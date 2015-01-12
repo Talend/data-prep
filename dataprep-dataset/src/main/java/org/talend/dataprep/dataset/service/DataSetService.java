@@ -52,9 +52,20 @@ public class DataSetService {
         }
     }
 
+    /**
+     * Add elements to responce header to add CORS support.
+     */
+    private void addResponseHeader(HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS");
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization");
+    }
+
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets", notes = "Returns the list of data sets the current user is allowed to see.")
     public void list(HttpServletResponse response) {
+        addResponseHeader(response);
+
         Iterable<DataSetMetadata> dataSets = dataSetMetadataRepository.list();
         try (JsonGenerator generator = factory.createJsonGenerator(response.getOutputStream())) {
             generator.writeStartArray();

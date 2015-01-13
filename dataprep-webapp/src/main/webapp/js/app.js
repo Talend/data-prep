@@ -5,15 +5,8 @@ var app = angular.module('data-prep', []);
 
 app.controller('RecordsCtrl', function($scope, $http) {
 	
-	$scope.loadFile = function() {
-		$http.get('ranking').success(function(data) {
-			$scope.columns = data.columns;
-			$scope.records = data.records;
-//			loadTableFeedbackStyles();
-		});
-	};
-	$scope.loadFileJson = function() {
-		$http.get('json/customers_100_full.json').success(function(data) {
+	$scope.openDataset = function(id) {
+		$http.get('http://10.42.10.99:8081/datasets/'+id+'?metadata=false').success(function(data) {
 			$scope.columns = data.columns;
 			$scope.records = data.records;
 //			loadTableFeedbackStyles();
@@ -21,7 +14,7 @@ app.controller('RecordsCtrl', function($scope, $http) {
 	};
 	
 	$scope.listDatasets = function() {
-		$http.get('http://localhost:8081/datasets').success(function(data) {
+		$http.get('http://10.42.10.99:8081/datasets').success(function(data) {
 			$scope.datasets = data;
 		});
 	};

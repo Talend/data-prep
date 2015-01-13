@@ -1,11 +1,26 @@
 Loaded datasets:
-<div ng-repeat="dataset in datasets">
-  => {{dataset}}
-  <div class="form-group">
-    <button
-      type="button"
-      class="t-btn t-btn-import-new-file"
-      id="button1"
-      ng-click="loadFileJson()">Load</button>
-  </div>
-</div>
+<table border="1">
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Author</td>
+      <td>Import</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="dataset in datasets">
+      <td>{{dataset.name}}</td>
+      <td>{{dataset.author}}</td>
+      <td>{{dataset.created}}</td>
+      <td>
+        <div class="form-group">
+          <button
+            type="button"
+            class="t-btn t-btn-import-new-file"
+            id="button1"
+            ng-click="loadFileJson()">Open</button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

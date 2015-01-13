@@ -26,7 +26,6 @@ app.controller('RecordsCtrl', function($scope, $http) {
 		});
 	};
 	
-	$scope.loadFileJson();
 	$scope.datasets = [];
 	$scope.listDatasets();
 });

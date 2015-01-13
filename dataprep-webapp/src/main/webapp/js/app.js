@@ -18,12 +18,17 @@ app.controller('RecordsCtrl', function($scope, $http) {
 			$scope.records = data.records;
 //			loadTableFeedbackStyles();
 		});
+	};
+	
+	$scope.listDatasets = function() {
 		$http.get('http://localhost:8081/datasets').success(function(data) {
 			$scope.datasets = data;
 		});
 	};
-	//$scope.loadFileJson();
-	$scope.datasets = ["5f35fb12-d664-40b7-8743-94d23cf0e6e1","a_fake_id"];
+	
+	$scope.loadFileJson();
+	$scope.datasets = [];
+	$scope.listDatasets();
 });
 
 app.controller('ColumnCtrl', ['$scope', function($scope) {
@@ -51,6 +56,12 @@ app.directive('importLocalFile', function() {
 	return {
 		restrict: 'E',
 		templateUrl: 'partials/import-local-file.html'
+	};
+});
+app.directive('datasetsList', function() {
+	return {
+		restrict: 'E',
+		templateUrl: 'partials/datasets-list.html'
 	};
 });
 

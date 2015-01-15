@@ -45,78 +45,83 @@
 
 <body ng-controller="RecordsCtrl">
 
-  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  
-    <div class="container-fluid t-top-bar">
-    
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-          aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span
-            class="icon-bar"></span>
-        </button>
-      </div>
-      
-      <div id="navbar" class="navbar-collapse collapse t-top-banner">
-      
-        <ul class="nav navbar-nav">
-          <li><a class="t-top-bar-logo shadowed navbar-brand" href="http://dev.talend.com"></a></li>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control t-search-inputfield" placeholder="Search anything here...">
-          </form>
-        </ul>
-        
-        <ul class="nav navbar-nav navbar-right">
-          <li><a class="t-top-bar_folder shadowed navbar-brand" href="http://dev.talend.com"></a></li>
-          <li><a class="t-top-bar_marketplace shadowed navbar-brand" href="http://dev.talend.com"></a></li>
-          <li><a class="t-top-bar_share shadowed navbar-brand" href="http://dev.talend.com"></a></li>
-          <li><a class="t-top-bar_notification shadowed navbar-brand" href="http://dev.talend.com"></a></li>
-          <li class="dropdown"><a href="#" class="dropdown-toggle shadowed t-top-bar_profile" data-toggle="dropdown" role="button"
-            aria-expanded="false"></a>
-            <ul class="dropdown-menu t-dropdown-menu" role="menu">
-              <li><a href="#">Logout</a>
-			  <li class="divider"></li>
-              <li><a href="#">Edit Profile</a></li>
-            </ul>
-          </li>
-        </ul>
-        
-      </div>
-      
-      <div class="t-top-toolbar">
-  	    <section>
-	      <form class="form-inline" role="form">
-	        <div class="form-group">
-	          <button type="button" class="t-btn t-btn-import-new-file" id="button1" ng-click="loadFileJson()">Import New File</button>
-	        </div>
-	        <div class="form-group">
-	          <button type="button" class="t-btn" id="button7" ng-click="loadFile()">Load file from java</button>
-	        </div>
-	        <div class="form-group">
-	          <button type="button" class="t-btn" id="button2" onclick="loadTableFeedbackStyles()">Refresh</button>
-	        </div>
-	        <div class="form-group">
-	          <button type="button" class="t-btn" id="button3">Split</button>
-	        </div>
-	        <div class="form-group">
-	          <button type="button" class="t-btn" id="button4">Filter</button>
-	        </div>
-	        <div class="form-group">
-	          <button type="button" class="t-btn" id="button5">Concatenate</button>
-	        </div>
-	        <div class="form-group">
-	          <button type="button" class="t-btn" id="button6">Keep</button>
-	        </div>
-	      </form>
-    	</section>
-      </div>
-      
-    </div>
+  <div>
+	  <nav id="topbar" class="navbar navbar-default navbar-static-top" role="navigation">
+	  
+	    <div class="container">
+	    
+<!-- 	      <div class="navbar-header"> -->
+<!-- 	        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" -->
+<!-- 	          aria-controls="navbar"> -->
+<!-- 	          <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span -->
+<!-- 	            class="icon-bar"></span> -->
+<!-- 	        </button> -->
+<!-- 	      </div> -->
+	      
+	      <div id="navbar" class="navbar-collapse collapse t-top-banner">
+	      
+	        <ul class="nav navbar-nav">
+	          <li><a class="t-top-bar-logo shadowed navbar-brand" href="http://dev.talend.com"></a></li>
+	          <form class="navbar-form navbar-right">
+	            <input type="text" class="form-control t-search-inputfield" placeholder="Search anything here...">
+	          </form>
+	        </ul>
+	        
+	        <ul class="nav navbar-nav navbar-right">
+	          <li><a class="t-top-bar_folder shadowed navbar-brand" href="http://dev.talend.com"></a></li>
+	          <li><a class="t-top-bar_marketplace shadowed navbar-brand" href="http://dev.talend.com"></a></li>
+	          <li><a class="t-top-bar_share shadowed navbar-brand" href="http://dev.talend.com"></a></li>
+	          <li><a class="t-top-bar_notification shadowed navbar-brand" href="http://dev.talend.com"></a></li>
+	          <li class="dropdown"><a href="#" class="dropdown-toggle shadowed t-top-bar_profile" data-toggle="dropdown" role="button"
+	            aria-expanded="false"></a>
+	            <ul class="dropdown-menu t-dropdown-menu" role="menu">
+	              <li><a href="#">Logout</a>
+				  <li class="divider"></li>
+	              <li><a href="#">Edit Profile</a></li>
+	            </ul>
+	          </li>
+	        </ul>
+	        
+	      </div>
+	  </nav>	      
+  </div>
+  <div>
+	  <nav id="navigationbar" class="navbar navbar-default navbar-static-top" role="navigation">
+	  
+	    <div class="container">
+	    
+<!-- 	      <div class="navbar-header"> -->
+<!-- 	        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" -->
+<!-- 	          aria-controls="navbar"> -->
+<!-- 	          <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span -->
+<!-- 	            class="icon-bar"></span> -->
+<!-- 	        </button> -->
+<!-- 	      </div> -->
+	      
+	      <div class="navbar-collapse collapse">
+	      
+	        <ul class="nav navbar-nav">
+		      <div >
+		  	    <section>
+			      <form class="form-inline" role="form">
+			        <div class="form-group">
+			          <button type="button" class="t-btn t-btn-import-new-file" id="button1" ng-click="loadFileJson()">Import New File</button>
+			        </div>
+		<!-- 	        FOR DEMO PURPOSE ONLY -->
+			        <div class="form-group">
+			        	<img src="images/images/breadcrumb.png" alt="this is a fake breadcrumb for demo purpose" height="42" width="565">
+			        </div>
+			      </form>
+		    	</section>
+		      </div>
+	        </ul>
+	      </div>
+	  </nav>	      
+  </div>
 
-  </nav>
+  </div>
   
-  
-  <div class="container-fluid t-container">
+  <div class="container t-container">
     <datasets-list></datasets-list>
     <dataset-grid></dataset-grid>
   </div>

@@ -1,26 +1,32 @@
-Loaded datasets:
-<table border="1">
+<table id="documentinventory" border="0">
   <thead>
-    <tr>
-      <td>Name</td>
-      <td>Author</td>
-      <td>Import</td>
-    </tr>
+    <tr >
+      <td colspan="3" class="t-demo-inventory-list-header">Sorted by Name</td>
+   </tr>
   </thead>
-  <tbody>
-    <tr ng-repeat="dataset in datasets">
-      <td>{{dataset.name}}</td>
-      <td>{{dataset.author}}</td>
-      <td>{{dataset.created}}</td>
-      <td>
-        <div class="form-group">
-          <button
-            type="button"
-            class="t-btn t-btn-import-new-file"
-            id="button1"
-            ng-click="openDataset(dataset.id)">Open</button>
-        </div>
+  <tbody ng-repeat="dataset in datasets" ng-click="openDataset(dataset.id)">
+    <tr>
+      <td rowspan="2" class="t-demo-inventory-list-icon">
+      	<img src="images/csv_file.png" class="t-demo-inventory-list-icon-img"/>
+	  </td>
+      <td class="t-demo-inventory-list-name">{{dataset.name}}</td>
+      <td rowspan="2" class="t-demo-inventory-list-actions">
+        <table>
+          <tbody>
+            <tr >
+              <td><button type="button" class="t-btn t-demo-btn t-demo-btn-shaker" ng-click="openDataset(dataset.id)"></button></td>
+              <td class="t-demo-right-divider"><button type="button" class="t-btn t-demo-btn t-demo-btn-pushto" ng-click=""></button></td>
+              <td><button type="button" class="t-btn t-demo-btn t-demo-btn-favorite" ng-click=""></button></td>
+              <td class="t-demo-right-divider"><button type="button" class="t-btn t-demo-btn t-demo-btn-share" ng-click=""></button></td>
+              <td class="t-demo-right-divider"><button type="button" class="t-btn t-demo-btn t-demo-btn-remove" ng-click=""></button></td>
+              <td><button type="button" class="t-btn t-demo-btn t-demo-btn-more" ng-click=""></button></td>
+            </tr>	
+          </tbody> 
+        </table>
       </td>
+    </tr> 
+    <tr>
+       <td class="t-demo-inventory-list-description">owned by {{dataset.author}}, created on {{dataset.created}}</td>
     </tr>
   </tbody>
 </table>

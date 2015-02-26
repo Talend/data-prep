@@ -7,7 +7,8 @@
             templateUrl: 'components/dataset/grid/header/dataset-column-header-directive.html',
             scope:{
                 metadata: '=',
-                column : '='
+                column : '=',
+                columnIndex: '='
             },
             bindToController: true,
             controllerAs: 'datasetHeaderCtrl',

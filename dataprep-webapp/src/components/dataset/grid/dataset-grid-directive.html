@@ -8,11 +8,11 @@
     </div>
 
     <div class="modal-body">
-        <table class="datagrid">
+        <table class="datagrid" id="datagrid" talend-loading-table>
             <thead>
             <tr>
-                <th ng-repeat="column in datagridCtrl.data.columns">
-                    <dataset-column-header column="column" metadata="datagridCtrl.metadata"></dataset-column-header>
+                <th ng-repeat="column in datagridCtrl.data.columns track by $index">
+                    <dataset-column-header column="column" metadata="datagridCtrl.metadata" column-index="$index"></dataset-column-header>
                 </th>
             </tr>
             </thead>

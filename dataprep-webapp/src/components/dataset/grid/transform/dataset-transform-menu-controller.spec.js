@@ -46,6 +46,7 @@ describe('Dataset transform menu controller', function () {
         },
         'type': 'string'
     };
+    var columnIndex = 2;
 
     beforeEach(module('data-prep-dataset'));
 
@@ -58,6 +59,7 @@ describe('Dataset transform menu controller', function () {
             });
             ctrl.metadata = metadata;
             ctrl.column = column;
+            ctrl.columnIndex = columnIndex;
             return ctrl;
         };
 
@@ -114,14 +116,14 @@ describe('Dataset transform menu controller', function () {
 
         //when
         ctrl.select();
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.start', {col: columnIndex});
         $rootScope.$digest();
 
         //then
         expect(ctrl.showModal).toBeFalsy();
         expect(TransformationService.transform).toHaveBeenCalledWith('44f5e4ef-96e9-4041-b86a-0bee3d50b18b', 'uppercase', { column_name: 'MostPopulousCity' });
         expect(DatasetGridService.updateRecords).toHaveBeenCalledWith(result.records);
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.stop', {col: columnIndex});
     }));
 
     it('should call transform on parameterized menu select', inject(function ($rootScope, TransformationService, DatasetGridService) {
@@ -138,7 +140,7 @@ describe('Dataset transform menu controller', function () {
 
         //when
         ctrl.transformWithParam();
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.start', {col: columnIndex});
         $rootScope.$digest();
 
         //then
@@ -148,7 +150,7 @@ describe('Dataset transform menu controller', function () {
             'uppercase',
             { column_name: 'MostPopulousCity', param1: 'param1Value', param2: 4 });
         expect(DatasetGridService.updateRecords).toHaveBeenCalledWith(result.records);
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.stop', {col: columnIndex});
     }));
 
     it('should call transform on simple choice param menu select', inject(function ($rootScope, TransformationService, DatasetGridService) {
@@ -169,7 +171,7 @@ describe('Dataset transform menu controller', function () {
 
         //when
         ctrl.transformWithParam();
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.start', {col: columnIndex});
         $rootScope.$digest();
 
         //then
@@ -179,7 +181,7 @@ describe('Dataset transform menu controller', function () {
             'split',
             { column_name: 'MostPopulousCity', mode: 'index'});
         expect(DatasetGridService.updateRecords).toHaveBeenCalledWith(result.records);
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.stop', {col: columnIndex});
     }));
 
     it('should call transform on parameterized choice menu select', inject(function ($rootScope, TransformationService, DatasetGridService) {
@@ -206,7 +208,7 @@ describe('Dataset transform menu controller', function () {
 
         //when
         ctrl.transformWithParam();
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.start', {col: columnIndex});
         $rootScope.$digest();
 
         //then
@@ -216,7 +218,7 @@ describe('Dataset transform menu controller', function () {
             'split',
             { column_name: 'MostPopulousCity', mode: 'regex', regex: 'param1Value', comment: 'my comment'});
         expect(DatasetGridService.updateRecords).toHaveBeenCalledWith(result.records);
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.stop', {col: columnIndex});
     }));
 
     it('should call transform with parameters and parameterized choice menu select', inject(function ($rootScope, TransformationService, DatasetGridService) {
@@ -247,7 +249,7 @@ describe('Dataset transform menu controller', function () {
 
         //when
         ctrl.transformWithParam();
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.start', {col: columnIndex});
         $rootScope.$digest();
 
         //then
@@ -257,6 +259,6 @@ describe('Dataset transform menu controller', function () {
             'split',
             { column_name: 'MostPopulousCity', mode: 'regex', regex: 'param1Value', comment: 'my comment', param1: 'param1Value', param2: 4});
         expect(DatasetGridService.updateRecords).toHaveBeenCalledWith(result.records);
-        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+        expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.datagrid.stop', {col: columnIndex});
     }));
 });

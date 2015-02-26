@@ -1,0 +1,32 @@
+.loading-column {
+  background: rgba(0, 0, 0, 0.5);
+  
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  
+  height: 100%;
+  width: 100%;
+  z-index: 999999;
+
+  transition: opacity 0.2s ease;
+  
+  .loading-column-inner {
+    position: absolute;
+    left: 25%;
+    top: 30px;
+    width: 50%;
+    
+    font-size: 2em;
+    color: white;
+    text-align: center;
+  }
+}
+
+.loading-column-hide {
+  opacity: 0;
+  background: rgba($green, 0.5);
+  animation: fadeOut 0.5s;
+}

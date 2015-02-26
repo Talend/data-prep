@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function DatasetGridService() {
+    function DatasetGridService($rootScope) {
         var self = this;
 
         self.visible = false;
@@ -30,6 +30,8 @@
         self.setDataset = function(metadata, data) {
             self.metadata = metadata;
             self.data = data;
+
+            $rootScope.$emit('talend.loading.datagrid.stop.all');
         };
 
         /**

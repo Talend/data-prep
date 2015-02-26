@@ -9,7 +9,8 @@
             scope: {
                 metadata: '=',
                 column: '=',
-                menu: '='
+                menu: '=',
+                columnIndex: '='
             },
             bindToController: true,
             controllerAs: 'menuCtrl',

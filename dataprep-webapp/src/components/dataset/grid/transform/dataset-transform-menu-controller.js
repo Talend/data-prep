@@ -75,7 +75,7 @@
          * Perform a transformation on the column
          */
         vm.transform = function (params) {
-            $rootScope.$emit('talend.loading.start');
+            $rootScope.$emit('talend.loading.datagrid.start', {col : vm.columnIndex});
 
             params = params || {};
             /*jshint camelcase: false */
@@ -86,7 +86,7 @@
                     DatasetGridService.updateRecords(response.data.records);
                 })
                 .finally(function () {
-                    $rootScope.$emit('talend.loading.stop');
+                    $rootScope.$emit('talend.loading.datagrid.stop', {col : vm.columnIndex});
                 });
         };
     }

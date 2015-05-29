@@ -7,14 +7,14 @@
 
     <tbody ng-repeat="dataset in datasetListCtrl.datasets track by $index" class="inventory-entry">
     <tr>
-        <td rowspan="2" class="inventory-icon" width="40px" ng-switch="dataset.type">
+        <td rowspan="2" class="inventory-icon" width="40px" ng-switch="dataset.type" ui-sref="nav.home.datasets({datasetid: dataset.id})">
             <img src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
             <img src="/assets/images/inventory/xls_file.png" ng-switch-when="application/vnd.ms-excel"/>
             <img src="/assets/images/inventory/generic_file.png" ng-switch-default/>
             <img ng-src="/assets/images/certification-{{dataset.certification | lowercase}}.png" class="pin"
                  ng-if="dataset.certification!='NONE'"/>
         </td>
-        <td class="inventory-title">{{dataset.name}}</td>
+        <td class="inventory-title" ui-sref="nav.home.datasets({datasetid: dataset.id})">{{dataset.name}}</td>
         <td rowspan="2" class="inventory-actions">
             <div class="inventory-actions-wrapper">
                 <table class="inventory-actions-table">

@@ -27,6 +27,10 @@ $border-color: #CECECE;
     padding: 10px 5px 10px 15px;
     border-bottom: 1px solid $border-color;
     position: relative;
+    cursor: pointer;
+    &:hover{
+      padding: 8px 3px 8px 13px;
+    }
   }
 
   .inventory-icon>img {
@@ -46,9 +50,13 @@ $border-color: #CECECE;
     font-weight: 700;
     font-size: 1.1em;
     text-transform: uppercase;
-
     height: 34px;
     overflow: hidden;
+    cursor: pointer;
+    &:hover {
+      color: $dark-blue;
+      text-decoration: underline;
+    }
   }
 
   .inventory-description {

@@ -1,27 +1,32 @@
 /** maillon circles **/
+$stroke-width: 4;
+$stroke-width-path: 2.5;
+
+$disabled-color: $shadow-gray;
+
 .maillon-circle{
   circle{
-    stroke:#b6be00;
-    stroke-width:3;
-    fill:#b6be00;
+    stroke:$dark-green;
+    stroke-width:$stroke-width;
+    fill:$dark-green;
     &.maillon-circle-enabled-hovered{
-      stroke:#00CCFF;
-      stroke-width:3;
-      fill:#ffffff;
+      stroke:$blue;
+      stroke-width:$stroke-width;
+      fill:$white;
     }
   }
   path{
-    stroke:#b6be00;
-    stroke-width:1;
+    stroke:$dark-green;
+    stroke-width:$stroke-width-path;
     fill:none;
     &.maillon-cables-disabled{
-      stroke:#DFDFDF;
-      stroke-width:0.4;
+      stroke:$disabled-color;
+      stroke-width:$stroke-width-path;
       fill:none;
     }
     &.single-maillon-cables-disabled{
-      stroke:#DFDFDF;
-      stroke-width:0.4;
+      stroke:$disabled-color;
+      stroke-width:$stroke-width-path;
       fill:none;
     }
   }
@@ -29,18 +34,18 @@
 
 .maillon-circle-disabled{
   circle{
-    stroke:#D2D2D2;
-    stroke-width:3;
-    fill:#ffffff;
+    stroke:$disabled-color;
+    stroke-width:$stroke-width;
+    fill:$white;
     &.maillon-circle-disabled-hovered{
-      stroke:blue;
-      stroke-width:3;
-      fill:#B122FF;
+      stroke:$dark-blue;
+      stroke-width:$stroke-width;
+      fill:$blue;
     }
   }
   path{
-    stroke:#DFDFDF;
-    stroke-width:0.4;
+    stroke:$disabled-color;
+    stroke-width:$stroke-width-path;
     fill:none;
   }
 }

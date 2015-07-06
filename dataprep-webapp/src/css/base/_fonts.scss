@@ -2,10 +2,29 @@ $sourcesanspro: "Source Sans Pro", "Lucida Grande", "Tahoma", "Verdana", "Arial"
 $inconsolota: Inconsolata, Monaco, Menlo, Consolas, "Courier New", monospace;
 $iconsfont: "icons-font";
 
-.icon {
-  font-family: $iconsfont;
-  font-size: 2.5em;
-  color: $dark-gray;
+
+
+//      Sample of button with iconfont:
+
+//		<a class="btn-primary" onclick="">
+//			<i data-icon="m" class="iconfont"></i>
+//			<i class="iconlabel">this_is_ths_label</i>
+//		</a>
+
+.iconfont {   // used for the icon in button in tag <i>
+  background: transparent;
+  font-size: 1.2rem;
+  -webkit-filter: drop-shadow(0px 1px 1px $dark-gray);
+  padding-right: 10px;
+}
+
+.iconlabel{ // used for the label in button in tag <i>
+  font-family: $sourcesanspro;
+  font-size: .9rem;
+  color: $white;
+  font-style: normal;
+  position: relative;
+  top: -3px;
 }
 
 @font-face {

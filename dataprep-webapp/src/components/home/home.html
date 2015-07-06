@@ -2,12 +2,12 @@
     <div class="subheader-wrapper">
         <ul id="help-dataset-nav">
             <li class="primary">
-                <button type="button"
-                        class="t-btn t-btn-import-new-file"
+                <a class="btn-primary"
                         id="help-import-local"
                         onclick="document.getElementById('datasetFile').click()">
-                    {{ ::'IMPORT_FILE' | translate }}
-                </button>
+                    <i data-icon="m" class="iconfont"></i>
+                    <i class="iconlabel">{{ ::'IMPORT_FILE' | translate }}</i>
+                </a>
                 <input type="file"
                        id="datasetFile"
                        name="datasetFile"
@@ -27,8 +27,9 @@
             </li>
         </ul>
         <div class="subheader-right ">
-            <button id="btn-toggle-right-panel" ng-click="homeCtrl.toggleRightPanel()" type="button" class="t-btn t-btn-expand-collapse-RHP"></button>
-            <button id="" onclick="" type="button" class="t-btn t-btn-view-mode"></button>
+            <!--<button id="btn-toggle-right-panel" ng-click="homeCtrl.toggleRightPanel()" type="button" class="btn expand-collapse-RHP"></button>-->
+            <a id="btn-toggle-right-panel" data-icon="t" class="expand-panel" ng-click="homeCtrl.toggleRightPanel()"></a>
+            <a data-icon="o" class="view-mode"></a>
         </div>
     </div>
 
@@ -40,8 +41,8 @@
             <input type="text" ng-model="homeCtrl.datasetName" required/>
 
             <div class="modal-buttons">
-                <button class="talend-modal-close t-btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}</button>
-                <button class="talend-modal-close t-btn-primary modal-primary-button"
+                <button class="talend-modal-close btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}</button>
+                <button class="talend-modal-close btn-primary modal-primary-button"
                         ng-click="homeCtrl.uploadDatasetName()"
                         ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}</button>
             </div>
@@ -73,7 +74,7 @@
         <p class="title">{{ ::'INVENTORY_DATA' | translate }}</p>
         <hr/>
         <p class="empty">
-            <img src="/assets/images/large_folder.png"/>
+            <i data-icon="i" class="iconfont large"></i>
             <br/>
             {{ ::'SELECT_DATASET_DESCRIPTION' | translate }}
         </p>

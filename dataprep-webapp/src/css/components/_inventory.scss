@@ -31,7 +31,7 @@ $border-color: #CECECE;
         background-color: $hover-color;
       }
 
-      .t-btn-transparent {
+      .btn-transparent {
         opacity: 1;
       }
     }
@@ -123,12 +123,7 @@ $border-color: #CECECE;
   }
 }
 
-.t-btn-transparent{
-  background: $hover-color no-repeat;
-  background-size: contain;
-  height: 42px;
-  width: 40px;
-  border: 5px solid transparent;
+.btn-transparent{
   opacity: 0;
   outline: none;
 
@@ -141,36 +136,20 @@ $border-color: #CECECE;
   }
 }
 
-.t-right-divider {
+.divider {
   width: 1px;
   background: $white;
 }
 
-.t-btn-shaker{
-  background-image: url('/assets/images/shaker.png');
-}
-
-.t-btn-pushto{
-  background-image: url('/assets/images/pushto.png');
-  width: 60px;
-}
-
-.t-btn-favorite{
-  background-image: url('/assets/images/favorite.png');
-}
-
-.t-btn-favorite-true{
-  opacity: 1;
-}
-
-.t-btn-share{
-  background-image: url('/assets/images/share.png');
-}
-
-.t-btn-remove{
-  background-image: url('/assets/images/remove.png');
-}
-
-.t-btn-more{
-  background-image: url('/assets/images/more.png');
+.btn-icon{
+  padding: 0px 10px 0px 10px;
+  margin: 0px 5px 0px 5px;
+  color: white;
+  font-family: icons-font;
+  font-size: 2em;
+  &:hover{
+    border-radius: 5px;
+    color: white;
+    background-color: $background-blue;
+  }
 }

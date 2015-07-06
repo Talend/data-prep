@@ -6,9 +6,9 @@
     <p ng-repeat="text in ::confirmCtrl.texts track by $index">{{text}}</p>
 
     <div class="modal-buttons">
-        <button class="talend-modal-close t-btn-secondary modal-secondary-button"
+        <button class="talend-modal-close btn-secondary modal-secondary-button"
                 ng-click="confirmCtrl.cancel()">NO</button>
-        <button class="talend-modal-close t-btn-primary modal-primary-button"
+        <button class="talend-modal-close btn-primary modal-primary-button"
                 ng-click="confirmCtrl.valid()">YES</button>
     </div>
 </talend-modal>

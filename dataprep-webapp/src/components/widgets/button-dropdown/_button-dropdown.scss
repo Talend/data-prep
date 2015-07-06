@@ -28,14 +28,29 @@
     @include button-dropdown-style();
 
     border-radius: 3px 0 0 3px;
+    border-left: 1px solid $white;
+    border-top:  1px solid $white;
+    border-bottom: 1px solid $white;
     padding: 0 7px 0 10px;
     text-transform: uppercase;
+  }
+
+  .line-separator{
+    position: absolute;
+    top: 8px;
+    right: 25px;
+    width: 1px;
+    height: 20px;
+    border-right: 1px solid transparentize($white, .7);
   }
 
   .button-dropdown-side {
     @include button-dropdown-style();
 
     border-radius: 0 3px 3px 0;
+    border-right: 1px solid $white;
+    border-top:  1px solid $white;
+    border-bottom: 1px solid $white;
     font-weight: 800;
     padding: 0 10px;
     margin-left: -5px;
@@ -56,14 +71,14 @@
     @include transition (all 0.2s ease-in-out);
     color: $dropdown-menu-color;
     box-shadow: 3px 3px 18px 3px transparentize(black, 0.8);
-    width: 228px;
+    width: 140px;
     outline: none;
-
     position: absolute;
-    right: -55px !important;
-    left: auto !important;
+    right: 0px !important;
+    top: 37px !important;
 
     &:before {
+
       left: 1em;
       right: 1em;
       text-align: center;
@@ -74,7 +89,7 @@
       color: #333;
       list-style: none;
       padding: 0.5em;
-      text-align: center;
+      text-align: left;
 
       &:first-child {
         border-top-left-radius: $base-border-radius;

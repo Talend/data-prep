@@ -47,25 +47,21 @@ $subheader-background: $light-gray;
   }
 }
 
-.t-btn-import-new-file{
-  background: $button-important url('/assets/images/import_new_file.png') no-repeat 10px 5px !important;
-  padding: 0px 10px 0px 45px!important;
-  color: $white;
-}
-
-.t-btn-expand-collapse-RHP{
+.expand-collapse-RHP{
   background: $button-toggle url('/assets/images/collapse_right_panel.png') no-repeat 10px 5px !important;
   padding: 0px 5px 0px 40px!important;
 }
 
-.t-btn-view-mode{
-  background: $button-toggle url('/assets/images/view_mode.png') no-repeat 10px 7px !important;
-  padding: 0px 5px 0px 40px!important;
+.view-mode{
+  float: right;
+  color: $medium-gray;
+  font-size: 1.4rem;
+  padding: 8px 15px 0px 0px;
 }
 
-.t-rhs-to-width-0px {
-  width: 0px !important;
-  padding: 0px !important;
-  flex: 0 0 0px !important;
-  border-left: 0px solid transparent !important;
+.expand-panel{
+  float: right;
+  color: $medium-gray;
+  font-size: 1.5rem;
+  padding: 6px 15px 0px 15px;
 }

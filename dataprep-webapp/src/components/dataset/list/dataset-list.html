@@ -22,28 +22,23 @@
         <!-- Draft actions icons -->
         <div ng-switch-when="true"
              class="inventory-actions">
-            <button class="t-btn t-btn-transparent t-btn-remove" ng-click="datasetListCtrl.delete(dataset)"></button>
+            <button class="btn btn-transparent btn-remove" ng-click="datasetListCtrl.delete(dataset)"></button>
         </div>
 
         <!-- Not draft actions icons -->
-        <div ng-switch-when="false"
-             class="inventory-actions">
-            <button class="t-btn t-btn-transparent t-btn-shaker"
-                    ng-if="!!dataset.defaultPreparation"
-                    ui-sref="nav.home.preparations({prepid: dataset.defaultPreparation.id})"></button>
-            <button class="t-btn t-btn-transparent t-btn-pushto"></button>
-            <div class="t-right-divider"></div>
-
-            <button ng-class="{'t-btn':true, 't-btn-transparent':true, 't-btn-favorite-true':dataset.favorite,  't-btn-favorite':true}" ng-click="datasetListCtrl.toggleFavorite(dataset)"></button>
-            <button class="t-btn t-btn-transparent t-btn-share"></button>
-            <div class="t-right-divider"></div>
-
-            <button class="t-btn t-btn-transparent t-btn-remove"
-                    ng-click="datasetListCtrl.delete(dataset)"></button>
-            <div class="t-right-divider"></div>
-
-            <button class="t-btn t-btn-transparent t-btn-more"
-                    ng-click="datasetListCtrl.processCertification(dataset)"></button>
+        <div ng-switch-when="false" class="inventory-actions">
+            <a data-icon="c" class="btn-icon btn-transparent" ng-if="!!dataset.defaultPreparation"
+                    ui-sref="nav.home.preparations({prepid: dataset.defaultPreparation.id})"></a>
+            <a data-icon="g" class="btn-icon btn-transparent"></a>
+            <div class="divider btn-transparent"></div>
+            <a data-icon="f" class="btn-icon btn-transparent"></a>
+            <a data-icon="h" class="btn-icon btn-transparent"></a>
+            <div class="divider btn-transparent"></div>
+            <a data-icon="e" class="btn-icon btn-transparent"
+                    ng-click="datasetListCtrl.delete(dataset)"></a>
+            <div class="divider btn-transparent"></div>
+            <a data-icon="s" class="btn-icon btn-transparent"
+                    ng-click="datasetListCtrl.processCertification(dataset)"></a>
         </div>
     </div>
 

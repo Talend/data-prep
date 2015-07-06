@@ -37,52 +37,44 @@
     width:190px;
     padding: 5px 0 4px 3px;
   }
-  button{
-    font-family: $iconsfont;
-    font-size: .9em;
-    margin: 3px;
-    padding: 2px;
-    border-radius: 50px;
-    vertical-align: top;
-    background-color: transparent;
-    color: $medium-gray;
-    font-weight: 400;
-    font-style: normal;
-    width: 24px;
-    height: 24px;
-
-    &.edit-btn{
-      margin-top: 2px;
-      color: $medium-gray;
+  div{
+    padding-top: 2px;
+    a {
+      font-family: $iconsfont;
+      font-size: .9em;
+      margin: 1px;
+      padding: 6px;
+      border-radius: 50px;
+      vertical-align: middle;
       background-color: transparent;
-      &:after {
-        content: "a";  /* Edit icon  */
-      }
-      &:hover{
-       color: $dark-gray;
-      }
-    }
+      color: $medium-gray;
+      font-weight: 400;
+      font-style: normal;
+      width: 24px;
+      height: 24px;
 
-    &.cancel-btn{
+      &.edit-btn {
+        color: $medium-gray;
+        background-color: transparent;
+        &:hover {
+          color: $dark-gray;
+        }
+      }
+      &.cancel-btn {
+        margin-left: 0px;
         color: $dark-gray;
         background-color: $light-gray;
-      &:after {
-        content: "b";
+        &:hover {
+          background-color: darken($light-gray, 10%);
+        }
       }
-      &:hover{
-        background-color: darken( $light-gray, 10% );
-      }
-    }
-
-    &.check-btn{
-        margin-left: 0px;
-         color: $white;
-         background-color: $dark-green;
-      &:after {
-        content: "c";
-      }
-      &:hover {
-        background-color: darken( $dark-green, 10% );
+      &.check-btn {
+        margin-left: 5px;
+        color: $white;
+        background-color: $dark-green;
+        &:hover {
+          background-color: darken($dark-green, 10%);
+        }
       }
     }
   }

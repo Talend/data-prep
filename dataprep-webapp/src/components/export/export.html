@@ -8,22 +8,22 @@
               on-close="exportCtrl.resetCurrentParameters()">
 
     <div ng-repeat="parameter in exportCtrl.currentExportType.parameters track by $index">
-      <p>{{ parameter.labelKey | translate }}</p>
-      <div ng-if="parameter.type == 'radio'">
-        <input ng-model="exportCtrl.currentExportParameters['exportParameters.' + parameter.name]"
-               type="radio"
-               value="{{parameter.defaultValue.value}}"/>{{ parameter.defaultValue.labelKey | translate }}( {{parameter.defaultValue.value}} )
+        <p>{{ parameter.labelKey | translate }}</p>
+        <div ng-if="parameter.type == 'radio'">
+            <input ng-model="exportCtrl.currentExportParameters['exportParameters.' + parameter.name]"
+                   type="radio"
+                   value="{{parameter.defaultValue.value}}"/>{{ parameter.defaultValue.labelKey | translate }}( {{parameter.defaultValue.value}} )
         <span ng-repeat="parameterValue in parameter.values track by $index">
             <input ng-model="exportCtrl.currentExportParameters['exportParameters.' + parameter.name]"
                    type="radio"
                    value="{{parameterValue.value}}" >{{ parameterValue.labelKey | translate }}( {{parameterValue.value}} )
         </span>
-      </div>
+        </div>
     </div>
 
     <div class="modal-buttons">
-      <button class="talend-modal-close t-btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}</button>
-      <button class="talend-modal-close t-btn-primary modal-primary-button" ng-click="exportCtrl.saveEditionAndExport()">{{ ::'EXPORT' | translate }}</button>
+        <button class="talend-modal-close btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}</button>
+        <button class="talend-modal-close btn-primary modal-primary-button" ng-click="exportCtrl.saveEditionAndExport()">{{ ::'EXPORT' | translate }}</button>
     </div>
 </talend-modal>
 

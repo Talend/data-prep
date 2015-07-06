@@ -12,4 +12,10 @@
   @include flex-row();
   @include flex-grow(1);
   @include justify-content(center);
+
+  .large{
+    font-size: 8em;
+    color: $light-blue;
+    -webkit-filter: none;
+  }
 }

@@ -2,7 +2,7 @@
     <div class="preparation" ng-repeat="preparation in preparationListCtrl.preparations track by $index">
         <p class="title">
             <a ui-sref="nav.home.preparations({prepid: preparation.id})">{{preparation.name}}</a>
-            <a class="favorite" ng-class="{selected: preparation.favorite}" ng-click="preparation.favorite = !preparation.favorite">&#9733;</a>
+            <a class="favorite" data-icon="f" ng-class="{selected: preparation.favorite}" ng-click="preparation.favorite = !preparation.favorite"></a>
         </p>
         <p class="description">
             {{::'OWNED_BY' | translate}} <span class="important">{{preparation.author}}</span><br/>
@@ -15,7 +15,7 @@
         <p class="details">
             <span class="important">{{preparation.steps.length - 1}} {{::'STEPS' | translate}}</span> {{::'RECIPE' |
             translate}}
-            <a class="actions" ng-click="preparationListCtrl.delete(preparation)">[delete]</a>
+            <a data-icon="e" class="actions" ng-click="preparationListCtrl.delete(preparation)"></a>
         </p>
         </p>
     </div>

@@ -1,7 +1,7 @@
 header.navigation {
   $navigation-submenu-background-hover: $menus-hover !important;
   $navigation-height: 51px;
-  
+
   .logo-wrapper {
     .logo {
       float: left;
@@ -14,35 +14,37 @@ header.navigation {
 
   ul li {
     &.nav-link a.icon {
+      color: $medium-gray;
+      font-size: 1.8em;
       width: 40px;
       height: 35px;
       position: relative;
-      top: 10px;
+      top: 6px;
       @include filter(drop-shadow(0px 1px 1px #1f2024));
 
-      &.t-top-bar_folder {
-        background: url('/assets/images/top_link_folder.png') no-repeat center;
-      }
-
-      &.t-top-bar_marketplace {
-        background: url('/assets/images/top_link_marketplace.png') no-repeat;
-      }
-
-      &.t-top-bar_share {
-        background: url('/assets/images/top_link_share.png') no-repeat;
+      &:hover {
+        color: lighten($medium-gray, 10%);
       }
 
       &.t-top-bar_notification {
-        background: url('/assets/images/top_link_notification.png') no-repeat;
-      }
+        top: -4px;
+        font-weight: 700;
+        font-size: .9rem;
+        padding: 0px 0px 0px 0px;
+        color: #FFFFFF;
+        text-align: center;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+        background: $color-error;
+        width: 24px;
+        height: 24px;
+        line-height: 21px;
+        border: 2px solid #FFFFFF;
+        border-radius: 50%;
 
-      &.t-top-bar_help {
-        background: url('/assets/images/top_link_help.png') no-repeat;
       }
 
       &.t-top-bar_profile {
-        background: url('/assets/images/top_link_profile.png') no-repeat;
-        width: 52px;
+        //width: 52px;
       }
     }
   }

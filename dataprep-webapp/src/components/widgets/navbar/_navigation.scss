@@ -15,13 +15,13 @@ header.navigation {
   }
   //////////////////////////////////////////////////////////////////////////////////
 
-  $navigation-padding: 1em;
+  $navigation-padding:1em;
   $navigation-background: $dark-gray;
   $navigation-color-hover: white;
   $navigation-height: 54px;
   $navigation-search-border: 1px solid $medium-gray;
   $navigation-active-link-color: transparentize(white, 0.5);
-  $navigation-submenu-padding: 1em;
+  $navigation-submenu-padding: 0px; //1em;
   $navigation-submenu-width: 12em;
   $horizontal-bar-mode: $large-screen;
 
@@ -183,7 +183,7 @@ header.navigation {
       position: relative;
 
       @include media($large-screen) {
-        margin-right: $navigation-submenu-padding;
+        margin-right: 0px; //$navigation-submenu-padding;
       }
 
       &:after {

@@ -56,7 +56,7 @@
         }
 
         &.favorite {
-          font-size: 1.2em;
+          font-size: 1.4em;
           float: right;
           color: $light-gray;
 
@@ -89,6 +89,7 @@
 
     .actions{
       float: right;
+      font-size: 1.3rem;
       font-weight: 600;
       color: $grid-items-background;
       &:hover{

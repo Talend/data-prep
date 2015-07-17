@@ -12,7 +12,8 @@
                    type="{{::param.inputType}}"
                    ng-trim="false"
                    ng-model="param.value"
-                   type-validation="{{::param.type}}"/>
+                   type-validation="{{::param.type}}"
+                   select-input-text-on-load/>
             <span ng-if="::(param.type === 'boolean')">{{param.name}}</span>
         </div>
 

@@ -1,24 +1,44 @@
 {
   "metadata": {
     "id": "1234",
+    "favorite": false,
+    "lifecycle": {
+      "importing": false,
+      "contentAnalyzed": false,
+      "schemaAnalyzed": true,
+      "qualityAnalyzed": true
+    },
     "name": "name",
     "author": "author",
     "records": 0,
     "nbLinesHeader": 0,
     "nbLinesFooter": 0,
     "created": 0,
-    "type": "text/csv"
+    "type": "text/csv",
+    "parameters": {
+      "SEPARATOR": ","
+    },
+    "formatGuess": "formatGuess#csv",
+    "certificationStep": "NONE",
+    "location": {
+      "type": "http",
+      "url": "http://estcequecestbientotleweekend.fr"
+    }
   },
   "columns": [
     {
       "id": "0005",
       "name": "column1",
+      "headerSize": 0,
+      "type": "string",
       "quality": {
         "empty": 0,
         "invalid": 10,
-        "valid": 50
+        "valid": 50,
+        "invalidValues": []
       },
-      "type": "string"
+      "statistics": {},
+      "domain": ""
     }
   ]
 }

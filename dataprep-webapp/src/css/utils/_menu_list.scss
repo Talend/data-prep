@@ -13,6 +13,7 @@
     padding: 3px 20px;
     position: relative;
     white-space: nowrap;
+    color: #333;
 
     &:hover {
       background-color: $menus-hover;
@@ -56,6 +57,7 @@
 
     &.divider {
       height: 1px;
+      width: 100%;
       margin: 9px 0;
       overflow: hidden;
       background-color: #e5e5e5;

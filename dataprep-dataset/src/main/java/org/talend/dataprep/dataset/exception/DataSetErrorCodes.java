@@ -1,9 +1,12 @@
 package org.talend.dataprep.dataset.exception;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -30,15 +33,21 @@ public enum DataSetErrorCodes implements ErrorCode {
     UNABLE_TO_SERVE_DATASET_CONTENT(400, "id"),
 
     /**
-     * this one will happen when user do something on datas whereas those datas has been updated async in the backend
-     * and this action is not possible anymore (i.e preview whereas this dataset do not need any preview)
+     * this one will happen when user do something on data whereas the data has been updated async in the backend and
+     * this action is not possible anymore (i.e preview whereas this dataset do not need any preview)
      */
     REDIRECT_CONTENT(301),
     /**
      * Error returned in case user tries to access to a data set that does not exist (or no longer exists).
      * @see org.talend.dataprep.dataset.service.DataSetService#updateDataSet(String, DataSetMetadata)
      */
-    DATASET_DOES_NOT_EXIST(400, "id");
+    DATASET_DOES_NOT_EXIST(400, "id"),
+    /**
+     * Error returned when the json that contains the dataset location cannot be parsed.
+     * 
+     * @see org.talend.dataprep.dataset.service.DataSetService#create(String, String, InputStream, HttpServletResponse)
+     */
+    UNABLE_TO_READ_DATASET_LOCATION(400);
 
     /** The http status to use. */
     private int httpStatus;

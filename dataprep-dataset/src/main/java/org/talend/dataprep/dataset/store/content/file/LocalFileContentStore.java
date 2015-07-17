@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.store.local;
+package org.talend.dataprep.dataset.store.content.file;
 
 import java.io.*;
 import java.nio.file.*;
@@ -10,27 +10,24 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.DataSetContent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.exception.DataSetErrorCodes;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
+import org.talend.dataprep.dataset.store.content.DataSetContentStoreAdapter;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.TDPExceptionContext;
-import org.talend.dataprep.schema.FormatGuess;
-import org.talend.dataprep.schema.Serializer;
 
-@Component
+/**
+ * Local dataset content that stores content in files.
+ */
+@Component("ContentStore#local")
 @ConditionalOnProperty(name = "dataset.content.store", havingValue = "local", matchIfMissing = false)
-public class LocalDataSetContentStore implements DataSetContentStore {
+public class LocalFileContentStore extends DataSetContentStoreAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocalDataSetContentStore.class);
-
-    @Autowired
-    FormatGuess.Factory factory;
+    /** This class' logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalFileContentStore.class);
 
     @Value("${dataset.content.store.local.location}")
     private String storeLocation;
@@ -66,13 +63,6 @@ public class LocalDataSetContentStore implements DataSetContentStore {
             throw new TDPException(DataSetErrorCodes.UNABLE_TO_STORE_DATASET_CONTENT, e, TDPExceptionContext.build().put("id",
                     dataSetMetadata.getId()));
         }
-    }
-
-    @Override
-    public InputStream get(DataSetMetadata dataSetMetadata) {
-        DataSetContent content = dataSetMetadata.getContent();
-        Serializer serializer = factory.getFormatGuess(content.getFormatGuessId()).getSerializer();
-        return serializer.serialize(getAsRaw(dataSetMetadata), dataSetMetadata);
     }
 
     @Override

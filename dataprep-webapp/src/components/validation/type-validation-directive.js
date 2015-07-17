@@ -48,6 +48,6 @@
         };
     }
 
-    angular.module('data-prep.type-validation')
+    angular.module('data-prep.validation')
         .directive('typeValidation', TypeValidation);
 })();

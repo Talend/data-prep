@@ -42,52 +42,41 @@ describe('Transform menu controller', function () {
         spyOn(TransformationService, 'initDynamicParameters').and.returnValue($q.when(true));
     }));
 
-    it('should do nothing on select if the menu is a divider', inject(function (PlaygroundService) {
-        //given
-        var ctrl = createController();
-        ctrl.menu = {isDivider: true};
-
-        //when
-        ctrl.select();
-
-        //then
-        expect(ctrl.showModal).toBeFalsy();
-        expect(PlaygroundService.appendStep).not.toHaveBeenCalled();
-    }));
-
     it('should open modal on select if item has parameters', inject(function (PlaygroundService) {
         //given
         var ctrl = createController();
-        ctrl.menu = {parameters: [{name: 'param1', type: 'text', default: '.'}]};
+        var menu = {parameters: [{name: 'param1', type: 'text', default: '.'}]};
 
         //when
-        ctrl.select();
+        ctrl.select(menu);
 
         //then
         expect(ctrl.showModal).toBeTruthy();
+        expect(ctrl.selectedMenu).toBe(menu);
         expect(PlaygroundService.appendStep).not.toHaveBeenCalled();
     }));
 
     it('should open modal on select if item has choice', inject(function (PlaygroundService) {
         //given
         var ctrl = createController();
-        ctrl.menu = {items: [{name: 'choice', values: [{name: 'choice1'}, {name: 'choice2'}]}]};
+        var menu = {items: [{name: 'choice', values: [{name: 'choice1'}, {name: 'choice2'}]}]};
 
         //when
-        ctrl.select();
+        ctrl.select(menu);
 
         //then
         expect(ctrl.showModal).toBeTruthy();
+        expect(ctrl.selectedMenu).toBe(menu);
         expect(PlaygroundService.appendStep).not.toHaveBeenCalled();
     }));
 
     it('should call transform on simple menu select', inject(function ($rootScope, PlaygroundService) {
         //given
         var ctrl = createController();
-        ctrl.menu = {name: 'uppercase', category: 'case'};
+        var menu = {name: 'uppercase', category: 'case'};
 
         //when
-        ctrl.select();
+        ctrl.select(menu);
         $rootScope.$digest();
 
         //then
@@ -98,13 +87,13 @@ describe('Transform menu controller', function () {
     it('should fetch dynamic parameters', inject(function ($rootScope, PlaygroundService, PreparationService, TransformationService) {
         //given
         var ctrl = createController();
-        ctrl.menu = {name: 'textclustering', category: 'quickfix', dynamic: true};
+        var menu = {name: 'textclustering', category: 'quickfix', dynamic: true};
 
         PlaygroundService.currentMetadata = {id: '78bae6345aef9965e22b54'};
         PreparationService.currentPreparationId = '721cd4455fb69e89543d4';
 
         //when
-        ctrl.select();
+        ctrl.select(menu);
         $rootScope.$digest();
 
         //then
@@ -121,14 +110,14 @@ describe('Transform menu controller', function () {
     it('should display modal and set flags on dynamic params fetch', inject(function ($rootScope, PlaygroundService, PreparationService) {
         //given
         var ctrl = createController();
-        ctrl.menu = {name: 'textclustering', category: 'quickfix', dynamic: true};
+        var menu = {name: 'textclustering', category: 'quickfix', dynamic: true};
 
         PlaygroundService.currentMetadata = {id: '78bae6345aef9965e22b54'};
         PreparationService.currentPreparationId = '721cd4455fb69e89543d4';
 
         //when
         expect(ctrl.showModal).toBeFalsy();
-        ctrl.select();
+        ctrl.select(menu);
         expect(ctrl.showModal).toBeTruthy();
         expect(ctrl.dynamicFetchInProgress).toBeTruthy();
         $rootScope.$digest();
@@ -142,7 +131,7 @@ describe('Transform menu controller', function () {
         //given
         var ctrl = createController();
         ctrl.showModal = true;
-        ctrl.menu = {
+        var menu = {
             name: 'uppercase',
             category: 'case',
             parameters: [
@@ -152,7 +141,7 @@ describe('Transform menu controller', function () {
         };
 
         //when
-        ctrl.transform({param1: 'param1Value', param2: 4 });
+        ctrl.transform(menu, {param1: 'param1Value', param2: 4 });
         expect(ctrl.showModal).toBeTruthy();
         $rootScope.$digest();
 

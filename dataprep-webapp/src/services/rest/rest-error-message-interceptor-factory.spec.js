@@ -81,7 +81,7 @@ describe('Rest message interceptor factory', function () {
 
     it('should show expected error message when dataset deletion cannot be processed', inject(function ($rootScope, $http, MessageService) {
         //given
-        $httpBackend.expectGET('testService').respond(400, {code:'TDP_API_UNABLE_TO_DELETE_DATASET'});
+        $httpBackend.expectGET('testService').respond(400, {code:'TDP_API_DATASET_STILL_IN_USE'});
 
         //when
         $http.get('testService');

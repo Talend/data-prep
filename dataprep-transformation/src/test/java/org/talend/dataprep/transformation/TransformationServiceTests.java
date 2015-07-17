@@ -41,7 +41,7 @@ public class TransformationServiceTests {
 
     @Test
     public void CORSHeaders() throws Exception {
-        when().post("/transform").then().header("Access-Control-Allow-Origin", "*")
+        when().post("/transform/JSON").then().header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT")
                 .header("Access-Control-Max-Age", "3600")
                 .header("Access-Control-Allow-Headers", "x-requested-with, Content-Type");
@@ -53,14 +53,14 @@ public class TransformationServiceTests {
 
     @Test
     public void emptyTransformation() {
-        given().multiPart("content", "").when().post("/transform").then().statusCode(HttpStatus.OK.value());
+        given().multiPart("content", "").when().post("/transform/JSON").then().statusCode(HttpStatus.OK.value());
     }
 
     @Test
     public void noAction() throws Exception {
         String initialContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test1.json"));
         String transformedContent = given().multiPart("actions", "").multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(initialContent, transformedContent, false);
     }
 
@@ -68,7 +68,7 @@ public class TransformationServiceTests {
     public void noActionWithCarrierReturn() throws Exception {
         String initialContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("carrierReturn.json"));
         String transformedContent = given().multiPart("actions", "").multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(initialContent, transformedContent, false);
     }
 
@@ -78,7 +78,7 @@ public class TransformationServiceTests {
         String initialContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test1.json"));
         String expectedContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test1_action1.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -88,13 +88,13 @@ public class TransformationServiceTests {
         String initialContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test1.json"));
         String expectedContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test1_action2.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
     @Test
     public void testInvalidJSONInput() throws Exception {
-        given().multiPart("content", "invalid content on purpose.").when().post("/transform").then().statusCode(400)
+        given().multiPart("content", "invalid content on purpose.").when().post("/transform/JSON").then().statusCode(400)
                 .content("code", is("TDP_TS_UNABLE_TO_PARSE_JSON"));
     }
 
@@ -106,7 +106,7 @@ public class TransformationServiceTests {
         String expectedContent = IOUtils.toString(TransformationServiceTests.class
                 .getResourceAsStream("test3_fillEmptyWithDefaultAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -118,7 +118,7 @@ public class TransformationServiceTests {
         String expectedContent = IOUtils.toString(TransformationServiceTests.class
                 .getResourceAsStream("test3_fillEmptyWithDefaultBooleanAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -130,7 +130,7 @@ public class TransformationServiceTests {
         String expectedContent = IOUtils.toString(TransformationServiceTests.class
                 .getResourceAsStream("test3_fillEmptyWithDefaultIntegerAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -141,7 +141,7 @@ public class TransformationServiceTests {
         String expectedContent = IOUtils
                 .toString(TransformationServiceTests.class.getResourceAsStream("test3_negateAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -151,7 +151,7 @@ public class TransformationServiceTests {
         String initialContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test4.json"));
         String expectedContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test4_cutAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -161,7 +161,7 @@ public class TransformationServiceTests {
         String initialContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test5.json"));
         String expectedContent = IOUtils.toString(TransformationServiceTests.class.getResourceAsStream("test5_duplicateAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -172,7 +172,7 @@ public class TransformationServiceTests {
         String expectedContent = IOUtils.toString(TransformationServiceTests.class
                 .getResourceAsStream("test3_deleteEmptyAction.json"));
         String transformedContent = given().multiPart("actions", actions).multiPart("content", initialContent).when()
-                .post("/transform").asString();
+                .post("/transform/JSON").asString();
         assertEquals(expectedContent, transformedContent, false);
     }
 

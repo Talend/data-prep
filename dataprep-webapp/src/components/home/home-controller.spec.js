@@ -37,6 +37,7 @@ describe('Home controller', function() {
         var dataset = {id: 'ec4834d9bc2af8', name: 'Customers (50 lines)', draft: false};
 
         beforeEach(inject(function($q, DatasetService, UploadWorkflowService) {
+
             ctrl = createController();
             ctrl.datasetFile = [{name: 'my dataset.csv'}];
             ctrl.datasetName = 'my cool dataset';
@@ -49,9 +50,11 @@ describe('Home controller', function() {
 
             spyOn(DatasetService, 'getDatasetById').and.returnValue($q.when(dataset));
             spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
-            spyOn(DatasetService, 'fileToDataset').and.callThrough();
+            spyOn(DatasetService, 'createDatasetInfo').and.callThrough();
             spyOn(DatasetService, 'create').and.returnValue(uploadDefer.promise);
+            spyOn(DatasetService, 'import').and.returnValue(uploadDefer.promise);
             spyOn(DatasetService, 'update').and.returnValue(uploadDefer.promise);
+
         }));
 
         it('should toggle right panel flag', function() {
@@ -83,6 +86,35 @@ describe('Home controller', function() {
             expect(ctrl.datasetNameModal).toBeTruthy();
         });
 
+        it('should display http import form', function() {
+            //given
+            expect(ctrl.datasetHttpModal).toBeFalsy();
+
+            //when
+            ctrl.startImport({id: 'http', name: 'from HTTP'});
+
+            //then
+            expect(ctrl.datasetHttpModal).toBeTruthy();
+        });
+
+        it('should create remote http dataset', inject(function(DatasetService, UploadWorkflowService) {
+            //given
+            expect(ctrl.uploadingDatasets.length).toBe(0);
+            ctrl.importHttpDataSet();
+            expect(ctrl.uploadingDatasets.length).toBe(1);
+
+            //when
+            uploadDefer.resolve({data: dataset.id});
+            scope.$digest();
+
+            //then
+            expect(DatasetService.createDatasetInfo).toHaveBeenCalledWith(null, 'my cool dataset');
+            expect(DatasetService.import).toHaveBeenCalled();
+            expect(ctrl.uploadingDatasets.length).toBe(0);
+            expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
+            expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
+
+        }));
         describe('step 2 with unique name', function() {
 
             beforeEach(inject(function($rootScope, DatasetService) {
@@ -183,7 +215,7 @@ describe('Home controller', function() {
                 scope.$digest();
 
                 //then
-                expect(DatasetService.fileToDataset).toHaveBeenCalledWith(ctrl.datasetFile[0], 'my cool dataset (1)');
+                expect(DatasetService.createDatasetInfo).toHaveBeenCalledWith(ctrl.datasetFile[0], 'my cool dataset (1)');
             }));
 
             it('should update existing dataset', inject(function (MessageService, TalendConfirmService, DatasetService) {

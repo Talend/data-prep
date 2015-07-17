@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
@@ -29,9 +30,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.talend.dataprep.api.Application;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationRepository;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.content.DataSetContentStore;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.preparation.store.ContentCache;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,6 +55,7 @@ public class DataPreparationAPITest {
     DataSetMetadataRepository dataSetMetadataRepository;
 
     @Autowired
+    @Qualifier("ContentStore#local")
     DataSetContentStore contentStore;
 
     @Autowired
@@ -186,7 +189,15 @@ public class DataPreparationAPITest {
         createPreparationFromDataset(dataSetId, "testPreparation");
 
         // when/then
-        when().delete("/api/datasets/" + dataSetId).then().log().ifValidationFails().assertThat().statusCode(400);
+        final Response response = when().delete("/api/datasets/" + dataSetId);
+
+        //then
+        final int statusCode = response.statusCode();
+        assertThat(statusCode, is(409));
+
+        final String responseAsString = response.asString();
+        final JsonPath json = JsonPath.from(responseAsString);
+        assertThat(json.get("code"), is("TDP_API_DATASET_STILL_IN_USE"));
     }
 
     @Test
@@ -199,6 +210,23 @@ public class DataPreparationAPITest {
         final String contentAsString = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId).asString();
 
         // then
+        assertThat(contentAsString, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void testDataSetCreate_cache_status() throws Exception {
+        // given
+        final String dataSetId = createDataset("testCreate.csv", "tagada", "text/csv");
+        final InputStream expected = DataPreparationAPITest.class.getResourceAsStream("testCreate_expected.json");
+
+        // then
+        final Preparation preparation = new Preparation(dataSetId, ROOT_STEP);
+        assertThat(cache.has(preparation.id(), ROOT_STEP.id()), is(false));
+        when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId).asString();
+        assertThat(cache.has(preparation.id(), ROOT_STEP.id()), is(true));
+
+        // then (check if cached content is the expected one).
+        final String contentAsString = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId).asString();
         assertThat(contentAsString, sameJSONAsFile(expected));
     }
 

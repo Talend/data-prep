@@ -19,7 +19,7 @@ describe('Dataset upload list directive', function() {
     it('should render progressing upload dataset', function() {
         //given
         scope.datasets = [
-            {name: 'Customers (50 lines)', progress: 10, error: false},
+            {name: 'Customers (50 lines)', progress: 10, error: false, type: 'file'},
         ];
 
         //when
@@ -31,6 +31,24 @@ describe('Dataset upload list directive', function() {
         expect(names.length).toBe(1);
         expect(names.eq(0).text()).toBe('Customers (50 lines)');
         expect(progress.eq(0).text().trim()).toBe('10 %');
+        expect(progress.eq(0).hasClass('error')).toBe(false);
+    });
+
+    it('should render progressing remote dataset import', function() {
+        //given
+        scope.datasets = [
+            {name: 'remote 1', progress: 0, error: false, type: 'remote'},
+        ];
+
+        //when
+        var element = createElement(scope);
+        var names = element.find('.inventory-title');
+        var progress = element.find('.inventory-progress');
+
+        //then
+        expect(names.length).toBe(1);
+        expect(names.eq(0).text()).toBe('remote 1');
+        expect(progress.eq(0).text().trim()).toBe('Processing remote dataset...');
         expect(progress.eq(0).hasClass('error')).toBe(false);
     });
 
@@ -55,9 +73,9 @@ describe('Dataset upload list directive', function() {
     it('should render multiple datasets', function() {
         //given
         scope.datasets = [
-            {name: 'Customers (50 lines)', progress: 10, error: false},
-            {name: 'Us states', progress: 20, error: false},
-            {name: 'Customers (1K lines)', progress: 30, error: true}
+            {name: 'Customers (50 lines)', progress: 10, error: false, type: 'file'},
+            {name: 'Us states', progress: 20, error: false, type: 'file'},
+            {name: 'Customers (1K lines)', progress: 30, error: true, type: 'file'}
         ];
 
         //when

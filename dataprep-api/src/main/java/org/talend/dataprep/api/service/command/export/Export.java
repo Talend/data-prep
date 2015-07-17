@@ -86,7 +86,7 @@ public class Export extends PreparationCommand<InputStream> {
      * @return The built URI
      */
     private String getTransformationUri(final ExportType exportType, final Map<String, String> params) {
-        String result = this.transformationServiceUrl + "/export/" + exportType;
+        String result = this.transformationServiceUrl + "/transform/" + exportType;
         boolean hasQueryParams = false;
 
         if (params != null ) {

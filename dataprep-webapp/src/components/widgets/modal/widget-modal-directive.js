@@ -111,6 +111,7 @@
                 closeButton: '=',
                 fullscreen: '=',
                 disableEnter: '=',
+                beforeClose: '&',
                 onClose: '&'
             },
             bindToController: true,
@@ -127,6 +128,7 @@
                     var body = angular.element('body');
                     var innerElement = iElement.find('.modal-inner').eq(0);
                     var primaryButton = iElement.find('.modal-primary-button').eq(0);
+                    var hasBeforeEachFn = iAttrs.beforeClose !== undefined;
 
                     /**
                      * @ngdoc method
@@ -135,7 +137,12 @@
                      * @description [PRIVATE] Hide modal action
                      */
                     var hideModal = function() {
-                        $timeout(ctrl.hide);
+                        $timeout(function() {
+                            if(hasBeforeEachFn && !ctrl.beforeClose()) {
+                                return;
+                            }
+                            ctrl.hide();
+                        });
                     };
 
                     /**

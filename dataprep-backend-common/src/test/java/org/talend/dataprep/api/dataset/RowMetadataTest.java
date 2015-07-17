@@ -31,9 +31,7 @@ public class RowMetadataTest {
         rowMetadata.diff(reference);
 
         // then (make sure the diff flag is always null)
-        rowMetadata.getColumns().forEach(column -> {
-            assertNull(column.getDiffFlagValue());
-        });
+        rowMetadata.getColumns().forEach(column -> assertNull(column.getDiffFlagValue()));
     }
 
     @Test
@@ -56,9 +54,9 @@ public class RowMetadataTest {
 
         // then (collect the columns with the new flag only and compare them with
         // the expected result)
-        List<ColumnMetadata> actual = row.getColumns().stream().filter(column -> {
-            return Flag.NEW.getValue().equals(column.getDiffFlagValue());
-        }).collect(Collectors.toList());
+        List<ColumnMetadata> actual = row.getColumns().stream() //
+                .filter(column -> Flag.NEW.getValue().equals(column.getDiffFlagValue())) //
+                .collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }
@@ -85,9 +83,9 @@ public class RowMetadataTest {
 
         // then (collect the columns with the new flag only and compare them with
         // the expected result)
-        List<ColumnMetadata> actual = row.getColumns().stream().filter(column -> {
-            return Flag.DELETE.getValue().equals(column.getDiffFlagValue());
-        }).collect(Collectors.toList());
+        List<ColumnMetadata> actual = row.getColumns().stream() //
+                .filter(column -> Flag.DELETE.getValue().equals(column.getDiffFlagValue())) //
+                .collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }
@@ -118,9 +116,9 @@ public class RowMetadataTest {
 
         // then (collect the columns with the new flag only and compare them with
         // the expected result)
-        List<ColumnMetadata> actual = row.getColumns().stream().filter(column -> {
-            return Flag.UPDATE.getValue().equals(column.getDiffFlagValue());
-        }).collect(Collectors.toList());
+        List<ColumnMetadata> actual = row.getColumns().stream() //
+                .filter(column -> Flag.UPDATE.getValue().equals(column.getDiffFlagValue())) //
+                .collect(Collectors.toList());
 
         assertEquals(actual.size(), 2);
         assertTrue(actual.get(0).getId().equals("1"));

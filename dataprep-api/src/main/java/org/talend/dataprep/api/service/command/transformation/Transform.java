@@ -40,7 +40,7 @@ public class Transform extends DataPrepCommand<InputStream> {
 
     @Override
     protected InputStream run() throws Exception {
-        String uri = transformationServiceUrl + "/transform"; //$NON-NLS-1$
+        String uri = transformationServiceUrl + "/transform/JSON"; //$NON-NLS-1$
         HttpPost transformationCall = new HttpPost(uri);
 
         HttpEntity reqEntity = MultipartEntityBuilder.create()

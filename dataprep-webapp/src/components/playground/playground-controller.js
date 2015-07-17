@@ -20,6 +20,17 @@
         vm.recipeService = RecipeService;
 
         /**
+         * @ngdoc property
+         * @name showNameValidation
+         * @propertyOf data-prep.playground.controller:PlaygroundCtrl
+         * @description Flag that controls the display of the save/discard window on implicit preparation close.
+         */
+        vm.showNameValidation = false;
+
+        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------RECIPE--------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        /**
          * @ngdoc method
          * @name toggleRecipe
          * @methodOf data-prep.playground.controller:PlaygroundCtrl
@@ -27,6 +38,9 @@
          */
         vm.toggleRecipe = RecipeBulletService.toggleRecipe;
 
+        //--------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------RECIPE HEADER-----------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
          * @name toggleEditionMode
@@ -44,8 +58,15 @@
          * @description Change the preparation name
          */
         vm.confirmPrepNameEdition = function confirmPrepNameEdition(){
-            vm.changeName();
-            vm.toggleEditionMode();
+            var cleanName = vm.preparationName.trim();
+            if(!vm.changeNameInProgress && cleanName) {
+                vm.toggleEditionMode();
+                changeName(cleanName)
+                    .then(function() {
+                        return $state.go('nav.home.preparations', {prepid : PreparationService.currentPreparationId}, {location:'replace', inherit:false} );
+                    })
+                    .catch(vm.toggleEditionMode);
+            }
         };
 
         /**
@@ -54,25 +75,86 @@
          * @methodOf data-prep.playground.controller:PlaygroundCtrl
          * @description cancels the new preparation name and sets the preparation name to the original one
          */
-        vm.cancelPrepNameEdition = function(){
+        vm.cancelPrepNameEdition = function cancelPrepNameEdition(){
             vm.preparationName = PlaygroundService.originalPreparationName;
             vm.toggleEditionMode();
         };
 
+        //--------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------PREPARATION------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
          * @name changeName
          * @methodOf data-prep.playground.controller:PlaygroundCtrl
-         * @description Create a preparation or update existing preparation name if it already exists
+         * @description [PRIVATE] Create a preparation or update existing preparation name if it already exists
+         * @param {string} name The preparation name
+         * @returns {Promise} The create/update promise
          */
-        vm.changeName = function() {
-            var cleanName = vm.preparationName.trim();
-            if(cleanName) {
-                PlaygroundService.createOrUpdatePreparation(cleanName)
-                    .then(function() {
-                        $state.go('nav.home.preparations', {prepid : PreparationService.currentPreparationId}, {location:'replace', inherit:false} );
-                    });
+        function changeName(name) {
+            vm.changeNameInProgress = true;
+            return PlaygroundService.createOrUpdatePreparation(name)
+                .finally(function() {
+                    vm.changeNameInProgress = false;
+                });
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------CLOSE---------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        /**
+         * @ngdoc method
+         * @name hideAll
+         * @methodOf data-prep.playground.controller:PlaygroundCtrl
+         * @description [PRIVATE] Hide all the modals (playground and save/discard)
+         */
+        function hideAll() {
+            vm.showNameValidation = false;
+            vm.showPlayground = false;
+        }
+
+        /**
+         * @ngdoc method
+         * @name beforeClose
+         * @methodOf data-prep.playground.controller:PlaygroundCtrl
+         * @description When the preparation is an implicit preparation, we show the save/discard modal and block the playground close.
+         * @returns {boolean} True if the playground can be closed (no implicit preparation), False otherwise
+         */
+        vm.beforeClose = function beforeClose() {
+            var isImplicitPreparation = PreparationService.currentPreparationId && !PlaygroundService.originalPreparationName;
+            if(isImplicitPreparation) {
+                vm.showNameValidation = true;
+                return false;
             }
+            return true;
+        };
+
+        /**
+         * @ngdoc method
+         * @name discardSaveOnClose
+         * @methodOf data-prep.playground.controller:PlaygroundCtrl
+         * @description Discard implicit preparation save. This trigger a preparation delete.
+         */
+        vm.discardSaveOnClose = function discardSaveOnClose() {
+            PreparationService.deleteCurrentPreparation()
+                .then(hideAll);
+        };
+
+        /**
+         * @ngdoc method
+         * @name confirmSaveOnClose
+         * @methodOf data-prep.playground.controller:PlaygroundCtrl
+         * @description Save implicit preparation with provided name. The playground is then closed.
+         */
+        vm.confirmSaveOnClose = function confirmSaveOnClose() {
+            vm.saveInProgress = true;
+            var cleanName = vm.preparationName.trim();
+            changeName(cleanName)
+                .then(vm.toggleEditionMode)
+                .then(hideAll)
+                .finally(function() {
+                    vm.saveInProgress = false;
+                });
         };
 
         /**

@@ -15,6 +15,20 @@
 
         /**
          * @ngdoc property
+         * @name importType
+         * @propertyOf data-prep.home.controller:HomeCtrl
+         * @description List of supported import type.
+         * @type {object[]}
+         */
+        vm.importTypes = [
+            {id: 'local', name: 'Local file'},
+            {id: 'http', name: 'from HTTP'},
+            {id: 'hdfs', name: 'from HDFS (Comming soon...)'},
+            {id: 'jdbc', name: 'from JDBC (Comming soon...)'}
+        ];
+
+        /**
+         * @ngdoc property
          * @name showRightPanel
          * @propertyOf data-prep.home.controller:HomeCtrl
          * @description Flag that control the right panel display
@@ -39,6 +53,64 @@
          */
         vm.toggleRightPanel = function() {
             vm.showRightPanel = !vm.showRightPanel;
+        };
+
+        /**
+         * @ngdoc method
+         * @name startDefaultImport
+         * @methodOf data-prep.home.controller:HomeCtrl
+         * @description Start the default import process of a dataset.
+         */
+        vm.startDefaultImport = function() {
+            var defaultExportType = _.find(vm.importTypes, 'id', 'local');
+            vm.startImport(defaultExportType);
+        };
+
+        /**
+         * @ngdoc method
+         * @name startImport
+         * @methodOf data-prep.home.controller:HomeCtrl
+         * @description Start the import process of a dataset. Route the call to the right import method
+         * (local or remote) depending on the import type user choice.
+         */
+        vm.startImport = function(importType) {
+            switch(importType.id) {
+                case 'local':
+                    document.getElementById('datasetFile').click();
+                    break;
+                case 'http':
+                    // show http dataset form
+                    vm.datasetHttpModal = true;
+                    break;
+                default:
+            }
+        };
+
+        /**
+         * @ngdoc method
+         * @name importHttpDataSet
+         * @methodOf data-prep.home.controller:HomeCtrl
+         * @description Import a remote http dataset.
+         */
+        vm.importHttpDataSet = function() {
+            var importParameters = {
+                type: 'http',
+                name: vm.datasetName,
+                url: vm.datasetUrl
+            };
+
+            var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
+            vm.uploadingDatasets.push(dataset);
+
+            DatasetService.import(importParameters)
+                .then(function(event) {
+                    vm.uploadingDatasets.splice(vm.uploadingDatasets.indexOf(dataset, 1));
+                    DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                })
+                .catch(function() {
+                    dataset.error = true;
+                    MessageService.error('IMPORT_ERROR_TITLE', 'IMPORT_ERROR');
+                });
         };
 
         /**
@@ -126,7 +198,7 @@
          * @description [PRIVATE] Create a new dataset
          */
         var createDataset = function(file, name) {
-            var dataset = DatasetService.fileToDataset(file, name);
+            var dataset = DatasetService.createDatasetInfo(file, name);
             vm.uploadingDatasets.push(dataset);
 
             DatasetService.create(dataset)
@@ -152,7 +224,7 @@
          * @description [PRIVATE] Update existing dataset
          */
         var updateDataset = function(file, existingDataset) {
-            var dataset = DatasetService.fileToDataset(file, existingDataset.name, existingDataset.id);
+            var dataset = DatasetService.createDatasetInfo(file, existingDataset.name, existingDataset.id);
             vm.uploadingDatasets.push(dataset);
 
             DatasetService.update(dataset)

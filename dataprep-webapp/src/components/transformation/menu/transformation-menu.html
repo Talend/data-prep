@@ -1,26 +1,54 @@
-<li ng-click="menuCtrl.select()"
-    ng-class="::{divider: menuCtrl.menu.isDivider}">
+<ul>
+    <!-- BEGIN : Hard coded transformations for demo purpose -->
+    <li class="more">
+        <a>This column is a &nbsp;<span class="info">{{menuCtrl.column.domain ? menuCtrl.column.domain : menuCtrl.converterService.simplifyType(menuCtrl.column.type)}}</span></a>
+        <ul class="submenu">
+            <li><a href="#">Coming soon ...</a></li>
+        </ul>
+    </li>
+    <li class="divider"></li>
+    <li class="more">
+        <a href="#">Sort is &nbsp;<span class="info">not defined</span></a>
+        <ul class="submenu">
+            <li><a href="#">Coming soon ...</a></li>
+        </ul>
+    </li>
+    <li class="more">
+        <a href="#">Filter is &nbsp;<span class="info">not defined</span></a>
+        <ul class="submenu">
+            <li><a href="#">Coming soon ...</a></li>
+        </ul>
+    </li>
+    <li class="divider"></li>
+    <li><a href="#">Fit to Content</a></li>
+    <li class="divider"></li>
+    <!-- END : Hard coded transformations for demo purpose -->
 
-    <span ng-if="::(!menuCtrl.menu.isDivider)">
-        <a href="#">
-            {{ menuCtrl.menu.label }}
-        </a>
+    <li ng-repeat="menu in menuCtrl.menuItems track by menu.name"
+        ng-click="menuCtrl.select(menu)">
 
-        <!-- Params modal -->
-        <talend-modal ng-if="::(menuCtrl.menu.dynamic || menuCtrl.menu.parameters || menuCtrl.menu.items)"
-                      fullscreen="false"
-                      state="menuCtrl.showModal"
-                      close-button="true">
+        <a>{{ menu.label }}</a>
+    </li>
 
-            <div class="modal-title">{{ menuCtrl.menu.label }}</div>
-            <div class="modal-subtitle">{{ menuCtrl.menu.description }}</div>
+    <!-- BEGIN : Hard coded transformations for demo purpose -->
+    <li class="divider"></li>
+    <li><a href="#">Delete</a></li>
+    <!-- END : Hard coded transformations for demo purpose -->
+</ul>
 
-            <div ng-if="menuCtrl.menu.dynamic && menuCtrl.dynamicFetchInProgress">
-                <i data-icon="e" class="icon continuous-rotate"></i>
-            </div>
-            <transform-params transformation="menuCtrl.menu"
-                              on-submit="menuCtrl.transform(params)"></transform-params>
+<!-- Params modal -->
+<talend-modal fullscreen="false"
+              state="menuCtrl.showModal"
+              close-button="true"
+              ng-if="menuCtrl.showModal">
 
-        </talend-modal>
-    </span>
-</li>
+    <div class="modal-title">{{ menuCtrl.selectedMenu.label }}</div>
+    <div class="modal-subtitle">{{ menuCtrl.selectedMenu.description }}</div>
+
+    <div ng-if="menuCtrl.selectedMenu.dynamic && menuCtrl.dynamicFetchInProgress">
+        <i data-icon="e" class="icon continuous-rotate"></i>
+    </div>
+    <transform-params transformation="menuCtrl.selectedMenu"
+                      on-submit="menuCtrl.transformClosure(menuCtrl.selectedMenu)(params)"></transform-params>
+
+</talend-modal>

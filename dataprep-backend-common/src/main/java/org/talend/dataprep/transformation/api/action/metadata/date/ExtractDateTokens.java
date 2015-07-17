@@ -130,18 +130,6 @@ public class ExtractDateTokens extends SingleColumnAction {
     }
 
     /**
-     * @param parameters the parameters.
-     * @return the column id parameter.
-     */
-    private String getColumnIdParameter(Map<String, String> parameters) {
-        String columnId = parameters.get(COLUMN_ID);
-        if (columnId == null) {
-            throw new IllegalArgumentException("Parameter '" + COLUMN_ID + "' is required for this action");
-        }
-        return columnId;
-    }
-
-    /**
      * Return the json statistics node.
      *
      * @param mapper jackson object mapper.

@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -15,8 +16,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.Application;
 import org.talend.dataprep.dataset.service.DataSetServiceTests;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.content.DataSetContentStore;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.schema.CSVFormatGuess;
 import org.talend.dataprep.schema.XlsFormatGuess;
 
@@ -30,6 +31,7 @@ public class FormatAnalyzerTest {
     FormatAnalysis formatAnalysis;
 
     @Autowired
+    @Qualifier("ContentStore#local")
     DataSetContentStore contentStore;
 
     @Autowired

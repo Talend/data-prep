@@ -28,7 +28,7 @@ public class CSVSerializer implements Serializer {
             final String separator = parameters.get(CSVFormatGuess.SEPARATOR_PARAMETER);
             CSVReader reader = new CSVReader(new InputStreamReader(rawContent), separator.charAt(0));
             StringWriter writer = new StringWriter();
-            JsonGenerator generator = new JsonFactory().createJsonGenerator(writer);
+            JsonGenerator generator = new JsonFactory().createGenerator(writer);
             reader.readNext(); // Skip column names
 
             generator.writeStartArray();

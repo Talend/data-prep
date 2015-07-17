@@ -32,6 +32,26 @@
 
         /**
          * @ngdoc method
+         * @name import
+         * @methodOf data-prep.services.dataset.service:DatasetRestService
+         * @description Import the remote dataset
+         * @param {parameters} - the import parameters
+         * @returns {Promise} - the $post promise
+         */
+        self.import = function(parameters) {
+            var req = {
+                method: 'POST',
+                url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name),
+                headers: {
+                    'Content-Type': 'application/vnd.remote-ds.'+ parameters.type
+                },
+                data: parameters
+            };
+            return $http(req);
+        };
+
+        /**
+         * @ngdoc method
          * @name update
          * @methodOf data-prep.services.dataset.service:DatasetRestService
          * @description Update the dataset

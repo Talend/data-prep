@@ -27,6 +27,7 @@
                 column: '='
             },
             bindToController: true,
+
             controllerAs: 'datagridHeaderCtrl',
             controller: 'DatagridHeaderCtrl',
             link: {

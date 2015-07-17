@@ -306,37 +306,6 @@ describe('Preparation list service controller', function() {
         expect(PreparationListService.preparations).toEqual(expectedListWithoutFirstPreparation);
     }));
 
-    it('should update step', inject(function(PreparationListService, PreparationRestService) {
-        //given
-        var preparationId = '84ab54cd867f4645a';
-        var step = {
-            transformation: {
-                stepId : '867654ab15edf576844c4',
-                name: 'my preparation'
-            }
-        };
-        var parameters = {value: 'toto'};
-
-        //when
-        PreparationListService.updateStep(preparationId, step, parameters);
-
-        //then
-        expect(PreparationRestService.updateStep).toHaveBeenCalledWith('84ab54cd867f4645a', '867654ab15edf576844c4', 'my preparation', {value: 'toto'});
-    }));
-
-    it('should append step', inject(function(PreparationListService, PreparationRestService) {
-        //given
-        var preparationId = '84ab54cd867f4645a';
-        var action = 'cut';
-        var parameters = {value: 'toto'};
-
-        //when
-        PreparationListService.appendStep(preparationId, action, parameters);
-
-        //then
-        expect(PreparationRestService.appendStep).toHaveBeenCalledWith('84ab54cd867f4645a', 'cut', {value: 'toto'});
-    }));
-
     it('should init preparations dataset', inject(function ($rootScope, PreparationListService) {
         //given
         PreparationListService.preparations = preparations;

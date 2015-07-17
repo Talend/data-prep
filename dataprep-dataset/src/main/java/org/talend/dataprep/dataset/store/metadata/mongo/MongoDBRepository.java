@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.store.mongo;
+package org.talend.dataprep.dataset.store.metadata.mongo;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.talend.dataprep.api.dataset.DataSetMetadata;

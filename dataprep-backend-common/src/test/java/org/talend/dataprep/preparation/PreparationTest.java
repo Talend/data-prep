@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.output.NullOutputStream;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,13 @@ public class PreparationTest {
 
     @Autowired
     private PreparationRepository repository;
+
+    @Test
+    public void testDefaultPreparation() throws Exception {
+        final Preparation preparation = Preparation.defaultPreparation("12345");
+        assertThat(preparation.id(), is("ec718238e9bfe45f58031313b79501a3cc55b186"));
+        assertThat(preparation.getStep().id(), is(ROOT_STEP.id()));
+    }
 
     @Test
     public void rootObjects() throws Exception {
@@ -131,7 +137,7 @@ public class PreparationTest {
         Class<? extends Identifiable> objectClass = repository.get("cdcd5c9a3a475f2298b5ee3f4258f8207ba10879", null).getClass();
         assertThat(PreparationActions.class.isAssignableFrom(objectClass), Is.is(true));
         assertThat(repository.get(null, null), nullValue());
-        Assert.assertThat(PreparationUtils.listSteps(null, repository), empty());
+        assertThat(PreparationUtils.listSteps(null, repository), empty());
         try {
             PreparationUtils.listSteps(ROOT_STEP, null, repository);
             fail();

@@ -22,8 +22,8 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.dataset.exception.DataSetErrorCodes;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
 import org.talend.datascience.common.inference.Analyzer;
@@ -42,7 +42,7 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
     DataSetMetadataRepository repository;
 
     @Autowired
-    DataSetContentStore store;
+    ContentStoreRouter store;
 
     @Autowired
     Jackson2ObjectMapperBuilder builder;

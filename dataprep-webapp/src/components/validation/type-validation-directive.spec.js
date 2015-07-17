@@ -3,7 +3,7 @@ describe('Type validation directive', function() {
 
     var scope, createElement;
 
-    beforeEach(module('data-prep.type-validation'));
+    beforeEach(module('data-prep.validation'));
 
     beforeEach(inject(function($rootScope, $compile) {
         scope = $rootScope.$new();

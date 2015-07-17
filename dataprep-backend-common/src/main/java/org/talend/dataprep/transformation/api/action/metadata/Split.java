@@ -176,28 +176,12 @@ public class Split extends SingleColumnAction {
 
         for (int i = 1; i < 1000; i++) {
             String temp = columnId + SPLIT_APPENDIX + '_' + i;
-            if (!contains(columnsId, temp)) {
+            if (!columnsId.contains(temp)) {
                 return i;
             }
         }
 
         return null;
-    }
-
-    /**
-     * Return true if the given list of String contains the wanted one.
-     *
-     * @param strings the list of Strings to search.
-     * @param wanted the wanted string.
-     * @return true if the given list of String contains the wanted one.
-     */
-    private boolean contains(List<String> strings, String wanted) {
-        for (String current : strings) {
-            if (StringUtils.equals(current, wanted)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

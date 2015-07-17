@@ -18,10 +18,9 @@
         return {
             restrict: 'E',
             templateUrl: 'components/transformation/menu/transformation-menu.html',
-            replace: true,
             scope: {
                 column: '=',
-                menu: '='
+                menuItems: '='
             },
             bindToController: true,
             controllerAs: 'menuCtrl',

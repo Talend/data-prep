@@ -45,12 +45,26 @@
          * @ngdoc method
          * @name create
          * @methodOf data-prep.services.dataset.service:DatasetListService
-         * @param {object} dataset The dataset to delete
+         * @param {object} dataset The dataset to create
          * @description Create a dataset from backend and refresh its internal list
          * @returns {promise} The pending POST promise
          */
         var create = function create(dataset) {
             var promise = DatasetRestService.create(dataset);
+            promise.then(refreshDatasets);
+            return promise;
+        };
+
+        /**
+         * @ngdoc method
+         * @name importRemoteDataset
+         * @methodOf data-prep.services.dataset.service:DatasetListService
+         * @param {object} parameters The import parameters to import
+         * @description Import a remote dataset from backend and refresh its internal list
+         * @returns {promise} The pending POST promise
+         */
+        var importRemoteDataset = function importRemoteDataset(parameters) {
+            var promise = DatasetRestService.import(parameters);
             promise.then(refreshDatasets);
             return promise;
         };
@@ -137,6 +151,7 @@
 
         this.refreshDatasets = refreshDatasets;
         this.create = create;
+        this.importRemoteDataset = importRemoteDataset;
         this.update = update;
         this.processCertification = processCertification;
         this.delete = deleteDataset;

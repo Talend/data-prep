@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.schema.SchemaParserResult;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,6 +45,10 @@ public class DataSetMetadata {
     @JsonUnwrapped
     private final DataSetGovernance governance = new DataSetGovernance();
 
+    /** Dataset location. */
+    @JsonProperty("location")
+    private DataSetLocation location;
+
     /** Dataset name. */
     @JsonProperty("name")
     private String name;
@@ -60,13 +65,13 @@ public class DataSetMetadata {
     private String sheetName;
 
     /**
-     * if <code>true</code> this dataset is still a draft as we need more informations from the user
+     * if <code>true</code> this dataset is still a draft as we need more information from the user
      */
     @JsonProperty("draft")
     private boolean draft = false;
 
     /**
-     * available only when draft is <code>true</code> i.e until some informations has been confirmed by the user
+     * available only when draft is <code>true</code> i.e until some information has been confirmed by the user
      */
     @JsonProperty("schemaParserResult")
     private SchemaParserResult schemaParserResult;
@@ -144,6 +149,20 @@ public class DataSetMetadata {
     }
 
     /**
+     * @return the Location.
+     */
+    public DataSetLocation getLocation() {
+        return location;
+    }
+
+    /**
+     * @param location the location to set.
+     */
+    public void setLocation(DataSetLocation location) {
+        this.location = location;
+    }
+
+    /**
      * @return the dataset name.
      */
     public String getName() {
@@ -185,18 +204,30 @@ public class DataSetMetadata {
         return creationDate;
     }
 
+    /**
+     * @return true if the dataset metadata is a draft.
+     */
     public boolean isDraft() {
         return draft;
     }
 
+    /**
+     * @param draft The draft value to set.
+     */
     public void setDraft(boolean draft) {
         this.draft = draft;
     }
 
+    /**
+     * @return the schema parser result.
+     */
     public SchemaParserResult getSchemaParserResult() {
         return schemaParserResult;
     }
 
+    /**
+     * @param schemaParserResult the schema parser result to set.
+     */
     public void setSchemaParserResult(SchemaParserResult schemaParserResult) {
         this.schemaParserResult = schemaParserResult;
     }
@@ -212,7 +243,7 @@ public class DataSetMetadata {
 
     /**
      * Sets the favorite.
-     * 
+     *
      * @param favorite the favorite to set
      */
     public void setFavorite(boolean favorite) {
@@ -243,37 +274,56 @@ public class DataSetMetadata {
      */
     public static class Builder {
 
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#id */
         private String id;
 
-        private ColumnMetadata.Builder[] columnBuilders;
-
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#author */
         private String author = "anonymous";
 
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#name */
         private String name = "";
 
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#creationDate */
         private long createdDate = System.currentTimeMillis();
 
-        private int size;
-
-        private int headerSize;
-
-        private int footerSize;
-
-        private boolean contentAnalyzed;
-
-        private boolean schemaAnalyzed;
-
-        private boolean qualityAnalyzed;
-
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#sheetName */
         private String sheetName;
 
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#draft */
         private boolean draft = true;
 
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#favorite */
+        private boolean isFavorite;
+
+        /** @see org.talend.dataprep.api.dataset.DataSetMetadata#location */
+        private DataSetLocation location = new LocalStoreLocation();
+
+        /** @see org.talend.dataprep.api.dataset.DataSetContent#nbRecords */
+        private int size;
+
+        /** @see org.talend.dataprep.api.dataset.DataSetContent#nbLinesInHeader */
+        private int headerSize;
+
+        /** @see org.talend.dataprep.api.dataset.DataSetContent#nbLinesInFooter */
+        private int footerSize;
+
+        /** @see org.talend.dataprep.api.dataset.DataSetContent#formatGuessId */
         private String formatGuessId;
 
+        /** @see org.talend.dataprep.api.dataset.DataSetContent#mediaType */
         private String mediaType;
 
-        private boolean isFavorite;
+        /** @see org.talend.dataprep.api.dataset.DataSetLifecycle#contentAnalyzed */
+        private boolean contentAnalyzed;
+
+        /** @see org.talend.dataprep.api.dataset.DataSetLifecycle#schemaAnalyzed */
+        private boolean schemaAnalyzed;
+
+        /** @see org.talend.dataprep.api.dataset.DataSetLifecycle#qualityAnalyzed */
+        private boolean qualityAnalyzed;
+
+        /** Dataset builder. */
+        private ColumnMetadata.Builder[] columnBuilders;
 
         public static DataSetMetadata.Builder metadata() {
             return new Builder();
@@ -359,6 +409,11 @@ public class DataSetMetadata {
             return this;
         }
 
+        public DataSetMetadata.Builder location(DataSetLocation location) {
+            this.location = location;
+            return this;
+        }
+
         public DataSetMetadata build() {
             if (id == null) {
                 throw new IllegalStateException("No id set for dataset.");
@@ -377,6 +432,7 @@ public class DataSetMetadata {
             metadata.sheetName = this.sheetName;
             metadata.draft = this.draft;
             metadata.setFavorite(this.isFavorite);
+            metadata.setLocation(location);
             // Content information
             DataSetContent currentContent = metadata.getContent();
             currentContent.setNbRecords(size);

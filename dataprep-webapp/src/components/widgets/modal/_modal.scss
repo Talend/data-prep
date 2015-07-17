@@ -167,6 +167,25 @@
       }
     }
 
+    .modal-form-row {
+      @include display(flex);
+      @include flex-direction(row);
+      @include flex-wrap(wrap);
+      @include align-items(center);
+      margin-bottom: 10px;
+
+      .param-name {
+        @include flex-basis(150px);
+        @include flex-grow(1);
+      }
+
+      .param-input {
+        @include flex-basis(250px);
+        @include flex-grow(2);
+        margin: 0;
+      }
+    }
+
     a.cta {
       color: white;
       display: inline-block;

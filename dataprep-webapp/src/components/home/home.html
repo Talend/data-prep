@@ -2,12 +2,17 @@
     <div class="subheader-wrapper">
         <ul id="help-dataset-nav">
             <li class="primary">
-                <a class="btn-primary"
-                        id="help-import-local"
-                        onclick="document.getElementById('datasetFile').click()">
-                    <i data-icon="m" class="iconfont"></i>
-                    <i class="iconlabel">{{ ::'IMPORT_FILE' | translate }}</i>
-                </a>
+
+                <talend-button-dropdown button-icon="m"
+                                        button-text="{{ ::'IMPORT_DATASET' | translate }}"
+                                        button-action="homeCtrl.startDefaultImport()">
+                    <ul>
+                        <li ng-repeat="importType in homeCtrl.importTypes" ng-click="homeCtrl.startImport(importType)">
+                            {{importType.name}}
+                        </li>
+                    </ul>
+                </talend-button-dropdown>
+
                 <input type="file"
                        id="datasetFile"
                        name="datasetFile"
@@ -31,6 +36,7 @@
         </div>
     </div>
 
+    <!-- Import dataset from local file -->
     <talend-modal fullscreen="false"
                   close-button="true"
                   state="homeCtrl.datasetNameModal">
@@ -39,13 +45,40 @@
             <input type="text" ng-model="homeCtrl.datasetName" required/>
 
             <div class="modal-buttons">
-                <button class="talend-modal-close btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}</button>
+                <button class="talend-modal-close btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}
+                </button>
                 <button class="talend-modal-close btn-primary modal-primary-button"
                         ng-click="homeCtrl.uploadDatasetName()"
-                        ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}</button>
+                        ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}
+                </button>
             </div>
         </form>
     </talend-modal>
+
+
+    <!-- Import remote HTTP dataset -->
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="homeCtrl.datasetHttpModal">
+
+        <div class="modal-title">{{ ::'IMPORT_HTML_DATASET' | translate }}</div>
+        {{ ::'ENTER_DATASET_NAME' | translate }}
+        <input type="text" ng-model="homeCtrl.datasetName" required/>
+
+        {{ ::'ENTER_DATASET_URL' | translate }}
+        <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="http://" required/>
+
+        <div class="modal-buttons">
+            <button class="talend-modal-close btn-secondary modal-secondary-button">
+                {{ ::'CANCEL' | translate }}
+            </button>
+            <button class="talend-modal-close btn-primary modal-primary-button"
+                    ng-click="homeCtrl.importHttpDataSet()"
+                    ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}
+            </button>
+        </div>
+    </talend-modal>
+
 </header>
 
 <div class="home">

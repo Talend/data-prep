@@ -93,9 +93,9 @@ public class XlsFormatTest {
             columnMetadataFound = columnMetadatas.stream()
                     .filter(columnMetadata -> StringUtils.equals(columnMetadata.getName(), "note")).findFirst().get();
 
-            logger.debug("columnMetadataFound: {}", columnMetadataFound);
+            logger.debug( "columnMetadataFound: {}", columnMetadataFound );
 
-            Assertions.assertThat(columnMetadataFound.getType()).isEqualTo(Type.NUMERIC.getName());
+            Assertions.assertThat(columnMetadataFound.getType()).isEqualTo( Type.NUMERIC.getName() );
 
         }
 
@@ -120,7 +120,7 @@ public class XlsFormatTest {
             List<ColumnMetadata> columnMetadatas = formatGuess.getSchemaParser()
                     .parse(new SchemaParser.Request(inputStream, null)).getSheetContents().get(0).getColumnMetadatas();
             logger.debug("columnMetadatas: {}", columnMetadatas);
-            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(17);
+            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize( 17 );
         }
 
     }
@@ -145,7 +145,7 @@ public class XlsFormatTest {
             List<ColumnMetadata> columnMetadatas = formatGuess.getSchemaParser()
                     .parse(new SchemaParser.Request(inputStream, null)).getSheetContents().get(0).getColumnMetadatas();
 
-            dataSetMetadata.getRow().setColumns(columnMetadatas);
+            dataSetMetadata.getRow().setColumns( columnMetadatas );
 
         }
 
@@ -233,7 +233,7 @@ public class XlsFormatTest {
 
             Assertions.assertThat(columnMetadata.getHeaderSize()).isEqualTo(1);
 
-            Assertions.assertThat(columnMetadata.getName()).isEqualTo("NoAuto");
+            Assertions.assertThat( columnMetadata.getName() ).isEqualTo( "NoAuto" );
 
         }
 
@@ -251,7 +251,7 @@ public class XlsFormatTest {
 
             List<Map<String, String>> values = mapper.readValue(json, collectionType);
 
-            logger.debug("values: {}", values);
+            logger.debug( "values: {}", values );
 
         }
 
@@ -319,7 +319,7 @@ public class XlsFormatTest {
 
         XlsSchemaParser xlsSchemaParser = new XlsSchemaParser();
 
-        DataSetMetadata dataSetMetadata = DataSetMetadata.Builder.metadata().id("beer").sheetName("sheet-1").build();
+        DataSetMetadata dataSetMetadata = DataSetMetadata.Builder.metadata().id( "beer" ).sheetName( "sheet-1" ).build();
 
         try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName)) {
             FormatGuesser formatGuesser = applicationContext.getBean(beanId, FormatGuesser.class);
@@ -334,7 +334,7 @@ public class XlsFormatTest {
             List<SchemaParserResult.SheetContent> sheetContents = xlsSchemaParser.parseAllSheets(inputStream);
 
             List<ColumnMetadata> columnMetadatas = sheetContents.stream()
-                    .filter(sheetContent -> "Leads".equals(sheetContent.getName())).findFirst().get().getColumnMetadatas();
+                    .filter( sheetContent -> "Leads".equals( sheetContent.getName() ) ).findFirst().get().getColumnMetadatas();
             logger.debug("columnMetadatas: {}", columnMetadatas);
             Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(14);
 
@@ -346,7 +346,7 @@ public class XlsFormatTest {
 
             Assertions.assertThat(columnMetadata.getType()).isEqualTo(Type.NUMERIC.getName());
 
-            dataSetMetadata.getRow().setColumns(columnMetadatas);
+            dataSetMetadata.getRow().setColumns( columnMetadatas );
 
         }
 
@@ -356,7 +356,7 @@ public class XlsFormatTest {
 
             String json = IOUtils.toString(jsonStream);
 
-            logger.trace("json: {}", json);
+            logger.trace( "json: {}", json );
 
             ObjectMapper mapper = new ObjectMapper();
 
@@ -379,9 +379,9 @@ public class XlsFormatTest {
                             MapEntry.entry("0004", "COCUD"));
 
             Assertions.assertThat(values.get(17)) //
-                    .contains(MapEntry.entry("0000", "17-Jul-2014"),//
-                            MapEntry.entry("0001", "SODEBO"), //
-                            MapEntry.entry("0003", "Tanguy"));
+                    .contains( MapEntry.entry( "0000", "17-Jul-2014" ),//
+                               MapEntry.entry( "0001", "SODEBO" ), //
+                               MapEntry.entry( "0003", "Tanguy" ) );
 
         }
 
@@ -412,9 +412,41 @@ public class XlsFormatTest {
         }
         // Test number serialization in XLS type guess
         InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("excel_numbers.xls");
-        final String result = IOUtils.toString(formatGuess.getSerializer().serialize(input, metadata));
+        final String result = IOUtils.toString( formatGuess.getSerializer().serialize( input, metadata ) );
         final String expected = "[{\"0000\":\"1\",\"0001\":\"123\"},{\"0000\":\"2\",\"0001\":\"123.1\"},{\"0000\":\"3\",\"0001\":\"209.9\"}]";
         assertThat(result, sameJSONAs(expected));
+    }
+
+
+    @Test
+    public void read_xls_TDP_332() throws Exception {
+
+        String fileName = "customersDate.xls";
+
+        FormatGuess formatGuess;
+
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName)) {
+            FormatGuesser formatGuesser = applicationContext.getBean(beanId, FormatGuesser.class);
+            formatGuess = formatGuesser.guess(inputStream).getFormatGuess();
+            Assert.assertNotNull(formatGuess);
+            Assert.assertTrue(formatGuess instanceof XlsFormatGuess);
+            Assert.assertEquals(XlsFormatGuess.MEDIA_TYPE, formatGuess.getMediaType());
+        }
+
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName)) {
+            List<ColumnMetadata> columnMetadatas = formatGuess.getSchemaParser()
+                .parse(new SchemaParser.Request(inputStream, null)).getSheetContents().get(0).getColumnMetadatas();
+            logger.debug("columnMetadatas: {}", columnMetadatas);
+            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize( 10 );
+
+            ColumnMetadata columnMetadataDate = columnMetadatas.stream() //
+                .filter( columnMetadata -> columnMetadata.getName().equalsIgnoreCase( "date" ) ) //
+                .findFirst().get();
+
+            Assertions.assertThat( columnMetadataDate.getType() ).isEqualTo( "date" );
+
+        }
+
     }
 
 

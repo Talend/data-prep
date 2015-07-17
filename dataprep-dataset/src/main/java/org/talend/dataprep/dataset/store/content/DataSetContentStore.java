@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.store;
+package org.talend.dataprep.dataset.store.content;
 
 import java.io.InputStream;
 import java.util.stream.Stream;

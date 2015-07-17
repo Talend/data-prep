@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.store;
+package org.talend.dataprep.dataset.store.metadata;
 
 import javax.annotation.Nullable;
 

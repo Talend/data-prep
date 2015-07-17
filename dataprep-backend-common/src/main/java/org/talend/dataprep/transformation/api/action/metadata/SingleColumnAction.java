@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,4 +60,17 @@ public abstract class SingleColumnAction implements ActionMetadata {
     public Item[] getItems() {
         return new Item[0];
     }
+
+    /**
+     * @param parameters the parameters.
+     * @return the column id parameter.
+     */
+    protected String getColumnIdParameter(Map<String, String> parameters) {
+        String columnId = parameters.get(COLUMN_ID);
+        if (columnId == null) {
+            throw new IllegalArgumentException("Parameter '" + COLUMN_ID + "' is required for this action");
+        }
+        return columnId;
+    }
+
 }

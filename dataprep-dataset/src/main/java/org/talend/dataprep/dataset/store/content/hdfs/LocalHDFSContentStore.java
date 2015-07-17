@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.store.hdfs;
+package org.talend.dataprep.dataset.store.content.hdfs;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,26 +17,25 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetContent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.exception.DataSetErrorCodes;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
+import org.talend.dataprep.dataset.store.content.DataSetContentStoreAdapter;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.TDPExceptionContext;
-import org.talend.dataprep.schema.FormatGuess;
 import org.talend.dataprep.schema.Serializer;
 
-@Component
+/**
+ * Local dataset content that stores content in files.
+ */
+@Component("ContentStore#local")
 @ConditionalOnProperty(name = "dataset.content.store", havingValue = "hdfs", matchIfMissing = false)
 @ConditionalOnBean(FileSystem.class)
-public class HDFSContentStore implements DataSetContentStore {
+public class LocalHDFSContentStore extends DataSetContentStoreAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HDFSContentStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalHDFSContentStore.class);
 
     private static final String HDFS_DIRECTORY = "talend/tdp/datasets/"; //$NON-NLS-1$
 
     @Autowired
     private FileSystem fileSystem;
-
-    @Autowired
-    private FormatGuess.Factory factory;
 
     private static Path getPath(DataSetMetadata dataSetMetadata) {
         return new Path(HDFS_DIRECTORY + dataSetMetadata.getId());

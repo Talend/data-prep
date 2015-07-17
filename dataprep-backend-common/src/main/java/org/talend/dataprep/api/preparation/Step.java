@@ -5,6 +5,10 @@ import org.apache.commons.lang.StringUtils;
 
 public class Step extends Identifiable {
 
+    /**
+     * The "root step": this is the initial step for all preparation (i.e. a newly created preparation has this root
+     * step as head).
+     */
     public static final Step ROOT_STEP = new Step(null, PreparationActions.ROOT_CONTENT.id());
 
     private String parentId = StringUtils.EMPTY;

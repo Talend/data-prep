@@ -14,8 +14,9 @@ import org.talend.dataprep.DistributedLock;
 import org.talend.dataprep.api.dataset.DataSetContent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.exception.DataSetErrorCodes;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
+import org.talend.dataprep.dataset.store.content.DataSetContentStore;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.schema.FormatGuess;
 import org.talend.dataprep.schema.FormatGuesser;
@@ -40,7 +41,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
     DataSetMetadataRepository repository;
 
     @Autowired
-    DataSetContentStore store;
+    ContentStoreRouter store;
 
     @Autowired
     List<FormatGuesser> guessers = new LinkedList<>();

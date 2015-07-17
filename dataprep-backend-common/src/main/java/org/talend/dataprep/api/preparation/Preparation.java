@@ -36,6 +36,15 @@ public class Preparation extends Identifiable {
         this.step = step;
     }
 
+    /**
+     * Creates a default preparation (no author) for <code>dataSetId</code> at {@link Step#ROOT_STEP}.
+     * @param dataSetId A data set id.
+     * @return A {@link Preparation preparation} where head is set to {@link Step#ROOT_STEP root step}.
+     */
+    public static Preparation defaultPreparation(String dataSetId) {
+        return new Preparation(dataSetId, Step.ROOT_STEP);
+    }
+
     public List<String> getSteps() {
         return steps;
     }

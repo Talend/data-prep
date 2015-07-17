@@ -41,6 +41,7 @@ describe('Dataset Rest Service', function () {
 
         $httpBackend
             .expectPOST(RestURLs.datasetUrl + '?name=my%20dataset')
+
             .respond(200, 'e85afAa78556d5425bc2');
 
         //when
@@ -52,6 +53,31 @@ describe('Dataset Rest Service', function () {
 
         //then
         expect(datasetId).toBe('e85afAa78556d5425bc2');
+    }));
+
+    it('should call dataset creation rest service with import parameters for remote http', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        //given
+        var datasetId = null;
+        var importParameters = {
+            type: 'http',
+            name: 'greatremotedataset',
+            url:  'moc.dnelat//:ptth'
+        };
+        var headers = {'Content-Type': 'application/vnd.remote-ds.http', 'Accept':'application/json, text/plain, */*'};
+
+        $httpBackend
+            .expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset', importParameters, headers)
+            .respond(200, '54g5g4d3fg4d3f5q5g4');
+
+        //when
+        DatasetRestService.import(importParameters).then(function (res) {
+            datasetId = res.data;
+        });
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+        //then
+        expect(datasetId).toBe('54g5g4d3fg4d3f5q5g4');
     }));
 
     it('should call dataset update rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {

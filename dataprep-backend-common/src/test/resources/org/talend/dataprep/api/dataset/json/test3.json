@@ -6,7 +6,11 @@
     "records": 2,
     "nbLinesHeader": 1,
     "nbLinesFooter": 0,
-    "type": "text/csv"
+    "type": "text/csv",
+    "location": {
+      "type": "http",
+      "url": "http://estcequecestbientotleweekend.fr"
+    }
   },
   "columns": [
     {

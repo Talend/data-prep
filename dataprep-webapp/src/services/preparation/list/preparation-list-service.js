@@ -10,16 +10,27 @@
      * @requires data-prep.services.preparation.service:PreparationRestService
      */
     function PreparationListService($q, PreparationRestService) {
-        var self = this;
         var preparationsPromise;
 
-        /**
-         * @ngdoc property
-         * @name preparations
-         * @propertyOf data-prep.services.preparation.service:PreparationListService
-         * @description the preparations list
-         */
-        self.preparations = null;
+        var service = {
+            /**
+             * @ngdoc property
+             * @name preparations
+             * @propertyOf data-prep.services.preparation.service:PreparationListService
+             * @description the preparations list
+             */
+            preparations: null,
+
+            refreshPreparations: refreshPreparations,
+            getPreparationsPromise: getPreparationsPromise,
+            refreshMetadataInfos: refreshMetadataInfos,
+
+            create: create,
+            update: update,
+            delete: deletePreparation
+        };
+        return service;
+
 
         /**
          * @ngdoc method
@@ -28,18 +39,18 @@
          * @description Refresh the preparations list
          * @returns {promise} The process promise
          */
-        self.refreshPreparations = function() {
+        function refreshPreparations() {
             if(!preparationsPromise) {
                 preparationsPromise = PreparationRestService.getPreparations()
                     .then(function (response) {
                         preparationsPromise = null;
-                        self.preparations = response.data;
+                        service.preparations = response.data;
 
-                        return self.preparations;
+                        return service.preparations;
                     });
             }
             return preparationsPromise;
-        };
+        }
 
         /**
          * @ngdoc method
@@ -48,9 +59,9 @@
          * @description Return preparation promise that resolve current preparation list if not empty, or call GET service
          * @returns {promise} The process promise
          */
-        self.getPreparationsPromise = function() {
-            return self.preparations === null ? self.refreshPreparations() : $q.when(self.preparations);
-        };
+        function getPreparationsPromise() {
+            return service.preparations === null ? refreshPreparations() : $q.when(service.preparations);
+        }
 
         /**
          * @ngdoc method
@@ -61,17 +72,17 @@
          * @description Create a new preparation
          * @returns {promise} The POST promise
          */
-        this.create = function(datasetId, name) {
+        function create(datasetId, name) {
             var createdResult;
             return PreparationRestService.create(datasetId, name)
                 .then(function(response) {
                     createdResult = response;
-                    return self.refreshPreparations();
+                    return refreshPreparations();
                 })
                 .then(function() {
                     return createdResult;
                 });
-        };
+        }
 
         /**
          * @ngdoc method
@@ -82,17 +93,17 @@
          * @description Update the current preparation name
          * @returns {promise} The PUT promise
          */
-        this.update = function(preparationId, name) {
+        function update(preparationId, name) {
             var updateResult;
             return PreparationRestService.update(preparationId, name)
                 .then(function(result) {
                     updateResult = result;
-                    return self.refreshPreparations();
+                    return refreshPreparations();
                 })
                 .then(function() {
                     return updateResult;
                 });
-        };
+        }
 
         /**
          * @ngdoc method
@@ -102,39 +113,13 @@
          * @description Delete a preparation from backend and from its internal list
          * @returns {promise} The DELETE promise
          */
-        self.delete = function(preparation) {
+        function deletePreparation(preparation) {
             return PreparationRestService.delete(preparation.id)
                 .then(function() {
-                    var index = self.preparations.indexOf(preparation);
-                    self.preparations.splice(index, 1);
+                    var index = service.preparations.indexOf(preparation);
+                    service.preparations.splice(index, 1);
                 });
-        };
-
-        /**
-         * @ngdoc method
-         * @name updateStep
-         * @methodOf data-prep.services.preparation.service:PreparationListService
-         * @param {object} preparationId The preparation id to update
-         * @param {object} step The step to update
-         * @param {object} parameters The new action parameters
-         * @description Update a step with new parameters
-         * @returns {promise} The PUT promise
-         */
-        this.updateStep = function(preparationId, step, parameters) {
-            return PreparationRestService.updateStep(preparationId, step.transformation.stepId, step.transformation.name, parameters);
-        };
-
-        /**
-         * @ngdoc method
-         * @name appendStep
-         * @methodOf data-prep.services.preparation.service:PreparationListService
-         * @param {object} preparationId The preparation id
-         * @param {object} action The action name
-         * @param {object} parameters The new action parameters
-         * @description Append a step to the preparation
-         * @returns {promise} The POST promise
-         */
-        this.appendStep = PreparationRestService.appendStep;
+        }
 
         /**
          * @ngdoc method
@@ -144,19 +129,18 @@
          * @description [PRIVATE] Inject the corresponding dataset to every preparation
          * @returns {promise} The process promise
          */
-        self.refreshMetadataInfos = function(datasets) {
-            return self.getPreparationsPromise()
+        function refreshMetadataInfos(datasets) {
+            return getPreparationsPromise()
                 .then(function(preparations) {
                     _.forEach(preparations, function(prep) {
-                        var correspondingDataset = _.find(datasets, function(dataset) {
+                        prep.dataset = _.find(datasets, function(dataset) {
                             return dataset.id === prep.dataSetId;
                         });
-                        prep.dataset = correspondingDataset;
                     });
 
                     return preparations;
                 });
-        };
+        }
     }
 
     angular.module('data-prep.services.preparation')

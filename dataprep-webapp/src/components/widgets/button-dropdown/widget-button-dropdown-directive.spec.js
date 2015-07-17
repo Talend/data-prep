@@ -15,7 +15,7 @@ describe('Button Dropdown directive', function () {
         scope = $rootScope.$new();
         scope.buttonAction = function() {};
 
-        html = '<talend-button-dropdown button-text="Click Me" button-action="buttonAction()">' +
+        html = '<talend-button-dropdown button-icon="m" button-text="Click Me" button-action="buttonAction()">' +
             '   <ul>' +
             '       <li>Menu 1</li>' +
             '       <li>Menu 2</li>' +

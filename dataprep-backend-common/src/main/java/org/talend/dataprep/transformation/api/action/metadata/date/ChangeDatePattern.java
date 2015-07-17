@@ -52,18 +52,6 @@ public class ChangeDatePattern extends SingleColumnAction {
     protected static final String OLD_PATTERN = "old_pattern"; //$NON-NLS-1$
 
     /**
-     * @param parameters the parameters.
-     * @return the column id parameter.
-     */
-    private String getColumnIdParameter(Map<String, String> parameters) {
-        String columnId = parameters.get(COLUMN_ID);
-        if (columnId == null) {
-            throw new IllegalArgumentException("Parameter '" + COLUMN_ID + "' is required for this action");
-        }
-        return columnId;
-    }
-
-    /**
      * Return the json statistics node.
      *
      * @param mapper jackson object mapper.

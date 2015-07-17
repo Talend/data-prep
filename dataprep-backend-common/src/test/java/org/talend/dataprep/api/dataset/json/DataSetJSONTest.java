@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.talend.dataprep.api.dataset.*;
+import org.talend.dataprep.api.dataset.location.HttpLocation;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.CommonErrorCodes;
 import org.talend.dataprep.exception.TDPException;
@@ -150,6 +151,9 @@ public class DataSetJSONTest {
         content.setMediaType("text/csv");
         metadata.getLifecycle().qualityAnalyzed(true);
         metadata.getLifecycle().schemaAnalyzed(true);
+        HttpLocation location = new HttpLocation();
+        location.setUrl("http://estcequecestbientotleweekend.fr");
+        metadata.setLocation(location);
         StringWriter writer = new StringWriter();
         DataSet dataSet = new DataSet();
         dataSet.setMetadata(metadata);

@@ -10,11 +10,12 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.dataprep.dataset.store.local;
+package org.talend.dataprep.dataset.store.metadata.memory;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
 import com.google.common.base.Defaults;
 
 /**

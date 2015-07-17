@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.DistributedLock;
 import org.talend.dataprep.api.dataset.DataSetContent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 
 @Component
 public class ContentAnalysis implements SynchronousDataSetAnalyzer {
@@ -22,9 +21,6 @@ public class ContentAnalysis implements SynchronousDataSetAnalyzer {
 
     @Autowired
     DataSetMetadataRepository repository;
-
-    @Autowired
-    DataSetContentStore store;
 
     @Override
     public void analyze(String dataSetId) {

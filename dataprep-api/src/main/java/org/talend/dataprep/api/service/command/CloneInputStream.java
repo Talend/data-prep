@@ -22,17 +22,44 @@ public class CloneInputStream extends InputStream {
         this.destinations = Arrays.asList(destinations);
     }
 
+    private static void flushDestinations(Collection<OutputStream> destinations) {
+        destinations.forEach(out -> {
+            try {
+                out.flush();
+            } catch (IOException e) {
+                LOG.error("Unable to write to '" + out + "'.", e);
+            }
+        });
+    }
+
+    private static void closeDestinations(Collection<OutputStream> destinations) {
+        destinations.forEach(out -> {
+            try {
+                out.close();
+            } catch (IOException e) {
+                LOG.error("Unable to write to '" + out + "'.", e);
+            }
+        });
+    }
+
+    private static void writeDestinations(Collection<OutputStream> destinations, byte[] bytes, int read) {
+        byte[] readBytes = Arrays.copyOf(bytes, read);
+        destinations.forEach(out -> {
+            try {
+                out.write(readBytes);
+            } catch (IOException e) {
+                LOG.error("Unable to write to '" + out + "'.", e);
+            }
+        });
+    }
+
     @Override
     public int read() throws IOException {
         int read = inputStream.read();
         if (read > 0) {
-            destinations.forEach(out -> {
-                try {
-                    out.write(read);
-                } catch (IOException e) {
-                    LOG.error("Unable to write to '" + out + "'.", e);
-                }
-            });
+            writeDestinations(destinations, new byte[] {(byte) read}, 1);
+        } else {
+            flushDestinations(destinations);
         }
         return read;
     }
@@ -41,14 +68,9 @@ public class CloneInputStream extends InputStream {
     public int read(byte[] bytes) throws IOException {
         int read = inputStream.read(bytes);
         if (read > 0) {
-            byte[] readBytes = Arrays.copyOf(bytes, read);
-            destinations.forEach(out -> {
-                try {
-                    out.write(readBytes);
-                } catch (IOException e) {
-                    LOG.error("Unable to write to '" + out + "'.", e);
-                }
-            });
+            writeDestinations(destinations, bytes, read);
+        } else {
+            flushDestinations(destinations);
         }
         return read;
     }
@@ -57,14 +79,9 @@ public class CloneInputStream extends InputStream {
     public int read(byte[] bytes, int i, int i1) throws IOException {
         int read = inputStream.read(bytes, i, i1);
         if (read > 0) {
-            byte[] readBytes = Arrays.copyOf(bytes, read);
-            destinations.forEach(out -> {
-                try {
-                    out.write(readBytes);
-                } catch (IOException e) {
-                    LOG.error("Unable to write to '" + out + "'.", e);
-                }
-            });
+            writeDestinations(destinations, bytes, read);
+        } else {
+            flushDestinations(destinations);
         }
         return read;
     }
@@ -82,14 +99,8 @@ public class CloneInputStream extends InputStream {
     @Override
     public void close() throws IOException {
         inputStream.close();
-        destinations.forEach(out -> {
-            try {
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                LOG.error("Unable to write to '" + out + "'.", e);
-            }
-        });
+        flushDestinations(destinations);
+        closeDestinations(destinations);
     }
 
     @Override

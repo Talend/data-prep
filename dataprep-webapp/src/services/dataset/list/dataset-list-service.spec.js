@@ -160,6 +160,7 @@ describe('Dataset List Service', function () {
 
         spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.when({data: datasets.slice(0)}));
         spyOn(DatasetRestService, 'create').and.returnValue($q.when(true));
+        spyOn(DatasetRestService, 'import').and.returnValue($q.when(true));
         spyOn(DatasetRestService, 'update').and.returnValue($q.when(true));
         spyOn(DatasetRestService, 'delete').and.returnValue($q.when(true));
         spyOn(DatasetRestService, 'processCertification').and.returnValue($q.when(true));
@@ -203,6 +204,22 @@ describe('Dataset List Service', function () {
 
         //then
         expect(DatasetRestService.create).toHaveBeenCalledWith(dataset);
+    }));
+
+    it('should import remote dataset', inject(function ($rootScope, DatasetListService, DatasetRestService) {
+        //given
+        var importParameters = {
+            type: 'http',
+            name: 'great remote dataset',
+            url:  'moc.dnelat//:ptth'
+        };
+
+        //when
+        DatasetListService.importRemoteDataset(importParameters);
+        $rootScope.$apply();
+
+        //then
+        expect(DatasetRestService.import).toHaveBeenCalledWith(importParameters);
     }));
 
     it('should refresh datasets list on dataset creation', inject(function ($rootScope, DatasetListService, DatasetRestService) {

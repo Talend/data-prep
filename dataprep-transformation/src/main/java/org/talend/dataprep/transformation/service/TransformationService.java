@@ -67,28 +67,7 @@ public class TransformationService {
      * {@link ActionMetadata} with parameters.
      *
      * To prevent the actions to exceed URL length limit, everything is shipped within via the multipart request body.
-     *
-     * @param actions A Base64-encoded list of actions.
-     * @param content A JSON input that complies with {@link DataSet} bean.
-     * @param response The response used to send transformation result back to client.
-     * @param request The request used to send transformation result back to client.
-     */
-    @RequestMapping(value = "/transform", method = POST, produces = APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ApiOperation(value = "Transform input data", notes = "This operation returns the input data transformed using the supplied actions.", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @VolumeMetered
-    public void transform(
-            @ApiParam(value = "Actions to perform on content (encoded in Base64).") @RequestPart(value = "actions", required = false) Part actions, //
-            @ApiParam(value = "Data set content as JSON") @RequestPart(value = "content", required = false) Part content, //
-            HttpServletResponse response, //
-            HttpServletRequest request) throws IOException {
-        // A transformation is an export to JSON
-        transform(ExportType.JSON, actions, content, response, request);
-    }
-
-
-    /**
-     * Similar to {@link #transform(Part, Part, HttpServletResponse,HttpServletRequest)} except this method allows
-     * client to customize the output format (see {@link ExportType available export types}).
+     * Operation allows client to customize the output format (see {@link ExportType available export types}).
      *
      * To prevent the actions to exceed URL length limit, everything is shipped within via the multipart request body.
      *
@@ -97,7 +76,7 @@ public class TransformationService {
      * @param content A JSON input that complies with {@link DataSet} bean.
      * @param response The response used to send transformation result back to client.
      */
-    @RequestMapping(value = "/export/{format}", method = POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(value = "/transform/{format}", method = POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "Export the preparation applying the transformation", notes = "This operation export the input data transformed using the supplied actions in the provided format.", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @VolumeMetered
     public void transform(@ApiParam(value = "Output format.") @PathVariable("format") final ExportType format, //

@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "compute_length",
+      "parameters": {
+        "column_id": "steps",
+        "column_name": "steps"
+      }
+    }
+  ]
+}

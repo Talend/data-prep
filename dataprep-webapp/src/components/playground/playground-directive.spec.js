@@ -21,7 +21,7 @@ describe('Playground directive', function () {
     }));
 
 
-    beforeEach(inject(function ($state, $rootScope, $compile, $q, $timeout, PreparationService, ExportService) {
+    beforeEach(inject(function ($state, $rootScope, $compile, $q, $timeout, PreparationService, PlaygroundService, ExportService) {
         scope = $rootScope.$new();
 
         createElement = function () {
@@ -34,6 +34,7 @@ describe('Playground directive', function () {
         };
 
         spyOn(PreparationService, 'refreshPreparations').and.returnValue();
+        spyOn(PlaygroundService, 'createOrUpdatePreparation').and.returnValue($q.when(true));
         spyOn($state, 'go').and.returnValue();
         spyOn(ExportService, 'refreshTypes').and.returnValue($q.when([]));
         spyOn(ExportService, 'getParameters').and.returnValue({});
@@ -94,6 +95,8 @@ describe('Playground directive', function () {
 
             expect(nonEditionSection.is(':visible')).toBe(false);
             expect(editionSection.is(':visible')).toBe(true);
+
+            element.controller('playground').preparationName = 'My Preparation';
 
             //when
             var event = new angular.element.Event('click');

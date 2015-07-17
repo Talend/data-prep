@@ -8,41 +8,9 @@
         <ul class="dropdown-menu grid-header-menu">
             <li ng-if="datagridHeaderCtrl.initTransformationsInProgress">{{ ::'LOADING' | translate }}...</li>
             <li ng-if="datagridHeaderCtrl.transformations && !datagridHeaderCtrl.transformations.length">{{ ::'NO_TRANSFORMATION' | translate }}</li>
-
-            <!-- BEGIN : Hard coded transformations for demo purpose -->
-            <li class="more">
-                <a>This column is a &nbsp;<span class="info">{{datagridHeaderCtrl.column.domain ? datagridHeaderCtrl.column.domain : datagridHeaderCtrl.converterService.simplifyType(datagridHeaderCtrl.column.type)}}</span></a>
-                <ul class="submenu">
-                    <li><a href="#">Coming soon ...</a></li>
-                </ul>
-            </li>
-            <li class="divider"></li>
-            <li class="more">
-                <a href="#">Sort is &nbsp;<span class="info">not defined</span></a>
-                <ul class="submenu">
-                    <li><a href="#">Coming soon ...</a></li>
-                </ul>
-            </li>
-            <li class="more">
-                <a href="#">Filter is &nbsp;<span class="info">not defined</span></a>
-                <ul class="submenu">
-                    <li><a href="#">Coming soon ...</a></li>
-                </ul>
-            </li>
-            <li class="divider"></li>
-            <li><a href="#">Fit to Content</a></li>
-            <li class="divider"></li>
-            <!-- END : Hard coded transformations for demo purpose -->
-
-            <transform-menu
-                    ng-repeat="item in datagridHeaderCtrl.transformations track by $index"
-                    column="datagridHeaderCtrl.column"
-                    menu="item"></transform-menu>
-
-            <!-- BEGIN : Hard coded transformations for demo purpose -->
-            <li class="divider"></li>
-            <li><a href="#">Delete</a></li>
-            <!-- END : Hard coded transformations for demo purpose -->
+            <transform-menu column="datagridHeaderCtrl.column"
+                            menu-items="datagridHeaderCtrl.transformations"
+                            ng-if="datagridHeaderCtrl.transformations.length"></transform-menu>
         </ul>
     </div>
 </talend-dropdown>

@@ -31,12 +31,14 @@
                     MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
                 }
 
-                else if(rejection.data) {
+                else if(rejection.data && rejection.data.code) {
 
-                    if(rejection.data.code === 'TDP_API_UNABLE_TO_DELETE_DATASET') {
+                    if(rejection.data.code === 'TDP_API_DATASET_STILL_IN_USE') {
                         MessageService.error('SERVER_ERROR_TITLE', 'DELETE_DATASET_ERROR');
                     }
-
+                    else {
+                        MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+                    }
                 }
 
 

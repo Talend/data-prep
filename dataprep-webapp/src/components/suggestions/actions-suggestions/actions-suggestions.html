@@ -52,7 +52,9 @@
     <!-- Dynamic params  -->
     <talend-modal fullscreen="false"
                   state="actionsSuggestionsCtrl.showDynamicModal"
-                  close-button="true">
+                  close-button="true"
+                  ng-if="actionsSuggestionsCtrl.showDynamicModal">
+
         <div ng-if="actionsSuggestionsCtrl.showHideModalContent">
             <div class="modal-title">{{ actionsSuggestionsCtrl.dynamicTransformation.label }}</div>
             <div class="modal-subtitle">{{ actionsSuggestionsCtrl.dynamicTransformation.description }}</div>

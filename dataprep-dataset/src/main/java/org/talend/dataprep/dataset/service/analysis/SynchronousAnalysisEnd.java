@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.DistributedLock;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 
 @Component
 public class SynchronousAnalysisEnd implements SynchronousDataSetAnalyzer {

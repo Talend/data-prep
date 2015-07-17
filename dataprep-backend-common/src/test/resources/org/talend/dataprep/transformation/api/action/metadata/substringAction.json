@@ -1,0 +1,15 @@
+{
+  "actions": [
+    {
+      "action": "substring",
+      "parameters": {
+        "column_id": "steps",
+        "column_name": "steps",
+        "from_mode": "From index",
+        "from_index": "5",
+        "to_mode": "To index",
+        "to_index":"12"
+      }
+    }
+  ]
+}

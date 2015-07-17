@@ -22,6 +22,7 @@
             transclude: true,
             templateUrl: 'components/widgets/button-dropdown/button-dropdown.html',
             scope: {
+                buttonIcon: '@',
                 buttonText: '@',
                 buttonAction: '&'
             },

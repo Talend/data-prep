@@ -22,8 +22,8 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.dataset.exception.DataSetErrorCodes;
 import org.talend.dataprep.dataset.service.Destinations;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 
 @Component
@@ -36,7 +36,7 @@ public class StatisticsAnalysis implements AsynchronousDataSetAnalyzer {
     DataSetMetadataRepository repository;
 
     @Autowired
-    DataSetContentStore store;
+    ContentStoreRouter store;
 
     @Autowired
     ApplicationContext applicationContext;

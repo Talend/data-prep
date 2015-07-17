@@ -22,8 +22,8 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.type.TypeUtils;
 import org.talend.dataprep.dataset.exception.DataSetErrorCodes;
-import org.talend.dataprep.dataset.store.DataSetContentStore;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.datascience.common.inference.quality.ValueQuality;
 import org.talend.datascience.common.inference.quality.ValueQualityAnalyzer;
@@ -38,7 +38,7 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
     DataSetMetadataRepository repository;
 
     @Autowired
-    DataSetContentStore store;
+    ContentStoreRouter store;
 
     @Autowired
     ApplicationContext applicationContext;

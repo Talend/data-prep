@@ -1,287 +1,400 @@
 [
-  {
-    "category": "case",
-    "items": [],
-    "name": "uppercase",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "category": "case",
-    "items": [],
-    "name": "lowercase",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "category": "case",
-    "items": [],
-    "name": "propercase",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "category": "quickfix",
-    "items": [],
-    "name": "trim",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "category": "quickfix",
-    "items": [],
-    "name": "fillemptywithdefault",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "default_value",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "name": "delete_empty",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "name": "delete_on_value",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "value",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "category": "quickfix",
-    "items": [],
-    "name": "cut",
-    "label":"Remove part of the text...",
-    "description":"Remove specified text from cells in this column",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "pattern",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  {
-    "category": "columns",
-    "items": [],
-    "name": "rename_column",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "new_column_name",
-        "type": "string",
-        "description": "The new column name",
-        "label": "New name",
-        "default": "firstname"
-      }
-    ],
-    "description": "Rename this column",
-    "label": "Rename"
-  },
-  {
-    "category": "quickfix",
-    "items": [
-      {
-        "name": "separator",
-        "category": "categ",
-        "values": [
-          {
-            "name": ":",
-            "parameters": [],
-            "default": true
-          },
-          {
-            "name": "@",
-            "parameters": [],
-            "default": false
-          },
-          {
-            "name": " ",
-            "parameters": [],
-            "default": false
-          },
-          {
-            "name": "other",
-            "parameters": [
-              {
-                "name": "manual_separator",
-                "type": "string",
-                "description": "Choose your own separator",
-                "label": "Manual separator",
-                "default": ""
-              }
-            ],
-            "default": false
-          }
-        ],
-        "description": "Character to use as separator",
-        "label": "Separator"
-      }
-    ],
-    "name": "split",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "limit",
-        "type": "integer",
-        "default": "2"
-      }
-    ],
-    "description": "Split column from separators",
-    "label": "Split the text in parts..."
-  },
-  {
-    "category": "quickfix",
-    "name": "textclustering",
-    "dynamic": true,
-    "items": [
-    ],
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "column_name",
-        "type": "string",
-        "default": ""
-      }
-    ],
-    "description": "Replace all similar values with the right one",
-    "label": "Find and group similar text..."
-  },
-  {
-      "label": "Duplicate",
-      "name":"copy",
-      "description": "Creates an exact copy of this column",
-      "category": "columns",
-      "parameters": [
+   {
+      "category":"case",
+      "items":[
+
+      ],
+      "name":"uppercase",
+      "parameters":[
          {
-            "name": "column_id",
-            "type": "string",
-            "description": "The column on which apply this action to",
-            "label": "Column",
-            "default": ""
+            "name":"column_id",
+            "type":"string",
+            "default":""
          },
          {
-            "name": "column_name",
-            "type": "string",
-            "description": "The column name on which apply this action to",
-            "label": "Column name",
-            "default": ""
+            "name":"column_name",
+            "type":"string",
+            "default":""
          }
-       ]
-  }
+      ]
+   },
+   {
+      "category":"case",
+      "items":[
+
+      ],
+      "name":"lowercase",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "category":"case",
+      "items":[
+
+      ],
+      "name":"propercase",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "category":"quickfix",
+      "items":[
+
+      ],
+      "name":"trim",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "category":"quickfix",
+      "items":[
+
+      ],
+      "name":"fillemptywithdefault",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"default_value",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "name":"delete_empty",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "name":"delete_on_value",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"value",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "category":"quickfix",
+      "items":[
+
+      ],
+      "name":"cut",
+      "label":"Remove part of the text...",
+      "description":"Remove specified text from cells in this column",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"pattern",
+            "type":"string",
+            "default":""
+         }
+      ]
+   },
+   {
+      "category":"columns",
+      "items":[
+
+      ],
+      "name":"rename_column",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "description":"The column on which apply this action to",
+            "label":"Column",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"new_column_name",
+            "type":"string",
+            "description":"The new column name",
+            "label":"New name",
+            "default":"firstname"
+         }
+      ],
+      "description":"Rename this column",
+      "label":"Rename"
+   },
+   {
+      "category":"quickfix",
+      "items":[
+         {
+            "name":"separator",
+            "category":"categ",
+            "values":[
+               {
+                  "name":":",
+                  "parameters":[
+
+                  ],
+                  "default":true
+               },
+               {
+                  "name":"@",
+                  "parameters":[
+
+                  ],
+                  "default":false
+               },
+               {
+                  "name":" ",
+                  "parameters":[
+
+                  ],
+                  "default":false
+               },
+               {
+                  "name":"other",
+                  "parameters":[
+                     {
+                        "name":"manual_separator",
+                        "type":"string",
+                        "description":"Choose your own separator",
+                        "label":"Manual separator",
+                        "default":""
+                     }
+                  ],
+                  "default":false
+               }
+            ],
+            "description":"Character to use as separator",
+            "label":"Separator"
+         }
+      ],
+      "name":"split",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "description":"The column on which apply this action to",
+            "label":"Column",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         },
+         {
+            "name":"limit",
+            "type":"integer",
+            "default":"2"
+         }
+      ],
+      "description":"Split column from separators",
+      "label":"Split the text in parts..."
+   },
+   {
+      "category":"quickfix",
+      "name":"textclustering",
+      "dynamic":true,
+      "items":[
+
+      ],
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "description":"The column on which apply this action to",
+            "label":"Column",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         }
+      ],
+      "description":"Replace all similar values with the right one",
+      "label":"Find and group similar text..."
+   },
+   {
+      "label":"Duplicate",
+      "name":"copy",
+      "description":"Creates an exact copy of this column",
+      "category":"columns",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "description":"The column on which apply this action to",
+            "label":"Column",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "description":"The column name on which apply this action to",
+            "label":"Column name",
+            "default":""
+         }
+      ]
+   },
+   {
+      "label":"Substring",
+      "name":"substring",
+      "description":"Extracts substring in a new column",
+      "category":"quickfix",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "description":"The column on which apply this action to",
+            "label":"Column",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "default":""
+         }
+      ],
+      "items":[
+         {
+            "name":"from_mode",
+            "category":"categ",
+            "values":[
+               {
+                  "name":"From begining",
+                  "parameters":[
+
+                  ],
+                  "default":true
+               },
+               {
+                  "name":"From index",
+                  "parameters":[
+                     {
+                        "name":"from_index",
+                        "type":"integer",
+                        "default":"0"
+                     }
+                  ],
+                  "default":false
+               }
+            ]
+         },
+         {
+            "name":"to_mode",
+            "category":"categ",
+            "values":[
+               {
+                  "name":"To end",
+                  "parameters":[
+
+                  ],
+                  "default":false
+               },
+               {
+                  "name":"To index",
+                  "parameters":[
+                     {
+                        "name":"to_index",
+                        "type":"integer",
+                        "default":"5"
+                     }
+                  ],
+                  "default":true
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "label":"Compute length",
+      "name":"compute_length",
+      "category":"quickfix",
+      "parameters":[
+         {
+            "name":"column_id",
+            "type":"string",
+            "description":"The column on which apply this action to",
+            "label":"Column",
+            "default":""
+         },
+         {
+            "name":"column_name",
+            "type":"string",
+            "description":"The column name on which apply this action to",
+            "label":"Column name",
+            "default":""
+         }
+      ]
+   }
 ]
+

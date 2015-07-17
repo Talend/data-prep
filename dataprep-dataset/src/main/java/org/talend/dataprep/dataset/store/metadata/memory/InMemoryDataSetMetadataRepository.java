@@ -1,4 +1,4 @@
-package org.talend.dataprep.dataset.store.local;
+package org.talend.dataprep.dataset.store.metadata.memory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.DistributedLock;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.store.DataSetMetadataRepository;
+import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 
 import com.google.common.base.Defaults;
 

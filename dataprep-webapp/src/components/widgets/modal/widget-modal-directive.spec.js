@@ -396,12 +396,15 @@ describe('Dropdown directive', function () {
             expect(document.activeElement.className).toBe('modal-inner');
         });
 
-        it('should focus on second input on show coz first has "no-focus" class', function () {
+        it('should focus on second input on show and select the text coz first has "no-focus" class', inject(function($timeout) {
             //given
             scope.fullscreen = false;
             scope.state = false;
             scope.closeButton = false;
             createFormElement();
+
+            //set a text in secondInput
+            $('#secondInput').val('city');
 
             var body = angular.element('body');
             body.append(element);
@@ -410,10 +413,12 @@ describe('Dropdown directive', function () {
             //when
             scope.state = true;
             scope.$digest();
+            $timeout.flush();
 
             //then
             expect(document.activeElement.id).toBe('secondInput');
-        });
+            expect(window.getSelection().toString()).toBe('city');
+        }));
 
         it('should focus on next last shown modal on focused modal close', function () {
             //given : init

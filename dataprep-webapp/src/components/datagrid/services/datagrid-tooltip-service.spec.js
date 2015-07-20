@@ -162,7 +162,7 @@ describe('Datagrid tooltip service', function() {
             DatagridTooltipService.init(gridMock);
 
             var box = {left: 400, right: 500, top: 10, bottom: 40}; //width: 100
-            var cell = {row: 1, cell: 3}; // contains 'toto\ntoto'
+            var cell = {row: 1, cell: 3}; // contains 'toto<span class="hiddenCharsBreakLine">&nbsp;</span>\ntoto'
             gridMock.initCellMock(cell, box);
 
             //when
@@ -182,7 +182,7 @@ describe('Datagrid tooltip service', function() {
                 record: item,
                 colId: '0003',
                 position: {x: 500, y: 300},
-                htmlStr: 'toto\ntoto'
+                htmlStr: 'toto<span class="hiddenCharsBreakLine">&nbsp;</span>\ntoto'
             });
             expect(DatagridTooltipService.showTooltip).toBeTruthy();
         }));

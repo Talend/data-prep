@@ -169,7 +169,8 @@
          * @name computeHTMLForLeadingOrTrailingHiddenChars
          * @methodOf data-prep.datagrid.service:DatagridStyleService
          * @description split the string value into leading chars, text and trailing char and create html element using
-         * the class hiddenChars to specify the hiddenChars.
+         * the class hiddenChars to specify the hiddenChars.If the text contains break lines, the class
+         * hiddenCharsBreakLine is used to notice it.
          * @param {string} value The string value to adapt
          */
         function computeHTMLForLeadingOrTrailingHiddenChars(value){
@@ -185,13 +186,20 @@
                 returnStr = '<span class="hiddenChars">' + hiddenCharsRegExpMatch[1] + '</span>';
             }
 
-            returnStr += hiddenCharsRegExpMatch[2] ;
+            if (hiddenCharsRegExpMatch[2]){
+                var hiddenCharsRegExpMatchSubArray = hiddenCharsRegExpMatch[2].split('\n');
+                for (var i=0; i < hiddenCharsRegExpMatchSubArray.length; i++){
+                    returnStr += hiddenCharsRegExpMatchSubArray[i];
+                    if(i !== (hiddenCharsRegExpMatchSubArray.length -1)){
+                        returnStr += '<span class="hiddenCharsBreakLine">&nbsp;</span>\n';
+                    }
+                }
+            }
 
             //trailing hidden chars
             if (hiddenCharsRegExpMatch[3]){
                 returnStr += '<span class="hiddenChars">' + hiddenCharsRegExpMatch[3] + '</span>';
             }
-
             return returnStr;
         }
 

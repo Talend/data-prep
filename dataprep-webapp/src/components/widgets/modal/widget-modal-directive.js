@@ -236,10 +236,13 @@
                             innerElement.focus();
 
                             //focus on first input (ignore first because it's the state checkbox)
-                            var inputs = iElement.find('input:not(".no-focus")');
-                            if(inputs.length > 1) {
-                                inputs.eq(1).focus();
-                            }
+                            $timeout(function() {
+                                var inputs = iElement.find('input:not(".no-focus")');
+                                if(inputs.length > 1) {
+                                    inputs.eq(1).focus();
+                                    inputs.eq(1).select();
+                                }
+                            });
                         } else if(oldValue) {
                             ctrl.onClose();
                             deregisterAndFocusOnLastModal(innerElement);

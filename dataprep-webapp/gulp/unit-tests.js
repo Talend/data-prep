@@ -21,10 +21,12 @@ function runTests(singleRun, done, karmaConfPath) {
         'src/components/**/*.html'
     ]);
 
-    return gulp.src(testFiles)
+    return gulp.src([])
         .pipe($.karma({
             configFile: karmaConfPath,
-            action: (singleRun) ? 'run' : 'watch'
+            action: (singleRun) ? 'run' : 'watch',
+            files: testFiles
+
         }))
         .on('error', function (err) {
             // Make sure failed tests cause gulp to exit non-zero

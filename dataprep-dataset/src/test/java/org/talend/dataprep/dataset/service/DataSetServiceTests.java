@@ -47,6 +47,7 @@ import org.talend.dataprep.schema.CSVFormatGuess;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.response.Response;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 public class DataSetServiceTests extends DataSetBaseTest {
 
@@ -845,7 +846,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
         final ColumnMetadata column = dataSetMetadata.getRow().getById("0001");
 
         assertThat(column.getType(), is("date"));
-        assertThat(column.getDomain(), is("DATE"));
+        assertThat(column.getDomain(), is(SemanticCategoryEnum.UNKNOWN.getDisplayName()));
         assertThat(column.getStatistics(), sameJSONAsFile(DataSetServiceTests.class.getResourceAsStream("../date_time_pattern_expected.json")));
 
     }

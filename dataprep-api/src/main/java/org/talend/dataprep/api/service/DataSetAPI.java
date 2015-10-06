@@ -96,7 +96,7 @@ public class DataSetAPI extends APIService {
         }
 
         final HttpClient client = getClient();
-        final HystrixCommand<Void> creation = getCommand(UpdateColumn.class, client, datasetId, columnId, body);
+        final HystrixCommand<Void> creation = getCommand( UpdateColumn.class, client, datasetId, columnId, body );
         creation.execute();
 
         LOG.debug("Dataset creation or update for #{} done.", datasetId);
@@ -134,6 +134,31 @@ public class DataSetAPI extends APIService {
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
+    }
+
+    /**
+     * Clone a dataset from the given id
+     *
+     * @param id the dataset id to clone
+     * @param name The dataset name.
+     * @return The dataset id.
+     */
+    @RequestMapping(value = "/api/datasets/clone/{id}", method = GET, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Create a data set", produces = TEXT_PLAIN_VALUE, notes = "Clone a data set based the id provided.")
+    public String cloneDataset(
+        @ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
+                               @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set') if none the current name concat with ' Copy' will be used. Returns the id of the newly created data set.")
+                               @RequestParam(defaultValue = "", required = false) String name) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Cloning dataset (pool: {} )...", getConnectionManager().getTotalStats());
+        }
+
+        HttpClient client = getClient();
+        HystrixCommand<String> creation = getCommand(CloneDataSet.class, client, id, name);
+        String result = creation.execute();
+        LOG.debug("Dataset creation done.");
+        return result;
     }
 
     @RequestMapping(value = "/api/datasets/preview/{id}", method = GET, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE)

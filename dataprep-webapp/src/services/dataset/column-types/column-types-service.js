@@ -20,7 +20,7 @@
             if (types) {
                 return $q.when(types);
             }
-            return $http.get(RestURLs.serverUrl + '/api/types').then(function (response) {
+            return $http.get(RestURLs.typesUrl).then(function (response) {
                 types = response.data;
                 return types;
             });

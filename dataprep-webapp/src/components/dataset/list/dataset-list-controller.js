@@ -26,6 +26,8 @@
 
         vm.datasetService = DatasetService;
         vm.uploadWorkflowService = UploadWorkflowService;
+        vm.showChangeName = false;
+        vm.currentDataset = null;
 
         /**
          * @ngdoc property
@@ -135,6 +137,49 @@
                 })
                 .then(function() {
                     MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {type: 'dataset', name: dataset.name});
+                });
+        };
+
+        /**
+         * @ngdoc method
+         * @name clone
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Delete a dataset
+         * @param {object} dataset - the dataset to clone
+         */
+        vm.clone = function(dataset){
+            // TODO ask a new name?
+            DatasetService.clone(dataset)
+                .then(function() {
+                          MessageService.success('CLONE_SUCCESS_TITLE', 'CLONE_SUCCESS');
+                });
+        };
+
+        /**
+         * @ngdoc method
+         * @name rename
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Open a modal asking a new name for the dataset
+         * @param {object} dataset - the dataset to rename
+         */
+        vm.rename = function(dataset){
+            vm.showChangeName = true;
+            vm.currentDataset = dataset;
+        };
+
+        /**
+         * @ngdoc method
+         * @name doRename
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Trigger the dataset rename in the backend
+         */
+        vm.doRename = function(){
+            return DatasetService.update(vm.currentDataset)
+                .then(function(){
+                  vm.showChangeName = false;
+                })
+                .then(function() {
+                          MessageService.success('RENAME_SUCCESS_TITLE', 'RENAME_SUCCESS');
                 });
         };
 

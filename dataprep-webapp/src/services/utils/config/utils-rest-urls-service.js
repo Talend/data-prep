@@ -28,6 +28,7 @@
             service.previewUrl = serverUrl + '/api/preparations/preview';
             service.exportUrl = serverUrl + '/api/export';
             service.aggregationUrl = serverUrl + '/api/aggregate';
+            service.typesUrl = serverUrl + '/api/types';
         }
     }
 

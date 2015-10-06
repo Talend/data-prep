@@ -23,7 +23,7 @@ describe('Column types Service', function () {
         //given
         var result = null;
         $httpBackend
-            .expectGET(RestURLs.serverUrl + '/api/types')
+            .expectGET(RestURLs.typesUrl)
             .respond(200, {data: types});
 
         //when
@@ -41,7 +41,7 @@ describe('Column types Service', function () {
         //given
         var result = null;
         $httpBackend
-            .expectGET(RestURLs.serverUrl + '/api/types')
+            .expectGET(RestURLs.typesUrl)
             .respond(200, {data: types});
 
         ColumnTypesService.getTypes();

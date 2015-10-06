@@ -60,7 +60,32 @@
                    ng-click="datasetListCtrl.datasetService.processCertification(dataset)"></a>
                 <a data-icon="f" class="btn-icon btn-transparent favorite" ng-class="{'favorite-true':dataset.favorite}"
                    ng-click="datasetListCtrl.datasetService.toggleFavorite(dataset)"></a>
+                <div class="divider btn-transparent"></div>
+                <a data-icon="y" class="btn-icon btn-transparent" title="clone"
+                   ng-click="datasetListCtrl.clone(dataset)"></a>
+`                <a data-icon="p" class="btn-icon btn-transparent" title="rename"
+                    ng-click="datasetListCtrl.rename(dataset)"></a>
             </div>
         </div>
     </div>
+
+  <talend-modal
+      fullscreen="false"
+      state="datasetListCtrl.showChangeName"
+      disable-enter="true"
+      close-button="true">
+    <div class="modal-title">Dataset {{ 'RENAME' | translate:dataset }}</div>
+    <br/>
+    <input type="text" ng-model="datasetListCtrl.currentDataset.name"/>
+
+    <div class="modal-buttons">
+      <a class="modal-secondary-button"
+         ng-click="datasetListCtrl.showChangeName=false">{{ 'NO_THANKS' | translate:dataset }}</a>
+      <a class="modal-primary-button btn-primary"
+         ng-click="datasetListCtrl.doRename()">{{ 'RENAME' | translate:dataset }}</a>
+      </button>
+    </div>
+
+  </talend-modal>
+
 </div>

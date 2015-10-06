@@ -15,6 +15,7 @@
             create: create,
             update: update,
             delete: deleteDataset,
+            clone: cloneDataset,
 
             createDatasetInfo: createDatasetInfo,
             updateColumn: DatasetRestService.updateColumn,
@@ -88,6 +89,21 @@
          */
         function update(dataset) {
             var promise = DatasetListService.update(dataset);
+            promise.then(consolidatePreparationsAndDatasets);
+            return promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @name clone
+         * @methodOf data-prep.services.dataset.service:DatasetService
+         * @param {object} dataset The dataset to clone
+         * @param {String} the new name otherwise null as using default name
+         * @description Clone a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} create function
+         * @returns {promise} The pending CREATE promise
+         */
+        function cloneDataset(dataset,name) {
+            var promise = DatasetListService.clone(dataset,name);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }

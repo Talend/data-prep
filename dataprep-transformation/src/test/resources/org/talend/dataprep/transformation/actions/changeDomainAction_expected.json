@@ -1,0 +1,43 @@
+{
+  "records": [
+    {
+      "state": "NC",
+      "city":"Santa Fe",
+      "tdpId": 1
+    },
+    {
+      "state": "NY",
+      "city":"Santa Fe",
+      "tdpId": 2
+    },
+    {
+      "state": "AZ",
+      "city":"Santa Fe",
+      "tdpId": 3
+    },
+    {
+      "state": "CA",
+      "city":"Santa Fe",
+      "tdpId": 4
+    }
+  ],
+  "columns": [
+    {
+      "id": "state",
+      "name": "state",
+      "type": "string",
+      "domain": "new_fake_domain",
+      "domainForced": true,
+      "typeForced": false
+    },
+    {
+      "id": "city",
+      "name": "city",
+      "type": "string",
+      "domain": "CITY",
+      "domainForced": false,
+      "typeForced": false
+    }
+
+  ]
+}

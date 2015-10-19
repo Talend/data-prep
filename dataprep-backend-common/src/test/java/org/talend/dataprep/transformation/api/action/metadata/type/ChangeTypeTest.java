@@ -3,7 +3,6 @@ package org.talend.dataprep.transformation.api.action.metadata.type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -51,9 +50,7 @@ public class ChangeTypeTest {
         Assertions.assertThat(row.getRowMetadata().getColumns().get(0).getDomainLabel()).isEmpty();
         Assertions.assertThat(row.getRowMetadata().getColumns().get(0).getDomainFrequency()).isEqualTo(0);
 
-        Set<String> forcedColumns = typeChange.getForcedColumns(transformationContext);
-
-        Assertions.assertThat(forcedColumns).isNotNull().isNotEmpty().hasSize(1).contains("0002");
+        Assertions.assertThat(row.getRowMetadata().getColumns().get(0).isTypeForced()).isTrue();
     }
 
     @Test
@@ -70,7 +67,7 @@ public class ChangeTypeTest {
                     .domainLabel("French Beer") //
                     .build();
 
-            Assertions.assertThat(typeChange.acceptColumn(columnMetadata)).isFalse();
+            Assertions.assertThat(typeChange.acceptColumn(columnMetadata)).isTrue();
         }
     }
 }

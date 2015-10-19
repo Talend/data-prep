@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "domain_change",
+      "parameters": {
+        "column_id": "state",
+        "new_domain_id": "new_fake_domain",
+        "scope": "column"
+      }
+    }
+  ]
+}

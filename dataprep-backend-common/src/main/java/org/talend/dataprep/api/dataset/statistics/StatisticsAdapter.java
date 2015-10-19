@@ -36,10 +36,6 @@ public class StatisticsAdapter {
     private int semanticThreshold;
 
     public void adapt(List<ColumnMetadata> columns, List<Analyzers.Result> results) {
-        adapt(columns, results, Collections.<String> emptySet());
-    }
-
-    public void adapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Set<String> readOnlyColumns) {
         final Iterator<ColumnMetadata> columnIterator = columns.iterator();
         for (Analyzers.Result result : results) {
             final ColumnMetadata currentColumn = columnIterator.next();
@@ -47,8 +43,7 @@ public class StatisticsAdapter {
             final boolean isString = Type.STRING.isAssignableFrom(Type.get(currentColumn.getType()));
             final Statistics statistics = currentColumn.getStatistics();
             // Data type
-            if (result.exist(DataType.class) && !currentColumn.isTypeForced()
-                    && !readOnlyColumns.contains(currentColumn.getId())) {
+            if (result.exist(DataType.class) && !currentColumn.isTypeForced()) {
                 final DataType dataType = result.get(DataType.class);
                 final Map<DataType.Type, Long> frequencies = dataType.getTypeFrequencies();
                 frequencies.remove(DataType.Type.EMPTY); // TDP-226: Don't take into account EMPTY values.
@@ -85,8 +80,7 @@ public class StatisticsAdapter {
                 statistics.setValid(valueQualityStatistics.getValidCount());
             }
             // Semantic types
-            if (result.exist(SemanticType.class) && !currentColumn.isDomainForced()
-                    && !readOnlyColumns.contains(currentColumn.getId())) {
+            if (result.exist(SemanticType.class) && !currentColumn.isDomainForced()) {
                 final SemanticType semanticType = result.get(SemanticType.class);
                 final Map<CategoryFrequency, Long> foundSemanticTypes = semanticType.getCategoryToCount();
                 // TDP-471: Don't pick semantic type if lower than a threshold.

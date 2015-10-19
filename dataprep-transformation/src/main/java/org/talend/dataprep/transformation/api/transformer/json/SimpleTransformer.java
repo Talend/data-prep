@@ -3,19 +3,19 @@ package org.talend.dataprep.transformation.api.transformer.json;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
 import org.talend.dataprep.api.type.Type;
@@ -26,7 +26,6 @@ import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.ParsedActions;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
-import org.talend.dataprep.transformation.api.action.metadata.SchemaChangeAction;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
@@ -55,6 +54,7 @@ import org.talend.datascience.common.inference.type.DataTypeAnalyzer;
 class SimpleTransformer implements Transformer {
 
     public static final String CONTEXT_ANALYZER = "analyzer";
+    public static final Logger LOGGER = LoggerFactory.getLogger(SimpleTransformer.class);
 
     @Autowired
     StatisticsAdapter adapter;
@@ -70,12 +70,12 @@ class SimpleTransformer implements Transformer {
     @Autowired
     private Jackson2ObjectMapperBuilder builder;
 
-    private static Analyzer<Analyzers.Result> configureAnalyzer(TransformationContext context) {
+    private static Analyzer<Analyzers.Result> configureAnalyzer(TransformationContext context, DataSetRow row) {
         try {
             Analyzer<Analyzers.Result> analyzer = (Analyzer<Analyzers.Result>) context.get(CONTEXT_ANALYZER);
             if (analyzer == null) {
                 // Configure quality & semantic analysis (if column metadata information is present in stream).
-                final List<ColumnMetadata> columns = context.getTransformedRowMetadata().getColumns();
+                final List<ColumnMetadata> columns = row.getRowMetadata().getColumns();
                 final DataType.Type[] types = TypeUtils.convert(columns);
                 final URI ddPath = SimpleTransformer.class.getResource("/luceneIdx/dictionary").toURI(); //$NON-NLS-1$
                 final URI kwPath = SimpleTransformer.class.getResource("/luceneIdx/keyword").toURI(); //$NON-NLS-1$
@@ -137,29 +137,30 @@ class SimpleTransformer implements Transformer {
             TransformationContext context = configuration.getTransformationContext();
             // Row transformations
             Stream<DataSetRow> records = input.getRecords();
-            writer.fieldName("records");
-            writer.startArray();
             // Apply actions to records
             for (DataSetRowAction action : rowActions) {
-                records = records.map(r -> action.apply(r.clone(), context));
+                records = records.map(r -> action.apply(r, context));
             }
             records = records.map(r -> {
-                //
-                context.setTransformedRowMetadata(r.getRowMetadata());
-                // Configure analyzer
                 if (transformColumns) {
                     // Use analyzer (for empty values, semantic...)
                     if (!r.isDeleted()) {
                         final DataSetRow row = r.order(r.getRowMetadata().getColumns());
-                        configureAnalyzer(context).analyze(row.toArray(DataSetRow.SKIP_TDP_ID));
+                        configureAnalyzer(context, row).analyze(row.toArray(DataSetRow.SKIP_TDP_ID));
                     }
                 }
                 return r;
             });
             // Write transformed records to stream
-            final AtomicBoolean wroteMetadata = new AtomicBoolean(false);
+            final AtomicBoolean wroteMetadata = new AtomicBoolean(false); // Flag to prevent multiple writes of header
+            final Stack<DataSetRow> postProcessQueue = new Stack<>(); // Stack to remember last processed row.
+            writer.fieldName("records");
+            writer.startArray();
             records.forEach(row -> {
                 try {
+                    if (!postProcessQueue.empty()) {
+                        postProcessQueue.pop();
+                    }
                     if (writer.requireMetadataForHeader() && !wroteMetadata.get()) {
                         writer.write(row.getRowMetadata());
                         wroteMetadata.set(true);
@@ -167,25 +168,26 @@ class SimpleTransformer implements Transformer {
                     if (row.shouldWrite()) {
                         writer.write(row);
                     }
+                    postProcessQueue.push(row); // In the end, last row remains in stack.
                 } catch (IOException e) {
                     throw new TDPException(TransformationErrorCodes.UNABLE_TRANSFORM_DATASET, e);
                 }
             });
             writer.endArray();
-            // Write columns
+            // Write columns (using last processed row).
             if (!wroteMetadata.get() && transformColumns) {
-                Set<String> forcedColumns = (Set<String>) context.get(SchemaChangeAction.FORCED_TYPE_SET_CTX_KEY);
-                if (forcedColumns == null) {
-                    forcedColumns = Collections.emptySet();
-                }
                 writer.fieldName("columns");
-                final RowMetadata row = context.getTransformedRowMetadata();
+                final DataSetRow row = postProcessQueue.pop();
                 // End analysis and set the statistics
                 final Analyzer<Analyzers.Result> analyzer = (Analyzer<Analyzers.Result>) context.get(CONTEXT_ANALYZER);
                 analyzer.end();
-                adapter.adapt(row.getColumns(), analyzer.getResult(), forcedColumns);
-                writer.write(context.getTransformedRowMetadata());
+                adapter.adapt(row.getRowMetadata().getColumns(), analyzer.getResult());
+                writer.write(row.getRowMetadata());
             }
+            if (postProcessQueue.size() > 1) {
+                LOGGER.warn("Too many processed rows in stack (expected 1, got {}).", postProcessQueue.size());
+            }
+            postProcessQueue.clear(); // Clear last processed row.
             writer.endObject();
             writer.flush();
         } catch (IOException e) {

@@ -255,7 +255,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
 
     @Test
-    public void testDataSetColumnsuggestions() throws Exception {
+    public void testDataSetColumnSuggestions() throws Exception {
         // given
         final String columnDescription = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"));
 

@@ -6,7 +6,6 @@ import static org.talend.dataprep.transformation.api.action.metadata.column.Type
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -110,8 +109,7 @@ public class TypeChangeTest {
         typeChange.applyOnColumn(row, transformationContext, parameters, "0002");
 
         // then
-        final Set<String> forcedColumns = typeChange.getForcedColumns(transformationContext);
-        assertThat(forcedColumns).isNotNull().isNotEmpty().hasSize(1).contains("0002");
+        assertThat(row.getRowMetadata().getById("0002").isTypeForced()).isTrue();
     }
 
     @Test
@@ -132,7 +130,7 @@ public class TypeChangeTest {
             final boolean accepted = domainChange.acceptColumn(columnMetadata);
 
             // then
-            assertThat(accepted).isFalse();
+            assertThat(accepted).isTrue();
         }
     }
 }

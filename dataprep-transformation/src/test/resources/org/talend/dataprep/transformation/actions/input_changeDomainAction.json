@@ -1,0 +1,34 @@
+{
+  "columns": [
+    {
+      "id": "state",
+      "name": "state",
+      "type": "string",
+      "domain": "US_STATE_CODE"
+    },
+    {
+      "id": "city",
+      "name": "city",
+      "type": "string",
+      "domain": "CITY"
+    }
+  ],
+  "records":[
+    {
+      "state":"NC",
+      "city":"Santa Fe"
+    },
+    {
+      "state":"NY",
+      "city":"Santa Fe"
+    },
+    {
+      "state":"AZ",
+      "city":"Santa Fe"
+    },
+    {
+      "state":"CA",
+      "city":"Santa Fe"
+    }
+  ]
+}

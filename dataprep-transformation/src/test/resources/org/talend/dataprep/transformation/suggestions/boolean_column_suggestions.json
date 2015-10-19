@@ -1,11 +1,13 @@
 [
   {
-    "name": "fillemptywithdefaultboolean",
+    "name": "delete_empty",
+    "category": "data cleansing",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -14,6 +16,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -22,34 +25,51 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
-      },
-      {
-        "name": "empty_default_value",
-        "type": "select",
-        "implicit": false,
-        "canBeBlank": false,
-        "configuration": {
-          "values": [
-            {
-              "value": "True"
-            },
-            {
-              "value": "False"
-            }
-          ],
-          "multiple": false
-        },
-        "description": "The value to set in empty cells",
-        "label": "Value",
-        "default": "True"
       }
     ],
     "dynamic": false,
-    "description": "Fill empty cells of this column with given value",
-    "label": "Fill empty cells with value..."
+    "description": "Delete rows that have this cell empty",
+    "label": "Delete lines with empty cell"
+  },
+  {
+    "name": "delete_invalid",
+    "category": "data cleansing",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Delete rows that have this invalid cell",
+    "label": "Delete lines with invalid cell"
   },
   {
     "name": "fillinvalidwithdefaultboolean",
@@ -58,6 +78,7 @@
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -66,6 +87,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -74,6 +96,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -99,18 +122,19 @@
         "default": "True"
       }
     ],
+    "category": "data cleansing",
     "dynamic": false,
     "description": "Fill invalid cells of this column with given value",
     "label": "Fill invalid cells with value..."
   },
   {
-    "name": "delete_empty",
-    "category": "data cleansing",
+    "name": "fillemptywithdefaultboolean",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -119,6 +143,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -127,122 +152,36 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      }
-    ],
-    "dynamic": false,
-    "description": "Delete rows that have this cell empty",
-    "label": "Delete lines with empty cell"
-  },
-  {
-    "name": "delete_invalid",
-    "category": "data cleansing",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      }
-    ],
-    "dynamic": false,
-    "description": "Delete rows that have this invalid cell",
-    "label": "Delete lines with invalid cell"
-  },
-  {
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
       },
       {
-        "name": "new_column_name",
-        "type": "string",
+        "name": "empty_default_value",
+        "type": "select",
         "implicit": false,
-        "description": "The new column name",
-        "label": "New name",
-        "default": "id",
-        "canBeBlank": false
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "True"
+            },
+            {
+              "value": "False"
+            }
+          ],
+          "multiple": false
+        },
+        "description": "The value to set in empty cells",
+        "label": "Value",
+        "default": "True"
       }
     ],
-    "category": "column_metadata",
-    "name": "rename_column",
+    "category": "data cleansing",
     "dynamic": false,
-    "description": "Rename this column",
-    "label": "Rename"
-  },
-  {
-    "category": "column_metadata",
-    "name": "copy",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      }
-    ],
-    "dynamic": false,
-    "description": "Creates an exact copy of this column",
-    "label": "Duplicate"
+    "description": "Fill empty cells of this column with given value",
+    "label": "Fill empty cells with value..."
   },
   {
     "category": "boolean",
@@ -252,6 +191,7 @@
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -260,6 +200,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -268,6 +209,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -278,52 +220,228 @@
     "label": "Negate value"
   },
   {
-    "name": "concat",
-    "category": "columns",
+    "category": "column_metadata",
+    "name": "copy",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
         "default": ""
       },
       {
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
         "default": ""
       },
       {
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Creates an exact copy of this column",
+    "label": "Duplicate"
+  },
+  {
+    "category": "columns",
+    "name": "concat",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
         "default": ""
       },
       {
         "name": "selected_column",
         "type": "column",
         "implicit": false,
+        "canBeBlank": false,
+        "description": "Combine the current column with this one",
+        "label": "Column",
         "default": ""
       },
       {
         "name": "prefix",
         "type": "string",
         "implicit": false,
+        "canBeBlank": true,
+        "description": "Optional new column prefix",
+        "label": "Prefix",
         "default": ""
       },
       {
         "name": "concat_separator",
         "type": "string",
         "implicit": false,
+        "canBeBlank": true,
+        "description": "Optional new column separator",
+        "label": "Separator",
         "default": ""
       },
       {
         "name": "suffix",
         "type": "string",
         "implicit": false,
+        "canBeBlank": true,
+        "description": "Optional new column suffix",
+        "label": "Suffix",
         "default": ""
       }
     ],
-    "dynamic": false
+    "dynamic": false,
+    "description": "Combine this column with another one",
+    "label": "Concatenate with..."
+  },
+  {
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "new_column_name",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "The new column name",
+        "label": "New name",
+        "default": "id"
+      }
+    ],
+    "category": "column_metadata",
+    "name": "rename_column",
+    "dynamic": false,
+    "description": "Rename this column",
+    "label": "Rename"
+  },
+  {
+    "category": "column_metadata",
+    "name": "domain_change",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Change Domain",
+    "label": "Change Domain"
+  },
+  {
+    "category": "column_metadata",
+    "name": "type_change",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Change Type",
+    "label": "Change Type"
   }
 ]

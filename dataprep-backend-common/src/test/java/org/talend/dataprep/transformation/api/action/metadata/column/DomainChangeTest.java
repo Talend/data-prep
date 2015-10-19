@@ -2,11 +2,10 @@ package org.talend.dataprep.transformation.api.action.metadata.column;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.talend.dataprep.transformation.api.action.metadata.column.DomainChange.*;
+import static org.talend.dataprep.transformation.api.action.metadata.column.DomainChange.NEW_DOMAIN_ID_PARAMETER_KEY;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,9 +51,7 @@ public class DomainChangeTest {
         row.setRowMetadata(rowMetadata);
 
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put(NEW_DOMAIN_FREQUENCY_PARAMETER_KEY, "98");
         parameters.put(NEW_DOMAIN_ID_PARAMETER_KEY, "AUS_BEER");
-        parameters.put(NEW_DOMAIN_LABEL_PARAMETER_KEY, "Aussie Beer");
 
         // when
         domainChange.applyOnColumn(row, transformationContext, parameters, "0002");
@@ -62,8 +59,6 @@ public class DomainChangeTest {
         // then
         final ColumnMetadata column = row.getRowMetadata().getColumns().get(0);
         assertThat(column.getDomain()).isEqualTo("AUS_BEER");
-        assertThat(column.getDomainLabel()).isEqualTo("Aussie Beer");
-        assertThat(column.getDomainFrequency()).isEqualTo(98);
     }
 
     @Test
@@ -81,16 +76,13 @@ public class DomainChangeTest {
         row.setRowMetadata(rowMetadata);
 
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put(NEW_DOMAIN_FREQUENCY_PARAMETER_KEY, "98");
         parameters.put(NEW_DOMAIN_ID_PARAMETER_KEY, "AUS_BEER");
-        parameters.put(NEW_DOMAIN_LABEL_PARAMETER_KEY, "Aussie Beer");
 
         // when
         domainChange.applyOnColumn(row, transformationContext, parameters, "0002");
 
         // then
-        final Set<String> forcedColumns = domainChange.getForcedColumns(transformationContext);
-        assertThat(forcedColumns).isNotNull().isNotEmpty().hasSize(1).contains("0002");
+        assertThat(row.getRowMetadata().getById("0002").isDomainForced()).isTrue();
     }
 
     @Test
@@ -111,7 +103,7 @@ public class DomainChangeTest {
             final boolean accepted = domainChange.acceptColumn(columnMetadata);
 
             // then
-            assertThat(accepted).isFalse();
+            assertThat(accepted).isTrue();
         }
     }
 }

@@ -1,0 +1,14 @@
+{
+  "actions": [
+    {
+      "action": "matchespattern",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "steps",
+        "proposed_pattern": "other",
+        "manual_pattern": "[a-zA-Z]*",
+        "scope": "column"
+      }
+    }
+  ]
+}

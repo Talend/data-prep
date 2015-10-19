@@ -1,5 +1,7 @@
 package org.talend.dataprep.dataset.service.analysis;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,6 +26,8 @@ import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
+import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
+import org.talend.dataquality.semantic.statistics.SemanticAnalyzer;
 import org.talend.dataquality.statistics.numeric.summary.SummaryAnalyzer;
 import org.talend.dataquality.statistics.quality.ValueQualityAnalyzer;
 import org.talend.dataquality.statistics.quality.ValueQualityStatistics;
@@ -142,9 +146,22 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer, Asynchronous
         }
         DataType.Type[] types = TypeUtils.convert(columns);
         // Run analysis
+        final CategoryRecognizerBuilder categoryBuilder;
+        try {
+            final URI ddPath = QualityAnalysis.class.getResource("/luceneIdx/dictionary").toURI(); //$NON-NLS-1$
+            final URI kwPath = QualityAnalysis.class.getResource("/luceneIdx/keyword").toURI(); //$NON-NLS-1$
+            categoryBuilder = CategoryRecognizerBuilder.newBuilder() //
+                    .ddPath(ddPath) //
+                    .kwPath(kwPath) //
+                    .setMode(CategoryRecognizerBuilder.Mode.LUCENE);
+        } catch (URISyntaxException e) {
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
+        }
         final ValueQualityAnalyzer valueQualityAnalyzer = new ValueQualityAnalyzer(types);
         valueQualityAnalyzer.setStoreInvalidValues(true);
-        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(valueQualityAnalyzer, new SummaryAnalyzer(types));
+        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(valueQualityAnalyzer, //
+                new SummaryAnalyzer(types), //
+                new SemanticAnalyzer(categoryBuilder));
         if (limit > 0) { // Only limit number of rows if limit > 0 (use limit to speed up sync analysis.
             LOGGER.debug("Limit analysis to the first {}.", limit);
             records = records.limit(limit);

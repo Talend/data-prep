@@ -3,7 +3,6 @@ package org.talend.dataprep.transformation.api.action.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**
@@ -16,9 +15,6 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
  */
 public final class TransformationContext {
 
-    /** The row metadata. */
-    private RowMetadata transformedRowMetadata;
-
     /** The context itself. */
     private Map<String, Object> context;
 
@@ -27,23 +23,6 @@ public final class TransformationContext {
      */
     public TransformationContext() {
         context = new HashMap<>();
-    }
-
-    /**
-     * @param transformedRowMetadata the row metadata to build this context from.
-     */
-    public void setTransformedRowMetadata(RowMetadata transformedRowMetadata) {
-        this.transformedRowMetadata = transformedRowMetadata;
-    }
-
-    /**
-     * @return immutable row metadata.
-     */
-    public RowMetadata getTransformedRowMetadata() {
-        if (transformedRowMetadata == null) {
-            throw new IllegalStateException("transformed row metadata was not set. Did ColumnsTypeTransformer set it ?");
-        }
-        return transformedRowMetadata;
     }
 
     /**

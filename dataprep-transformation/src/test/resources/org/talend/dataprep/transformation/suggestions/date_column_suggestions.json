@@ -1,11 +1,13 @@
 [
   {
     "name": "delete_empty",
+    "category": "data cleansing",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -14,6 +16,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -22,6 +25,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -33,11 +37,13 @@
   },
   {
     "name": "delete_invalid",
+    "category": "data cleansing",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -46,6 +52,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -54,6 +61,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -64,11 +72,13 @@
     "label": "Delete lines with invalid cell"
   },
   {
+    "name": "change_date_pattern",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -77,6 +87,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -85,66 +96,107 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
       },
       {
-        "name": "new_column_name",
-        "type": "string",
+        "name": "new_pattern",
+        "type": "select",
         "implicit": false,
-        "description": "The new column name",
-        "label": "New name",
-        "default": null
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "MM.dd.yyyy"
+            },
+            {
+              "value": "MMM.dd.yyyy"
+            },
+            {
+              "value": "MMMM dd yyyy"
+            },
+            {
+              "value": "MM.dd.yyyy HH:mm:ss"
+            },
+            {
+              "value": "custom",
+              "parameters": [
+                {
+                  "name": "custom_date_pattern",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "description": "e.g. dd/MM/yyyy for day/month/year",
+                  "label": "Enter your own date pattern",
+                  "default": ""
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "description": "Choose the date pattern to use in the list or make your own",
+        "label": "New date pattern to use",
+        "default": "MM.dd.yyyy"
       }
     ],
-    "category": "column_metadata",
-    "name": "rename_column",
-    "dynamic": false,
-    "description": "Rename this column",
-    "label": "Rename"
-  },
-  {
-    "category": "column_metadata",
-    "name": "copy",
-    "parameters": [
+    "parametersForDatePattern": [
       {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
+        "name": "new_pattern",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "MM.dd.yyyy"
+            },
+            {
+              "value": "MMM.dd.yyyy"
+            },
+            {
+              "value": "MMMM dd yyyy"
+            },
+            {
+              "value": "MM.dd.yyyy HH:mm:ss"
+            },
+            {
+              "value": "custom",
+              "parameters": [
+                {
+                  "name": "custom_date_pattern",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "description": "e.g. dd/MM/yyyy for day/month/year",
+                  "label": "Enter your own date pattern",
+                  "default": ""
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "description": "Choose the date pattern to use in the list or make your own",
+        "label": "New date pattern to use",
+        "default": "MM.dd.yyyy"
       }
     ],
-    "dynamic": false,
-    "description": "Creates an exact copy of this column",
-    "label": "Duplicate"
-  },
-  {
     "category": "dates",
+    "dynamic": false,
+    "description": "Change date pattern to use on a date column",
+    "label": "Change date pattern"
+  },
+  {
     "name": "compute_time_since",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -153,6 +205,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -161,6 +214,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -192,90 +246,19 @@
         "default": "HOURS"
       }
     ],
+    "category": "dates",
     "dynamic": false,
     "description": "Computes time elapsed since this date in the desired unit",
     "label": "Compute time since"
   },
   {
-    "category": "dates",
-    "name": "change_date_pattern",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      },
-      {
-        "name": "new_pattern",
-        "type": "select",
-        "implicit": false,
-        "canBeBlank": false,
-        "configuration": {
-          "values": [
-            {
-              "value": "MM.dd.yyyy"
-            },
-            {
-              "value": "MMM.dd.yyyy"
-            },
-            {
-              "value": "MMMM dd yyyy"
-            },
-            {
-              "value": "MM.dd.yyyy HH:mm:ss"
-            },
-            {
-              "value": "custom",
-              "parameters": [
-                {
-                  "name": "custom_date_pattern",
-                  "type": "string",
-                  "implicit": false,
-                  "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Enter your own date pattern",
-                  "default": ""
-                }
-              ]
-            }
-          ],
-          "multiple": false
-        },
-        "description": "Choose the date pattern to use in the list or make your own",
-        "label": "New date pattern to use",
-        "default": "MM.dd.yyyy"
-      }
-    ],
-    "dynamic": false,
-    "description": "Change date pattern to use on a date column",
-    "label": "Change date pattern"
-  },
-  {
-    "category": "dates",
     "name": "extract_date_tokens",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -284,6 +267,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -292,6 +276,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -300,6 +285,7 @@
         "name": "YEAR",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts year field",
         "label": "Year",
         "default": "true"
@@ -308,6 +294,7 @@
         "name": "MONTH",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts month of year field",
         "label": "Month of year",
         "default": "true"
@@ -316,6 +303,7 @@
         "name": "DAY",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts day of month field",
         "label": "Day of month",
         "default": "true"
@@ -324,6 +312,7 @@
         "name": "HOUR_12",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts the hour within the AM/PM, from 0 to 11",
         "label": "Hour of am-pm",
         "default": "false"
@@ -332,6 +321,7 @@
         "name": "AM_PM",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts the AM/PM within the day, from 0 (AM) to 1 (PM)",
         "label": "The am-pm-of-day",
         "default": "false"
@@ -340,6 +330,7 @@
         "name": "HOUR_24",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts the hour within the day, from 0 to 23",
         "label": "Hour of day",
         "default": "true"
@@ -348,6 +339,7 @@
         "name": "MINUTE",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts minute of hour",
         "label": "Minute",
         "default": "true"
@@ -356,6 +348,7 @@
         "name": "SECOND",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts second of minute",
         "label": "Second",
         "default": "false"
@@ -364,6 +357,7 @@
         "name": "DAY_OF_WEEK",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts the day of week, such as Tuesday",
         "label": "Day of week",
         "default": "false"
@@ -372,6 +366,7 @@
         "name": "DAY_OF_YEAR",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts the day of year. This has values from 1 to 365 in standard years and 1 to 366 in leap years",
         "label": "Day of year",
         "default": "false"
@@ -380,11 +375,13 @@
         "name": "WEEK_OF_YEAR",
         "type": "boolean",
         "implicit": false,
+        "canBeBlank": true,
         "description": "Extracts concept of the count of weeks within the period of a year where the weeks are aligned to the start of the year",
         "label": "Week of year",
         "default": "false"
       }
     ],
+    "category": "dates",
     "dynamic": false,
     "description": "Creates columns with year, month, day, etc...",
     "label": "Extract date tokens"
@@ -396,6 +393,7 @@
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
@@ -404,6 +402,7 @@
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
@@ -412,6 +411,7 @@
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
@@ -420,11 +420,13 @@
         "name": "invalid_default_value",
         "type": "date",
         "implicit": false,
+        "canBeBlank": false,
         "description": "The value to set in invalid cells",
         "label": "Value",
         "default": "01/01/1970 10:00:00"
       }
     ],
+    "category": "data cleansing",
     "dynamic": false,
     "description": "Fill invalid cells of this column with given value",
     "label": "Fill invalid cells with value..."
@@ -475,52 +477,228 @@
     "label": "Fill empty cells with value..."
   },
   {
-    "name": "concat",
-    "category": "columns",
+    "category": "column_metadata",
+    "name": "copy",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
         "default": ""
       },
       {
         "name": "row_id",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
         "default": ""
       },
       {
         "name": "scope",
         "type": "string",
         "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Creates an exact copy of this column",
+    "label": "Duplicate"
+  },
+  {
+    "category": "columns",
+    "name": "concat",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
         "default": ""
       },
       {
         "name": "selected_column",
         "type": "column",
         "implicit": false,
+        "canBeBlank": false,
+        "description": "Combine the current column with this one",
+        "label": "Column",
         "default": ""
       },
       {
         "name": "prefix",
         "type": "string",
         "implicit": false,
+        "canBeBlank": true,
+        "description": "Optional new column prefix",
+        "label": "Prefix",
         "default": ""
       },
       {
         "name": "concat_separator",
         "type": "string",
         "implicit": false,
+        "canBeBlank": true,
+        "description": "Optional new column separator",
+        "label": "Separator",
         "default": ""
       },
       {
         "name": "suffix",
         "type": "string",
         "implicit": false,
+        "canBeBlank": true,
+        "description": "Optional new column suffix",
+        "label": "Suffix",
         "default": ""
       }
     ],
-    "dynamic": false
+    "dynamic": false,
+    "description": "Combine this column with another one",
+    "label": "Concatenate with..."
+  },
+  {
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "new_column_name",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "The new column name",
+        "label": "New name",
+        "default": null
+      }
+    ],
+    "category": "column_metadata",
+    "name": "rename_column",
+    "dynamic": false,
+    "description": "Rename this column",
+    "label": "Rename"
+  },
+  {
+    "category": "column_metadata",
+    "name": "domain_change",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Change Domain",
+    "label": "Change Domain"
+  },
+  {
+    "category": "column_metadata",
+    "name": "type_change",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Change Type",
+    "label": "Change Type"
   }
 ]

@@ -1,6 +1,8 @@
 package org.talend.dataprep.api.folder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
@@ -17,6 +19,12 @@ public class Folder extends Identifiable implements Serializable {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("pathParts")
+    private List<String> pathParts;
+
+    @JsonProperty("folderEntries")
+    private List<FolderEntry> folderEntries = new ArrayList<>();
+
     @Override
     public String getId() {
         return this.id;
@@ -28,6 +36,9 @@ public class Folder extends Identifiable implements Serializable {
     }
 
     @Override
+    /**
+     * <b>do not use it</b> the backend system will generate an Id
+     */
     public void setId(String id) {
         this.id = id;
     }
@@ -38,6 +49,22 @@ public class Folder extends Identifiable implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<FolderEntry> getFolderEntries() {
+        return folderEntries;
+    }
+
+    public void addFolderEntry(FolderEntry folderEntry) {
+        this.folderEntries.add(folderEntry);
+    }
+
+    public List<String> getPathParts() {
+        return pathParts;
+    }
+
+    public void setPathParts(List<String> pathParts) {
+        this.pathParts = pathParts;
     }
 
     @Override
@@ -64,16 +91,16 @@ public class Folder extends Identifiable implements Serializable {
 
     public static class Builder {
 
-        private String id;
-
         private String name;
+
+        private List<String> pathParts;
 
         public static Builder folder() {
             return new Folder.Builder();
         }
 
-        public Folder.Builder id(String id) {
-            this.id = id;
+        public Folder.Builder pathParts(List<String> pathParts) {
+            this.pathParts = pathParts;
             return this;
         }
 
@@ -83,12 +110,9 @@ public class Folder extends Identifiable implements Serializable {
         }
 
         public Folder build() {
-            if (id == null) {
-                throw new IllegalStateException("No id set for Folder.");
-            }
 
             Folder folder = new Folder();
-            folder.setId(id);
+            folder.setPathParts(pathParts);
             folder.setName(name);
 
             return folder;

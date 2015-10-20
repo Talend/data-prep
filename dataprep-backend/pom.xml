@@ -153,6 +153,11 @@
                 </exclusions>
 
             </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+            </dependency>
             <!-- Hazelcast -->
             <dependency>
                 <groupId>com.hazelcast</groupId>

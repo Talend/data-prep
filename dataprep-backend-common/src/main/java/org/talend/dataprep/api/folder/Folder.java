@@ -87,7 +87,12 @@ public class Folder extends Identifiable implements Serializable {
 
     @Override
     public String toString() {
-        return "Folder{" + "id='" + id + '\'' + ", name='" + name + '\'' + '}';
+        return "Folder{" + //
+                "id='" + id + '\'' + //
+                ", name='" + name + '\'' + //
+                ", pathParts=" + pathParts + //
+                ", folderEntries=" + folderEntries + //
+                '}';
     }
 
     public static class Builder {

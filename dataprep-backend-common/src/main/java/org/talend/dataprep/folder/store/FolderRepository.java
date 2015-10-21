@@ -24,11 +24,11 @@ public interface FolderRepository {
     Folder addFolder(Folder parent, Folder child);
 
     /**
-     * 
+     * add or update (if alreadu exists) the entry
      * @param parent the parent {@link Folder}
      * @param folderEntry the {@link FolderEntry} to add to the parent
      */
-    void addFolderEntry(Folder parent, FolderEntry folderEntry);
+    FolderEntry addFolderEntry(Folder parent, FolderEntry folderEntry);
 
     /**
      * 

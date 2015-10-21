@@ -1,6 +1,8 @@
 package org.talend.dataprep.folder.store.file;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,12 +12,15 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +31,6 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.google.common.collect.Lists;
 
@@ -114,15 +117,46 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     }
 
     @Override
-    public void addFolderEntry(Folder parent, FolderEntry folderEntry) {
+    public FolderEntry addFolderEntry(Folder parent, FolderEntry folderEntry) {
 
-        throw new NotImplementedException();
+        // we store the FolderEntry bean content as properties the file name is the name
 
+        try {
+            List<String> pathParts = Lists.newArrayList(parent.getPathParts());
+            pathParts.add(folderEntry.getName());
+            Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+            // we delete it if exists
+            Files.deleteIfExists(path);
+
+            path = Files.createFile(path);
+
+            Properties properties = new Properties();
+
+            properties.setProperty("contentClass", folderEntry.getContentClass());
+            properties.setProperty("contentId", folderEntry.getContentId());
+
+            try (OutputStream outputStream = Files.newOutputStream(path)) {
+                properties.store(outputStream, "saved");
+            }
+            folderEntry.setId(folderEntry.getName());
+            return folderEntry;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override
     public void removeFolderEntry(Folder parent, FolderEntry folderEntry) {
-        throw new NotImplementedException();
+
+        try {
+            List<String> pathParts = Lists.newArrayList(parent.getPathParts());
+            pathParts.add(folderEntry.getName());
+            Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+            // we delete it if exists
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -147,7 +181,28 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
 
     @Override
     public Iterable<FolderEntry> entries(Folder folder, String contentType) {
-        return null;
+        List<String> pathParts = Lists.newArrayList(folder.getPathParts());
+
+        Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+
+        Files.list(path).filter(path1 -> !Files.isDirectory(path1)).parallel().filter(new Predicate<Path>() {
+
+            @Override
+            public boolean test(Path path) {
+                try {
+                    try (InputStream inputStream = Files.newInputStream(path)) {
+                        Properties properties = new Properties();
+                        properties.load(inputStream);
+                        if (StringUtils.equalsIgnoreCase(properties.getProperty("contentClass"), contentType)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            }
+        });
     }
 
     @Override

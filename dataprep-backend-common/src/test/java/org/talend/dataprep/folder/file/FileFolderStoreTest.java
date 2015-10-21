@@ -6,13 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -27,7 +27,8 @@ import org.talend.dataprep.folder.store.FolderRepository;
 public class FileFolderStoreTest extends AbstractFolderTest {
 
     @Inject
-    private ApplicationContext applicationContext;
+    @Named("folderRepository#file")
+    private FolderRepository folderRepository;
 
     /** Where to store the folders */
     @Value("${folder.store.file.location}")
@@ -43,6 +44,6 @@ public class FileFolderStoreTest extends AbstractFolderTest {
 
     @Override
     protected FolderRepository getFolderRepository() {
-        return applicationContext.getBean("folderRepository#file", FolderRepository.class);
+        return folderRepository;
     }
 }

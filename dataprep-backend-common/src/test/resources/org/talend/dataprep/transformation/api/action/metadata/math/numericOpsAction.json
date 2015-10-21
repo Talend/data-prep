@@ -1,0 +1,15 @@
+{
+  "actions": [
+    {
+      "action": "numeric_ops",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "column",
+        "operator": "+",
+        "mode":"Another column",
+        "selected_column": "0001",
+        "operand": "2"
+      }
+    }
+  ]
+}

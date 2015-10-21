@@ -1,11 +1,10 @@
 package org.talend.dataprep.api.folder;
 
-import java.io.Serializable;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.talend.dataprep.api.preparation.Identifiable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
 public class FolderEntry extends Identifiable implements Serializable {
 

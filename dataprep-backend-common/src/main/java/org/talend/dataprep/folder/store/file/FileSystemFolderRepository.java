@@ -1,5 +1,20 @@
 package org.talend.dataprep.folder.store.file;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.folder.store.FolderRepository;
+import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,40 +29,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
-
-import com.google.common.collect.Lists;
-
-@Component("folderRepository#file")
-@ConditionalOnProperty(name = "folder.store", havingValue = "file")
-public class FileSystemFolderRepository extends FolderRepositoryAdapter implements FolderRepository {
+@Component("folderRepository#file") @ConditionalOnProperty(name = "folder.store", havingValue = "file")
+public class FileSystemFolderRepository  extends FolderRepositoryAdapter implements FolderRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemFolderRepository.class);
 
-    /** Where to store the folders */
+    /**
+     * Where to store the folders
+     */
     @Value("${folder.store.file.location}")
     private String foldersLocation;
 
-    private FileAttribute<Set<PosixFilePermission>> defaultFilePermissions = PosixFilePermissions.asFileAttribute( //
-            Sets.newHashSet(PosixFilePermission.OWNER_EXECUTE, //
-                    PosixFilePermission.OWNER_READ, //
-                    PosixFilePermission.OWNER_WRITE));
+    private FileAttribute<Set<PosixFilePermission>> defaultFilePermissions = //
+            PosixFilePermissions.asFileAttribute( //
+                    Sets.newHashSet(PosixFilePermission.OWNER_EXECUTE, //
+                            PosixFilePermission.OWNER_READ, //
+                            PosixFilePermission.OWNER_WRITE));
 
     /**
      * Make sure the root folder is there.
@@ -185,24 +184,35 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
 
         Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
 
-        Files.list(path).filter(path1 -> !Files.isDirectory(path1)).parallel().filter(new Predicate<Path>() {
+        try {
+            List<FolderEntry> folderEntries = new ArrayList<>();
+            Files.list(path) //
+                    .filter(pathFound -> !Files.isDirectory(pathFound)) //
+                    .parallel() //
+                    .forEach(pathFile -> {
+                        {
+                            try {
+                                try (InputStream inputStream = Files.newInputStream(pathFile)) {
+                                    Properties properties = new Properties();
+                                    properties.load(inputStream);
+                                    if (StringUtils.equalsIgnoreCase(properties.getProperty("contentClass"), //
+                                            contentType)) {
+                                        folderEntries.add(new FolderEntry(pathFile.getFileName().toString(), //
+                                                contentType, //
+                                                properties.getProperty("contentType")));
+                                    }
+                                }
 
-            @Override
-            public boolean test(Path path) {
-                try {
-                    try (InputStream inputStream = Files.newInputStream(path)) {
-                        Properties properties = new Properties();
-                        properties.load(inputStream);
-                        if (StringUtils.equalsIgnoreCase(properties.getProperty("contentClass"), contentType)) {
-                            return true;
+                            } catch (IOException e) {
+                                throw new RuntimeException(e.getMessage(), e);
+                            }
                         }
-                    }
-                    return false;
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage(), e);
-                }
-            }
-        });
+                    });
+
+            return folderEntries;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -221,7 +231,6 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     }
 
     /**
-     * 
      * @param path
      * @return the folder number of a directory recursively
      */

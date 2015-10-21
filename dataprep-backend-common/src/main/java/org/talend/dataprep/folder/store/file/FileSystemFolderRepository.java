@@ -15,6 +15,7 @@ import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,10 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Component("folderRepository#file") @ConditionalOnProperty(name = "folder.store", havingValue = "file")
@@ -54,11 +52,34 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     @PostConstruct
     private void init() {
         try {
-            Files.createDirectories(getRootFolder(), defaultFilePermissions);
+            if (!Files.exists(getRootFolder())) {
+                Files.createDirectories(getRootFolder(), defaultFilePermissions);
+            }
+            Path idPath = Paths.get(foldersLocation, ".id");
+            createIdFile(idPath);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
+    }
+
+    protected String createIdFile(Path path) throws IOException {
+        if (Files.isDirectory(path)){
+            File idFile = new File( path.toFile(), ".id");
+            path = idFile.toPath();
+            if (!Files.exists(path)){
+                path = Files.createFile(idFile.toPath());
+            }
+        }
+
+        if  (!Files.exists(path)){
+            Path idFile = Files.createFile(path);
+            String uuid = UUID.randomUUID().toString();
+            Files.write(idFile, uuid.getBytes());
+            return uuid;
+        } else {
+            return new String(Files.readAllBytes(path));
+        }
     }
 
     /**
@@ -78,7 +99,15 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             Stream<Path> childStream = Files.list(folderPath);
             List<Folder> childs = new ArrayList<>();
             childStream.forEach(path -> {
-                childs.add(Folder.Builder.folder().name(path.getFileName().toString()).pathParts(pathParts(path)).build());
+                try {
+                    childs.add(Folder.Builder.folder() //
+                            .name(path.getFileName().toString()) //
+                            .pathParts(pathParts(path)) //
+                            .id(createIdFile(path)) //
+                            .build());
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
             });
             return childs;
         } catch (IOException e) {
@@ -108,6 +137,8 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                 Files.createDirectories(path, defaultFilePermissions);
             }
 
+            child.setId(createIdFile(path));
+
             return child;
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -133,11 +164,12 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
             properties.setProperty("contentClass", folderEntry.getContentClass());
             properties.setProperty("contentId", folderEntry.getContentId());
+            properties.setProperty("id", UUID.randomUUID().toString());
 
             try (OutputStream outputStream = Files.newOutputStream(path)) {
                 properties.store(outputStream, "saved");
             }
-            folderEntry.setId(folderEntry.getName());
+            folderEntry.setId(properties.getProperty("id"));
             return folderEntry;
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -197,7 +229,9 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                                     properties.load(inputStream);
                                     if (StringUtils.equalsIgnoreCase(properties.getProperty("contentClass"), //
                                             contentType)) {
-                                        folderEntries.add(new FolderEntry(pathFile.getFileName().toString(), //
+                                        folderEntries.add(new FolderEntry(
+                                                properties.getProperty("id"), //
+                                                pathFile.getFileName().toString(), //
                                                 contentType, //
                                                 properties.getProperty("contentType")));
                                     }

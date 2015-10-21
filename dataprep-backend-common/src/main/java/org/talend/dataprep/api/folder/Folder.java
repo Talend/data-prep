@@ -97,6 +97,8 @@ public class Folder extends Identifiable implements Serializable {
 
     public static class Builder {
 
+        private String id;
+
         private String name;
 
         private List<String> pathParts;
@@ -110,6 +112,11 @@ public class Folder extends Identifiable implements Serializable {
             return this;
         }
 
+        public Folder.Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
         public Folder.Builder name(String name) {
             this.name = name;
             return this;
@@ -118,6 +125,7 @@ public class Folder extends Identifiable implements Serializable {
         public Folder build() {
 
             Folder folder = new Folder();
+            folder.setId(id);
             folder.setPathParts(pathParts);
             folder.setName(name);
 

@@ -12,8 +12,16 @@ public abstract class AbstractFolderTest {
 
     protected abstract FolderRepository getFolderRepository();
 
+
+    /**
+     *
+     * This test create one child under root assert size, child list
+     * then delete
+     */
     @Test
     public void create_child_then_remove() throws Exception {
+
+
         Folder rootFolder = Folder.Builder.folder().name("").build();
 
         int sizeBefore = getFolderRepository().size();
@@ -46,6 +54,10 @@ public abstract class AbstractFolderTest {
 
     }
 
+    /**
+     * this test create a hierarchy then delete part of it doing some assert on list, size
+     * then delete part of it asserting the deletion
+     */
     @Test
     public void create_two_childs_little_child_then_remove() throws Exception {
 

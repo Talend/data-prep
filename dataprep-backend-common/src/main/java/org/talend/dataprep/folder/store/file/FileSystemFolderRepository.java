@@ -1,6 +1,7 @@
 package org.talend.dataprep.folder.store.file;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,9 +42,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     private String foldersLocation;
 
     private FileAttribute<Set<PosixFilePermission>> defaultFilePermissions = PosixFilePermissions.asFileAttribute( //
-            Sets.newHashSet(PosixFilePermission.GROUP_READ,
-                    //
-                    PosixFilePermission.GROUP_WRITE));
+            Sets.newHashSet(PosixFilePermission.OWNER_EXECUTE, //
+                    PosixFilePermission.OWNER_READ, //
+                    PosixFilePermission.OWNER_WRITE));
 
     /**
      * Make sure the root folder is there.
@@ -141,10 +142,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     @Override
     public Folder rootFolder() {
 
-        List<String> parts = new ArrayList<>();
-        getRootFolder().iterator().forEachRemaining(thePath -> parts.add(thePath.toString()));
-        String name = getRootFolder().getFileName().toString();
-        return Folder.Builder.folder().pathParts(parts).name(name).build();
+        return Folder.Builder.folder().name("").build();
     }
 
     @Override
@@ -163,6 +161,35 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
 
     @Override
     public int size() {
-        return 0;
+        int number = foldersNumber(getRootFolder());
+        return number;
+    }
+
+    /**
+     * 
+     * @param path
+     * @return the folder number of a directory recursively
+     */
+    protected int foldersNumber(Path path) {
+        try {
+            int number = 0;
+
+            if (!Files.isDirectory(path)) {
+                return 0;
+            }
+
+            DirectoryStream<Path> stream = Files.newDirectoryStream(path);
+
+            for (Path part : stream) {
+                if (Files.isDirectory(part)) {
+                    number++;
+                    number += foldersNumber(part);
+                }
+            }
+
+            return number;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }

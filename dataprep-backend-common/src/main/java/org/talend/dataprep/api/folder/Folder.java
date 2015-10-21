@@ -2,6 +2,7 @@ package org.talend.dataprep.api.folder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,7 +61,7 @@ public class Folder extends Identifiable implements Serializable {
     }
 
     public List<String> getPathParts() {
-        return pathParts;
+        return pathParts == null ? Collections.<String> emptyList() : pathParts;
     }
 
     public void setPathParts(List<String> pathParts) {

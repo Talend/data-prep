@@ -2,6 +2,7 @@ package org.talend.dataprep.folder.store;
 
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.lock.LockFactory;
 

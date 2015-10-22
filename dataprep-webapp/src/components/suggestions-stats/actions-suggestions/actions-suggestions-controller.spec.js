@@ -298,5 +298,23 @@ describe('Actions suggestions-stats controller', function () {
             //then
             expect(ctrl.showModalContent).toBe(true);
         });
+
+
+        it('should toogle view all mode', inject(function (SuggestionService, ColumnSuggestionService) {
+            //given
+            SuggestionService.currentColumn = column;
+            SuggestionService.showAllAction = false;
+            spyOn(ColumnSuggestionService, 'initTransformations').and.returnValue();
+
+            var ctrl = createController();
+
+            //when
+            ctrl.toggleShowAction();
+
+            //then
+            expect(ColumnSuggestionService.initTransformations).toHaveBeenCalledWith(column, false);
+        }));
+
+
     });
 });

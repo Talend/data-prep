@@ -23,32 +23,39 @@ public class TypeUtils {
         DataType.Type[] types = new DataType.Type[columns.size()];
         for (int i = 0; i < columns.size(); i++) {
             final String type = columns.get(i).getType();
-            switch (Type.get(type)) {
-            case ANY:
-            case STRING:
-                types[i] = DataType.Type.STRING;
-                break;
-            case NUMERIC:
-                types[i] = DataType.Type.INTEGER;
-                break;
-            case INTEGER:
-                types[i] = DataType.Type.INTEGER;
-                break;
-            case DOUBLE:
-            case FLOAT:
-                types[i] = DataType.Type.DOUBLE;
-                break;
-            case BOOLEAN:
-                types[i] = DataType.Type.BOOLEAN;
-                break;
-            case DATE:
-                types[i] = DataType.Type.DATE;
-                break;
-            default:
-                types[i] = DataType.Type.STRING;
-            }
+            types[i] = convert(Type.get(type));
         }
         return types;
+    }
+
+    public static DataType.Type convert(Type type) {
+        switch (type) {
+            case ANY:
+            case STRING:
+                return DataType.Type.STRING;
+            case NUMERIC:
+                return DataType.Type.INTEGER;
+            case INTEGER:
+                return DataType.Type.INTEGER;
+            case DOUBLE:
+            case FLOAT:
+                return DataType.Type.DOUBLE;
+            case BOOLEAN:
+                return DataType.Type.BOOLEAN;
+            case DATE:
+                return DataType.Type.DATE;
+            default:
+                return DataType.Type.STRING;
+        }
+
+    }
+
+    public static DataType.Type[] convert(Type[] types) {
+        DataType.Type[] converted = new DataType.Type[types.length];
+        for (int i = 0; i < types.length; i++) {
+            converted[i] = convert(types[i]);
+        }
+        return converted;
     }
 
     /**

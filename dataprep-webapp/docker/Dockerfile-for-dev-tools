@@ -1,6 +1,5 @@
 FROM dockerfile/nodejs-bower-gulp
 
-
 #update the apt-get packages
 RUN apt-get update
 
@@ -24,7 +23,9 @@ RUN gem install sass
 #https://github.com/karma-runner/karma-phantomjs-launcher/issues/31#issuecomment-60698359
 RUN apt-get -y install libfontconfig
 
-WORKDIR /dataprep-webapp
+#update bower
+RUN npm update -g bower
 
+WORKDIR /dataprep-webapp
 
 CMD ["bash"]

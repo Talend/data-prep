@@ -591,18 +591,19 @@ describe('Transformation Service', function () {
         expect(transformation.cluster.clusters[2].replace.initialValue).toBe('Tata');
     }));
 
-    it('should get column transformations with adapted input types and without column_name parameter', inject(function ($rootScope, TransformationService) {
+    it('should get column transformations with adapted input types and without column_name parameter', inject(function ($rootScope, TransformationService, TransformationRestService) {
         //given
         var transformations = null;
 
         //when
-        TransformationService.getTransformations('{}')
+        TransformationService.getTransformations('{}', true)
             .then(function(result) {
                 transformations = result;
             });
         $rootScope.$digest();
 
         //then
+        expect(TransformationRestService.getTransformations).toHaveBeenCalledWith('{}', true);
         expect(transformations[0].parameters).toBe(null); // delete column_name & column_id parameter
         expect(transformations[1].parameters).toBe(null); // delete column_name & column_id parameter
         expect(transformations[2].parameters.length).toBe(1); // delete column_name & column_id parameter

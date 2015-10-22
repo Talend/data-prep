@@ -39,10 +39,20 @@ public abstract class AbstractFillIfInvalid extends AbstractActionMetadata imple
         final ColumnMetadata colMetadata = row.getRowMetadata().getById(columnId);
 
         if (ActionMetadataUtils.checkInvalidValue(colMetadata, value)) {
-            row.set(columnId, parameters.get(DEFAULT_VALUE_PARAMETER));
+            String newValue = getDefaultValue(row, parameters, columnId);
+            row.set(columnId, newValue);
             // update invalid values of column metadata to prevent unnecessary future analysis
             final Set<String> invalidValues = colMetadata.getQuality().getInvalidValues();
             invalidValues.add(value);
         }
     }
+
+    /**
+     * Default implementation gets the default value from parameters.
+     * Can be override, like in FillWithDateIfEmpty.
+     */
+    protected String getDefaultValue(DataSetRow row, Map<String, String> parameters, String columnId) {
+        return parameters.get(DEFAULT_VALUE_PARAMETER);
+    }
+
 }

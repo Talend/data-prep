@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "fillemptywithdefaultboolean",
+      "action": "fillemptywithdefault",
       "parameters": {
         "column_id": "tagada",
         "empty_default_value": "True",

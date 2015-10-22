@@ -5,11 +5,12 @@
      * @ngdoc service
      * @name data-prep.services.preparation.service:PreparationService
      * @description Preparation list service. this service manage the operations that touches the preparations
+     * @requires data-prep.services.utils.service:StorageService
      * @requires data-prep.services.preparation.service:PreparationListService
      * @requires data-prep.services.preparation.service:PreparationRestService
      * @requires data-prep.services.dataset.service:DatasetListService
      */
-    function PreparationService($q, PreparationListService, PreparationRestService, DatasetListService) {
+    function PreparationService($q, StorageService, PreparationListService, PreparationRestService, DatasetListService) {
         return {
             //get, refresh preparations
             preparationsList: preparationsList,
@@ -99,12 +100,17 @@
          * @methodOf data-prep.services.preparation.service:PreparationService
          * @param {string} datasetId The dataset id
          * @param {string} name The preparation name
-         * @description Create a new preparation, and keep the current preparation id
+         * @description Create a new preparation
          * @returns {promise} The POST promise
          */
         function create(datasetId, name) {
             return PreparationListService.create(datasetId, name)
-                .then(consolidatePreparationsAndDatasets);
+                .then(consolidatePreparationsAndDatasets)
+                .then(function(preparation) {
+                    //get all dataset aggregations per columns from localStorage and save them for the new preparation
+                    StorageService.savePreparationAggregationsFromDataset(datasetId, preparation.id);
+                    return preparation;
+                });
         }
 
         /**
@@ -117,7 +123,12 @@
          */
         function deletePreparation(preparation) {
             return PreparationListService.delete(preparation)
-                .then(consolidatePreparationsAndDatasets);
+                .then(consolidatePreparationsAndDatasets)
+                .then(function(response) {
+                    //get remove all preparation aggregations per columns in localStorage
+                    StorageService.removeAllAggregations(preparation.dataSetId, preparation.id);
+                    return response;
+                });
         }
 
         //---------------------------------------------------------------------------------
@@ -135,7 +146,11 @@
          */
         function setName(preparationId, name) {
             return PreparationListService.update(preparationId, name)
-                .then(consolidatePreparationsAndDatasets);
+                .then(consolidatePreparationsAndDatasets)
+                .then(function(preparation) {
+                    StorageService.moveAggregations(preparation.dataSetId, preparationId, preparation.id);
+                    return preparation;
+                });
         }
 
         /**

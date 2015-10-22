@@ -88,7 +88,14 @@ public class StatisticsAdapter {
                         .filter(e -> !e.getKey().getCategoryName().isEmpty())
                         .max((o1, o2) -> o1.getValue().intValue() - o2.getValue().intValue());
                 if (entry.isPresent()) {
-                    final long percentage = (entry.get().getValue() * 100) / statistics.getCount();
+                    // TODO (TDP-734) Take into account limit of the semantic analyzer.
+                    final long percentage;
+                    final long count = statistics.getCount();
+                    if (count < 100 && count > 0) {
+                        percentage = (entry.get().getValue() * 100) / count;
+                    } else {
+                        percentage = entry.get().getValue();
+                    }
                     if (percentage > semanticThreshold) {
                         currentColumn.setDomain(semanticType.getSuggestedCategory());
                         currentColumn.setDomainLabel(TypeUtils.getDomainLabel(semanticType));

@@ -35,6 +35,37 @@ public class CSVWriterTest extends BaseFormatTest {
         writer = (CSVWriter) context.getBean("writer#CSV", outputStream, parameters);
     }
 
+    /**
+     * see https://jira.talendforge.org/browse/TDP-722
+     */
+    @Test
+    public void should_write_with_tab_separator() throws Exception {
+
+        // given
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(CSVWriter.SEPARATOR_PARAM_NAME, "\t");
+        final CSVWriter tabWriter = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
+
+        final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("song").type(Type.STRING).build();
+        final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("band").type(Type.STRING).build();
+        final List<ColumnMetadata> columns = Arrays.asList(column1, column2);
+
+        final DataSetRow row = new DataSetRow(Collections.emptyMap());
+        row.set("0001", "last nite");
+        row.set("0002", "the Strokes");
+
+        // when
+        tabWriter.write(new RowMetadata(columns));
+        tabWriter.write(row);
+        tabWriter.flush();
+
+        // then
+
+        final String expectedCsv = "\"song\"\t\"band\"\n" + "\"last nite\"\t\"the Strokes\"\n";
+        assertThat(temp.toString()).isEqualTo(expectedCsv);
+    }
+
     @Test
     public void write_should_write_columns() throws Exception {
         // given

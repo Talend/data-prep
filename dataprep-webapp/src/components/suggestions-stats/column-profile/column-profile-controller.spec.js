@@ -137,48 +137,19 @@ describe('ColumnProfile controller', function () {
             expect(aggregation).toBe('LINE_COUNT');
         }));
 
-        it('should change aggregation chart with preparation and step id', inject(function(StatisticsService, PlaygroundService, PreparationService, RecipeService) {
+        it('should change aggregation chart', inject(function(StatisticsService) {
             //given
             spyOn(StatisticsService, 'processAggregation').and.returnValue();
             var ctrl = createController();
 
-            var datasetId = '13654634856752';
-            var preparationId = '5463514684';
-            var stepId = '698656896987486';
             var column = {id: '0001'};
             var aggregation = {name: 'MAX'};
-
-            stateMock.playground.dataset = {id: datasetId};
-            stateMock.playground.preparation = {id: preparationId};
-            spyOn(RecipeService, 'getLastActiveStep').and.returnValue({id: stepId});
 
             //when
             ctrl.changeAggregation(column, aggregation);
 
             //then
-            expect(StatisticsService.processAggregation).toHaveBeenCalledWith(datasetId, preparationId, stepId, column, aggregation);
-        }));
-
-        it('should change aggregation chart with dataset id (no preparation)', inject(function(StatisticsService, PlaygroundService, PreparationService, RecipeService) {
-            //given
-            spyOn(StatisticsService, 'processAggregation').and.returnValue();
-            var ctrl = createController();
-
-            var datasetId = '13654634856752';
-            var column = {id: '0001'};
-            var aggregation = {name: 'MAX'};
-
-            stateMock.playground.dataset = {id: datasetId};
-            stateMock.playground.preparation = null;
-            spyOn(RecipeService, 'getLastActiveStep').and.callFake(function() {
-                throw new Error('should NOT call RecipeService because there is no preparation');
-            });
-
-            //when
-            ctrl.changeAggregation(column, aggregation);
-
-            //then
-            expect(StatisticsService.processAggregation).toHaveBeenCalledWith(datasetId, null, null, column, aggregation);
+            expect(StatisticsService.processAggregation).toHaveBeenCalledWith(column, aggregation);
         }));
 
         it('should do nothing if the current histogram is already the wanted aggregation', inject(function(StatisticsService) {
@@ -193,7 +164,6 @@ describe('ColumnProfile controller', function () {
             };
 
             var ctrl = createController();
-
 
             //when
             ctrl.changeAggregation(column, aggregation);

@@ -35,12 +35,38 @@ describe('Column suggestion service', function () {
         ColumnSuggestionService.transformations = {};
 
         //when
-        ColumnSuggestionService.initTransformations(firstSelectedColumn);
+        ColumnSuggestionService.initTransformations(firstSelectedColumn, true);
         expect(ColumnSuggestionService.transformations).toBeFalsy();
         $rootScope.$digest();
 
         //then : transformations initialized
-        expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(firstSelectedColumn);
+        expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(firstSelectedColumn, true);
+
+        //then : column category filtered
+        var suggestedTransformations = ColumnSuggestionService.transformations;
+        expect(suggestedTransformations).toBeDefined();
+        var columnCategoryTransformation = _.find(suggestedTransformations, {category: 'column_metadata'});
+        expect(columnCategoryTransformation).toBeFalsy();
+
+        //then : result grouped
+        expect(suggestedTransformations.CASE.length).toBe(3);
+        expect(suggestedTransformations.CLEAR.length).toBe(1);
+        expect(suggestedTransformations.QUICKFIX.length).toBe(2);
+
+    }));
+
+
+    it('should filter "column" category', inject(function ($rootScope, ColumnSuggestionService, TransformationCacheService) {
+        //given
+        ColumnSuggestionService.transformations = {};
+
+        //when
+        ColumnSuggestionService.initTransformations(firstSelectedColumn, false);
+        expect(ColumnSuggestionService.transformations).toBeFalsy();
+        $rootScope.$digest();
+
+        //then : transformations initialized
+        expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(firstSelectedColumn, false);
 
         //then : column category filtered
         var suggestedTransformations = ColumnSuggestionService.transformations;
@@ -49,7 +75,8 @@ describe('Column suggestion service', function () {
         expect(columnCategoryTransformation).toBeFalsy();
 
         //then : result alphabetically sorted
-        expect(suggestedTransformations[0].label).toEqual('a');
-        expect(suggestedTransformations[suggestedTransformations.length - 1].label).toEqual('v');
+        expect(suggestedTransformations[0].label).toEqual('f');
+        expect(suggestedTransformations[0].labelHtml).toEqual('f');
+        expect(suggestedTransformations[suggestedTransformations.length - 1].label).toEqual('m');
     }));
 });

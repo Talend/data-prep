@@ -104,20 +104,38 @@ describe('Transformation cache service', function() {
         spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
     }));
 
-    it('should call TransformationService when column is not in cache', inject(function($rootScope, TransformationCacheService, TransformationService) {
+    it('should call TransformationService when column is not in cache and showAll is true', inject(function($rootScope, TransformationCacheService, TransformationService) {
         //given
         var result = null;
         var stringifiedColumn = JSON.stringify(column);
 
         //when
-        TransformationCacheService.getTransformations(column)
+        TransformationCacheService.getTransformations(column, true)
             .then(function(transformations) {
                 result = transformations;
             });
         $rootScope.$digest();
 
         //then
-        expect(TransformationService.getTransformations).toHaveBeenCalledWith(stringifiedColumn);
+        expect(TransformationService.getTransformations).toHaveBeenCalledWith(stringifiedColumn, true);
+        expect(result).toEqual(transformationsMock());
+    }));
+
+
+    it('should call TransformationService when column is not in cache and showAll is false', inject(function($rootScope, TransformationCacheService, TransformationService) {
+        //given
+        var result = null;
+        var stringifiedColumn = JSON.stringify(column);
+
+        //when
+        TransformationCacheService.getTransformations(column, false)
+            .then(function(transformations) {
+                result = transformations;
+            });
+        $rootScope.$digest();
+
+        //then
+        expect(TransformationService.getTransformations).toHaveBeenCalledWith(stringifiedColumn, false);
         expect(result).toEqual(transformationsMock());
     }));
 

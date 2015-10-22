@@ -64,7 +64,7 @@ describe('Onboarding service', function() {
         expect(options.doneLabel).toBe('OK, LET ME TRY!');
     }));
 
-    it('should create/adapt tour step', inject(function(OnboardingService) {
+    it('should create/adapt dataset tour step', inject(function(OnboardingService) {
         //when
         OnboardingService.startTour('dataset');
 
@@ -75,6 +75,34 @@ describe('Onboarding service', function() {
             element: '.no-js',
             position: 'right',
             intro: '<div class="introjs-tooltiptitle">Welcome to Talend Data Preparation</div><div class="introjs-tooltipcontent">To learn more about Talend Data Preparation, take this quick tour</div>'
+        });
+    }));
+
+    it('should create/adapt playground step', inject(function(OnboardingService) {
+        //when
+        OnboardingService.startTour('playground');
+
+        //then
+        expect(introJsMock.setOptions).toHaveBeenCalled();
+        var options = introJsMock.setOptions.calls.argsFor(0)[0];
+        expect(options.steps[0]).toEqual({
+            element: '#datagrid .slick-header-columns-right > .slick-header-column',
+            position: 'right',
+            intro: '<div class="introjs-tooltiptitle">Columns</div><div class="introjs-tooltipcontent">Select a column to discover which actions you can apply on its cells, use the bar bellow to identify invalid or empty values.</div>'
+        });
+    }));
+
+    it('should create/adapt recipe tour step', inject(function(OnboardingService) {
+        //when
+        OnboardingService.startTour('recipe');
+
+        //then
+        expect(introJsMock.setOptions).toHaveBeenCalled();
+        var options = introJsMock.setOptions.calls.argsFor(0)[0];
+        expect(options.steps[0]).toEqual({
+            element: '#help-preparation-name',
+            position: 'right',
+            intro: '<div class="introjs-tooltiptitle">Your new preparation</div><div class="introjs-tooltipcontent">You can give a name to your brand new preparation. Usefull to find it later...</div>'
         });
     }));
 

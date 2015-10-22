@@ -15,29 +15,16 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.api.type.TypeUtils;
+import org.talend.dataprep.configuration.AnalyzerService;
 import org.talend.dataprep.dataset.service.Destinations;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
-import org.talend.dataquality.statistics.cardinality.CardinalityAnalyzer;
-import org.talend.dataquality.statistics.frequency.DataFrequencyAnalyzer;
-import org.talend.dataquality.statistics.frequency.PatternFrequencyAnalyzer;
-import org.talend.dataquality.statistics.numeric.histogram.HistogramAnalyzer;
-import org.talend.dataquality.statistics.numeric.histogram.HistogramColumnParameter;
-import org.talend.dataquality.statistics.numeric.histogram.HistogramParameter;
-import org.talend.dataquality.statistics.numeric.quantile.QuantileAnalyzer;
-import org.talend.dataquality.statistics.numeric.summary.SummaryAnalyzer;
-import org.talend.dataquality.statistics.quality.ValueQualityAnalyzer;
-import org.talend.dataquality.statistics.text.TextLengthAnalyzer;
 import org.talend.datascience.common.inference.Analyzer;
 import org.talend.datascience.common.inference.Analyzers;
-import org.talend.datascience.common.inference.type.DataType;
 
 @Component
 public class StatisticsAnalysis implements AsynchronousDataSetAnalyzer {
@@ -52,6 +39,9 @@ public class StatisticsAnalysis implements AsynchronousDataSetAnalyzer {
 
     @Autowired
     StatisticsAdapter adapter;
+
+    @Autowired
+    AnalyzerService analyzerService;
 
     @JmsListener(destination = Destinations.STATISTICS_ANALYSIS)
     public void analyzeQuality(Message message) {
@@ -112,38 +102,7 @@ public class StatisticsAnalysis implements AsynchronousDataSetAnalyzer {
             LOGGER.debug("Skip statistics of {} (no column information).", metadata.getId());
             return;
         }
-        DataType.Type[] types = TypeUtils.convert(columns);
-        // Set min and max for each column in histogram
-        final HistogramParameter histogramParameter = new HistogramParameter();
-        for (int i = 0; i < columns.size(); i++) {
-            ColumnMetadata column = columns.get(i);
-            final boolean isNumeric = Type.NUMERIC.isAssignableFrom(Type.get(column.getType()));
-            if (isNumeric) {
-                final HistogramColumnParameter columnParameter = new HistogramColumnParameter();
-                final Statistics statistics = column.getStatistics();
-                columnParameter.setParameters(statistics.getMin(), statistics.getMax(), 20);
-                histogramParameter.putColumnParameter(i, columnParameter);
-            }
-        }
-        final HistogramAnalyzer histogramAnalyzer = new HistogramAnalyzer(types, histogramParameter);
-        // Select all analysis
-        Analyzer[] allAnalyzers = new Analyzer[] {
-                new ValueQualityAnalyzer(types),
-                // Cardinality (distinct + duplicate)
-                new CardinalityAnalyzer(),
-                // Frequency analysis (Pattern + data)
-                new DataFrequencyAnalyzer(),
-                new PatternFrequencyAnalyzer(),
-                // Quantile analysis
-                new QuantileAnalyzer(types),
-                // Summary (min, max, mean, variance)
-                new SummaryAnalyzer(types),
-                // Histogram
-                histogramAnalyzer,
-                // Text length analysis (for applicable columns)
-                new TextLengthAnalyzer()
-        };
-        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(allAnalyzers);
+        final Analyzer<Analyzers.Result> analyzer = analyzerService.full(columns);
         stream.map(row -> row.toArray(DataSetRow.SKIP_TDP_ID)).forEach(analyzer::analyze);
         analyzer.end();
         // Store results back in data set

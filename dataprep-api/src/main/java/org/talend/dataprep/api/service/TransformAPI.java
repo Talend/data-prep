@@ -21,6 +21,7 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
 import org.talend.dataprep.api.service.command.dataset.DataSetGet;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
+import org.talend.dataprep.api.service.command.transformation.ColumnActions;
 import org.talend.dataprep.api.service.command.transformation.SuggestActionParams;
 import org.talend.dataprep.api.service.command.transformation.SuggestColumnActions;
 import org.talend.dataprep.api.service.command.transformation.Transform;
@@ -68,6 +69,37 @@ public class TransformAPI extends APIService {
         }
 
         LOG.debug("Transformation of dataset id #{} done.", dataSetId);
+    }
+
+    /**
+     * Get all the possible actions for a given column.
+     *
+     * Although not rest compliant, this is done via a post in order to pass all the column metadata in the request body
+     * without risking breaking the url size limit if GET would be used.
+     *
+     * @param body the column description (json encoded) in the request body.
+     * @param response the http response.
+     */
+    @RequestMapping(value = "/api/transform/actions/column", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get all actions for a data set column.", notes = "Returns all actions for the given column.")
+    @Timed
+    public void columnActions(@ApiParam(value = "Optional column Metadata content as JSON") InputStream body,
+                                     HttpServletResponse response) {
+
+        HttpClient client = getClient();
+
+        // Asks transformation service for all actions for column type and domain
+        HystrixCommand<InputStream> getSuggestedActions = getCommand(ColumnActions.class, client, body);
+        // Returns actions
+        try {
+            // olamy: this is weird to have to configure that manually whereas there is an annotation for the method!!
+            response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
+            ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copyLarge(getSuggestedActions.execute(), outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
     }
 
     /**

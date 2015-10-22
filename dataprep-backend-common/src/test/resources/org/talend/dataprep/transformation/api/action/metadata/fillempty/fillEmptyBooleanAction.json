@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "fillemptywithdefaultboolean",
+      "action": "fillemptywithdefault",
       "parameters": {
         "empty_default_value": "True",
         "scope": "column",

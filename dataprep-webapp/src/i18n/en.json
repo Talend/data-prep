@@ -124,6 +124,9 @@
   "COLUMN_TYPE_IS": "This column is a",
   "COLUMN_TYPE_SET": "Set as",
 
+  "_comment": "Action panel",
+  "FIND_FUNCTION": "Find a Function...",
+
   "_comment": "Statistics",
   "COUNT": "Count",
   "DISTINCT_COUNT": "Distinct",
@@ -147,6 +150,9 @@
   "GROUP_BY": "group by ",
   "APPLY_TO_ALL_CELLS": "Apply to all cells with this value",
   "STRING": "TEXT",
-  "FLOAT": "DECIMAL"
+  "FLOAT": "DECIMAL",
 
+  "_comment": "Range slider",
+  "INVALID_VALUE_RANGE_SLIDER": "Invalid Entered Value",
+  "INVALID_VALUE_RANGE_SLIDER_CONTENT": ": Use \".\" instead of \",\""
 }

@@ -34,7 +34,25 @@ describe('Transformation Application Service', function () {
             expect(PlaygroundService.appendStep).toHaveBeenCalledWith('tolowercase', expectedParams);
         }));
 
-        it('should create an appen closure', inject(function (TransformationApplicationService, PlaygroundService) {
+        it('should call appendStep without param', inject(function (TransformationApplicationService, PlaygroundService) {
+            //given
+            var transformation = {name: 'tolowercase'};
+            var scope = 'column';
+            stateMock.playground.column = {id: '0001', name: 'firstname'};
+
+            //when
+            TransformationApplicationService.append(transformation, scope);
+
+            //then
+            var expectedParams = {
+                scope: 'column',
+                column_id: '0001',
+                column_name: 'firstname'
+            };
+            expect(PlaygroundService.appendStep).toHaveBeenCalledWith('tolowercase', expectedParams);
+        }));
+
+        it('should create an append closure', inject(function (TransformationApplicationService, PlaygroundService) {
             //given
             var transformation = {name: 'tolowercase'};
             var scope = 'column';

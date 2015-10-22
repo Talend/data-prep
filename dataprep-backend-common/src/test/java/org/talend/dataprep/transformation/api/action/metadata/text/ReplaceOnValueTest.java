@@ -20,6 +20,7 @@ import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters.*;
 import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.CELL_VALUE_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.REPLACE_ENTIRE_CELL_PARAMETER;
 import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.REPLACE_VALUE_PARAMETER;
 
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -41,85 +43,110 @@ public class ReplaceOnValueTest {
 
     @Test
     public void should_return_common_and_specific_parameters() {
-        //when
+        // when
         final List<Parameter> actionParams = action.getParameters();
 
-        //then
-        assertThat(actionParams, hasSize(5));
+        // then
+        assertThat(actionParams, hasSize(6));
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
-        assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder(
-                COLUMN_ID.getKey(),
-                ROW_ID.getKey(),
-                SCOPE.getKey(),
-                CELL_VALUE_PARAMETER,
-                REPLACE_VALUE_PARAMETER));
+        assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder(COLUMN_ID.getKey(), //
+                ROW_ID.getKey(), //
+                SCOPE.getKey(), //
+                CELL_VALUE_PARAMETER, //
+                REPLACE_VALUE_PARAMETER, //
+                REPLACE_ENTIRE_CELL_PARAMETER));
     }
 
     @Test
     public void should_accept_string_typed_column() {
-        //given
+        // given
         final ColumnMetadata column = new ColumnMetadata();
         column.setType(STRING.toString());
 
-        //when
+        // when
         final boolean accepted = action.acceptColumn(column);
 
-        //then
+        // then
         assertThat(accepted, is(true));
     }
 
     @Test
     public void should_reject_non_string_typed_column() {
-        //given
+        // given
         final ColumnMetadata column = new ColumnMetadata();
         column.setType(BOOLEAN.toString());
 
-        //when
+        // when
         final boolean accepted = action.acceptColumn(column);
 
-        //then
+        // then
         assertThat(accepted, is(false));
     }
 
     @Test
-    public void should_replace_the_value_that_match_on_the_specified_column() {
-        //given
+    public void should_replace_the_value_that_match_on_the_specified_column_entire() {
+        // given
         final String columnId = "firstname";
 
         final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "James");
+        values.put(columnId, "James Hetfield");
         final DataSetRow row = new DataSetRow(values);
 
-        final Map<String,String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, "James");
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(CELL_VALUE_PARAMETER, "James.*");
         parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "true");
 
-        //when
+        // when
         action.applyOnColumn(row, null, parameters, columnId);
 
-        //then
+        // then
         assertThat(row.get(columnId), is("Jimmy"));
     }
 
     @Test
+    public void testComputeNewValue() {
+        // Case text when matches:
+        Assert.assertEquals("Bob Dylan", action.computeNewValue("Robert Dylan", "Robert", "Bob", false));
+        Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", "Robert", "Bob", true));
+        Assert.assertEquals("I listen to Bob Dylan every day", action.computeNewValue("I listen to Robert Dylan every day", "Robert", "Bob", false));
+
+        // Case text when don't match:
+        Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", "Andy", "Bob", false));
+        Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", "Andy", "Bob", true));
+
+        // Case regexp when matches:
+        Assert.assertEquals("Bob", action.computeNewValue("Robert Dylan", "Robert.*", "Bob", false));
+        Assert.assertEquals("Bob", action.computeNewValue("Robert Dylan", "Robert.*", "Bob", true));
+        Assert.assertEquals("I want to break free", action.computeNewValue("I want 2 break free", "\\d", "to", false));
+        Assert.assertEquals("to", action.computeNewValue("I want 2 break free", ".*\\d.*", "to", false));
+
+        // Case regexp when don't match:
+        Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", ".*Andy.*", "Bob", false));
+        Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", "Andy.*", "Bob", true));
+        Assert.assertEquals("I want 2 break free", action.computeNewValue("I want 2 break free", "\\d", "to", true));
+
+        Assert.assertEquals("XXXX_EN", action.computeNewValue("XXXX_FR_YYYY", "FR.*", "EN", false));
+        Assert.assertEquals("XXXX_EN_YYYY", action.computeNewValue("XXXX_FR_YYYY", "FR", "EN", false));
+        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "US", "EN", false));
+
+        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "FR.*", "EN", true));
+        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "FR", "EN", true));
+        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "US", "EN", true));
+        Assert.assertEquals("EN", action.computeNewValue("XXXX_FR_YYYY", ".*FR.*", "EN", true));
+    }
+
+    @Test
+    public void should_replace_the_value_that_match_on_the_specified_column() {
+        Assert.assertEquals("Jimmy Hetfield", action.computeNewValue("James Hetfield", "James", "Jimmy", false));
+        Assert.assertEquals("James Hetfield", action.computeNewValue("James Hetfield", "James", "Jimmy", true));
+    }
+
+    @Test
     public void should_NOT_replace_the_value_that_DOESNT_match_on_the_specified_column() {
-        //given
-        final String columnId = "firstname";
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "Toto");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String,String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, "James");
-        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
-
-        //when
-        action.applyOnColumn(row, null, parameters, columnId);
-
-        //then
-        assertThat(row.get(columnId), is("Toto"));
+        Assert.assertEquals("Toto", action.computeNewValue("Toto", "James", "Jimmy", false));
+        Assert.assertEquals("Toto", action.computeNewValue("Toto", "James", "Jimmy", true));
     }
 
     @Test
@@ -134,6 +161,7 @@ public class ReplaceOnValueTest {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(CELL_VALUE_PARAMETER, "James");
         parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
 
         // when
         action.applyOnColumn(row, null, parameters, "no column here");
@@ -144,83 +172,77 @@ public class ReplaceOnValueTest {
 
     @Test
     public void should_replace_the_value_that_match_on_the_specified_cell() {
-        //given
+        // given
         final String columnId = "firstname";
 
         final Map<String, String> values = new HashMap<>();
         values.put(columnId, "James");
         final DataSetRow row = new DataSetRow(values);
 
-        final Map<String,String> parameters = new HashMap<>();
+        final Map<String, String> parameters = new HashMap<>();
         parameters.put(CELL_VALUE_PARAMETER, "James");
         parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
 
-        //when
+        // when
         action.applyOnCell(row, null, parameters, 85L, columnId);
 
-        //then
+        // then
         assertThat(row.get(columnId), is("Jimmy"));
     }
 
     @Test
+    public void should_replace_many_values_that_match_on_the_specified_cell() {
+        // given
+        final String columnId = "firstname";
+
+        final Map<String, String> values = new HashMap<>();
+        values.put(columnId, "James Cleveland James");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(CELL_VALUE_PARAMETER, "James");
+        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
+
+        // when
+        action.applyOnCell(row, null, parameters, 85L, columnId);
+
+        // then
+        assertThat(row.get(columnId), is("Jimmy Cleveland Jimmy"));
+    }
+
+    @Test
     public void should_NOT_replace_the_value_that_DOESNT_match_on_the_specified_cell() {
-        //given
+        // given
         final String columnId = "firstname";
 
         final Map<String, String> values = new HashMap<>();
         values.put(columnId, "Toto");
         final DataSetRow row = new DataSetRow(values);
 
-        final Map<String,String> parameters = new HashMap<>();
+        final Map<String, String> parameters = new HashMap<>();
         parameters.put(CELL_VALUE_PARAMETER, "James");
         parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
 
-        //when
+        // when
         action.applyOnCell(row, null, parameters, 85L, columnId);
 
-        //then
+        // then
         assertThat(row.get(columnId), is("Toto"));
     }
 
     @Test
     public void should_replace_the_value_because_regexp() {
-        // given
-        final String columnId = "firstname";
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "password swordfish with Halle Berry");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, ".*Halle.*");
-        parameters.put(REPLACE_VALUE_PARAMETER, "replaced");
-
-        // when
-        action.applyOnCell(row, null, parameters, 85L, columnId);
-
-        // then
-        assertThat(row.get(columnId), is("replaced"));
+        Assert.assertEquals("replaced", action.computeNewValue("password swordfish with Halle Berry", ".*Halle.*", "replaced", false));
+        Assert.assertEquals("replaced", action.computeNewValue("password swordfish with Halle Berry", ".*Halle.*", "replaced", true));
     }
-
 
     @Test
     public void test_TDP_663() {
-        // given
-        final String columnId = "firstname";
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "password swordfish with Halle Berry");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, "*");
-        parameters.put(REPLACE_VALUE_PARAMETER, "replaced");
-
-        // when
-        action.applyOnCell(row, null, parameters, 85L, columnId);
-
-        // then
-        assertThat(row.get(columnId), is("password swordfish with Halle Berry"));
+        Assert.assertEquals("password swordfish with Halle Berry", action.computeNewValue("password swordfish with Halle Berry", "*", "replaced", true));
+        Assert.assertEquals("password swordfish with Halle Berry", action.computeNewValue("password swordfish with Halle Berry", "*", "replaced", false));
     }
 
 }

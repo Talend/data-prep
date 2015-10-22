@@ -4,6 +4,8 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.talend.dataprep.api.dataset.DataSetMetadata.Builder.metadata;
 
+import java.util.stream.Stream;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.dataset.Application;
 import org.talend.dataprep.dataset.service.DataSetServiceTests;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
@@ -74,6 +77,19 @@ public class FormatAnalyzerTest {
         assertThat(actual.getContent().getMediaType(), is("text/csv"));
         assertThat(actual.getContent().getParameters().get("SEPARATOR"), is("\t"));
         assertThat(actual.getEncoding(), is("UTF-16"));
+    }
+
+    @Test
+    public void test_TDP_690() throws Exception {
+        final DataSetMetadata metadata = metadata().id("1234").build();
+        repository.add(metadata);
+        contentStore.storeAsRaw(metadata, DataSetServiceTests.class.getResourceAsStream("../wave_lab_utf16_LE.txt"));
+        formatAnalysis.analyze("1234");
+        // Test for empty lines
+        final DataSetMetadata actual = repository.get("1234");
+        Stream<DataSetRow> content = contentStore.stream(actual);
+        final long emptyRows = content.filter(DataSetRow::isEmpty).count();
+        assertThat(emptyRows, is(0L));
     }
 
     @Test

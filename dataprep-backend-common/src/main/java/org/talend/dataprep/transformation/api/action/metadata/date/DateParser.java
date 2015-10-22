@@ -21,6 +21,21 @@ import org.talend.dataquality.statistics.frequency.PatternFrequencyStatistics;
 public class DateParser {
 
     /**
+     * Returns the most frequent pattern. If few patterns are equally frequent, no guaranty of which one is returned.
+     * 
+     * @param column
+     * @return the most frequent pattern or null if no pattern at all.
+     */
+    public DatePattern getMostFrequentPattern(ColumnMetadata column) {
+        List<DatePattern> patterns = getPatterns(column.getStatistics().getPatternFrequencies());
+        if (!patterns.isEmpty()) {
+            return patterns.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Parse the date time out of the given value based on the column date pattern.
      *
      * At first uses the known date patterns from the column statistics. If it fails, the DQ library is called to try to

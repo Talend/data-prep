@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "fillemptywithdefaultinteger",
+      "action": "fillemptywithdefault",
       "parameters": {
         "column_id": "nbCommands",
         "empty_default_value": 5,

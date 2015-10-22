@@ -20,18 +20,19 @@ import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTest
 /**
  * Unit test for the FillWithIntegerIfEmpty action.
  *
- * @see FillWithIntegerIfEmpty
+ * @see FillIfEmpty
  */
 public class FillWithIntegerIfEmptyTest {
 
     /** The action to test. */
-    private FillWithIntegerIfEmpty action;
+    private FillIfEmpty action;
 
     /**
      * Default empty constructor.
      */
     public FillWithIntegerIfEmptyTest() {
-        action = new FillWithIntegerIfEmpty();
+        action = new FillIfEmpty();
+        action.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
     }
 
     @Test
@@ -72,9 +73,6 @@ public class FillWithIntegerIfEmptyTest {
         assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
         assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
         assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));
     }
 

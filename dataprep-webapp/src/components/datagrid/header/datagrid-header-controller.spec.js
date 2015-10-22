@@ -133,7 +133,7 @@ describe('Datagrid header controller', function () {
             $rootScope.$digest();
 
             //then
-            expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(column);
+            expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(column, true);
             expect(ctrl.transformations.length).toBe(2);
             expect(ctrl.transformations[0].name).toBe('rename');
             expect(ctrl.transformations[1].name).toBe('split');

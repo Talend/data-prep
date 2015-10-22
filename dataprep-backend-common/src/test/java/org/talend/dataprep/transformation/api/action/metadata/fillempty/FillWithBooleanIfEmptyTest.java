@@ -20,18 +20,19 @@ import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTest
 /**
  * Unit test for the FillWithBooleanIfEmpty action.
  *
- * @see FillWithBooleanIfEmpty
+ * @see FillIfEmpty
  */
 public class FillWithBooleanIfEmptyTest {
 
     /** The action to test. */
-    private FillWithBooleanIfEmpty action;
+    private FillIfEmpty action;
 
     /**
      * Default empty constructor.
      */
     public FillWithBooleanIfEmptyTest() {
-        action = new FillWithBooleanIfEmpty();
+        action = new FillIfEmpty();
+        action.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
     }
 
     @Test
@@ -69,12 +70,9 @@ public class FillWithBooleanIfEmptyTest {
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
         assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
         assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
         assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.INTEGER)));
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));
     }
 

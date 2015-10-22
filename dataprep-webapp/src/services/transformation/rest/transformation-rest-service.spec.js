@@ -9,7 +9,28 @@ describe('Transformation Rest Service', function() {
         $httpBackend = $injector.get('$httpBackend');
     }));
 
-    it('should call GET transform rest service', inject(function ($rootScope, TransformationRestService, RestURLs) {
+    it('should call POST transform rest service to get all transformations', inject(function ($rootScope, TransformationRestService, RestURLs) {
+        //given
+        var column = {'id': 'firstname', 'quality': { 'empty': 0, 'invalid': 0, 'valid': 2 }, 'type': 'string', 'total': 2};
+        var response = null;
+
+        var result = [{'category':'case','items':[],'name':'uppercase','value':'','type':'OPERATION','parameters':[{'name':'column_name','type':'string','default':''}]},{'category':'case','items':[],'name':'lowercase','value':'','type':'OPERATION','parameters':[{'name':'column_name','type':'string','default':''}]}];
+        $httpBackend
+            .expectPOST(RestURLs.transformUrl + '/actions/column', JSON.stringify(column))
+            .respond(200, result);
+
+        //when
+        TransformationRestService.getTransformations(JSON.stringify(column), true).then(function (resp) {
+            response = resp.data;
+        });
+        $httpBackend.flush();
+
+        //then
+        expect(response).toEqual(result);
+    }));
+
+
+    it('should call POST transform rest service to get some suggested transformations', inject(function ($rootScope, TransformationRestService, RestURLs) {
         //given
         var column = {'id': 'firstname', 'quality': { 'empty': 0, 'invalid': 0, 'valid': 2 }, 'type': 'string', 'total': 2};
         var response = null;
@@ -20,7 +41,7 @@ describe('Transformation Rest Service', function() {
             .respond(200, result);
 
         //when
-        TransformationRestService.getTransformations(JSON.stringify(column)).then(function (resp) {
+        TransformationRestService.getTransformations(JSON.stringify(column), false).then(function (resp) {
             response = resp.data;
         });
         $httpBackend.flush();

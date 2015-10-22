@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  *
  */
-class DatePattern implements Comparable {
+public class DatePattern implements Comparable {
 
     private long occurrences;
 

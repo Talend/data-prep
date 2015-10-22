@@ -1,7 +1,5 @@
 package org.talend.dataprep.dataset.service.analysis;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -19,21 +17,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
-import org.talend.dataprep.api.type.TypeUtils;
+import org.talend.dataprep.configuration.AnalyzerService;
 import org.talend.dataprep.dataset.service.Destinations;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
-import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
-import org.talend.dataquality.semantic.statistics.SemanticAnalyzer;
-import org.talend.dataquality.statistics.numeric.summary.SummaryAnalyzer;
-import org.talend.dataquality.statistics.quality.ValueQualityAnalyzer;
 import org.talend.dataquality.statistics.quality.ValueQualityStatistics;
 import org.talend.datascience.common.inference.Analyzer;
 import org.talend.datascience.common.inference.Analyzers;
-import org.talend.datascience.common.inference.type.DataType;
 
 @Component
 public class QualityAnalysis implements SynchronousDataSetAnalyzer, AsynchronousDataSetAnalyzer {
@@ -51,6 +44,9 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer, Asynchronous
 
     @Autowired
     StatisticsAdapter adapter;
+
+    @Autowired
+    AnalyzerService analyzerService;
 
     @JmsListener(destination = Destinations.QUALITY_ANALYSIS)
     public void analyzeQuality(Message message) {
@@ -144,24 +140,7 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer, Asynchronous
             LOGGER.debug("Skip analysis of {} (no column information).", dataset.getId());
             return;
         }
-        DataType.Type[] types = TypeUtils.convert(columns);
-        // Run analysis
-        final CategoryRecognizerBuilder categoryBuilder;
-        try {
-            final URI ddPath = QualityAnalysis.class.getResource("/luceneIdx/dictionary").toURI(); //$NON-NLS-1$
-            final URI kwPath = QualityAnalysis.class.getResource("/luceneIdx/keyword").toURI(); //$NON-NLS-1$
-            categoryBuilder = CategoryRecognizerBuilder.newBuilder() //
-                    .ddPath(ddPath) //
-                    .kwPath(kwPath) //
-                    .setMode(CategoryRecognizerBuilder.Mode.LUCENE);
-        } catch (URISyntaxException e) {
-            throw new TDPException(DataSetErrorCodes.UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
-        }
-        final ValueQualityAnalyzer valueQualityAnalyzer = new ValueQualityAnalyzer(types);
-        valueQualityAnalyzer.setStoreInvalidValues(true);
-        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(valueQualityAnalyzer, //
-                new SummaryAnalyzer(types), //
-                new SemanticAnalyzer(categoryBuilder));
+        final Analyzer<Analyzers.Result> analyzer = analyzerService.qualityAnalysis(columns);
         if (limit > 0) { // Only limit number of rows if limit > 0 (use limit to speed up sync analysis.
             LOGGER.debug("Limit analysis to the first {}.", limit);
             records = records.limit(limit);

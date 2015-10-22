@@ -5,12 +5,15 @@ describe('Preparation Service', function () {
 
     var preparationConsolidation, datasetConsolidation;
     var datasets = [{name: 'my dataset'}, {name: 'my second dataset'}, {name: 'my second dataset (1)'}, {name: 'my second dataset (2)'}];
-    var preparations = [{id: '4385fa764bce39593a405d91bc88'}, {id: '58444bce39593a405d9456'}, {id: '2545764bce39593a405d91bc8673'}];
+    var preparations = [{id: '4385fa764bce39593a405d91bc88', dataSetId: '3214a5454ef8642c13'}, {id: '58444bce39593a405d9456'}, {id: '2545764bce39593a405d91bc8673'}];
     var newPreparationId = '6cd546546548a745';
+
+    var updatedDatasetId = '99ac8561e62f34131';
+    var updatedPreparationId = '5ea51464f515125e3';
 
     beforeEach(module('data-prep.services.preparation'));
 
-    beforeEach(inject(function($q, DatasetListService, PreparationListService, PreparationRestService) {
+    beforeEach(inject(function($q, DatasetListService, PreparationListService, PreparationRestService, StorageService) {
         preparationConsolidation = $q.when(true);
         datasetConsolidation = $q.when(datasets);
 
@@ -18,8 +21,8 @@ describe('Preparation Service', function () {
         spyOn(PreparationListService, 'refreshMetadataInfos').and.returnValue(preparationConsolidation);
 
         spyOn(PreparationListService, 'refreshPreparations').and.returnValue($q.when(preparations));
-        spyOn(PreparationListService, 'create').and.returnValue($q.when({data: newPreparationId}));
-        spyOn(PreparationListService, 'update').and.returnValue($q.when(true));
+        spyOn(PreparationListService, 'create').and.returnValue($q.when({id: newPreparationId}));
+        spyOn(PreparationListService, 'update').and.returnValue($q.when({id: updatedPreparationId, dataSetId: updatedDatasetId}));
         spyOn(PreparationListService, 'delete').and.returnValue($q.when(true));
 
         spyOn(PreparationRestService, 'updateStep').and.returnValue($q.when(true));
@@ -28,6 +31,10 @@ describe('Preparation Service', function () {
         spyOn(PreparationRestService, 'getPreviewDiff').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'getPreviewUpdate').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'getPreviewAdd').and.returnValue($q.when(true));
+
+        spyOn(StorageService, 'savePreparationAggregationsFromDataset').and.returnValue();
+        spyOn(StorageService, 'removeAllAggregations').and.returnValue();
+        spyOn(StorageService, 'moveAggregations').and.returnValue();
     }));
 
     describe('getter/refresher', function() {
@@ -165,82 +172,125 @@ describe('Preparation Service', function () {
     });
 
     describe('lifecycle', function() {
-        it('should create a new preparation', inject(function ($rootScope, PreparationService, PreparationListService) {
-            //given
-            var datasetId = '2430e5df845ab6034c85';
-            var name = 'my preparation';
+        describe('create', function() {
+            it('should create a new preparation', inject(function ($rootScope, PreparationService, PreparationListService) {
+                //given
+                var datasetId = '2430e5df845ab6034c85';
+                var name = 'my preparation';
 
-            //when
-            PreparationService.create(datasetId, name);
-            $rootScope.$digest();
+                //when
+                PreparationService.create(datasetId, name);
+                $rootScope.$digest();
 
-            //then
-            expect(PreparationListService.create).toHaveBeenCalledWith(datasetId, name);
-        }));
+                //then
+                expect(PreparationListService.create).toHaveBeenCalledWith(datasetId, name);
+            }));
 
-        it('should consolidate preparations and datasets on creation', inject(function ($rootScope, PreparationService, PreparationListService, DatasetListService) {
-            //given
-            PreparationListService.preparations = preparations;
-            var datasetId = '2430e5df845ab6034c85';
+            it('should consolidate preparations and datasets on creation', inject(function ($rootScope, PreparationService, PreparationListService, DatasetListService) {
+                //given
+                PreparationListService.preparations = preparations;
+                var datasetId = '2430e5df845ab6034c85';
 
-            //when
-            PreparationService.create(datasetId, 'my preparation');
-            $rootScope.$digest();
+                //when
+                PreparationService.create(datasetId, 'my preparation');
+                $rootScope.$digest();
 
-            //then
-            expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
-            expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
-        }));
+                //then
+                expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
+                expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
+            }));
 
-        it('should update current preparation name', inject(function ($rootScope, PreparationService, PreparationListService) {
-            //given
-            var preparationId = '6cd546546548a745';
-            var name = 'my preparation';
+            it('should save aggregations for preparation from dataset aggregations', inject(function ($rootScope, PreparationService, StorageService) {
+                //given
+                var datasetId = '2430e5df845ab6034c85';
 
-            //when
-            PreparationService.setName(preparationId, name);
-            $rootScope.$digest();
+                //when
+                PreparationService.create(datasetId, 'my preparation');
+                $rootScope.$digest();
 
-            //then
-            expect(PreparationListService.update).toHaveBeenCalledWith(preparationId, name);
-        }));
+                //then
+                expect(StorageService.savePreparationAggregationsFromDataset).toHaveBeenCalledWith(datasetId, newPreparationId);
+            }));
+        });
 
-        it('should consolidate preparations and datasets on name update', inject(function ($rootScope, PreparationService, PreparationListService, DatasetListService) {
-            //given
-            PreparationListService.preparations = preparations;
-            var preparationId = '6cd546546548a745';
-            var name = 'my preparation';
+        describe('update', function() {
+            it('should update current preparation name', inject(function ($rootScope, PreparationService, PreparationListService) {
+                //given
+                var preparationId = '6cd546546548a745';
+                var name = 'my preparation';
 
-            //when
-            PreparationService.setName(preparationId, name);
-            $rootScope.$digest();
+                //when
+                PreparationService.setName(preparationId, name);
+                $rootScope.$digest();
 
-            //then
-            expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
-            expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
-        }));
+                //then
+                expect(PreparationListService.update).toHaveBeenCalledWith(preparationId, name);
+            }));
 
-        it('should delete a preparation', inject(function ($rootScope, PreparationService, PreparationListService) {
-            //when
-            PreparationService.delete(preparations[0]);
-            $rootScope.$digest();
+            it('should move aggregations to the new preparation id key in localStorage', inject(function ($rootScope, PreparationService, StorageService) {
+                //given
+                var preparationId = '6cd546546548a745';
+                var name = 'my preparation';
 
-            //then
-            expect(PreparationListService.delete).toHaveBeenCalledWith(preparations[0]);
-        }));
+                //when
+                PreparationService.setName(preparationId, name);
+                $rootScope.$digest();
 
-        it('should consolidate preparations and datasets on deletion', inject(function ($rootScope, PreparationService, PreparationListService, DatasetListService) {
-            //given
-            PreparationListService.preparations = preparations;
+                //then
+                expect(StorageService.moveAggregations).toHaveBeenCalledWith(updatedDatasetId, preparationId, updatedPreparationId);
+            }));
 
-            //when
-            PreparationService.delete(preparations[0]);
-            $rootScope.$digest();
+            it('should consolidate preparations and datasets on name update', inject(function ($rootScope, PreparationService, PreparationListService, DatasetListService) {
+                //given
+                PreparationListService.preparations = preparations;
+                var preparationId = '6cd546546548a745';
+                var name = 'my preparation';
 
-            //then
-            expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
-            expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
-        }));
+                //when
+                PreparationService.setName(preparationId, name);
+                $rootScope.$digest();
+
+                //then
+                expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
+                expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
+            }));
+        });
+
+        describe('delete', function() {
+            it('should delete a preparation', inject(function ($rootScope, PreparationService, PreparationListService) {
+                //when
+                PreparationService.delete(preparations[0]);
+                $rootScope.$digest();
+
+                //then
+                expect(PreparationListService.delete).toHaveBeenCalledWith(preparations[0]);
+            }));
+
+            it('should consolidate preparations and datasets on deletion', inject(function ($rootScope, PreparationService, PreparationListService, DatasetListService) {
+                //given
+                PreparationListService.preparations = preparations;
+
+                //when
+                PreparationService.delete(preparations[0]);
+                $rootScope.$digest();
+
+                //then
+                expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
+                expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
+            }));
+
+            it('should remove aggregations from storage', inject(function ($rootScope, PreparationService, PreparationListService, StorageService) {
+                //given
+                PreparationListService.preparations = preparations;
+
+                //when
+                PreparationService.delete(preparations[0]);
+                $rootScope.$digest();
+
+                //then
+                expect(StorageService.removeAllAggregations).toHaveBeenCalledWith(preparations[0].dataSetId, preparations[0].id);
+            }));
+        });
     });
 
     describe('steps', function() {

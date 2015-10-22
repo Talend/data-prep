@@ -252,8 +252,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
         assertEquals("Test with spaces", metadata.getName());
     }
 
-
-
     @Test
     public void testDataSetColumnSuggestions() throws Exception {
         // given
@@ -263,7 +261,19 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String content = given().body(columnDescription).when().post("/api/transform/suggest/column").asString();
 
         // then
-        final InputStream expected = PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_suggestions.json");
+        assertThat(content, sameJSONAs("[]")); // All values in column are valid, no corrective action proposed.
+    }
+
+    @Test
+    public void testDataSetColumnActions() throws Exception {
+        // given
+        final String columnDescription = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"));
+
+        // when
+        final String content = given().body(columnDescription).when().post("/api/transform/actions/column").asString();
+
+        // then
+        final InputStream expected = PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_actions.json");
         assertThat(content, sameJSONAsFile(expected));
     }
 

@@ -6,5 +6,8 @@
     "invalid": 10,
     "valid": 72
   },
-  "type": "integer"
+  "type": "integer",
+  "statistics": {
+    "min": -10
+  }
 }

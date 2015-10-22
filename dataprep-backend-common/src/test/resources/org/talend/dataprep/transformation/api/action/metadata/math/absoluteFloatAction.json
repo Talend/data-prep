@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "absolute_float",
+      "action": "absolute",
       "parameters": {
         "column_id": "float_column",
         "scope": "column"

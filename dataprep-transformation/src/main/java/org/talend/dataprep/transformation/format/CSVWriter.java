@@ -53,7 +53,7 @@ public class CSVWriter implements TransformerWriter {
      */
     public CSVWriter(final OutputStream output, Map<String, Object> parameters) {
         String actualSeparator = (String) parameters.get(SEPARATOR_PARAM_NAME);
-        if (actualSeparator == null || StringUtils.isBlank(actualSeparator) || actualSeparator.length() > 1) {
+        if (actualSeparator == null || StringUtils.isEmpty(actualSeparator) || actualSeparator.length() > 1) {
             actualSeparator = String.valueOf(DEFAULT_SEPARATOR);
         }
         writer = new au.com.bytecode.opencsv.CSVWriter(new OutputStreamWriter(output), actualSeparator.charAt(0));

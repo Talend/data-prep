@@ -23,8 +23,8 @@
 
                     var drag = false;
 
-                    var actionHeaderPanelsSizeMargin = 130;
-                    var statHeaderPanelsSizeMargin = 100;
+                    var actionHeaderPanelsSizeMargin = 120;
+                    var statHeaderPanelsSizeMargin = 35;
 
                     iElement.bind('mousemove', function () {
                         if (!drag) {
@@ -51,9 +51,9 @@
 
                     //Initialization of the right panel
                     // 325px : to have at least 5 actions in the top panel
-                    panel1.css('height', '350px');
-                    handler.css('top', '350px');
-                    panel2.css('top', '350px');
+                    panel1.css('height', '310px');
+                    handler.css('top', '310px');
+                    panel2.css('top', '310px');
 
                     iElement.find('.action-suggestion-tab-items').css('height', panel1.height()- actionHeaderPanelsSizeMargin + 'px');
                     iElement.find('.stat-detail-tab-items').css('height', panel2.height()- statHeaderPanelsSizeMargin + 'px');

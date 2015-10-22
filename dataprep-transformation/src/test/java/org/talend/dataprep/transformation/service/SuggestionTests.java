@@ -2,11 +2,15 @@ package org.talend.dataprep.transformation.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.talend.dataprep.transformation.Application;
+
+import com.jayway.restassured.path.json.JsonPath;
 
 /**
  * Integration tests on suggestions.
@@ -62,6 +66,42 @@ public class SuggestionTests extends TransformationServiceBaseTests {
 
         // then
         assertEquals(expectedSuggestions, response, false);
+    }
+
+    @Test
+    public void suggestLimit() throws Exception {
+        // given
+        final String columnMetadata = IOUtils.toString(Application.class.getResourceAsStream("suggestions/date_column.json"));
+
+        // when
+        final String response = given() //
+                .contentType(JSON) //
+                .body(columnMetadata) //
+                .when() //
+                .post("/suggest/column?limit=2") //
+                .asString();
+
+        // then
+        final JsonPath json = JsonPath.from(response);
+        assertThat(json.getList("").size(), is(2));
+    }
+
+    @Test
+    public void suggestLimitDefault() throws Exception {
+        // given
+        final String columnMetadata = IOUtils.toString(Application.class.getResourceAsStream("suggestions/date_column.json"));
+
+        // when
+        final String response = given() //
+                .contentType(JSON) //
+                .body(columnMetadata) //
+                .when() //
+                .post("/suggest/column") //
+                .asString();
+
+        // then
+        final JsonPath json = JsonPath.from(response);
+        assertThat(json.getList("").size(), is(5)); // Default for "limit" is 5.
     }
 
     @Test

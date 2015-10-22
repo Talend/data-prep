@@ -83,7 +83,7 @@ public class CSVSerializer implements Serializer {
         while ((line = reader.readNext()) != null) {
 
             // skip empty lines
-            if (line.length == 1 && StringUtils.isEmpty(line[0])) {
+            if (line.length == 1 && (StringUtils.isEmpty(line[0]) || line[0].charAt(0) == '\u0000')) {
                 continue;
             }
 

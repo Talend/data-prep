@@ -7,10 +7,9 @@
      * @description Column profile controller.
      * @requires data-prep.services.state.constant:state
      * @requires data-prep.statistics.service:StatisticsService
-     * @requires data-prep.recipe.service:RecipeService
      * @requires data-prep.services.filter.service:FilterService
      */
-    function ColumnProfileCtrl($scope, state, StatisticsService, RecipeService, FilterService) {
+    function ColumnProfileCtrl($scope, state, StatisticsService, FilterService) {
         var vm = this;
         vm.statisticsService = StatisticsService;
         vm.chartConfig = {};
@@ -87,11 +86,7 @@
                 return;
             }
 
-            var datasetId = state.playground.dataset.id;
-            var preparationId = state.playground.preparation ? state.playground.preparation.id : null;
-            var stepId = preparationId ? RecipeService.getLastActiveStep().id : null;
-
-            StatisticsService.processAggregation(datasetId, preparationId, stepId, column, aggregation);
+            StatisticsService.processAggregation(column, aggregation);
         };
 
         //------------------------------------------------------------------------------------------------------

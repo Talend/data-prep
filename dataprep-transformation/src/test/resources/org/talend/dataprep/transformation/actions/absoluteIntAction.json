@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "absolute_int",
+      "action": "absolute",
       "parameters": {
         "column_id": "avgAmount",
         "scope": "column"

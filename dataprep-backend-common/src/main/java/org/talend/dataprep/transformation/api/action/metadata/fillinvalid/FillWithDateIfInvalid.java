@@ -27,6 +27,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadataUtils;
 import org.talend.dataprep.transformation.api.action.metadata.date.DateParser;
+import org.talend.dataprep.transformation.api.action.metadata.date.DatePattern;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
@@ -52,7 +53,7 @@ public class FillWithDateIfInvalid extends AbstractFillIfInvalid {
     private static final String DEFAULT_DATE_VALUE = DEFAULT_FORMATTER.format(LocalDateTime.of(1970, Month.JANUARY, 1, 10, 0));
 
     @Autowired
-    private DateParser dateParser;
+    private DateParser dateParser = new DateParser(); // TODO investigate why this instantiation is required, should be auto with Autowired
 
     @Override
     public String getName() {
@@ -68,73 +69,15 @@ public class FillWithDateIfInvalid extends AbstractFillIfInvalid {
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, TransformationContext context, Map<String, String> parameters, String columnId) {
-        final String value = row.get(columnId);
+    protected String getDefaultValue(DataSetRow row, Map<String, String> parameters, String columnId) {
+        final ColumnMetadata columnMetadata = row.getRowMetadata().getById(columnId);
+        final LocalDateTime date = dateParser.parse(parameters.get(DEFAULT_VALUE_PARAMETER), columnMetadata);
+        final DatePattern mostFrequentPattern = dateParser.getMostFrequentPattern(columnMetadata);
 
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        final ColumnMetadata column = rowMetadata.getById(columnId);
-        if (column == null) {
-            return;
-        }
+        DateTimeFormatter ourNiceFormatter = (mostFrequentPattern == null ? DEFAULT_FORMATTER : mostFrequentPattern
+                .getFormatter());
 
-        try {
-            if (StringUtils.isEmpty(value) || ActionMetadataUtils.checkInvalidValue(column, value)) {
-
-                // we assume all controls have been made in the ui, parse the new date to set
-                String newDateStr = parameters.get(DEFAULT_VALUE_PARAMETER);
-                TemporalAccessor newValueToSet = DEFAULT_FORMATTER.parse(newDateStr);
-
-                // format the result with the most used pattern in the column
-                String mostUsedPattern = findMostUsedDatePattern(column);
-                String newDateWithFormat = formatResult(newValueToSet, mostUsedPattern);
-
-                // set the result
-                row.set(columnId, newDateWithFormat);
-
-                // update invalid values to prevent future unnecessary analysis
-                if (!StringUtils.isEmpty(value)) {
-                    final Set<String> invalidValues = column.getQuality().getInvalidValues();
-                    invalidValues.add(value);
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.warn("skip error parsing date", e);
-        }
-    }
-
-    /**
-     * The formatted date with the given pattern.
-     *
-     * @param toFormat the date(time) to format.
-     * @param pattern the pattern to use to format.
-     * @return The formatted date with the given pattern.
-     */
-    private String formatResult(TemporalAccessor toFormat, String pattern) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-        return formatter.format(toFormat);
-    }
-
-    /**
-     * Return the most used date pattern in the column, using the columne statistics.
-     *
-     * @param column the column to inspect.
-     * @return the most used date pattern.
-     */
-    protected String findMostUsedDatePattern(final ColumnMetadata column) {
-        // get the date pattern to write the date with
-        // register the new pattern in column stats, to be able to process date action later
-        final Statistics statistics = column.getStatistics();
-        final Stream<PatternFrequency> stream = statistics.getPatternFrequencies().stream();
-        final Optional<PatternFrequency> mostUsed = stream.sorted((pf1, pf2) -> {
-            if (pf1.getOccurrences() - pf2.getOccurrences() == 0) {
-                return 0;
-            } else if (pf1.getOccurrences() - pf2.getOccurrences() > 0) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }).findFirst();
-        return mostUsed.get().getPattern();
+        return ourNiceFormatter.format(date);
     }
 
     /**

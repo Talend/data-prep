@@ -18,6 +18,14 @@ describe('rangeSlider directive', function () {
 
     beforeEach(module('talend.widget'));
 
+    beforeEach(module('pascalprecht.translate', function ($translateProvider) {
+        $translateProvider.translations('en', {
+            'INVALID_VALUE_RANGE_SLIDER': 'Invalid Entered Value',
+            'INVALID_VALUE_RANGE_SLIDER_CONTENT': ': Use \".\" instead of \",\"'
+        });
+        $translateProvider.preferredLanguage('en');
+    }));
+
     beforeEach(inject(function ($rootScope, $compile) {
         scope = $rootScope.$new(true);
         scope.rangeLimits = {

@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "delete_negative_values",
+      "parameters": {
+        "column_id": "age",
+        "scope": "column"
+      }
+    }
+  ]
+}

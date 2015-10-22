@@ -2,7 +2,7 @@ describe('Tabs directive', function () {
     'use strict';
 
     var scope, element, createElement;
-
+    var body = angular.element('body');
     beforeEach(module('talend.widget'));
     beforeEach(module('htmlTemplates'));
 
@@ -11,12 +11,15 @@ describe('Tabs directive', function () {
         element.remove();
     });
 
-    beforeEach(inject(function ($rootScope, $compile) {
+    beforeEach(inject(function ($rootScope, $compile, $timeout) {
         scope = $rootScope.$new();
 
         createElement = function () {
-            var template = '<talend-tabs tab="selectedTab">' +
-                '   <talend-tabs-item tab-title="tab 1 title">' +
+
+            scope.resizePanels = jasmine.createSpy('resizePanels');
+
+            var template = '<talend-tabs tab="selectedTab" action-on-click="resizePanels()">' +
+                '   <talend-tabs-item tab-title="tab 1 title" action-on-init="resizePanels()">' +
                 '       <div id="tab1Content">Content tab 1</div>' +
                 '   </talend-tabs-item>' +
                 '   <talend-tabs-item tab-title="tab 2 title" default="true">' +
@@ -27,7 +30,9 @@ describe('Tabs directive', function () {
                 '   </talend-tabs-item>' +
                 '</talend-tabs>';
             element = $compile(template)(scope);
+            body.append(element);
             scope.$digest();
+            $timeout.flush();
         };
     }));
 
@@ -107,5 +112,29 @@ describe('Tabs directive', function () {
 
         //then
         expect(ctrl.setSelectedTab).not.toHaveBeenCalled();
+    }));
+
+
+    it('should resize panel when changing tabs', inject(function () {
+        //given
+        createElement();
+
+        //when
+        var event = angular.element.Event('click');
+        element.find('.tabs-item').eq(0).trigger(event);
+
+        //then
+        expect(scope.resizePanels).toHaveBeenCalled();
+        expect(scope.resizePanels.calls.count()).toBe(2);
+    }));
+
+
+    it('should resize panel when initializing the tabs', inject(function () {
+        //given
+        createElement();
+
+        //then
+        expect(scope.resizePanels).toHaveBeenCalled();
+        expect(scope.resizePanels.calls.count()).toBe(1);
     }));
 });

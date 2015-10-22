@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "fillemptywithdefaultstring",
+      "action": "fillemptywithdefault",
       "parameters": {
         "empty_default_value": "beer",
         "scope": "column",

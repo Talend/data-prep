@@ -16,6 +16,7 @@ import org.talend.dataprep.api.type.Type;
  * A DataSetRow is a row of a dataset. Values in data set row are <b>alphabetically</b> ordered by name.
  */
 public class DataSetRow implements Cloneable {
+
     public static final String TDP_ID = "tdpId";
 
     /**
@@ -71,9 +72,13 @@ public class DataSetRow implements Cloneable {
         return rowMetadata;
     }
 
+    public void setRowMetadata(RowMetadata rowMetadata) {
+        this.rowMetadata = rowMetadata;
+    }
+
     /**
      * Set an entry in the dataset row
-     * 
+     *
      * @param name - the key
      * @param value - the value
      */
@@ -84,7 +89,7 @@ public class DataSetRow implements Cloneable {
 
     /**
      * Get the value associated with the provided key
-     * 
+     *
      * @param id the column id.
      * @return - the value as string
      */
@@ -186,7 +191,7 @@ public class DataSetRow implements Cloneable {
 
     public Map<String, Object> valuesWithId() {
         final Map<String, Object> temp = values();
-        if(getTdpId() != null) {
+        if (getTdpId() != null) {
             temp.put(TDP_ID, getTdpId());
         }
         return temp;
@@ -252,8 +257,9 @@ public class DataSetRow implements Cloneable {
     }
 
     /**
-     * Order values of this data set row according to <code>columns</code>. This method clones the current record, so
-     * no need to call {@link #clone()}.
+     * Order values of this data set row according to <code>columns</code>. This method clones the current record, so no
+     * need to call {@link #clone()}.
+     *
      * @param columns The columns to be used to order values.
      * @return A new data set row for method with values ordered following <code>columns</code>.
      */
@@ -278,7 +284,9 @@ public class DataSetRow implements Cloneable {
 
     /**
      * Returns the current row as an array of Strings.
-     * @param filters An optional set of {@link Predicate filters} to be used to filter values. See {@link #SKIP_TDP_ID} for example.
+     *
+     * @param filters An optional set of {@link Predicate filters} to be used to filter values. See {@link #SKIP_TDP_ID}
+     * for example.
      * @return The current row as array of String eventually with filtered out columns depending on filter.
      */
     @SafeVarargs
@@ -303,7 +311,11 @@ public class DataSetRow implements Cloneable {
         this.tdpId = tdpId;
     }
 
-    public void setRowMetadata(RowMetadata rowMetadata) {
-        this.rowMetadata = rowMetadata;
+    /**
+     * @return <code>true</code> if row has no value / or / only contains empty strings / or / null strings.
+     * <code>false</code> otherwise.
+     */
+    public boolean isEmpty() {
+        return values.isEmpty() || values.values().stream().filter(s -> !StringUtils.isEmpty(s)).count() == 0;
     }
 }

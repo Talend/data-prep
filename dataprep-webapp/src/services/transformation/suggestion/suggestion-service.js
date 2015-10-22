@@ -34,6 +34,23 @@
              */
             currentColumn: null,
 
+            /**
+             * @ngdoc property
+             * @name showAllAction
+             * @propertyOf data-prep.services.transformation.service:SuggestionService
+             * @description show all actions or all of them
+             * @type {Object}
+             */
+            showAllAction: false,
+
+            /**
+             * @ngdoc property
+             * @name searchActionString
+             * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+             * @description Actions to search
+             */
+            searchActionString: '',
+
             setColumn: setColumn,
             selectTab: selectTab,
             reset: reset
@@ -41,20 +58,25 @@
 
         return service;
 
+
+
         /**
          * @ngdoc method
          * @name setColumn
          * @methodOf data-prep.services.transformation.service:SuggestionService
          * @param {object} column The new selected column
-         * @description Set the selected column and init its suggested transformations
+         * @description Set the selected column and init its suggested transformations and reset action search
          */
         function setColumn(column) {
+
+            resetSearchAction();
+
             if (column === service.currentColumn) {
                 return;
             }
 
             service.currentColumn = column;
-            ColumnSuggestionService.initTransformations(column);
+            ColumnSuggestionService.initTransformations(column, service.showAllAction);
         }
 
         /**
@@ -77,6 +99,30 @@
         function reset() {
             service.currentColumn = null;
             ColumnSuggestionService.reset();
+        }
+
+
+        /**
+         * @ngdoc method
+         * @name reset
+         * @methodOf data-prep.services.transformation.service:SuggestionService
+         * @description Reset the suggestions
+         */
+        function resetSearchAction() {
+            service.searchActionString = '';
+
+            if(!service.showAllAction) {
+                angular.forEach(ColumnSuggestionService.transformations, function(item){
+                    item.labelHtml = item.label;
+                });
+            } else {
+                angular.forEach(ColumnSuggestionService.transformations, function(transfo){
+                    angular.forEach(transfo, function(item) {
+                        item.categoryHtml = item.category.toUpperCase();
+                    });
+                });
+                ColumnSuggestionService.updateTransformations();
+            }
         }
     }
 

@@ -94,10 +94,11 @@
          * @name getTransformations
          * @methodOf data-prep.services.transformation.service:TransformationService
          * @param {object} stringifiedColumn The transformations target column as string
+         * @param {boolean} showAll show all transformation or some of them
          * @description Get transformations from REST call, clean and adapt them
          */
-        function getTransformations(stringifiedColumn) {
-            return TransformationRestService.getTransformations(stringifiedColumn)
+        function getTransformations(stringifiedColumn, showAll) {
+            return TransformationRestService.getTransformations(stringifiedColumn, showAll)
                 .then(function(response) {
                     var menus = cleanParams(response.data);
                     return adaptInputTypes(menus);

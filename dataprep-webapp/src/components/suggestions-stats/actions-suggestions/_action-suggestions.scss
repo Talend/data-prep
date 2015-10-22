@@ -3,6 +3,45 @@
   $menu-color: tint($black, 20%);
   $menu-background: $super-light-gray;
 
+  .actions-suggestions{
+    .label-switch{
+      padding: 0;
+      input[type="checkbox"] + .checkbox {
+        margin-top: 0;
+      }
+    }
+
+    .action-category {
+      background-color: #F1F1F1;
+      font-weight: bold;
+      padding-left: 5px;
+    }
+
+    .title-div{
+      padding-right: 20px;
+      background-color: #F1F1F1;
+    }
+
+    .title-action{
+      width: 200px;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: bottom;
+
+    }
+    .title-view-all {
+      width: 100px;
+      display: inline-block;
+      font-size: 0.9em;
+      color: cornflowerblue;
+      overflow: hidden;
+    }
+  }
+
+
+
   .action-suggestion-tab-items{
     height: 100%;
     overflow-y: auto;
@@ -37,5 +76,17 @@
         }
       }
     }
+  }
+
+  .action-search {
+    width: 94%;
+    height: 25px;
+    font-size: 0.8em;
+    padding: 0 0 0 5px;
+    margin: 0 10px 0 10px;
+  };
+
+  .highlighted{
+    background-color: yellow;
   }
 }

@@ -22,17 +22,6 @@ describe('stats details directive', function () {
         element.remove();
     });
 
-    it('should set "Action" in title when no column is selected', inject(function (SuggestionService) {
-        //given
-        SuggestionService.currentColumn = null;
-
-        //when
-        createElement();
-
-        //then
-        expect(element.find('.title').text().trim()).toBe('Stats');
-    }));
-
     it('should set column name in title', inject(function (StatisticsService) {
         //given
         createElement();

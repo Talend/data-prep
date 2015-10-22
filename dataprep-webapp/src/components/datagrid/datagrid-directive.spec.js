@@ -1,7 +1,7 @@
 describe('Datagrid directive', function() {
     'use strict';
 
-    var stateMock, scope, createElement, element, grid, createdColumns = [{id: '0001'}, {id: '0002'}];
+    var stateMock, scope, createElement, element, grid, createdColumns = [{id: '0001', tdpColMetadata: {id: '0001'}}, {id: '0002', tdpColMetadata: {id: '0002'}}];
 
     beforeEach(module('data-prep.datagrid', function ($provide) {
         stateMock = {playground: {}};
@@ -9,7 +9,7 @@ describe('Datagrid directive', function() {
     }));
     beforeEach(module('htmlTemplates'));
 
-    beforeEach(inject(function($rootScope, $compile, DatagridGridService, DatagridColumnService, DatagridSizeService, DatagridStyleService, DatagridExternalService) {
+    beforeEach(inject(function($rootScope, $compile, DatagridGridService, DatagridColumnService, DatagridSizeService, DatagridStyleService, DatagridExternalService, StateService) {
         scope = $rootScope.$new();
         createElement = function() {
             element = angular.element('<datagrid></datagrid>');
@@ -38,6 +38,7 @@ describe('Datagrid directive', function() {
         spyOn(DatagridStyleService, 'updateColumnClass').and.returnValue();
         spyOn(DatagridStyleService, 'resetCellStyles').and.returnValue();
         spyOn(DatagridExternalService, 'updateSuggestionPanel').and.returnValue();
+        spyOn(StateService, 'setGridSelection').and.returnValue();
     }));
 
     beforeEach(function() {
@@ -57,7 +58,7 @@ describe('Datagrid directive', function() {
         beforeEach(inject(function() {
             //given
             createElement();
-            data = {columns: [{id: '0000'}, {id: '0001'}], preview: false};
+            data = {columns: [{id: '0000'}, {id: '0001', tdpColMetadata: {id: '0001'}}], preview: false};
 
             //when
             stateMock.playground.data = data;
@@ -65,169 +66,176 @@ describe('Datagrid directive', function() {
             jasmine.clock().tick(1);
         }));
 
-        it('should init grid', inject(function(DatagridGridService) {
-            //then
-            expect(DatagridGridService.initGrid).toHaveBeenCalledWith('#datagrid');
-        }));
+        describe('init', function() {
+            it('should init grid', inject(function(DatagridGridService) {
+                //then
+                expect(DatagridGridService.initGrid).toHaveBeenCalledWith('#datagrid');
+            }));
 
-        it('should init grid only once', inject(function(DatagridService, DatagridGridService) {
-            //given
-            expect(DatagridGridService.initGrid.calls.count()).toBe(1);
+            it('should init grid only once', inject(function(DatagridService, DatagridGridService) {
+                //given
+                expect(DatagridGridService.initGrid.calls.count()).toBe(1);
 
-            //when
-            stateMock.playground.data = {};
-            scope.$digest();
+                //when
+                stateMock.playground.data = {};
+                scope.$digest();
 
-            //then
-            expect(DatagridGridService.initGrid.calls.count()).toBe(1);
-        }));
+                //then
+                expect(DatagridGridService.initGrid.calls.count()).toBe(1);
+            }));
 
-        it('should init tooltip ruler', inject(function(DatagridTooltipService) {
-            //then
-            expect(DatagridTooltipService.tooltipRuler).toBeDefined();
-        }));
+            it('should init tooltip ruler', inject(function(DatagridTooltipService) {
+                //then
+                expect(DatagridTooltipService.tooltipRuler).toBeDefined();
+            }));
+        });
 
-        it('should create new columns columns', inject(function(DatagridColumnService) {
-            //then
-            expect(DatagridColumnService.createColumns).toHaveBeenCalledWith(data.columns, data.preview);
-        }));
+        describe('grid update', function() {
 
-        it('should reset cell styles', inject(function(DatagridStyleService) {
-            //then
-            expect(DatagridStyleService.resetCellStyles).toHaveBeenCalled();
-        }));
+            describe('column creation', function() {
+                it('should create new columns', inject(function(DatagridColumnService) {
+                    //then
+                    expect(DatagridColumnService.createColumns).toHaveBeenCalledWith(data.columns, data.preview);
+                }));
 
-        it('should update created columns style with selected column', inject(function(DatagridStyleService) {
-            //then
-            expect(DatagridStyleService.updateColumnClass).toHaveBeenCalledWith(createdColumns, createdColumns[1]);
-        }));
+                it('should reset renew all columns flag', inject(function(DatagridColumnService) {
+                    //then
+                    expect(DatagridColumnService.renewAllColumns).toHaveBeenCalledWith(false);
+                }));
+            });
 
-        it('should auto size created columns (and set them in grid, done by autosize() function)', inject(function(DatagridSizeService) {
-            //then
-            expect(DatagridSizeService.autosizeColumns).toHaveBeenCalledWith(createdColumns);
-        }));
+            describe('column style', function() {
+                it('should reset cell styles', inject(function(DatagridStyleService) {
+                    //then
+                    expect(DatagridStyleService.resetCellStyles).toHaveBeenCalled();
+                }));
 
-        it('should reset renew all columns flag', inject(function(DatagridColumnService) {
-            //then
-            expect(DatagridColumnService.renewAllColumns).toHaveBeenCalledWith(false);
-        }));
+                it('should update first column style when there is no selected column', inject(function(DatagridStyleService) {
+                    //then
+                    expect(DatagridStyleService.updateColumnClass).toHaveBeenCalledWith(createdColumns, createdColumns[1]);
+                }));
 
-        it('should navigate in the grid to show the interesting column after a 300ms delay', inject(function(DatagridGridService) {
-            //given
-            expect(DatagridGridService.navigateToFocusedColumn).not.toHaveBeenCalled();
+                it('should update selected column style', inject(function(DatagridService, DatagridStyleService) {
+                    //given
+                    stateMock.playground.column = {id: '0001'};
+                    expect(DatagridStyleService.updateColumnClass).not.toHaveBeenCalledWith(createdColumns, data.columns[1]);
 
-            //when
-            jasmine.clock().tick(300);
+                    //when
+                    stateMock.playground.data = {};
+                    scope.$digest();
+                    jasmine.clock().tick(1);
 
-            //then
-            expect(DatagridGridService.navigateToFocusedColumn).toHaveBeenCalled();
-        }));
+                    //then
+                    expect(DatagridStyleService.updateColumnClass).toHaveBeenCalledWith(createdColumns, data.columns[1]);
+                }));
 
-        it('should update column class with selected column', inject(function(DatagridService, DatagridStyleService) {
-            //given
-            stateMock.playground.column = {id: '0001'};
+                it('should NOT reset cell style when data is preview data', inject(function(DatagridService, DatagridStyleService) {
+                    //given
+                    expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
 
-            //when
-            stateMock.playground.data = {};
-            scope.$digest();
-            jasmine.clock().tick(1);
+                    //when
+                    stateMock.playground.data = {preview: true};
+                    scope.$digest();
+                    jasmine.clock().tick(1);
 
-            //then
-            expect(DatagridStyleService.updateColumnClass).toHaveBeenCalledWith(createdColumns, data.columns[1]);
-        }));
+                    //then
+                    expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
+                }));
 
-        it('should update suggestion panel when a column is selected', inject(function(DatagridService, DatagridStyleService, DatagridExternalService) {
-            //given
-            stateMock.playground.column = {id: '0001'};
+                it('should NOT reset cell style when there is a selected column', inject(function(DatagridService, DatagridStyleService) {
+                    //given
+                    expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
+                    stateMock.playground.column = {id: '0001'};
 
-            //when
-            stateMock.playground.data = {};
-            scope.$digest();
-            jasmine.clock().tick(1);
+                    //when
+                    stateMock.playground.data = {preview: false};
+                    scope.$digest();
+                    jasmine.clock().tick(1);
 
-            //then
-            expect(DatagridExternalService.updateSuggestionPanel).toHaveBeenCalledWith(data.columns[1]);
-        }));
+                    //then
+                    expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
+                }));
+            });
 
-        it('should update suggestion panel with 1st column when the selected column does not exist', inject(function(DatagridService, DatagridStyleService, DatagridExternalService) {
-            //given
-            stateMock.playground.column = {id: '9999'};
+            describe('column size', function() {
+                it('should auto size created columns (and set them in grid, done by autosize() function)', inject(function(DatagridSizeService) {
+                    //then
+                    expect(DatagridSizeService.autosizeColumns).toHaveBeenCalledWith(createdColumns);
+                }));
+            });
 
-            //when
-            stateMock.playground.data = {};
-            scope.$digest();
-            jasmine.clock().tick(1);
+            it('should execute the grid update only once when the second call is triggered before the first timeout', inject(function(DatagridService, DatagridGridService, DatagridColumnService, DatagridExternalService) {
+                //given
+                expect(DatagridColumnService.createColumns.calls.count()).toBe(1);
+                expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(1);
+                expect(DatagridGridService.navigateToFocusedColumn.calls.count()).toBe(0);
 
-            //then
-            expect(DatagridExternalService.updateSuggestionPanel).toHaveBeenCalledWith(createdColumns[1]);
-        }));
+                stateMock.playground.column = {id: '0001'};
 
-        it('should NOT update suggestion panel when data is preview data', inject(function(DatagridService, DatagridStyleService, DatagridExternalService) {
-            //given
-            stateMock.playground.column = {id: '0001'};
-            expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(1);
+                //when
+                stateMock.playground.data = {};
+                scope.$digest();
 
-            //when
-            stateMock.playground.data = {preview: true};
-            scope.$digest();
-            jasmine.clock().tick(1);
+                expect(DatagridColumnService.createColumns.calls.count()).toBe(1);
+                expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(1);
+                expect(DatagridGridService.navigateToFocusedColumn.calls.count()).toBe(0);
 
-            //then
-            expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(1);
-        }));
+                stateMock.playground.data = {};
+                scope.$digest();
+                jasmine.clock().tick(300);
 
-        it('should NOT reset cell style when data is preview data', inject(function(DatagridService, DatagridStyleService) {
-            //given
-            expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
+                //then
+                expect(DatagridColumnService.createColumns.calls.count()).toBe(2);
+                expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(2);
+                expect(DatagridGridService.navigateToFocusedColumn.calls.count()).toBe(1);
+            }));
+        });
 
-            //when
-            stateMock.playground.data = {preview: true};
-            scope.$digest();
-            jasmine.clock().tick(1);
+        describe('column focus', function() {
+            it('should navigate in the grid to show the interesting column after a 300ms delay', inject(function(DatagridGridService) {
+                //given
+                expect(DatagridGridService.navigateToFocusedColumn).not.toHaveBeenCalled();
 
-            //then
-            expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
-        }));
+                //when
+                jasmine.clock().tick(300);
 
-        it('should NOT reset cell style when there is a selected column', inject(function(DatagridService, DatagridStyleService) {
-            //given
-            expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
-            stateMock.playground.column = {id: '0001'};
+                //then
+                expect(DatagridGridService.navigateToFocusedColumn).toHaveBeenCalled();
+            }));
+        });
 
-            //when
-            stateMock.playground.data = {preview: false};
-            scope.$digest();
-            jasmine.clock().tick(1);
+        describe('external trigger', function() {
+            it('should set grid selection to the first column when there is no selected column', inject(function(StateService) {
+                //then
+                expect(StateService.setGridSelection).toHaveBeenCalledWith(createdColumns[1].tdpColMetadata);
+            }));
 
-            //then
-            expect(DatagridStyleService.resetCellStyles.calls.count()).toBe(1);
-        }));
+            it('should update suggestion panel with 1st column when there is no selected column', inject(function(DatagridService, DatagridStyleService, DatagridExternalService) {
+                //given
+                stateMock.playground.column = {id: '9999'};
 
-        it('should execute the grid update only once when the second call is triggered before the first timeout', inject(function(DatagridService, DatagridGridService, DatagridColumnService, DatagridExternalService) {
-            //given
-            expect(DatagridColumnService.createColumns.calls.count()).toBe(1);
-            expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(1);
-            expect(DatagridGridService.navigateToFocusedColumn.calls.count()).toBe(0);
+                //when
+                stateMock.playground.data = {};
+                scope.$digest();
+                jasmine.clock().tick(1);
 
-            stateMock.playground.column = {id: '0001'};
+                //then
+                expect(DatagridExternalService.updateSuggestionPanel).toHaveBeenCalledWith(createdColumns[1]);
+            }));
 
-            //when
-            stateMock.playground.data = {};
-            scope.$digest();
+            it('should update suggestion panel when on selected column', inject(function(DatagridService, DatagridStyleService, DatagridExternalService) {
+                //given
+                stateMock.playground.column = {id: '0001'};
 
-            expect(DatagridColumnService.createColumns.calls.count()).toBe(1);
-            expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(1);
-            expect(DatagridGridService.navigateToFocusedColumn.calls.count()).toBe(0);
+                //when
+                stateMock.playground.data = {};
+                scope.$digest();
+                jasmine.clock().tick(1);
 
-            stateMock.playground.data = {};
-            scope.$digest();
-            jasmine.clock().tick(300);
-
-            //then
-            expect(DatagridColumnService.createColumns.calls.count()).toBe(2);
-            expect(DatagridExternalService.updateSuggestionPanel.calls.count()).toBe(2);
-            expect(DatagridGridService.navigateToFocusedColumn.calls.count()).toBe(1);
-        }));
+                //then
+                expect(DatagridExternalService.updateSuggestionPanel).toHaveBeenCalledWith(data.columns[1]);
+            }));
+        });
     });
 
     describe('on metadata change', function() {

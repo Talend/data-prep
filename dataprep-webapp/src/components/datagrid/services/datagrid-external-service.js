@@ -14,8 +14,8 @@
         var grid;
         var suggestionTimeout;
         var scrollTimeout;
-        var lastSelectedColumn;
         var lastSelectedTab;
+        var lastSelectedColumn;
 
         return {
             init: init,
@@ -35,9 +35,8 @@
         function updateSuggestionPanel(column, tab) {
             if (column.id === 'tdpId') {
                 $timeout(function () {
-                    lastSelectedColumn = null;
                     SuggestionService.reset();
-                    StatisticsService.resetCharts();
+                    StatisticsService.reset(true, true, true);
                 });
             }
             else {
@@ -58,7 +57,7 @@
                         SuggestionService.selectTab(lastSelectedTab);
                     }
                     if (columnHasChanged) {
-                        StatisticsService.processData(lastSelectedColumn);
+                        StatisticsService.updateStatistics();
                         SuggestionService.setColumn(lastSelectedColumn);
                     }
                 }, 200);

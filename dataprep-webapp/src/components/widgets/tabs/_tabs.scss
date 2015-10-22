@@ -8,6 +8,8 @@ talend-tabs {
     box-shadow: -2px 7px 2px -4px rgba(0, 0, 0, 0.1);
     margin-bottom: 0.5em;
 
+    background-color: #F1F1F1;
+
     >.tabs-item {
       color: $medium-gray;
       cursor: pointer;
@@ -24,7 +26,7 @@ talend-tabs {
 
         &:after {
           position: absolute;
-          color: $white;
+          color: #F1F1F1;
           content: "\25bc";
           font-size: 1.4em;
           pointer-events: none;

@@ -6,12 +6,15 @@
      * @description Extracts/structures the data to be visualized in charts
      * @requires data-prep.services.playground.service:DatagridService
      * @requires data-prep.services.filter.service:FilterService
+     * @requires data-prep.services.recipe.service:RecipeService
+     * @requires data-prep.services.statistics.service:StatisticsRestService
      * @requires data-prep.services.utils.service:ConverterService
      * @requires data-prep.services.utils.service:TextFormatService
-     * @requires data-prep.services.statistics.service:StatisticsRestService
-     * @requires data-prep.state.service:StateService
+     * @requires data-prep.services.utils.service:StorageService
      */
-    function StatisticsService($timeout, $filter, DatagridService, FilterService, ConverterService, TextFormatService, StatisticsRestService, state) {
+    function StatisticsService($timeout, $filter, state,
+                               DatagridService, FilterService, RecipeService, StatisticsRestService,
+                               ConverterService, TextFormatService, StorageService) {
 
         var service = {
             boxPlot: null,
@@ -23,10 +26,11 @@
             addRangeFilter: addRangeFilter,
 
             //statistics entry points
-            processData: processData,
-            processAggregation: processAggregation,
-            getAggregationColumns: getAggregationColumns,
-            resetCharts: resetCharts,
+            processData: processData,                       // basic charts
+            processAggregation: processAggregation,         // aggregation charts
+            getAggregationColumns: getAggregationColumns,   // possible aggregation columns
+            updateStatistics: updateStatistics,             // update stats + trigger chart
+            reset: reset,                                   // reset charts/statistics/cache
 
             //TODO temporary method to be replaced with new geo chart
             getGeoDistribution: getGeoDistribution
@@ -35,7 +39,7 @@
         return service;
 
         //
-        // BELOW ARE ALL THE STATISTICS TABS FUNCTIONS FOR (1-VIZ, 2-VALUES, 3-PATTERN, 4-OTHERS)
+        // BELOW ARE ALL THE STATISTICS TABS FUNCTIONS FOR (1-CHART, 2-VALUES, 3-PATTERN, 4-OTHERS)
         //
 
         //--------------------------------------------------------------------------------------------------------------
@@ -126,7 +130,7 @@
                 }),
                 key: key,
                 label: label,
-                column: service.selectedColumn
+                column: state.playground.column
             };
         }
 
@@ -144,7 +148,7 @@
                 data: dataTable,
                 key: key,
                 label: label,
-                column: service.selectedColumn,
+                column: state.playground.column,
                 activeLimits: null,
                 vertical: true
             };
@@ -175,7 +179,7 @@
          * and the active/inactive bars of the vertical barchart
          */
         function initRangeLimits() {
-            var column = service.selectedColumn;
+            var column = state.playground.column;
             var statistics = column.statistics;
             var currentRangeFilter = _.find(FilterService.filters, function (filter) {
                 return filter.colId === column.id && filter.type === 'inside_range';
@@ -316,16 +320,16 @@
          * @description Adds a rangefilter in the angular context
          */
         function addRangeFilter(interval) {
+            var selectedColumn = state.playground.column;
             var removeFilterFn = function removeFilterFn(filter) {
-                if (service.selectedColumn && filter.colId === service.selectedColumn.id) {
+                if (selectedColumn && filter.colId === selectedColumn.id) {
                     initRangeLimits();
                     //to reset the bars colors
-                    service.histogram.activeLimits = [service.selectedColumn.statistics.min, service.selectedColumn.statistics.max];
+                    service.histogram.activeLimits = [selectedColumn.statistics.min, selectedColumn.statistics.max];
                 }
             };
 
-            var column = service.selectedColumn;
-            var filterFn = FilterService.addFilter.bind(null, 'inside_range', column.id, column.name, {interval: interval}, removeFilterFn);
+            var filterFn = FilterService.addFilter.bind(null, 'inside_range', selectedColumn.id, selectedColumn.name, {interval: interval}, removeFilterFn);
             $timeout(function () {
                 filterFn();
                 initRangeLimits();
@@ -333,7 +337,7 @@
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------COMMON-------------------------------------------------------
+        //---------------------------------------------NON AGGREGATION--------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
@@ -375,13 +379,11 @@
          * @ngdoc method
          * @name processData
          * @methodOf data-prep.services.statistics.service:StatisticsService
-         * @param {object} column The column to visualize
-         * @description Processes the statistics data for visualization on the provided column
+         * @description Processes the statistics data for visualization on the selected column
          */
-        function processData(column) {
-            service.selectedColumn = column;
-            resetCharsWithoutCache();
-            initStatisticsValues(column);
+        function processData() {
+            var column = state.playground.column;
+            reset(true, false, false);
 
             //TODO replace with new geo chart
             if (column.domain.indexOf('STATE_CODE') !== -1) {
@@ -396,25 +398,28 @@
             }
         }
 
+        //--------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------Aggregation--------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
          * @name processAggregation
          * @methodOf data-prep.services.statistics.service:StatisticsService
-         * @param {string} datasetId The column to visualize
-         * @param {string} preparationId The column to visualize
-         * @param {string} stepId The column to visualize
          * @param {object} column The column to visualize
          * @param {object} aggregation The column to visualize
          * @description Processes the statistics aggregation for visualization
          */
-        function processAggregation(datasetId, preparationId, stepId, column, aggregation) {
+        function processAggregation(column, aggregation) {
             if (!aggregation) {
-                return processData(service.selectedColumn);
+                removeSavedColumnAggregation();
+                return processData();
             }
 
-            service.boxPlot = null;
-            service.histogram = null;
-            service.stateDistribution = null;
+            reset(true, false, false);
+            var datasetId = state.playground.dataset.id;
+            var preparationId = state.playground.preparation && state.playground.preparation.id;
+            var stepId = preparationId && RecipeService.getLastActiveStep() && RecipeService.getLastActiveStep().id;
+            var selectedColumn = state.playground.column;
 
             var aggregationParameters = {
                 datasetId: preparationId ? null : datasetId,
@@ -424,7 +429,7 @@
                     operator: aggregation,
                     columnId: column.id
                 }],
-                groupBy: [service.selectedColumn.id]
+                groupBy: [selectedColumn.id]
             };
 
             StatisticsRestService.getAggregations(aggregationParameters)
@@ -432,38 +437,53 @@
                     initClassicHistogram(aggregation, $filter('translate')(aggregation), response);
                     service.histogram.aggregationColumn = column;
                     service.histogram.aggregation = aggregation;
+
+                    saveColumnAggregation();
                 });
         }
 
-        //--------------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------UTILS--------------------------------------------------------
-        //--------------------------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
-         * @name resetCharts
+         * @name getSavedColumnAggregation
          * @methodOf data-prep.services.statistics.service:StatisticsService
-         * @description Removes all the data to disable all visualization (including cache)
+         * @description Get the saved dataset column aggregation.
          */
-        function resetCharts() {
-            //charts data
-            resetCharsWithoutCache();
-
-            //caches
-            StatisticsRestService.resetCache();
+        function getSavedColumnAggregation() {
+            var datasetId = state.playground.dataset && state.playground.dataset.id;
+            var preparationId = state.playground.preparation &&  state.playground.preparation.id;
+            var columnId = state.playground.column &&  state.playground.column.id;
+            return StorageService.getAggregation(datasetId, preparationId, columnId);
         }
 
         /**
          * @ngdoc method
-         * @name resetCharts
+         * @name removeSavedColumnAggregation
          * @methodOf data-prep.services.statistics.service:StatisticsService
-         * @description Removes all the data to disable all visualization
+         * @description Delete the actual column aggregation key in localStorage
          */
-        function resetCharsWithoutCache() {
-            service.boxPlot = null;
-            service.histogram = null;
-            service.rangeLimits = null;
-            service.stateDistribution = null;
-            service.statistics = null;
+        function removeSavedColumnAggregation() {
+            var datasetId = state.playground.dataset && state.playground.dataset.id;
+            var preparationId = state.playground.preparation &&  state.playground.preparation.id;
+            var columnId = state.playground.column &&  state.playground.column.id;
+            return StorageService.removeAggregation(datasetId, preparationId, columnId);
+        }
+
+        /**
+         * @ngdoc method
+         * @name saveColumnAggregation
+         * @methodOf data-prep.services.statistics.service:StatisticsService
+         * @description Update the actual dataset column aggregation in localStorage
+         */
+        function saveColumnAggregation() {
+            var datasetId = state.playground.dataset && state.playground.dataset.id;
+            var preparationId = state.playground.preparation &&  state.playground.preparation.id;
+            var columnId = state.playground.column &&  state.playground.column.id;
+
+            var aggregation = {};
+            aggregation.aggregation = service.histogram.aggregation;
+            aggregation.aggregationColumnId = service.histogram.aggregationColumn.id;
+
+            return StorageService.setAggregation(datasetId, preparationId, columnId, aggregation);
         }
 
         /**
@@ -473,9 +493,56 @@
          * @description Removes all the data to disable all visualization
          */
         function getAggregationColumns() {
-            var column = service.selectedColumn;
+            var column = state.playground.column;
             //TODO JSO : put a cache again that is invalidated when one of the columns change
             return DatagridService.getNumericColumns(column);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------COMMON-------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        /**
+         * @ngdoc method
+         * @name updateStatistics
+         * @methodOf data-prep.services.statistics.service:StatisticsService
+         * @description update aggregation for a selected column
+         */
+        function updateStatistics() {
+            var column = state.playground.column;
+            reset(true, true, false);
+            initStatisticsValues(column);
+
+            var columnAggregation = getSavedColumnAggregation();
+            var aggregatedColumn = columnAggregation && _.findWhere(getAggregationColumns(), {id: columnAggregation.aggregationColumnId});
+            var aggregation = columnAggregation && columnAggregation.aggregation;
+
+            service.processAggregation(aggregatedColumn, aggregation);
+        }
+
+        /**
+         * @ngdoc method
+         * @name reset
+         * @methodOf data-prep.services.statistics.service:StatisticsService
+         * @param {boolean} charts Remove charts
+         * @param {boolean} statistics Remove statistics data
+         * @param {boolean} cache Clear cache
+         * @description Removes data depending on the parameters
+         */
+        function reset(charts, statistics, cache) {
+            if(charts) {
+                service.boxPlot = null;
+                service.histogram = null;
+                service.rangeLimits = null;
+                service.stateDistribution = null;
+            }
+
+            if(statistics) {
+                service.statistics = null;
+            }
+
+            if(cache) {
+                StatisticsRestService.resetCache();
+            }
         }
     }
 

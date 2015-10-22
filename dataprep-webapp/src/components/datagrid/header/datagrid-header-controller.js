@@ -55,7 +55,7 @@
                 vm.transformationsRetrieveError = false;
                 vm.initTransformationsInProgress = true;
 
-                TransformationCacheService.getTransformations(vm.column)
+                TransformationCacheService.getTransformations(vm.column, true)
                     .then(function(menus) {
                         vm.transformations = _.filter(menus, function(menu) {
                             return menu.category === COLUMN_CATEGORY;

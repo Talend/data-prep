@@ -48,7 +48,10 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String datasetId = createDataset("export/export_dataset.csv", "testHeaders", "text/csv");
 
         // when
-        final Response response = given().formParam("exportType", "CSV").formParam("datasetId", datasetId).when()
+        final Response response = given() //
+                .formParam("exportType", "CSV") //
+                .formParam("datasetId", datasetId) //
+                .when() //
                 .get("/api/export");
 
         // then

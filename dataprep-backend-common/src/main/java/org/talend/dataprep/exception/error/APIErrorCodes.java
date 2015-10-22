@@ -35,6 +35,7 @@ public enum APIErrorCodes implements ErrorCode {
     DATASET_STILL_IN_USE(409, "dataSetId", "preparations"),
     UNABLE_TO_UPDATE_COLUMN(400, "id"),
     UNABLE_TO_LIST_FOLDERS(400),
+    UNABLE_TO_CREATE_FOLDER(400),
     DATASET_REDIRECT(301);
 
     /** The http status to use. */

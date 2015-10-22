@@ -27,7 +27,8 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
 import java.util.stream.Stream;
 
-@Component("folderRepository#file") @ConditionalOnProperty(name = "folder.store", havingValue = "file")
+@Component("folderRepository#file")
+@ConditionalOnProperty(name = "folder.store", havingValue = "file", matchIfMissing = false)
 public class FileSystemFolderRepository  extends FolderRepositoryAdapter implements FolderRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemFolderRepository.class);
@@ -95,8 +96,13 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     @Override
     public Iterable<Folder> childs(Folder folder) {
         try {
-            List<String> pathParts = folder.getPathParts();
-            Path folderPath = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+            Path folderPath = null;
+            if (folder != null) {
+                List<String> pathParts = folder.getPathParts();
+                Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+            } else {
+                folderPath = getRootFolder();
+            }
             Stream<Path> childStream = Files.list(folderPath);
             List<Folder> childs = new ArrayList<>();
             childStream.forEach(path -> {

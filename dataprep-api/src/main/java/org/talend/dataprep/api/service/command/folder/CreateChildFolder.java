@@ -1,10 +1,12 @@
 package org.talend.dataprep.api.service.command.folder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -25,33 +27,28 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_LIST_F
 
 @Component
 @Scope("request")
-public class FoldersList extends GenericCommand<InputStream> {
+public class CreateChildFolder extends GenericCommand<InputStream> {
 
-    private FoldersList(HttpClient client, Folder folder) {
+    private CreateChildFolder(HttpClient client, Folder folder, String parentId) {
         super(APIService.DATASET_GROUP, client);
-        execute(() -> onExecute(folder));
+        execute(() -> onExecute(folder, parentId));
         onError(e -> new TDPException(UNABLE_TO_LIST_FOLDERS, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private FoldersList(HttpClient client) {
-        super(APIService.DATASET_GROUP, client);
-        execute(() -> onExecute(null));
-        onError(e -> new TDPException(UNABLE_TO_LIST_FOLDERS, e, ExceptionContext.build()));
-        on(HttpStatus.OK).then(pipeStream());
-    }
-
-    private HttpRequestBase onExecute(Folder folder) {
+    private HttpRequestBase onExecute(Folder folder, String parentId) {
         try {
-            if (folder != null) {
-                HttpPost folderList = new HttpPost(datasetServiceUrl + "/folders/childs" );
-                folderList.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-                byte[] folderJSONValue = builder.build().writeValueAsBytes(folder);
-                folderList.setEntity(new ByteArrayEntity(folderJSONValue));
-                return folderList;
-            }
-            return new HttpGet(datasetServiceUrl + "/folders/root/childs" );
+            byte[] folderJSONValue = builder.build().writeValueAsBytes(folder);
 
+            StringBuilder url = new StringBuilder(datasetServiceUrl + "/folders");
+            if (StringUtils.isNotEmpty(parentId)){
+                url.append("?parentId=").append(parentId);
+            }
+
+            HttpPut folderList = new HttpPut( url.toString() );
+            folderList.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+            folderList.setEntity(new ByteArrayEntity(folderJSONValue));
+            return folderList;
         } catch (JsonProcessingException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

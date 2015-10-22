@@ -82,13 +82,33 @@ public abstract class AbstractFolderTest {
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
 
-        getFolderRepository().removeFolder("/bar/beer");
+        // testing child of /bar
+
+        iterable = getFolderRepository().childs("/beer");
+        folders = new ArrayList<>();
+        iterable.forEach(folders::add);
+
+        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
+
+        getFolderRepository().removeFolder("/beer/bar");
+
+        // testing child of /beer after removing the first child
+        iterable = getFolderRepository().childs("/beer");
+        folders = new ArrayList<>();
+        iterable.forEach(folders::add);
+
+        Assertions.assertThat(folders).isNotNull().isEmpty();
+
+
+        // testing the whole size
 
         sizeAfter = getFolderRepository().size();
 
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 1);
+        Assertions.assertThat(sizeAfter).isEqualTo(2);
 
         getFolderRepository().removeFolder("/foo");
+
+        getFolderRepository().removeFolder("/beer");
 
         sizeAfter = getFolderRepository().size();
 

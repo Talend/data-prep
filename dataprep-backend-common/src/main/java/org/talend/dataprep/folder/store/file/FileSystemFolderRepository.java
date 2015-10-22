@@ -75,8 +75,8 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     public Iterable<Folder> childs(String parentPath) {
         try {
             Path folderPath = null;
-            if (parentPath != null) {
-                Paths.get(getRootFolder().toString(), StringUtils.split(parentPath, PATH_SEPARATOR));
+            if (StringUtils.isNotEmpty(parentPath)) {
+                folderPath = Paths.get(getRootFolder().toString(), StringUtils.split(parentPath, PATH_SEPARATOR));
             } else {
                 folderPath = getRootFolder();
             }
@@ -111,9 +111,11 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     @Override
     public Folder addFolder(String parentPath, String child) {
         try {
-            StringBuilder pathString = new StringBuilder(parentPath);
-            pathString.append(child);
-            Path path = Paths.get(getRootFolder().toString(), pathString.toString());
+
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(parentPath, PATH_SEPARATOR));
+            pathParts.addAll(Lists.newArrayList(StringUtils.split(child, PATH_SEPARATOR)));
+
+            Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
 
             if (!Files.exists(path)) {
                 Files.createDirectories(path, defaultFilePermissions);

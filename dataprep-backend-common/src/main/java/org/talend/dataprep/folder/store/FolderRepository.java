@@ -9,61 +9,51 @@ import org.talend.dataprep.lock.DistributedLock;
  */
 public interface FolderRepository {
 
+    char PATH_SEPARATOR = '/';
+
     /**
      * @return A {@link java.lang.Iterable iterable} of child {@link Folder folder}. Returned folders are expected to be
      * visible by current user.
-     * @param folder the parent folder
+     * @param path the parent folder in the format /ffo/blab/mm or <code>null</code> for root folder
      */
-    Iterable<Folder> childs(Folder folder);
+    Iterable<Folder> childs(String path);
 
     /**
      * 
-     * @param parent the parent {@link Folder folder}
-     * @param child the child {@link Folder folder} to add to the parent
+     * @param parentPath the parent
+     * @param child the child to add to the parent
      */
-    Folder addFolder(Folder parent, Folder child);
+    Folder addFolder(String parentPath, String child);
 
     /**
      * add or update (if alreadu exists) the entry
-     * @param parent the parent {@link Folder}
+     * @param parent the parent path
      * @param folderEntry the {@link FolderEntry} to add to the parent
      */
-    FolderEntry addFolderEntry(Folder parent, FolderEntry folderEntry);
+    FolderEntry addFolderEntry(String parent, FolderEntry folderEntry);
 
     /**
      * 
-     * @param parent the parent {@link Folder}
+     * @param parent the parent path
      * @param folderEntry the {@link FolderEntry} to remove from the parent
      */
-    void removeFolderEntry(Folder parent, FolderEntry folderEntry);
+    void removeFolderEntry(String parent, FolderEntry folderEntry);
 
-    /**
-     *
-     * @param folderId
-     * @return {@link Folder} with the corresponding id otherwise <code>null</code>
-     */
-    Folder find(String folderId);
 
     /**
      * remove folder and content recursively
      * 
-     * @param folder the parent {@link Folder} to remove
+     * @param path the path to remove only the last part is remove
      */
-    void removeFolder(Folder folder);
-
-    /**
-     * 
-     * @return the root {@link Folder folder}
-     */
-    Folder rootFolder();
+    void removeFolder(String path);
 
     /**
      *
-     * @param folder the parent {@link Folder}
+     * @param path the parent path
      * @param contentType the contentClass to filter folder entries
      * @return A {@link java.lang.Iterable iterable} of {@link FolderEntry} content filtered for the given type
      */
-    Iterable<FolderEntry> entries(Folder folder, String contentType);
+    Iterable<FolderEntry> entries(String path, String contentType);
 
     /**
      * clear the whole content

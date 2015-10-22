@@ -2,6 +2,7 @@ package org.talend.dataprep.folder.store.file;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.collect.Sets;
 import org.slf4j.Logger;
@@ -54,35 +55,12 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             if (!Files.exists(getRootFolder())) {
                 Files.createDirectories(getRootFolder(), defaultFilePermissions);
             }
-            Path idPath = Paths.get(foldersLocation, ".id");
-            createIdFile(idPath);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
     }
 
-    /**
-     * create or read .id file corresponding of folder id
-     * @param path
-     * @return
-     * @throws IOException
-     */
-    protected String createIdFile(Path path) throws IOException {
-        if (Files.isDirectory(path)){
-            File idFile = new File( path.toFile(), ".id");
-            path = idFile.toPath();
-        }
-
-        if  (!Files.exists(path)){
-            Path idFile = Files.createFile(path);
-            String uuid = UUID.randomUUID().toString();
-            Files.write(idFile, uuid.getBytes(), StandardOpenOption.CREATE);
-            return uuid;
-        } else {
-            return new String(Files.readAllBytes(path));
-        }
-    }
 
     /**
      * Return the root folder where the preparations are stored.
@@ -94,29 +72,23 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public Iterable<Folder> childs(Folder folder) {
+    public Iterable<Folder> childs(String parentPath) {
         try {
             Path folderPath = null;
-            if (folder != null) {
-                List<String> pathParts = folder.getPathParts();
-                Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+            if (parentPath != null) {
+                Paths.get(getRootFolder().toString(), StringUtils.split(parentPath, PATH_SEPARATOR));
             } else {
                 folderPath = getRootFolder();
             }
             Stream<Path> childStream = Files.list(folderPath);
             List<Folder> childs = new ArrayList<>();
             childStream.forEach(path -> {
-                try {
                     if (Files.isDirectory( path )) {
                         childs.add(Folder.Builder.folder() //
                                 .name(path.getFileName().toString()) //
-                                .pathParts(pathParts(path)) //
-                                .id(createIdFile(path)) //
+                                .path(pathAsString(path)) //
                                 .build());
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage(), e);
-                }
             });
             return childs;
         } catch (IOException e) {
@@ -124,30 +96,32 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         }
     }
 
-    protected List<String> pathParts(Path path) {
+    /**
+     *
+     * @param path
+     * @return a path using {@link FolderRepository#PATH_SEPARATOR}
+     */
+    protected String pathAsString(Path path) {
         Path relativePath = path.subpath(getRootFolder().getNameCount(), path.getNameCount());
-        final List<String> parts = new ArrayList<>();
-        relativePath.iterator().forEachRemaining(thePath -> parts.add(thePath.toString()));
-        return parts;
+        final StringBuilder stringBuilder = new StringBuilder(PATH_SEPARATOR);
+        relativePath.iterator().forEachRemaining(thePath -> stringBuilder.append(thePath.toString()).append(PATH_SEPARATOR));
+        return stringBuilder.toString();
     }
 
     @Override
-    public Folder addFolder(Folder parent, Folder child) {
+    public Folder addFolder(String parentPath, String child) {
         try {
-            List<String> pathParts = Lists.newArrayList(parent.getPathParts());
-            pathParts.add(child.getName());
-            Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
-
-            child.setPathParts(pathParts);
-            child.setId(child.getName());
+            StringBuilder pathString = new StringBuilder(parentPath);
+            pathString.append(child);
+            Path path = Paths.get(getRootFolder().toString(), pathString.toString());
 
             if (!Files.exists(path)) {
                 Files.createDirectories(path, defaultFilePermissions);
             }
-
-            child.setId(createIdFile(path));
-
-            return child;
+            return Folder.Builder.folder() //
+                    .name(path.getFileName().toString()) //
+                    .path(pathAsString(path)) //
+                    .build();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -155,12 +129,12 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public FolderEntry addFolderEntry(Folder parent, FolderEntry folderEntry) {
+    public FolderEntry addFolderEntry(String parent, FolderEntry folderEntry) {
 
         // we store the FolderEntry bean content as properties the file name is the name
 
         try {
-            List<String> pathParts = Lists.newArrayList(parent.getPathParts());
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(parent, PATH_SEPARATOR));
             pathParts.add(folderEntry.getName());
             Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
             // we delete it if exists
@@ -185,11 +159,11 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public void removeFolderEntry(Folder parent, FolderEntry folderEntry) {
+    public void removeFolderEntry(String parent, FolderEntry folderEntry) {
 
         try {
-            List<String> pathParts = Lists.newArrayList(parent.getPathParts());
-            pathParts.add(folderEntry.getName());
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(parent, PATH_SEPARATOR));
+            pathParts.add( folderEntry.getName());
             Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
             // we delete it if exists
             Files.deleteIfExists(path);
@@ -199,10 +173,9 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public void removeFolder(Folder folder) {
-        List<String> pathParts = Lists.newArrayList(folder.getPathParts());
+    public void removeFolder(String folder) {
 
-        Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+        Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
 
         try {
             FileUtils.deleteDirectory(path.toFile());
@@ -211,60 +184,11 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         }
     }
 
-    @Override
-    public Folder find(String folderId) {
-
-        final Folder result = new Folder();
-
-        try {
-            Files.walkFileTree(getRootFolder(), new FileVisitor<Path>() {
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    if (StringUtils.equalsIgnoreCase(createIdFile(dir), folderId)){
-                        result.setId(folderId);
-                        result.setName(dir.getFileName().toString());
-                        result.setPathParts(pathParts(dir));
-                        // we found the directory with id so terminate
-                        return FileVisitResult.TERMINATE;
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        return result;
-    }
-
-
-
 
     @Override
-    public Folder rootFolder() {
-        return Folder.Builder.folder().name("").build();
-    }
+    public Iterable<FolderEntry> entries(String folder, String contentType) {
 
-    @Override
-    public Iterable<FolderEntry> entries(Folder folder, String contentType) {
-        List<String> pathParts = Lists.newArrayList(folder.getPathParts());
-
-        Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+        Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
 
         try {
             List<FolderEntry> folderEntries = new ArrayList<>();

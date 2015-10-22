@@ -21,31 +21,28 @@ public abstract class AbstractFolderTest {
     @Test
     public void create_child_then_remove() throws Exception {
 
-        Folder rootFolder = Folder.Builder.folder().name("").build();
 
         int sizeBefore = getFolderRepository().size();
 
-        Folder child = Folder.Builder.folder().name("foo").build();
-
-        child = getFolderRepository().addFolder(rootFolder, child);
+        Folder child = getFolderRepository().addFolder("/", "foo");
 
         int sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 1);
 
-        Iterable<Folder> iterable = getFolderRepository().childs(rootFolder);
+        Iterable<Folder> iterable = getFolderRepository().childs("");
         List<Folder> folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
 
-        getFolderRepository().removeFolder(child);
+        getFolderRepository().removeFolder("/foo");
 
         sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore);
 
-        iterable = getFolderRepository().childs(rootFolder);
+        iterable = getFolderRepository().childs("");
         folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
@@ -68,46 +65,36 @@ public abstract class AbstractFolderTest {
 
         int sizeBefore = getFolderRepository().size();
 
-        Folder foo = Folder.Builder.folder().name("foo").build();
 
-        getFolderRepository().addFolder(rootFolder, foo);
+        Folder foo = getFolderRepository().addFolder("", "foo");
 
-        Folder beer = Folder.Builder.folder().name("beer").build();
+        Folder beer = getFolderRepository().addFolder("", "beer");
 
-        beer = getFolderRepository().addFolder(rootFolder, beer);
-
-        Folder bar = Folder.Builder.folder().name("bar").build();
-
-        bar = getFolderRepository().addFolder(beer, bar);
+        Folder bar = getFolderRepository().addFolder("beer", "bar");
 
         int sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 3);
 
-        Iterable<Folder> iterable = getFolderRepository().childs(rootFolder);
+        Iterable<Folder> iterable = getFolderRepository().childs("");
         List<Folder> folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
 
-
-        Folder barFound = getFolderRepository().find(bar.id());
-
-        Assertions.assertThat(barFound).isNotNull();
-
-        getFolderRepository().removeFolder(beer);
+        getFolderRepository().removeFolder("/bar/beer");
 
         sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 1);
 
-        getFolderRepository().removeFolder(foo);
+        getFolderRepository().removeFolder("/foo");
 
         sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore);
 
-        iterable = getFolderRepository().childs(rootFolder);
+        iterable = getFolderRepository().childs("");
         folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
@@ -122,19 +109,16 @@ public abstract class AbstractFolderTest {
     @Test
     public void create_child_with_two_entries_then_remove() throws Exception {
 
-        Folder rootFolder = Folder.Builder.folder().name("").build();
 
         int sizeBefore = getFolderRepository().size();
 
-        Folder foo = Folder.Builder.folder().name("foo").build();
-
-        foo = getFolderRepository().addFolder(rootFolder, foo);
+        Folder foo = getFolderRepository().addFolder("", "foo");
 
         int sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 1);
 
-        Iterable<Folder> iterable = getFolderRepository().childs(rootFolder);
+        Iterable<Folder> iterable = getFolderRepository().childs("");
         List<Folder> folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
@@ -144,31 +128,31 @@ public abstract class AbstractFolderTest {
 
         FolderEntry wineEntry = new FolderEntry("wine", DataSet.class.getName(), "bordeaux");
 
-        getFolderRepository().addFolderEntry(foo, beerEntry);
+        getFolderRepository().addFolderEntry("/foo", beerEntry);
 
-        getFolderRepository().addFolderEntry(foo, wineEntry);
+        getFolderRepository().addFolderEntry("foo", wineEntry);
 
-        Iterable<FolderEntry> folderEntries = getFolderRepository().entries(foo, DataSet.class.getName());
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
         List<FolderEntry> entries = new ArrayList<>();
         folderEntries.forEach(entries::add);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        getFolderRepository().removeFolderEntry( foo, beerEntry );
+        getFolderRepository().removeFolderEntry( "/foo", beerEntry );
 
-        folderEntries = getFolderRepository().entries(foo, DataSet.class.getName());
+        folderEntries = getFolderRepository().entries("/foo", DataSet.class.getName());
         entries = new ArrayList<>();
         folderEntries.forEach(entries::add);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
-        getFolderRepository().removeFolder(foo);
+        getFolderRepository().removeFolder("/foo");
 
         sizeAfter = getFolderRepository().size();
 
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore);
 
-        iterable = getFolderRepository().childs(rootFolder);
+        iterable = getFolderRepository().childs("");
         folders = new ArrayList<>();
         iterable.forEach(folders::add);
 

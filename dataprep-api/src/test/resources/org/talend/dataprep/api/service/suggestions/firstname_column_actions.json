@@ -1890,5 +1890,101 @@
     "dynamic": false,
     "description": "Change type of this column",
     "label": "Change Type"
+  },
+  {
+    "name": "numeric_ops",
+    "label": "Add, multiply, substract or divide",
+    "description":"Add (+), multiply (x), substract (-), or divide(/) this column with another or with a fixed value",
+    "category":"math",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "operator",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "+"
+            },
+            {
+              "value": "x"
+            },
+            {
+              "value": "-"
+            },
+            {
+              "value": "/"
+            }
+          ],
+          "multiple": false
+        },
+        "description": "Operator to use for this operation",
+        "label": "Operator",
+        "default": "x"
+      },
+      {
+        "name": "mode",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "Select if you want to compute against a constant value or to another column",
+        "label": "Compute with...",
+        "default": "Constant",
+        "configuration": {
+          "values": [
+            {
+              "value": "Constant",
+              "parameters": [
+                {
+                  "name": "operand",
+                  "type": "string",
+                  "description": "Fixed value to use as operand",
+                  "label": "Operand",
+                  "default": "2"
+                }
+              ]
+            },
+            {
+              "value": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "dynamic": false
   }
 ]

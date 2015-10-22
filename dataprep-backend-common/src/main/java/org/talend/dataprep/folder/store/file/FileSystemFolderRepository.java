@@ -19,10 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -63,19 +61,22 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
     }
 
+    /**
+     * create or read .id file corresponding of folder id
+     * @param path
+     * @return
+     * @throws IOException
+     */
     protected String createIdFile(Path path) throws IOException {
         if (Files.isDirectory(path)){
             File idFile = new File( path.toFile(), ".id");
             path = idFile.toPath();
-            if (!Files.exists(path)){
-                path = Files.createFile(idFile.toPath());
-            }
         }
 
         if  (!Files.exists(path)){
             Path idFile = Files.createFile(path);
             String uuid = UUID.randomUUID().toString();
-            Files.write(idFile, uuid.getBytes());
+            Files.write(idFile, uuid.getBytes(), StandardOpenOption.CREATE);
             return uuid;
         } else {
             return new String(Files.readAllBytes(path));
@@ -100,11 +101,13 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             List<Folder> childs = new ArrayList<>();
             childStream.forEach(path -> {
                 try {
-                    childs.add(Folder.Builder.folder() //
-                            .name(path.getFileName().toString()) //
-                            .pathParts(pathParts(path)) //
-                            .id(createIdFile(path)) //
-                            .build());
+                    if (Files.isDirectory( path )) {
+                        childs.add(Folder.Builder.folder() //
+                                .name(path.getFileName().toString()) //
+                                .pathParts(pathParts(path)) //
+                                .id(createIdFile(path)) //
+                                .build());
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
@@ -116,7 +119,6 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     protected List<String> pathParts(Path path) {
-
         Path relativePath = path.subpath(getRootFolder().getNameCount(), path.getNameCount());
         final List<String> parts = new ArrayList<>();
         relativePath.iterator().forEachRemaining(thePath -> parts.add(thePath.toString()));
@@ -201,12 +203,54 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-
     }
 
     @Override
-    public Folder rootFolder() {
+    public Folder find(String folderId) {
 
+        final Folder result = new Folder();
+
+        try {
+            Files.walkFileTree(getRootFolder(), new FileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    if (StringUtils.equalsIgnoreCase(createIdFile(dir), folderId)){
+                        result.setId(folderId);
+                        result.setName(dir.getFileName().toString());
+                        result.setPathParts(pathParts(dir));
+                        // we found the directory with id so terminate
+                        return FileVisitResult.TERMINATE;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return result;
+    }
+
+
+
+
+    @Override
+    public Folder rootFolder() {
         return Folder.Builder.folder().name("").build();
     }
 

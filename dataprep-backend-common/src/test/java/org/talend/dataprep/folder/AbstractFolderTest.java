@@ -61,8 +61,8 @@ public abstract class AbstractFolderTest {
     public void create_two_childs_little_child_then_remove() throws Exception {
 
         // - foo
-        // - beer
-        // - bar
+        // - beer-
+        //       | - bar
 
         Folder rootFolder = Folder.Builder.folder().name("").build();
 
@@ -89,6 +89,11 @@ public abstract class AbstractFolderTest {
         iterable.forEach(folders::add);
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
+
+
+        Folder barFound = getFolderRepository().find(bar.id());
+
+        Assertions.assertThat(barFound).isNotNull();
 
         getFolderRepository().removeFolder(beer);
 
@@ -148,6 +153,14 @@ public abstract class AbstractFolderTest {
         folderEntries.forEach(entries::add);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+
+        getFolderRepository().removeFolderEntry( foo, beerEntry );
+
+        folderEntries = getFolderRepository().entries(foo, DataSet.class.getName());
+        entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
         getFolderRepository().removeFolder(foo);
 

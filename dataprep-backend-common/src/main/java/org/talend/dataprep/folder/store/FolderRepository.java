@@ -38,6 +38,13 @@ public interface FolderRepository {
     void removeFolderEntry(Folder parent, FolderEntry folderEntry);
 
     /**
+     *
+     * @param folderId
+     * @return {@link Folder} with the corresponding id otherwise <code>null</code>
+     */
+    Folder find(String folderId);
+
+    /**
      * remove folder and content recursively
      * 
      * @param folder the parent {@link Folder} to remove

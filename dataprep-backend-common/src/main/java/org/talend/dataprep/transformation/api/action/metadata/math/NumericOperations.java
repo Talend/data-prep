@@ -1,6 +1,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.List;
 import java.util.Map;
 
@@ -154,18 +155,27 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             BigDecimal operand_1 = new BigDecimal(operand_1_string);
             BigDecimal operand_2 = new BigDecimal(operand_2_string);
 
+            BigDecimal toReturn = null;
+
             switch (operator) {
             case "+":
-                return operand_1.add(operand_2).toString();
+                toReturn = operand_1.add(operand_2);
+                break;
             case "x":
-                return operand_1.multiply(operand_2).toString();
+                toReturn = operand_1.multiply(operand_2);
+                break;
             case "-":
-                return operand_1.subtract(operand_2).toString();
+                toReturn = operand_1.subtract(operand_2);
+                break;
             case "/":
-                return operand_1.divide(operand_2).toString();
+                toReturn = operand_1.divide(operand_2, 2, BigDecimal.ROUND_HALF_UP);
+                break;
             default:
                 return "";
             }
+
+            // Format result:
+            return toReturn.stripTrailingZeros().toPlainString();
         } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
             return "";
         }

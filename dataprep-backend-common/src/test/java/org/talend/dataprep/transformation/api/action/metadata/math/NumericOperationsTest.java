@@ -64,8 +64,9 @@ public class NumericOperationsTest {
         assertEquals("5", action.compute("3", "+", "2"));
         assertEquals("6", action.compute("3", "x", "2"));
         assertEquals("1", action.compute("3", "-", "2"));
-        assertEquals("1.5", action.compute("3", "/", "2"));
+        assertEquals("2", action.compute("4", "/", "2"));
 
+        // silently fail when divide by 0
         assertEquals("", action.compute("3", "/", "0"));
 
         // empty items:
@@ -82,6 +83,15 @@ public class NumericOperationsTest {
         assertEquals("", action.compute(null, "/", "2"));
         assertEquals("", action.compute("3", null, "2"));
         assertEquals("", action.compute("3", "/", null));
+    }
+
+    @Test
+    public void testComputeScaleAndRound() {
+        assertEquals("1.5", action.compute("3", "/", "2"));
+        assertEquals("2", action.compute("18", "/", "9"));
+        assertEquals("2.11", action.compute("19", "/", "9"));
+        assertEquals("211.11", action.compute("1900", "/", "9"));
+        assertEquals("21111.11", action.compute("190000", "/", "9"));
     }
 
     @Test

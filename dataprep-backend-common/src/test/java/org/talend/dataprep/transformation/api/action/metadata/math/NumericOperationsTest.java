@@ -86,12 +86,30 @@ public class NumericOperationsTest {
     }
 
     @Test
-    public void testComputeScaleAndRound() {
+    public void testComputeScaleAndRoundMultiply() {
+        assertEquals("6.66", action.compute("3.33", "x", "2"));
+        assertEquals("36.22", action.compute("18.1111", "x", "2"));
+    }
+
+    @Test
+    public void testComputeScaleAndRoundDivide() {
         assertEquals("1.5", action.compute("3", "/", "2"));
         assertEquals("2", action.compute("18", "/", "9"));
         assertEquals("2.11", action.compute("19", "/", "9"));
         assertEquals("211.11", action.compute("1900", "/", "9"));
         assertEquals("21111.11", action.compute("190000", "/", "9"));
+    }
+
+    @Test
+    public void testComputeScaleAndRoundAdd() {
+        assertEquals("5.33", action.compute("3.33", "+", "2"));
+        assertEquals("20.11", action.compute("18.1111", "+", "2"));
+    }
+
+    @Test
+    public void testComputeScaleAndRoundSubstract() {
+        assertEquals("1.33", action.compute("3.33", "-", "2"));
+        assertEquals("16.11", action.compute("18.1111", "-", "2"));
     }
 
     @Test

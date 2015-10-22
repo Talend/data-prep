@@ -2,6 +2,7 @@ package org.talend.dataprep.transformation.api.action.metadata.math;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -157,6 +158,9 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
             BigDecimal toReturn = null;
 
+            final int scale = 2;
+            final RoundingMode rm = RoundingMode.HALF_UP;
+
             switch (operator) {
             case "+":
                 toReturn = operand_1.add(operand_2);
@@ -168,14 +172,14 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
                 toReturn = operand_1.subtract(operand_2);
                 break;
             case "/":
-                toReturn = operand_1.divide(operand_2, 2, BigDecimal.ROUND_HALF_UP);
+                toReturn = operand_1.divide(operand_2, scale, rm);
                 break;
             default:
                 return "";
             }
 
             // Format result:
-            return toReturn.stripTrailingZeros().toPlainString();
+            return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
         } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
             return "";
         }

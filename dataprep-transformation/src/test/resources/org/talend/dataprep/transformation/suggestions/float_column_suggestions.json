@@ -568,7 +568,7 @@
               "parameters": [
                 {
                   "name": "operand",
-                  "type": "integer",
+                  "type": "string",
                   "description": "Fixed value to use as operand",
                   "label": "Operand",
                   "default": "2"

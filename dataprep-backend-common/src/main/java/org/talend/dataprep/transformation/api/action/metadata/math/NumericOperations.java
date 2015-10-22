@@ -1,7 +1,6 @@
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +98,7 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                         .name(MODE_PARAMETER)
-                        .item(CONSTANT_MODE, new Parameter(OPERAND_PARAMETER, ParameterType.INTEGER, "2"))
+                        .item(CONSTANT_MODE, new Parameter(OPERAND_PARAMETER, ParameterType.STRING, "2"))
                         .item("Another column", new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
                         .defaultValue(CONSTANT_MODE)
                         .build()
@@ -214,7 +213,7 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         return ColumnMetadata.Builder //
                 .column() //
                 .name(sourceColumn.getName() + " " + operator + " " + operand) //
-                .type(Type.NUMERIC) //
+                .type(Type.DOUBLE) //
                 .build();
     }
 }

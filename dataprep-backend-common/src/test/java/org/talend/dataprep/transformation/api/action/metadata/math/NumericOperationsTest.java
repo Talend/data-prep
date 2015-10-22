@@ -113,6 +113,22 @@ public class NumericOperationsTest {
     }
 
     @Test
+    public void testComputeDecimalOperand() {
+        assertEquals("5.1", action.compute("3", "+", "2.1"));
+        assertEquals("6.3", action.compute("3", "x", "2.1"));
+        assertEquals("0.9", action.compute("3", "-", "2.1"));
+        assertEquals("1.9", action.compute("4", "/", "2.1"));
+    }
+
+
+    @Test
+    public void testComputeScientificOperand() {
+        assertEquals("2400", action.compute("1.2E3", "x", "2"));
+        assertEquals("2400", action.compute("2", "x", "1.2E3"));
+        assertEquals("2640", action.compute("2.2", "x", "1.2E3"));
+    }
+
+    @Test
     public void should_apply_on_column() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
@@ -154,7 +170,7 @@ public class NumericOperationsTest {
         action.applyOnColumn(row, new TransformationContext(), parameters, "0000");
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source + selected").type(Type.NUMERIC).build();
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source + selected").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -173,7 +189,7 @@ public class NumericOperationsTest {
         action.applyOnColumn(row, new TransformationContext(), parameters, "0000");
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source + 2").type(Type.NUMERIC).build();
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source + 2").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

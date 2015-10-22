@@ -78,7 +78,7 @@ describe('Dataset list directive', function () {
         var certificationIcon = icon.find('.pin');
         expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
         expect(certificationIcon.length).toBe(0);
-        expect(element.find('.inventory-title').eq(0).text()).toBe('US States');
+        expect(element.find('.inventory-title').eq(0).text().indexOf('US States')).toBe(0);
         expect(element.find('.inventory-description').eq(0).text()).toBe('owned by anonymousUser, created ' + momentize('1437020219741') + ', contains  lines');
 
         icon = element.find('.inventory-icon').eq(1);
@@ -86,7 +86,7 @@ describe('Dataset list directive', function () {
         certificationIcon = icon.find('.pin')[0].src;
         expect(strEndsWith(iconSrc, '/assets/images/inventory/xls_file.png')).toBe(true);
         expect(strEndsWith(certificationIcon, '/assets/images/certification-pending.png')).toBe(true);
-        expect(element.find('.inventory-title').eq(1).text()).toBe('Customers');
+        expect(element.find('.inventory-title').eq(1).text().indexOf('Customers')).toBe(0);
         expect(element.find('.inventory-description').eq(1).text()).toBe('owned by anonymousUser, created ' + momentize('143702021974') + ', contains  lines');
 
         icon = element.find('.inventory-icon').eq(2);
@@ -94,7 +94,7 @@ describe('Dataset list directive', function () {
         certificationIcon = icon.find('.pin')[0].src;
         expect(strEndsWith(iconSrc, '/assets/images/inventory/generic_file.png')).toBe(true);
         expect(strEndsWith(certificationIcon, '/assets/images/certification-certified.png')).toBe(true);
-        expect(element.find('.inventory-title').eq(2).text()).toBe('Customers 2');
+        expect(element.find('.inventory-title').eq(2).text().indexOf('Customers 2')).toBe(0);
         expect(element.find('.inventory-description').eq(2).text()).toBe('owned by anonymousUser, created ' + momentize('14370202197') + ', contains  lines');
     }));
 });

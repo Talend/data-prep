@@ -1,0 +1,17 @@
+<div class="editable-text" ng-switch="editableTextCtrl.editionMode">
+    <div ng-show="!editableTextCtrl.editionMode" class="editable-text-container">
+        <span class="editable-text-text {{::editableTextCtrl.textClass}}"
+              ng-click="editableTextCtrl.onTextClick()"
+              ng-bind="editableTextCtrl.text"></span>
+        <button class="edit-btn" data-icon="a" ng-click="editableTextCtrl.edit()"></button>
+    </div>
+
+    <form class="editable-text-container" ng-show="editableTextCtrl.editionMode" ng-submit="editableTextCtrl.validate()">
+        <input class="edition-text-input"
+               type="text"
+               placeholder="{{:: editableTextCtrl.placeholder | translate}}"
+               ng-model="editableTextCtrl.editionText"/>
+        <button class="valid-btn" data-icon="b"></button>
+        <button type='button' class="cancel-btn" data-icon="d" ng-click="editableTextCtrl.cancel()"></button>
+    </form>
+</div>

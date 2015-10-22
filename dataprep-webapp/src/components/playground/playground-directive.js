@@ -7,29 +7,13 @@
      * @description This directive create the playground.
      * @restrict E
      */
-    function Playground($timeout) {
+    function Playground() {
         return {
             restrict: 'E',
             templateUrl: 'components/playground/playground.html',
             bindToController: true,
             controllerAs: 'playgroundCtrl',
-            controller: 'PlaygroundCtrl',
-            link: function (scope, iElement, iAttrs, ctrl) {
-                var attachKeyDown = function () {
-                    angular.element('body > talend-modal .steps-header').find('input#prepNameInput')
-                        .bind('keydown', function(e) {
-                            e.stopPropagation();
-
-                            if (e.keyCode === 13) {
-                                ctrl.confirmPrepNameEdition();
-                            }
-                            else if (e.keyCode === 27) {
-                                $timeout(ctrl.cancelPrepNameEdition);
-                            }
-                        });
-                };
-                $timeout(attachKeyDown);
-            }
+            controller: 'PlaygroundCtrl'
         };
     }
 

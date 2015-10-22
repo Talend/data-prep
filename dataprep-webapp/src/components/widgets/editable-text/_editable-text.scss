@@ -1,0 +1,46 @@
+.editable-text {
+  @mixin editable-button-color($color, $background-color, $hover-color, $hover-background-color) {
+    color: $color;
+    background-color: $background-color;
+    &:hover {
+      color: $hover-color;
+      background-color: $hover-background-color;
+    }
+  }
+
+  .editable-text-container {
+    @include display(flex);
+    @include align-items(center);
+  }
+
+  .edition-text-input {
+    font-family: $base-font-family;
+    margin: 0;
+    padding: 5px;
+    width: 190px;
+  }
+
+  button {
+    font-family: $iconsfont;
+    font-size: .5em;
+
+    height: 25px;
+    width: 25px;
+    border-radius: 50px;
+
+    margin-left: 5px;
+    padding: 0;
+
+    &.edit-btn {
+      @include editable-button-color($medium-gray, transparent, $dark-gray, transparent);
+    }
+
+    &.cancel-btn {
+      @include editable-button-color($dark-gray, $light-gray, $dark-gray, darken($light-gray, 10%));
+    }
+
+    &.valid-btn {
+      @include editable-button-color($white, $dark-green, $white, darken($dark-green, 10%));
+    }
+  }
+}

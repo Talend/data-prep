@@ -1,6 +1,7 @@
 package org.talend.dataprep.dataset.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.api.dataset.DataSetMetadata.Builder.metadata;
@@ -17,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.jms.Message;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.dataset.service.analysis.*;
@@ -330,6 +333,70 @@ public class DataSetService {
         }
     }
 
+
+    /**
+     * Creates a new data set and returns the new data set id as text in the response.
+     *
+     * @param name An optional name for the new data set (might be <code>null</code>).
+     * @param name The dataset name.
+     * @param response The HTTP response to interact with caller.
+     * @return The new data id.
+     */
+    @RequestMapping(value = "/datasets/clone/{id}", method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Clone a data set", produces = MediaType.TEXT_PLAIN_VALUE,
+        notes = "Clone a new data set based on the given id. Returns the id of the newly created data set.")
+    @Timed
+    @VolumeMetered
+    public String clone(
+        @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
+        @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015'.  if none the current name concat with ' Copy' will be used. Returns the id of the newly created data set.")
+        @RequestParam(defaultValue = "", required = false) String name,
+        HttpServletResponse response) throws IOException {
+
+        response.setHeader( "Content-Type", MediaType.TEXT_PLAIN_VALUE ); //$NON-NLS-1$
+
+
+        DataSet dataSet = get( true, true, null, dataSetId, response);
+
+        // if no metadata it's an empty one the get method has already set NO CONTENT http return code
+        // so simply return!!
+        if (dataSet.getMetadata() == null){
+            return StringUtils.EMPTY;
+        }
+
+        final String newId = UUID.randomUUID().toString();
+
+        if (StringUtils.isEmpty( name )){
+            name = dataSet.getMetadata().getName() + " Copy";
+        }
+
+        dataSet.getMetadata().setName( name );
+
+        final Marker marker = Markers.dataset( newId );
+        LOG.debug( marker, "Cloning..." );
+
+         DataSetMetadata dataSetMetadata = metadata() //
+            .id(newId) //
+            .name(name) //
+            .author(getUserId()) //
+            .location(dataSet.getMetadata().getLocation()) //
+            .created(System.currentTimeMillis()) //
+            .build();
+
+        // Create the new data set
+        dataSetMetadataRepository.add( dataSetMetadata );
+
+        // Save data set content
+        LOG.debug( marker, "Storing content..." );
+        contentStore.storeAsRaw( dataSetMetadata, contentStore.getAsRaw( dataSet.getMetadata() ) );
+        LOG.debug( marker, "Content stored." );
+
+        queueEvents(newId);
+        LOG.debug(marker, "Cloned!");
+
+        return newId;
+    }
+
     /**
      * Deletes a data set with provided id.
      *
@@ -339,7 +406,7 @@ public class DataSetService {
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     public void delete(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to delete") String dataSetId) {
-        DataSetMetadata metadata = dataSetMetadataRepository.get(dataSetId);
+        DataSetMetadata metadata = dataSetMetadataRepository.get( dataSetId );
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         try {
             lock.lock();
@@ -402,7 +469,7 @@ public class DataSetService {
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId, //
             @RequestParam(value = "name", required = false) @ApiParam(name = "name", value = "New value for the data set name") String name, //
             @ApiParam(value = "content") InputStream dataSetContent) {
-        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
+        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock( dataSetId );
         try {
             lock.lock();
             DataSetMetadata.Builder datasetBuilder = metadata().id(dataSetId);
@@ -450,9 +517,9 @@ public class DataSetService {
             return DataSet.empty();
         }
         DataSet dataSet = new DataSet();
-        completeWithUserData(metadata);
-        dataSet.setMetadata(metadata);
-        dataSet.setColumns(metadata.getRow().getColumns());
+        completeWithUserData( metadata );
+        dataSet.setMetadata( metadata );
+        dataSet.setColumns( metadata.getRow().getColumns() );
         return dataSet;
     }
 
@@ -469,7 +536,7 @@ public class DataSetService {
             for (DataSetErrorCodes code : DataSetErrorCodes.values()) {
                 errors.add(new JsonErrorCodeDescription(code));
             }
-            builder.build().writer().writeValue(response.getOutputStream(), errors);
+            builder.build().writer().writeValue( response.getOutputStream(), errors );
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

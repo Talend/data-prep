@@ -21,7 +21,7 @@
       font-weight: bold;
       text-align: center;
       cursor: pointer;
-      &:hover{
+      &:hover {
         color: $dark-blue;
         text-decoration: underline;
       }
@@ -34,6 +34,23 @@
     bottom: 0;
     left: 0;
     right: 0;
-  }
 
+    .inventory-title {
+      padding: 3px 0;
+    }
+
+    .edition-text-input {
+      width: 220px;
+    }
+
+    .edit-btn {
+      visibility: hidden;
+    }
+
+    .inventory-entry:hover {
+      .edit-btn {
+        visibility: visible;
+      }
+    }
+  }
 }

@@ -42,27 +42,14 @@
                     <input type="checkbox"
                            ng-model='playgroundCtrl.hasActiveStep'
                            ng-change='playgroundCtrl.toggleRecipe()'/>
-                    <div class="checkbox"></div>
+                    <div id="recipe-toggle-switch" class="checkbox" ></div>
                 </label>
 
-                <div id="help-preparation-name">
-                    <div ng-show="!playgroundCtrl.state.playground.nameEditionMode">
-                        <span class="title">{{playgroundCtrl.preparationName}}</span>
-                        <a class="edit-btn" data-icon="a" ng-click="playgroundCtrl.toggleEditionMode()"></a>
-                    </div>
-                    <div ng-show="playgroundCtrl.state.playground.nameEditionMode">
-                        <input id="prepNameInput"
-                               type="text"
-                               placeholder="{{::'ENTER_PREPARATION_NAME' | translate}}"
-                               ng-model="playgroundCtrl.preparationName"
-                               ng-model-options="{updateOn: 'default blur'}" />
-                        <div>
-                            <a class="check-btn" data-icon="b" ng-click="playgroundCtrl.confirmPrepNameEdition()"></a>
-                            <a class="cancel-btn" data-icon="d" ng-click="playgroundCtrl.cancelPrepNameEdition()"></a>
-                        </div>
-                    </div>
-                </div>
-
+                <talend-editable-text id="help-preparation-name"
+                                      edition-mode="playgroundCtrl.state.playground.nameEditionMode"
+                                      on-validate="playgroundCtrl.confirmPrepNameEdition(text)"
+                                      placeholder="ENTER_PREPARATION_NAME"
+                                      text="playgroundCtrl.preparationName"></talend-editable-text>
             </div>
 
             <!-- Recipe -->

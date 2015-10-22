@@ -126,39 +126,18 @@ describe('Playground directive', function () {
             expect(playground.eq(0).find('.recipe').eq(0).find('.action').eq(0).hasClass('right')).toBe(false);
         });
 
-        it('should show/hide action buttons in the recipe header', function () {
+        it('should render editable text on preparation title', function () {
             //given
             stateMock.playground.preparation = {id: '3e41168465e15d4'};
             stateMock.playground.dataset = metadata;
+
+            //when
             createElement();
 
+            //then
             var stepsHeader = angular.element('body > talend-modal').find('.steps-header').eq(0);
-            var nonEditionSection = stepsHeader.find('div[ng-show="!playgroundCtrl.state.playground.nameEditionMode"]').eq(0);
-            var editionSection = stepsHeader.find('div[ng-show="playgroundCtrl.state.playground.nameEditionMode"]').eq(0);
-
-            var confirmBtn = stepsHeader.find('a.check-btn').eq(0);
-            var editionBtn = stepsHeader.find('a.edit-btn').eq(0);
-
-            expect(nonEditionSection.is(':visible')).toBe(false);
-            expect(editionSection.is(':visible')).toBe(true);
-
-            element.controller('playground').preparationName = 'My Preparation';
-
-            //when
-            var event = new angular.element.Event('click');
-            confirmBtn.trigger(event);
-
-            //then
-            expect(nonEditionSection.is(':visible')).toBe(true);
-            expect(editionSection.is(':visible')).toBe(false);
-
-            //when
-            var event2 = new angular.element.Event('click');
-            editionBtn.trigger(event2);
-
-            //then
-            expect(nonEditionSection.is(':visible')).toBe(false);
-            expect(editionSection.is(':visible')).toBe(true);
+            var title = stepsHeader.find('talend-editable-text');
+            expect(title.length).toBe(1);
 
         });
 
@@ -228,66 +207,6 @@ describe('Playground directive', function () {
 
             //then
             expect(chkboxOnOff.prop('checked')).toBe(true);
-        }));
-
-        it('should confirm preparation name edition on ENTER keydown', inject(function (PlaygroundService) {
-            //given
-            stateMock.playground.dataset = metadata;
-            PlaygroundService.preparationName = 'PrepName';
-
-            createElement();
-            var ctrl = element.controller('playground');
-            spyOn(ctrl, 'confirmPrepNameEdition').and.returnValue();
-
-            var event = new angular.element.Event('keydown', {keyCode: 13});
-
-            //when
-            var input = angular.element('body > talend-modal .steps-header').find('input#prepNameInput');
-            input.trigger(event);
-
-            //then
-            expect(ctrl.confirmPrepNameEdition).toHaveBeenCalled();
-        }));
-
-        it('should cancel preparation name edition on ENTER keydown', inject(function ($timeout, PlaygroundService) {
-            //given
-            stateMock.playground.dataset = metadata;
-            PlaygroundService.preparationName = 'PrepName';
-
-            createElement();
-            var ctrl = element.controller('playground');
-            spyOn(ctrl, 'cancelPrepNameEdition').and.returnValue();
-
-            var event = new angular.element.Event('keydown', {keyCode: 27});
-
-            //when
-            var input = angular.element('body > talend-modal .steps-header').find('input#prepNameInput');
-            input.trigger(event);
-            $timeout.flush();
-
-            //then
-            expect(ctrl.cancelPrepNameEdition).toHaveBeenCalled();
-        }));
-
-        it('should do nothing special on keydown other than ENTER/ESC', inject(function ($timeout, PlaygroundService) {
-            //given
-            stateMock.playground.dataset = metadata;
-            PlaygroundService.preparationName = 'PrepName';
-
-            createElement();
-            var ctrl = element.controller('playground');
-            spyOn(ctrl, 'confirmPrepNameEdition').and.returnValue();
-            spyOn(ctrl, 'cancelPrepNameEdition').and.returnValue();
-
-            var event = new angular.element.Event('keydown', {keyCode: 19});
-
-            //when
-            var input = angular.element('body > talend-modal .steps-header').find('input#prepNameInput');
-            input.trigger(event);
-
-            //then
-            expect(ctrl.confirmPrepNameEdition).not.toHaveBeenCalled();
-            expect(ctrl.cancelPrepNameEdition).not.toHaveBeenCalled();
         }));
     });
 

@@ -1,0 +1,27 @@
+{
+   "metadata":{
+      "name":"tagada Copy",
+      "author":"anonymousUser",
+      "records":2,
+      "nbLinesHeader":1,
+      "nbLinesFooter":0
+   },
+   "records":[
+      {
+         "0000": "1",
+         "0001": "John",
+         "0002": "Lennon",
+         "0003": "40",
+         "0004": "10/09/1940",
+         "0005": "false"
+      },
+      {
+         "0000": "2",
+         "0001": "David",
+         "0002": "Bowie",
+         "0003": "67",
+         "0004": "01/08/1947",
+         "0005": "true"
+      }
+   ]
+}

@@ -76,50 +76,15 @@
   .steps-header{
     margin: 15px 0 15px 10px;
 
-    .title{
-      padding: 3px 0 4px 0;
+    .editable-text {
+      padding: 5px;
+    }
+
+    .editable-text-text{
+      padding: 2px 0;
       font-size: 1.2em;
       font-weight: 600;
       text-transform: uppercase;
-    }
-    input{
-      font-family: $base-font-family;
-      float: left;
-      width:190px;
-      padding: 5px 0 4px 3px;
-    }
-    div{
-      padding: 3px;
-      a {
-        font-family: $iconsfont;
-        font-size: .5em;
-        padding: 8px 5px;
-        border-radius: 50px;
-
-        &.edit-btn {
-          color: $medium-gray;
-          background-color: transparent;
-          &:hover {
-            color: $dark-gray;
-          }
-        }
-        &.cancel-btn {
-          margin-left: 0px;
-          color: $dark-gray;
-          background-color: $light-gray;
-          &:hover {
-            background-color: darken($light-gray, 10%);
-          }
-        }
-        &.check-btn {
-          margin-left: 5px;
-          color: $white;
-          background-color: $dark-green;
-          &:hover {
-            background-color: darken($dark-green, 10%);
-          }
-        }
-      }
     }
   }
 

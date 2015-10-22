@@ -48,54 +48,20 @@
 
         /**
          * @ngdoc method
-         * @name toggleEditionMode
-         * @methodOf data-prep.playground.controller:PlaygroundCtrl
-         * @description Toggle the edition mode flag
-         */
-        vm.toggleEditionMode = function toggleEditionMode() {
-            var editionMode = state.playground.nameEditionMode;
-            StateService.setNameEditionMode(!editionMode);
-        };
-
-        /**
-         * @ngdoc method
          * @name confirmPrepNameEdition
          * @methodOf data-prep.playground.controller:PlaygroundCtrl
          * @description Change the preparation name
          */
-        vm.confirmPrepNameEdition = function confirmPrepNameEdition(){
-            var cleanName = vm.preparationName.trim();
+        vm.confirmPrepNameEdition = function confirmPrepNameEdition(name){
+            var cleanName = name.trim();
             if(!vm.changeNameInProgress && cleanName) {
-                vm.toggleEditionMode();
                 changeName(cleanName)
                     .then(function() {
                         return $state.go('nav.home.preparations', {prepid : state.playground.preparation.id}, {location:'replace', inherit:false} );
-                    })
-                    .catch(vm.toggleEditionMode);
+                    });
             }
         };
 
-        /**
-         * @ngdoc method
-         * @name cancelPrepNameEdition
-         * @methodOf data-prep.playground.controller:PlaygroundCtrl
-         * @description cancels the new preparation name and sets the preparation name to the original one
-         */
-        vm.cancelPrepNameEdition = function cancelPrepNameEdition(){
-            vm.preparationName = PlaygroundService.originalPreparationName;
-            vm.toggleEditionMode();
-        };
-
-        //--------------------------------------------------------------------------------------------------------------
-        //------------------------------------------------------GRID----------------------------------------------------
-        //--------------------------------------------------------------------------------------------------------------
-        vm.toggleLookup = function toggleLookup() {
-            StateService.setLookupVisibility(!state.playground.lookupVisibility);
-        };
-
-        //--------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------PREPARATION------------------------------------------------
-        //--------------------------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
          * @name changeName
@@ -111,6 +77,13 @@
                     vm.changeNameInProgress = false;
                 });
         }
+
+        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------GRID----------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        vm.toggleLookup = function toggleLookup() {
+            StateService.setLookupVisibility(!state.playground.lookupVisibility);
+        };
 
         //--------------------------------------------------------------------------------------------------------------
         //------------------------------------------------------CLOSE---------------------------------------------------
@@ -163,7 +136,6 @@
             vm.saveInProgress = true;
             var cleanName = vm.preparationName.trim();
             changeName(cleanName)
-                .then(vm.toggleEditionMode)
                 .then(hideAll)
                 .finally(function() {
                     vm.saveInProgress = false;

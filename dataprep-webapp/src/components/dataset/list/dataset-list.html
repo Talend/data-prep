@@ -22,7 +22,8 @@
     </div>
 
     <div class="inventory-list" id="datasets-list">
-        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}" >
+        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}"
+             ng-mouseover="datasetListCtrl.overDataset(dataset,true)" ng-mouseleave="datasetListCtrl.overDataset(dataset,false)">
 
             <div class="inventory-icon" ng-switch="dataset.type" ng-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)">
                 <img src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
@@ -34,33 +35,51 @@
             </div>
 
             <div class="inventory-text">
-                <div class="inventory-title"
-                     ng-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)">{{dataset.name}}</div>
-                <div class="inventory-description"
-                     ng-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)">{{ 'INVENTORY_DETAILS' | translate:dataset }}</div>
+                <talend-editable-text text="dataset.name"
+                                      text-class="inventory-title"
+                                      on-text-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)"
+                                      on-validate="datasetListCtrl.rename(dataset, text)"></talend-editable-text>
+                <div class="inventory-description">{{ 'INVENTORY_DETAILS' | translate:dataset }}</div>
             </div>
 
             <!-- Draft actions icons -->
             <div ng-switch-when="true"
                  class="inventory-actions">
-                <button class="btn btn-transparent btn-remove" ng-click="datasetListCtrl.delete(dataset)"></button>
+                <a data-icon="e" class="btn-icon btn-transparent" ng-click="datasetListCtrl.delete(dataset)"></a>
             </div>
 
             <!-- Not draft actions icons -->
             <div ng-switch-when="false" class="inventory-actions">
-                <a data-icon="c" class="btn-icon btn-transparent" ng-if="!!dataset.defaultPreparation"
+                <a data-icon="c"
+                   class="btn-icon btn-transparent"
+                   ng-if="!!dataset.defaultPreparation"
                    ui-sref="nav.home.preparations({prepid: dataset.defaultPreparation.id})"></a>
                 <a data-icon="g" class="btn-icon btn-transparent"></a>
                 <a data-icon="h" class="btn-icon btn-transparent"></a>
+
                 <div class="divider btn-transparent"></div>
-                <a data-icon="e" class="btn-icon btn-transparent"
+                <a data-icon="e"
+                   class="btn-icon btn-transparent"
                    ng-click="datasetListCtrl.delete(dataset)"></a>
+
                 <div class="divider btn-transparent"></div>
-                <a data-icon="s" class="btn-icon btn-transparent"
+                <a data-icon="s"
+                   class="btn-icon btn-transparent"
                    ng-click="datasetListCtrl.datasetService.processCertification(dataset)"></a>
-                <a data-icon="f" class="btn-icon btn-transparent favorite" ng-class="{'favorite-true':dataset.favorite}"
+                <a data-icon="f"
+                   class="btn-icon btn-transparent favorite"
+                   ng-class="{'favorite-true':dataset.favorite}"
                    ng-click="datasetListCtrl.datasetService.toggleFavorite(dataset)"></a>
+
+                <!--
+                <div class="divider btn-transparent"></div>
+                <a data-icon="y"
+                   class="btn-icon btn-transparent"
+                   title="clone"
+                   ng-click="datasetListCtrl.clone(dataset)"></a>
+                -->
             </div>
         </div>
     </div>
+
 </div>

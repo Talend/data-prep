@@ -17,6 +17,7 @@
         var service = {
             refreshDatasets : refreshDatasets,
             create : create,
+            clone: clone,
             importRemoteDataset : importRemoteDataset,
             update : update,
             processCertification : processCertification,
@@ -85,6 +86,25 @@
 
         /**
          * @ngdoc method
+         * @name clone
+         * @methodOf data-prep.services.dataset.service:DatasetListService
+         * @param {object} dataset The dataset to clone
+         * @param {string} the optional cloned dataset name
+         * @description Clone a dataset from backend and refresh its internal list
+         * @returns {promise} The pending GET promise
+         */
+        function clone(dataset,name) {
+            var promise = DatasetRestService.clone(dataset,name);
+
+            promise.then(function (){
+                refreshDatasets();
+            });
+
+            return promise;
+        }
+
+        /**
+         * @ngdoc method
          * @name importRemoteDataset
          * @methodOf data-prep.services.dataset.service:DatasetListService
          * @param {object} parameters The import parameters to import
@@ -107,7 +127,8 @@
          * @ngdoc method
          * @name update
          * @methodOf data-prep.services.dataset.service:DatasetListService
-         * @param {object} dataset The dataset to delete         * @description Update a dataset from backend and refresh its internal list
+         * @param {object} dataset The dataset to delete
+         * @description Update a dataset from backend and refresh its internal list
          * @returns {promise} The pending POST promise
          */
         function update(dataset) {

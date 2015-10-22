@@ -6,11 +6,6 @@
      * @name data-prep.dataset-list.controller:DatasetListCtrl
      * @description Dataset list controller.
      On creation, it fetch dataset list from backend and load playground if 'datasetid' query param is provided
-     <br/>
-     Watchers :
-     <ul>
-        <li>datasets : on dataset list change, set the default preparation id in each element</li>
-     </ul>
      * @requires data-prep.services.dataset.service:DatasetService
      * @requires data-prep.services.dataset.service:DatasetListSortService
      * @requires data-prep.services.playground.service:PlaygroundService
@@ -18,7 +13,6 @@
      * @requires data-prep.services.utils.service:MessageService
      * @requires data-prep.services.uploadWorkflowService.service:UploadWorkflowService
      * @requires data-prep.services.state.service:StateService
-     * @requires data-prep.services.onboarding:OnboardingService
      */
     function DatasetListCtrl($stateParams, DatasetService, DatasetListSortService, PlaygroundService,
                              TalendConfirmService, MessageService, UploadWorkflowService, StateService) {
@@ -140,10 +134,53 @@
 
         /**
          * @ngdoc method
+         * @name clone
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Clone a dataset
+         * @param {object} dataset - the dataset to clone
+         */
+        vm.clone = function(dataset){
+            // TODO ask a new name?
+            DatasetService.clone(dataset)
+                .then(function() {
+                          MessageService.success('CLONE_SUCCESS_TITLE', 'CLONE_SUCCESS');
+                });
+        };
+
+        /**
+         * @ngdoc method
+         * @name rename
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @param {object} dataset The dataset to rename
+         * @param {string} name The new name
+         * @description Rename a dataset
+         */
+        vm.rename = function(dataset, name){
+            if (dataset.renaming){
+                return;
+            }
+
+            dataset.renaming = true;
+            var oldName = dataset.name;
+            dataset.name = name;
+            return DatasetService.update(dataset)
+                .then(function() {
+                  MessageService.success('DATASET_RENAME_SUCCESS_TITLE', 'DATASET_RENAME_SUCCESS');
+                })
+                .catch(function() {
+                    dataset.name = oldName;
+                })
+                .finally(function () {
+                    dataset.renaming = false;
+                });
+        };
+
+        /**
+         * @ngdoc method
          * @name loadUrlSelectedDataset
          * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
          * @description [PRIVATE] Load playground with provided dataset id, if present in route param
-         * @param {object[]} datasets - list of all user's datasets
+         * @param {object[]} datasets List of all user's datasets
          */
         var loadUrlSelectedDataset = function(datasets) {
             if($stateParams.datasetid) {

@@ -40,7 +40,7 @@ describe('Dataset list controller', function () {
         spyOn($state, 'go').and.returnValue();
     }));
 
-    afterEach(inject(function($stateParams) {
+    afterEach(inject(function ($stateParams) {
         $stateParams.datasetid = null;
     }));
 
@@ -53,7 +53,7 @@ describe('Dataset list controller', function () {
         expect(DatasetService.getDatasets).toHaveBeenCalled();
     }));
 
-    describe('dataset in query params load', function() {
+    describe('dataset in query params load', function () {
         it('should init playground with the provided datasetId from url', inject(function ($stateParams, PlaygroundService, StateService) {
             //given
             $stateParams.datasetid = 'ab45f893d8e923';
@@ -82,9 +82,9 @@ describe('Dataset list controller', function () {
         }));
     });
 
-    describe('sort parameters', function() {
+    describe('sort parameters', function () {
 
-        describe('with dataset refresh success', function() {
+        describe('with dataset refresh success', function () {
             beforeEach(inject(function ($q, DatasetService) {
                 spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.when(true));
             }));
@@ -167,7 +167,7 @@ describe('Dataset list controller', function () {
 
         });
 
-        describe('with dataset refresh failure', function() {
+        describe('with dataset refresh failure', function () {
             beforeEach(inject(function ($q, DatasetService) {
                 spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.reject(false));
             }));
@@ -175,7 +175,7 @@ describe('Dataset list controller', function () {
             it('should set the old sort parameter', function () {
                 //given
                 var previousSelectedSort = {id: 'date', name: 'DATE'};
-                var newSort =  {id: 'name', name: 'NAME_SORT'};
+                var newSort = {id: 'name', name: 'NAME_SORT'};
 
                 var ctrl = createController();
                 ctrl.sortSelected = previousSelectedSort;
@@ -192,7 +192,7 @@ describe('Dataset list controller', function () {
             it('should set the old order parameter', function () {
                 //given
                 var previousSelectedOrder = {id: 'desc', name: 'DESC'};
-                var newSortOrder =  {id: 'asc', name: 'ASC_ORDER'};
+                var newSortOrder = {id: 'asc', name: 'ASC_ORDER'};
 
                 var ctrl = createController();
                 ctrl.sortOrderSelected = previousSelectedOrder;
@@ -208,43 +208,189 @@ describe('Dataset list controller', function () {
         });
     });
 
-    describe('already created', function () {
-        var ctrl;
-
-        beforeEach(inject(function ($rootScope, $q, MessageService, DatasetService, DatasetSheetPreviewService, TalendConfirmService) {
-            ctrl = createController();
-            scope.$digest();
-
+    describe('delete dataset', function () {
+        beforeEach(inject(function ($q, MessageService, DatasetService, TalendConfirmService) {
             spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.when(true));
             spyOn(DatasetService, 'delete').and.returnValue($q.when(true));
             spyOn(MessageService, 'success').and.returnValue();
-            spyOn(DatasetSheetPreviewService, 'loadPreview').and.returnValue($q.when(true));
-            spyOn(DatasetSheetPreviewService, 'display').and.returnValue($q.when(true));
-            spyOn(DatasetService, 'toggleFavorite').and.returnValue($q.when(true));
             spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when(true));
         }));
 
-        it('should delete dataset and show toast', inject(function ($q, MessageService, DatasetService, TalendConfirmService) {
+        it('should ask confirmation before deletion', inject(function (TalendConfirmService) {
             //given
             var dataset = datasets[0];
-
+            var ctrl = createController();
 
             //when
             ctrl.delete(dataset);
             scope.$digest();
 
             //then
-            expect(TalendConfirmService.confirm).toHaveBeenCalledWith({disableEnter: true}, [ 'DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM' ], {type: 'dataset', name: 'Customers (50 lines)' });
-            expect(DatasetService.delete).toHaveBeenCalledWith(dataset);
-            expect(MessageService.success).toHaveBeenCalledWith('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {type: 'dataset', name: 'Customers (50 lines)'});
+            expect(TalendConfirmService.confirm).toHaveBeenCalledWith({disableEnter: true}, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {
+                type: 'dataset',
+                name: 'Customers (50 lines)'
+            });
         }));
+
+        it('should delete dataset', inject(function (DatasetService) {
+            //given
+            var dataset = datasets[0];
+            var ctrl = createController();
+
+            //when
+            ctrl.delete(dataset);
+            scope.$digest();
+
+            //then
+            expect(DatasetService.delete).toHaveBeenCalledWith(dataset);
+        }));
+
+        it('should show confirmation toast', inject(function (MessageService) {
+            //given
+            var dataset = datasets[0];
+            var ctrl = createController();
+
+            //when
+            ctrl.delete(dataset);
+            scope.$digest();
+
+            //then
+            expect(MessageService.success).toHaveBeenCalledWith('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {
+                type: 'dataset',
+                name: 'Customers (50 lines)'
+            });
+        }));
+
+    });
+
+    describe('bindings', function () {
 
         it('should bind datasets getter to datasetListService.datasets', inject(function (DatasetService, DatasetListService) {
             //given
+            var ctrl = createController();
+
+            //when
             DatasetListService.datasets = refreshedDatasets;
 
             //then
             expect(ctrl.datasets).toBe(refreshedDatasets);
         }));
+    });
+
+    describe('rename', function () {
+
+        it('should do nothing when dataset is currently being renamed', inject(function ($q, DatasetService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.when(true));
+
+            var ctrl = createController();
+            var dataset = {renaming: true};
+            var name = 'new dataset name';
+
+            //when
+            ctrl.rename(dataset, name);
+
+            //then
+            expect(DatasetService.update).not.toHaveBeenCalled();
+        }));
+
+        it('should change name on the current dataset and call service to rename it', inject(function ($q, DatasetService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.when(true));
+
+            var ctrl = createController();
+            var dataset = {name: 'my old name'};
+            var name = 'new dataset name';
+
+            //when
+            ctrl.rename(dataset, name);
+
+            //then
+            expect(dataset.name).toBe(name);
+            expect(DatasetService.update).toHaveBeenCalledWith(dataset);
+        }));
+
+        it('should show confirmation message', inject(function ($q, DatasetService, MessageService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.when(true));
+            spyOn(MessageService, 'success').and.returnValue();
+
+            var ctrl = createController();
+            var dataset = {name: 'my old name'};
+            var name = 'new dataset name';
+
+            //when
+            ctrl.rename(dataset, name);
+            scope.$digest();
+
+            //then
+            expect(MessageService.success).toHaveBeenCalledWith('DATASET_RENAME_SUCCESS_TITLE', 'DATASET_RENAME_SUCCESS');
+        }));
+
+        it('should set back the old name when the real rename is rejected', inject(function ($q, DatasetService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.reject(false));
+
+            var ctrl = createController();
+            var oldName = 'my old name';
+            var newName = 'new dataset name';
+            var dataset = {name: oldName};
+
+            //when
+            ctrl.rename(dataset, newName);
+            expect(dataset.name).toBe(newName);
+            scope.$digest();
+
+            //then
+            expect(dataset.name).toBe(oldName);
+        }));
+
+        it('should manage "renaming" flag', inject(function ($q, DatasetService, MessageService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.when(true));
+            spyOn(MessageService, 'success').and.returnValue();
+
+            var ctrl = createController();
+            var dataset = {name: 'my old name'};
+            var name = 'new dataset name';
+
+            expect(dataset.renaming).toBeFalsy();
+
+            //when
+            ctrl.rename(dataset, name);
+            expect(dataset.renaming).toBeTruthy();
+            scope.$digest();
+
+            //then
+            expect(dataset.renaming).toBeFalsy();
+        }));
+    });
+
+    describe('cloning dataset', function () {
+
+        var ctrl;
+
+        beforeEach(inject(function ($rootScope, $q, DatasetService, MessageService) {
+            ctrl = createController();
+            scope.$digest();
+
+            spyOn(DatasetService, 'clone').and.returnValue($q.when(true));
+            spyOn(MessageService, 'success').and.returnValue();
+        }));
+
+        it('clone must call clone service', inject(function ($q, DatasetService, MessageService) {
+            //given
+            var dataset = datasets[0];
+
+
+            //when
+            ctrl.clone(dataset);
+            scope.$digest();
+
+            //then
+            expect(DatasetService.clone).toHaveBeenCalledWith(dataset);
+            expect(MessageService.success).toHaveBeenCalledWith('CLONE_SUCCESS_TITLE', 'CLONE_SUCCESS');
+        }));
+
     });
 });

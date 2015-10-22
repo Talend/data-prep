@@ -14,6 +14,7 @@
             create: create,
             update: update,
             delete: deleteDataset,
+            clone: cloneDataset,
 
             updateColumn: updateColumn,
 
@@ -92,6 +93,23 @@
          */
         function deleteDataset(dataset) {
             return $http.delete(RestURLs.datasetUrl + '/' + dataset.id);
+        }
+
+        /**
+         * @ngdoc method
+         * @name cloneDataset
+         * @methodOf data-prep.services.dataset.service:DatasetRestService
+         * @description Clone the dataset
+         * @param {dataset} dataset the dataset infos to delete
+         * @param {string) the optional clone name
+         * @returns {Promise} The GET promise
+         */
+        function cloneDataset(dataset, name){
+            var url = RestURLs.datasetUrl + '/clone/' + dataset.id;
+            if(name){
+                url += '?name='+encodeURIComponent(name);
+            }
+            return $http.get(url);
         }
 
         //--------------------------------------------------------------------------------------------------------------

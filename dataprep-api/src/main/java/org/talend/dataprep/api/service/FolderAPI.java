@@ -27,27 +27,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class FolderAPI extends APIService {
 
 
-    @RequestMapping(value = "/api/folders/childs", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/folders/childs", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List childs folders of the parameter if null list root childs.")
     @Timed
-    public void childs(@RequestBody(required = false) final Folder folder, final HttpServletResponse response) {
+    public void childs(@RequestParam(required = false)  String path, final HttpServletResponse response) {
         try {
-            final HystrixCommand<InputStream> transformation = getCommand(FoldersList.class, getClient(), folder);
-            response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-            final ServletOutputStream outputStream = response.getOutputStream();
-            IOUtils.copyLarge(transformation.execute(), outputStream);
-            outputStream.flush();
-        } catch (Exception e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDERS, e);
-        }
-    }
-
-    @RequestMapping(value = "/api/folders/root/childs", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List childs folders of the root folder")
-    @Timed
-    public void rootChilds(@RequestBody(required = false) final Folder folder, final HttpServletResponse response) {
-        try {
-            final HystrixCommand<InputStream> transformation = getCommand(FoldersList.class, getClient());
+            final HystrixCommand<InputStream> transformation = getCommand(FoldersList.class, getClient(), path);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(transformation.execute(), outputStream);
@@ -58,12 +43,13 @@ public class FolderAPI extends APIService {
     }
 
 
-    @RequestMapping(value = "/api/folders", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/folders/add", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Add folder as a child of the one in parameter if none as child of root.")
     @Timed
-    public void addFolder(@RequestBody final Folder folder,@RequestParam(required = false) String parentId, final HttpServletResponse response) {
+    public void addFolder(@RequestParam(required = false) String parentPath, @RequestParam(required = true) String path, //
+            final HttpServletResponse response) {
         try {
-            final HystrixCommand<InputStream> transformation = getCommand(CreateChildFolder.class, getClient(), folder, parentId);
+            final HystrixCommand<InputStream> transformation = getCommand(CreateChildFolder.class, getClient(), parentPath, path);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(transformation.execute(), outputStream);

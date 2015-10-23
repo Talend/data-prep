@@ -41,53 +41,30 @@ public class FolderService {
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
-     * @param folder
+     * @param path
      * @return
      */
-    @RequestMapping(value = "/folders/childs", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Folder childs", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
+    @RequestMapping(value = "/folders/childs", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Folder childs", produces = MediaType.APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
     @Timed
     @VolumeMetered
-    public Iterable<Folder> childs( Folder folder){
-        return folderRepository.childs(folder);
+    public Iterable<Folder> childs( @RequestParam(required = false)  String path){
+        return folderRepository.childs(path == null ? "" : path);
     }
 
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
-     * @param folder
+     * @param path
      * @return
      */
-    @RequestMapping(value = "/folders/root/childs", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Folder childs", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE,
-            notes = "List all child folders of the root folder")
+    @RequestMapping(value = "/folders/add", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Create a folder in the one with the id, If null create as a child root")
     @Timed
     @VolumeMetered
-    public Iterable<Folder> rootChilds( Folder folder){
-        return folderRepository.childs(folderRepository.rootFolder());
-    }
+    public Folder addFolder(@RequestParam(required = false) String parentPath, @RequestParam(required = true) String path){
 
-    /**
-     * no javadoc here so see description in @ApiOperation notes.
-     * @param folder
-     * @return
-     */
-    @RequestMapping(value = "/folders", method = PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create a Folder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, notes = "Create a folder in the one with the id, If null create as a child root")
-    @Timed
-    @VolumeMetered
-    public Folder addFolder(@RequestParam(required = false) String parentId, @RequestBody Folder folder){
-
-        Folder parent;
-        if (StringUtils.isEmpty(parentId)){
-            parent = folderRepository.rootFolder();
-        } else {
-            parent = folderRepository.find(parentId);
-        }
-        if (parent == null){
-            throw new TDPException(FolderErrorCodes.FOLDER_DOES_NOT_EXIST, ExceptionContext.build().put("folderId", parentId));
-        }
-        folder = folderRepository.addFolder(parent, folder);
+        Folder folder = folderRepository.addFolder(parentPath == null ? "" : parentPath, path);
         return folder;
     }
 

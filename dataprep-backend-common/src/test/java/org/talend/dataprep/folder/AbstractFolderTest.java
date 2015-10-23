@@ -24,7 +24,7 @@ public abstract class AbstractFolderTest {
 
         int sizeBefore = getFolderRepository().size();
 
-        Folder child = getFolderRepository().addFolder("/", "foo");
+        Folder child = getFolderRepository().addFolder( "foo");
 
         int sizeAfter = getFolderRepository().size();
 
@@ -66,11 +66,11 @@ public abstract class AbstractFolderTest {
         int sizeBefore = getFolderRepository().size();
 
 
-        Folder foo = getFolderRepository().addFolder("", "foo");
+        Folder foo = getFolderRepository().addFolder("foo");
 
-        Folder beer = getFolderRepository().addFolder("", "beer");
+        Folder beer = getFolderRepository().addFolder("beer");
 
-        Folder bar = getFolderRepository().addFolder("beer", "bar");
+        Folder bar = getFolderRepository().addFolder("beer/bar");
 
         int sizeAfter = getFolderRepository().size();
 
@@ -132,7 +132,7 @@ public abstract class AbstractFolderTest {
 
         int sizeBefore = getFolderRepository().size();
 
-        Folder foo = getFolderRepository().addFolder("", "foo");
+        Folder foo = getFolderRepository().addFolder("foo");
 
         int sizeAfter = getFolderRepository().size();
 

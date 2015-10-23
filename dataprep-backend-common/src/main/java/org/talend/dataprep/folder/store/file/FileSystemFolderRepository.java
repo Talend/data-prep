@@ -109,20 +109,19 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public Folder addFolder(String parentPath, String child) {
+    public Folder addFolder(String path) {
         try {
 
-            List<String> pathParts = Lists.newArrayList(StringUtils.split(parentPath, PATH_SEPARATOR));
-            pathParts.addAll(Lists.newArrayList(StringUtils.split(child, PATH_SEPARATOR)));
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(path, PATH_SEPARATOR));
 
-            Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+            Path pathToCreate = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
 
-            if (!Files.exists(path)) {
-                Files.createDirectories(path, defaultFilePermissions);
+            if (!Files.exists(pathToCreate)) {
+                Files.createDirectories(pathToCreate, defaultFilePermissions);
             }
             return Folder.Builder.folder() //
-                    .name(path.getFileName().toString()) //
-                    .path(pathAsString(path)) //
+                    .name(pathToCreate.getFileName().toString()) //
+                    .path(path) //
                     .build();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);

@@ -45,8 +45,7 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         // create beer under foo
         response = RestAssured.given() //
-                .queryParam("path", "beer") //
-                .queryParam("parentPath", "foo") //
+                .queryParam("path", "foo/beer") //
                 .when() //
                 .get("/api/folders/add");
 
@@ -57,8 +56,7 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         // create wine under foo
         response = RestAssured.given() //
-                .queryParam("path", "wine") //
-                .queryParam("parentPath", "foo") //
+                .queryParam("path", "foo/wine") //
                 .when() //
                 .get("/api/folders/add");
 

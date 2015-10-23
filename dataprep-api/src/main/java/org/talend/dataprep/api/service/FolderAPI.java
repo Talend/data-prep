@@ -44,12 +44,12 @@ public class FolderAPI extends APIService {
 
 
     @RequestMapping(value = "/api/folders/add", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Add folder as a child of the one in parameter if none as child of root.")
+    @ApiOperation(value = "Add a folder.")
     @Timed
-    public void addFolder(@RequestParam(required = false) String parentPath, @RequestParam(required = true) String path, //
+    public void addFolder(@RequestParam(required = true) String path, //
             final HttpServletResponse response) {
         try {
-            final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, getClient(), parentPath, path);
+            final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, getClient(), path);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(createChildFolder.execute(), outputStream);

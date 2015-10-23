@@ -20,10 +20,9 @@ public interface FolderRepository {
 
     /**
      * 
-     * @param parentPath the parent
-     * @param child the child to add to the parent
+     * @param path the path to create
      */
-    Folder addFolder(String parentPath, String child);
+    Folder addFolder(String path);
 
     /**
      * add or update (if alreadu exists) the entry

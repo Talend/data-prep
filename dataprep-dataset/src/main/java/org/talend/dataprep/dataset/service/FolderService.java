@@ -52,12 +52,12 @@ public class FolderService {
      * @return
      */
     @RequestMapping(value = "/folders/add", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Create a folder in the one with the id, If null create as a child root")
+    @ApiOperation(value = "Create a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Create a folder")
     @Timed
     @VolumeMetered
-    public Folder addFolder(@RequestParam(required = false) String parentPath, @RequestParam(required = true) String path){
+    public Folder addFolder(@RequestParam(required = true) String path){
 
-        Folder folder = folderRepository.addFolder(parentPath == null ? "" : parentPath, path);
+        Folder folder = folderRepository.addFolder(path);
         return folder;
     }
 

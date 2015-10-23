@@ -31,20 +31,17 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_LIST_F
 @Scope("request")
 public class CreateChildFolder extends GenericCommand<InputStream> {
 
-    private CreateChildFolder(HttpClient client, String parentPath, String path) {
+    private CreateChildFolder(HttpClient client, String path) {
         super(APIService.DATASET_GROUP, client);
-        execute(() -> onExecute(parentPath, path));
+        execute(() -> onExecute(path));
         onError(e -> new TDPException(UNABLE_TO_LIST_FOLDERS, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private HttpRequestBase onExecute(String parentPath, String path) {
+    private HttpRequestBase onExecute( String path) {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/add");
-            if (StringUtils.isNotEmpty(parentPath)){
-                uriBuilder.addParameter("parentPath", parentPath);
-            }
             uriBuilder.addParameter("path", path);
             HttpGet folderCreate = new HttpGet(uriBuilder.build());
             return folderCreate;

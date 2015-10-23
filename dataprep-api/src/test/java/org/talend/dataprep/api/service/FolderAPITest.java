@@ -4,44 +4,46 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.talend.dataprep.api.folder.Folder;
 
-@TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "folder.store=file",
-        "folder.store.file.location=target/test/store/folders" })
+import java.nio.file.Paths;
+
 public class FolderAPITest extends ApiServiceTestBase {
 
     Logger logger = LoggerFactory.getLogger(getClass());
+
+
+    @Before
+    public void cleanupFolder() throws Exception {
+        FileUtils.deleteDirectory(Paths.get("target/test/store/folders").toFile());
+    }
 
     @Test
     public void add_then_list_folders() throws Exception {
 
         // create foo folder under root
-        Folder foo = Folder.Builder.folder().name("foo").build();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-         Response response = RestAssured.given() //
-                .content(foo) //
-                .contentType(ContentType.JSON) //
+        Response response = RestAssured.given() //
+                .queryParam("path", "foo")
                 .when() //
-                .put("/api/folders");
+                .get("/api/folders/add");
 
         Folder created = response.as(Folder.class);
 
         logger.info("created: {}", created);
 
         // create beer under foo
-        Folder beer = Folder.Builder.folder().name("beer").build();
-
         response = RestAssured.given() //
-                .content(foo) //
-                .contentType(ContentType.JSON) //
+                .queryParam("path", "beer") //
+                .queryParam("parentPath", "foo") //
                 .when() //
-                .put("/api/folders?parentId={id}", created.getId());
+                .get("/api/folders/add");
 
         created = response.as(Folder.class);
 
@@ -49,13 +51,11 @@ public class FolderAPITest extends ApiServiceTestBase {
 
 
         // create wine under foo
-        Folder wine = Folder.Builder.folder().name("wine").build();
-
         response = RestAssured.given() //
-                .content(foo) //
-                .contentType(ContentType.JSON) //
+                .queryParam("path", "wine") //
+                .queryParam("parentPath", "foo") //
                 .when() //
-                .put("/api/folders?parentId={id}", created.getId());
+                .get("/api/folders/add");
 
         created = response.as(Folder.class);
 
@@ -63,7 +63,7 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         response = RestAssured.given() //
                 .when() //
-                .get("/api/folders/root/childs");
+                .get("/api/folders/childs");
 
         logger.info("response: {}", response.asString());
 

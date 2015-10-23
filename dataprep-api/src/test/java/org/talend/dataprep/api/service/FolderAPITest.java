@@ -1,10 +1,13 @@
 package org.talend.dataprep.api.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,6 +17,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.talend.dataprep.api.folder.Folder;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FolderAPITest extends ApiServiceTestBase {
 
@@ -26,7 +31,7 @@ public class FolderAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void add_then_list_folders() throws Exception {
+    public void add_then_remove() throws Exception {
 
         // create foo folder under root
         Response response = RestAssured.given() //
@@ -66,6 +71,44 @@ public class FolderAPITest extends ApiServiceTestBase {
                 .get("/api/folders/childs");
 
         logger.info("response: {}", response.asString());
+
+        response = RestAssured.given() //
+                .queryParam("path", "foo") //
+                .when() //
+                .get("/api/folders/childs");
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+
+        List<Folder> folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>(){});
+
+        List<Folder> expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer/").build(), //
+                Folder.Builder.folder().path("foo/wine/").build());
+
+        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2) //
+                .usingElementComparatorOnFields("path").containsAll(expected);
+
+
+        RestAssured.given() //
+                .queryParam("path", "foo/wine") //
+                .when() //
+                .delete("/api/folders");
+
+
+        response = RestAssured.given() //
+                .queryParam("path", "foo") //
+                .when() //
+                .get("/api/folders/childs");
+
+
+        folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>(){});
+
+        expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer/").build());
+
+        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1) //
+                .usingElementComparatorOnFields("path").containsAll(expected);
+
 
     }
 

@@ -41,6 +41,7 @@ public class Folder extends Identifiable implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+        this.id = path;
     }
 
     @Override
@@ -52,12 +53,12 @@ public class Folder extends Identifiable implements Serializable {
             return false;
         }
         Folder that = (Folder) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(path, that.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(path);
     }
 
     @Override public String toString() {

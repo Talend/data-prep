@@ -2,28 +2,21 @@ package org.talend.dataprep.dataset.service;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
-import org.talend.dataprep.exception.error.FolderErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 
 import javax.inject.Inject;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 
 @RestController
 @Api(value = "folders", basePath = "/folders", description = "Operations on folders")
@@ -68,6 +61,19 @@ public class FolderService {
         return folder;
     }
 
+
+    /**
+     * no javadoc here so see description in @ApiOperation notes.
+     * @param path
+     * @return
+     */
+    @RequestMapping(value = "/folders", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Remove a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Remove the folder")
+    @Timed
+    @VolumeMetered
+    public void removeFolder(@RequestParam(required = true) String path){
+        folderRepository.removeFolder(path);
+    }
 
 
 }

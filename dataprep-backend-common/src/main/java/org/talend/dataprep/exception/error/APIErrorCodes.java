@@ -36,6 +36,7 @@ public enum APIErrorCodes implements ErrorCode {
     UNABLE_TO_UPDATE_COLUMN(400, "id"),
     UNABLE_TO_LIST_FOLDERS(400),
     UNABLE_TO_CREATE_FOLDER(400),
+    UNABLE_TO_DELETE_FOLDER(400),
     DATASET_REDIRECT(301);
 
     /** The http status to use. */

@@ -110,6 +110,18 @@ public class FolderAPITest extends ApiServiceTestBase {
                 .usingElementComparatorOnFields("path").containsAll(expected);
 
 
+        RestAssured.given() //
+                .queryParam("path", "foo") //
+                .when() //
+                .delete("/api/folders");
+
+        response = RestAssured.given() //
+                .when() //
+                .get("/api/folders/childs");
+
+        folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>(){});
+
+        Assertions.assertThat(folders).isNotNull().isEmpty();
     }
 
 }

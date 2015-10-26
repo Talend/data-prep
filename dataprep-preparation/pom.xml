@@ -20,17 +20,21 @@
 
     <dependencies>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-metrics</artifactId>
+            <artifactId>dataprep-backend-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-common</artifactId>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>daikon</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -67,19 +71,7 @@
         <!-- SPRING DEPENDENCIES-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>

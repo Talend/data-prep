@@ -126,7 +126,7 @@
                     nextLabel: 'NEXT',
                     prevLabel: 'BACK',
                     skipLabel: 'SKIP',
-                    doneLabel: 'OK, LET ME TRY!',
+                    doneLabel: 'LET ME TRY',
                     steps: createIntroSteps(getTour(tour))
                 })
                 .oncomplete(function () {

@@ -1,7 +1,7 @@
 describe('Datagrid tooltip service', function() {
     'use strict';
 
-    var gridMock;
+    var gridMock, stateMock, dataViewMock;
 
     //invisible ruler mock
     var RulerMock = {
@@ -36,9 +36,16 @@ describe('Datagrid tooltip service', function() {
         {id: 'tdpId', name: '#'}
     ];
 
-    beforeEach(module('data-prep.datagrid'));
+    beforeEach(module('data-prep.datagrid', function ($provide) {
+        dataViewMock = new DataViewMock();
+        stateMock = {playground: {grid: {
+            dataView: dataViewMock
+        }}};
 
-    beforeEach(inject(function(DatagridTooltipService, DatagridService) {
+        $provide.constant('state', stateMock);
+    }));
+
+    beforeEach(inject(function(DatagridTooltipService) {
         /*global SlickGridMock:false */
         gridMock = new SlickGridMock();
 
@@ -46,7 +53,7 @@ describe('Datagrid tooltip service', function() {
         spyOn(gridMock.onMouseEnter, 'subscribe').and.returnValue();
         spyOn(gridMock.onMouseLeave, 'subscribe').and.returnValue();
 
-        spyOn(DatagridService.dataView, 'getItem').and.returnValue(item);
+        spyOn(stateMock.playground.grid.dataView, 'getItem').and.returnValue(item);
         DatagridTooltipService.tooltipRuler = RulerMock;
     }));
 

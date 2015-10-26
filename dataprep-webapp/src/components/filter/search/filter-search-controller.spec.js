@@ -2,13 +2,8 @@ describe('filter search controller', function() {
     'use strict';
 
     var createController, scope;
+    var stateMock;
 
-    var metadata = {
-        'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
-        'name': 'US States',
-        'author': 'anonymousUser',
-        'created': '02-03-2015 14:52'
-    };
     var data = {
         'columns': [
             {
@@ -98,22 +93,26 @@ describe('filter search controller', function() {
         ]
     };
 
-    beforeEach(module('data-prep.filter-search'));
+    beforeEach(module('data-prep.filter-search', function ($provide) {
+        stateMock = {playground: {}};
+        $provide.constant('state', stateMock);
+    }));
 
-    beforeEach(inject(function($rootScope, $controller) {
+    beforeEach(inject(function($rootScope, $controller, FilterService) {
         scope = $rootScope.$new();
 
         createController = function() {
-            var ctrl =  $controller('FilterSearchCtrl', {
+            return $controller('FilterSearchCtrl', {
                 $scope: scope
             });
-            return ctrl;
         };
+
+        spyOn(FilterService, 'addFilter').and.returnValue();
     }));
 
-    it('should create sorted suggestions based on case insensitive typed word and current data from service', inject(function(DatagridService) {
+    it('should create sorted suggestions based on case insensitive typed word and current data from service', function() {
         //given
-        DatagridService.setDataset(metadata, data);
+        stateMock.playground.data = data;
         var ctrl = createController();
 
         //when
@@ -133,11 +132,11 @@ describe('filter search controller', function() {
             columnId: '0002',
             columnName: 'State'
         });
-    }));
+    });
 
-    it('should create sorted suggestions based on typed word with wildcard', inject(function(DatagridService) {
+    it('should create sorted suggestions based on typed word with wildcard', function() {
         //given
-        DatagridService.setDataset(metadata, data);
+        stateMock.playground.data = data;
         var ctrl = createController();
 
         //when
@@ -158,11 +157,11 @@ describe('filter search controller', function() {
             columnId: '0002',
             columnName: 'State'
         });
-    }));
+    });
 
-    it('should return empty array if typed string is empty', inject(function(DatagridService) {
+    it('should return empty array if typed string is empty', function() {
         //given
-        DatagridService.setDataset(metadata, data);
+        stateMock.playground.data = data;
         var ctrl = createController();
 
         //when
@@ -170,11 +169,11 @@ describe('filter search controller', function() {
 
         //then
         expect(suggestions.length).toBe(0);
-    }));
+    });
 
-    it('should reset input search on item select', inject(function(DatagridService) {
+    it('should reset input search on item selection', function() {
         //given
-        DatagridService.setDataset(metadata, data);
+        stateMock.playground.data = data;
         var ctrl = createController();
         ctrl.filterSearch = 'ala';
 
@@ -189,6 +188,26 @@ describe('filter search controller', function() {
 
         //then
         expect(ctrl.filterSearch).toBe('');
-    }));
+    });
 
+    it('should add filter on item selection', inject(function(FilterService) {
+        //given
+        stateMock.playground.data = data;
+        var ctrl = createController();
+        ctrl.filterSearch = 'ala';
+
+        expect(FilterService.addFilter).not.toHaveBeenCalled();
+
+        //when
+        /*jshint camelcase: false */
+        ctrl.filterSuggestOptions.on_select({
+            label: 'ala in <b>State</b>',
+            value: 'ala',
+            columnName: 'State',
+            columnId: '0002'
+        });
+
+        //then
+        expect(FilterService.addFilter).toHaveBeenCalledWith('contains', '0002', 'State', { phrase: 'ala' });
+    }));
 });

@@ -3,8 +3,14 @@
 
     var playgroundState = {};
 
-    function PlaygroundStateService(RecipeStateService, recipeState) {
+    function PlaygroundStateService(
+        RecipeStateService, recipeState,
+        GridStateService, gridState,
+        FilterStateService, filterState) {
+
         playgroundState.recipe = recipeState;
+        playgroundState.grid = gridState;
+        playgroundState.filter = filterState;
 
         return {
             //playground
@@ -15,27 +21,22 @@
             setNameEditionMode: setNameEditionMode,
             reset: reset,
             setData: setData,
+            setLookupVisibility: setLookupVisibility,
 
             //recipe
             showRecipe: RecipeStateService.show,
             hideRecipe: RecipeStateService.hide,
 
             //datagrid
-            setGridSelection: setGridSelection,
-            setLookupVisibility: setLookupVisibility
+            setColumnFocus: GridStateService.setColumnFocus,
+            setGridSelection: GridStateService.setGridSelection,
+
+            //filters
+            addGridFilter: addGridFilter,
+            updateGridFilter: updateGridFilter,
+            removeGridFilter: removeGridFilter,
+            removeAllGridFilters: removeAllGridFilters
         };
-
-        //--------------------------------------------------------------------------------------------------------------
-        //-----------------------------------------------------GRID-----------------------------------------------------
-        //--------------------------------------------------------------------------------------------------------------
-        function setGridSelection(column, line) {
-            playgroundState.column = column;
-            playgroundState.line = line;
-        }
-
-        function setLookupVisibility(visibility) {
-            playgroundState.lookupVisibility = visibility;
-        }
 
         //--------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------PLAYGROUND--------------------------------------------------
@@ -46,6 +47,7 @@
 
         function setData(data) {
             playgroundState.data = data;
+            GridStateService.setData(data);
         }
 
         function setPreparation(preparation) {
@@ -64,16 +66,43 @@
             playgroundState.visible = false;
         }
 
+        function setLookupVisibility(visibility) {
+            playgroundState.lookupVisibility = visibility;
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------FILTERS----------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        function addGridFilter(filter) {
+            FilterStateService.addGridFilter(filter);
+            GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
+        }
+
+        function updateGridFilter(oldFilter, newFilter) {
+            FilterStateService.updateGridFilter(oldFilter, newFilter);
+            GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
+        }
+
+        function removeGridFilter(filter) {
+            FilterStateService.removeGridFilter(filter);
+            GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
+        }
+
+        function removeAllGridFilters() {
+            FilterStateService.removeAllGridFilters();
+            GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
+        }
+
         function reset() {
-            playgroundState.column = null;
-            playgroundState.line = null;
+            playgroundState.data = null;
             playgroundState.dataset = null;
             playgroundState.preparation = null;
             playgroundState.nameEditionMode = false;
             playgroundState.lookupVisibility = false;
+
+            GridStateService.reset();
+            FilterStateService.reset();
         }
-
-
     }
 
     angular.module('data-prep.services.state')

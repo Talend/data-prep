@@ -18,7 +18,7 @@
         //------------------------------------------------FILTER------------------------------------------------
         //------------------------------------------------------------------------------------------------------
         function addExactFilter(value) {
-            var column = state.playground.column;
+            var column = state.playground.grid.selectedColumn;
             return value.length?
                 FilterService.addFilterAndDigest('exact', column.id, column.name, {phrase: value, caseSensitive: true}):
                 FilterService.addFilterAndDigest('empty_records', column.id, column.name);

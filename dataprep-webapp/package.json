@@ -62,7 +62,8 @@
     "require-dir": "~0.1.0",
     "through2": "^0.6.3",
     "uglify-save-license": "~0.4.1",
-    "wiredep": "~2.2.0"
+    "wiredep": "~2.2.0",
+    "run-sequence": "~1.1.4"
   },
   "engines": {
     "node": ">=0.10.0"

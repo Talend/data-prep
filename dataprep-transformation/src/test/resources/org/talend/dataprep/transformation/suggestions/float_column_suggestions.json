@@ -72,7 +72,8 @@
     "label": "Delete lines with invalid cell"
   },
   {
-    "name": "fillinvalidwithdefaultnumeric",
+    "name": "fillinvalidwithdefault",
+    "category": "data cleansing",
     "parameters": [
       {
         "name": "column_id",
@@ -111,9 +112,9 @@
         "default": "0"
       }
     ],
-    "category": "data cleansing",
     "dynamic": false,
     "description": "Fill invalid cells of this column with given value",
     "label": "Fill invalid cells with value..."
   }
 ]
+

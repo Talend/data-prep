@@ -63,7 +63,6 @@
          * @param enteredMax The max input value
          * @param minimum The minimum value in the range
          * @param maximum The maximum value in the range
-         * @param nbDecimals The number precision
          */
         vm.adaptRangeValues = function adaptRangeValues(enteredMin, enteredMax, minimum, maximum) {
             //switch entered values if necessary
@@ -73,22 +72,19 @@
                 enteredMax = _aux;
             }
 
-            if(enteredMax < minimum && enteredMin < minimum){
-                enteredMin = minimum;
-                enteredMax = minimum;
-            }
-            if(enteredMin > maximum && enteredMax > maximum){
-                enteredMin = maximum;
-                enteredMax = maximum;
-            }
-
             //maximum limits
-            if (enteredMax > maximum || enteredMax < minimum) {
+            if (enteredMax > maximum) {
                 enteredMax = maximum;
+            }
+            else if(enteredMax < minimum) {
+                enteredMax = minimum;
             }
 
             //minimum limits
-            if (enteredMin > maximum || enteredMin < minimum) {
+            if (enteredMin > maximum) {
+                enteredMin = maximum;
+            }
+            else if(enteredMin < minimum) {
                 enteredMin = minimum;
             }
 

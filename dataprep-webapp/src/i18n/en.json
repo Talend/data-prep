@@ -44,8 +44,10 @@
   "ENTER_PREPARATION_NAME": "Enter preparation name",
   "FILE_DETAILS": "File: {{name}} ({{records}} lines)",
   "FILTER": "Search and Filter",
+  "NB_LINES_MATCHING_FILTERS": "{{percentage}}% of lines are matching your filter(s)",
   "NEW_FILTER": "New filter...",
   "PREPARATION": "Preparation",
+  "REMOVE_ALL_FILTER": "Remove all filters",
 
   "_comment": "Buttons",
   "CANCEL": "Cancel",
@@ -157,6 +159,9 @@
   "APPLY_TO_ALL_CELLS": "Apply to all cells with this value",
   "STRING": "TEXT",
   "FLOAT": "DECIMAL",
+
+  "_comment": "Dataset actions",
+  "REPLACE_FILE_CONTENT": "Replace this file content",
 
   "_comment": "Range slider",
   "INVALID_VALUE_RANGE_SLIDER": "Invalid Entered Value",

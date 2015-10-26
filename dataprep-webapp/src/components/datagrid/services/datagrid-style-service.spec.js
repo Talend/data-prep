@@ -1,7 +1,7 @@
 describe('Datagrid style service', function () {
     'use strict';
 
-    var gridMock, gridColumns;
+    var gridMock, gridColumns, stateMock;
 
     function assertColumnsHasNoStyles() {
         gridColumns.forEach(function(column) {
@@ -9,7 +9,10 @@ describe('Datagrid style service', function () {
         });
     }
 
-    beforeEach(module('data-prep.datagrid'));
+    beforeEach(module('data-prep.datagrid', function ($provide) {
+        stateMock = {playground: {grid: {}}};
+        $provide.constant('state', stateMock);
+    }));
 
     beforeEach(inject(function () {
         jasmine.clock().install();
@@ -167,8 +170,15 @@ describe('Datagrid style service', function () {
     });
 
     describe('on active cell changed event', function () {
+        var dataViewMock;
+
+        beforeEach(function () {
+            dataViewMock = new DataViewMock();
+            stateMock.playground.grid.dataView = dataViewMock;
+        });
+
         beforeEach(inject(function(DatagridService) {
-            spyOn(DatagridService.dataView, 'getItem').and.returnValue({'0001': 'cell 1 content'});
+            spyOn(stateMock.playground.grid.dataView, 'getItem').and.returnValue({'0001': 'cell 1 content'});
             spyOn(DatagridService, 'getSameContentConfig').and.returnValue({
                 5: { '0001': 'highlight' },
                 18: { '0001': 'highlight' },

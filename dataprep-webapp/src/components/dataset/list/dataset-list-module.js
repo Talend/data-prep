@@ -9,8 +9,7 @@
      * @requires ddata-prep.dataset-xls-preview
      * @requires data-prep.services.dataset
      * @requires data-prep.services.playground
-     * @requires data-prep.services.utils
-     * @requires data-prep.services.uploadWorkflowService
+     * @requires data-prep.services.datasetWorkflowService
      * @requires data-prep.services.utils
      * @requires data-prep.services.state
      */
@@ -21,8 +20,7 @@
         'data-prep.dataset-xls-preview',
         'data-prep.services.dataset',
         'data-prep.services.playground',
-        'data-prep.services.utils',
-        'data-prep.services.uploadWorkflowService',
+        'data-prep.services.datasetWorkflowService',
         'data-prep.services.utils',
         'data-prep.services.state'
     ]);

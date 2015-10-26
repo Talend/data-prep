@@ -1,5 +1,14 @@
 package org.talend.dataprep.transformation.api.action.metadata.fillinvalid;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -8,29 +17,22 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
-
 /**
  * Unit test for the FillWithStringIfInvalid action.
  * 
- * @see FillWithStringIfInvalid
+ * @see FillInvalid
  */
 public class FillWithStringIfInvalidTest {
 
     /** The action to test. */
-    private FillWithStringIfInvalid action;
+    private FillInvalid action;
 
     /**
      * Default empty constructor.
      */
     public FillWithStringIfInvalidTest() {
-        action = new FillWithStringIfInvalid();
+        action = new FillInvalid();
+        action = (FillInvalid) action.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
     }
 
     @Test
@@ -42,7 +44,7 @@ public class FillWithStringIfInvalidTest {
         values.put("0003", "100");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.STRING) //
                 .computedId("0003") //
                 .invalidValues(newHashSet("100")) //
@@ -68,13 +70,12 @@ public class FillWithStringIfInvalidTest {
     }
 
     @Test
+    public void should_adapt_null() throws Exception {
+        assertThat(action.adapt(null), is(action));
+    }
+
+    @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.INTEGER)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));
     }
 }

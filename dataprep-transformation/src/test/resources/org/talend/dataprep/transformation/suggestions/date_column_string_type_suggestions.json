@@ -72,6 +72,12 @@
     "label": "Delete lines with invalid cell"
   },
   {
+    "name":"fillemptywithdefault"
+  },
+  {
+    "name":"fillinvalidwithdefault"
+  },
+  {
     "name": "change_date_pattern",
     "parameters": [
       {

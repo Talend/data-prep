@@ -25,7 +25,7 @@
      * @param {div} content The content element that is shown/hidden
      * @param {function} on-open The function to execute on accordion item open
      * @param {boolean} default The default accordion to open
-     * @param {boolean} scrollToBottom Scroll to the bottom of the accordion when it is opened
+     * @param {function} action Action to perform on open //TODO cnugyen : remove this and use on-open
      */
     function talendAccordionsItem($timeout) {
         return {
@@ -38,7 +38,6 @@
                 'default': '=',
                 'onOpen': '&',
                 'action': '='
-
             },
             bindToController: true,
             controller: function() {},

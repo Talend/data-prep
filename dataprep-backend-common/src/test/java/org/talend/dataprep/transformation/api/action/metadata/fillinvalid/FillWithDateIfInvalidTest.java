@@ -1,7 +1,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.fillinvalid;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.setStatistics;
@@ -20,25 +20,26 @@ import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.api.action.metadata.date.ChangeDatePatternTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.talend.dataprep.transformation.api.action.metadata.date.ChangeDatePatternTest;
 
 /**
  * Unit test for FillWithDateIfInvalid action.
  * 
- * @see FillWithDateIfInvalid
+ * @see FillInvalid
  */
 public class FillWithDateIfInvalidTest {
 
     /** The action to test. */
-    private FillWithDateIfInvalid action;
+    private FillInvalid action;
 
     /**
      * Default empty constructor.
      */
     public FillWithDateIfInvalidTest() {
-        action = new FillWithDateIfInvalid();
+        action = new FillInvalid();
+        action = (FillInvalid) action.adapt(ColumnMetadata.Builder.column().type(Type.DATE).build());
     }
 
     @Test
@@ -54,7 +55,7 @@ public class FillWithDateIfInvalidTest {
                 this.getClass().getResourceAsStream("fillInvalidDateTimeAction_statistics.json"));
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.DATE) //
                 .computedId("0002") //
                 .invalidValues(newHashSet("N")) //
@@ -89,7 +90,7 @@ public class FillWithDateIfInvalidTest {
         final Statistics statistics = getStatistics(this.getClass().getResourceAsStream("fillInvalidDateAction_statistics.json"));
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.DATE) //
                 .computedId("0002") //
                 .invalidValues(new HashSet<>()) // no invalid values
@@ -122,7 +123,7 @@ public class FillWithDateIfInvalidTest {
         values.put("0003", "100");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Arrays.asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.DATE) //
                 .computedId("0002") //
                 .build()));
@@ -149,11 +150,12 @@ public class FillWithDateIfInvalidTest {
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptColumn(getColumn(Type.ANY)));
+    }
+
+    @Test
+    public void should_adapt_null() throws Exception {
+        assertThat(action.adapt(null), is(action));
     }
 
     public Statistics getStatistics(InputStream source) throws IOException {

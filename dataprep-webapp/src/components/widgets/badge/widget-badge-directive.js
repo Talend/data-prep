@@ -67,18 +67,15 @@
 
                         //ESC : reset value and stop ESC key propagation
                         if(event.keyCode === 27) {
-                            input.val(ctrl.obj.value);
-                            ctrl.value = ctrl.obj.value;
-
-                            input.blur();
                             event.stopPropagation();
+
+                            ctrl.value = ctrl.obj.value;
+                            input.val(ctrl.obj.value);
+                            input.blur();
                         }
 
                         adjustWidth(input);
                     });
-
-                    //Blur listener : impact change
-                    input.blur(ctrl.manageChange);
                 };
 
                 $timeout(function() {

@@ -11,7 +11,7 @@
      * @requires data-prep.services.preparation
      * @requires data-prep.services.state
      * @requires data-prep.recipe-bullet
-     * @requires data-prep.transformation-params
+     * @requires data-prep.transformation-form
      */
     angular.module('data-prep.recipe', [
         'pascalprecht.translate',
@@ -21,6 +21,6 @@
         'data-prep.services.preparation',
         'data-prep.services.state',
         'data-prep.recipe-bullet',
-        'data-prep.transformation-params'
+        'data-prep.transformation-form'
     ]);
 })();

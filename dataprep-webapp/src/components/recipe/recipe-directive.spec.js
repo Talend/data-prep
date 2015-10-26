@@ -693,7 +693,7 @@ describe('Recipe directive', function () {
 
         //then
         expect(element.find('>ul .accordion .content').length).toBe(1);
-        expect(element.find('>ul .accordion .content').eq(0).find('.transformation-params').length).toBe(1);
+        expect(element.find('>ul .accordion .content').eq(0).find('.transformation-form').length).toBe(1);
     }));
 
     it('should render recipe cluster params', inject(function (RecipeService) {

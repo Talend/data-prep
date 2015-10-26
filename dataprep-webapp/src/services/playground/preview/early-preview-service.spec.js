@@ -15,13 +15,13 @@ describe('Early Preview Service', function () {
         stateMock = {playground: {
             dataset: dataset,
             preparation: preparation,
-            playground: {}
+            grid: {}
         }};
         $provide.constant('state', stateMock);
     }));
 
     beforeEach(inject(function (PlaygroundService, PreviewService, RecipeService, EarlyPreviewService) {
-        stateMock.playground.column = column;
+        stateMock.playground.grid.selectedColumn = column;
 
         transfoScope = 'column';
         transformation = {

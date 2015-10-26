@@ -12,6 +12,10 @@
     <name>dataprep-api</name>
     <dependencies>
         <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
             <scope>runtime</scope>
@@ -23,10 +27,6 @@
         <dependency>
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-metrics</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
@@ -70,15 +70,7 @@
         <!-- SPRING DEPENDENCIES-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>

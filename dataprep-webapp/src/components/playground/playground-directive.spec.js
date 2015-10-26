@@ -13,7 +13,7 @@ describe('Playground directive', function () {
     };
 
     beforeEach(module('data-prep.playground', function($provide) {
-        stateMock = {playground: {visible: true}};
+        stateMock = {playground: {visible: true, filter: {gridFilters: []}}};
         $provide.constant('state', stateMock);
     }));
     beforeEach(module('htmlTemplates'));
@@ -220,8 +220,8 @@ describe('Playground directive', function () {
 
             //then : check datagrid and filters are present
             var playground = angular.element('body').find('.playground').eq(0);
-            expect(playground.eq(0).find('.filter-list').length).toBe(1);
-            expect(playground.eq(0).find('.filter-list').find('.filter-search').length).toBe(1);
+            expect(playground.eq(0).find('filter-bar').length).toBe(1);
+            expect(playground.eq(0).find('filter-bar').find('#filter-search').length).toBe(1);
             expect(playground.eq(0).find('datagrid').length).toBe(1);
         });
     });

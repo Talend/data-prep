@@ -96,7 +96,7 @@
         function getDisplayedTdpIds() {
             var indexes = _.range(service.gridRangeIndex.top, service.gridRangeIndex.bottom + 1);
             return  _.chain(indexes)
-                .map(DatagridService.dataView.getItem)
+                .map(state.playground.grid.dataView.getItem)
                 .map('tdpId')
                 .sortBy('tdpId')
                 .value();
@@ -132,8 +132,8 @@
                     records: state.playground.data.records.slice(0)
                 };
                 displayedTdpIds = getDisplayedTdpIds();
-                startIndex = DatagridService.dataView.getIdxById(displayedTdpIds[0]);
-                endIndex = DatagridService.dataView.getIdxById(displayedTdpIds[displayedTdpIds.length - 1]);
+                startIndex = state.playground.grid.dataView.getIdxById(displayedTdpIds[0]);
+                endIndex = state.playground.grid.dataView.getIdxById(displayedTdpIds[displayedTdpIds.length - 1]);
             }
 
             previewCanceler = $q.defer();

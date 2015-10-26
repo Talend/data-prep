@@ -13,8 +13,9 @@
      * @requires data-prep.services.utils.service:MessageService
      * @requires data-prep.services.uploadWorkflowService.service:UploadWorkflowService
      * @requires data-prep.services.state.service:StateService
+     * @requires data-prep.services.datasetWorkflowService:UpdateWorkflowService
      */
-    function DatasetListCtrl($stateParams, DatasetService, DatasetListSortService, PlaygroundService,
+    function DatasetListCtrl(UpdateWorkflowService, $stateParams, DatasetService, DatasetListSortService, PlaygroundService,
                              TalendConfirmService, MessageService, UploadWorkflowService, StateService) {
         var vm = this;
 
@@ -113,6 +114,16 @@
         var open = function(dataset) {
             PlaygroundService.initPlayground(dataset)
                 .then(StateService.showPlayground);
+        };
+
+        /**
+         * @ngdoc method
+         * @name uploadUpdatedDatasetFile
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description [PRIVATE] updates the existing dataset with the uploadd one
+         */
+        vm.uploadUpdatedDatasetFile = function uploadUpdatedDatasetFile(dataset){
+            UpdateWorkflowService.updateDataset(vm.updateDatasetFile[0], dataset);
         };
 
         /**

@@ -5,7 +5,7 @@ describe('Transformation Application Service', function () {
     var stateMock;
 
     beforeEach(module('data-prep.services.transformation', function ($provide) {
-        stateMock = {playground: {}};
+        stateMock = {playground: {grid: {}}};
         $provide.constant('state', stateMock);
     }));
 
@@ -19,7 +19,7 @@ describe('Transformation Application Service', function () {
             var transformation = {name: 'tolowercase'};
             var scope = 'column';
             var params = {param: 'value'};
-            stateMock.playground.column = {id: '0001', name: 'firstname'};
+            stateMock.playground.grid.selectedColumn = {id: '0001', name: 'firstname'};
 
             //when
             TransformationApplicationService.append(transformation, scope, params);
@@ -38,7 +38,7 @@ describe('Transformation Application Service', function () {
             //given
             var transformation = {name: 'tolowercase'};
             var scope = 'column';
-            stateMock.playground.column = {id: '0001', name: 'firstname'};
+            stateMock.playground.grid.selectedColumn = {id: '0001', name: 'firstname'};
 
             //when
             TransformationApplicationService.append(transformation, scope);
@@ -57,7 +57,7 @@ describe('Transformation Application Service', function () {
             var transformation = {name: 'tolowercase'};
             var scope = 'column';
             var params = {param: 'value'};
-            stateMock.playground.column = {id: '0001', name: 'firstname'};
+            stateMock.playground.grid.selectedColumn = {id: '0001', name: 'firstname'};
 
             //when
             var closure = TransformationApplicationService.appendClosure(transformation, scope);

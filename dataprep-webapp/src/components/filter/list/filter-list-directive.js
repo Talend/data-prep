@@ -8,15 +8,18 @@
      * @restrict E
      * @requires data-prep.services.filter.service:FilterService
      */
-    function FilterList(FilterService) {
+    function FilterList() {
         return {
             restrict: 'E',
-            replace: true,
             templateUrl: 'components/filter/list/filter-list.html',
+            scope: {
+                filters: '=',
+                onFilterChange: '&',
+                onFilterRemove: '&'
+            },
+            bindToController: true,
             controllerAs: 'filterCtrl',
-            controller: function() {
-                this.filterService = FilterService;
-            }
+            controller: 'FilterListCtrl'
         };
     }
 

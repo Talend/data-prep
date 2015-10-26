@@ -1,0 +1,17 @@
+<div id="filter-bar">
+    <div class="title">{{::'FILTER' | translate}}{{:: 'COLON' | translate}}</div>
+
+    <filter-search class="search"></filter-search>
+
+    <filter-list class="list"
+                 filters="filterBarCtrl.state.playground.filter.gridFilters"
+                 on-filter-change="filterBarCtrl.filterService.updateFilter(filter, value)"
+                 on-filter-remove="filterBarCtrl.filterService.removeFilter(filter)"></filter-list>
+
+    <filter-monitor class="monitor"
+                    filters="filterBarCtrl.state.playground.filter.gridFilters"
+                    on-reset="filterBarCtrl.filterService.removeAllFilters()"
+                    nb-lines="filterBarCtrl.state.playground.grid.nbLines"
+                    nb-total-lines="filterBarCtrl.state.playground.grid.nbTotalLines"
+                    percentage="filterBarCtrl.state.playground.grid.displayLinesPercentage"></filter-monitor>
+</div>

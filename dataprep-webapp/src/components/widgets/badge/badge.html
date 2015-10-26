@@ -4,8 +4,11 @@
     <span ng-if="badgeCtrl.obj.value">
         <span class="badge-item">{{badgeCtrl.text}}{{badgeCtrl.sign}}</span>
         <span class="badge-item">
-            <input ng-if="badgeCtrl.editable === true" class="editable-input textEllipsis" type="text"
-                   ng-model="badgeCtrl.value" title="{{badgeCtrl.value}}"/>
+            <input ng-if="badgeCtrl.editable === true"
+                   class="editable-input textEllipsis" type="text"
+                   ng-model="badgeCtrl.value"
+                   ng-blur="badgeCtrl.manageChange()"
+                   title="{{badgeCtrl.value}}"/>
             <span class="description textEllipsis" ng-if="badgeCtrl.editable === false">{{badgeCtrl.value}}</span>
         </span>
     </span>

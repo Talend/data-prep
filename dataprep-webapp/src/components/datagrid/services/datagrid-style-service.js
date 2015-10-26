@@ -9,7 +9,7 @@
      * @requires data-prep.services.utils.service:ConverterService
      * @requires data-prep.services.utils.service:TextFormatService
      */
-    function DatagridStyleService(DatagridService, ConverterService, TextFormatService) {
+    function DatagridStyleService(DatagridService, state, ConverterService, TextFormatService) {
         var grid;
         var highlightCellTimeout;
         var columnClassTimeout;
@@ -193,7 +193,7 @@
             clearTimeout(highlightCellTimeout);
             highlightCellTimeout = setTimeout(function() {
                 var column = grid.getColumns()[colIndex];
-                var content = DatagridService.dataView.getItem(rowIndex)[column.id];
+                var content = state.playground.grid.dataView.getItem(rowIndex)[column.id];
 
                 var sameContentConfig = DatagridService.getSameContentConfig(column.id, content, 'highlight');
                 grid.setCellCssStyles('highlight', sameContentConfig);

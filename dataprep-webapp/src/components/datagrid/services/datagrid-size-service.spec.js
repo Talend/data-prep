@@ -1,7 +1,7 @@
 describe('Datagrid size service', function () {
     'use strict';
 
-    var gridMock, windowMock, gridColumns;
+    var gridMock, windowMock, gridColumns, stateMock;
 
     var storageKey = 'org.talend.dataprep.col_size_00000000';
 
@@ -13,9 +13,12 @@ describe('Datagrid size service', function () {
             windowMock.addEventListener = function() {};
             return windowMock;
         });
+
+        stateMock = {playground: {}};
+        $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function (_$window_, $window, DatagridService) {
+    beforeEach(inject(function (_$window_, $window) {
         /*global SlickGridMock:false */
         gridMock = new SlickGridMock();
         gridColumns = [
@@ -25,7 +28,7 @@ describe('Datagrid size service', function () {
             {id: '0003', name: 'col3', width: 40, minWidth: 80},
             {id: '0004', name: 'col4', width: 50, minWidth: 80}
         ];
-        DatagridService.metadata = {id: '00000000'};
+        stateMock.playground.dataset = {id: '00000000'};
 
         spyOn(gridMock.onColumnsResized, 'subscribe').and.returnValue();
         spyOn(gridMock, 'resizeCanvas').and.returnValue();

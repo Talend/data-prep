@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class FillWithBooleanIfEmptyTest {
      */
     public FillWithBooleanIfEmptyTest() {
         action = new FillIfEmpty();
-        action.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
+        action = (FillIfEmpty) action.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class FillWithBooleanIfEmptyTest {
         values.put("0003", "100");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Arrays.asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.BOOLEAN) //
                 .computedId("0002") //
                 .build()));

@@ -41,6 +41,8 @@
     "$": false,
     // Lodash
     "_": false,
+    //DataViewMock
+    "DataViewMock":false,
     // SlickGrid
     "Slick": false,
     //Export

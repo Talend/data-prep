@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class FillWithIntegerIfEmptyTest {
      */
     public FillWithIntegerIfEmptyTest() {
         action = new FillIfEmpty();
-        action.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
+        action = (FillIfEmpty) action.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class FillWithIntegerIfEmptyTest {
         values.put("0003", "Something");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Arrays.asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.INTEGER) //
                 .computedId("0002") //
                 .build()));

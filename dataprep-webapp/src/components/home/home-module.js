@@ -12,7 +12,7 @@
      * @requires data-prep.preparation-list
      * @requires data-prep.services.dataset
      * @requires data-prep.services.utils
-     * @requires data-prep.services.uploadWorkflowService
+     * @requires data-prep.services.datasetWorkflowService
      * @requires data-prep.services.state
      */
     angular.module('data-prep.home', [
@@ -23,7 +23,7 @@
         'data-prep.preparation-list',
         'data-prep.services.dataset',
         'data-prep.services.utils',
-        'data-prep.services.uploadWorkflowService',
+        'data-prep.services.datasetWorkflowService',
         'data-prep.services.state'
     ]);
 })();

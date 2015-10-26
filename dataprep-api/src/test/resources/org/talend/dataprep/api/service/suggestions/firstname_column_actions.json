@@ -622,62 +622,9 @@
     "label": "Extract date tokens"
   },
   {
-    "name": "fillinvalidwithdefaultboolean",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      },
-      {
-        "name": "invalid_default_value",
-        "type": "select",
-        "implicit": false,
-        "canBeBlank": false,
-        "configuration": {
-          "values": [
-            {
-              "value": "True"
-            },
-            {
-              "value": "False"
-            }
-          ],
-          "multiple": false
-        },
-        "description": "The value to set in invalid cells",
-        "label": "Value",
-        "default": "True"
-      }
-    ],
-    "category": "data cleansing",
-    "dynamic": false,
     "description": "Fill invalid cells of this column with given value",
-    "label": "Fill invalid cells with value..."
-  },
-  {
+    "category": "data cleansing",
+    "label": "Fill invalid cells with value...",
     "name": "fillinvalidwithdefault",
     "parameters": [
       {
@@ -717,100 +664,7 @@
         "default": ""
       }
     ],
-    "category": "data cleansing",
-    "dynamic": false,
-    "description": "Fill invalid cells of this column with given value",
-    "label": "Fill invalid cells with value..."
-  },
-  {
-    "name": "fillinvalidwithdefaultnumeric",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      },
-      {
-        "name": "invalid_default_value",
-        "type": "integer",
-        "implicit": false,
-        "canBeBlank": false,
-        "description": "The value to set in invalid cells",
-        "label": "Value",
-        "default": "0"
-      }
-    ],
-    "category": "data cleansing",
-    "dynamic": false,
-    "description": "Fill invalid cells of this column with given value",
-    "label": "Fill invalid cells with value..."
-  },
-  {
-    "name": "fillinvalidwithdefaultdate",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      },
-      {
-        "name": "invalid_default_value",
-        "type": "date",
-        "implicit": false,
-        "canBeBlank": false,
-        "description": "The value to set in invalid cells",
-        "label": "Value",
-        "default": "01/01/1970 10:00:00"
-      }
-    ],
-    "category": "data cleansing",
-    "dynamic": false,
-    "description": "Fill invalid cells of this column with given value",
-    "label": "Fill invalid cells with value..."
+    "dynamic": false
   },
   {
     "category": "strings",
@@ -1561,7 +1415,7 @@
     "label": "Simplify Text (remove case, accent, etc.)"
   },
   {
-    "name": "round",
+    "name": "floor",
     "category": "math",
     "parameters": [
       {
@@ -1593,8 +1447,8 @@
       }
     ],
     "dynamic": false,
-    "description": "Round value to the closest integer",
-    "label": "Round value"
+    "description": "Round value to the largest integer value that is less than or equal to the argument",
+    "label": "Floor value"
   },
   {
     "name": "delete_negative_values",
@@ -1630,7 +1484,43 @@
     ],
     "dynamic": false,
     "description": "Lines with a negative value in this column will be deleted",
-    "label": "Remove negatie values"
+    "label": "Remove negative values"
+  },
+  {
+    "name": "round",
+    "category": "math",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      }
+    ],
+    "dynamic": false,
+    "description": "Round value to the closest integer",
+    "label": "Round value"
   },
   {
     "description": "Compute the absolute value for all numeric values of this column.",
@@ -1669,7 +1559,7 @@
     "dynamic": false
   },
   {
-    "name": "floor",
+    "name": "round_down",
     "category": "math",
     "parameters": [
       {
@@ -1701,8 +1591,8 @@
       }
     ],
     "dynamic": false,
-    "description": "Round value to the largest integer value that is less than or equal to the argument",
-    "label": "Floor value"
+    "description": "Round towards zero. Never increments the digit prior to a discarded fraction (i.e. truncates)",
+    "label": "Remove fractional part"
   },
   {
     "name": "ceil",
@@ -2000,5 +1890,101 @@
     "dynamic": false,
     "description": "Change type of this column",
     "label": "Change Type"
+  },
+  {
+    "name": "numeric_ops",
+    "label": "Add, multiply, substract or divide",
+    "description":"Add (+), multiply (x), substract (-), or divide(/) this column with another or with a fixed value",
+    "category":"math",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "operator",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "+"
+            },
+            {
+              "value": "x"
+            },
+            {
+              "value": "-"
+            },
+            {
+              "value": "/"
+            }
+          ],
+          "multiple": false
+        },
+        "description": "Operator to use for this operation",
+        "label": "Operator",
+        "default": "x"
+      },
+      {
+        "name": "mode",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "Select if you want to compute against a constant value or to another column",
+        "label": "Compute with...",
+        "default": "Constant",
+        "configuration": {
+          "values": [
+            {
+              "value": "Constant",
+              "parameters": [
+                {
+                  "name": "operand",
+                  "type": "string",
+                  "description": "Fixed value to use as operand",
+                  "label": "Operand",
+                  "default": "2"
+                }
+              ]
+            },
+            {
+              "value": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "dynamic": false
   }
 ]

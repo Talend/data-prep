@@ -102,6 +102,10 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         }
 
         try {
+            if (replaceEntireCell) {
+                regexp = ".*" + regexp + ".*";
+            }
+
             Pattern p = Pattern.compile(regexp);
             final Matcher matcher = p.matcher(originalValue);
 

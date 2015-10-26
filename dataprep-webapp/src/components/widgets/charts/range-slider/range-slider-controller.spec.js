@@ -126,7 +126,39 @@ describe('RangeSlider controller', function () {
             var result = ctrl.adaptRangeValues(enteredMin, enteredMax, minimum, maximum, nbDecimals);
 
             //then
-            expect(result).toEqual({min:2, max: 50});
+            expect(result.min).toBe(2);
+        }));
+
+        it('should set enteredMin to the maximum if it is above', inject(function () {
+            //given
+            var ctrl = createController();
+            var enteredMin = 105;// above maximum
+            var enteredMax = 110;
+            var minimum = 2;
+            var maximum = 100;
+            var nbDecimals = 2;
+
+            //when
+            var result = ctrl.adaptRangeValues(enteredMin, enteredMax, minimum, maximum, nbDecimals);
+
+            //then
+            expect(result.min).toBe(100);
+        }));
+
+        it('should set enteredMax to the minimum if it is under', inject(function () {
+            //given
+            var ctrl = createController();
+            var enteredMin = -1;
+            var enteredMax = 0; // under minimum
+            var minimum = 2;
+            var maximum = 100;
+            var nbDecimals = 2;
+
+            //when
+            var result = ctrl.adaptRangeValues(enteredMin, enteredMax, minimum, maximum, nbDecimals);
+
+            //then
+            expect(result.max).toBe(2);
         }));
 
         it('should set enteredMax to the maximum if it is above', inject(function () {
@@ -142,7 +174,7 @@ describe('RangeSlider controller', function () {
             var result = ctrl.adaptRangeValues(enteredMin, enteredMax, minimum, maximum, nbDecimals);
 
             //then
-            expect(result).toEqual({min:20, max:100});
+            expect(result.max).toBe(100);
         }));
     });
 });

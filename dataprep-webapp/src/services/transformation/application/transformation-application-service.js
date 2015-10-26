@@ -35,7 +35,7 @@
         function appendClosure(action, scope) {
             /*jshint camelcase: false */
             return function (params) {
-                var column = state.playground.column;
+                var column = state.playground.grid.selectedColumn;
 
                 params = params || {};
                 params.scope = scope;

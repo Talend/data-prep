@@ -54,7 +54,13 @@
                    class="btn-icon btn-transparent"
                    ng-if="!!dataset.defaultPreparation"
                    ui-sref="nav.home.preparations({prepid: dataset.defaultPreparation.id})"></a>
-                <a data-icon="g" class="btn-icon btn-transparent"></a>
+                <talend-file-selector
+                        button-data-icon="g"
+                        button-title="REPLACE_FILE_CONTENT"
+                        file-model="datasetListCtrl.updateDatasetFile"
+                        on-file-change="datasetListCtrl.uploadUpdatedDatasetFile(dataset)">
+                </talend-file-selector>
+
                 <a data-icon="h" class="btn-icon btn-transparent"></a>
 
                 <div class="divider btn-transparent"></div>

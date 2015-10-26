@@ -61,7 +61,7 @@ describe('Onboarding service', function() {
         expect(options.nextLabel).toBe('NEXT');
         expect(options.prevLabel).toBe('BACK');
         expect(options.skipLabel).toBe('SKIP');
-        expect(options.doneLabel).toBe('OK, LET ME TRY!');
+        expect(options.doneLabel).toBe('LET ME TRY');
     }));
 
     it('should create/adapt dataset tour step', inject(function(OnboardingService) {
@@ -74,7 +74,7 @@ describe('Onboarding service', function() {
         expect(options.steps[0]).toEqual({
             element: '.no-js',
             position: 'right',
-            intro: '<div class="introjs-tooltiptitle">Welcome to Talend Data Preparation</div><div class="introjs-tooltipcontent">To learn more about Talend Data Preparation, take this quick tour</div>'
+            intro: '<div class="introjs-tooltiptitle"><center>Welcome to</br>Talend Data Preparation</center></div><div class="introjs-tooltipcontent">To quickly learn how to use it, click <b>Next</b>.</div>'
         });
     }));
 
@@ -86,9 +86,23 @@ describe('Onboarding service', function() {
         expect(introJsMock.setOptions).toHaveBeenCalled();
         var options = introJsMock.setOptions.calls.argsFor(0)[0];
         expect(options.steps[0]).toEqual({
+            element: '.no-js',
+            position: 'right',
+            intro: '<div class="introjs-tooltiptitle"><center>Welcome to the dataset view</center></div><div class="introjs-tooltipcontent">This grid corresponds to a sample extracted from your data.</br>From this view you can prepare the transformations to apply to your data.</div>'
+        });
+    }));
+
+    it('should create/adapt column selection', inject(function(OnboardingService) {
+        //when
+        OnboardingService.startTour('playground');
+
+        //then
+        expect(introJsMock.setOptions).toHaveBeenCalled();
+        var options = introJsMock.setOptions.calls.argsFor(0)[0];
+        expect(options.steps[1]).toEqual({
             element: '#datagrid .slick-header-columns-right > .slick-header-column',
             position: 'right',
-            intro: '<div class="introjs-tooltiptitle">Columns</div><div class="introjs-tooltipcontent">Select a column to discover which actions you can apply on its cells, use the bar bellow to identify invalid or empty values.</div>'
+            intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">Select a column to discover the transformation actions you can apply to the data.</div>'
         });
     }));
 
@@ -102,7 +116,7 @@ describe('Onboarding service', function() {
         expect(options.steps[0]).toEqual({
             element: '#help-preparation-name',
             position: 'right',
-            intro: '<div class="introjs-tooltiptitle">Your new preparation</div><div class="introjs-tooltipcontent">You can give a name to your brand new preparation. Usefull to find it later...</div>'
+            intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">You can give a name to your brand new preparation.</br>It will be listed in the <b>All preparations</b> view.</div>'
         });
     }));
 

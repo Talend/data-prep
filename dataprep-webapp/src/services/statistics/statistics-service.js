@@ -130,7 +130,7 @@
                 }),
                 key: key,
                 label: label,
-                column: state.playground.column
+                column: state.playground.grid.selectedColumn
             };
         }
 
@@ -148,7 +148,7 @@
                 data: dataTable,
                 key: key,
                 label: label,
-                column: state.playground.column,
+                column: state.playground.grid.selectedColumn,
                 activeLimits: null,
                 vertical: true
             };
@@ -179,9 +179,9 @@
          * and the active/inactive bars of the vertical barchart
          */
         function initRangeLimits() {
-            var column = state.playground.column;
+            var column = state.playground.grid.selectedColumn;
             var statistics = column.statistics;
-            var currentRangeFilter = _.find(FilterService.filters, function (filter) {
+            var currentRangeFilter = _.find(state.playground.filter.gridFilters, function (filter) {
                 return filter.colId === column.id && filter.type === 'inside_range';
             });
 
@@ -320,7 +320,7 @@
          * @description Adds a rangefilter in the angular context
          */
         function addRangeFilter(interval) {
-            var selectedColumn = state.playground.column;
+            var selectedColumn = state.playground.grid.selectedColumn;
             var removeFilterFn = function removeFilterFn(filter) {
                 if (selectedColumn && filter.colId === selectedColumn.id) {
                     initRangeLimits();
@@ -382,7 +382,7 @@
          * @description Processes the statistics data for visualization on the selected column
          */
         function processData() {
-            var column = state.playground.column;
+            var column = state.playground.grid.selectedColumn;
             reset(true, false, false);
 
             //TODO replace with new geo chart
@@ -419,7 +419,7 @@
             var datasetId = state.playground.dataset.id;
             var preparationId = state.playground.preparation && state.playground.preparation.id;
             var stepId = preparationId && RecipeService.getLastActiveStep() && RecipeService.getLastActiveStep().id;
-            var selectedColumn = state.playground.column;
+            var selectedColumn = state.playground.grid.selectedColumn;
 
             var aggregationParameters = {
                 datasetId: preparationId ? null : datasetId,
@@ -451,7 +451,7 @@
         function getSavedColumnAggregation() {
             var datasetId = state.playground.dataset && state.playground.dataset.id;
             var preparationId = state.playground.preparation &&  state.playground.preparation.id;
-            var columnId = state.playground.column &&  state.playground.column.id;
+            var columnId = state.playground.grid.selectedColumn &&  state.playground.grid.selectedColumn.id;
             return StorageService.getAggregation(datasetId, preparationId, columnId);
         }
 
@@ -464,7 +464,7 @@
         function removeSavedColumnAggregation() {
             var datasetId = state.playground.dataset && state.playground.dataset.id;
             var preparationId = state.playground.preparation &&  state.playground.preparation.id;
-            var columnId = state.playground.column &&  state.playground.column.id;
+            var columnId = state.playground.grid.selectedColumn &&  state.playground.grid.selectedColumn.id;
             return StorageService.removeAggregation(datasetId, preparationId, columnId);
         }
 
@@ -477,7 +477,7 @@
         function saveColumnAggregation() {
             var datasetId = state.playground.dataset && state.playground.dataset.id;
             var preparationId = state.playground.preparation &&  state.playground.preparation.id;
-            var columnId = state.playground.column &&  state.playground.column.id;
+            var columnId = state.playground.grid.selectedColumn &&  state.playground.grid.selectedColumn.id;
 
             var aggregation = {};
             aggregation.aggregation = service.histogram.aggregation;
@@ -493,7 +493,7 @@
          * @description Removes all the data to disable all visualization
          */
         function getAggregationColumns() {
-            var column = state.playground.column;
+            var column = state.playground.grid.selectedColumn;
             //TODO JSO : put a cache again that is invalidated when one of the columns change
             return DatagridService.getNumericColumns(column);
         }
@@ -508,7 +508,7 @@
          * @description update aggregation for a selected column
          */
         function updateStatistics() {
-            var column = state.playground.column;
+            var column = state.playground.grid.selectedColumn;
             reset(true, true, false);
             initStatisticsValues(column);
 

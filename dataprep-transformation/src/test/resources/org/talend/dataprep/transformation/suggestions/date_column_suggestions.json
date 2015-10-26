@@ -385,5 +385,95 @@
     "dynamic": false,
     "description": "Creates columns with year, month, day, hour, minute, second, etc...",
     "label": "Extract date tokens"
+  },
+  {
+    "description": "Fill invalid cells of this column with given value",
+    "category": "data cleansing",
+    "label": "Fill invalid cells with value...",
+    "name": "fillinvalidwithdefault",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "invalid_default_value",
+        "type": "date",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "The value to set in invalid cells",
+        "label": "Value",
+        "default": "01/01/1970 10:00:00"
+      }
+    ],
+    "dynamic": false
+  },
+  {
+    "description": "Fill empty cells of this column with given value",
+    "category": "data cleansing",
+    "label": "Fill empty cells with value...",
+    "name": "fillemptywithdefault",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "empty_default_value",
+        "type": "date",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "The value to set in empty cells",
+        "label": "Value",
+        "default": "01/01/1970 10:00:00"
+      }
+    ],
+    "dynamic": false
   }
 ]

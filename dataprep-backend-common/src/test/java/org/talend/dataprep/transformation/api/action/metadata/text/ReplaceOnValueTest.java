@@ -94,7 +94,7 @@ public class ReplaceOnValueTest {
         final DataSetRow row = new DataSetRow(values);
 
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, "James.*");
+        parameters.put(CELL_VALUE_PARAMETER, "James");
         parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
         parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "true");
 
@@ -109,7 +109,7 @@ public class ReplaceOnValueTest {
     public void testComputeNewValue() {
         // Case text when matches:
         Assert.assertEquals("Bob Dylan", action.computeNewValue("Robert Dylan", "Robert", "Bob", false));
-        Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", "Robert", "Bob", true));
+        Assert.assertEquals("Bob", action.computeNewValue("Robert Dylan", "Robert", "Bob", true));
         Assert.assertEquals("I listen to Bob Dylan every day", action.computeNewValue("I listen to Robert Dylan every day", "Robert", "Bob", false));
 
         // Case text when don't match:
@@ -121,26 +121,33 @@ public class ReplaceOnValueTest {
         Assert.assertEquals("Bob", action.computeNewValue("Robert Dylan", "Robert.*", "Bob", true));
         Assert.assertEquals("I want to break free", action.computeNewValue("I want 2 break free", "\\d", "to", false));
         Assert.assertEquals("to", action.computeNewValue("I want 2 break free", ".*\\d.*", "to", false));
+        Assert.assertEquals("to", action.computeNewValue("I want 2 break free", "\\d", "to", true));
 
         // Case regexp when don't match:
         Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", ".*Andy.*", "Bob", false));
         Assert.assertEquals("Robert Dylan", action.computeNewValue("Robert Dylan", "Andy.*", "Bob", true));
-        Assert.assertEquals("I want 2 break free", action.computeNewValue("I want 2 break free", "\\d", "to", true));
 
-        Assert.assertEquals("XXXX_EN", action.computeNewValue("XXXX_FR_YYYY", "FR.*", "EN", false));
-        Assert.assertEquals("XXXX_EN_YYYY", action.computeNewValue("XXXX_FR_YYYY", "FR", "EN", false));
-        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "US", "EN", false));
+        Assert.assertEquals("XXX_EN_YYY", action.computeNewValue("XXX_FR_YYY", "FR", "EN", false));
+        Assert.assertEquals("XXX_FR_YYY", action.computeNewValue("XXX_FR_YYY", "FOO", "EN", false));
+        Assert.assertEquals("EN", action.computeNewValue("XXX_FR_YYY", "FR", "EN", true));
 
-        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "FR.*", "EN", true));
-        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "FR", "EN", true));
-        Assert.assertEquals("XXXX_FR_YYYY", action.computeNewValue("XXXX_FR_YYYY", "US", "EN", true));
-        Assert.assertEquals("EN", action.computeNewValue("XXXX_FR_YYYY", ".*FR.*", "EN", true));
+        Assert.assertEquals("XXX_EN_YYY", action.computeNewValue("XXX_FR_YYY", "F.", "EN", false));
+        Assert.assertEquals("XXX_FR_YYY", action.computeNewValue("XXX_FR_YYY", "G.", "EN", false));
+        Assert.assertEquals("EN", action.computeNewValue("XXX_FR_YYY", "F.", "EN", true));
+
+        Assert.assertEquals("XXX_EN_YYY", action.computeNewValue("XXX_David Bowie_YYY", "_.*_", "_EN_", false));
+        Assert.assertEquals("XXX_David 2 Bowie_YYY",
+                action.computeNewValue("XXX_David 2 Bowie_YYY", "_[a-zA-Z]*_", "_EN_", false));
+        Assert.assertEquals("XXX_EN_YYY", action.computeNewValue("XXX_David 2 Bowie_YYY", "_[a-zA-Z0-9 ]*_", "_EN_", false));
+
+        Assert.assertEquals("XXX_YYY", action.computeNewValue("XXX_FR_YYY", "FR_", "", false));
+
     }
 
     @Test
     public void should_replace_the_value_that_match_on_the_specified_column() {
         Assert.assertEquals("Jimmy Hetfield", action.computeNewValue("James Hetfield", "James", "Jimmy", false));
-        Assert.assertEquals("James Hetfield", action.computeNewValue("James Hetfield", "James", "Jimmy", true));
+        Assert.assertEquals("Jimmy", action.computeNewValue("James Hetfield", "James", "Jimmy", true));
     }
 
     @Test

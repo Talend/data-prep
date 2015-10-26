@@ -1,0 +1,20 @@
+<div class="transformation-form">
+    <form ng-submit="formCtrl.paramForm.$valid && formCtrl.transformWithParam()"
+          name="formCtrl.paramForm">
+        
+        <transform-params parameters="formCtrl.transformation.parameters"></transform-params>
+
+        <transform-cluster-params
+                ng-if="formCtrl.transformation.cluster"
+                details="formCtrl.transformation.cluster">
+        </transform-cluster-params>
+    </form>
+
+    <div class="param-buttons">
+        <button ng-disabled="formCtrl.paramForm.$invalid"
+                class="param-primary-button btn-primary"
+                ng-click="formCtrl.transformWithParam()"
+                ng-mouseleave="formCtrl.submitHoverOff()"
+                ng-mouseenter="formCtrl.submitHoverOn()">Submit</button>
+    </div>
+</div>

@@ -5,9 +5,8 @@
      * @ngdoc service
      * @name data-prep.datagrid.service:DatagridSizeService
      * @description Datagrid private service that manage the grid sizes
-     * @requires data-prep.services.playground.service:DatagridService
      */
-    function DatagridSizeService($window, DatagridService) {
+    function DatagridSizeService($window, state) {
         var grid;
         
         return {
@@ -24,7 +23,7 @@
          * @description Get the actual dataset column sizes key. This key is used in localStorage 
          */
         function getLocalStorageKey() {
-            return 'org.talend.dataprep.col_size_' + DatagridService.metadata.id;
+            return 'org.talend.dataprep.col_size_' + state.playground.dataset.id;
         }
 
         /**

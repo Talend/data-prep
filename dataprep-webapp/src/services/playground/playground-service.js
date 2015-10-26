@@ -8,7 +8,6 @@
      * @requires data-prep.services.dataset.service:DatasetService
      * @requires data-prep.services.playground.service:DatagridService
      * @requires data-prep.services.playground.service:PreviewService
-     * @requires data-prep.services.filter.service:FilterService
      * @requires data-prep.services.recipe.service:RecipeService
      * @requires data-prep.services.transformation.service:TransformationCacheService
      * @requires data-prep.services.transformation.service:SuggestionService
@@ -19,7 +18,7 @@
      * @requires data-prep.services.state.service:StateService
      * @requires data-prep.services.onboarding:OnboardingService
      */
-    function PlaygroundService($rootScope, $q, state, DatasetService, DatagridService, PreviewService, FilterService,
+    function PlaygroundService($rootScope, $q, state, DatasetService, DatagridService, PreviewService,
                                RecipeService, TransformationCacheService, SuggestionService, PreparationService,
                                MessageService, StatisticsService, HistoryService, StateService, OnboardingService) {
         var DEFAULT_NAME = 'Preparation draft';
@@ -53,12 +52,12 @@
         function reset(dataset, data, preparation) {
             StateService.resetPlayground();
             StateService.setCurrentDataset(dataset);
+            StateService.setCurrentData(data);
             StateService.setCurrentPreparation(preparation);
+            StateService.removeAllGridFilters();
 
-            FilterService.removeAllFilters();
             RecipeService.refresh();
             StatisticsService.reset(true, true, true);
-            DatagridService.setDataset(dataset, data);
             TransformationCacheService.invalidateCache();
             SuggestionService.reset();
             HistoryService.clear();

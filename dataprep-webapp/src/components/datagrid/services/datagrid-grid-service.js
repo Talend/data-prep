@@ -13,7 +13,7 @@
      * @requires data-prep.datagrid.service:DatagridExternalService
      * @requires data-prep.datagrid.service:DatagridTooltipService
      */
-    function DatagridGridService(StateService, DatagridService, DatagridStyleService, DatagridColumnService,
+    function DatagridGridService(StateService, state, DatagridService, DatagridStyleService, DatagridColumnService,
                                  DatagridSizeService, DatagridExternalService, DatagridTooltipService) {
         var grid = null;
         var gridServices = [
@@ -38,11 +38,11 @@
          * @description Attach listeners for big table row management
          */
         function attachLongTableListeners() {
-            DatagridService.dataView.onRowCountChanged.subscribe(function () {
+            state.playground.grid.dataView.onRowCountChanged.subscribe(function () {
                 grid.updateRowCount();
                 grid.render();
             });
-            DatagridService.dataView.onRowsChanged.subscribe(function (e, args) {
+            state.playground.grid.dataView.onRowsChanged.subscribe(function (e, args) {
                 grid.invalidateRows(args.rows);
                 grid.render();
             });
@@ -117,7 +117,7 @@
                 syncColumnCellResize: false,
                 frozenColumn: 0
             };
-            grid = new Slick.Grid(elementId, DatagridService.dataView, [{id: 'tdpId'}], options);
+            grid = new Slick.Grid(elementId, state.playground.grid.dataView, [{id: 'tdpId'}], options);
 
             //listeners
             attachLongTableListeners();

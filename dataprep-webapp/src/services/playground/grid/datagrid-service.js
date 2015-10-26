@@ -15,67 +15,25 @@
         var REPLACE = 'REPLACE';
         var INSERT = 'INSERT';
 
-        var self = this;
+        var service = {
+            focusedColumn: null, //TODO JSO : put this in state
 
-        /**
-         * @ngdoc property
-         * @name metadata
-         * @propertyOf data-prep.services.playground.service:DatagridService
-         * @description the loaded metadata
-         * @type {Object}
-         */
-        self.metadata = null;
+            //grid data
+            updateData: updateData, //updata data in the current dataset
+            getColumns: getColumns,
+            getColumnsContaining: getColumnsContaining,
+            getSameContentConfig: getSameContentConfig,
+            getNumericColumns: getNumericColumns,
 
-        /**
-         * @ngdoc property
-         * @name dataView
-         * @propertyOf data-prep.services.playground.service:DatagridService
-         * @description the SlickGrid dataView
-         * @type {Object}
-         */
-        self.dataView = new Slick.Data.DataView({inlineFilters: false});
-
-        /**
-         * @ngdoc property
-         * @name filters
-         * @propertyOf data-prep.services.playground.service:DatagridService
-         * @description the filters applied to the dataview
-         * @type {function[]}
-         */
-        self.filters = [];
+            //preview
+            execute: execute,
+            previewDataExecutor: previewDataExecutor
+        };
+        return service;
 
         //------------------------------------------------------------------------------------------------------
         //---------------------------------------------------DATA-----------------------------------------------
         //------------------------------------------------------------------------------------------------------
-
-        /**
-         * @ngdoc method
-         * @name updateDataviewRecords
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @param {Object[]} records - the records to insert
-         * @description [PRIVATE] Set dataview records
-         */
-        var updateDataviewRecords = function (records) {
-            self.dataView.beginUpdate();
-            self.dataView.setItems(records, 'tdpId');
-            self.dataView.endUpdate();
-        };
-
-        /**
-         * @ngdoc method
-         * @name setDataset
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @param {Object} metadata - the new metadata to load
-         * @param {Object} data - the new data to load
-         * @description Set dataview records and metadata to the datagrid
-         */
-        self.setDataset = function (metadata, data) {
-            self.metadata = metadata;
-            StateService.setCurrentData(data);
-            self.focusedColumn = null;
-            updateDataviewRecords(data.records);
-        };
-
         /**
          * @ngdoc method
          * @name getLastNewColumnId
@@ -98,13 +56,12 @@
          * @param {Object} data - the new data (columns and records)
          * @description Update the data in the datagrid
          */
-        self.updateData = function (data) {
+        function updateData(data) {
             if (state.playground.data.columns.length < data.columns.length) {
-                self.focusedColumn = getLastNewColumnId(data.columns);
+                service.focusedColumn = getLastNewColumnId(data.columns);
             }
             StateService.setCurrentData(data);
-            updateDataviewRecords(data.records);
-        };
+        }
 
         //------------------------------------------------------------------------------------------------------
         //--------------------------------------------------PREVIEW---------------------------------------------
@@ -118,26 +75,26 @@
          * This allows to update the dataset, with limited SlickGrid computation, for more performant operations than
          * setItems which compute everything on the whole dataset.
          */
-        self.execute = function execute(executor) {
+        function execute(executor) {
             if (!executor) {
                 return;
             }
 
             var revertInstructions = [];
 
-            self.dataView.beginUpdate();
+            state.playground.grid.dataView.beginUpdate();
             _.forEach(executor.instructions, function (step) {
                 switch (step.type) {
                     case INSERT:
-                        self.dataView.insertItem(step.index, step.row);
+                        state.playground.grid.dataView.insertItem(step.index, step.row);
                         revertInstructions.push({
                             type: DELETE,
                             row: step.row
                         });
                         break;
                     case DELETE:
-                        var index = self.dataView.getIdxById(step.row.tdpId);
-                        self.dataView.deleteItem(step.row.tdpId);
+                        var index = state.playground.grid.dataView.getIdxById(step.row.tdpId);
+                        state.playground.grid.dataView.deleteItem(step.row.tdpId);
                         revertInstructions.push({
                             type: INSERT,
                             row: step.row,
@@ -145,8 +102,8 @@
                         });
                         break;
                     case REPLACE:
-                        var originalRow = self.dataView.getItemById(step.row.tdpId);
-                        self.dataView.updateItem(step.row.tdpId, step.row);
+                        var originalRow = state.playground.grid.dataView.getItemById(step.row.tdpId);
+                        state.playground.grid.dataView.updateItem(step.row.tdpId, step.row);
                         revertInstructions.push({
                             type: REPLACE,
                             row: originalRow
@@ -154,7 +111,7 @@
                         break;
                 }
             });
-            self.dataView.endUpdate();
+            state.playground.grid.dataView.endUpdate();
 
             var reverter = {
                 instructions: revertInstructions,
@@ -163,17 +120,17 @@
             };
 
             if (state.playground.data.columns.length < executor.columns.length) {
-                self.focusedColumn = getLastNewColumnId(executor.columns);
+                service.focusedColumn = getLastNewColumnId(executor.columns);
             }
 
             StateService.setCurrentData({
-                    columns: executor.columns,
-                    records: state.playground.data.records,
-                    preview: executor.preview
-                });
+                columns: executor.columns,
+                records: state.playground.data.records,
+                preview: executor.preview
+            });
 
             return reverter;
-        };
+        }
 
         /**
          * @ngdoc method
@@ -182,14 +139,14 @@
          * @param {Object} data The new preview data to insert
          * @description Create an executor that reflect the provided preview data, in order to update the current dataset
          */
-        self.previewDataExecutor = function previewDataExecutor(data) {
+        function previewDataExecutor(data) {
             var executor = {
                 columns: data.columns,
                 instructions: [],
                 preview: true
             };
 
-            var nextInsertionIndex = self.dataView.getIdxById(data.records[0].tdpId);
+            var nextInsertionIndex = state.playground.grid.dataView.getIdxById(data.records[0].tdpId);
             _.forEach(data.records, function (row) {
                 if (row.__tdpRowDiff || row.__tdpDiff) {
                     if (row.__tdpRowDiff === 'new') {
@@ -210,7 +167,7 @@
             });
 
             return executor;
-        };
+        }
 
         //------------------------------------------------------------------------------------------------------
         //------------------------------------------------DATA UTILS--------------------------------------------
@@ -224,7 +181,7 @@
          * @description Filter the column ids
          * @returns {Object[]} - the column list that match the desired filters (id & name)
          */
-        self.getColumns = function (excludeNumeric, excludeBoolean) {
+        function getColumns(excludeNumeric, excludeBoolean) {
             var cols = state.playground.data.columns;
 
             if (excludeNumeric) {
@@ -242,7 +199,7 @@
             return _.map(cols, function (col) {
                 return {'id': col.id, 'name': col.name};
             });
-        };
+        }
 
         /**
          * @ngdoc method
@@ -254,11 +211,11 @@
          * @description Return the column id list that has a value that match the regexp
          * @returns {Object[]} - the column list that contains a value that match the regexp (col.id & col.name)
          */
-        self.getColumnsContaining = function (regexp, canBeNumeric, canBeBoolean) {
+        function getColumnsContaining(regexp, canBeNumeric, canBeBoolean) {
             var results = [];
 
             var data = state.playground.data.records;
-            var potentialColumns = self.getColumns(!canBeNumeric, !canBeBoolean);
+            var potentialColumns = getColumns(!canBeNumeric, !canBeBoolean);
 
             //we loop over data while there is data and potential columns that can contains the searched term
             //if a col value for a row contains the term, we add it to result
@@ -278,7 +235,7 @@
             }
 
             return results;
-        };
+        }
 
         /**
          * @ngdoc method
@@ -290,10 +247,10 @@
          * @description Return displayed rows index where data[rowId][colId] contains the searched term
          * @returns {Object} The SlickGrid css config for each column with the provided content
          */
-        self.getSameContentConfig = function (colId, term, cssClass) {
+        function getSameContentConfig(colId, term, cssClass) {
             var config = {};
-            for (var i = 0; i < self.dataView.getLength(); ++i) {
-                var item = self.dataView.getItem(i);
+            for (var i = 0; i < state.playground.grid.dataView.getLength(); ++i) {
+                var item = state.playground.grid.dataView.getItem(i);
                 if (term === item[colId]) {
                     config[i] = {};
                     config[i][colId] = cssClass;
@@ -301,7 +258,7 @@
             }
 
             return config;
-        };
+        }
 
         /**
          * @ngdoc method
@@ -311,7 +268,7 @@
          * @description Filter numeric columns
          * @returns {array} The numeric columns
          */
-        self.getNumericColumns = function getNumericColumns(columnToSkip) {
+        function getNumericColumns(columnToSkip) {
             return _.chain(state.playground.data.columns)
                 .filter(function (column) {
                     return !columnToSkip || column.id !== columnToSkip.id;
@@ -321,114 +278,7 @@
                     return simpleType === 'integer' || simpleType === 'decimal';
                 })
                 .value();
-        };
-
-        //------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------FILTERS----------------------------------------------
-        //------------------------------------------------------------------------------------------------------
-        /**
-         * @ngdoc method
-         * @name filterFn
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @param {object} item - the item to test
-         * @param {object} args - object containing the filters predicates
-         * @description [PRIVATE] Filter function. It iterates over all filters and return if the provided item fit the predicates
-         * @returns {boolean} - true if the item pass all the filters
-         */
-        function filterFn(item, args) {
-            //init filters with actual data
-            var initializedFilters = _.map(args.filters, function (filter) {
-                return filter(state.playground.data);
-            });
-            //execute each filter on the value
-            for (var i = 0; i < initializedFilters.length; i++) {
-                var filter = initializedFilters[i];
-                if (!filter(item)) {
-                    return false;
-                }
-            }
-            return true;
         }
-
-        /**
-         * @ngdoc method
-         * @name getAllFiltersFn
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @description [PRIVATE] Create a closure that contains the active filters to execute
-         * @returns {function} The filters closure
-         */
-        self.getAllFiltersFn = function () {
-            return function (item) {
-                return filterFn(item, self);
-            };
-        };
-
-        /**
-         * @ngdoc method
-         * @name updateDataViewFilters
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @description [PRIVATE] Update filters in dataview
-         */
-        var updateDataViewFilters = function () {
-            self.dataView.beginUpdate();
-            self.dataView.setFilterArgs({
-                filters: self.filters
-            });
-            self.dataView.setFilter(filterFn);
-            self.dataView.endUpdate();
-        };
-
-        /**
-         * @ngdoc method
-         * @name addFilter
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @description Add a filter in dataview
-         * @param {object} filter - the filter function to add
-         */
-        self.addFilter = function (filter) {
-            self.filters.push(filter);
-            updateDataViewFilters();
-        };
-
-        /**
-         * @ngdoc method
-         * @name updateFilter
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @description Update a filter in dataview
-         * @param {object} oldFilter - the filter function to replace
-         * @param {object} newFilter - the new filter function
-         */
-        self.updateFilter = function (oldFilter, newFilter) {
-            var index = self.filters.indexOf(oldFilter);
-            self.filters.splice(index, 1, newFilter);
-            updateDataViewFilters();
-        };
-
-        /**
-         * @ngdoc method
-         * @name removeFilter
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @description Remove a filter in dataview
-         * @param {object} filter - the filter function to remove
-         */
-        self.removeFilter = function (filter) {
-            var filterIndex = self.filters.indexOf(filter);
-            if (filterIndex > -1) {
-                self.filters.splice(filterIndex, 1);
-                updateDataViewFilters();
-            }
-        };
-
-        /**
-         * @ngdoc method
-         * @name resetFilters
-         * @methodOf data-prep.services.playground.service:DatagridService
-         * @description Remove all filters from dataview
-         */
-        self.resetFilters = function () {
-            self.filters = [];
-            updateDataViewFilters();
-        };
     }
 
     angular.module('data-prep.services.playground')

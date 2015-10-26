@@ -1,0 +1,11 @@
+<div id="filter-monitor">
+    <a id="reset-filters"
+       title="{{::'REMOVE_ALL_FILTER' | translate}}"
+       ng-if="filterMonitorCtrl.filters.length" data-icon="A"
+       ng-click="filterMonitorCtrl.onReset()"></a>
+
+    <div id="filters-monitor-stats"
+         title="{{ 'NB_LINES_MATCHING_FILTERS' | translate:{percentage: filterMonitorCtrl.percentage} }}">
+        {{filterMonitorCtrl.nbLines}}/{{filterMonitorCtrl.nbTotalLines}}
+    </div>
+</div>

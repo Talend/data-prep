@@ -34,7 +34,7 @@ public interface ContentCache {
      * Please note content is not passed in parameters but return of this method also callers to write in entry.
      *
      * @param key content cache key.
-     * @param timeToLive The {@link HDFSContentCache.TimeToLive TTL} for the new cache entry.
+     * @param timeToLive The {@link TimeToLive TTL} for the new cache entry.
      * @return A {@link OutputStream output stream} to be used to write content in cache entry
      */
     OutputStream put(ContentCacheKey key, TimeToLive timeToLive);

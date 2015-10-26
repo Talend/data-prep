@@ -67,13 +67,13 @@ describe('Transformation menu directive', function () {
         //then
         var menuItem = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
         expect(menuItem.text().trim()).toBe('menu with param');
-        expect(angular.element('body').find('.transformation-params').length).toBe(0);
+        expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
         //when
         menuItem.click();
 
         //then
-        var paramsElements = angular.element('body').find('.transformation-params');
+        var paramsElements = angular.element('body').find('.transformation-form');
         expect(paramsElements.length).toBe(1);
         expect(paramsElements.is(':visible')).toBe(true);
     });
@@ -102,13 +102,13 @@ describe('Transformation menu directive', function () {
         //then
         var menuItem = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
         expect(menuItem.text().trim()).toBe('menu with param');
-        expect(angular.element('body').find('.transformation-params').length).toBe(0);
+        expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
         //when
         menuItem.click();
 
         //then
-        var paramsElements = angular.element('body').find('.transformation-params');
+        var paramsElements = angular.element('body').find('.transformation-form');
         expect(paramsElements.length).toBe(1);
         expect(paramsElements.is(':visible')).toBe(true);
     });
@@ -213,13 +213,13 @@ describe('Transformation menu directive', function () {
         var menuItems = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
         var menuWithChoice = menuItems.eq(1);
         var menuWithParams = menuItems.eq(2);
-        expect(angular.element('body').find('.transformation-params').length).toBe(0);
+        expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
         //when
         menuWithChoice.click();
 
         //then : expect params to render choice
-        var paramsElements = angular.element('body').find('.transformation-params');
+        var paramsElements = angular.element('body').find('.transformation-form');
         expect(paramsElements.length).toBe(1);
         expect(paramsElements.is(':visible')).toBe(true);
         expect(paramsElements.find('input').length).toBe(0);
@@ -229,7 +229,7 @@ describe('Transformation menu directive', function () {
         menuWithParams.click();
 
         //then : expect params to render simple params
-        paramsElements = angular.element('body').find('.transformation-params');
+        paramsElements = angular.element('body').find('.transformation-form');
         expect(paramsElements.length).toBe(1);
         expect(paramsElements.is(':visible')).toBe(true);
         expect(paramsElements.find('input').length).toBe(2);

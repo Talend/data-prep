@@ -20,7 +20,9 @@ describe('App directive', function() {
         RestURLs.setServerUrl('');
 
         var $httpBackend = $injector.get('$httpBackend');
-        $httpBackend.when('GET', '/api/export/formats').respond(200, {});
+        $httpBackend
+            .expectGET(RestURLs.exportUrl + '/formats')
+            .respond(200, {});
     }));
 
     afterEach(function() {

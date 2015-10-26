@@ -6,17 +6,15 @@ import java.io.OutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
  * An implementation of {@link ContentCache} that holds no content. This is mainly an implementation to replace an
  * actual content cache in case configuration does not include HDFS configuration.
- * @see org.talend.dataprep.configuration.HDFS
- * @see HDFSContentCache
  */
 @Component
-@ConditionalOnMissingBean(HDFSContentCache.class)
+@ConditionalOnProperty(name = "api.cache", havingValue = "disabled", matchIfMissing = true)
 public class NoOpContentCache implements ContentCache {
 
     /** This class' logger. */
@@ -49,7 +47,7 @@ public class NoOpContentCache implements ContentCache {
      * @see ContentCache#put(ContentCacheKey, TimeToLive)
      */
     @Override
-    public OutputStream put(ContentCacheKey key, HDFSContentCache.TimeToLive timeToLive) {
+    public OutputStream put(ContentCacheKey key, TimeToLive timeToLive) {
         return new NullOutputStream();
     }
 

@@ -1,9 +1,7 @@
 package org.talend.dataprep.dataset.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.dataprep.api.dataset.DataSetMetadata.Builder.metadata;
 
 import java.io.IOException;
@@ -18,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.jms.Message;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
-import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.dataset.service.analysis.*;
@@ -51,6 +46,7 @@ import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.schema.DraftValidator;
 import org.talend.dataprep.schema.FormatGuess;
 import org.talend.dataprep.schema.SchemaParserResult;
+import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
 import com.wordnik.swagger.annotations.*;
@@ -112,6 +108,10 @@ public class DataSetService {
     @Autowired
     private Jackson2ObjectMapperBuilder builder;
 
+    /** DataPrep abstraction to the underlying security (whether it's enabled or not). */
+    @Autowired
+    private Security security;
+
     /**
      * Sort the synchronous analyzers.
      */
@@ -152,21 +152,6 @@ public class DataSetService {
                 return message;
             });
         }
-    }
-
-    /**
-     * @return Get user id based on the user name from Spring Security context, return "anonymous" if no user is
-     * currently logged in.
-     */
-    private static String getUserId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String author;
-        if (principal != null) {
-            author = principal.toString();
-        } else {
-            author = "anonymous"; //$NON-NLS-1
-        }
-        return author;
     }
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -246,7 +231,7 @@ public class DataSetService {
         DataSetMetadata dataSetMetadata = metadata() //
                 .id(id) //
                 .name(name) //
-                .author(getUserId()) //
+                .author(security.getUserId()) //
                 .location(location) //
                 .created(System.currentTimeMillis()) //
                 .build();
@@ -338,7 +323,6 @@ public class DataSetService {
      * Creates a new data set and returns the new data set id as text in the response.
      *
      * @param name An optional name for the new data set (might be <code>null</code>).
-     * @param name The dataset name.
      * @param response The HTTP response to interact with caller.
      * @return The new data id.
      */
@@ -378,7 +362,7 @@ public class DataSetService {
          DataSetMetadata dataSetMetadata = metadata() //
             .id(newId) //
             .name(name) //
-            .author(getUserId()) //
+            .author(security.getUserId()) //
             .location(dataSet.getMetadata().getLocation()) //
             .created(System.currentTimeMillis()) //
             .build();
@@ -628,7 +612,7 @@ public class DataSetService {
      * @param dataSetMetadata, the metadata to be updated
      */
     void completeWithUserData(DataSetMetadata dataSetMetadata) {
-        String userId = getUserId();
+        String userId = security.getUserId();
         UserData userData = userDataRepository.get(userId);
         if (userData != null) {
             dataSetMetadata.setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
@@ -709,7 +693,7 @@ public class DataSetService {
     @ApiOperation(value = "return all favorites datasets of the current user", notes = "Returns the list of favorites datasets.")
     @Timed
     public Iterable<String> favorites() {
-        String userId = getUserId();
+        String userId = security.getUserId();
         UserData userData = userDataRepository.get(userId);
         return userData != null ? userData.getFavoritesDatasets() : Collections.emptyList();
     }
@@ -729,7 +713,7 @@ public class DataSetService {
     public void setFavorites(
             @RequestParam(defaultValue = "false") @ApiParam(name = "unset", value = "if true then unset the dataset as favorite, if false (default value) set the favorite flag") boolean unset, //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the favorite data set, do nothing is the id does not exist.") String dataSetId) {
-        String userId = getUserId();
+        String userId = security.getUserId();
         // check that dataset exists
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
         if (dataSetMetadata != null) {

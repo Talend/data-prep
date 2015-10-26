@@ -9,10 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithBooleanIfInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithDateIfInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithNumericIfInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithStringIfInvalid;
+import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillInvalid;
 import org.talend.dataprep.transformation.api.action.metadata.text.ProperCase;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
@@ -39,18 +36,12 @@ public class FillInvalidRuleTest {
 
     @Test
     public void testNegativeMatch() throws Exception {
-        assertThat(fillInvalidRule.apply(new FillWithBooleanIfInvalid(), allValidColumn), is(NEGATIVE));
-        assertThat(fillInvalidRule.apply(new FillWithDateIfInvalid(), allValidColumn), is(NEGATIVE));
-        assertThat(fillInvalidRule.apply(new FillWithNumericIfInvalid(), allValidColumn), is(NEGATIVE));
-        assertThat(fillInvalidRule.apply(new FillWithStringIfInvalid(), allValidColumn), is(NEGATIVE));
+        assertThat(fillInvalidRule.apply(new FillInvalid(), allValidColumn), is(NEGATIVE));
     }
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(fillInvalidRule.apply(new FillWithBooleanIfInvalid(), mostValidColumn), is(POSITIVE));
-        assertThat(fillInvalidRule.apply(new FillWithDateIfInvalid(), mostValidColumn), is(POSITIVE));
-        assertThat(fillInvalidRule.apply(new FillWithNumericIfInvalid(), mostValidColumn), is(POSITIVE));
-        assertThat(fillInvalidRule.apply(new FillWithStringIfInvalid(), mostValidColumn), is(POSITIVE));
+        assertThat(fillInvalidRule.apply(new FillInvalid(), mostValidColumn), is(POSITIVE));
     }
 
 }

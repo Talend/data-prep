@@ -71,7 +71,7 @@
                 cancelPendingPreview();
 
                 previewTimeout = $timeout(function () {
-                    var column = state.playground.column;
+                    var column = state.playground.grid.selectedColumn;
                     var preparationId = state.playground.preparation ? state.playground.preparation.id : null;
 
                     params.scope = scope;

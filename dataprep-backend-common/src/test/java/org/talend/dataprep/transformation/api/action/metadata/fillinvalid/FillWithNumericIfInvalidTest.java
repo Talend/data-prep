@@ -1,5 +1,12 @@
 package org.talend.dataprep.transformation.api.action.metadata.fillinvalid;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
+
+import java.util.*;
+
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -8,31 +15,22 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
-
 /**
  * Unit test for the FillWithNumericIfInvalid action.
  * 
- * @see FillWithNumericIfInvalid
+ * @see FillInvalid
  */
 public class FillWithNumericIfInvalidTest {
 
     /** The action to test. */
-    private FillWithNumericIfInvalid action;
+    private FillInvalid action;
 
     /**
      * Default empty constructor.
      */
     public FillWithNumericIfInvalidTest() {
-        action = new FillWithNumericIfInvalid();
+        action = new FillInvalid();
+        action = (FillInvalid) action.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
     }
 
     @Test
@@ -44,7 +42,7 @@ public class FillWithNumericIfInvalidTest {
         values.put("0003", "Something");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.INTEGER) //
                 .computedId("0002") //
                 .invalidValues(newHashSet("N")) //
@@ -74,7 +72,7 @@ public class FillWithNumericIfInvalidTest {
         values.put("0003", "Something");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.INTEGER) //
                 .computedId("0002") //
                 .invalidValues(new HashSet<>()) // no invalid values
@@ -107,10 +105,12 @@ public class FillWithNumericIfInvalidTest {
     }
 
     @Test
+    public void should_adapt_null() throws Exception {
+        assertThat(action.adapt(null), is(action));
+    }
+
+    @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));
     }
 

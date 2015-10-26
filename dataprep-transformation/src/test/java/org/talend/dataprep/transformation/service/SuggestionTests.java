@@ -135,7 +135,7 @@ public class SuggestionTests extends TransformationServiceBaseTests {
                 .contentType(JSON) //
                 .body(columnMetadata) //
                 .when() //
-                .post("/suggest/column") //
+                .post("/suggest/column?limit=6") //
                 .asString();
 
         // then
@@ -173,7 +173,7 @@ public class SuggestionTests extends TransformationServiceBaseTests {
                 .contentType(JSON) //
                 .body(columnMetadata) //
                 .when() //
-                .post("/suggest/column") //
+                .post("/suggest/column?limit=10") //
                 .asString();
 
         // then
@@ -193,7 +193,7 @@ public class SuggestionTests extends TransformationServiceBaseTests {
                 .contentType(JSON) //
                 .body(columnMetadata) //
                 .when() //
-                .post("/suggest/column") //
+                .post("/suggest/column?limit=10") //
                 .asString();
 
         // then

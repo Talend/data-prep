@@ -1,29 +1,9 @@
-.filter-list {
-  @include calc(width, "100% - 20px");
-  background-color: $shadow-gray;
-  color: $dark-gray;
-  overflow-x: auto;
+#filter-list {
+  padding: 0 10px;
+  @include display(flex);
+  @include flex-wrap(wrap);
 
-  >ul {
-    > li {
-      float: left;
-      line-height: 45px;
-      padding-left: 15px;
-
-      input[type="search"] {
-        background-color: $white;
-        color: $dark-gray;
-        font-family: $base-font-family;
-        font-size: 0.85em;
-        position: relative;
-        margin: 7px 0 0;
-        width: 150px;
-        border: 1px solid darken($light-gray, 10%);
-      }
-      .ac-container {
-        color: $dark-gray;
-        position: fixed !important;
-      }
-    }
+  >li {
+    margin: 0 3px;
   }
 }

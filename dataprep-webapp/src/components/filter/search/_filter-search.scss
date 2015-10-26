@@ -1,0 +1,15 @@
+#filter-search {
+  input[type="search"] {
+    background-color: $white;
+    color: $dark-gray;
+    font-family: $base-font-family;
+    font-size: 0.85em;
+    margin: 0;
+    border: 1px solid darken($light-gray, 10%);
+  }
+
+  .ac-container {
+    color: $dark-gray;
+    position: fixed !important;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "round_down",
+      "parameters": {
+        "column_id": "aNumber",
+        "scope": "column"
+      }
+    }
+  ]
+}

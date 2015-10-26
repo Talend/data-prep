@@ -6,7 +6,7 @@ describe('ColumnProfile controller', function () {
     var stateMock;
 
     beforeEach(module('data-prep.column-profile', function($provide) {
-        stateMock = {playground: {}};
+        stateMock = {playground: {grid: {}}};
         $provide.constant('state', stateMock);
     }));
 
@@ -31,7 +31,7 @@ describe('ColumnProfile controller', function () {
             var ctrl = createController();
             var obj = {'data': 'Ulysse', 'occurrences': 5};
 
-            stateMock.playground.column = {
+            stateMock.playground.grid.selectedColumn = {
                 id: '0001',
                 name: 'firstname'
             };
@@ -60,7 +60,7 @@ describe('ColumnProfile controller', function () {
             var ctrl = createController();
             var obj = {'data': '', 'occurrences': 5};
 
-            stateMock.playground.column = {
+            stateMock.playground.grid.selectedColumn = {
                 id: '0001',
                 name: 'firstname'
             };

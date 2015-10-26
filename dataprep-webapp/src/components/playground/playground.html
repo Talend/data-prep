@@ -42,14 +42,17 @@
                     <input type="checkbox"
                            ng-model='playgroundCtrl.hasActiveStep'
                            ng-change='playgroundCtrl.toggleRecipe()'/>
-                    <div id="recipe-toggle-switch" class="checkbox" ></div>
+
+                    <div id="recipe-toggle-switch" class="checkbox"></div>
                 </label>
 
-                <talend-editable-text id="help-preparation-name"
-                                      edition-mode="playgroundCtrl.state.playground.nameEditionMode"
-                                      on-validate="playgroundCtrl.confirmPrepNameEdition(text)"
-                                      placeholder="ENTER_PREPARATION_NAME"
-                                      text="playgroundCtrl.preparationName"></talend-editable-text>
+                <div id="help-preparation-name">
+                    <talend-editable-text id="help-preparation-name"
+                                          edition-mode="playgroundCtrl.state.playground.nameEditionMode"
+                                          on-validate="playgroundCtrl.confirmPrepNameEdition(text)"
+                                          placeholder="ENTER_PREPARATION_NAME"
+                                          text="playgroundCtrl.preparationName"></talend-editable-text>
+                </div>
             </div>
 
             <!-- Recipe -->
@@ -57,7 +60,7 @@
         </talend-slidable>
 
         <div class="playground-center">
-            <filter-list></filter-list>
+            <filter-bar></filter-bar>
 
             <div class="datagrid-container">
                 <datagrid></datagrid>

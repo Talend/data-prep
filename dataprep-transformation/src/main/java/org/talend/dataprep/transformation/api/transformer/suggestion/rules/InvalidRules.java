@@ -9,10 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.delete.DeleteInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithBooleanIfInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithDateIfInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithNumericIfInvalid;
-import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillWithStringIfInvalid;
+import org.talend.dataprep.transformation.api.action.metadata.fillinvalid.FillInvalid;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
 @Component
@@ -49,10 +46,7 @@ public class InvalidRules extends BasicRules {
      */
     @Bean
     public SuggestionEngineRule fillInvalidRule() {
-        return forActions(FillWithBooleanIfInvalid.FILL_EMPTY_ACTION_NAME, //
-                FillWithDateIfInvalid.FILL_INVALID_ACTION_NAME, //
-                FillWithNumericIfInvalid.FILL_INVALID_ACTION_NAME, //
-                FillWithStringIfInvalid.FILL_INVALID_ACTION_NAME) //
+        return forActions(FillInvalid.FILL_INVALID_ACTION_NAME) //
                         .then(columnMetadata -> {
                             if (getInvalidCount(columnMetadata) > 0) {
                                 return POSITIVE;

@@ -393,4 +393,24 @@ describe('Dataset list controller', function () {
         }));
 
     });
+
+    describe('Replace an existing dataset with a new one', function() {
+        beforeEach(inject(function (UpdateWorkflowService) {
+            spyOn(UpdateWorkflowService,'updateDataset').and.returnValue();
+        }));
+
+        it('should update the existing dataset with the new file', inject(function (UpdateWorkflowService) {
+            //given
+            var ctrl          = createController();
+            var existingDataset = {};
+            var newDataSet = {};
+            ctrl.updateDatasetFile = [existingDataset];
+
+            //when
+            ctrl.uploadUpdatedDatasetFile(newDataSet);
+
+            //then
+            expect(UpdateWorkflowService.updateDataset).toHaveBeenCalledWith(existingDataset, newDataSet);
+        }));
+    });
 });

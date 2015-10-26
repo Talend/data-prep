@@ -10,9 +10,10 @@ import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.api.action.metadata.math.Ceil;
-import org.talend.dataprep.transformation.api.action.metadata.math.Floor;
-import org.talend.dataprep.transformation.api.action.metadata.math.Round;
+import org.talend.dataprep.transformation.api.action.metadata.math.RoundCeil;
+import org.talend.dataprep.transformation.api.action.metadata.math.RoundDown;
+import org.talend.dataprep.transformation.api.action.metadata.math.RoundFloor;
+import org.talend.dataprep.transformation.api.action.metadata.math.RoundHalfUp;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
 public class IntegerRuleTest {
@@ -33,29 +34,32 @@ public class IntegerRuleTest {
 
     @Test
     public void testOtherAction() throws Exception {
-        assertThat(integerRule.apply(new Ceil(), stringColumn), is(NON_APPLICABLE));
-        assertThat(integerRule.apply(new Round(), stringColumn), is(NON_APPLICABLE));
-        assertThat(integerRule.apply(new Floor(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundCeil(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundHalfUp(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundFloor(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundDown(), stringColumn), is(NON_APPLICABLE));
     }
 
     @Test
     public void testNegativeMatch() throws Exception {
-        assertThat(integerRule.apply(new Ceil(), allIntColumn), is(NEGATIVE));
-        assertThat(integerRule.apply(new Round(), allIntColumn), is(NEGATIVE));
-        assertThat(integerRule.apply(new Floor(), allIntColumn), is(NEGATIVE));
+        assertThat(integerRule.apply(new RoundDown(), allIntColumn), is(NEGATIVE));
+        assertThat(integerRule.apply(new RoundHalfUp(), allIntColumn), is(NEGATIVE));
     }
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(integerRule.apply(new Ceil(), mostIntColumn), is(POSITIVE));
-        assertThat(integerRule.apply(new Round(), mostIntColumn), is(POSITIVE));
-        assertThat(integerRule.apply(new Floor(), mostIntColumn), is(POSITIVE));
+        assertThat(integerRule.apply(new RoundDown(), mostIntColumn), is(POSITIVE));
+        assertThat(integerRule.apply(new RoundHalfUp(), mostIntColumn), is(POSITIVE));
     }
 
     @Test
     public void testIgnoreRule() throws Exception {
-        assertThat(integerRule.apply(new Ceil(), stringColumn), is(NON_APPLICABLE));
-        assertThat(integerRule.apply(new Round(), stringColumn), is(NON_APPLICABLE));
-        assertThat(integerRule.apply(new Floor(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundCeil(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundHalfUp(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundFloor(), stringColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundDown(), stringColumn), is(NON_APPLICABLE));
+
+        assertThat(integerRule.apply(new RoundCeil(), mostIntColumn), is(NON_APPLICABLE));
+        assertThat(integerRule.apply(new RoundFloor(), mostIntColumn), is(NON_APPLICABLE));
     }
 }

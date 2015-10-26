@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.metadata.math.Absolute;
-import org.talend.dataprep.transformation.api.action.metadata.math.Ceil;
+import org.talend.dataprep.transformation.api.action.metadata.math.RoundCeil;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
 public class AbsoluteRuleTest {
@@ -36,8 +36,8 @@ public class AbsoluteRuleTest {
 
     @Test
     public void testOtherAction() throws Exception {
-        assertThat(absoluteRule.apply(new Ceil(), positiveIntColumn), is(NON_APPLICABLE));
-        assertThat(absoluteRule.apply(new Ceil(), negativeIntColumn), is(NON_APPLICABLE));
+        assertThat(absoluteRule.apply(new RoundCeil(), positiveIntColumn), is(NON_APPLICABLE));
+        assertThat(absoluteRule.apply(new RoundCeil(), negativeIntColumn), is(NON_APPLICABLE));
     }
 
     @Test

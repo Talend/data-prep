@@ -5,13 +5,14 @@
      * @ngdoc controller
      * @name data-prep.home.controller:HomeCtrl
      * @description Home controller.
-     * @requires data-prep.services.utils.service:MessageService
      * @requires data-prep.services.dataset.service:DatasetService
      * @requires talend.widget.service:TalendConfirmService
-     * @requires data-prep.services.uploadWorkflowService.service:UploadWorkflowService
+     * @requires data-prep.services.datasetWorkflowService.service:UploadWorkflowService
+     * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
      * @requires data-prep.services.state.service:StateService
+     * @requires data-prep.services.state.constant:state
      */
-    function HomeCtrl($window, UploadWorkflowService, MessageService, DatasetService, TalendConfirmService, StateService) {
+    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state) {
         var vm = this;
         var DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
 
@@ -54,7 +55,7 @@
          * @description The current uploading datasets
          * @type {object[]}
          */
-        vm.uploadingDatasets = [];
+        vm.uploadingDatasets = state.dataset.uploadingDatasets;
 
         //--------------------------------------------------------------------------------------------------------------
         //---------------------------------------------------Right panel------------------------------------------------
@@ -155,7 +156,7 @@
             };
 
             var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
-            vm.uploadingDatasets.push(dataset);
+            StateService.startUploadingDataset(dataset);
 
             DatasetService.import(importParameters)
                 .then(function (event) {
@@ -163,8 +164,9 @@
                 })
                 .catch(function () {
                     dataset.error = true;
-                }).finally(function () {
-                    vm.uploadingDatasets.splice(vm.uploadingDatasets.indexOf(dataset, 1));
+                })
+                .finally(function () {
+                    StateService.finishUploadingDataset(dataset);
                 });
         };
 
@@ -182,7 +184,7 @@
             };
 
             var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
-            vm.uploadingDatasets.push(dataset);
+            StateService.startUploadingDataset(dataset);
 
             DatasetService.import(importParameters)
                 .then(function (event) {
@@ -192,7 +194,7 @@
                     dataset.error = true;
                 })
                 .finally(function () {
-                    vm.uploadingDatasets.splice(vm.uploadingDatasets.indexOf(dataset, 1));
+                    StateService.finishUploadingDataset(dataset);
                 });
         };
 
@@ -276,7 +278,7 @@
             var file = vm.datasetFile[0];
             var existingDataset = vm.existingDatasetFromName;
 
-            updateDataset(file, existingDataset);
+            UpdateWorkflowService.updateDataset(file, existingDataset);
         };
 
         /**
@@ -289,7 +291,7 @@
          */
         var createDataset = function (file, name) {
             var dataset = DatasetService.createDatasetInfo(file, name);
-            vm.uploadingDatasets.push(dataset);
+            StateService.startUploadingDataset(dataset);
 
             DatasetService.create(dataset)
                 .progress(function (event) {
@@ -302,42 +304,9 @@
                     dataset.error = true;
                 })
                 .finally(function () {
-                    vm.uploadingDatasets.splice(vm.uploadingDatasets.indexOf(dataset, 1));
+                    StateService.finishUploadingDataset(dataset);
                 });
         };
-
-        /**
-         * @ngdoc method
-         * @name updateDataset
-         * @methodOf data-prep.home.controller:HomeCtrl
-         * @param {object} file - the file to upload
-         * @param {object} existingDataset - the existing dataset
-         * @description [PRIVATE] Update existing dataset
-         */
-        var updateDataset = function (file, existingDataset) {
-            var dataset = DatasetService.createDatasetInfo(file, existingDataset.name, existingDataset.id);
-            vm.uploadingDatasets.push(dataset);
-
-            DatasetService.update(dataset)
-                .progress(function (event) {
-                    dataset.progress = parseInt(100.0 * event.loaded / event.total);
-                })
-                .then(function () {
-                    MessageService.success('DATASET_UPDATE_SUCCESS_TITLE', 'DATASET_UPDATE_SUCCESS', {dataset: dataset.name});
-
-                    //Force the update currentMetadata of the dataset
-                    StateService.resetPlayground();
-                    DatasetService.getDatasetById(dataset.id).then(UploadWorkflowService.openDataset);
-
-                })
-                .catch(function () {
-                    dataset.error = true;
-                })
-                .finally(function () {
-                    vm.uploadingDatasets.splice(vm.uploadingDatasets.indexOf(dataset, 1));
-                });
-        };
-
     }
 
     angular.module('data-prep.home')

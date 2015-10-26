@@ -8,8 +8,7 @@
      * @requires talend.widget
      * @requires data-prep.datagrid
      * @requires data-prep.export
-     * @requires data-prep.filter-search
-     * @requires data-prep.filter-list
+     * @requires data-prep.filter-bar
      * @requires data-prep.history-control
      * @requires data-prep.lookup
      * @requires data-prep.recipe
@@ -26,8 +25,7 @@
         'talend.widget',
         'data-prep.datagrid',
         'data-prep.export',
-        'data-prep.filter-search',
-        'data-prep.filter-list',
+        'data-prep.filter-bar',
         'data-prep.history-control',
         'data-prep.lookup',
         'data-prep.recipe',

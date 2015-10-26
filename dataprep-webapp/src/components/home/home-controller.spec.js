@@ -1,18 +1,23 @@
 describe('Home controller', function () {
     'use strict';
 
-    var ctrl, createController, scope, $httpBackend;
+    var ctrl, createController, scope, $httpBackend, StateMock;
     var DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
+    var dataset = {id: 'ec4834d9bc2af8', name: 'Customers (50 lines)', draft: false};
 
-    beforeEach(module('data-prep.home'));
+    beforeEach(module('data-prep.home', function ($provide) {
+        StateMock = {
+            dataset: {
+                uploadingDatasets:[]
+            }
+        };
+        $provide.constant('state', StateMock);
+    }));
 
-    beforeEach(inject(function ($injector, MessageService) {
+    beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
         $httpBackend.when('GET', 'i18n/en.json').respond({});
         $httpBackend.when('GET', 'i18n/fr.json').respond({});
-
-        spyOn(MessageService, 'success').and.returnValue();
-        spyOn(MessageService, 'error').and.returnValue();
     }));
 
     beforeEach(inject(function ($rootScope, $controller) {
@@ -27,6 +32,8 @@ describe('Home controller', function () {
 
     afterEach(inject(function($window) {
         $window.localStorage.removeItem(DATA_INVENTORY_PANEL_KEY);
+        dataset.error = false;
+        dataset.progress = false;
     }));
 
     it('should init upload list to empty array', function () {
@@ -50,9 +57,8 @@ describe('Home controller', function () {
 
     describe('with created controller', function () {
         var uploadDefer;
-        var dataset = {id: 'ec4834d9bc2af8', name: 'Customers (50 lines)', draft: false};
 
-        beforeEach(inject(function ($q, DatasetService, UploadWorkflowService) {
+        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService) {
 
             ctrl = createController();
             ctrl.datasetFile = [{name: 'my dataset.csv'}];
@@ -66,11 +72,15 @@ describe('Home controller', function () {
 
             spyOn(DatasetService, 'getDatasetById').and.returnValue($q.when(dataset));
             spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
-            spyOn(DatasetService, 'createDatasetInfo').and.callThrough();
+            spyOn(DatasetService, 'createDatasetInfo').and.callFake(function() {
+                return dataset;
+            });
             spyOn(DatasetService, 'create').and.returnValue(uploadDefer.promise);
             spyOn(DatasetService, 'import').and.returnValue(uploadDefer.promise);
             spyOn(DatasetService, 'update').and.returnValue(uploadDefer.promise);
 
+            spyOn(StateService, 'startUploadingDataset').and.returnValue();
+            spyOn(StateService, 'finishUploadingDataset').and.returnValue();
         }));
 
         describe('right panel management', function() {
@@ -137,11 +147,11 @@ describe('Home controller', function () {
                 expect(ctrl.datasetHttpModal).toBeTruthy();
             });
 
-            it('should create remote http dataset', inject(function (DatasetService, UploadWorkflowService) {
+            it('should create remote http dataset', inject(function (StateService, DatasetService, UploadWorkflowService) {
                 //given
                 expect(ctrl.uploadingDatasets.length).toBe(0);
                 ctrl.importHttpDataSet();
-                expect(ctrl.uploadingDatasets.length).toBe(1);
+                expect(StateService.startUploadingDataset).toHaveBeenCalled();
 
                 //when
                 uploadDefer.resolve({data: dataset.id});
@@ -153,7 +163,7 @@ describe('Home controller', function () {
                 expect(ctrl.uploadingDatasets.length).toBe(0);
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
-
+                expect(StateService.finishUploadingDataset).toHaveBeenCalled();
             }));
 
             it('should display hdfs import form', function () {
@@ -167,11 +177,11 @@ describe('Home controller', function () {
                 expect(ctrl.datasetHdfsModal).toBeTruthy();
             });
 
-            it('should create remote hdfs dataset', inject(function (DatasetService, UploadWorkflowService) {
+            it('should create remote hdfs dataset', inject(function (StateService, DatasetService, UploadWorkflowService) {
                 //given
                 expect(ctrl.uploadingDatasets.length).toBe(0);
                 ctrl.importHdfsDataSet();
-                expect(ctrl.uploadingDatasets.length).toBe(1);
+                expect(StateService.startUploadingDataset).toHaveBeenCalled();
 
                 //when
                 uploadDefer.resolve({data: dataset.id});
@@ -183,7 +193,7 @@ describe('Home controller', function () {
                 expect(ctrl.uploadingDatasets.length).toBe(0);
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
-
+                expect(StateService.finishUploadingDataset).toHaveBeenCalled();
             }));
         });
 
@@ -211,7 +221,7 @@ describe('Home controller', function () {
                 expect(ctrl.datasetNameModal).toBeTruthy();
             }));
 
-            it('should display name modal on step 1 when name is unique', inject(function (DatasetService) {
+            it('should display name modal on step 1 when name is unique', inject(function (StateService, DatasetService) {
                 //given
                 expect(ctrl.datasetNameModal).toBeFalsy();
                 spyOn(DatasetService, 'getDatasetByName').and.returnValue(null);
@@ -222,6 +232,7 @@ describe('Home controller', function () {
                 //then
                 expect(ctrl.datasetNameModal).toBeFalsy();
                 expect(DatasetService.create).toHaveBeenCalled();
+                expect(StateService.startUploadingDataset).toHaveBeenCalled();
             }));
 
             describe('step 2 with unique name', function () {
@@ -231,11 +242,11 @@ describe('Home controller', function () {
                     spyOn($rootScope, '$emit').and.returnValue();
                 }));
 
-                it('should create dataset if name is unique', inject(function ($q, $rootScope, MessageService, DatasetService, UploadWorkflowService) {
+                it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService) {
                     //given
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     ctrl.uploadDatasetName();
-                    expect(ctrl.uploadingDatasets.length).toBe(1);
+                    expect(StateService.startUploadingDataset).toHaveBeenCalled();
 
                     //when
                     uploadDefer.resolve({data: dataset.id});
@@ -246,12 +257,14 @@ describe('Home controller', function () {
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                     expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
+                    expect(StateService.finishUploadingDataset).toHaveBeenCalled();
                 }));
 
-                it('should update progress on create', inject(function (DatasetService) {
+                it('should update progress on create', inject(function (state, StateService, DatasetService) {
                     //given
                     ctrl.uploadDatasetName();
-                    expect(ctrl.uploadingDatasets[0].progress).toBeFalsy();
+                    expect(StateService.startUploadingDataset).toHaveBeenCalled();
+                    expect(dataset.progress).toBeFalsy();
 
                     var event = {
                         loaded: 140,
@@ -264,13 +277,14 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
-                    expect(ctrl.uploadingDatasets[0].progress).toBe(70);
+                    expect(dataset.progress).toBe(70);
                 }));
 
-                it('should set error flag and show error toast', inject(function (DatasetService) {
+                it('should set error flag and show error toast', inject(function (StateService, DatasetService) {
                     //given
                     ctrl.uploadDatasetName();
-                    expect(ctrl.uploadingDatasets[0].error).toBeFalsy();
+                    expect(StateService.startUploadingDataset).toHaveBeenCalled();
+                    expect(dataset.error).toBeFalsy();
 
                     //when
                     uploadDefer.reject();
@@ -278,7 +292,7 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
-                    expect(ctrl.uploadingDatasets.length).toBe(0);
+                    expect(dataset.error).toBe(true);
                 }));
             });
 
@@ -288,7 +302,7 @@ describe('Home controller', function () {
                 };
                 var confirmDefer;
 
-                beforeEach(inject(function ($rootScope, $q, StateService, DatasetService, TalendConfirmService) {
+                beforeEach(inject(function ($rootScope, $q, StateService, DatasetService, UpdateWorkflowService, TalendConfirmService) {
                     confirmDefer = $q.defer();
 
                     spyOn(StateService, 'resetPlayground').and.returnValue();
@@ -296,6 +310,8 @@ describe('Home controller', function () {
                     spyOn(DatasetService, 'getUniqueName').and.returnValue('my cool dataset (1)');
                     spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
                     spyOn($rootScope, '$emit').and.returnValue();
+                    spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue();
+
                 }));
 
                 it('should do nothing on confirm modal dismiss', inject(function (TalendConfirmService, DatasetService) {
@@ -313,7 +329,7 @@ describe('Home controller', function () {
                     expect(DatasetService.update).not.toHaveBeenCalled();
                 }));
 
-                it('should create dataset with modified name', inject(function ($rootScope, MessageService, TalendConfirmService, DatasetService) {
+                it('should create dataset with modified name', inject(function ($rootScope, TalendConfirmService, DatasetService) {
                     //given
                     ctrl.uploadDatasetName();
 
@@ -327,79 +343,21 @@ describe('Home controller', function () {
                     expect(DatasetService.createDatasetInfo).toHaveBeenCalledWith(ctrl.datasetFile[0], 'my cool dataset (1)');
                 }));
 
-                it('should update existing dataset', inject(function (MessageService, TalendConfirmService, DatasetService) {
+                it('should update existing dataset', inject(function (UpdateWorkflowService) {
                     //given
                     ctrl.uploadDatasetName();
 
                     //when
                     confirmDefer.resolve();
                     scope.$digest();
-                    expect(ctrl.uploadingDatasets.length).toBe(1);
                     uploadDefer.resolve();
                     scope.$digest();
 
                     //then
-                    expect(DatasetService.update).toHaveBeenCalled();
-                    expect(ctrl.uploadingDatasets.length).toBe(0);
-                    expect(MessageService.success).toHaveBeenCalledWith('DATASET_UPDATE_SUCCESS_TITLE', 'DATASET_UPDATE_SUCCESS', {dataset: 'my cool dataset'});
-                    expect(DatasetService.getDatasetById).toHaveBeenCalled();
-                }));
-
-                it('should force playground reset on update existing dataset', inject(function (StateService) {
-                    //given
-                    ctrl.uploadDatasetName();
-                    expect(StateService.resetPlayground).not.toHaveBeenCalled();
-
-                    //when
-                    confirmDefer.resolve();
-                    scope.$digest();
-                    expect(ctrl.uploadingDatasets.length).toBe(1);
-                    uploadDefer.resolve();
-                    scope.$digest();
-
-                    //then
-                    expect(StateService.resetPlayground).toHaveBeenCalled();
-                }));
-
-                it('should set error flag and show error toast on update error', inject(function (MessageService, TalendConfirmService, DatasetService) {
-                    //given
-                    ctrl.uploadDatasetName();
-
-                    //when
-                    confirmDefer.resolve();
-                    scope.$digest();
-                    expect(ctrl.uploadingDatasets.length).toBe(1);
-                    uploadDefer.reject();
-                    scope.$digest();
-
-                    //then
-                    expect(DatasetService.update).toHaveBeenCalled();
-                    expect(ctrl.uploadingDatasets.length).toBe(0);
-                }));
-
-                it('should update progress on update', inject(function (TalendConfirmService, DatasetService) {
-                    //given
-                    ctrl.uploadDatasetName();
-                    confirmDefer.resolve();
-                    scope.$digest();
-                    expect(ctrl.uploadingDatasets[0].progress).toBeFalsy();
-
-                    var event = {
-                        loaded: 140,
-                        total: 200
-                    };
-
-                    //when
-                    uploadDefer.progressCb(event);
-                    scope.$digest();
-
-                    //then
-                    expect(DatasetService.update).toHaveBeenCalled();
-                    expect(ctrl.uploadingDatasets[0].progress).toBe(70);
+                    expect(UpdateWorkflowService.updateDataset).toHaveBeenCalledWith(ctrl.datasetFile[0], {name: 'my cool dataset'});
                 }));
             });
         });
 
     });
-
 });

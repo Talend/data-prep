@@ -5,20 +5,33 @@ describe('Datagrid grid service', function () {
     'use strict';
 
     var realSlickGrid = Slick;
+    var dataViewMock, stateMock;
 
     beforeEach(module('data-prep.datagrid'));
     beforeEach(module('data-prep.suggestions-stats'));
 
+    beforeEach(function () {
+        dataViewMock = new DataViewMock();
+    });
+
+
+    beforeEach(module('data-prep.datagrid', function ($provide) {
+        stateMock = {playground: {grid: {
+            dataView: dataViewMock
+        }}};
+        $provide.constant('state', stateMock);
+
+        spyOn(dataViewMock.onRowCountChanged, 'subscribe').and.returnValue();
+        spyOn(dataViewMock.onRowsChanged, 'subscribe').and.returnValue();
+    }));
+
     beforeEach(inject(function (DatagridColumnService, DatagridStyleService, DatagridSizeService,
-                                DatagridExternalService, DatagridTooltipService, DatagridService) {
+                                DatagridExternalService, DatagridTooltipService) {
         spyOn(DatagridColumnService, 'init').and.returnValue();
         spyOn(DatagridStyleService, 'init').and.returnValue();
         spyOn(DatagridSizeService, 'init').and.returnValue();
         spyOn(DatagridExternalService, 'init').and.returnValue();
         spyOn(DatagridTooltipService, 'init').and.returnValue();
-
-        spyOn(DatagridService.dataView.onRowCountChanged, 'subscribe').and.returnValue();
-        spyOn(DatagridService.dataView.onRowsChanged, 'subscribe').and.returnValue();
     }));
 
     beforeEach(function () {
@@ -46,25 +59,25 @@ describe('Datagrid grid service', function () {
             expect(DatagridTooltipService.init).toHaveBeenCalled();
         }));
 
-        it('should add grid listeners', inject(function (DatagridGridService, DatagridService) {
+        it('should add grid listeners', inject(function (DatagridGridService) {
             //when
             DatagridGridService.initGrid();
 
             //then
-            expect(DatagridService.dataView.onRowCountChanged.subscribe).toHaveBeenCalled();
-            expect(DatagridService.dataView.onRowsChanged.subscribe).toHaveBeenCalled();
+            expect(stateMock.playground.grid.dataView.onRowCountChanged.subscribe).toHaveBeenCalled();
+            expect(stateMock.playground.grid.dataView.onRowsChanged.subscribe).toHaveBeenCalled();
         }));
     });
 
     describe('grid handlers', function() {
-        it('should update row count and render grid on row count change', inject(function (DatagridGridService, DatagridService) {
+        it('should update row count and render grid on row count change', inject(function (DatagridGridService) {
             //given
             var grid = DatagridGridService.initGrid();
             spyOn(grid, 'updateRowCount').and.returnValue();
             spyOn(grid, 'render').and.returnValue();
 
             //when
-            var onRowCountChanged = DatagridService.dataView.onRowCountChanged.subscribe.calls.argsFor(0)[0];
+            var onRowCountChanged = stateMock.playground.grid.dataView.onRowCountChanged.subscribe.calls.argsFor(0)[0];
             onRowCountChanged();
 
             //then
@@ -72,7 +85,7 @@ describe('Datagrid grid service', function () {
             expect(grid.render).toHaveBeenCalled();
         }));
 
-        it('should invalidate rows and render grid on rows changed', inject(function (DatagridGridService, DatagridService) {
+        it('should invalidate rows and render grid on rows changed', inject(function (DatagridGridService) {
             //given
             var grid = DatagridGridService.initGrid();
             spyOn(grid, 'invalidateRows').and.returnValue();
@@ -81,7 +94,7 @@ describe('Datagrid grid service', function () {
             var args = {rows: []};
 
             //when
-            var onRowsChanged = DatagridService.dataView.onRowsChanged.subscribe.calls.argsFor(0)[0];
+            var onRowsChanged = stateMock.playground.grid.dataView.onRowsChanged.subscribe.calls.argsFor(0)[0];
             onRowsChanged(null, args);
 
             //then

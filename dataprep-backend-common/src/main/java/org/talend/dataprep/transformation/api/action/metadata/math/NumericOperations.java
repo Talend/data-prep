@@ -23,12 +23,18 @@ import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
+import static java.math.RoundingMode.HALF_UP;
+
 /**
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
 @Component(NumericOperations.ACTION_BEAN_PREFIX + NumericOperations.ACTION_NAME)
 public class NumericOperations extends AbstractActionMetadata implements ColumnAction {
+    private static final String PLUS = "+";
+    private static final String MINUS = "-";
+    private static final String MULTIPLY = "x";
+    private static final String DIVIDE = "/";
 
     /**
      * The action name.
@@ -86,11 +92,11 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                         .name(OPERATOR_PARAMETER)
-                        .item("+")
-                        .item("x")
-                        .item("-")
-                        .item("/")
-                        .defaultValue("x")
+                        .item(PLUS)
+                        .item(MULTIPLY)
+                        .item(MINUS)
+                        .item(DIVIDE)
+                        .defaultValue(MULTIPLY)
                         .build()
         );
         //@formatter:on
@@ -120,66 +126,67 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
      * @see ColumnAction#applyOnColumn(DataSetRow, TransformationContext, Map, String)
      */
     @Override
-    public void applyOnColumn(DataSetRow row, TransformationContext context, Map<String, String> parameters, String columnId) {
-        RowMetadata rowMetadata = row.getRowMetadata();
-        ColumnMetadata sourceColumn = rowMetadata.getById(columnId);
+    public void applyOnColumn(final DataSetRow row, final TransformationContext context, final Map<String, String> parameters, final String columnId) {
+        checkParameters(parameters, row);
 
-        checkSelectedColumnParameter(parameters, row);
+        final RowMetadata rowMetadata = row.getRowMetadata();
+        final ColumnMetadata sourceColumn = rowMetadata.getById(columnId);
 
-        String operator = parameters.get(OPERATOR_PARAMETER);
-
-        String operand = null;
-        String operandName = null;
+        // extract transformation parameters
+        final String operator = parameters.get(OPERATOR_PARAMETER);
+        String operand;
+        String operandName;
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
             operand = parameters.get(OPERAND_PARAMETER);
             operandName = operand;
-        } else {
-            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+        }
+        else {
+            final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             operand = row.get(selectedColumn.getId());
             operandName = selectedColumn.getName();
         }
 
-        ColumnMetadata newColumn = createNewColumn(sourceColumn, operator, operandName);
-        String newColumnId = rowMetadata.insertAfter(columnId, newColumn);
+        // column creation
+        final ColumnMetadata newColumn = createNewColumn(sourceColumn, operator, operandName);
+        final String newColumnId = rowMetadata.insertAfter(columnId, newColumn);
 
-        // Set new column value
-        String sourceValue = row.get(columnId);
-
-        String newValue = compute(sourceValue, operator, operand);
-
+        // set new column value
+        final String sourceValue = row.get(columnId);
+        final String newValue = compute(sourceValue, operator, operand);
         row.set(newColumnId, newValue);
     }
 
-    protected String compute(String operand_1_string, String operator, String operand_2_string) {
+    protected String compute(final String operand_1_string, final String operator, final String operand_2_string) {
         try {
-            BigDecimal operand_1 = new BigDecimal(operand_1_string);
-            BigDecimal operand_2 = new BigDecimal(operand_2_string);
+            final BigDecimal operand_1 = new BigDecimal(operand_1_string);
+            final BigDecimal operand_2 = new BigDecimal(operand_2_string);
 
-            BigDecimal toReturn = null;
+            BigDecimal toReturn;
 
             final int scale = 2;
-            final RoundingMode rm = RoundingMode.HALF_UP;
+            final RoundingMode rm = HALF_UP;
 
             switch (operator) {
-            case "+":
-                toReturn = operand_1.add(operand_2);
-                break;
-            case "x":
-                toReturn = operand_1.multiply(operand_2);
-                break;
-            case "-":
-                toReturn = operand_1.subtract(operand_2);
-                break;
-            case "/":
-                toReturn = operand_1.divide(operand_2, scale, rm);
-                break;
-            default:
-                return "";
+                case PLUS:
+                    toReturn = operand_1.add(operand_2);
+                    break;
+                case MULTIPLY:
+                    toReturn = operand_1.multiply(operand_2);
+                    break;
+                case MINUS:
+                    toReturn = operand_1.subtract(operand_2);
+                    break;
+                case DIVIDE:
+                    toReturn = operand_1.divide(operand_2, scale, rm);
+                    break;
+                default:
+                    return "";
             }
 
             // Format result:
             return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
-        } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
+        }
+        catch (NumberFormatException | ArithmeticException | NullPointerException e) {
             return "";
         }
     }
@@ -189,20 +196,17 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
      * the parameter is invalid, an exception is thrown.
      *
      * @param parameters where to look the parameter value.
-     * @param row the row where to look for the column.
+     * @param row        the row where to look for the column.
      */
-    private void checkSelectedColumnParameter(Map<String, String> parameters, DataSetRow row) {
-        if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
-            if (!parameters.containsKey(OPERAND_PARAMETER)) {
-                throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                        OPERAND_PARAMETER));
-            }
-        } else {
-            if (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
-                    || row.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null) {
-                throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                        SELECTED_COLUMN_PARAMETER));
-            }
+    private void checkParameters(Map<String, String> parameters, DataSetRow row) {
+        if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(OPERAND_PARAMETER)) {
+            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
+                    OPERAND_PARAMETER));
+        }
+        else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) &&
+                (!parameters.containsKey(SELECTED_COLUMN_PARAMETER) || row.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
+                    SELECTED_COLUMN_PARAMETER));
         }
     }
 

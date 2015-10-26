@@ -26,7 +26,6 @@
     function TransformSimpleParam() {
         return {
             restrict: 'E',
-            replace: true,
             templateUrl: 'components/transformation/form/simple/transformation-simple-param.html',
             scope: {
                 editableSelect: '=',

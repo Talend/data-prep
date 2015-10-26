@@ -24,7 +24,6 @@
     function TransformColumnParam() {
         return {
             restrict: 'E',
-            replace: true,
             templateUrl: 'components/transformation/form/column/transformation-column-param.html',
             scope: {
                 parameter: '='

@@ -20,7 +20,7 @@ describe('Transformation params directive', function () {
         };
 
         createElement = function () {
-            var element = angular.element('<transform-params transformation="transformation" on-submit="onSubmit"></transform-params>');
+            var element = angular.element('<transform-form transformation="transformation" on-submit="onSubmit"></transform-form>');
             $compile(element)(scope);
             scope.$digest();
             return element;
@@ -99,62 +99,61 @@ describe('Transformation params directive', function () {
 
     it('should render an action with choice containing parameters', function () {
         //given
-        scope.transformation = {
-            name: 'menu with param',
-            parameters: [
-                {
-                    'name': 'my choice',
-                    'label': 'my choice',
-                    'type': 'select',
-                    'configuration': {
-                        'values': [
-                            {name: 'noParamChoice', value: 'noParamChoice'},
+        var parameter = {
+            'name': 'my choice',
+            'label': 'my choice',
+            'type': 'select',
+            'configuration': {
+                'values': [
+                    {name: 'noParamChoice', value: 'noParamChoice'},
+                    {
+                        name: 'twoParams',
+                        value: 'twoParams',
+                        parameters: [
                             {
-                                name: 'twoParams',
-                                value: 'twoParams',
-                                parameters: [
-                                    {
-                                        label: 'Param 1',
-                                        name: 'param1',
-                                        type: 'string',
-                                        default: '.'
-                                    },
-                                    {
-                                        label: 'Param 2',
-                                        name: 'param2',
-                                        type: 'float',
-                                        default: '5'
-                                    }
-                                ]
+                                label: 'Param 1',
+                                name: 'param1',
+                                type: 'string',
+                                default: '.'
+                            },
+                            {
+                                label: 'Param 2',
+                                name: 'param2',
+                                type: 'float',
+                                default: '5'
                             }
                         ]
-                    },
-                    'default': ''
-                }
-            ]
+                    }
+                ]
+            },
+            'default': ''
+        };
+        scope.transformation = {
+            name: 'menu with param',
+            parameters: [parameter]
         };
         var element = createElement();
-        var paramChoice = element.find('.param').eq(0);
+        var renderedParams = element.find('transform-params').eq(0);
 
         //when
-        scope.transformation.parameters[0].value = scope.transformation.parameters[0].configuration.values[0];
-        scope.$digest();
+        parameter.value = parameter.configuration.values[0];
+        scope.$apply();
 
         //then
-        expect(paramChoice.find('.param-name').length).toBe(1); // choice name only
+        expect(renderedParams.find('.param-name').length).toBe(1); // choice name only
 
         //when
-        scope.transformation.parameters[0].value = scope.transformation.parameters[0].configuration.values[1].value;
-        scope.$digest();
+        parameter.value = parameter.configuration.values[1].value;
+        scope.$apply();
 
         //then
-        expect(paramChoice.find('.param-name').length).toBe(3); // choice name + 2 input params name
-        expect(paramChoice.find('.param-name').eq(1).text().trim()).toBe('Param 1:');
-        expect(paramChoice.find('.param-name').eq(2).text().trim()).toBe('Param 2:');
+        expect(renderedParams.find('.param-name').length).toBe(3); // choice name + 2 input params name
+        expect(renderedParams.find('.param-name').eq(1).text().trim()).toBe('Param 1:');
+        expect(renderedParams.find('.param-name').eq(2).text().trim()).toBe('Param 2:');
 
-        expect(paramChoice.find('.param-input').length).toBe(3); // choice + 2 input params
-        expect(paramChoice.find('.param-input').eq(1).find('input[type="text"]').length).toBe(1);
-        expect(paramChoice.find('.param-input').eq(2).find('input[type="number"]').length).toBe(1);
+        expect(renderedParams.find('.param-input').length).toBe(3); // choice + 2 input params
+        expect(renderedParams.find('.param-input').eq(1).find('input[type="text"]').length).toBe(1);
+        expect(renderedParams.find('.param-input').eq(2).find('input[type="number"]').length).toBe(1);
     });
 
     it('should render an action with cluster parameters', function () {

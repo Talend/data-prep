@@ -24,7 +24,6 @@
         return {
             restrict: 'E',
             templateUrl: 'components/transformation/form/cluster/transformation-cluster-params.html',
-            replace: true,
             scope: {
                 details: '='
             },

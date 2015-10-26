@@ -22,7 +22,6 @@
         return {
             restrict: 'E',
             templateUrl: 'components/transformation/form/transformation-form.html',
-            replace: true,
             scope: {
                 transformation: '=',
                 onSubmit: '&',

@@ -18,7 +18,6 @@
         return {
             restrict: 'E',
             templateUrl: 'components/transformation/form/choice/transformation-choice-param.html',
-            replace: true,
             scope: {
                 parameter: '='
             },

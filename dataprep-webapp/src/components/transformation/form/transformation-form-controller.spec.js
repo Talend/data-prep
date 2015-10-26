@@ -12,7 +12,7 @@ describe('Transform params controller', function () {
         scope = $rootScope.$new();
 
         createController = function () {
-            var ctrlFn = $controller('TransformParamsCtrl', {
+            var ctrlFn = $controller('TransformFormCtrl', {
                 $scope: scope
             }, true);
             ctrlFn.instance.transformation = transformation;
@@ -329,22 +329,5 @@ describe('Transform params controller', function () {
 
         //then
         expect(hoverArgs.params).toEqual({ param1: 'param1Value', param2: 4 });
-    });
-
-    it('should get the correct parameter type', function() {
-        // given / when
-        var ctrl = createController();
-
-        //then
-        expect(ctrl.getParameterType({type: 'numeric'})).toEqual('simple');
-        expect(ctrl.getParameterType({type: 'integer'})).toEqual('simple');
-        expect(ctrl.getParameterType({type: 'double'})).toEqual('simple');
-        expect(ctrl.getParameterType({type: 'float'})).toEqual('simple');
-        expect(ctrl.getParameterType({type: 'string'})).toEqual('simple');
-        expect(ctrl.getParameterType({type: 'select'})).toEqual('select');
-        expect(ctrl.getParameterType({type: 'cluster'})).toEqual('cluster');
-        expect(ctrl.getParameterType({type: 'date'})).toEqual('date');
-        expect(ctrl.getParameterType({type: 'column'})).toEqual('column');
-        expect(ctrl.getParameterType({type: 'toto'})).toEqual('simple');
     });
 });

@@ -26,7 +26,6 @@
     function TransformDateParam() {
         return {
             restrict: 'E',
-            replace: true,
             templateUrl: 'components/transformation/form/date/transformation-date-param.html',
             scope: {
                 parameter: '=',

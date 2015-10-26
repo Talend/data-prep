@@ -80,14 +80,14 @@ describe('Transformation choice params directive', function () {
 
         //when
         scope.parameter.value = scope.parameter.configuration.values[0].value;
-        scope.$digest();
+        scope.$apply();
 
         //then
         expect(element.find('.param-name').length).toBe(1); // choice name only
 
         //when
         scope.parameter.value = scope.parameter.configuration.values[1].value;
-        scope.$digest();
+        scope.$apply();
 
         //then
         expect(element.find('.param-name').length).toBe(3); // choice name + 2 input params name

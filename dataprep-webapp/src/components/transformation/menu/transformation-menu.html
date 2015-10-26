@@ -44,7 +44,7 @@
     <div ng-if="menuCtrl.selectedMenu.dynamic && menuCtrl.dynamicFetchInProgress">
         <i data-icon="e" class="icon continuous-rotate"></i>
     </div>
-    <transform-params transformation="menuCtrl.selectedMenu"
-                      on-submit="menuCtrl.appendClosure(menuCtrl.selectedMenu, menuCtrl.selectedScope)(params)"></transform-params>
+    <transform-form transformation="menuCtrl.selectedMenu"
+                      on-submit="menuCtrl.appendClosure(menuCtrl.selectedMenu, menuCtrl.selectedScope)(params)"></transform-form>
 
 </talend-modal>

@@ -56,10 +56,10 @@
                     <!--with static parameters-->
                     <a class="trigger" ng-switch-when="true" ng-bind-html="transfo.labelHtml"></a>
                     <ul class="content" ng-switch-when="true">
-                        <transform-params transformation="transfo"
+                        <transform-form transformation="transfo"
                                           on-submit="actionsSuggestionsCtrl.transform(transfo, 'column')(params)"
                                           on-submit-hover-on="actionsSuggestionsCtrl.earlyPreview(transfo, 'column')(params)"
-                                          on-submit-hover-off="actionsSuggestionsCtrl.cancelEarlyPreview(params)"></transform-params>
+                                          on-submit-hover-off="actionsSuggestionsCtrl.cancelEarlyPreview(params)"></transform-form>
                     </ul>
                 </talend-accordions-item>
             </talend-accordions>
@@ -90,10 +90,10 @@
                                 <!--with static parameters-->
                                 <a class="trigger" ng-switch-when="true" ng-bind-html="transfo.labelHtml"></a>
                                 <ul class="content" ng-switch-when="true">
-                                    <transform-params transformation="transfo"
+                                    <transform-form transformation="transfo"
                                                       on-submit="actionsSuggestionsCtrl.transform(transfo, 'column')(params)"
                                                       on-submit-hover-on="actionsSuggestionsCtrl.earlyPreview(transfo, 'column')(params)"
-                                                      on-submit-hover-off="actionsSuggestionsCtrl.cancelEarlyPreview(params)"></transform-params>
+                                                      on-submit-hover-off="actionsSuggestionsCtrl.cancelEarlyPreview(params)"></transform-form>
                                 </ul>
                             </talend-accordions-item>
                         </talend-accordions>
@@ -137,8 +137,8 @@
             <div ng-if="actionsSuggestionsCtrl.dynamicFetchInProgress">
                 <i data-icon="c" class="icon continuous-rotate"></i>
             </div>
-            <transform-params transformation="actionsSuggestionsCtrl.dynamicTransformation"
-                              on-submit="actionsSuggestionsCtrl.transform(actionsSuggestionsCtrl.dynamicTransformation, actionsSuggestionsCtrl.dynamicScope)(params)"></transform-params>
+            <transform-form transformation="actionsSuggestionsCtrl.dynamicTransformation"
+                              on-submit="actionsSuggestionsCtrl.transform(actionsSuggestionsCtrl.dynamicTransformation, actionsSuggestionsCtrl.dynamicScope)(params)"></transform-form>
         </div>
         <div ng-if="!actionsSuggestionsCtrl.showModalContent">
             <div class="modal-title">{{ actionsSuggestionsCtrl.dynamicTransformation.label }}</div>

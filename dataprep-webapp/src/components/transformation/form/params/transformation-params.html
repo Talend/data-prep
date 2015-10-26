@@ -1,0 +1,24 @@
+<div ng-repeat="parameter in paramsCtrl.parameters track by $index"
+     ng-switch="paramsCtrl.getParameterType(parameter)">
+
+    <transform-simple-param
+            ng-switch-when="simple"
+            parameter="parameter">
+    </transform-simple-param>
+
+    <transform-choice-param
+            ng-switch-when="select"
+            parameter="parameter">
+    </transform-choice-param>
+
+    <transform-date-param
+            ng-switch-when="date"
+            parameter="parameter">
+    </transform-date-param>
+
+    <transform-column-param
+            ng-switch-when="column"
+            parameter="parameter">
+    </transform-column-param>
+
+</div>

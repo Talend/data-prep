@@ -1,0 +1,15 @@
+@import "./simple/transformation-simple-param";
+@import "./date/transformation-date-param";
+@import "./cluster/transformation-cluster-params";
+
+.transformation-form {
+  select,
+  input {
+    margin: 0;
+  }
+
+  .param-buttons{
+    text-align: right;
+    padding: 0 10px 10px 0;
+  }
+}

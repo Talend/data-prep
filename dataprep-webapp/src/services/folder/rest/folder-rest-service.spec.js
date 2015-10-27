@@ -15,7 +15,7 @@ describe('Folder Rest Service', function () {
 
     it('should call delete folder', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
-        var path = "/foo/bar";
+        var path = '/foo/bar';
 
         $httpBackend
             .expectDELETE(RestURLs.datasetUrl + '/folders?path=' + encodeURIComponent(path))
@@ -31,7 +31,7 @@ describe('Folder Rest Service', function () {
 
     it('should call create folder', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
-        var path = "/foo/bar";
+        var path = '/foo/bar';
 
         $httpBackend
             .expectGET(RestURLs.datasetUrl + '/folders/add?path=' + encodeURIComponent(path))
@@ -47,7 +47,7 @@ describe('Folder Rest Service', function () {
 
     it('should call get folders', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
-        var path = "/foo";
+        var path = '/foo';
 
         $httpBackend
             .expectGET(RestURLs.datasetUrl + '/folders?path=' + encodeURIComponent(path))

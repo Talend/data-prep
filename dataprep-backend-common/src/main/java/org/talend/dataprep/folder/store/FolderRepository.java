@@ -25,18 +25,16 @@ public interface FolderRepository {
     Folder addFolder(String path);
 
     /**
-     * add or update (if alreadu exists) the entry
-     * @param parent the parent path
-     * @param folderEntry the {@link FolderEntry} to add to the parent
+     * add or update (if already exists) the entry
+     * @param folderEntry the {@link FolderEntry} to add
      */
-    FolderEntry addFolderEntry(String parent, FolderEntry folderEntry);
+    FolderEntry addFolderEntry(FolderEntry folderEntry);
 
     /**
-     * 
-     * @param parent the parent path
-     * @param folderEntry the {@link FolderEntry} to remove from the parent
+     *
+     * @param folderEntry the {@link FolderEntry} to remove
      */
-    void removeFolderEntry(String parent, FolderEntry folderEntry);
+    void removeFolderEntry(FolderEntry folderEntry);
 
 
     /**

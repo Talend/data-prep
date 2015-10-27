@@ -130,12 +130,12 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public FolderEntry addFolderEntry(String parent, FolderEntry folderEntry) {
+    public FolderEntry addFolderEntry( FolderEntry folderEntry) {
 
         // we store the FolderEntry bean content as properties the file name is the name
 
         try {
-            List<String> pathParts = Lists.newArrayList(StringUtils.split(parent, PATH_SEPARATOR));
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(folderEntry.getPath(), PATH_SEPARATOR));
             pathParts.add(folderEntry.getName());
             Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
             // we delete it if exists
@@ -160,10 +160,10 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public void removeFolderEntry(String parent, FolderEntry folderEntry) {
+    public void removeFolderEntry(FolderEntry folderEntry) {
 
         try {
-            List<String> pathParts = Lists.newArrayList(StringUtils.split(parent, PATH_SEPARATOR));
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(folderEntry.getPath(), PATH_SEPARATOR));
             pathParts.add( folderEntry.getName());
             Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
             // we delete it if exists

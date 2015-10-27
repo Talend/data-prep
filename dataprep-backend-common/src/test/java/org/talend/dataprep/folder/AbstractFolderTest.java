@@ -144,13 +144,13 @@ public abstract class AbstractFolderTest {
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
 
-        FolderEntry beerEntry = new FolderEntry("beer", DataSet.class.getName(), "littlecreatures");
+        FolderEntry beerEntry = new FolderEntry("beer", DataSet.class.getName(), "littlecreatures", "/foo");
 
-        FolderEntry wineEntry = new FolderEntry("wine", DataSet.class.getName(), "bordeaux");
+        FolderEntry wineEntry = new FolderEntry("wine", DataSet.class.getName(), "bordeaux", "foo");
 
-        getFolderRepository().addFolderEntry("/foo", beerEntry);
+        getFolderRepository().addFolderEntry(beerEntry);
 
-        getFolderRepository().addFolderEntry("foo", wineEntry);
+        getFolderRepository().addFolderEntry(wineEntry);
 
         Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
         List<FolderEntry> entries = new ArrayList<>();
@@ -158,7 +158,8 @@ public abstract class AbstractFolderTest {
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        getFolderRepository().removeFolderEntry( "/foo", beerEntry );
+        getFolderRepository().removeFolderEntry(
+            beerEntry );
 
         folderEntries = getFolderRepository().entries("/foo", DataSet.class.getName());
         entries = new ArrayList<>();

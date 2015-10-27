@@ -20,18 +20,24 @@ public class FolderEntry extends Identifiable implements Serializable {
     private String contentClass;
 
     /* id of the content i.e datasetId or preparationId or something else */
+    @JsonProperty("contentId")
     private String contentId;
 
+    @JsonProperty("name")
     private String name;
 
-    public FolderEntry(String name, String contentClass, String contentId) {
+    @JsonProperty("path")
+    private String path;
+
+    public FolderEntry(String name, String contentClass, String contentId, String path) {
         this.name = name;
         this.contentClass = contentClass;
         this.contentId = contentId;
+        this.path = path;
     }
 
-    public FolderEntry(String id, String contentClass, String contentId, String name) {
-        this(contentClass, contentId, name);
+    public FolderEntry(String id, String contentClass, String contentId, String name, String path) {
+        this(contentClass, contentId, name, path);
         this.id = id;
     }
 
@@ -72,13 +78,25 @@ public class FolderEntry extends Identifiable implements Serializable {
         this.name = name;
     }
 
+    public String getPath()
+    {
+        return path;
+    }
+
+    public void setPath( String path )
+    {
+        this.path = path;
+    }
+
     @Override
-    public String toString() {
-        return "FolderEntry{" + //
-                "id='" + id + '\'' + //
-                ", contentClass='" + contentClass + '\'' + //
-                ", contentId='" + contentId + '\'' + //
-                ", name='" + name + '\'' + //
-                '}';
+    public String toString()
+    {
+        return "FolderEntry{" +
+            "contentClass='" + contentClass + '\'' +
+            ", id='" + id + '\'' +
+            ", contentId='" + contentId + '\'' +
+            ", name='" + name + '\'' +
+            ", path='" + path + '\'' +
+            '}';
     }
 }

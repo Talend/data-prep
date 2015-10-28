@@ -31,13 +31,13 @@ public class FolderAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void add_then_remove() throws Exception {
+    public void add_then_remove_folder() throws Exception {
 
         // create foo folder under root
         Response response = RestAssured.given() //
                 .queryParam("path", "foo")
                 .when() //
-                .get("/api/folders/add");
+                .put("/api/folders");
 
         Folder created = response.as(Folder.class);
 
@@ -47,7 +47,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         response = RestAssured.given() //
                 .queryParam("path", "foo/beer") //
                 .when() //
-                .get("/api/folders/add");
+                .put("/api/folders");
 
         created = response.as(Folder.class);
 
@@ -58,7 +58,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         response = RestAssured.given() //
                 .queryParam("path", "foo/wine") //
                 .when() //
-                .get("/api/folders/add");
+                .put("/api/folders");
 
         created = response.as(Folder.class);
 
@@ -66,14 +66,14 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         response = RestAssured.given() //
                 .when() //
-                .get("/api/folders/childs");
+                .get("/api/folders");
 
         logger.info("response: {}", response.asString());
 
         response = RestAssured.given() //
                 .queryParam("path", "foo") //
                 .when() //
-                .get("/api/folders/childs");
+                .get("/api/folders");
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -97,7 +97,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         response = RestAssured.given() //
                 .queryParam("path", "foo") //
                 .when() //
-                .get("/api/folders/childs");
+                .get("/api/folders");
 
 
         folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>(){});
@@ -115,7 +115,7 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         response = RestAssured.given() //
                 .when() //
-                .get("/api/folders/childs");
+                .get("/api/folders");
 
         folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>(){});
 

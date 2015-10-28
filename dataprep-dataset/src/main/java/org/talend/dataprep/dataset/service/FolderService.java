@@ -40,7 +40,7 @@ public class FolderService {
      * @param path
      * @return
      */
-    @RequestMapping(value = "/folders/childs", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/folders", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Folder childs", produces = MediaType.APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
     @Timed
     @VolumeMetered
@@ -54,7 +54,7 @@ public class FolderService {
      * @param path
      * @return
      */
-    @RequestMapping(value = "/folders/add", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/folders", method = PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Create a folder")
     @Timed
     @VolumeMetered

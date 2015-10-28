@@ -31,8 +31,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class FolderAPI extends APIService {
 
 
-    @RequestMapping(value = "/api/folders/childs", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List childs folders of the parameter if null list root childs.")
+    @RequestMapping(value = "/api/folders", method = GET)
+    @ApiOperation(value = "List childs folders of the parameter if null list root childs.", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void childs(@RequestParam(required = false)  String path, final HttpServletResponse response) {
         try {
@@ -47,8 +47,8 @@ public class FolderAPI extends APIService {
     }
 
 
-    @RequestMapping(value = "/api/folders/add", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Add a folder.")
+    @RequestMapping(value = "/api/folders", method = PUT)
+    @ApiOperation(value = "Add a folder.", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void addFolder(@RequestParam(required = true) String path, //
             final HttpServletResponse response) {
@@ -68,8 +68,8 @@ public class FolderAPI extends APIService {
      * @param path
      * @return
      */
-    @RequestMapping(value = "/api/folders", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Remove a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Remove the folder")
+    @RequestMapping(value = "/api/folders", method = DELETE)
+    @ApiOperation(value = "Remove a Folder")
     @Timed
     public void removeFolder(@RequestParam(required = true) String path){
         try {
@@ -87,8 +87,8 @@ public class FolderAPI extends APIService {
      * @param folderEntry
      * @return
      */
-    @RequestMapping(value = "/api/folders/entries", method = PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Add a FolderEntry", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Add the folder entry")
+    @RequestMapping(value = "/api/folders/entries", method = PUT)
+    @ApiOperation(value = "Add a FolderEntry")
     @Timed
     @VolumeMetered
     public void addFolderEntry(@RequestBody FolderEntry folderEntry){
@@ -106,8 +106,8 @@ public class FolderAPI extends APIService {
      * @param contentType
      * @return
      */
-    @RequestMapping(value = "/folders/entries/{contentType}/{id}", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Remove a FolderEntry", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Delete the folder entry")
+    @RequestMapping(value = "/api/folders/entries/{contentType}/{id}", method = DELETE)
+    @ApiOperation(value = "Remove a FolderEntry")
     @Timed
     @VolumeMetered
     public void deleteFolderEntry(@PathVariable(value = "id") String contentId, @PathVariable(value = "contentType") String contentType, //
@@ -128,8 +128,8 @@ public class FolderAPI extends APIService {
      * @param contentType
      * @return
      */
-    @RequestMapping(value = "/folders/entries", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List Folder entries", produces = MediaType.APPLICATION_JSON_VALUE, notes = "List all folder entries of the given content type")
+    @RequestMapping(value = "/api/folders/entries", method = GET)
+    @ApiOperation(value = "List all folder entries of the given content type within the path", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @VolumeMetered
     public void entries(@RequestParam String path, @RequestParam String contentType, final HttpServletResponse response){

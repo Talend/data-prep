@@ -47,7 +47,7 @@ public class FoldersList extends GenericCommand<InputStream> {
     private HttpRequestBase onExecute(String path) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/childs" );
+            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders" );
 
             if (StringUtils.isNotEmpty(path)) {
                uriBuilder.addParameter("path", path);

@@ -171,7 +171,7 @@
          * @param {String} actionName The action name
          */
         vm.applyActionOnColumn = function applyActionOnColumn(actionName) {
-            var actionToApply = _.find(ColumnSuggestionService.transformations, function (action) {
+            var actionToApply = _.find(ColumnSuggestionService.allTransformations, function (action) {
                 return action.name === actionName;
             });
             TransformationApplicationService.append(actionToApply, 'column');

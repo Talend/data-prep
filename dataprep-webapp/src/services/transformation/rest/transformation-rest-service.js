@@ -9,25 +9,35 @@
      * {@link data-prep.services.transformation.service:TransformationService TransformationService} must be the only entry point for transformation</b>
      */
     function TransformationRestService($http, RestURLs) {
+        return {
+            getDynamicParameters: getDynamicParameters,
+            getSuggestions: getSuggestions,
+            getTransformations: getTransformations
+        };
 
         /**
          * @ngdoc method
          * @name getTransformations
          * @methodOf data-prep.services.transformation.service:TransformationRestService
-         * @param {string} stringifiedColumn The column metadata
-         * @param {boolean} showAll show all transformation or some of them
-         * @description Fetch the transformations on a column of the dataset
-         * @returns {HttpPromise} The POST promise
+         * @param {string} column The column metadata
+         * @description Fetch the transformations on a column
+         * @returns {Promise} The POST promise
          */
-        this.getTransformations = function(stringifiedColumn, showAll) {
-            if(showAll) {
-                //Fetch the all transformations on a column of the dataset
-                return $http.post(RestURLs.transformUrl + '/actions/column', stringifiedColumn);
-            }
-            //Fetch some suggested transformations on a column of the dataset (5 by default)
-            //To change the number of suggested transformations, add "?limit=10" to the end of URL
-            return $http.post(RestURLs.transformUrl + '/suggest/column', stringifiedColumn);
-         };
+        function getTransformations(column) {
+            return $http.post(RestURLs.transformUrl + '/actions/column', column);
+         }
+
+        /**
+         * @ngdoc method
+         * @name getSuggestions
+         * @methodOf data-prep.services.transformation.service:TransformationRestService
+         * @param {string} column The column metadata
+         * @description Fetch the suggestions on a column
+         * @returns {Promise} The POST promise
+         */
+        function getSuggestions(column) {
+            return $http.post(RestURLs.transformUrl + '/suggest/column', column);
+         }
 
 
         /**
@@ -40,15 +50,15 @@
          * @param {string} preparationId The preparation Id
          * @param {string} stepId The step Id
          * @description Fetch the transformations dynamic params
-         * @returns {HttpPromise} The GET promise
+         * @returns {Promise} The GET promise
          */
-        this.getDynamicParameters = function(action, columnId, datasetId, preparationId, stepId) {
+        function getDynamicParameters(action, columnId, datasetId, preparationId, stepId) {
             var queryParams = preparationId ? '?preparationId=' + encodeURIComponent(preparationId) : '?datasetId=' + encodeURIComponent(datasetId);
             queryParams += stepId ? '&stepId=' + encodeURIComponent(stepId) : '';
             queryParams+= '&columnId=' + encodeURIComponent(columnId);
 
             return $http.get(RestURLs.transformUrl + '/suggest/' + action + '/params' + queryParams);
-        };
+        }
     }
 
     angular.module('data-prep.services.transformation')

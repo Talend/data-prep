@@ -54,7 +54,7 @@ public class FillWithDateIfEmptyTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
+        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
                 this.getClass().getResourceAsStream("fillEmptyDateAction.json"));
 
         // when
@@ -83,8 +83,8 @@ public class FillWithDateIfEmptyTest {
         row.setRowMetadata(rowMetadata);
         setStatistics(row, "0002", ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"));
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillEmptyDateAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillEmptyDateAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0002");

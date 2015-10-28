@@ -53,8 +53,8 @@ public class FillWithStringIfInvalidTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillInvalidStringAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillInvalidStringAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0003");

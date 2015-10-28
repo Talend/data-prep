@@ -29,7 +29,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.math.DeleteNegativeValues;
 
 /**
  * Test class for DeleteOnValue action. Creates one consumer, and test it.
@@ -47,9 +46,8 @@ public class DeleteNegativeValuesTest {
     public void init() throws IOException {
         action = new DeleteNegativeValues();
 
-        parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
-                DeleteNegativeValuesTest.class.getResourceAsStream("deleteNegativeValuesAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(DeleteNegativeValuesTest.class.getResourceAsStream("deleteNegativeValuesAction.json"));
     }
 
     @Test
@@ -71,16 +69,16 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_delete() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", "-12");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertTrue(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals("-12", row.get("age"));
@@ -88,16 +86,16 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_delete_even_with_leading_space() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", " -12"); // notice the space before ' Berlin'
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertTrue(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals(" -12", row.get("age"));
@@ -105,16 +103,16 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_delete_even_with_trailing_space() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", "-12 "); // notice the space after 'Berlin '
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertTrue(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals("-12 ", row.get("age"));
@@ -122,16 +120,16 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_delete_even_with_enclosing_spaces() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", " -12 "); // notice the spaces enclosing ' Berlin '
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertTrue(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals(" -12 ", row.get("age"));
@@ -139,31 +137,31 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_not_delete_because_value_not_found() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertFalse(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
     }
 
     @Test
     public void should_not_delete_because_value_different() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", "68");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertFalse(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals("68", row.get("age"));
@@ -171,16 +169,16 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_not_delete_because_value_different_zero() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", "0");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertFalse(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals("0", row.get("age"));
@@ -188,16 +186,16 @@ public class DeleteNegativeValuesTest {
 
     @Test
     public void should_not_delete_because_space_between_sign_and_value() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("name", "David Bowie");
         values.put("age", "- 6");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "age");
 
-        //then
+        // then
         assertFalse(row.isDeleted());
         assertEquals("David Bowie", row.get("name"));
         assertEquals("- 6", row.get("age"));

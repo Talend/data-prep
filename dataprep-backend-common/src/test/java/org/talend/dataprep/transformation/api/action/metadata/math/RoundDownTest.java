@@ -46,9 +46,7 @@ public class RoundDownTest {
     public void init() throws IOException {
         action = new RoundDown();
 
-        parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
-                RoundDownTest.class.getResourceAsStream("roundDownAction.json"));
+        parameters = ActionMetadataTestUtils.parseParameters(RoundDownTest.class.getResourceAsStream("roundDownAction.json"));
     }
 
     @Test
@@ -78,15 +76,15 @@ public class RoundDownTest {
         action.applyOnColumn(row, new TransformationContext(), parameters, "aNumber");
 
         // then
-        assertEquals( expected, row.get( "aNumber" ) );
+        assertEquals(expected, row.get("aNumber"));
     }
 
     @Test
     public void testPositive() {
-        testCommon( "5.0", "5" );
+        testCommon("5.0", "5");
         testCommon("5.1", "5");
-        testCommon( "5.5", "5" );
-        testCommon( "5.8", "5" );
+        testCommon("5.5", "5");
+        testCommon("5.8", "5");
     }
 
     @Test
@@ -103,7 +101,6 @@ public class RoundDownTest {
         testCommon("891234567899.9", "891234567899");
         testCommon("999999999999.9", "999999999999");
     }
-
 
     @Test
     public void test_huge_number_negative() {

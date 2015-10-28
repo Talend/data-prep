@@ -9,10 +9,9 @@ describe('Quality bar controller', function () {
         scope = $rootScope.$new();
 
         createController = function () {
-            var ctrl = $controller('QualityBarCtrl', {
+            return $controller('QualityBarCtrl', {
                 $scope: scope
             });
-            return ctrl;
         };
     }));
 
@@ -206,8 +205,8 @@ describe('Quality bar controller', function () {
         //given
         var ctrl = createController();
         var transfo = {name:'delete_empty', parameters:null};
-        ColumnSuggestionService.transformations = [];
-        ColumnSuggestionService.transformations.push(transfo);
+        ColumnSuggestionService.allTransformations = [];
+        ColumnSuggestionService.allTransformations.push(transfo);
         spyOn(TransformationApplicationService,'append').and.returnValue(function(){});
 
         //when

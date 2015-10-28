@@ -1,6 +1,6 @@
 <div class="inventory dataset">
     <div class="inventory-sort">
-        <div>{{ ::'SORTED_BY' | translate }}</div>
+        <div translate-once="SORTED_BY"></div>
         <div class="button-switch">
             <talend-button-switch
                     values="datasetListCtrl.sortList"
@@ -9,7 +9,7 @@
                     change-action="datasetListCtrl.updateSortBy(selected)">
             </talend-button-switch>
         </div>
-        <div> {{ ::'SORT_IN' | translate }} </div>
+        <div translate-once="SORT_IN"> </div>
         <div class="button-switch">
             <talend-button-switch
                     values="datasetListCtrl.orderList"
@@ -18,14 +18,18 @@
                     change-action="datasetListCtrl.updateSortOrder(selected)">
             </talend-button-switch>
         </div>
-        <div> {{ ::'SORT_ORDER' | translate }} </div>
+        <div translate-once="SORT_ORDER"></div>
     </div>
 
     <div class="inventory-list" id="datasets-list">
         <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}"
              ng-mouseover="datasetListCtrl.overDataset(dataset,true)" ng-mouseleave="datasetListCtrl.overDataset(dataset,false)">
 
-            <div class="inventory-icon" ng-switch="dataset.type" ng-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)">
+            <div class="inventory-icon"
+                 translate-once-title="OPEN_ACTION"
+                 translate-values="{type: 'dataset', name: dataset.name}"
+                 ng-switch="dataset.type"
+                 ng-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)">
                 <img src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
                 <img src="/assets/images/inventory/xls_file.png" ng-switch-when="application/vnd.ms-excel"/>
                 <img src="/assets/images/inventory/generic_file.png" ng-switch-default/>
@@ -37,15 +41,20 @@
             <div class="inventory-text">
                 <talend-editable-text text="dataset.name"
                                       text-class="inventory-title"
+                                      text-title="{{ 'OPEN_ACTION' | translate: {type: 'dataset', name: dataset.name} }}"
                                       on-text-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)"
                                       on-validate="datasetListCtrl.rename(dataset, text)"></talend-editable-text>
-                <div class="inventory-description">{{ 'INVENTORY_DETAILS' | translate:dataset }}</div>
+                <div class="inventory-description" translate-once="INVENTORY_DETAILS" translate-values="dataset"></div>
             </div>
 
             <!-- Draft actions icons -->
             <div ng-switch-when="true"
                  class="inventory-actions">
-                <a data-icon="e" class="btn-icon btn-transparent" ng-click="datasetListCtrl.delete(dataset)"></a>
+                <a data-icon="e"
+                   class="btn-icon btn-transparent"
+                   translate-once-title="DELETE_ACTION"
+                   translate-values="{type: 'dataset', name: dataset.name}"
+                   ng-click="datasetListCtrl.delete(dataset)"></a>
             </div>
 
             <!-- Not draft actions icons -->
@@ -53,7 +62,10 @@
                 <a data-icon="c"
                    class="btn-icon btn-transparent"
                    ng-if="!!dataset.defaultPreparation"
+                   translate-once-title="OPEN_ACTION"
+                   translate-values="{type: 'preparation', name: dataset.defaultPreparation.name}"
                    ui-sref="nav.home.preparations({prepid: dataset.defaultPreparation.id})"></a>
+
                 <talend-file-selector
                         button-data-icon="g"
                         button-title="REPLACE_FILE_CONTENT"
@@ -66,24 +78,22 @@
                 <div class="divider btn-transparent"></div>
                 <a data-icon="e"
                    class="btn-icon btn-transparent"
+                   translate-once-title="DELETE_ACTION"
+                   translate-values="{type: 'dataset', name: dataset.name}"
                    ng-click="datasetListCtrl.delete(dataset)"></a>
 
                 <div class="divider btn-transparent"></div>
                 <a data-icon="s"
                    class="btn-icon btn-transparent"
+                   translate-once-title="CERTIFY_ACTION"
+                   translate-values="{type: 'dataset', name: dataset.name}"
                    ng-click="datasetListCtrl.datasetService.processCertification(dataset)"></a>
                 <a data-icon="f"
                    class="btn-icon btn-transparent favorite"
+                   translate-once-title="FAVORITE_ACTION"
+                   translate-values="{type: 'dataset', name: dataset.name}"
                    ng-class="{'favorite-true':dataset.favorite}"
                    ng-click="datasetListCtrl.datasetService.toggleFavorite(dataset)"></a>
-
-                <!--
-                <div class="divider btn-transparent"></div>
-                <a data-icon="y"
-                   class="btn-icon btn-transparent"
-                   title="clone"
-                   ng-click="datasetListCtrl.clone(dataset)"></a>
-                -->
             </div>
         </div>
     </div>

@@ -35,7 +35,7 @@ public class DeleteEmptyTest {
         action = new DeleteEmpty();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 DeleteEmptyTest.class.getResourceAsStream("deleteEmptyAction.json"));
     }
 

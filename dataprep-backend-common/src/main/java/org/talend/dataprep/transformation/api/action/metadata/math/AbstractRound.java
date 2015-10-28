@@ -21,14 +21,13 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 /**
  * Abstract class for Math operation on {@link Type#NUMERIC} values
  */
-public abstract class AbstractRound extends AbstractActionMetadata implements ColumnAction {
+public abstract class AbstractRound extends ActionMetadata implements ColumnAction {
 
     /**
      * @see ActionMetadata#getCategory()
@@ -48,11 +47,8 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
 
         try {
             BigDecimal bd = new BigDecimal(value);
-
             bd = bd.setScale(0, getRoundingMode());
-
             long result = bd.longValue();
-
             row.set(columnId, String.valueOf(result));
         } catch (NumberFormatException nfe2) {
             // Nan: nothing to do, but fail silently (no change in value)

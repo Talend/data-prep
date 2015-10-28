@@ -2,80 +2,9 @@
   {
     "name": "delete_empty",
     "category": "data cleansing",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      }
-    ],
     "dynamic": false,
     "description": "Delete rows that have this cell empty",
-    "label": "Delete lines with empty cell"
-  },
-  {
-    "name": "delete_invalid",
-    "category": "data cleansing",
-    "parameters": [
-      {
-        "name": "column_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
-        "default": ""
-      },
-      {
-        "name": "row_id",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
-        "default": ""
-      },
-      {
-        "name": "scope",
-        "type": "string",
-        "implicit": true,
-        "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
-        "default": ""
-      }
-    ],
-    "dynamic": false,
-    "description": "Delete rows that have this invalid cell",
-    "label": "Delete lines with invalid cell"
-  },
-  {
-    "description": "Fill invalid cells of this column with given value",
-    "category": "data cleansing",
-    "label": "Fill invalid cells with value...",
-    "name": "fillinvalidwithdefault",
+    "label": "Delete lines with empty cell",
     "parameters": [
       {
         "name": "column_id",
@@ -105,21 +34,20 @@
         "default": ""
       },
       {
-        "name": "invalid_default_value",
-        "type": "integer",
-        "implicit": false,
-        "canBeBlank": false,
-        "description": "The value to set in invalid cells",
-        "label": "Value",
-        "default": "0"
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
       }
-    ],
-    "dynamic": false
+    ]
   },
   {
     "description": "Fill empty cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill empty cells with value...",
+    "label": "Fill empty cells with value",
     "name": "fillemptywithdefault",
     "parameters": [
       {
@@ -150,6 +78,15 @@
         "default": ""
       },
       {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
+      },
+      {
         "name": "empty_default_value",
         "type": "integer",
         "implicit": false,
@@ -164,6 +101,9 @@
   {
     "name": "delete_negative_values",
     "category": "data cleansing",
+    "dynamic": false,
+    "description": "Lines with a negative value in this column will be deleted",
+    "label": "Remove negative values",
     "parameters": [
       {
         "name": "column_id",
@@ -191,17 +131,24 @@
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
       }
-    ],
-    "dynamic": false,
-    "description": "Lines with a negative value in this column will be deleted",
-    "label": "Remove negative values"
+    ]
   },
   {
     "description": "Compute the absolute value for all numeric values of this column.",
     "category": "math",
     "label": "Absolute value",
     "name": "absolute",
+    "dynamic": false,
     "parameters": [
       {
         "name": "column_id",
@@ -229,6 +176,158 @@
         "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
         "label": "Scope",
         "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "category": "data cleansing",
+    "name": "clear_invalid",
+    "dynamic": false,
+    "description": "Clear cells that have a value recognized as invalid",
+    "label": "Clear cells with invalid values",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "delete_invalid",
+    "category": "data cleansing",
+    "dynamic": false,
+    "description": "Delete rows that have this invalid cell",
+    "label": "Delete lines with invalid cell",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "description": "Fill invalid cells of this column with given value",
+    "category": "data cleansing",
+    "label": "Fill invalid cells with value",
+    "name": "fillinvalidwithdefault",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
+      },
+      {
+        "name": "invalid_default_value",
+        "type": "integer",
+        "implicit": false,
+        "canBeBlank": false,
+        "description": "The value to set in invalid cells",
+        "label": "Value",
+        "default": "0"
       }
     ],
     "dynamic": false

@@ -7,6 +7,9 @@
     "f6e172c33bdacbc69bca9d32b2bd78174712a171",
     "2b6ae58738239819df3d8c4063e7cb56f53c0d59"
   ],
+  "diff": [
+    null
+  ],
   "actions": [
     {
       "action": "uppercase",
@@ -24,6 +27,7 @@
           "name": "column_id",
           "type": "string",
           "implicit": true,
+          "canBeBlank": true,
           "description": "The column on which apply this action to",
           "label": "Column",
           "default": ""
@@ -32,6 +36,7 @@
           "name": "row_id",
           "type": "string",
           "implicit": true,
+          "canBeBlank": true,
           "description": "The row on which apply this action to",
           "label": "Row",
           "default": ""
@@ -40,14 +45,21 @@
           "name": "scope",
           "type": "string",
           "implicit": true,
+          "canBeBlank": true,
           "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
           "label": "Scope",
           "default": ""
+        },
+        {
+          "name": "filter",
+          "type": "filter",
+          "implicit": true,
+          "canBeBlank": true,
+          "description": "An optional filter to apply action on matching values only.",
+          "label": "Filter",
+          "default": ""
         }
-      ],
-      "dynamic": false,
-      "description": "Converts all of the cell values in this column to upper case",
-      "label": "Change case to UPPER"
+      ]
     }
   ]
 }

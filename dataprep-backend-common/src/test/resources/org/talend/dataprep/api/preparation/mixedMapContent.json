@@ -1,0 +1,12 @@
+{
+  "string": "string value",
+  "boolean": true,
+  "numeric": 10,
+  "double": 10.10,
+  "object": {
+    "eq": {
+      "field": "nbCommands",
+      "value": "13"
+    }
+  }
+}

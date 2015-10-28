@@ -46,9 +46,7 @@ public class RoundHalfUpTest {
     public void init() throws IOException {
         action = new RoundHalfUp();
 
-        parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
-                RoundHalfUpTest.class.getResourceAsStream("roundAction.json"));
+        parameters = ActionMetadataTestUtils.parseParameters(RoundHalfUpTest.class.getResourceAsStream("roundAction.json"));
     }
 
     @Test

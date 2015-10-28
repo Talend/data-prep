@@ -52,7 +52,7 @@ public class FillWithStringIfEmptyTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
+        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
                 this.getClass().getResourceAsStream("fillEmptyStringAction.json"));
 
         // when

@@ -8,15 +8,14 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 /**
  * Trim leading and trailing spaces.
  */
-@Component(Trim.ACTION_BEAN_PREFIX + Trim.TRIM_ACTION_NAME)
-public class Trim extends AbstractActionMetadata implements ColumnAction {
+@Component(ActionMetadata.ACTION_BEAN_PREFIX + Trim.TRIM_ACTION_NAME)
+public class Trim extends ActionMetadata implements ColumnAction {
 
     /**
      * The action name.

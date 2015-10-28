@@ -4,13 +4,13 @@
         <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.histogram.aggregationColumn.name}}">
             <ul class="column-profile-aggregation-list">
                 <li ng-click="columnProfileCtrl.changeAggregation()">
-                    <div>{{ ::'LINE_COUNT' | translate }}</div>
+                    <div translate-once="LINE_COUNT"></div>
                 </li>
                 <li ng-repeat="column in columnProfileCtrl.aggregationColumns track by column.id" class="more">
                     <div class="moreText" title="{{column.name}}">{{column.name}}</div>
                     <ul class="submenu">
                         <li ng-repeat="aggregation in columnProfileCtrl.aggregations track by $index" ng-click="columnProfileCtrl.changeAggregation(column, aggregation)" title="{{ ::aggregation | translate }}">
-                            <div class="moreText">{{ ::aggregation | translate }}</div>
+                            <div class="moreText" translate-once="{{aggregation}}"></div>
                         </li>
                     </ul>
                 </li>
@@ -20,7 +20,7 @@
         <div ng-if="columnProfileCtrl.histogram.aggregation" class="column-profile-aggregation-description">
             <span>{{columnProfileCtrl.histogram.aggregation | translate}}</span>
             <span class="highlight">{{columnProfileCtrl.histogram.aggregationColumn.name}}</span>
-            <span>{{ 'GROUP_BY' | translate }} </span>
+            <span translate-once="GROUP_BY"></span>
             <span class="highlight">{{columnProfileCtrl.histogram.column.name}}</span>
         </div>
     </div>

@@ -47,7 +47,7 @@ public class RemoveNonNumCharsTest {
         action = new RemoveNonNumChars();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 RemoveNonNumCharsTest.class.getResourceAsStream("remove_non_num_chars.json"));
     }
 

@@ -11,28 +11,28 @@
                 iElement.wrap(wrapper);
 
                 var clearButton = angular.element('<div style="position: absolute;"><img src="/assets/images/common-input-clear.png" alt="x"></div>');
-                var loupeIcone = angular.element('<div style="position: absolute;"><img src="/assets/images/icone-loupe.png" alt=""></div>');
+                var searchIcon = angular.element('<div style="position: absolute;"><img src="/assets/images/actions-search-icon.png" alt=""></div>');
 
                 clearButton.css('top','2px');
                 clearButton.css('left',iElement.width()-margin);
                 clearButton.css('display','none');
 
 
-                loupeIcone.css('top','2px');
-                loupeIcone.css('left',iElement.width()-margin);
-                loupeIcone.css('display','block');
+                searchIcon.css('top','2px');
+                searchIcon.css('left',iElement.width()-margin);
+                searchIcon.css('display','block');
 
                 iElement.parent().append(clearButton);
-                iElement.parent().append(loupeIcone);
+                iElement.parent().append(searchIcon);
 
                 scope.$watch(function(){
                         return ngModel.$modelValue;
                     }, function (value) {
                     if(value) {
                         clearButton.css('display','block');
-                        loupeIcone.css('display','none');
+                        searchIcon.css('display','none');
                     } else {
-                        loupeIcone.css('display','block');
+                        searchIcon.css('display','block');
                         clearButton.css('display','none');
                     }
                 });

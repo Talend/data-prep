@@ -52,7 +52,7 @@ public class CopyColumnTest {
         action = new CopyColumnMetadata();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 CopyColumnTest.class.getResourceAsStream("copyColumnAction.json"));
     }
 

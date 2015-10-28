@@ -9,7 +9,6 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
@@ -17,7 +16,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  * Lower case a column in a dataset row.
  */
 @Component(Normalize.ACTION_BEAN_PREFIX + Normalize.ACTION_NAME)
-public class Normalize extends AbstractActionMetadata implements ColumnAction {
+public class Normalize extends ActionMetadata implements ColumnAction {
 
     /**
      * Action name.

@@ -1,0 +1,18 @@
+{
+  "actions": [
+    {
+      "action": "copy",
+      "parameters": {
+        "column_name": "lastname",
+        "column_id": "0001",
+        "scope": "column",
+        "filter": {
+          "eq": {
+            "field": "0001",
+            "value": "value"
+          }
+        }
+      }
+    }
+  ]
+}

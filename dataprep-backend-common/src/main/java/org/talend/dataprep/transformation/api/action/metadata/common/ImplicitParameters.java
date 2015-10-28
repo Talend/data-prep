@@ -10,9 +10,14 @@ import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
 public enum ImplicitParameters {
-                                COLUMN_ID("column_id", ParameterType.STRING, EMPTY),
-                                ROW_ID("row_id", ParameterType.STRING, EMPTY),
-                                SCOPE("scope", ParameterType.STRING, EMPTY);
+
+    COLUMN_ID("column_id", ParameterType.STRING, EMPTY),
+
+    ROW_ID("row_id", ParameterType.STRING, EMPTY),
+
+    SCOPE("scope", ParameterType.STRING, EMPTY),
+
+    FILTER("filter", ParameterType.FILTER, EMPTY);
 
     private final Parameter parameter;
 

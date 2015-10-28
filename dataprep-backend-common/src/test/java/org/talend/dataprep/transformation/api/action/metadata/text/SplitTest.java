@@ -30,11 +30,9 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.column.CopyColumnMetadata;
 
 /**
  * Test class for Split action. Creates one consumer, and test it.
@@ -55,7 +53,7 @@ public class SplitTest {
         action = new Split();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 SplitTest.class.getResourceAsStream("splitAction.json"));
     }
 
@@ -239,7 +237,7 @@ public class SplitTest {
         // given
         final Split nullSeparatorAction = new Split();
         final Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
-                nullSeparatorAction, //
+                //
                 SplitTest.class.getResourceAsStream("splitActionWithNullSeparator.json"));
 
         final Map<String, String> values = new HashMap<>();
@@ -260,7 +258,7 @@ public class SplitTest {
         // given
         final Split nullSeparatorAction = new Split();
         final Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
-                nullSeparatorAction, //
+                //
                 SplitTest.class.getResourceAsStream("splitActionWithNullSeparator.json"));
 
         final List<ColumnMetadata> input = new ArrayList<>();

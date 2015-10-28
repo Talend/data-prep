@@ -5,7 +5,7 @@
 
                 <div id="help-import-local">
                     <talend-button-dropdown button-icon="m"
-                                            button-text="{{ ::'IMPORT_DATASET' | translate }}"
+                                            button-text="{{'IMPORT_DATASET' | translate }}"
                                             button-action="homeCtrl.startDefaultImport()">
                         <ul>
                             <li ng-repeat="importType in homeCtrl.importTypes" ng-click="homeCtrl.startImport(importType)">
@@ -43,16 +43,18 @@
     <talend-modal fullscreen="false"
                   close-button="true"
                   state="homeCtrl.datasetNameModal">
-        {{ ::'ENTER_DATASET_NAME' | translate }}
+        <span translate-once="ENTER_DATASET_NAME"></span>
         <form name="homeCtrl.datasetNameForm">
             <input type="text" ng-model="homeCtrl.datasetName" required/>
 
             <div class="modal-buttons">
-                <button class="talend-modal-close btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}
+                <button class="talend-modal-close btn-secondary modal-secondary-button">
+                    <span translate-once="CANCEL"></span>
                 </button>
                 <button class="talend-modal-close btn-primary modal-primary-button"
                         ng-click="homeCtrl.uploadDatasetName()"
-                        ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}
+                        ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                    <span translate-once="OK"></span>
                 </button>
             </div>
         </form>
@@ -64,20 +66,20 @@
                   close-button="true"
                   state="homeCtrl.datasetHttpModal">
 
-        <div class="modal-title">{{ ::'IMPORT_HTTP_DATASET' | translate }}</div>
-        {{ ::'ENTER_DATASET_NAME' | translate }}
+        <div class="modal-title" translate-once="IMPORT_HTTP_DATASET"></div>
+        <span translate-once="ENTER_DATASET_NAME"></span>
         <input type="text" ng-model="homeCtrl.datasetName" required/>
-
-        {{ ::'ENTER_DATASET_URL' | translate }}
+        <span translate-once="ENTER_DATASET_URL"></span>
         <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="http://" required/>
 
         <div class="modal-buttons">
             <button class="talend-modal-close btn-secondary modal-secondary-button">
-                {{ ::'CANCEL' | translate }}
+                <span translate-once="CANCEL"></span>
             </button>
             <button class="talend-modal-close btn-primary modal-primary-button"
                     ng-click="homeCtrl.importHttpDataSet()"
-                    ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}
+                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                <span translate-once="OK"></span>
             </button>
         </div>
     </talend-modal>
@@ -87,20 +89,21 @@
                   close-button="true"
                   state="homeCtrl.datasetHdfsModal">
 
-        <div class="modal-title">{{ ::'IMPORT_HDFS_DATASET' | translate }}</div>
-        {{ ::'ENTER_DATASET_NAME' | translate }}
+        <div class="modal-title" translate-once="IMPORT_HDFS_DATASET"></div>
+        <span translate-once="ENTER_DATASET_NAME"></span>
         <input type="text" ng-model="homeCtrl.datasetName" required/>
 
-        {{ ::'ENTER_DATASET_URL' | translate }}
+        <span translate-once="ENTER_DATASET_URL"></span>
         <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="hdfs://host:port/file" required/>
 
         <div class="modal-buttons">
             <button class="talend-modal-close btn-secondary modal-secondary-button">
-                {{ ::'CANCEL' | translate }}
+                <span translate-once="CANCEL"></span>
             </button>
             <button class="talend-modal-close btn-primary modal-primary-button"
                     ng-click="homeCtrl.importHdfsDataSet()"
-                    ng-disabled="homeCtrl.datasetNameForm.$invalid">{{ ::'OK' | translate }}
+                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                <span translate-once="OK"></span>
             </button>
         </div>
     </talend-modal>
@@ -110,10 +113,10 @@
 <div class="home">
     <div class="flex-left-panel side-menu">
         <ul>
-            <li id="nav_home_datasets"><a ui-sref="nav.home.datasets" ui-sref-active="selected">{{ ::'ALL_FOLDERS' | translate }}</a></li>
-            <li id="nav_home_preparations"><a ui-sref="nav.home.preparations" ui-sref-active="selected">{{ ::'ALL_PREPARATIONS' | translate }}</a></li>
-            <li><a ui-sref="nav.home.recentfiles">{{ ::'MOST_RECENT_FILES' | translate }}</a></li>
-            <li><a ui-sref="nav.home.favorites">{{ ::'FAVORITE_FILES' | translate }}</a></li>
+            <li id="nav_home_datasets"><a ui-sref="nav.home.datasets" ui-sref-active="selected" translate-once="ALL_FOLDERS"></a></li>
+            <li id="nav_home_preparations"><a ui-sref="nav.home.preparations" ui-sref-active="selected" translate-once="ALL_PREPARATIONS"></a></li>
+            <li><a ui-sref="nav.home.recentfiles" translate-once="MOST_RECENT_FILES"></a></li>
+            <li><a ui-sref="nav.home.favorites" translate-once="FAVORITE_FILES"></a></li>
         </ul>
     </div>
 
@@ -131,12 +134,12 @@
                      side="right"
                      control-bar="false"
                      resizable="inventory-data">
-        <p class="title">{{ ::'INVENTORY_DATA' | translate }}</p>
+        <p class="title" translate-once="INVENTORY_DATA"></p>
         <hr/>
         <p class="empty">
             <i data-icon="i" class="iconfont large"></i>
             <br/>
-            {{ ::'SELECT_DATASET_DESCRIPTION' | translate }}
+            <span translate-once="SELECT_DATASET_DESCRIPTION"></span>
         </p>
     </talend-slidable>
 </div>

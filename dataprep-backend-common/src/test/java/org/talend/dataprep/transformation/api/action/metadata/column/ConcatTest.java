@@ -43,7 +43,7 @@ public class ConcatTest {
     @Before
     public void setUp() throws Exception {
         final InputStream parametersSource = ConcatTest.class.getResourceAsStream("concatAction.json");
-        parameters = ActionMetadataTestUtils.parseParameters(action, parametersSource);
+        parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
     @Test

@@ -17,7 +17,6 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadataUtils;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
@@ -28,7 +27,7 @@ import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 @Component(ActionMetadata.ACTION_BEAN_PREFIX + FillInvalid.FILL_INVALID_ACTION_NAME)
-public class FillInvalid extends AbstractActionMetadata implements ColumnAction {
+public class FillInvalid extends ActionMetadata implements ColumnAction {
 
     public static final String FILL_INVALID_BOOLEAN = "fillinvalidwithdefaultboolean"; //$NON-NLS-1$
 

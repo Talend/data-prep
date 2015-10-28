@@ -60,7 +60,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
     public void init() throws IOException {
         final ComputeTimeSince currentAction = new ComputeTimeSince();
         final InputStream json = ComputeTimeSince.class.getResourceAsStream("computeTimeSinceAction.json");
-        parameters = ActionMetadataTestUtils.parseParameters(currentAction, json);
+        parameters = ActionMetadataTestUtils.parseParameters(json);
         parameters.put(TIME_UNIT_PARAMETER, YEARS.name());
     }
 

@@ -26,11 +26,9 @@ import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.column.CopyColumnMetadata;
 
 /**
  * Test class for Trim action. Creates one consumer, and test it.
@@ -49,7 +47,7 @@ public class TrimTest {
         action = new Trim();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 TrimTest.class.getResourceAsStream("trimAction.json"));
     }
 

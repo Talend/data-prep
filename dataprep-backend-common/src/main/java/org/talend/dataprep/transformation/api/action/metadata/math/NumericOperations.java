@@ -1,5 +1,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
+import static java.math.RoundingMode.HALF_UP;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -16,21 +18,18 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
-import static java.math.RoundingMode.HALF_UP;
-
 /**
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
 @Component(NumericOperations.ACTION_BEAN_PREFIX + NumericOperations.ACTION_NAME)
-public class NumericOperations extends AbstractActionMetadata implements ColumnAction {
+public class NumericOperations extends ActionMetadata implements ColumnAction {
     private static final String PLUS = "+";
     private static final String MINUS = "-";
     private static final String MULTIPLY = "x";

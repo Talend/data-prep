@@ -34,8 +34,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.text.ComputeLength;
-import org.talend.dataprep.transformation.api.action.metadata.text.Split;
 
 /**
  * Test class for Split action. Creates one consumer, and test it.
@@ -53,7 +51,7 @@ public class TimestampToDateTest extends BaseDateTests {
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 TimestampToDateTest.class.getResourceAsStream("timestampToDate.json"));
     }
 
@@ -69,9 +67,6 @@ public class TimestampToDateTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_convert_to_date() {
         // given
@@ -94,9 +89,6 @@ public class TimestampToDateTest extends BaseDateTests {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_convert_to_date_empty() {
         // given
@@ -128,9 +120,6 @@ public class TimestampToDateTest extends BaseDateTests {
         assertEquals("",action.getTimeStamp(null, DateTimeFormatter.ISO_LOCAL_DATE));
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_compute_length_twice() {
         // given
@@ -155,9 +144,6 @@ public class TimestampToDateTest extends BaseDateTests {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ComputeLength#create(Map)
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -180,9 +166,6 @@ public class TimestampToDateTest extends BaseDateTests {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    /**
-     * @see ComputeLength#create(Map)
-     */
     @Test
     public void should_update_metadata_twice() {
         // given
@@ -228,5 +211,31 @@ public class TimestampToDateTest extends BaseDateTests {
         return ColumnMetadata.Builder.column().computedId(id).name(name).type(type).headerSize(12).empty(0).invalid(2).valid(5)
                 .build();
     }
+
+    @Test
+    public void should_create_string_column_for_custom_pattern() {
+        // given
+        parameters.put("new_pattern", "custom");
+        parameters.put("custom_date_pattern", "yyyy");
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "0");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "0");
+        expectedValues.put("0003", "1970");
+        expectedValues.put("0002", "01/01/2015");
+
+        // when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
+
+        // then
+        assertEquals(expectedValues, row.values());
+        assertThat(row.getRowMetadata().getById("0003").getType(), is("string"));
+    }
+
 
 }

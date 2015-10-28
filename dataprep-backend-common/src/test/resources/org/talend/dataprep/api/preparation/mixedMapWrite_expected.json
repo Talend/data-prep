@@ -1,0 +1,10 @@
+{
+  "string": "string value",
+  "numeric": "10",
+  "object": {
+    "eq": {
+      "field": "nbCommands",
+      "value": "13"
+    }
+  }
+}

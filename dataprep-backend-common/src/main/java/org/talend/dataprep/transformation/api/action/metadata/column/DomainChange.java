@@ -10,7 +10,6 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
@@ -19,7 +18,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  * It's available from column headers</b>
  */
 @Component(DomainChange.ACTION_BEAN_PREFIX + DomainChange.DOMAIN_CHANGE_ACTION_NAME)
-public class DomainChange extends AbstractActionMetadata implements ColumnAction {
+public class DomainChange extends ActionMetadata implements ColumnAction {
 
     /**
      * The action name.

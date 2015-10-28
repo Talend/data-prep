@@ -46,9 +46,7 @@ public class RoundCeilTest {
     public void init() throws IOException {
         action = new RoundCeil();
 
-        parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
-                RoundCeilTest.class.getResourceAsStream("ceilAction.json"));
+        parameters = ActionMetadataTestUtils.parseParameters(RoundCeilTest.class.getResourceAsStream("ceilAction.json"));
     }
 
     @Test

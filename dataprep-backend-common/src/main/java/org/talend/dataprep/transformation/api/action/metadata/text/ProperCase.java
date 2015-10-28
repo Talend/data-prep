@@ -9,11 +9,11 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
-@Component(ProperCase.ACTION_BEAN_PREFIX + ProperCase.PROPER_CASE_ACTION_NAME)
-public class ProperCase extends AbstractActionMetadata implements ColumnAction {
+@Component(ActionMetadata.ACTION_BEAN_PREFIX + ProperCase.PROPER_CASE_ACTION_NAME)
+public class ProperCase extends ActionMetadata implements ColumnAction {
 
     public static final String PROPER_CASE_ACTION_NAME = "propercase"; //$NON-NLS-1$
 

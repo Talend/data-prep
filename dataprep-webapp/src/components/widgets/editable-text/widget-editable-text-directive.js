@@ -8,6 +8,7 @@
             scope: {
                 placeholder: '@',
                 text: '=',
+                textTitle: '@',
                 textClass: '@',
                 editionMode: '=',
                 onTextClick: '&',

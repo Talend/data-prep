@@ -4,7 +4,7 @@
         <div class="param-name"
              data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
              ng-if="::(simpleParamCtrl.label !== 'false')">
-            {{::simpleParamCtrl.parameter.label}}{{:: 'COLON' | translate}}
+            {{::simpleParamCtrl.parameter.label}}<span translate-once="COLON"></span>
         </div>
 
         <div class="param-input" ng-if="::(simpleParamCtrl.editableSelect)">

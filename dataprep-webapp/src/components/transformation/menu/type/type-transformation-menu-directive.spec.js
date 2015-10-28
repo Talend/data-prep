@@ -18,7 +18,7 @@ describe('Transformation menu directive', function () {
 
     beforeEach(module('pascalprecht.translate', function ($translateProvider) {
         $translateProvider.translations('en', {
-            'COLUMN_TYPE_IS': 'Column type is',
+            'COLUMN_TYPE_IS': 'This column is a ',
             'COLUMN_TYPE_SET': 'Set as',
             'FLOAT': 'DECIMAL'
         });
@@ -62,8 +62,9 @@ describe('Transformation menu directive', function () {
         //when
         createElement();
 
-        //then
-        expect(element.find('>li >a').text().trim()).toBe('Column type is CITY');
+        //then (beware of the space char between "is a " and "CITY" which is not exactly a space)
+        expect(element.find('>li >span').eq(0).text()).toBe('This column is a ');
+        expect(element.find('>li >a').text().trim()).toBe('CITY');
     });
 
     it('should display simplified type when there is no domain', function () {
@@ -75,8 +76,9 @@ describe('Transformation menu directive', function () {
         //when
         createElement();
 
-        //then
-        expect(element.find('>li >a').text().trim()).toBe('Column type is text');
+        //then (beware of the space char between "is a " and "text which is not exactly a space)
+        expect(element.find('>li >span').eq(0).text()).toBe('This column is a ');
+        expect(element.find('>li >a').text().trim()).toBe('text');
     });
 
     it('should render domain items with percentages', function () {

@@ -7,14 +7,13 @@ import java.util.Map;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 /**
  * Abstract class used as base class for delete actions.
  */
-public abstract class AbstractDelete extends AbstractActionMetadata implements ColumnAction {
+public abstract class AbstractDelete extends ActionMetadata implements ColumnAction {
 
     /**
      * @see ActionMetadata#getCategory()

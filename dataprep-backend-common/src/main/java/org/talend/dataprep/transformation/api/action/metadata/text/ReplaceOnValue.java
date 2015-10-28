@@ -15,7 +15,6 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.CellAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
@@ -23,7 +22,7 @@ import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
 @Component(ReplaceOnValue.ACTION_BEAN_PREFIX + ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
-public class ReplaceOnValue extends AbstractActionMetadata implements ColumnAction, CellAction {
+public class ReplaceOnValue extends ActionMetadata implements ColumnAction, CellAction {
 
     /**
      * The action name.

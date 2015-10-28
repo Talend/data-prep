@@ -1,0 +1,20 @@
+{
+  "actions": [
+    {
+      "action": "split",
+      "parameters": {
+        "column_id": "city",
+        "scope": "column",
+        "separator": "other",
+        "manual_separator": " ",
+        "limit":"2",
+        "filter": {
+          "eq": {
+            "field": "state",
+            "value": "CA"
+          }
+        }
+      }
+    }
+  ]
+}

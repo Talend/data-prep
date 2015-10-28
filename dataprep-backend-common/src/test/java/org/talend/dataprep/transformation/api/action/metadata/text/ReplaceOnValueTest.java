@@ -47,12 +47,13 @@ public class ReplaceOnValueTest {
         final List<Parameter> actionParams = action.getParameters();
 
         // then
-        assertThat(actionParams, hasSize(6));
+        assertThat(actionParams, hasSize(7));
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
         assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder(COLUMN_ID.getKey(), //
                 ROW_ID.getKey(), //
                 SCOPE.getKey(), //
+                FILTER.getKey(), //
                 CELL_VALUE_PARAMETER, //
                 REPLACE_VALUE_PARAMETER, //
                 REPLACE_ENTIRE_CELL_PARAMETER));

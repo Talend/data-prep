@@ -8,12 +8,11 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 @Component(RemoveNonNumChars.ACTION_BEAN_PREFIX + RemoveNonNumChars.ACTION_NAME)
-public class RemoveNonNumChars extends AbstractActionMetadata implements ColumnAction {
+public class RemoveNonNumChars extends ActionMetadata implements ColumnAction {
 
     /**
      * The action name.

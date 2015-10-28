@@ -1,6 +1,7 @@
 (function() {
     'use strict';
-
+    /*Filter by label, description and category of actions
+    * */
     function ActionsSuggestionsSearchFilter() {
         return function(arr, searchActionString){
             if(!searchActionString){
@@ -9,9 +10,9 @@
             var result = [];
             searchActionString = searchActionString.toLowerCase();
             angular.forEach(arr, function(item){
-                if(item.label.toLowerCase().indexOf(searchActionString) !== -1 ||
+                if(item.labelHtml.toLowerCase().indexOf(searchActionString) !== -1 ||
                     item.description.toLowerCase().indexOf(searchActionString) !== -1 ||
-                    item.category.toLowerCase().indexOf(searchActionString) !== -1){
+                    item.categoryHtml.toLowerCase().indexOf(searchActionString) !== -1){
                     result.push(item);
                 }
             });

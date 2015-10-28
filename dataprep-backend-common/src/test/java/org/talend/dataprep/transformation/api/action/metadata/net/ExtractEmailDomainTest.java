@@ -51,7 +51,7 @@ public class ExtractEmailDomainTest {
         action = new ExtractEmailDomain();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 ExtractEmailDomainTest.class.getResourceAsStream("extractDomainAction.json"));
     }
 

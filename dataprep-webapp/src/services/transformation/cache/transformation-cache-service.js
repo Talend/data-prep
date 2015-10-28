@@ -8,8 +8,15 @@
      * It holds a cache that should be invalidated at each new playground load
      * @requires data-prep.services.transformation.service:TransformationService
      */
-    function TransformationCacheService($q, TransformationService) {
-        var suggestionsCache = [];
+    function TransformationCacheService($q, $cacheFactory, TransformationService) {
+        var transformationsCache = $cacheFactory('transformationsCache', {capacity: 10});
+        var suggestionsCache = $cacheFactory('suggestionsCache', {capacity: 10});
+
+        return {
+            invalidateCache: invalidateCache,
+            getSuggestions: getSuggestions,
+            getTransformations: getTransformations
+        };
 
         /**
          * @ngdoc method
@@ -18,38 +25,51 @@
          * @param {object} column The column to set as key
          * @description [PRIVATE] Generate a unique key for the column.
          */
-        var getKey = function getKey(column, showAll) {
-            return showAll? JSON.stringify(column)+ '_showAll': JSON.stringify(column);
-        };
+        function getKey(column) {
+            return JSON.stringify(column);
+        }
+
+        function getValue(column, cache, restCall) {
+            var key = getKey(column);
+
+            //if cache contains the key, the value is either the values or the fetch promise
+            var value = cache.get(key);
+            if(value) {
+                return $q.when(value);
+            }
+
+            //fetch value from REST and adapt them. The Promise is put in cache, it is then replaced by the value.
+            var fetchPromise = restCall(column)
+                .then(function(value) {
+                    cache.put(key, value);
+                    return value;
+                });
+
+            cache.put(key, fetchPromise);
+            return fetchPromise;
+        }
 
         /**
          * @ngdoc method
          * @name getTransformations
          * @methodOf data-prep.services.transformation.service:TransformationCacheService
          * @param {object} column The transformations target column
-         * @param {boolean} showAll show all transformation or some of them
          * @description Get transformations from cache if present, from REST call otherwise.
-         * It clean and adapt them.
          */
-        this.getTransformations = function getTransformations(column, showAll) {
-            var key = getKey(column, showAll);
+        function getTransformations(column) {
+            return getValue(column, transformationsCache, TransformationService.getTransformations);
+        }
 
-            //if cache contains the key, the value is either the values or the fetch promise
-            var menus = suggestionsCache[key];
-            if(menus) {
-                return $q.when(menus);
-            }
-
-            //fetch menus from REST and adapt them. The Promise is put in cache, it is then replaced by the value.
-            var fetchPromise = TransformationService.getTransformations(JSON.stringify(column), showAll)
-                .then(function(menus) {
-                    suggestionsCache[key] = menus;
-                    return menus;
-                });
-
-            suggestionsCache[key] = fetchPromise;
-            return fetchPromise;
-        };
+        /**
+         * @ngdoc method
+         * @name getTransformations
+         * @methodOf data-prep.services.transformation.service:TransformationCacheService
+         * @param {object} column The transformations target column
+         * @description Get suggestions from cache if present, from REST call otherwise.
+         */
+        function getSuggestions(column) {
+            return getValue(column, suggestionsCache, TransformationService.getSuggestions);
+        }
 
         /**
          * @ngdoc method
@@ -57,9 +77,10 @@
          * @methodOf data-prep.services.transformation.service:TransformationCacheService
          * @description Invalidate all cache entries
          */
-        this.invalidateCache = function invalidateCache() {
-            suggestionsCache = [];
-        };
+        function invalidateCache() {
+            transformationsCache.removeAll();
+            suggestionsCache.removeAll();
+        }
     }
 
     angular.module('data-prep.services.transformation')

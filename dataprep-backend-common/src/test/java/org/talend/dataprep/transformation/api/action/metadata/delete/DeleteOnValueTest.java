@@ -47,7 +47,7 @@ public class DeleteOnValueTest {
         action = new DeleteOnValue();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 DeleteOnValueTest.class.getResourceAsStream("deleteOnValueAction.json"));
     }
 
@@ -140,7 +140,7 @@ public class DeleteOnValueTest {
         final DataSetRow row = new DataSetRow(values);
 
         Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 DeleteOnValueTest.class.getResourceAsStream("deleteOnValueAction.json"));
         regexpParameters.put("value", ".*Berlin.*");
 
@@ -162,7 +162,7 @@ public class DeleteOnValueTest {
         final DataSetRow row = new DataSetRow(values);
 
         Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 DeleteOnValueTest.class.getResourceAsStream("deleteOnValueAction.json"));
         regexpParameters.put("value", "*");
 

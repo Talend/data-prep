@@ -1,7 +1,6 @@
 package org.talend.dataprep.api.preparation;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,7 +27,7 @@ public class Action implements Serializable {
     private String action;
 
     /** Parameters needed for the action. */
-    private Map<String, String> parameters = new HashMap<>(1);
+    private MixedContentMap parameters = new MixedContentMap();
 
     /**
      * Default empty constructor.
@@ -70,7 +69,7 @@ public class Action implements Serializable {
     /**
      * @param parameters the action parameters to set.
      */
-    public void setParameters(Map<String, String> parameters) {
+    public void setParameters(MixedContentMap parameters) {
         this.parameters = parameters;
     }
 

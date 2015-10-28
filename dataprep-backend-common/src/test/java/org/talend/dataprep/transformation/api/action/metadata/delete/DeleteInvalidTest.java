@@ -1,5 +1,13 @@
 package org.talend.dataprep.transformation.api.action.metadata.delete;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
+
+import java.io.IOException;
+import java.util.*;
+
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -7,18 +15,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 /**
  * Test class for DeleteInvalid action. Creates one consumer, and test it.
@@ -37,7 +33,7 @@ public class DeleteInvalidTest {
      */
     public DeleteInvalidTest() throws IOException {
         deleteInvalid = new DeleteInvalid();
-        parameters = ActionMetadataTestUtils.parseParameters(deleteInvalid, //
+        parameters = ActionMetadataTestUtils.parseParameters( //
                 DeleteInvalidTest.class.getResourceAsStream("deleteInvalidAction.json"));
     }
 
@@ -50,7 +46,7 @@ public class DeleteInvalidTest {
         values.put("0003", "Something");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.STRING) //
                 .computedId("0002") //
                 .invalidValues(newHashSet("N")) //
@@ -79,7 +75,7 @@ public class DeleteInvalidTest {
         values.put("0003", "2");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(asList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
                 .type(Type.INTEGER) //
                 .computedId("0002") //
                 .invalidValues(new HashSet<>()) // no registered invalid values

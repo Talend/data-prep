@@ -41,7 +41,7 @@ public class DeleteInvalidRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(deleteInvalidRule.apply(new DeleteInvalid(), mostValidColumn), is(POSITIVE));
+        assertThat(deleteInvalidRule.apply(new DeleteInvalid(), mostValidColumn), is(INVALID_MGT));
     }
 
 }

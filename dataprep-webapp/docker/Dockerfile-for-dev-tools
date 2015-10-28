@@ -1,7 +1,8 @@
-FROM dockerfile/nodejs-bower-gulp
+FROM neo9polska/nodejs-bower-gulp
 
 #update the apt-get packages
 RUN apt-get update
+
 
 #fix locales to be UTF-8
 RUN apt-get -y install locales
@@ -10,6 +11,9 @@ ENV LANG en_US.UTF-8
 
 #install ruby
 RUN apt-get -y install ruby1.9.1
+
+# install unzip
+RUN apt-get install unzip
 
 #install gem
 RUN wget http://production.cf.rubygems.org/rubygems/rubygems-2.4.6.zip
@@ -25,6 +29,13 @@ RUN apt-get -y install libfontconfig
 
 #update bower
 RUN npm update -g bower
+
+# add jenkins user (needs to match the <docker.user> value passed to the jenkins job)
+RUN adduser --disabled-password --uid=498 --gecos '' jenkins
+
+# add dev user for tests default value in pom.xml
+RUN adduser --disabled-password --uid=1000 --gecos '' dp_dev
+
 
 WORKDIR /dataprep-webapp
 

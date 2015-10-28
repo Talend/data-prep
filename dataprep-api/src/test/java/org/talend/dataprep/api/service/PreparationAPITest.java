@@ -1,19 +1,5 @@
 package org.talend.dataprep.api.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.cache.ContentCacheKey;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
@@ -21,6 +7,21 @@ import static org.junit.Assert.*;
 import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.cache.ContentCacheKey;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -129,7 +130,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .getList("steps");
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(ROOT_STEP.id()));
-        assertThat(steps.get(1), is("3c7b40baca3680c22f8bd7142c95697f7424e37f"));
+        assertThat(steps.get(1), is("c19c0f82ff8c2296acb4da9c485e6dc83ead6c45"));
     }
 
     @Test
@@ -175,22 +176,22 @@ public class PreparationAPITest extends ApiServiceTestBase {
         List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(ROOT_STEP.id()));
-        assertThat(steps.get(1), is("c713d4988879e2aaab916853b45e4ddf9debe303")); // <- transformation/upper_case_lastname
-        assertThat(steps.get(2), is("a16245b478e70fdcc17621b892241ed1284f55ed")); // <- upper_case_firstname
+        assertThat(steps.get(1), is("81d219222e99d73b6a762cf2b0ec74261196df75")); // <- transformation/upper_case_lastname
+        assertThat(steps.get(2), is("3505adaabdcdb1d7fd4e7d2898a2782ec572401d")); // <- upper_case_firstname
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59") with another action
         final String actionContent3 = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"));
         given().contentType(ContentType.JSON)
                 .body(actionContent3)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
-                        "c713d4988879e2aaab916853b45e4ddf9debe303").then().statusCode(is(200));
+                        "81d219222e99d73b6a762cf2b0ec74261196df75").then().statusCode(is(200));
 
         // then : Steps id should have changed due to update
         steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(ROOT_STEP.id()));
-        assertThat(steps.get(1), is("cd3cefd02aa2eec8755bd6fdd77934a6ae958414"));
-        assertThat(steps.get(2), is("1e76900b00817d10f81084b71dc97d023085a49b"));
+        assertThat(steps.get(1), is("434e7fc9005014ea6636a5c0803932db9dcc0943"));
+        assertThat(steps.get(2), is("ef5c618b0648b5a9888e92c20424d00b7bbda180"));
     }
 
     @Test
@@ -201,7 +202,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
-        assertThat(steps.get(1), is("c713d4988879e2aaab916853b45e4ddf9debe303")); // <- transformation/upper_case_lastname
+        assertThat(steps.get(1), is("81d219222e99d73b6a762cf2b0ec74261196df75")); // <- transformation/upper_case_lastname
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59")
         // with another action that create a column
@@ -209,7 +210,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         given().contentType(ContentType.JSON)
                 .body(updateAction)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
-                        "c713d4988879e2aaab916853b45e4ddf9debe303").then().statusCode(is(200));
+                        "81d219222e99d73b6a762cf2b0ec74261196df75").then().statusCode(is(200));
 
         // then
         final JsonPath jsonPath = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath();
@@ -260,7 +261,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(ROOT_STEP.id()));
-        assertThat(steps.get(1), is("3c7b40baca3680c22f8bd7142c95697f7424e37f"));
+        assertThat(steps.get(1), is("c19c0f82ff8c2296acb4da9c485e6dc83ead6c45"));
     }
 
     @Test

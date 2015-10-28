@@ -7,21 +7,24 @@ describe('Actions suggestions search filter', function () {
             'label': 'Ceil value',
             'labelHtml': 'Ceil value',
             'description': 'f',
-            'category': 'w'
+            'category': 'w',
+            'categoryHtml': 'w'
         },
         {
             'name': 'floor_value',
             'label': 'Floor value',
             'labelHtml': 'Floor value',
             'description': 's',
-            'category': 'x'
+            'category': 'x',
+            'categoryHtml': 'x'
         },
         {
             'name': 'round_value',
             'label': 'Round value',
             'labelHtml': 'Round value',
             'description': 'k',
-            'category': 'f'
+            'category': 'f',
+            'categoryHtml': 'f'
         }
     ];
 

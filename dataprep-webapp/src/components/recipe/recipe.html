@@ -17,11 +17,11 @@
             <span class="recipe-description">{{::step.transformation.label}}</span>
 
             <span ng-switch-when="column">
-                {{::'RECIPE_ITEM_ON_COL' | translate}}
+                <span translate-once="RECIPE_ITEM_ON_COL"></span>
                 <span class="recipe-description recipe-column-name">{{::step.column.name}}</span>
             </span>
             <span ng-switch-when="cell">
-                {{::'RECIPE_ITEM_ON_CELL' | translate}}
+                <span translate-once="RECIPE_ITEM_ON_CELL"></span>
             </span>
 
             <recipe-bullet class="step-trigger" step="step" ></recipe-bullet>

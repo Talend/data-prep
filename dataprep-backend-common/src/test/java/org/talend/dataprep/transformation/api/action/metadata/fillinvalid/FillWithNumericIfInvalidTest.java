@@ -51,8 +51,8 @@ public class FillWithNumericIfInvalidTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0002");
@@ -61,7 +61,6 @@ public class FillWithNumericIfInvalidTest {
         assertEquals("25", row.get("0002"));
         assertEquals("David Bowie", row.get("0001"));
     }
-
 
     @Test
     public void should_fill_non_valid_integer_not_in_invalid_values() throws Exception {
@@ -81,8 +80,8 @@ public class FillWithNumericIfInvalidTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0002");

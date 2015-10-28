@@ -5,6 +5,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -100,6 +101,12 @@ public class StatisticsAdapter {
                         currentColumn.setDomain(semanticType.getSuggestedCategory());
                         currentColumn.setDomainLabel(TypeUtils.getDomainLabel(semanticType));
                         currentColumn.setDomainFrequency(entry.get().getValue());
+                    } else {
+                        // Ensure the domain is cleared if percentage is lower than threshold (earlier analysis - e.g.
+                        // on the first 20 lines - may be over threshold, but full scan may decide otherwise.
+                        currentColumn.setDomain(StringUtils.EMPTY);
+                        currentColumn.setDomainLabel(StringUtils.EMPTY);
+                        currentColumn.setDomainFrequency(0);
                     }
                 }
                 // Remembers all suggested semantic categories

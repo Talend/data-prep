@@ -51,7 +51,7 @@ public class RenameTest {
         action = new Rename();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 CopyColumnTest.class.getResourceAsStream("renameAction.json"));
     }
 

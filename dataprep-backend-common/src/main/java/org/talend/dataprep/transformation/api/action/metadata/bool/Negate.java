@@ -9,7 +9,6 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
@@ -18,8 +17,8 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  *
  * @see Negate
  */
-@Component(Negate.ACTION_BEAN_PREFIX + Negate.NEGATE_ACTION_NAME)
-public class Negate extends AbstractActionMetadata implements ColumnAction {
+@Component(ActionMetadata.ACTION_BEAN_PREFIX + Negate.NEGATE_ACTION_NAME)
+public class Negate extends ActionMetadata implements ColumnAction {
 
     /**
      * Action name.

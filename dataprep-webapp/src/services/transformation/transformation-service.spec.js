@@ -221,6 +221,7 @@ describe('Transformation Service', function () {
 
     beforeEach(inject(function ($q, TransformationRestService) {
         spyOn(TransformationRestService, 'getTransformations').and.returnValue($q.when({data: menusRestMock()}));
+        spyOn(TransformationRestService, 'getSuggestions').and.returnValue($q.when({data: menusRestMock()}));
         spyOn(TransformationRestService, 'getDynamicParameters').and.returnValue($q.when({data: textClusteringParams()}));
     }));
 
@@ -596,14 +597,36 @@ describe('Transformation Service', function () {
         var transformations = null;
 
         //when
-        TransformationService.getTransformations('{}', true)
+        TransformationService.getTransformations('{}')
             .then(function(result) {
                 transformations = result;
             });
         $rootScope.$digest();
 
         //then
-        expect(TransformationRestService.getTransformations).toHaveBeenCalledWith('{}', true);
+        expect(TransformationRestService.getTransformations).toHaveBeenCalledWith('{}');
+        expect(transformations[0].parameters).toBe(null); // delete column_name & column_id parameter
+        expect(transformations[1].parameters).toBe(null); // delete column_name & column_id parameter
+        expect(transformations[2].parameters.length).toBe(1); // delete column_name & column_id parameter
+        expect(transformations[2].parameters[0].inputType).toBe('text'); //adapt input type
+        expect(transformations[3].parameters[0].configuration.values[1].inputType).toBe('text'); //adapt input type
+        expect(transformations[3].parameters[0].configuration.values[2].parameters[0].inputType).toBe('number'); //adapt input type
+        expect(transformations[3].parameters[0].configuration.values[3].parameters[0].inputType).toBe('number'); //adapt input type
+    }));
+
+    it('should get column transformations with adapted input types and without column_name parameter', inject(function ($rootScope, TransformationService, TransformationRestService) {
+        //given
+        var transformations = null;
+
+        //when
+        TransformationService.getSuggestions('{}')
+            .then(function(result) {
+                transformations = result;
+            });
+        $rootScope.$digest();
+
+        //then
+        expect(TransformationRestService.getSuggestions).toHaveBeenCalledWith('{}');
         expect(transformations[0].parameters).toBe(null); // delete column_name & column_id parameter
         expect(transformations[1].parameters).toBe(null); // delete column_name & column_id parameter
         expect(transformations[2].parameters.length).toBe(1); // delete column_name & column_id parameter

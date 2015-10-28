@@ -8,7 +8,6 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
@@ -16,7 +15,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  * Uppercase a column in a row.
  */
 @Component(UpperCase.ACTION_BEAN_PREFIX + UpperCase.UPPER_CASE_ACTION_NAME)
-public class UpperCase extends AbstractActionMetadata implements ColumnAction {
+public class UpperCase extends ActionMetadata implements ColumnAction {
 
     /**
      * The action code name.

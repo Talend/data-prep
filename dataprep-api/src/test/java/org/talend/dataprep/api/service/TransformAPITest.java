@@ -1,18 +1,19 @@
 package org.talend.dataprep.api.service;
 
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
-import java.io.InputStream;
-import java.util.List;
-
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Response;
 
 /**
  * Unit test for Transformation API.
@@ -170,4 +171,21 @@ public class TransformAPITest extends ApiServiceTestBase {
         // then
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
+
+    @Test
+    public void testMultipleParams() throws Exception {
+        // given
+        final String dataSetId = createDataset("dataset/dataset_TDP-402.csv", "testDataset", "text/csv");
+        final String actions = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/multiple_filters.json"));
+        final InputStream expectedContent = PreparationAPITest.class
+                .getResourceAsStream("transformation/multiple_filters_expected.json");
+
+        // when
+        final String transformed = given().contentType(ContentType.JSON).body(actions).when().post("/api/transform/" + dataSetId)
+                .asString();
+
+        // then
+        assertThat(transformed, sameJSONAsFile(expectedContent));
+    }
+
 }

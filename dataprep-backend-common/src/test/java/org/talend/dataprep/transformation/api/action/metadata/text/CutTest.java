@@ -36,7 +36,7 @@ public class CutTest {
     public CutTest() throws IOException {
         action = new Cut();
         final InputStream parametersSource = SplitTest.class.getResourceAsStream("cutAction.json");
-        parameters = ActionMetadataTestUtils.parseParameters(action, parametersSource);
+        parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class CutTest {
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", " cut !", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(action,
+        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
                 SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", ".*gets");
 
@@ -87,7 +87,7 @@ public class CutTest {
         DataSetRow row = getRow("Wait for it...", "TSG-12345", "Done !");
         DataSetRow expected = getRow("Wait for it...", "TSG-12345", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(action,
+        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
                 SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", "*");
 

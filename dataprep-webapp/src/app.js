@@ -39,14 +39,7 @@ var fetchConfiguration, bootstrapDataPrepApplication;
                 .state('nav.home', {
                     abstract: true,
                     url: '/home',
-                    template: '<home></home>',
-                    resolve: {
-                        //HACK to be fixed : waiting for translation resource to be load
-                        //once the $translate promise is resolve, the router will perform the asked routing
-                        translateLoaded: function ($translate) {
-                            return $translate('ALL_FOLDERS');
-                        }
-                    }
+                    template: '<home></home>'
                 })
                 .state('nav.home.datasets', {
                     url: '/datasets?datasetid',

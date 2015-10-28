@@ -4,8 +4,10 @@ package org.talend.dataprep.transformation.api.action.metadata.category;
  * List all actions category.
  */
 public enum ActionCategory {
-                            COLUMN_METADATA("column_metadata"), // actions in this category will be displayed on column
-                                                                // header
+    /**
+     * Actions in this category will be displayed on column's header.
+     */
+    COLUMN_METADATA("column_metadata"), //
     COLUMNS("columns"), //
     MATH("math"), //
     STRINGS("strings"), //
@@ -13,7 +15,8 @@ public enum ActionCategory {
     SPLIT("split"), //
     DATE("dates"), //
     BOOLEAN("boolean"), //
-    DATA_CLEANSING("data cleansing");
+    DATA_CLEANSING("data cleansing"), //
+    FILTERED("filtered");
 
     /** The category display name. */
     private final String displayName;

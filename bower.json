@@ -35,7 +35,8 @@
     "moment": "~2.10.3",
     "datetimepicker": "2.4.5",
     "x-slickgrid": "3.0.0",
-    "bg-splitter" : "*"
+    "bg-splitter": "*",
+    "angular-translate-once": "~1.0.2"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.x"

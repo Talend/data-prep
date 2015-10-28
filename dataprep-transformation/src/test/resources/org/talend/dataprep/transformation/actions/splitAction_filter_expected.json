@@ -1,0 +1,32 @@
+{
+  "records": [
+    {
+      "0002": "",
+      "0003": "",
+      "city": "Santa Fe",
+      "state": "NC",
+      "tdpId": 1
+    },
+    {
+      "0002": "",
+      "0003": "",
+      "city": "Santa Fe",
+      "state": "NY",
+      "tdpId": 2
+    },
+    {
+      "0002": "",
+      "0003": "",
+      "city": "Santa Fe",
+      "state": "AZ",
+      "tdpId": 3
+    },
+    {
+      "0002": "Santa",
+      "0003": "Fe",
+      "city": "Santa Fe",
+      "state": "CA",
+      "tdpId": 4
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "and": [
+    {
+      "eq": {
+        "field": "0000",
+        "value": "value"
+      }
+    },
+    {
+      "and": [
+        {
+          "eq": {
+            "field": "0001",
+            "value": "value with spaces"
+          }
+        },
+        {
+          "eq": {
+            "field": "0002",
+            "value": "2"
+          }
+        }
+      ]
+    }
+  ]
+}

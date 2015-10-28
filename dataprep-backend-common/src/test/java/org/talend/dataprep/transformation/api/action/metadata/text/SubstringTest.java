@@ -51,7 +51,7 @@ public class SubstringTest {
         action = new Substring();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 SubstringTest.class.getResourceAsStream("substringAction.json"));
     }
 

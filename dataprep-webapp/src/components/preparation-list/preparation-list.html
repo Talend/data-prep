@@ -3,15 +3,15 @@
         <div class="information">
             <p class="title one-line"><a ui-sref="nav.home.preparations({prepid: preparation.id})" title="{{preparation.name}}">{{preparation.name}}</a></p>
             <p class="description">
-                {{::'OWNED_BY' | translate}} <span class="important" title="{{preparation.author}}" >{{preparation.author}}</span><br/>
-                {{::'LAST_MODIFICATION' | translate}}: {{preparation.lastModificationDate | TDPMoment}}
+                <span translate-once="OWNED_BY"></span> <span class="important" title="{{preparation.author}}" >{{preparation.author}}</span><br/>
+                <span translate-once="LAST_MODIFICATION"></span><span translate-once="COLON"></span>{{preparation.lastModificationDate | TDPMoment}}
             </p>
 
             <p class="details">
-                <span class="important name one-line" title="{{preparation.dataset.name}}">{{preparation.dataset.name}}</span>&nbsp;- {{ preparation.dataset.records}} {{::'ROWS' | translate}}
+                <span class="important name one-line" title="{{preparation.dataset.name}}">{{preparation.dataset.name}}</span>&nbsp;- {{ preparation.dataset.records}} <span translate-once="ROWS"></span>
             </p>
             <p class="details">
-                <span class="important">{{preparation.steps.length - 1}} {{::'STEPS' | translate}}</span> {{::'RECIPE' | translate}}
+                <span class="important">{{preparation.steps.length - 1}}</span><span class="important" translate-once="STEPS"></span> <span translate-once="RECIPE"></span>
             </p>
         </div>
 

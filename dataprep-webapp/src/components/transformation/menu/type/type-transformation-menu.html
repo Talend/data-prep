@@ -1,5 +1,5 @@
 <li class="more">
-    <a><span class="itemText">{{ ::'COLUMN_TYPE_IS' | translate }}&nbsp;</span><span class="info">{{ typeMenuCtrl.currentSimplifiedDomain }}</span></a>
+   <span class="itemText" translate-once="COLUMN_TYPE_IS"></span><a><span class="info">{{ typeMenuCtrl.currentSimplifiedDomain }}</span></a>
     <ul class="submenu">
         <li ng-repeat="semanticDomain in typeMenuCtrl.domains track by semanticDomain.id"
             ng-click="typeMenuCtrl.changeDomain(semanticDomain)">
@@ -11,7 +11,7 @@
             ng-click="typeMenuCtrl.changeType(type)">
             <input type="radio" value="{{ ::type.id}}" ng-model="typeMenuCtrl.currentDomain"
                    ng-checked="typeMenuCtrl.shouldBeChecked(type)"/>
-            {{ ::'COLUMN_TYPE_SET' | translate }}&nbsp;{{::type.labelKey | translate }}
+            <span translate-once="COLUMN_TYPE_SET"></span><span>&nbsp;</span>{{::type.labelKey | translate }}
         </li>
     </ul>
 </li>

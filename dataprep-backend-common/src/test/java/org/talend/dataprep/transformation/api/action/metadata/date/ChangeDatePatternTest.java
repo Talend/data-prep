@@ -36,7 +36,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 ChangeDatePatternTest.class.getResourceAsStream("changeDatePatternAction.json"));
     }
 

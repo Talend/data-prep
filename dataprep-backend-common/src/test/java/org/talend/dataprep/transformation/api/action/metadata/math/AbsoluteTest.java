@@ -52,12 +52,10 @@ public class AbsoluteTest {
     public void init() throws IOException {
         absolute = new Absolute();
 
-        absFloatParameters = ActionMetadataTestUtils.parseParameters( //
-                absolute, //
-                AbsoluteTest.class.getResourceAsStream("absoluteFloatAction.json"));
-        absIntParameters = ActionMetadataTestUtils.parseParameters( //
-                absolute, //
-                AbsoluteTest.class.getResourceAsStream("absoluteIntAction.json"));
+        absFloatParameters = ActionMetadataTestUtils
+                .parseParameters(AbsoluteTest.class.getResourceAsStream("absoluteFloatAction.json"));
+        absIntParameters = ActionMetadataTestUtils
+                .parseParameters(AbsoluteTest.class.getResourceAsStream("absoluteIntAction.json"));
     }
 
     @Test

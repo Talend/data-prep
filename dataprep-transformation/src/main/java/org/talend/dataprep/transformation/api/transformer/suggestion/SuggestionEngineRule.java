@@ -14,4 +14,7 @@ public interface SuggestionEngineRule extends BiFunction<ActionMetadata, ColumnM
     int NEGATIVE = -1 * HOP;
 
     int NON_APPLICABLE = 0;
+
+    int INVALID_MGT = 50;
+
 }

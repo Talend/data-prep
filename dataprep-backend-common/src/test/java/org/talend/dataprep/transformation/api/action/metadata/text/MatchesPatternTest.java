@@ -51,9 +51,7 @@ public class MatchesPatternTest {
     public void init() throws IOException {
         action = new MatchesPattern();
 
-        parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
-                MatchesPatternTest.class.getResourceAsStream("matchesPattern.json"));
+        parameters = ActionMetadataTestUtils.parseParameters(MatchesPatternTest.class.getResourceAsStream("matchesPattern.json"));
     }
 
     @Test
@@ -101,7 +99,7 @@ public class MatchesPatternTest {
         assertFalse(action.computeNewValue(" ", "[a-zA-Z]*"));
         assertTrue(action.computeNewValue("aA", "[a-zA-Z]*"));
 
-        assertFalse(action.computeNewValue("Ouch !","[a-zA-Z0-9]*"));
+        assertFalse(action.computeNewValue("Ouch !", "[a-zA-Z0-9]*"));
         assertTrue(action.computeNewValue("Houba 2 fois", "[a-zA-Z0-9 ]*"));
     }
 

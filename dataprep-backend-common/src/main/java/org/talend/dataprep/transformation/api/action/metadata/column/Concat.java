@@ -14,7 +14,6 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
@@ -25,7 +24,7 @@ import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
 @Component(Concat.ACTION_BEAN_PREFIX + Concat.CONCAT_ACTION_NAME)
-public class Concat extends AbstractActionMetadata implements ColumnAction {
+public class Concat extends ActionMetadata implements ColumnAction {
 
     /**
      * The action name.

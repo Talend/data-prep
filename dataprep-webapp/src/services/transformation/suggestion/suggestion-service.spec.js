@@ -24,49 +24,25 @@ describe('Suggestion Service', function() {
         //given
         expect(ColumnSuggestionService.initTransformations).not.toHaveBeenCalled();
         var column = {id: '0001'};
-        SuggestionService.showAllAction = true;
 
         //when
-        SuggestionService.setColumn(column, SuggestionService.showAllAction);
+        SuggestionService.setColumn(column);
 
         //then
-        expect(ColumnSuggestionService.initTransformations).toHaveBeenCalledWith(column, SuggestionService.showAllAction);
+        expect(ColumnSuggestionService.initTransformations).toHaveBeenCalledWith(column);
     }));
 
 
-    it('should reset action search when showAllActionis false', inject(function(SuggestionService, ColumnSuggestionService) {
+    it('should reset action search', inject(function(SuggestionService) {
         //given
         var column = {id: '0001'};
-        SuggestionService.showAllAction = false;
-        ColumnSuggestionService.transformations =
-            [
-                {name: 'rename', category: 'column_metadata', label: 'z', labelHtml: '<span class="highlighted">z</span>'},
-                {name: 'cluster', category: 'quickfix', label: 'f', labelHtml: 'f'}
-            ];
+        SuggestionService.searchActionString = 'test';
 
         //when
-        SuggestionService.setColumn(column, SuggestionService.showAllAction);
+        SuggestionService.setColumn(column);
 
         //then
         expect(SuggestionService.searchActionString).toBeFalsy();
-        expect(ColumnSuggestionService.transformations[0].labelHtml).toBe('z');
-
-    }));
-
-
-    it('should reset action search when showAllActionis true', inject(function(SuggestionService, ColumnSuggestionService) {
-        //given
-        var column = {id: '0001'};
-        SuggestionService.showAllAction = true;
-        ColumnSuggestionService.transformations =
-        {'QUICKFI<span class="highlighted">X</span>': [{name: 'cluster', label: 'cluster', category: 'quickfix', categoryHtml: 'QUICKFI<span class="highlighted">X</span>'}]};
-
-        //when
-        SuggestionService.setColumn(column, SuggestionService.showAllAction);
-        //then
-        expect(SuggestionService.searchActionString).toBeFalsy();
-        expect(ColumnSuggestionService.transformations.QUICKFIX[0].categoryHtml).toBe('QUICKFIX');
-
     }));
 
     it('should NOT init column suggestions when column is already selected', inject(function(SuggestionService, ColumnSuggestionService) {

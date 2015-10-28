@@ -65,8 +65,8 @@ public class FillWithDateIfInvalidTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0002");
@@ -100,8 +100,8 @@ public class FillWithDateIfInvalidTest {
         final DataSetRow row = new DataSetRow(values);
         row.setRowMetadata(rowMetadata);
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0002");
@@ -132,8 +132,8 @@ public class FillWithDateIfInvalidTest {
         row.setRowMetadata(rowMetadata);
         setStatistics(row, "0002", ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"));
 
-        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters(action, //
-                this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
+        Map<String, String> parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0002");

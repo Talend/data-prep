@@ -48,7 +48,7 @@ public class NormalizeTest {
         action = new Normalize();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 NormalizeTest.class.getResourceAsStream("normalize.json"));
     }
 

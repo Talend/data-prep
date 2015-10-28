@@ -47,8 +47,7 @@
                 </label>
 
                 <div id="help-preparation-name">
-                    <talend-editable-text id="help-preparation-name"
-                                          edition-mode="playgroundCtrl.state.playground.nameEditionMode"
+                    <talend-editable-text edition-mode="playgroundCtrl.state.playground.nameEditionMode"
                                           on-validate="playgroundCtrl.confirmPrepNameEdition(text)"
                                           placeholder="ENTER_PREPARATION_NAME"
                                           text="playgroundCtrl.preparationName"></talend-editable-text>
@@ -86,13 +85,14 @@
     Do you want to save it ?
     <br/><br/>
 
-    <form name="savePreparationForm" ng-submit="savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
+    <form id="playground-save-form" name="savePreparationForm" ng-submit="savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
         <div class="modal-form-row">
             <div class="param-name">Preparation Name: </div>
             <input type="text"
+                   id="playground-save-name-input"
                    class="param-input"
-                   placeholder="{{::'ENTER_PREPARATION_NAME' | translate}}"
+                   translate-once-placeholder="ENTER_PREPARATION_NAME"
                    ng-model="playgroundCtrl.preparationName"
                    can-be-blank="false"/>
         </div>

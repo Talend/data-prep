@@ -22,7 +22,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
@@ -30,7 +29,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  * This will compute the absolute value for numerical columns.
  */
 @Component(ActionMetadata.ACTION_BEAN_PREFIX + Absolute.ABSOLUTE_ACTION_NAME)
-public class Absolute extends AbstractActionMetadata implements ColumnAction {
+public class Absolute extends ActionMetadata implements ColumnAction {
 
     public static final String ABSOLUTE_ACTION_NAME = "absolute"; //$NON-NLS-1$
 

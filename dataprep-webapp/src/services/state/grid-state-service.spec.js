@@ -2,6 +2,12 @@ describe('Grid state service', function () {
     'use strict';
 
     var data = {
+        columns: [
+            {id: '0000'},
+            {id: '0001'},
+            {id: '0002'},
+            {id: '0003'}
+        ],
         records: [
             {tdpId: 0, firstname: 'Tata'},
             {tdpId: 1, firstname: 'Tetggggge'},
@@ -16,6 +22,30 @@ describe('Grid state service', function () {
             {tdpId: 10, firstname: 'Pupu'},
             {tdpId: 11, firstname: 'Pypy'}
         ]
+    };
+
+    var previewData = {
+        columns: [
+            {id: '0000'},
+            {id: '0001'},
+            {id: '0002'},
+            {id: '0003'}
+        ],
+        records: [
+            {tdpId: 0, firstname: 'Tata'},
+            {tdpId: 1, firstname: 'Tetggggge'},
+            {tdpId: 2, firstname: 'Titi'},
+            {tdpId: 3, firstname: 'Toto'},
+            {tdpId: 4, name: 'AMC Gremlin'},
+            {tdpId: 5, firstname: 'Tyty'},
+            {tdpId: 6, firstname: 'Papa'},
+            {tdpId: 7, firstname: 'Pepe'},
+            {tdpId: 8, firstname: 'Pipi'},
+            {tdpId: 9, firstname: 'Popo'},
+            {tdpId: 10, firstname: 'Pupu'},
+            {tdpId: 11, firstname: 'Pypy'}
+        ],
+        preview: true
     };
 
     beforeEach(module('data-prep.services.state'));
@@ -111,6 +141,55 @@ describe('Grid state service', function () {
             expect(gridState.nbLines).toBe(12);
             expect(gridState.nbTotalLines).toBe(12);
             expect(gridState.displayLinesPercentage).toBe('100');
+        }));
+
+        it('should update column selection metadata with the new metadata corresponding to the selected id', inject(function (gridState, GridStateService) {
+            //given
+            var oldMetadata = {id: '0001'};
+            gridState.selectedColumn = oldMetadata;
+
+            //when
+            GridStateService.setData(data);
+
+            //then
+            expect(gridState.selectedColumn).not.toBe(oldMetadata);
+            expect(gridState.selectedColumn).toBe(data.columns[1]);
+        }));
+
+        it('should update column selection metadata with the 1st column when actual selected column is not in the new columns', inject(function (gridState, GridStateService) {
+            //given
+            var oldMetadata = {id: '0018'};
+            gridState.selectedColumn = oldMetadata;
+
+            //when
+            GridStateService.setData(data);
+
+            //then
+            expect(gridState.selectedColumn).not.toBe(oldMetadata);
+            expect(gridState.selectedColumn).toBe(data.columns[0]);
+        }));
+
+        it('should update column selection metadata with the first column metadata when there is no selected column yet', inject(function (gridState, GridStateService) {
+            //given
+            gridState.selectedColumn = null;
+
+            //when
+            GridStateService.setData(data);
+
+            //then
+            expect(gridState.selectedColumn).toBe(data.columns[0]);
+        }));
+
+        it('should not change selected column when data is preview data', inject(function (gridState, GridStateService) {
+            //given
+            var oldMetadata = {id: '0001'};
+            gridState.selectedColumn = oldMetadata;
+
+            //when
+            GridStateService.setData(previewData);
+
+            //then
+            expect(gridState.selectedColumn).toBe(oldMetadata);
         }));
     });
 

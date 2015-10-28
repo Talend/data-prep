@@ -701,7 +701,7 @@ describe('Statistics service', function () {
             stateMock.playground.grid.selectedColumn = currentColumn;
             stateMock.playground.dataset = {id: datasetId};
             stateMock.playground.preparation = {id: preparationId};
-            spyOn(RecipeService, 'getLastActiveStep').and.returnValue({id: stepId});
+            spyOn(RecipeService, 'getLastActiveStep').and.returnValue({transformation: {stepId: stepId}});
             spyOn(StorageService, 'setAggregation').and.returnValue();
             spyOn(StorageService, 'removeAggregation').and.returnValue();
         }));
@@ -1029,7 +1029,7 @@ describe('Statistics service', function () {
             stateMock.playground.grid.selectedColumn = currentColumn;
             stateMock.playground.dataset = {id: datasetId};
             stateMock.playground.preparation = {id: preparationId};
-            spyOn(RecipeService, 'getLastActiveStep').and.returnValue({id: stepId});
+            spyOn(RecipeService, 'getLastActiveStep').and.returnValue({transformation: {stepId: stepId}});
             spyOn(StorageService, 'setAggregation').and.returnValue();
             spyOn(StorageService, 'removeAggregation').and.returnValue();
         }));

@@ -43,7 +43,7 @@ public class NumericOperationsTest {
     @Before
     public void setUp() throws Exception {
         final InputStream parametersSource = NumericOperationsTest.class.getResourceAsStream("numericOpsAction.json");
-        parameters = ActionMetadataTestUtils.parseParameters(action, parametersSource);
+        parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
     @Test

@@ -14,6 +14,7 @@
 
         return {
             getTransformations: getTransformations,
+            getSuggestions: getSuggestions,
             resetParamValue: resetParamValue,
             initParamsValues: initParamsValues,
             initDynamicParameters: initDynamicParameters
@@ -93,12 +94,26 @@
          * @ngdoc method
          * @name getTransformations
          * @methodOf data-prep.services.transformation.service:TransformationService
-         * @param {object} stringifiedColumn The transformations target column as string
-         * @param {boolean} showAll show all transformation or some of them
+         * @param {object} column The transformations target column
          * @description Get transformations from REST call, clean and adapt them
          */
-        function getTransformations(stringifiedColumn, showAll) {
-            return TransformationRestService.getTransformations(stringifiedColumn, showAll)
+        function getTransformations(column) {
+            return TransformationRestService.getTransformations(column)
+                .then(function(response) {
+                    var menus = cleanParams(response.data);
+                    return adaptInputTypes(menus);
+                });
+        }
+
+        /**
+         * @ngdoc method
+         * @name getSuggestions
+         * @methodOf data-prep.services.transformation.service:TransformationService
+         * @param {object} column The transformations target column
+         * @description Get suggestions from REST call, clean and adapt them
+         */
+        function getSuggestions(column) {
+            return TransformationRestService.getSuggestions(column)
                 .then(function(response) {
                     var menus = cleanParams(response.data);
                     return adaptInputTypes(menus);

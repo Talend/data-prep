@@ -46,9 +46,7 @@ public class RoundFloorTest {
     public void init() throws IOException {
         action = new RoundFloor();
 
-        parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
-                RoundFloorTest.class.getResourceAsStream("floorAction.json"));
+        parameters = ActionMetadataTestUtils.parseParameters(RoundFloorTest.class.getResourceAsStream("floorAction.json"));
     }
 
     @Test
@@ -69,31 +67,31 @@ public class RoundFloorTest {
     }
 
     public void testCommon(String input, String expected) {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("aNumber", input);
         final DataSetRow row = new DataSetRow(values);
 
-        //when
-        action.applyOnColumn( row, new TransformationContext(), parameters, "aNumber" );
+        // when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "aNumber");
 
-        //then
-        assertEquals( expected, row.get( "aNumber" ) );
+        // then
+        assertEquals(expected, row.get("aNumber"));
     }
 
     @Test
     public void testPositive() {
-        testCommon( "5.0", "5" );
+        testCommon("5.0", "5");
         testCommon("5.1", "5");
-        testCommon( "5.5", "5" );
-        testCommon( "5.8", "5" );
+        testCommon("5.5", "5");
+        testCommon("5.8", "5");
     }
 
     @Test
     public void testNegative() {
         testCommon("-5.0", "-5");
-        testCommon( "-5.4", "-6" );
-        testCommon( "-5.6", "-6" );
+        testCommon("-5.4", "-6");
+        testCommon("-5.6", "-6");
     }
 
     @Test

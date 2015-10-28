@@ -1,4 +1,4 @@
-<talend-button-dropdown button-text="{{ ::'EXPORT' | translate }}" button-action="exportCtrl.export()">
+<talend-button-dropdown button-text="{{'EXPORT' | translate }}" button-action="exportCtrl.export()">
     <ul>
         <li ng-repeat="exportType in exportCtrl.exportTypes" ng-click="exportCtrl.changeTypeAndExport(exportType)">{{exportType.id}}</li>
     </ul>
@@ -29,8 +29,8 @@
     </div>
 
     <div class="modal-buttons">
-        <button class="talend-modal-close btn-secondary modal-secondary-button">{{ ::'CANCEL' | translate }}</button>
-        <button class="talend-modal-close btn-primary modal-primary-button" ng-click="exportCtrl.saveEditionAndExport()">{{ ::'EXPORT' | translate }}</button>
+        <button class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL"></button>
+        <button class="talend-modal-close btn-primary modal-primary-button" ng-click="exportCtrl.saveEditionAndExport()" translate-once="EXPORT"></button>
     </div>
 </talend-modal>
 

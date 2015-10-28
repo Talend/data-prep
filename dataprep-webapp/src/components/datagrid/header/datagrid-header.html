@@ -6,8 +6,8 @@
                     <div class="dropdown-button" title="{{ datagridHeaderCtrl.column.name }}"></div>
                 </div>
                 <ul class="dropdown-menu grid-header-menu">
-                    <li ng-if="datagridHeaderCtrl.initTransformationsInProgress">{{ ::'LOADING' | translate }}...</li>
-                    <li ng-if="datagridHeaderCtrl.transformations && !datagridHeaderCtrl.transformations.length">{{ ::'NO_TRANSFORMATION' | translate }}</li>
+                    <li ng-if="datagridHeaderCtrl.initTransformationsInProgress" translate-once="LOADING"></li>
+                    <li ng-if="datagridHeaderCtrl.transformations && !datagridHeaderCtrl.transformations.length" translate-once="NO_TRANSFORMATION"></li>
                     <transform-menu column="datagridHeaderCtrl.column"
                                     menu-items="datagridHeaderCtrl.transformations"
                                     ng-if="datagridHeaderCtrl.transformations.length"></transform-menu>

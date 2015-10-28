@@ -64,7 +64,7 @@
   "IMPORT_HDFS_DATASET": "Import HDFS DataSet",
 
   "_comment": "Common",
-  "LOADING": "Loading",
+  "LOADING": "Loading...",
   "PROCESSING": "Processing",
 
   "_comment": "Confirm",
@@ -84,10 +84,10 @@
   "SEPARATOR_TAB": "Tabulation",
   "SEPARATOR_SPACE": "Space",
   "SEPARATOR_COMMA": "Comma",
-  "CONTENT_100_FIRST_ROWS": "Content (100 first rows)",
-  "DATASET_NAME": "Dataset Name",
+  "CONTENT_100_FIRST_ROWS": "Content (100 first rows):",
+  "DATASET_NAME": "Dataset Name:",
   "IMPORT_EXCEL_FILE": "Import Excel File",
-  "STYLESHEET": "Style sheet",
+  "STYLESHEET": "Style sheet:",
   "RENAME": "Rename",
   "NO_THANKS": "No, Thanks !",
 
@@ -134,6 +134,8 @@
 
   "_comment": "Action panel",
   "FIND_FUNCTION": "Find a Function...",
+  "ACTION_SUGGESTION": "Suggestion",
+
 
   "_comment": "Statistics",
   "COUNT": "Count",
@@ -161,7 +163,11 @@
   "FLOAT": "DECIMAL",
 
   "_comment": "Dataset actions",
-  "REPLACE_FILE_CONTENT": "Replace this file content",
+  "REPLACE_FILE_CONTENT": "Update dataset with another file",
+  "OPEN_ACTION": "Open {{type}} \"{{name}}\"",
+  "CERTIFY_ACTION": "Certify {{type}} \"{{name}}\"",
+  "FAVORITE_ACTION": "Add {{type}} \"{{name}}\" in your favorites",
+  "DELETE_ACTION": "Delete {{type}} \"{{name}}\"",
 
   "_comment": "Range slider",
   "INVALID_VALUE_RANGE_SLIDER": "Invalid Entered Value",

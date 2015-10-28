@@ -8,11 +8,9 @@
 | [dataprep-backend-common](dataprep-backend-common) | *set of common objects shared by multiple services*                  |
 | [dataprep-backend](dataprep-backend)               | *parent project for all backend projects*                            |
 | [dataprep-dataset](dataprep-dataset)               | *rest service to manage datasets (import, export, sample, stats)*    |
-| [dataprep-metrics](dataprep-metrics)               | *library to monitor rest services*                                   |
 | [dataprep-preparation](dataprep-preparation)       | *rest service to manage preparations (create, list steps, get data)* |
 | [dataprep-transformation](dataprep-transformation) | *rest service to apply transformations (actions are here)*           |
 | [dataprep-webapp](dataprep-webapp)                 | *web app (AngularJS)*                                                |
-| [dataprep-app](dataprep-app)                       | *Standalone application that runs both backend services and UI*      |
 | [tooling](tooling)                                 | *IDE specific config files + some other stuff*                       |
 
 ### UI
@@ -22,8 +20,6 @@ The following projects provides UI for Data Prep.
 | _Project_                  | _Description_ |
 |:-------------------------|-------------|
 | [dataprep-webapp](dataprep-webapp)         | *Builds all the AngularJS UI of Data Prep* |
-| [dataprep-app](dataprep-app)         | *A standalone application to run all Data Prep on your machine* |
-
 
 ### Back-end
 
@@ -45,7 +41,6 @@ The following projects don't build any back-end artifacts but provide build util
 |:-------------------------|-------------|
 | [dataprep-backend](dataprep-backend)          | *Common POM for all back-end modules (defines all libraries & versions, as well as common build behaviors)* |
 | [dataprep-backend-common](dataprep-backend-common)         | *Common resources and classes for back-end modules (CORS Filter, Branded Swagger UI...)* |
-| [dataprep-metrics](dataprep-metrics)         | *Spring AOP based annotations to monitor method execution times and volume per user* |
 
 
 ## Build

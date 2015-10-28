@@ -418,7 +418,7 @@
             reset(true, false, false);
             var datasetId = state.playground.dataset.id;
             var preparationId = state.playground.preparation && state.playground.preparation.id;
-            var stepId = preparationId && RecipeService.getLastActiveStep() && RecipeService.getLastActiveStep().id;
+            var stepId = preparationId && RecipeService.getLastActiveStep() && RecipeService.getLastActiveStep().transformation.stepId;
             var selectedColumn = state.playground.grid.selectedColumn;
 
             var aggregationParameters = {

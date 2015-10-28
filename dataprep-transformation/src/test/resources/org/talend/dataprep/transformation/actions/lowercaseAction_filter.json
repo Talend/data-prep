@@ -1,0 +1,17 @@
+{
+  "actions": [
+    {
+      "action": "lowercase",
+      "parameters": {
+        "column_id": "firstname",
+        "scope": "column",
+        "filter": {
+          "eq": {
+            "field": "nbCommands",
+            "value": "13"
+          }
+        }
+      }
+    }
+  ]
+}

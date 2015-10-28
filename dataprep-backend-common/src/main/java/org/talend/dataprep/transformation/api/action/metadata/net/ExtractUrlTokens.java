@@ -14,7 +14,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
@@ -22,7 +21,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  * Split a cell value on a separator.
  */
 @Component(ExtractUrlTokens.ACTION_BEAN_PREFIX + ExtractUrlTokens.EXTRACT_URL_TOKENS_ACTION_NAME)
-public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAction {
+public class ExtractUrlTokens extends ActionMetadata implements ColumnAction {
 
     /**
      * The action name.

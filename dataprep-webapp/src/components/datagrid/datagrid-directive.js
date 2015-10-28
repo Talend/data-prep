@@ -13,20 +13,17 @@
      *         <li>Filters : reset the styles</li>
      * </ul>
      *
+     * @requires data-prep.state.service:state
      * @requires data-prep.datagrid.service:DatagridGridService
      * @requires data-prep.datagrid.service:DatagridColumnService
      * @requires data-prep.datagrid.service:DatagridStyleService
      * @requires data-prep.datagrid.service:DatagridSizeService
      * @requires data-prep.datagrid.service:DatagridTooltipService
      * @requires data-prep.datagrid.service:DatagridExternalService
-     * @requires data-prep.services.playground.service:DatagridService
-     * @requires data-prep.services.filter.service:FilterService
-     * @requires data-prep.state.service:state
-     * @requires data-prep.state.service:StateService
      * @restrict E
      */
-    function Datagrid(DatagridGridService, DatagridColumnService, DatagridStyleService, DatagridSizeService,
-                      DatagridTooltipService, DatagridExternalService, DatagridService, FilterService, state, StateService) {
+    function Datagrid(state, DatagridGridService, DatagridColumnService, DatagridStyleService, DatagridSizeService,
+                      DatagridTooltipService, DatagridExternalService) {
         return {
             restrict: 'E',
             templateUrl: 'components/datagrid/datagrid.html',
@@ -98,18 +95,19 @@
                         initGridIfNeeded();
                         var columns;
                         var selectedColumn;
-                        var stateSelectedColumn = ctrl.state.playground.grid.selectedColumn;
+                        var stateSelectedColumn = ctrl.state.playground.grid.selectedColumn; //column metadata
+                        var stateSelectedLine = ctrl.state.playground.grid.selectedLine; //column metadata
 
                         //create columns, manage style and size, set columns in grid
                         clearTimeout(columnTimeout);
                         columnTimeout = setTimeout(function () {
                             columns = DatagridColumnService.createColumns(data.columns, data.preview);
+
                             if(!data.preview) {
                                 selectedColumn = stateSelectedColumn ? _.find(columns, {id: stateSelectedColumn.id}) : null;
-                                if (!selectedColumn) {
-                                    DatagridStyleService.resetCellStyles();
-                                    selectedColumn = columns[1];
-                                    StateService.setGridSelection(selectedColumn.tdpColMetadata);
+                                if(stateSelectedLine) {
+                                    var stateSelectedColumnIndex = columns.indexOf(selectedColumn);
+                                    DatagridStyleService.scheduleHighlightCellsContaining(stateSelectedLine, stateSelectedColumnIndex);
                                 }
                             }
 
@@ -181,7 +179,7 @@
                 /**
                  * When filter change, displayed values change, so we reset active cell and cell styles
                  */
-                scope.$watchCollection(getFilters, onFiltersChange);
+                scope.$watch(getFilters, onFiltersChange);
             }
         };
     }

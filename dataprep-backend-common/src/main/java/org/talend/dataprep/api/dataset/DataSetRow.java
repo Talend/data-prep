@@ -270,7 +270,7 @@ public class DataSetRow implements Cloneable {
         if (columns.isEmpty()) {
             return clone();
         }
-        if (columns.size() != values.size()) {
+        if (columns.size() < values.size()) {
             throw new IllegalArgumentException("Expected " + values.size() + " columns but got " + columns.size());
         }
 
@@ -317,5 +317,142 @@ public class DataSetRow implements Cloneable {
      */
     public boolean isEmpty() {
         return values.isEmpty() || values.values().stream().filter(s -> !StringUtils.isEmpty(s)).count() == 0;
+    }
+
+    /**
+     * @return A {@link DataSetRow} as 'unmodifiable': all previously set values cannot change (changes would be
+     * silently ignored), setting a new column will set empty string (value will be discarded).
+     */
+    public DataSetRow unmodifiable() {
+        return new UnmodifiableDataSetRow(this);
+    }
+
+    public DataSetRow modifiable() {
+        return this;
+    }
+
+    /**
+     * A wrapper implementation of {@link DataSetRow} that prevents changes on previous values and set empty string for
+     * all new columns. This implementation allows modification on {@link RowMetadata}.
+     * 
+     * @see #set(String, String)
+     */
+    private static class UnmodifiableDataSetRow extends DataSetRow {
+
+        private final DataSetRow delegate;
+
+        private final boolean deleted;
+
+        public UnmodifiableDataSetRow(DataSetRow delegate) {
+            super(delegate.rowMetadata);
+            this.delegate = delegate;
+            deleted = delegate.isDeleted();
+        }
+
+        @Override
+        public RowMetadata getRowMetadata() {
+            return delegate.getRowMetadata();
+        }
+
+        @Override
+        public void setRowMetadata(RowMetadata rowMetadata) {
+        }
+
+        /**
+         * This method prevents changes on previous values and set empty string for all new columns.
+         * 
+         * @param name - the key A column name.
+         * @param value - the value The value to be set for column name.
+         * @return This data set row for chaining calls.
+         */
+        @Override
+        public DataSetRow set(String name, String value) {
+            if (delegate.get(name) == null) {
+                return delegate.set(name, StringUtils.EMPTY);
+            }
+            return this;
+        }
+
+        @Override
+        public String get(String id) {
+            return delegate.get(id);
+        }
+
+        @Override
+        public boolean isDeleted() {
+            return deleted;
+        }
+
+        @Override
+        public void setDeleted(boolean deleted) {
+        }
+
+        @Override
+        public void diff(DataSetRow oldRow) {
+            delegate.diff(oldRow);
+        }
+
+        @Override
+        public Map<String, Object> values() {
+            return Collections.unmodifiableMap(delegate.values());
+        }
+
+        @Override
+        public Map<String, Object> valuesWithId() {
+            return Collections.unmodifiableMap(delegate.valuesWithId());
+        }
+
+        @Override
+        public void clear() {
+        }
+
+        @Override
+        public DataSetRow clone() {
+            return this;
+        }
+
+        @Override
+        public boolean shouldWrite() {
+            return delegate.shouldWrite();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return delegate.equals(o);
+        }
+
+        @Override
+        public int hashCode() {
+            return delegate.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
+
+        @Override
+        public DataSetRow order(List<ColumnMetadata> columns) {
+            return delegate.order(columns);
+        }
+
+        @Override
+        public Long getTdpId() {
+            return delegate.getTdpId();
+        }
+
+        @Override
+        public void setTdpId(Long tdpId) {
+        }
+
+        @Override
+        public DataSetRow unmodifiable() {
+            return this;
+        }
+
+        @Override
+        public DataSetRow modifiable() {
+            return delegate;
+        }
     }
 }

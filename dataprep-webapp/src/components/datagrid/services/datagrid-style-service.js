@@ -19,7 +19,8 @@
             resetCellStyles: resetCellStyles,
             updateColumnClass: updateColumnClass,
             columnFormatter: columnFormatter,
-            getColumnPreviewStyle: getColumnPreviewStyle
+            getColumnPreviewStyle: getColumnPreviewStyle,
+            scheduleHighlightCellsContaining: scheduleHighlightCellsContaining
         };
 
         //--------------------------------------------------------------------------------------------------------------

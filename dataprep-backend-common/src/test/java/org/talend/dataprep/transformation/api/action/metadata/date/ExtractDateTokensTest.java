@@ -43,7 +43,7 @@ public class ExtractDateTokensTest extends BaseDateTests {
     public void init() throws IOException {
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 ExtractDateTokensTest.class.getResourceAsStream("extractDateTokensAction.json"));
     }
 

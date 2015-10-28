@@ -53,7 +53,7 @@ public class ExtractUrlTokensTest {
         action = new ExtractUrlTokens();
 
         parameters = ActionMetadataTestUtils.parseParameters( //
-                action, //
+                //
                 ExtractUrlTokensTest.class.getResourceAsStream("extractUrlTokensAction.json"));
     }
 

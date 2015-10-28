@@ -41,7 +41,7 @@ public class FillInvalidRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(fillInvalidRule.apply(new FillInvalid(), mostValidColumn), is(POSITIVE));
+        assertThat(fillInvalidRule.apply(new FillInvalid(), mostValidColumn), is(INVALID_MGT));
     }
 
 }

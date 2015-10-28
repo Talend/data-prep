@@ -5,6 +5,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,7 +69,7 @@ public class FolderService {
      * @param path
      * @return
      */
-    @RequestMapping(value = "/folders", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/folders", method = DELETE)
     @ApiOperation(value = "Remove a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Remove the folder")
     @Timed
     @VolumeMetered
@@ -83,7 +84,7 @@ public class FolderService {
      * @param folderEntry
      * @return
      */
-    @RequestMapping(value = "/folders/entries", method = PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/folders/entries", method = PUT)
     @ApiOperation(value = "Add a FolderEntry", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Add the folder entry")
     @Timed
     @VolumeMetered
@@ -93,15 +94,17 @@ public class FolderService {
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
-     * @param folderEntry
+     * @param contentId
+     * @param contentType
      * @return
      */
-    @RequestMapping(value = "/folders/entries", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Remove a FolderEntry", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Delete the folder entry")
+    @RequestMapping(value = "/folders/entries/{contentType}/{id}", method = DELETE)
+    @ApiOperation(value = "Remove a FolderEntry", notes = "Delete the folder entry")
     @Timed
     @VolumeMetered
-    public void deleteFolderEntry(@RequestBody FolderEntry folderEntry){
-        folderRepository.removeFolderEntry( folderEntry );
+    public void deleteFolderEntry(@RequestParam String path, @PathVariable(value = "id") String contentId, @PathVariable(value = "contentType") String contentType){
+
+        folderRepository.removeFolderEntry( path, contentId, contentType );
     }
 
     /**

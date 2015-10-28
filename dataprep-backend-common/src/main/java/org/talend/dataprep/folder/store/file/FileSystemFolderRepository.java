@@ -1,8 +1,24 @@
 package org.talend.dataprep.folder.store.file;
 
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.collect.Sets;
 import org.slf4j.Logger;
@@ -15,18 +31,7 @@ import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.*;
-import java.util.stream.Stream;
+import com.google.common.collect.Lists;
 
 @Component("folderRepository#file")
 @ConditionalOnProperty(name = "folder.store", havingValue = "file", matchIfMissing = false)
@@ -136,7 +141,7 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
         try {
             List<String> pathParts = Lists.newArrayList(StringUtils.split(folderEntry.getPath(), PATH_SEPARATOR));
-            pathParts.add(folderEntry.getName());
+            pathParts.add(folderEntry.id());
             Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
             // we delete it if exists
             Files.deleteIfExists(path);
@@ -145,9 +150,9 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
             Properties properties = new Properties();
 
-            properties.setProperty("contentClass", folderEntry.getContentClass());
+            properties.setProperty("contentType", folderEntry.getContentType());
             properties.setProperty("contentId", folderEntry.getContentId());
-            properties.setProperty("id", UUID.randomUUID().toString());
+            properties.setProperty("id", folderEntry.getId());
 
             try (OutputStream outputStream = Files.newOutputStream(path)) {
                 properties.store(outputStream, "saved");
@@ -160,14 +165,33 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
-    public void removeFolderEntry(FolderEntry folderEntry) {
+    public void removeFolderEntry(String folderPath, String contentId, String contentType) {
 
         try {
-            List<String> pathParts = Lists.newArrayList(StringUtils.split(folderEntry.getPath(), PATH_SEPARATOR));
-            pathParts.add( folderEntry.getName());
+            List<String> pathParts = Lists.newArrayList(StringUtils.split(folderPath, PATH_SEPARATOR));
             Path path = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
-            // we delete it if exists
-            Files.deleteIfExists(path);
+
+            Files.list( path ) //
+                .filter( pathFound -> !Files.isDirectory(pathFound)) //
+                .parallel() //
+                .forEach( pathFile -> {
+                    try {
+                        try (InputStream inputStream = Files.newInputStream(pathFile)) {
+                            Properties properties = new Properties();
+                            properties.load(inputStream);
+                            if (StringUtils.equalsIgnoreCase(properties.getProperty("contentType"), //
+                                                             contentType) && //
+                                StringUtils.equalsIgnoreCase(properties.getProperty("contentId"), //
+                                                             contentId) ) {
+                                Files.delete( pathFile );
+                            }
+                        }
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e.getMessage(), e);
+                    }
+                });
+
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -197,25 +221,22 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                     .filter(pathFound -> !Files.isDirectory(pathFound)) //
                     .parallel() //
                     .forEach(pathFile -> {
-                        {
                             try {
                                 try (InputStream inputStream = Files.newInputStream(pathFile)) {
                                     Properties properties = new Properties();
                                     properties.load(inputStream);
-                                    if (StringUtils.equalsIgnoreCase(properties.getProperty("contentClass"), //
+                                    if (StringUtils.equalsIgnoreCase(properties.getProperty("contentType"), //
                                             contentType)) {
                                         folderEntries.add(new FolderEntry(
-                                                properties.getProperty("id"), //
-                                                pathFile.getFileName().toString(), //
-                                                contentType, //
-                                                properties.getProperty("contentType")));
+                                            contentType, //
+                                            properties.getProperty("id"), //
+                                            folder));
                                     }
                                 }
 
                             } catch (IOException e) {
                                 throw new RuntimeException(e.getMessage(), e);
                             }
-                        }
                     });
 
             return folderEntries;

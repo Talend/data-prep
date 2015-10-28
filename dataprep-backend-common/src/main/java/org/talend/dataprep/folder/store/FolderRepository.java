@@ -31,10 +31,12 @@ public interface FolderRepository {
     FolderEntry addFolderEntry(FolderEntry folderEntry);
 
     /**
-     *
-     * @param folderEntry the {@link FolderEntry} to remove
+     * remove a {@link FolderEntry}
+     * @param folderPath the folder path containing the entry (TODO optional and search for removing it?)
+     * @param contentId the id
+     * @param contentType  the type dataset, preparation as fqcn
      */
-    void removeFolderEntry(FolderEntry folderEntry);
+    void removeFolderEntry(String folderPath, String contentId, String contentType);
 
 
     /**

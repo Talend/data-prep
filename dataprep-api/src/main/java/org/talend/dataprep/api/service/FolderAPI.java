@@ -10,6 +10,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
 import org.talend.dataprep.api.service.command.folder.CreateFolderEntry;
+import org.talend.dataprep.api.service.command.folder.FolderEntriesList;
 import org.talend.dataprep.api.service.command.folder.FoldersList;
 import org.talend.dataprep.api.service.command.folder.RemoveFolder;
 import org.talend.dataprep.api.service.command.folder.RemoveFolderEntry;
@@ -101,16 +102,18 @@ public class FolderAPI extends APIService {
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
-     * @param folderEntry
+     * @param contentId
+     * @param contentType
      * @return
      */
-    @RequestMapping(value = "/folders/entries", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/folders/entries/{contentType}/{id}", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Remove a FolderEntry", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Delete the folder entry")
     @Timed
     @VolumeMetered
-    public void deleteFolderEntry(@RequestBody FolderEntry folderEntry){
+    public void deleteFolderEntry(@PathVariable(value = "id") String contentId, @PathVariable(value = "contentType") String contentType, //
+                                  @RequestParam String path){
         try {
-            final HystrixCommand<Void> createFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), folderEntry);
+            final HystrixCommand<Void> createFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), path, contentType, contentId);
             createFolderEntry.execute();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER_ENTRY, e);
@@ -129,10 +132,11 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "List Folder entries", produces = MediaType.APPLICATION_JSON_VALUE, notes = "List all folder entries of the given content type")
     @Timed
     @VolumeMetered
-    public Iterable<FolderEntry> entries(@RequestParam String path, @RequestParam String contentType, final HttpServletResponse response){
+    public void entries(@RequestParam String path, @RequestParam String contentType, final HttpServletResponse response){
         try {
-            final HystrixCommand<InputStream> listFolderEntries = getCommand(ListFolderEntry.class, getClient(), folderEntry);
+            final HystrixCommand<InputStream> listFolderEntries = getCommand(FolderEntriesList.class, getClient(), path, contentType);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
+
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(listFolderEntries.execute(), outputStream);
             outputStream.flush();

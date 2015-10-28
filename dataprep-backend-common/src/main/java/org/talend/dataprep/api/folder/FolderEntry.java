@@ -15,31 +15,25 @@ public class FolderEntry extends Identifiable implements Serializable {
     // FIXME olamy: not sure we need to export that in json result
     @JsonProperty("contentClass")
     /**
-     * this is the class of the content Dataset or Preparation or something else..
+     * this is the class of the content Dataset or Preparation or something else.. (we use fqcn)
      */
-    private String contentClass;
+    private String contentType;
 
     /* id of the content i.e datasetId or preparationId or something else */
     @JsonProperty("contentId")
     private String contentId;
 
-    @JsonProperty("name")
-    private String name;
 
     @JsonProperty("path")
     private String path;
 
-    public FolderEntry(String name, String contentClass, String contentId, String path) {
-        this.name = name;
-        this.contentClass = contentClass;
+    public FolderEntry(String contentType, String contentId, String path) {
+        this.contentType = contentType;
         this.contentId = contentId;
         this.path = path;
+        this.id = contentType + '@' + contentId;
     }
 
-    public FolderEntry(String id, String contentClass, String contentId, String name, String path) {
-        this(contentClass, contentId, name, path);
-        this.id = id;
-    }
 
     @Override
     public String id() {
@@ -54,12 +48,14 @@ public class FolderEntry extends Identifiable implements Serializable {
         this.id = id;
     }
 
-    public String getContentClass() {
-        return contentClass;
+    public String getContentType()
+    {
+        return contentType;
     }
 
-    public void setContentClass(String contentClass) {
-        this.contentClass = contentClass;
+    public void setContentType( String contentType )
+    {
+        this.contentType = contentType;
     }
 
     public String getContentId() {
@@ -68,14 +64,6 @@ public class FolderEntry extends Identifiable implements Serializable {
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPath()
@@ -92,10 +80,9 @@ public class FolderEntry extends Identifiable implements Serializable {
     public String toString()
     {
         return "FolderEntry{" +
-            "contentClass='" + contentClass + '\'' +
+            "contentId='" + contentId + '\'' +
             ", id='" + id + '\'' +
-            ", contentId='" + contentId + '\'' +
-            ", name='" + name + '\'' +
+            ", contentType='" + contentType + '\'' +
             ", path='" + path + '\'' +
             '}';
     }

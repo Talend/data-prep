@@ -202,7 +202,7 @@ public class ReplaceOnValueTest {
     @Test
     public void test_TDP_796() {
         String from = "bridge.html?region=FR";
-        String regexp = "bridge.html?region=FR";
+        String regexp = "bridge.html[?]region=FR";
         String to = "pont.html?region=FR";
         Assert.assertEquals(to, action.computeNewValue(from, regexp, to, false));
     }

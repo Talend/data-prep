@@ -200,6 +200,14 @@ public class ReplaceOnValueTest {
     }
 
     @Test
+    public void test_TDP_796() {
+        String from = "bridge.html?region=FR";
+        String regexp = "bridge.html?region=FR";
+        String to = "pont.html?region=FR";
+        Assert.assertEquals(to, action.computeNewValue(from, regexp, to, false));
+    }
+
+    @Test
     public void should_replace_many_values_that_match_on_the_specified_cell() {
         // given
         final String columnId = "firstname";

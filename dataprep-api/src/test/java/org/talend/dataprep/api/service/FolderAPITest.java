@@ -200,30 +200,46 @@ public class FolderAPITest extends ApiServiceTestBase {
                 .hasSize(2) //
                 .contains(created, anOtherfolderEntry);
 
+        // delete folder entry
         // "/api/folders/entries/{contentType}/{id}"
         // RequestParam path
 
         response = RestAssured.given() //
-                .queryParam("path", "/beer") //
-                .pathParam("contentType", DataSet.class.getName()) //
-                .pathParam("id", anOtherfolderEntry.getContentId()) //
-                .delete("/api/folders/entries/{contentType}/{id}");
+                .queryParam( "path", "/beer" ) //
+                .pathParam( "contentType", DataSet.class.getName() ) //
+                .pathParam( "id", anOtherfolderEntry.getContentId() ) //
+                .delete( "/api/folders/entries/{contentType}/{id}" );
 
         logger.info("search response: {}", response.asString());
 
         response = RestAssured.given() //
-                .queryParam("path", "/beer") //
-                .queryParam("contentType", DataSet.class.getName()) //
-                .get("/api/folders/entries");
+                .queryParam( "path", "/beer" ) //
+                .queryParam( "contentType", DataSet.class.getName() ) //
+                .get( "/api/folders/entries" );
 
         folderEntries = objectMapper.readValue(response.asString(), new TypeReference<List<FolderEntry>>() {
         });
 
         Assertions.assertThat(folderEntries).isNotNull() //
                 .isNotEmpty() //
-                .hasSize(1) //
-                .contains(created);
+                .hasSize( 1 ) //
+                .contains( created );
 
+        response = RestAssured.given() //
+            .queryParam("path", "beer") //
+            .when() //
+            .delete("/api/folders");
+
+        // delete the folder
+        response = RestAssured.given() //
+            .queryParam( "path", "/beer" ) //
+            .queryParam( "contentType", DataSet.class.getName() ) //
+            .get( "/api/folders/entries" );
+
+        folderEntries = objectMapper.readValue(response.asString(), new TypeReference<List<FolderEntry>>() {
+        });
+
+        Assertions.assertThat( folderEntries ).isNotNull().isEmpty();
     }
 
 }

@@ -11,6 +11,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -215,6 +216,10 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
         Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
 
+        if (!Files.exists( path )){
+            return Collections.emptyList();
+        }
+
         try {
             List<FolderEntry> folderEntries = new ArrayList<>();
             Files.list(path) //
@@ -259,7 +264,7 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
     @Override
     public int size() {
-        int number = foldersNumber(getRootFolder());
+        int number = foldersNumber( getRootFolder() );
         return number;
     }
 

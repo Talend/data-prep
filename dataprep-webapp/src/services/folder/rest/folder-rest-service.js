@@ -10,12 +10,20 @@
      */
     function FolderRestService($http, RestURLs) {
         return {
+            // folder operations
             create: createFolder,
             delete: deleteFolder,
+            folders: listFolderChilds,
 
-            childs: listFolderChilds
+            // folder entry operations
+            createFolderEntry: createFolderEntry,
+            deleteFolderEntry: deleteFolderEntry,
+            listFolderEntries: listFolderEntries
         };
 
+        //----------------------------------------------
+        //   folders
+        //----------------------------------------------
         /**
          * @ngdoc method
          * @name deleteFolder
@@ -37,7 +45,7 @@
          * @returns {Promise} The GET promise
          */
         function createFolder(path){
-            return $http.get(RestURLs.datasetUrl + '/folders/add?path=' + encodeURIComponent(path));
+            return $http.put(RestURLs.datasetUrl + '/folders/add?path=' + encodeURIComponent(path));
         }
 
         /**
@@ -55,6 +63,73 @@
             }
             return $http.get(url);
         }
+
+        //----------------------------------------------
+        //   folder entries
+        //----------------------------------------------
+        /**
+         * @ngdoc method
+         * @name deleteFolderEntry
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Delete the folder entry
+         * @param {string} path the path to delete
+         * @returns {Promise} The DELETE promise
+         */
+        function deleteFolderEntry(contentType, contentId, path) {
+            var url = RestURLs.datasetUrl + '/folders/entries';
+            url += '/'+contentType;
+            url += '/'+contentId;
+            if (path) {
+                url += '?path=' + encodeURIComponent(path);
+            }
+            return $http.delete(url);
+        }
+
+        /**
+         * @ngdoc method
+         * @name createFolderEntry
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Create a folder
+         * @param {string} path the path to create
+         * @returns {Promise} The GET promise
+         */
+        function createFolderEntry(contentType, contentId, path){
+            var request = {
+                method: 'PUT',
+                url: RestURLs.datasetUrl+ '/folders/entries',
+                data: {
+                    contentType: contentType,
+                    contentId: contentId,
+                    path: path
+                }
+            };
+            return $http(request);
+        }
+
+        /**
+         * @ngdoc method
+         * @name listFolderChilds
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description List the childs of a folder (or child of root folder)
+         * @param {string} path optional path to list childs
+         * @returns {Promise} The GET promise
+         */
+        function listFolderEntries(contentType,path){
+            var url = RestURLs.datasetUrl + '/folders/entries';
+            if (path) {
+                url += '?path=' + encodeURIComponent(path);
+            }
+            if (contentType) {
+                if (path) {
+                    url += '&contentType=' + encodeURIComponent( contentType );
+                } else {
+                    url += '?contentType=' + encodeURIComponent( contentType );
+                }
+            }
+
+            return $http.get(url);
+        }
+
 
     }
 

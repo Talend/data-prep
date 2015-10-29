@@ -27,6 +27,11 @@ public class FolderEntry extends Identifiable implements Serializable {
     @JsonProperty("path")
     private String path;
 
+    public FolderEntry()
+    {
+        // no op only to help Jackson
+    }
+
     public FolderEntry(String contentType, String contentId, String path) {
         this.contentType = contentType;
         this.contentId = contentId;
@@ -85,5 +90,29 @@ public class FolderEntry extends Identifiable implements Serializable {
             ", contentType='" + contentType + '\'' +
             ", path='" + path + '\'' +
             '}';
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        FolderEntry that = (FolderEntry) o;
+
+        return !( id != null ? !id.equals( that.id ) : that.id != null );
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id != null ? id.hashCode() : 0;
     }
 }

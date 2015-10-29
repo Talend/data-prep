@@ -87,14 +87,17 @@ public class FolderAPI extends APIService {
      * @param folderEntry
      * @return
      */
-    @RequestMapping(value = "/api/folders/entries", method = PUT)
-    @ApiOperation(value = "Add a FolderEntry")
+    @RequestMapping(value = "/api/folders/entries", method = PUT, consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Add a FolderEntry", consumes = APPLICATION_JSON_VALUE,produces = APPLICATION_JSON_VALUE)
     @Timed
     @VolumeMetered
-    public void addFolderEntry(@RequestBody FolderEntry folderEntry){
+    public void addFolderEntry(@RequestBody FolderEntry folderEntry, final HttpServletResponse response){
         try {
-            final HystrixCommand<Void> createFolderEntry = getCommand(CreateFolderEntry.class, getClient(), folderEntry);
-            createFolderEntry.execute();
+            final HystrixCommand<InputStream> createFolderEntry = getCommand(CreateFolderEntry.class, getClient(), folderEntry);
+            response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
+            final ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copyLarge(createFolderEntry.execute(), outputStream);
+            outputStream.flush();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_CREATE_FOLDER_ENTRY, e);
         }

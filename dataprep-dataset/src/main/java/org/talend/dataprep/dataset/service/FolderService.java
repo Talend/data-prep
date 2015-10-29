@@ -84,12 +84,12 @@ public class FolderService {
      * @param folderEntry
      * @return
      */
-    @RequestMapping(value = "/folders/entries", method = PUT)
+    @RequestMapping(value = "/folders/entries", method = PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes =  MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Add a FolderEntry", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Add the folder entry")
     @Timed
     @VolumeMetered
-    public void addFolderEntry(@RequestBody FolderEntry folderEntry){
-        folderRepository.addFolderEntry( folderEntry );
+    public FolderEntry addFolderEntry(@RequestBody FolderEntry folderEntry){
+        return folderRepository.addFolderEntry( folderEntry );
     }
 
     /**
@@ -102,7 +102,8 @@ public class FolderService {
     @ApiOperation(value = "Remove a FolderEntry", notes = "Delete the folder entry")
     @Timed
     @VolumeMetered
-    public void deleteFolderEntry(@RequestParam String path, @PathVariable(value = "id") String contentId, @PathVariable(value = "contentType") String contentType){
+    public void deleteFolderEntry(@RequestParam String path, @PathVariable(value = "id") String contentId, //
+                                  @PathVariable(value = "contentType") String contentType){
 
         folderRepository.removeFolderEntry( path, contentId, contentType );
     }

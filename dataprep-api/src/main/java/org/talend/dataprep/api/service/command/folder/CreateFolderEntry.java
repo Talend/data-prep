@@ -1,6 +1,12 @@
 package org.talend.dataprep.api.service.command.folder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE_FOLDER;
+
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -16,34 +22,31 @@ import org.talend.dataprep.api.service.command.common.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
-import java.net.URISyntaxException;
-
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE_FOLDER;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Component
 @Scope("request")
-public class CreateFolderEntry extends GenericCommand<Void>
-{
+public class CreateFolderEntry extends GenericCommand<InputStream> {
 
     private CreateFolderEntry(HttpClient client, FolderEntry folderEntry) {
-        super( APIService.DATASET_GROUP, client);
+        super(APIService.DATASET_GROUP, client);
         execute(() -> onExecute(folderEntry));
         onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER, e, ExceptionContext.build()));
-        on( HttpStatus.OK).then(asNull());
+        on(HttpStatus.OK).then(pipeStream());
     }
 
-    private HttpRequestBase onExecute( FolderEntry folderEntry) {
+    private HttpRequestBase onExecute(FolderEntry folderEntry) {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/entries");
 
             HttpPut create = new HttpPut(uriBuilder.build());
-            byte[] theBytes = builder.build().writeValueAsBytes( folderEntry );
-            create.setEntity( new ByteArrayEntity( theBytes ) );
+            create.addHeader("Content-Type", APPLICATION_JSON_VALUE);
+            byte[] theBytes = builder.build().writeValueAsBytes(folderEntry);
+            create.setEntity(new ByteArrayEntity(theBytes));
             return create;
-        } catch (URISyntaxException|JsonProcessingException e) {
-            throw new TDPException( CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        } catch (URISyntaxException | JsonProcessingException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 

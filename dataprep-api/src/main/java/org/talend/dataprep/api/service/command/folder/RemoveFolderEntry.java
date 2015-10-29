@@ -29,7 +29,7 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE
 public class RemoveFolderEntry
     extends GenericCommand<Void> {
 
-    private RemoveFolderEntry( HttpClient client, String path, String contentId, String contentType ) {
+    private RemoveFolderEntry( HttpClient client, String path, String contentType, String contentId ) {
         super(APIService.DATASET_GROUP, client);
         execute(() -> onExecute(path, contentId, contentType));
         onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER_ENTRY, e, ExceptionContext.build()));

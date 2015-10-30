@@ -1,12 +1,11 @@
 package org.talend.dataprep.transformation.api.action.metadata.delete;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadataUtils;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Delete row when value is invalid.
@@ -35,14 +34,10 @@ public class DeleteInvalid extends AbstractDelete {
 
     @Override
     public boolean toDelete(ColumnMetadata colMetadata, Map<String, String> parsedParameters, String value) {
-
         // update invalid values of column metadata to prevent unnecessary future analysis
         if (ActionMetadataUtils.checkInvalidValue(colMetadata, value)) {
-            final Set<String> invalidValues = colMetadata.getQuality().getInvalidValues();
-            invalidValues.add(value);
             return true;
         }
-
         // valid value
         return false;
     }

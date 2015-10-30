@@ -5,6 +5,29 @@
             <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} [%t] [%marker] %-5level %logger{36} - %msg%n}"/>
         </Console>
 
+
+        <!--
+        <Socket name="logstash" host="10.42.10.99" port="4560" ignoreExceptions="false">
+            <JSONLayout compact="true" eventEol="true"/>
+        </Socket>
+
+        <Failover name="failover" primary="logstash" retryIntervalSeconds="60">
+            <Failovers>
+                <AppenderRef ref="console"/>
+            </Failovers>
+        </Failover>
+
+        <Socket name="logstash" host="10.42.10.99" port="4560" ignoreExceptions="false">
+            <JSONLayout compact="true" eventEol="true"/>
+        </Socket>
+
+        <Failover name="failover" primary="logstash" retryIntervalSeconds="60">
+            <Failovers>
+                <AppenderRef ref="console"/>
+            </Failovers>
+        </Failover>
+        -->
+
     </appenders>
 
     <loggers>

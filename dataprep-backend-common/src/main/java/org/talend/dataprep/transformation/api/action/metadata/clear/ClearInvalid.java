@@ -3,7 +3,6 @@ package org.talend.dataprep.transformation.api.action.metadata.clear;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -51,20 +50,16 @@ public class ClearInvalid extends ActionMetadata implements ColumnAction {
     public void applyOnColumn(DataSetRow row, TransformationContext context, Map<String, String> parameters, String columnId) {
         final String value = row.get(columnId);
         final ColumnMetadata colMetadata = row.getRowMetadata().getById(columnId);
-        if (!isValid(colMetadata, parameters, value)) {
+        if (!isValid(colMetadata, value)) {
             row.set(columnId, "");
         }
     }
 
-    public boolean isValid(ColumnMetadata colMetadata, Map<String, String> parsedParameters, String value) {
-
+    public boolean isValid(ColumnMetadata colMetadata, String value) {
         // update invalid values of column metadata to prevent unnecessary future analysis
         if (ActionMetadataUtils.checkInvalidValue(colMetadata, value)) {
-            final Set<String> invalidValues = colMetadata.getQuality().getInvalidValues();
-            invalidValues.add(value);
             return false;
         }
-
         // valid value
         return true;
     }

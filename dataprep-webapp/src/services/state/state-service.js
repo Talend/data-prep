@@ -17,6 +17,7 @@
             setCurrentPreparation: PlaygroundStateService.setPreparation,
             setLookupVisibility: PlaygroundStateService.setLookupVisibility,
             setNameEditionMode: PlaygroundStateService.setNameEditionMode,
+            updateColumnsStatistics: PlaygroundStateService.updateColumnsStatistics,
 
             //playground - recipe
             hideRecipe: PlaygroundStateService.hideRecipe,

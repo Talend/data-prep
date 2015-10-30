@@ -123,6 +123,31 @@ describe('Playground state service', function () {
             //then
             expect(playgroundState.lookupVisibility).toBe(true);
         }));
+
+        it('should update columns statistics', inject(function(playgroundState, PlaygroundStateService) {
+            //given
+            playgroundState.data = {
+                columns: [
+                    {id: '0000', statistics: {}},
+                    {id: '0001', statistics: {}},
+                    {id: '0002', statistics: {}}
+                ]
+            };
+
+            var newColumns = [
+                {id: '0000', statistics: {frequencyTable: [{data: '5.0', occurrences: 98}]}},
+                {id: '0001', statistics: {frequencyTable: [{data: 'Toto', occurrences: 5}]}},
+                {id: '0002', statistics: {frequencyTable: [{data: '', occurrences: 66}]}}
+            ];
+
+            //when
+            PlaygroundStateService.updateColumnsStatistics(newColumns);
+
+            //then
+            expect(playgroundState.data.columns[0].statistics).toBe(newColumns[0].statistics);
+            expect(playgroundState.data.columns[1].statistics).toBe(newColumns[1].statistics);
+            expect(playgroundState.data.columns[2].statistics).toBe(newColumns[2].statistics);
+        }));
     });
 
     describe('filters', function() {

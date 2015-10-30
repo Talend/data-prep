@@ -22,7 +22,7 @@ describe('stats details directive', function () {
         element.remove();
     });
 
-    it('should set column name in title', inject(function (StatisticsService) {
+    it('should render stats', inject(function (StatisticsService) {
         //given
         createElement();
 

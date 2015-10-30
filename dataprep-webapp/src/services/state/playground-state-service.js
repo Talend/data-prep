@@ -22,6 +22,7 @@
             reset: reset,
             setData: setData,
             setLookupVisibility: setLookupVisibility,
+            updateColumnsStatistics: updateColumnsStatistics,
 
             //recipe
             showRecipe: RecipeStateService.show,
@@ -68,6 +69,13 @@
 
         function setLookupVisibility(visibility) {
             playgroundState.lookupVisibility = visibility;
+        }
+
+        function updateColumnsStatistics(columns) {
+            _.forEach(playgroundState.data.columns, function(col) {
+                var correspondingColumn = _.find(columns, {id: col.id});
+                col.statistics = correspondingColumn.statistics;
+            });
         }
 
         //--------------------------------------------------------------------------------------------------------------

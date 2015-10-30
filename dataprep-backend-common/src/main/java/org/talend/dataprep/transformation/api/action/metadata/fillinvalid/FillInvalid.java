@@ -7,7 +7,6 @@ import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,9 +154,6 @@ public class FillInvalid extends ActionMetadata implements ColumnAction {
                 newValue = parameters.get(DEFAULT_VALUE_PARAMETER);
             }
             row.set(columnId, newValue);
-            // update invalid values of column metadata to prevent unnecessary future analysis
-            final Set<String> invalidValues = colMetadata.getQuality().getInvalidValues();
-            invalidValues.add(value);
         }
     }
 

@@ -6,11 +6,23 @@ describe('Transformation Application Service', function () {
 
     beforeEach(module('data-prep.services.transformation', function ($provide) {
         stateMock = {playground: {grid: {}}};
+        stateMock.playground.filter = {
+            applyTransformationOnFilters: true,
+            gridFilters: [88]
+        };
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function ($q, PlaygroundService) {
+    beforeEach(inject(function ($q, PlaygroundService, FilterService) {
         spyOn(PlaygroundService, 'appendStep').and.returnValue();
+        spyOn(FilterService, 'convertFiltersArrayToTreeFormat').and.returnValue({
+            filter:{
+                eq:{
+                    field:'0001',
+                    value:'john'
+                }
+            }
+        });
     }));
 
     describe('Append Step', function () {
@@ -20,6 +32,7 @@ describe('Transformation Application Service', function () {
             var scope = 'column';
             var params = {param: 'value'};
             stateMock.playground.grid.selectedColumn = {id: '0001', name: 'firstname'};
+            stateMock.playground.filter.applyTransformationOnFilters = false;
 
             //when
             TransformationApplicationService.append(transformation, scope, params);
@@ -47,7 +60,13 @@ describe('Transformation Application Service', function () {
             var expectedParams = {
                 scope: 'column',
                 column_id: '0001',
-                column_name: 'firstname'
+                column_name: 'firstname',
+                filter: {
+                    eq:{
+                        field:'0001',
+                        value:'john'
+                    }
+                }
             };
             expect(PlaygroundService.appendStep).toHaveBeenCalledWith('tolowercase', expectedParams);
         }));
@@ -68,7 +87,13 @@ describe('Transformation Application Service', function () {
                 param: 'value',
                 scope: 'column',
                 column_id: '0001',
-                column_name: 'firstname'
+                column_name: 'firstname',
+                filter: {
+                    eq:{
+                        field:'0001',
+                        value:'john'
+                    }
+                }
             };
             expect(PlaygroundService.appendStep).toHaveBeenCalledWith('tolowercase', expectedParams);
         }));

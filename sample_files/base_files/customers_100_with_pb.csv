@@ -13,9 +13,9 @@ id;firstname;lastname;state;registration;city;birth;nbCommands;avgAmount
 12;Zachary;  Adams  ;  MI  ;14-10-2007;Atlant;22-11-1969;;89.7
 13;Richard;"  Coolidge
 foobar  ";KY;02-09-07;;01-07-1959;62;56.3
-14;Gerald;Clinton  ;ND;27-06-07;SACRAMENTO;26-06-1980;88;
+14;Gerald;Clinton  ;XX;27-06-07;SACRAMENTO;26-06-1980;88;
 15;George;Hoover  ;TN;05-11-07;Sacramento;26-08-1948;39;-38.6
-16;Franklin;     Polk;WI;15-12-07;Madison;07-05-1958;77;10
+16;Franklin;     Polk;WK;15-12-07;Madison;07-05-1958;77;10
 17;Herbert;Pierce;IL;15-11-2007;Salem;27-08-1967;69;NA
 18;Jimmy;Taft;WI;09-02-2007;Carson City;28-10-1970;58;-8.2
 19;Thomas;Tyler;ND;09-12-2008;Providence;14-01-1977;54;52.0

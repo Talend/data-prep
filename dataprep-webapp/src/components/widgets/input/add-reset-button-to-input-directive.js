@@ -11,14 +11,16 @@
                 iElement.wrap(wrapper);
 
                 var clearButton = angular.element('<div style="position: absolute;"><img src="/assets/images/common-input-clear.png" alt="x"></div>');
-                var searchIcon = angular.element('<div style="position: absolute;"><img src="/assets/images/actions-search-icon.png" alt=""></div>');
+                var searchIcon = angular.element('<div style="position: absolute;"><span class="icon" data-icon="D"></span></div>');
 
                 clearButton.css('top','2px');
                 clearButton.css('left',iElement.width()-margin);
                 clearButton.css('display','none');
 
 
-                searchIcon.css('top','2px');
+                searchIcon.css('top','4px');
+                searchIcon.css('font-size','0.5em');
+                searchIcon.css('color','gray');
                 searchIcon.css('left',iElement.width()-margin);
                 searchIcon.css('display','block');
 

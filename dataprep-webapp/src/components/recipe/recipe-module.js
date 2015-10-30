@@ -21,6 +21,8 @@
         'data-prep.services.preparation',
         'data-prep.services.state',
         'data-prep.recipe-bullet',
-        'data-prep.transformation-form'
+        'data-prep.transformation-form',
+        'data-prep.services.filter',
+        'data-prep.services.utils'
     ]);
 })();

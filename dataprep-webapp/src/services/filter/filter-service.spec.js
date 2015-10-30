@@ -3,7 +3,15 @@ describe('Filter service', function() {
 
     var stateMock;
     beforeEach(module('data-prep.services.filter', function ($provide) {
-        stateMock = {playground: {filter: {gridFilters: []}}};
+        var columns =  [
+            {id: '0000', name: 'id'},
+            {id: '0001', name: 'name'}
+        ];
+
+        stateMock = {playground: {
+            filter: {gridFilters: []},
+            data:{columns:columns}
+        }};
         $provide.constant('state', stateMock);
     }));
 
@@ -448,6 +456,197 @@ describe('Filter service', function() {
             //the 4 is no more inside the brush range
             expect(newFilterInfos.filterFn()({col1: '4'})).toBeFalsy();
             expect(newFilterInfos.removeFilterFn).toBe(removeCallback);
+        }));
+    });
+
+    describe('filters tree construction', function() {
+        it('should constructs AND pairs tree with more than 1 filter', inject(function(FilterService) {
+            //given
+            var filters = [
+                {
+                    'type': 'valid_records',
+                    'colId': '0000',
+                    'colName': 'name',
+                    'value': 'valid records'
+                },
+                {
+                    'type': 'exact',
+                    'colId': '0000',
+                    'colName': 'name',
+                    'args': {
+                        'phrase': '        AMC  ',
+                        'caseSensitive': true
+                    },
+                    'value': '        AMC  '
+                },
+                {
+                    'type': 'contains',
+                    'colId': '0000',
+                    'colName': 'name',
+                    'args': {
+                        'phrase': 'amc'
+                    },
+                    'value': 'amc'
+                },
+                {
+                    'type': 'inside_range',
+                    'colId': '0005',
+                    'colName': 'weight (lb)',
+                    'args': {
+                        'interval': [
+                            1786,
+                            5140
+                        ]
+                    },
+                    'value': '[1,786 .. 5,140]'
+                },
+                {
+                    'type': 'invalid_records',
+                    'colId': '0001',
+                    'colName': 'economy (mpg)',
+                    'value': 'invalid records'
+                },
+                {
+                    'type': 'empty_records',
+                    'colId': '0004',
+                    'colName': 'power (hp)',
+                    'value': 'empty records'
+                }
+            ];
+
+            //when
+            var filtersTree = FilterService.convertFiltersArrayToTreeFormat(filters);
+
+            //then
+            expect(filtersTree.filter).toEqual({
+                'and': [
+                    {
+                        'and': [
+                            {
+                                'and': [
+                                    {
+                                        'valid': {
+                                            'field': '0000'
+                                        }
+                                    },
+                                    {
+                                        'eq': {
+                                            'field': '0000',
+                                            'value': '        AMC  '
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                'and': [
+                                    {
+                                        'contains': {
+                                            'field': '0000',
+                                            'value': 'amc'
+                                        }
+                                    },
+                                    {
+                                        'range': {
+                                            'field': '0005',
+                                            'start': '1786',
+                                            'end': '5140'
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'and': [
+                            {
+                                'invalid': {
+                                    'field': '0001'
+                                }
+                            },
+                            {
+                                'empty': {
+                                    'field': '0004'
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+        }));
+
+        it('should constructs AND pairs tree with only 1 filter', inject(function(FilterService) {
+            //given
+            var filters = [
+                {
+                    'type': 'exact',
+                    'colId': '0000',
+                    'colName': 'name',
+                    'args': {
+                        'phrase': '        AMC  ',
+                        'caseSensitive': true
+                    },
+                    'value': '        AMC  '
+                }
+            ];
+
+            //when
+            var filtersTree = FilterService.convertFiltersArrayToTreeFormat(filters);
+
+            //then
+            expect(filtersTree.filter).toEqual({
+                'eq': {
+                    'field': '0000',
+                    'value': '        AMC  '
+                }
+            });
+        }));
+
+        it('should return empty object', inject(function(FilterService) {
+            //given
+            var filters = [];
+
+            //when
+            var filtersTree = FilterService.convertFiltersArrayToTreeFormat(filters);
+
+            //then
+            expect(filtersTree.filter).toBe(undefined);
+            expect(filtersTree).toEqual({});
+        }));
+    });
+
+    describe('filters tree flattening', function() {
+        it('should return empty object', inject(function(FilterService) {
+            //given
+            var filtersTree = {
+                'and': [
+                    {
+                        'invalid': {
+                            'field': '0000'
+                        }
+                    },
+                    {
+                        'eq': {
+                            'field': '0001',
+                            'value': 'Toum'
+                        }
+                    }
+                ]
+            };
+            var result = [];
+
+            //when
+            FilterService.flattenFiltersTree(filtersTree, result);
+
+            //then
+            expect(result[0].type).toEqual('invalid_records');
+            expect(result[0].colId).toEqual('0000');
+            expect(result[0].colName).toEqual('id');
+            expect(result[0].args).toBe(undefined);
+
+            expect(result[1].type).toBe('exact');
+            expect(result[1].colId).toBe('0001');
+            expect(result[1].colName).toBe('name');
+            expect(result[1].args).toEqual({ phrase: 'Toum' });
         }));
     });
 });

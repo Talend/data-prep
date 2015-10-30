@@ -14,6 +14,7 @@
         'data-prep.services.preparation',
         'data-prep.services.transformation',
         'data-prep.services.playground',
-        'data-prep.services.state'
+        'data-prep.services.state',
+        'data-prep.services.filter'
     ]);
 })();

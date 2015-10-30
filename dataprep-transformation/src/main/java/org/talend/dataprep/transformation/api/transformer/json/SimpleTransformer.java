@@ -127,8 +127,11 @@ class SimpleTransformer implements Transformer {
                 final DataSetRow row = postProcessQueue.pop();
                 // End analysis and set the statistics
                 final Analyzer<Analyzers.Result> analyzer = (Analyzer<Analyzers.Result>) context.get(CONTEXT_ANALYZER);
-                analyzer.end();
-                adapter.adapt(row.getRowMetadata().getColumns(), analyzer.getResult());
+                if (analyzer != null) {
+                    // Analyzer may not be initialized when all rows were deleted.
+                    analyzer.end();
+                    adapter.adapt(row.getRowMetadata().getColumns(), analyzer.getResult());
+                }
                 writer.write(row.getRowMetadata());
             }
             if (postProcessQueue.size() > 1) {

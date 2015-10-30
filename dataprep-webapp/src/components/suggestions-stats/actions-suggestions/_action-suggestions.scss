@@ -38,6 +38,27 @@
       color: cornflowerblue;
       overflow: hidden;
     }
+
+    .filters-actions-form{
+      background-color: #F1F1F1;
+      .hr-style{
+        margin:auto;
+        border: 0;
+        height: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      &.animate-show.ng-hide-add, &.animate-show.ng-hide-remove {
+        transition: all linear 0.5s;
+      }
+      &.animate-show.ng-hide {
+        opacity: 0;
+      }
+      &.animate-show {
+        opacity: 1;
+      }
+    }
+
   }
 
   .action-suggestion-tab-items{

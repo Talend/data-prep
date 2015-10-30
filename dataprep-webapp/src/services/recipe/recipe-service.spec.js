@@ -24,7 +24,12 @@ describe('Recipe service', function () {
                 {
                     'action': 'uppercase',
                     'parameters': {
-                        'column_name': 'country'
+                        'column_name': 'country',
+                        filter:{
+                            valid: {
+                                field:'0000'
+                            }
+                        }
                     }
                 },
                 {
@@ -429,7 +434,7 @@ describe('Recipe service', function () {
         stateMock = {playground: {}};
         $provide.constant('state', stateMock);
     }));
-    beforeEach(inject(function($q, PreparationService, TransformationService) {
+    beforeEach(inject(function($q, PreparationService, TransformationService, FilterService) {
         spyOn(PreparationService, 'getDetails').and.returnValue($q.when({
             data: preparationDetails()
         }));
@@ -439,6 +444,7 @@ describe('Recipe service', function () {
             return $q.when(transformation);
         });
         spyOn(TransformationService, 'initParamsValues').and.callThrough();
+        spyOn(FilterService, 'flattenFiltersTree').and.returnValue();
     }));
 
     describe('refresh', function() {
@@ -562,7 +568,7 @@ describe('Recipe service', function () {
             );
         }));
 
-        it('should get recipe from preparation and init dynamic params', inject(function($rootScope, RecipeService, TransformationService) {
+        it('should get recipe from preparation and init dynamic params', inject(function(FilterService, $rootScope, RecipeService, TransformationService) {
             //given
             stateMock.playground.preparation = {id: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4'};
 
@@ -582,6 +588,7 @@ describe('Recipe service', function () {
 
             expect(TransformationService.initDynamicParameters).toHaveBeenCalledWith(recipe[4].transformation, { columnId: '1', preparationId: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4', stepId: '1e1f41dd6d4554705abebd8d1896022acdbad217' });
             expect(TransformationService.initParamsValues).toHaveBeenCalledWith(recipe[4].transformation, recipe[4].actionParameters.parameters);
+            expect(FilterService.flattenFiltersTree).toHaveBeenCalledWith(recipe[0].actionParameters.parameters.filter, []);
         }));
 
         it('should reuse dynamic params from previous recipe if ids are the same, on refresh', inject(function($rootScope, RecipeService, TransformationService) {
@@ -615,12 +622,12 @@ describe('Recipe service', function () {
 
             //then
             var recipe = RecipeService.getRecipe();
-            expect(recipe[0].actionParameters).toEqual({ action: 'uppercase', parameters: Object({ column_name: 'country' }) });
-            expect(recipe[1].actionParameters).toEqual({ action: 'fillemptywithdefault', parameters: Object({ default_value: 'M', column_name: 'gender' }) });
-            expect(recipe[2].actionParameters).toEqual({ action: 'negate', parameters: Object({ column_name: 'campain' }) });
-            expect(recipe[3].actionParameters).toEqual({ action: 'cut', parameters: Object({ pattern: '.', column_name: 'first_item' }) });
+            expect(recipe[0].actionParameters).toEqual({ action: 'uppercase', parameters: { column_name: 'country', filter: { valid: { field: '0000' }}}});
+            expect(recipe[1].actionParameters).toEqual({ action: 'fillemptywithdefault', parameters: { default_value: 'M', column_name: 'gender' }});
+            expect(recipe[2].actionParameters).toEqual({ action: 'negate', parameters: { column_name: 'campain' } });
+            expect(recipe[3].actionParameters).toEqual({ action: 'cut', parameters: { pattern: '.', column_name: 'first_item' }});
             expect(recipe[4].actionParameters).toEqual({ action: 'textclustering', parameters: { Texa: 'Texas', Tixass: 'Texas', 'Tex@s': 'Texas', Massachusetts: 'Massachussets', Masachusetts: 'Massachussets', Massachussetts: 'Massachussets', Massachusets: 'Massachussets', Masachussets: 'Massachussets', column_id: '1', column_name: 'uglystate' }});
-            expect(recipe[5].actionParameters).toEqual({ action: 'fillemptywithdefaultboolean', parameters: Object({ default_value: 'True', column_name: 'campain' }) });
+            expect(recipe[5].actionParameters).toEqual({ action: 'fillemptywithdefaultboolean', parameters: { default_value: 'True', column_name: 'campain' }});
         }));
     });
 
@@ -1014,6 +1021,11 @@ describe('Recipe service', function () {
                 value: 'James',
                 replace: 'Jimmy'
             };
+
+            stateMock.playground.filter = {
+                applyTransformationOnFilters: true,
+                gridFilters: [88]
+            };
         }));
 
         it('should create a new recipe with preview step appended', inject(function(RecipeService) {
@@ -1049,7 +1061,8 @@ describe('Recipe service', function () {
                     parameters: params
                 },
                 preview: true,
-                inactive: false
+                inactive: false,
+                filters:[88]
             });
             expect(recipe[3].transformation.parameters).not.toBe(transformation.parameters);
         }));

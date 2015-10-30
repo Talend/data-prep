@@ -27,6 +27,7 @@ public class FilterServiceTest {
                 put("0001", "value with spaces");
                 put("0002", "2");
                 put("0003", "");
+                put("0004", "10.5");
             }
         };
         row = new DataSetRow(values);
@@ -134,6 +135,16 @@ public class FilterServiceTest {
         assertThat(matchPredicate.test(row), is(true));
         // Test non match on "0 <= 0002 <= 1"
         final Predicate<DataSetRow> nonMatchPredicate = service.build("{\"range\": {\"field\": \"0002\",\"start\": \"0\",\"end\": \"1\"}}");
+        assertThat(nonMatchPredicate.test(row), is(false));
+    }
+
+    @Test
+    public void testRangeOnDouble() throws Exception {
+        // Test match on "0 <= 0002 <= 2"
+        final Predicate<DataSetRow> matchPredicate = service.build("{\"range\": {\"field\": \"0004\",\"start\": \"10.4\",\"end\": \"10.6\"}}");
+        assertThat(matchPredicate.test(row), is(true));
+        // Test non match on "0 <= 0002 <= 1"
+        final Predicate<DataSetRow> nonMatchPredicate = service.build("{\"range\": {\"field\": \"0004\",\"start\": \"10.1\",\"end\": \"10.4\"}}");
         assertThat(nonMatchPredicate.test(row), is(false));
     }
 

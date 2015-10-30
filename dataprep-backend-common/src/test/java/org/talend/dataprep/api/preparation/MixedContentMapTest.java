@@ -2,6 +2,7 @@ package org.talend.dataprep.api.preparation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -35,6 +36,8 @@ public class MixedContentMapTest {
         assertThat(map.get("numeric"), is("10"));
         assertThat(map.get("boolean"), is("true"));
         assertThat(map.get("double"), is("10.1"));
+        assertThat(map.get("null"), nullValue());
+        assertThat(map.get("empty"), is(""));
         final String object = map.get("object");
         assertThat(object, sameJSONAs("{\"eq\": { \"field\": \"nbCommands\",\"value\": \"13\" }}"));
     }
@@ -44,6 +47,8 @@ public class MixedContentMapTest {
         MixedContentMap map = new MixedContentMap();
         map.put("string", "string value");
         map.put("numeric", "10");
+        map.put("null", null);
+        map.put("empty", "");
         map.put("object", "{\"eq\": { \"field\": \"nbCommands\",\"value\": \"13\" }}");
         final StringWriter writer = new StringWriter();
         mapper.writer().writeValue(writer, map);

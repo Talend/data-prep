@@ -32,19 +32,6 @@ describe('Suggestion Service', function() {
         expect(ColumnSuggestionService.initTransformations).toHaveBeenCalledWith(column);
     }));
 
-
-    it('should reset action search', inject(function(SuggestionService) {
-        //given
-        var column = {id: '0001'};
-        SuggestionService.searchActionString = 'test';
-
-        //when
-        SuggestionService.setColumn(column);
-
-        //then
-        expect(SuggestionService.searchActionString).toBeFalsy();
-    }));
-
     it('should NOT init column suggestions when column is already selected', inject(function(SuggestionService, ColumnSuggestionService) {
         //given
         expect(ColumnSuggestionService.initTransformations).not.toHaveBeenCalled();

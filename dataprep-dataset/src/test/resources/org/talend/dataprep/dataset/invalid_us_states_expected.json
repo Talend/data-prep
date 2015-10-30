@@ -1,0 +1,462 @@
+{
+  "metadata": {
+    "favorite": false,
+    "lifecycle": {
+      "inProgress": false,
+      "importing": false,
+      "contentAnalyzed": true,
+      "schemaAnalyzed": true,
+      "qualityAnalyzed": true
+    },
+    "records": 5,
+    "nbLinesHeader": 1,
+    "nbLinesFooter": 0,
+    "type": "text/csv",
+    "parameters": {
+      "SEPARATOR": ";"
+    },
+    "formatGuess": "formatGuess#csv",
+    "certificationStep": "NONE",
+    "location": {
+      "type": "local"
+    },
+    "name": "",
+    "author": "anonymousUser",
+    "sheetName": null,
+    "draft": false,
+    "schemaParserResult": null,
+    "encoding": "UTF-8"
+  },
+  "columns": [
+    {
+      "name": "al",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 2,
+        "valid": 3,
+        "invalidValues": [
+          "ZZ",
+          "RT"
+        ]
+      },
+      "id": "0000",
+      "statistics": {
+        "count": 5,
+        "valid": 3,
+        "invalid": 2,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 0,
+        "distinctCount": 5,
+        "frequencyTable": [
+          {
+            "data": "ZZ",
+            "occurrences": 1
+          },
+          {
+            "data": "RT",
+            "occurrences": 1
+          },
+          {
+            "data": "AZ",
+            "occurrences": 1
+          },
+          {
+            "data": "CO",
+            "occurrences": 1
+          },
+          {
+            "data": "CA",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "AA",
+            "occurrences": 5
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 2.0,
+          "maximalLength": 2.0,
+          "averageLength": 2.0
+        }
+      },
+      "domain": "US_STATE_CODE",
+      "domainLabel": "US State Code",
+      "domainFrequency": 3.0,
+      "semanticDomains": [
+        {
+          "id": "US_STATE_CODE",
+          "label": "US State Code",
+          "frequency": 60.0
+        },
+        {
+          "id": "COUNTRY_CODE_ISO2",
+          "label": "Country Code ISO2",
+          "frequency": 60.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Alabama",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 5,
+        "invalidValues": []
+      },
+      "id": "0001",
+      "statistics": {
+        "count": 5,
+        "valid": 5,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 0,
+        "distinctCount": 5,
+        "frequencyTable": [
+          {
+            "data": "ARIZONA",
+            "occurrences": 1
+          },
+          {
+            "data": "Colorado",
+            "occurrences": 1
+          },
+          {
+            "data": "Alaska",
+            "occurrences": 1
+          },
+          {
+            "data": "California",
+            "occurrences": 1
+          },
+          {
+            "data": "Arkansas",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "Aaaaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "AAAAAAA",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 6.0,
+          "maximalLength": 10.0,
+          "averageLength": 7.8
+        }
+      },
+      "domain": "US_STATE",
+      "domainLabel": "US State",
+      "domainFrequency": 5.0,
+      "semanticDomains": [
+        {
+          "id": "AIRPORT",
+          "label": "Airport",
+          "frequency": 20.0
+        },
+        {
+          "id": "CITY",
+          "label": "City",
+          "frequency": 20.0
+        },
+        {
+          "id": "US_COUNTY",
+          "label": "US County",
+          "frequency": 40.0
+        },
+        {
+          "id": "US_STATE",
+          "label": "US State",
+          "frequency": 100.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Montgomery",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 1,
+        "invalid": 0,
+        "valid": 4,
+        "invalidValues": []
+      },
+      "id": "0002",
+      "statistics": {
+        "count": 5,
+        "valid": 4,
+        "invalid": 0,
+        "empty": 1,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 0,
+        "distinctCount": 5,
+        "frequencyTable": [
+          {
+            "data": "",
+            "occurrences": 1
+          },
+          {
+            "data": "PHOENIX",
+            "occurrences": 1
+          },
+          {
+            "data": "Denver",
+            "occurrences": 1
+          },
+          {
+            "data": "Juneau",
+            "occurrences": 1
+          },
+          {
+            "data": "Little Rock",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "Aaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "",
+            "occurrences": 1
+          },
+          {
+            "pattern": "AAAAAAA",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa Aaaa",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 0.0,
+          "maximalLength": 11.0,
+          "averageLength": 6.0
+        }
+      },
+      "domain": "CITY",
+      "domainLabel": "City",
+      "domainFrequency": 4.0,
+      "semanticDomains": [
+        {
+          "id": "CITY",
+          "label": "City",
+          "frequency": 80.0
+        },
+        {
+          "id": "AIRPORT",
+          "label": "Airport",
+          "frequency": 40.0
+        },
+        {
+          "id": "US_COUNTY",
+          "label": "US County",
+          "frequency": 40.0
+        },
+        {
+          "id": "FIRST_NAME",
+          "label": "First Name",
+          "frequency": 40.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Birmingham city",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 1,
+        "invalid": 0,
+        "valid": 4,
+        "invalidValues": []
+      },
+      "id": "0003",
+      "statistics": {
+        "count": 5,
+        "valid": 4,
+        "invalid": 0,
+        "empty": 1,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 0,
+        "distinctCount": 5,
+        "frequencyTable": [
+          {
+            "data": "",
+            "occurrences": 1
+          },
+          {
+            "data": "PHOENIX",
+            "occurrences": 1
+          },
+          {
+            "data": "Anchorage",
+            "occurrences": 1
+          },
+          {
+            "data": "Denver",
+            "occurrences": 1
+          },
+          {
+            "data": "Little Rock",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "",
+            "occurrences": 1
+          },
+          {
+            "pattern": "AAAAAAA",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa Aaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 0.0,
+          "maximalLength": 11.0,
+          "averageLength": 6.6
+        }
+      },
+      "domain": "CITY",
+      "domainLabel": "City",
+      "domainFrequency": 4.0,
+      "semanticDomains": [
+        {
+          "id": "CITY",
+          "label": "City",
+          "frequency": 80.0
+        },
+        {
+          "id": "AIRPORT",
+          "label": "Airport",
+          "frequency": 20.0
+        },
+        {
+          "id": "US_COUNTY",
+          "label": "US County",
+          "frequency": 40.0
+        },
+        {
+          "id": "FIRST_NAME",
+          "label": "First Name",
+          "frequency": 40.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    }
+  ],
+  "records": [
+    {
+      "0000": "ZZ",
+      "0001": "Alaska",
+      "0002": "Juneau",
+      "0003": "Anchorage",
+      "tdpId": 1
+    },
+    {
+      "0000": "AZ",
+      "0001": "ARIZONA",
+      "0002": "PHOENIX",
+      "0003": "PHOENIX",
+      "tdpId": 2
+    },
+    {
+      "0000": "RT",
+      "0001": "Arkansas",
+      "0002": "Little Rock",
+      "0003": "Little Rock",
+      "tdpId": 3
+    },
+    {
+      "0000": "CA",
+      "0001": "California",
+      "0002": "",
+      "0003": "",
+      "tdpId": 4
+    },
+    {
+      "0000": "CO",
+      "0001": "Colorado",
+      "0002": "Denver",
+      "0003": "Denver",
+      "tdpId": 5
+    }
+  ]
+}

@@ -3,36 +3,39 @@
         <span class="title title-action" title="{{actionsSuggestionsCtrl.column.name}}">{{actionsSuggestionsCtrl.column.name}}</span>
     </div>
 
-    <div class="Description" ng-if="! actionsSuggestionsCtrl.columnSuggestions">Select a column to display its actions</div>
+    <div class="Description" ng-if="!actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">Select a column to display its actions</div>
 
-    <talend-tabs tab="actionsSuggestionsCtrl.tab" action-on-click="actionsSuggestionsCtrl.resizePanels()" ng-if="actionsSuggestionsCtrl.columnSuggestions">
+    <talend-tabs tab="actionsSuggestionsCtrl.tab" action-on-click="actionsSuggestionsCtrl.resizePanels()" ng-if="actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">
         <talend-tabs-item tab-title="Text">
-            <div class="action-suggestion-tab-items">Coming soon ...</div>
+            <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Cell">
-            <div class="action-suggestion-tab-items">Coming soon ...</div>
+            <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Line">
-            <div class="action-suggestion-tab-items">Coming soon ...</div>
+            <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Column" default="true" action-on-init="actionsSuggestionsCtrl.resizePanels()">
             <input type="search"
                    class="action-search"
                    id="action-suggestions-search"
                    translate-once-placeholder="FIND_FUNCTION"
-                   ng-model="actionsSuggestionsCtrl.suggestionService.searchActionString"
+                   ng-model="actionsSuggestionsCtrl.columnSuggestionService.searchActionString"
                    ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                   ng-change="actionsSuggestionsCtrl.columnSuggestionService.filterTransformations()"
                    add-reset-button-to-input>
 
             <div class="action-suggestion-tab-items">
-                <div ng-repeat="(category, transformations) in actionsSuggestionsCtrl.columnSuggestions">
-                    <div class="action-category" ng-show="(transformations | actionsSuggestionsSearchFilter:actionsSuggestionsCtrl.suggestionService.searchActionString).length" ng-bind-html="category"></div>
+                <div ng-repeat="categoryTransformations in actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations track by $index"
+                     ng-if="actionsSuggestionsCtrl.shouldRenderCategory(categoryTransformations)">
+                    <div class="action-category" ng-bind-html="categoryTransformations.categoryHtml"></div>
                     <div>
                         <talend-accordions class="menu">
                             <talend-accordions-item
-                                    ng-repeat="transfo in transformations | actionsSuggestionsSearchFilter:actionsSuggestionsCtrl.suggestionService.searchActionString track by transfo.name"
+                                    ng-repeat="transfo in categoryTransformations.transformations track by transfo.name"
+                                    ng-if="actionsSuggestionsCtrl.shouldRenderTransformation(transfo)"
                                     action="actionsSuggestionsCtrl.scrollToBottom"
-                                    ng-switch="!!(transfo.parameters || transfo.items)">
+                                    ng-switch="!!transfo.parameters">
                                 <!--with dynamic parameters-->
                                 <a class="trigger"
                                    ng-switch-when="false"
@@ -107,4 +110,18 @@
 
         </div>
     </talend-modal>
+
+    <div class="filters-actions-form animate-show" ng-show="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length">
+        <hr class="hr-style">
+        <form name="myForm">
+            Apply changes to:
+            <input type="radio" ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters" ng-value="false" />
+            All Lines
+            <input type="radio" ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters" ng-value="true" />
+            Filtered Lines
+        </form>
+        <hr class="hr-style">
+    </div>
+
+
 </div>

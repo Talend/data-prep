@@ -12,6 +12,7 @@
     angular.module('data-prep.services.transformation', [
         'data-prep.services.utils',
         'data-prep.services.state',
-        'data-prep.services.playground'
+        'data-prep.services.playground',
+        'data-prep.services.filter'
     ]);
 })();

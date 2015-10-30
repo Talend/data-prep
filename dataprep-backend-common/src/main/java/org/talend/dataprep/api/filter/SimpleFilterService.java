@@ -47,13 +47,13 @@ public class SimpleFilterService implements FilterService {
             if (currentNode.has("eq")) {
                 return r -> StringUtils.equals(r.get(columnName), value);
             } else if (currentNode.has("gt")) {
-                return safe(r -> Integer.parseInt(r.get(columnName)) > Integer.parseInt(value));
+                return safe(r -> Double.parseDouble(r.get(columnName)) > Double.parseDouble(value));
             } else if (currentNode.has("lt")) {
-                return safe(r -> Integer.parseInt(r.get(columnName)) < Integer.parseInt(value));
+                return safe(r -> Double.parseDouble(r.get(columnName)) < Double.parseDouble(value));
             } else if (currentNode.has("gte")) {
-                return safe(r -> Integer.parseInt(r.get(columnName)) >= Integer.parseInt(value));
+                return safe(r -> Double.parseDouble(r.get(columnName)) >= Double.parseDouble(value));
             } else if (currentNode.has("lte")) {
-                return safe(r -> Integer.parseInt(r.get(columnName)) <= Integer.parseInt(value));
+                return safe(r -> Double.parseDouble(r.get(columnName)) <= Double.parseDouble(value));
             } else if (currentNode.has("contains")) {
                 return r -> StringUtils.containsIgnoreCase(r.get(columnName), value);
             }
@@ -84,8 +84,8 @@ public class SimpleFilterService implements FilterService {
                 final String start = currentNodeContent.get("start").asText();
                 final String end = currentNodeContent.get("end").asText();
                 return safe(r -> {
-                    final int columnValue = Integer.parseInt(r.get(columnName));
-                    return columnValue >= Integer.parseInt(start) && columnValue <= Integer.parseInt(end);
+                    final double columnValue = Double.parseDouble(r.get(columnName));
+                    return columnValue >= Double.parseDouble(start) && columnValue <= Double.parseDouble(end);
                 });
             } else if (currentNode.has("and")) {
                 if (currentNodeContent.size() != 2) {
@@ -115,6 +115,9 @@ public class SimpleFilterService implements FilterService {
             try {
                 return inner.test(r);
             } catch (NumberFormatException e) {
+                return false;
+            } catch (NullPointerException e) {
+                // Double.parseDouble throws NPE when parsing null strings.
                 return false;
             }
         };

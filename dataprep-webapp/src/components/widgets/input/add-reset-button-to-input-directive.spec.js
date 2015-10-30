@@ -28,7 +28,8 @@ describe('Add reset button to input directive', function() {
 
         //then
         expect(element.find('div').length).toBe(3);
-        expect(element.find('img').length).toBe(2);
+        expect(element.find('img').length).toBe(1);
+        expect(element.find('span').length).toBe(1);
 
         expect(element.find('div').eq(1).css('display')).toEqual('none');
         expect(element.find('div').eq(2).css('display')).toEqual('block');

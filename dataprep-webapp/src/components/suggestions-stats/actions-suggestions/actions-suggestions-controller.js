@@ -12,14 +12,16 @@
      * @requires data-prep.services.playground.service:EarlyPreviewService
      */
     function ActionsSuggestionsCtrl(state, SuggestionService, ColumnSuggestionService, TransformationService,
-                                    TransformationApplicationService, EarlyPreviewService) {
+                                    TransformationApplicationService, EarlyPreviewService, StateService) {
 
         var vm = this;
         vm.columnSuggestionService = ColumnSuggestionService;
         vm.suggestionService = SuggestionService;
+        vm.state = state;
 
         vm.earlyPreview = EarlyPreviewService.earlyPreview;
         vm.cancelEarlyPreview = EarlyPreviewService.cancelEarlyPreview;
+        vm.updateFilterStatus = StateService.updateFilterStatus;
 
         /**
          * @ngdoc property
@@ -52,16 +54,6 @@
          * @description show/hides the dynamic transformation or the alert message
          */
         vm.showModalContent = null;
-
-
-        /**
-         * @ngdoc property
-         * @name searchActionString
-         * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
-         * @description Actions to search
-         */
-        vm.searchActionString = '';
-
 
         /**
          * @ngdoc method
@@ -168,23 +160,38 @@
                     });
             };
         };
-    }
 
-    /**
-     * @ngdoc property
-     * @name suggestions
-     * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
-     * @description The suggested transformations list.
-     * This is bound to {@link data-prep.services.transformation:ColumnSuggestionService ColumnSuggestionService}.transformations
-     */
-    Object.defineProperty(ActionsSuggestionsCtrl.prototype,
-        'columnSuggestions', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.columnSuggestionService.transformations;
-            }
-        });
+        /**
+         * @ngdoc method
+         * @name shouldRenderTransformation
+         * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+         * @param {object} transformation The transformation to test
+         * @description Determine if the transformation should be rendered.
+         * The 'filtered' category transformations are not rendered if the applyTransformationOnFilters flag is false
+         * @returns {boolean} True if the transformation should be rendered, False otherwise
+         */
+        vm.shouldRenderTransformation = function shouldRenderTransformation(transformation) {
+            return state.playground.filter.applyTransformationOnFilters || (transformation.category !== 'filtered');
+        };
+
+        /**
+         * @ngdoc method
+         * @name shouldRenderCategory
+         * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+         * @param {object} categoryTransformations The categories with their transformations
+         * @description Determine if the category should be rendered.
+         * The 'suggestion' category is rendered if it has transformations to render
+         * @returns {boolean} True if the category should be rendered, False otherwise
+         */
+        vm.shouldRenderCategory = function shouldRenderCategory(categoryTransformations) {
+
+            return state.playground.filter.applyTransformationOnFilters ||                      // display 'filtered' transformations (contained into 'suggestion' category)
+                categoryTransformations.category !== 'suggestion' ||                            // not 'suggestion' category
+                _.find(categoryTransformations.transformations, function(transfo) {             // 'suggestion' category: has transformations that is not a 'filtered' transformation
+                    return transfo.category !== 'filtered';
+                });
+        };
+    }
 
     /**
      * @ngdoc property

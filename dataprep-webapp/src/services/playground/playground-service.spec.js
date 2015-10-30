@@ -351,6 +351,71 @@ describe('Playground Service', function () {
         }));
     });
 
+    describe('update statistics', function () {
+        beforeEach(inject(function ($q, StateService, DatasetService, PreparationService, StatisticsService) {
+            spyOn(StatisticsService, 'updateStatistics').and.returnValue();
+            spyOn(PreparationService, 'getContent').and.returnValue($q.when(datasetContent));
+            spyOn(StateService, 'updateColumnsStatistics').and.returnValue();
+        }));
+
+        it('should get dataset content and set statistics in state', inject(function ($rootScope, PlaygroundService, DatasetService, StateService) {
+            //given
+            stateMock.playground.dataset = {id: '1324d56456b84ef154'};
+            stateMock.playground.preparation = null;
+
+            //when
+            PlaygroundService.updateStatistics();
+            $rootScope.$digest();
+
+            //then
+            expect(DatasetService.getContent).toHaveBeenCalledWith('1324d56456b84ef154', false);
+            expect(StateService.updateColumnsStatistics).toHaveBeenCalledWith(datasetContent.columns);
+        }));
+
+        it('should trigger statistics update', inject(function ($rootScope, PlaygroundService, StatisticsService) {
+            //given
+            stateMock.playground.dataset = {id: '1324d56456b84ef154'};
+            stateMock.playground.preparation = null;
+
+            //when
+            PlaygroundService.updateStatistics();
+            $rootScope.$digest();
+
+            //then
+            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+        }));
+
+        it('should get preparation head content and set statistics in state', inject(function ($rootScope, RecipeService, PlaygroundService, PreparationService, StateService) {
+            //given
+            spyOn(RecipeService, 'getLastActiveStep').and.returnValue(null);
+            stateMock.playground.dataset = {id: '1324d56456b84ef154'};
+            stateMock.playground.preparation = {id: '56ab612e6546ef15'};
+
+            //when
+            PlaygroundService.updateStatistics();
+            $rootScope.$digest();
+
+            //then
+            expect(PreparationService.getContent).toHaveBeenCalledWith('56ab612e6546ef15', 'head');
+            expect(StateService.updateColumnsStatistics).toHaveBeenCalledWith(datasetContent.columns);
+        }));
+
+        it('should get preparation at specific step content and set statistics in state', inject(function ($rootScope, RecipeService, PlaygroundService, PreparationService, StateService) {
+            //given
+            spyOn(RecipeService, 'getLastActiveStep').and.returnValue({transformation: {stepId: '35ae846435a8486'}});
+            stateMock.playground.dataset = {id: '1324d56456b84ef154'};
+            stateMock.playground.preparation = {id: '56ab612e6546ef15'};
+
+            //when
+            PlaygroundService.updateStatistics();
+            $rootScope.$digest();
+
+            //then
+            expect(PreparationService.getContent).toHaveBeenCalledWith('56ab612e6546ef15', '35ae846435a8486');
+            expect(StateService.updateColumnsStatistics).toHaveBeenCalledWith(datasetContent.columns);
+        }));
+    });
+
     describe('transformation steps', function () {
         var preparationHeadContent, metadata;
         var lastStepId = 'a151e543456413ef51';

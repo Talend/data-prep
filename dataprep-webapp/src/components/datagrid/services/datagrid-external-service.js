@@ -34,6 +34,7 @@
 
         function updateSuggestionPanel(column, tab) {
             if (column.id === 'tdpId') {
+                $timeout.cancel(suggestionTimeout);
                 $timeout(function () {
                     SuggestionService.reset();
                     StatisticsService.reset(true, true, true);

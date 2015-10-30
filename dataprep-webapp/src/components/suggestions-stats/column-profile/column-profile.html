@@ -1,52 +1,71 @@
-<div class="column-profile">
+<div class="column-profile" ng-switch="!!(columnProfileCtrl.histogram.data.length || columnProfileCtrl.stateDistribution)">
 
-    <div class="column-profile-aggregation" ng-if="columnProfileCtrl.histogram || columnProfileCtrl.stateDistribution">
-        <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.histogram.aggregationColumn.name}}">
-            <ul class="column-profile-aggregation-list">
-                <li ng-click="columnProfileCtrl.changeAggregation()">
-                    <div translate-once="LINE_COUNT"></div>
-                </li>
-                <li ng-repeat="column in columnProfileCtrl.aggregationColumns track by column.id" class="more">
-                    <div class="moreText" title="{{column.name}}">{{column.name}}</div>
-                    <ul class="submenu">
-                        <li ng-repeat="aggregation in columnProfileCtrl.aggregations track by $index" ng-click="columnProfileCtrl.changeAggregation(column, aggregation)" title="{{ ::aggregation | translate }}">
-                            <div class="moreText" translate-once="{{aggregation}}"></div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </talend-button-dropdown>
+    <div id="column-profile-refresh"
+         ng-switch-when="false"
+         ng-switch="!!columnProfileCtrl.histogram">
 
-        <div ng-if="columnProfileCtrl.histogram.aggregation" class="column-profile-aggregation-description">
-            <span>{{columnProfileCtrl.histogram.aggregation | translate}}</span>
-            <span class="highlight">{{columnProfileCtrl.histogram.aggregationColumn.name}}</span>
-            <span translate-once="GROUP_BY"></span>
-            <span class="highlight">{{columnProfileCtrl.histogram.column.name}}</span>
-        </div>
+        <button ng-switch-when="true"
+                ng-click="columnProfileCtrl.refresh()"
+                ng-disabled="columnProfileCtrl.refreshInProgress"
+                ng-switch="columnProfileCtrl.refreshInProgress">
+            <img ng-switch-when="false" src="/assets/images/refresh-small.png">
+            <span ng-switch-when="true"><i data-icon="c" class="icon continuous-rotate"></i></span>
+        </button>
+
+        <div ng-switch-when="false"
+             class="watermark"
+             translate-once="COMING_SOON"></div>
     </div>
 
-    <horizontal-barchart id="hBarChart"
-                         ng-if="!columnProfileCtrl.histogram.vertical"
-                         width="300"
-                         height="400"
-                         on-click="columnProfileCtrl.addBarchartFilter"
-                         visu-data="columnProfileCtrl.histogram.data"
-                         value-field="formattedValue"
-                         key-field="{{columnProfileCtrl.histogram.key}}"
-                         key-label="{{columnProfileCtrl.histogram.label}}"></horizontal-barchart>
+    <div ng-switch-when="true">
+        <div class="column-profile-aggregation">
+            <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.histogram.aggregationColumn.name}}">
+                <ul class="column-profile-aggregation-list">
+                    <li ng-click="columnProfileCtrl.changeAggregation()">
+                        <div translate-once="LINE_COUNT"></div>
+                    </li>
+                    <li ng-repeat="column in columnProfileCtrl.aggregationColumns track by column.id" class="more">
+                        <div class="moreText" title="{{column.name}}">{{column.name}}</div>
+                        <ul class="submenu">
+                            <li ng-repeat="aggregation in columnProfileCtrl.aggregations track by $index" ng-click="columnProfileCtrl.changeAggregation(column, aggregation)" title="{{ ::aggregation | translate }}">
+                                <div class="moreText" translate-once="{{aggregation}}"></div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </talend-button-dropdown>
 
-    <vertical-barchart id="vBarChart"
-                       ng-if="columnProfileCtrl.histogram.vertical"
-                       width="300"
-                       height="150"
-                       on-click="columnProfileCtrl.addRangeFilter"
-                       visu-data="columnProfileCtrl.histogram.data"
-                       value-field="{{columnProfileCtrl.histogram.key}}"
-                       key-field="data"
-                       active-limits="columnProfileCtrl.histogram.activeLimits"
-                       key-label="{{columnProfileCtrl.histogram.label}}"></vertical-barchart>
+            <div ng-if="columnProfileCtrl.histogram.aggregation" class="column-profile-aggregation-description">
+                <span>{{columnProfileCtrl.histogram.aggregation | translate}}</span>
+                <span class="highlight">{{columnProfileCtrl.histogram.aggregationColumn.name}}</span>
+                <span translate-once="GROUP_BY"></span>
+                <span class="highlight">{{columnProfileCtrl.histogram.column.name}}</span>
+            </div>
+        </div>
 
-    <highchart id="geochart"
-               ng-if="columnProfileCtrl.stateDistribution"
-               config="columnProfileCtrl.chartConfig"></highchart>
+        <horizontal-barchart id="hBarChart"
+                             ng-if="!columnProfileCtrl.histogram.vertical"
+                             width="300"
+                             height="400"
+                             on-click="columnProfileCtrl.addBarchartFilter"
+                             visu-data="columnProfileCtrl.histogram.data"
+                             value-field="formattedValue"
+                             key-field="{{columnProfileCtrl.histogram.key}}"
+                             key-label="{{columnProfileCtrl.histogram.label}}"></horizontal-barchart>
+
+        <vertical-barchart id="vBarChart"
+                           ng-if="columnProfileCtrl.histogram.vertical"
+                           width="300"
+                           height="150"
+                           on-click="columnProfileCtrl.addRangeFilter"
+                           visu-data="columnProfileCtrl.histogram.data"
+                           value-field="{{columnProfileCtrl.histogram.key}}"
+                           key-field="data"
+                           active-limits="columnProfileCtrl.histogram.activeLimits"
+                           key-label="{{columnProfileCtrl.histogram.label}}"></vertical-barchart>
+
+        <highchart id="geochart"
+                   ng-if="columnProfileCtrl.stateDistribution"
+                   config="columnProfileCtrl.chartConfig"></highchart>
+    </div>
 </div>

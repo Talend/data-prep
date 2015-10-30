@@ -17,9 +17,9 @@ import org.talend.dataquality.statistics.frequency.PatternFrequencyStatistics;
 import org.talend.dataquality.statistics.numeric.histogram.HistogramStatistics;
 import org.talend.dataquality.statistics.numeric.quantile.QuantileStatistics;
 import org.talend.dataquality.statistics.numeric.summary.SummaryStatistics;
-import org.talend.dataquality.statistics.quality.ValueQualityStatistics;
 import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.datascience.common.inference.Analyzers;
+import org.talend.datascience.common.inference.ValueQualityStatistics;
 import org.talend.datascience.common.inference.type.DataType;
 
 public class StatisticsUtilsTest {

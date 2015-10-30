@@ -1,0 +1,21 @@
+{
+  "name": "nbCommands",
+  "type": "integer",
+  "quality": {
+    "empty": 4,
+    "invalid": 6,
+    "valid": 90,
+    "invalidValues": [
+      "--",
+      "17.5",
+      "NA",
+      "Unknown",
+      "null",
+      "NC"
+    ]
+  },
+  "statistics": {
+    "max": 98,
+    "min": -92
+  }
+}

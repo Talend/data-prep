@@ -1,16 +1,13 @@
 package org.talend.dataprep.transformation.api.action.metadata.common;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.type.TypeUtils;
-import org.talend.dataquality.statistics.quality.ValueQualityAnalyzer;
-import org.talend.dataquality.statistics.quality.ValueQualityStatistics;
-import org.talend.datascience.common.inference.type.DataType;
+import org.talend.dataprep.configuration.AnalyzerService;
+import org.talend.datascience.common.inference.Analyzer;
+import org.talend.datascience.common.inference.ValueQualityStatistics;
 
 /**
  * Utility class for the ActionsMetadata
@@ -19,6 +16,10 @@ public class ActionMetadataUtils {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionMetadataUtils.class);
+
+    private static final AnalyzerService service = new AnalyzerService();
+
+    private static final Map<String, Analyzer<ValueQualityStatistics>> analyzerCache = new HashMap<>();
 
     /**
      * Default empty constructor.
@@ -38,27 +39,36 @@ public class ActionMetadataUtils {
      * @return true if the value is invalid.
      */
     public static boolean checkInvalidValue(ColumnMetadata colMetadata, String value) {
-
         // easy case
-        if (colMetadata.getQuality().getInvalidValues().contains(value)) {
+        final Set<String> invalidValues = colMetadata.getQuality().getInvalidValues();
+        if (invalidValues.contains(value)) {
             return true;
         }
-
-        // perform a second analysis because column metadata statistics may have been performed on a
-        // sample smaller than the dataset
-        DataType.Type[] types = TypeUtils.convert(Collections.singletonList(colMetadata));
-        final ValueQualityAnalyzer analyzer = new ValueQualityAnalyzer(types, true);
-        analyzer.analyze(value);
-        analyzer.end();
-
-        final List<ValueQualityStatistics> results = analyzer.getResult();
-        if (results.isEmpty()) {
-            LOGGER.warn("ValueQualityAnalysis of {} returned an empty result, invalid value could not be detected...");
-            return false;
+        // Find analyzer for column type
+        Analyzer<ValueQualityStatistics> analyzer;
+        synchronized (analyzerCache) {
+            analyzer = analyzerCache.get(colMetadata.getDomain());
+            if (analyzer == null) {
+                analyzer = service.qualityAnalyzer(Collections.singletonList(colMetadata));
+                analyzer.init();
+                analyzerCache.put(colMetadata.getDomain(), analyzer);
+            }
+            analyzer.getResult().clear();
+            analyzer.analyze(value);
+            analyzer.end();
+            final List<ValueQualityStatistics> results = analyzer.getResult();
+            if (results.isEmpty()) {
+                LOGGER.warn("ValueQualityAnalysis of {} returned an empty result, invalid value could not be detected...");
+                return false;
+            }
+            final Set<String> updatedInvalidValues = results.get(0).getInvalidValues();
+            // update invalid values of column metadata to prevent unnecessary future analysis
+            invalidValues.addAll(updatedInvalidValues);
+            return updatedInvalidValues.contains(value);
         }
+    }
 
-        final Set<String> updatedInvalidValues = results.get(0).getInvalidValues();
-
-        return updatedInvalidValues.contains(value);
+    public static Map<String, Analyzer<ValueQualityStatistics>> getAnalyzerCache() {
+        return analyzerCache;
     }
 }

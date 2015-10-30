@@ -21,13 +21,32 @@ describe('Filter state service', function () {
 
     describe('grid filters', function() {
 
-        it('should add filter', inject(function (filterState, FilterStateService) {
+        it('should add a new filter', inject(function (filterState, FilterStateService) {
+            //given
+            var originalGridFilters = [];
+            filterState.gridFilters = originalGridFilters;
+            filterState.applyTransformationOnFilters = false;
+
+            var newFilter = {colId: '0001', args: {value: 'tata'}};
+
+            //when
+            FilterStateService.addGridFilter(newFilter);
+
+            //then
+            var gridFilters = filterState.gridFilters;
+            expect(gridFilters).not.toBe(originalGridFilters);
+            expect(gridFilters.length).toBe(1);
+            expect(gridFilters[0]).toBe(newFilter);
+            expect(filterState.applyTransformationOnFilters).toBe(true);
+        }));
+
+        it('should add filter to existing filters', inject(function (filterState, FilterStateService) {
             //given
             var filter1 = {colId: '0001', args: {value: 'toto'}};
             var filter2 = {colId: '0004', args: {value: 'toto'}};
             var originalGridFilters = [filter1, filter2];
             filterState.gridFilters = originalGridFilters;
-
+            filterState.applyTransformationOnFilters = true;
 
             var newFilter = {colId: '0001', args: {value: 'tata'}};
 
@@ -41,6 +60,7 @@ describe('Filter state service', function () {
             expect(gridFilters[0]).toBe(filter1);
             expect(gridFilters[1]).toBe(filter2);
             expect(gridFilters[2]).toBe(newFilter);
+            expect(filterState.applyTransformationOnFilters).toBe(true);
         }));
 
         it('should update filter', inject(function (filterState, FilterStateService) {
@@ -64,12 +84,13 @@ describe('Filter state service', function () {
             expect(gridFilters[1]).toBe(otherFilter);
         }));
 
-        it('should remove filter', inject(function (filterState, FilterStateService) {
+        it('should remove not the last filter', inject(function (filterState, FilterStateService) {
             //given
             var filter1 = {colId: '0001', args: {value: 'toto'}};
             var filter2 = {colId: '0004', args: {value: 'toto'}};
             var originalGridFilters = [filter1, filter2];
             filterState.gridFilters = originalGridFilters;
+            filterState.applyTransformationOnFilters = true;
 
             //when
             FilterStateService.removeGridFilter(filter1);
@@ -79,6 +100,24 @@ describe('Filter state service', function () {
             expect(gridFilters).not.toBe(originalGridFilters);
             expect(gridFilters.length).toBe(1);
             expect(gridFilters[0]).toBe(filter2);
+            expect(filterState.applyTransformationOnFilters).toBe(true);
+        }));
+
+        it('should remove the last filter', inject(function (filterState, FilterStateService) {
+            //given
+            var filter1 = {colId: '0001', args: {value: 'toto'}};
+            var originalGridFilters = [filter1];
+            filterState.gridFilters = originalGridFilters;
+            filterState.applyTransformationOnFilters = true;
+
+            //when
+            FilterStateService.removeGridFilter(filter1);
+
+            //then
+            var gridFilters = filterState.gridFilters;
+            expect(gridFilters).not.toBe(originalGridFilters);
+            expect(gridFilters.length).toBe(0);
+            expect(filterState.applyTransformationOnFilters).toBe(false);
         }));
 
         it('should remove all filters', inject(function (filterState, FilterStateService) {
@@ -87,6 +126,7 @@ describe('Filter state service', function () {
             var filter2 = {colId: '0004', args: {value: 'toto'}};
             var originalGridFilters = [filter1, filter2];
             filterState.gridFilters = originalGridFilters;
+            filterState.applyTransformationOnFilters = true;
 
             //when
             FilterStateService.removeAllGridFilters();
@@ -95,6 +135,7 @@ describe('Filter state service', function () {
             var gridFilters = filterState.gridFilters;
             expect(gridFilters).not.toBe(originalGridFilters);
             expect(gridFilters.length).toBe(0);
+            expect(filterState.applyTransformationOnFilters).toBe(false);
         }));
     });
 

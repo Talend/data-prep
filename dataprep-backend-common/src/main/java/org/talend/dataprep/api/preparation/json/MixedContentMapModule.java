@@ -3,6 +3,7 @@ package org.talend.dataprep.api.preparation.json;
 import java.io.IOException;
 import java.util.Map;
 
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 
@@ -33,7 +34,11 @@ public class MixedContentMapModule extends SimpleModule {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 jsonGenerator.writeFieldName(entry.getKey());
                 final String value = entry.getValue();
-                if(value.charAt(0) == '{') {
+                if (value == null) {
+                    jsonGenerator.writeNull();
+                } else if (value.isEmpty()) {
+                    jsonGenerator.writeString(StringUtils.EMPTY);
+                } else if (value.charAt(0) == '{') {
                     jsonGenerator.writeRaw(':' + value);
                 } else {
                     jsonGenerator.writeString(value);

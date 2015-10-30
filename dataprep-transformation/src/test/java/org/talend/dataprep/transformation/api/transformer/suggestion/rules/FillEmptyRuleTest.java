@@ -41,7 +41,7 @@ public class FillEmptyRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(fillEmptyRule.apply(new FillIfEmpty(), mostEmptyColumn), is(POSITIVE));
+        assertThat(fillEmptyRule.apply(new FillIfEmpty(), mostEmptyColumn), is(EMPTY_MGT));
     }
 
 }

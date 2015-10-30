@@ -65,6 +65,20 @@
     }
   }
 
+  /*******************************Step Filters List******************************/
+  #step-filters-list {
+    background-color: $shadow-gray;
+    color: $dark-gray;
+    max-height: 85px;
+    overflow-y: auto;
+    @include display(flex);
+    @include flex-direction(row);
+    .list {
+      @include flex-grow(1);
+      @include flex-shrink(1);
+    }
+  }
+
   /***********************************Panel hide/show*******************************/
   .action {
     &:hover {

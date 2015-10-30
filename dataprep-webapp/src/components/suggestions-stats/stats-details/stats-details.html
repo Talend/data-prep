@@ -42,8 +42,9 @@
                 </horizontal-barchart>
             </div>
         </talend-tabs-item>
-        <talend-tabs-item tab-title="Others">
+        <talend-tabs-item tab-title="Advanced">
             <div class="stat-detail-tab-items">
+                <div class="watermark" ng-if="!statsDetailsCtrl.boxPlot" translate-once="NO_ADVANCED_CHART"></div>
                 <boxplot-chart
                         id="boxplotId"
                         width="300"

@@ -192,13 +192,20 @@
          */
         function scheduleHighlightCellsContaining(rowIndex, colIndex) {
             clearTimeout(highlightCellTimeout);
-            highlightCellTimeout = setTimeout(function() {
-                var column = grid.getColumns()[colIndex];
-                var content = state.playground.grid.dataView.getItem(rowIndex)[column.id];
 
-                var sameContentConfig = DatagridService.getSameContentConfig(column.id, content, 'highlight');
-                grid.setCellCssStyles('highlight', sameContentConfig);
-            }, 200);
+            var row = state.playground.grid.dataView.getItem(rowIndex);
+            if(row) {
+                highlightCellTimeout = setTimeout(function() {
+                    var column = grid.getColumns()[colIndex];
+                    var content = row[column.id];
+
+                    var sameContentConfig = DatagridService.getSameContentConfig(column.id, content, 'highlight');
+                    grid.setCellCssStyles('highlight', sameContentConfig);
+                }, 200);
+            }
+            else {
+                grid.setCellCssStyles('highlight', {});
+            }
         }
 
         /**

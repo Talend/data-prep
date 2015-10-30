@@ -2,7 +2,8 @@
     'use strict';
 
     var filterState = {
-        gridFilters: []
+        gridFilters: [],
+        applyTransformationOnFilters: false
     };
 
     function FilterStateService() {
@@ -21,8 +22,14 @@
         //-----------------------------------------------------GRID-----------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------
         function addGridFilter(filterInfo) {
-            filterState.gridFilters = filterState.gridFilters.slice(0);
+            var _aux = filterState.gridFilters;
+            filterState.gridFilters = _aux.slice(0);
             filterState.gridFilters.push(filterInfo);
+
+            if(filterState.gridFilters.length && checkRelevantChanges(filterState.gridFilters, _aux)){
+                filterState.applyTransformationOnFilters = true;
+            }
+
         }
 
         function updateGridFilter(oldFilter, newFilter) {
@@ -33,12 +40,23 @@
 
         function removeGridFilter(filterInfo) {
             var index = filterState.gridFilters.indexOf(filterInfo);
-            filterState.gridFilters = filterState.gridFilters.slice(0);
+            var _aux = filterState.gridFilters;
+            filterState.gridFilters = _aux.slice(0);
             filterState.gridFilters.splice(index, 1);
+
+            if(filterState.gridFilters.length === 0  && checkRelevantChanges(filterState.gridFilters, _aux)){
+                //in order to keep All the lines radio selected
+                filterState.applyTransformationOnFilters = false;
+            }
         }
 
         function removeAllGridFilters() {
             filterState.gridFilters = [];
+            filterState.applyTransformationOnFilters = false;
+        }
+
+        function checkRelevantChanges(newArr, ancientArr){
+            return !(newArr.length && ancientArr.length);//the real condition is : !!(newArr.length) !== !!(ancientArr.length);
         }
 
         //--------------------------------------------------------------------------------------------------------------

@@ -322,7 +322,8 @@
         function addRangeFilter(interval) {
             var selectedColumn = state.playground.grid.selectedColumn;
             var removeFilterFn = function removeFilterFn(filter) {
-                if (selectedColumn && filter.colId === selectedColumn.id) {
+                var actualSelectedColumn = state.playground.grid.selectedColumn;
+                if (filter.colId === actualSelectedColumn.id) {
                     initRangeLimits();
                     //to reset the bars colors
                     service.histogram.activeLimits = [selectedColumn.statistics.min, selectedColumn.statistics.max];

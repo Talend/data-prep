@@ -1,37 +1,52 @@
-.column-profile-aggregation {
-  margin: 15px 10px;
+.column-profile {
+  #column-profile-refresh {
+    text-align: center;
+    padding-top: 20px;
 
-  .button-dropdown .button-dropdown-main {
-    background-color: $white;
-    border-color: $dark-gray;
-    color: $dark-gray;
-    max-width: 240px;
-    min-width: 90px;
+    button {
+      background: $light-gray;
+      color: $dark-gray;
+      width: 40px;
+      height: 40px;
+      padding: 5px;
+    }
   }
 
-  .button-dropdown .button-dropdown-side {
-    background-color: $white;
-    border-color: $dark-gray;
-    color: $dark-gray;
-  }
+  .column-profile-aggregation {
+    margin: 15px 10px;
 
-  .moreText {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    width: 95%;
-  }
+    .button-dropdown .button-dropdown-main {
+      background-color: $white;
+      border-color: $dark-gray;
+      color: $dark-gray;
+      max-width: 240px;
+      min-width: 90px;
+    }
 
-  .column-profile-aggregation-list {
-    @include menu-list;
-  }
+    .button-dropdown .button-dropdown-side {
+      background-color: $white;
+      border-color: $dark-gray;
+      color: $dark-gray;
+    }
 
-  .column-profile-aggregation-description {
-    padding: 10px 5px;
+    .moreText {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 95%;
+    }
 
-    .highlight {
-      font-weight: bold;
+    .column-profile-aggregation-list {
+      @include menu-list;
+    }
+
+    .column-profile-aggregation-description {
+      padding: 10px 5px;
+
+      .highlight {
+        font-weight: bold;
+      }
     }
   }
 }

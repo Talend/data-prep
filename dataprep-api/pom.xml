@@ -3,7 +3,7 @@
     <parent>
         <artifactId>dataprep-backend</artifactId>
         <groupId>org.talend.dataprep</groupId>
-        <version>1.0.m9-SNAPSHOT</version>
+        <version>1.0.m10-SNAPSHOT</version>
         <relativePath>../dataprep-backend/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

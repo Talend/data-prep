@@ -1,5 +1,6 @@
 package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
+import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.EMPTY_MGT;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.NEGATIVE;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.POSITIVE;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.rules.GenericRule.GenericRuleBuilder.forActions;
@@ -26,7 +27,7 @@ public class EmptyRules extends BasicRules {
         return forActions(DeleteEmpty.DELETE_EMPTY_ACTION_NAME) //
                 .then(columnMetadata -> {
                     if (getEmptyCount(columnMetadata) > 0) {
-                        return POSITIVE;
+                        return EMPTY_MGT;
                     }
                     return NEGATIVE;
                 }) //
@@ -41,7 +42,7 @@ public class EmptyRules extends BasicRules {
         return forActions(FillIfEmpty.FILL_EMPTY_ACTION_NAME) //
                         .then(columnMetadata -> {
                             if (getEmptyCount(columnMetadata) > 0) {
-                                return POSITIVE;
+                                return EMPTY_MGT;
                             }
                             return NEGATIVE;
                         }) //

@@ -87,7 +87,7 @@
          * @param {string} value The string value to replace
          */
         function escapeHtmlTags(value) {
-            return (value + '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return (value + '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
     }
 

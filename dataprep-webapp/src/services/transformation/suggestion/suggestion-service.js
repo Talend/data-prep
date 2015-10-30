@@ -34,14 +34,6 @@
              */
             currentColumn: null,
 
-            /**
-             * @ngdoc property
-             * @name searchActionString
-             * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
-             * @description Actions to search
-             */
-            searchActionString: '',
-
             setColumn: setColumn,
             selectTab: selectTab,
             reset: reset
@@ -59,8 +51,6 @@
          * @description Set the selected column and init its suggested transformations and reset action search
          */
         function setColumn(column) {
-
-            service.searchActionString = '';
 
             if (column === service.currentColumn) {
                 return;

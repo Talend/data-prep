@@ -10,7 +10,7 @@
      * @requires data-prep.services.playground.service:PreviewService
      * @requires data-prep.services.preparation.service:PreparationService
      */
-    function RecipeCtrl(state, RecipeService, PlaygroundService, PreparationService, PreviewService) {
+    function RecipeCtrl(state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterService) {
         var vm = this;
         vm.recipeService = RecipeService;
 
@@ -57,10 +57,35 @@
                 return;
             }
 
-            PlaygroundService.updateStep(step, newParams)
+            return PlaygroundService.updateStep(step, newParams)
                 .then(function() {
                     vm.showModal = {};
                 });
+        };
+
+        /**
+         * @ngdoc method
+         * @name removeStepFilter
+         * @methodOf data-prep.recipe.controller:RecipeCtrl
+         * @param {string} step The step id to update
+         * @param {object} filter the filter to be removed
+         * @description removes a filter in the step and updates the step
+         */
+        vm.removeStepFilter = function removeStepFilter(step, filter){
+            if(step.actionParameters.action === 'delete_lines' && step.filters.length === 1){
+                MessageService.warning('REMOVE_LAST_STEP_FILTER_TITLE', 'REMOVE_LAST_STEP_FILTER_CONTENT', null);
+            }
+            else{
+                var filterPos = step.filters.indexOf(filter);
+                var removedFilter = step.filters.splice(filterPos, 1);
+                var stepFiltersTree = FilterService.convertFiltersArrayToTreeFormat(step.filters);
+
+                //_.omit for the case where all the step filters have been removed because in that case stepFiltersTree === {}
+                vm.updateStep(step, _.extend({}, _.omit(step.actionParameters.parameters, 'filter'), stepFiltersTree))
+                    .catch(function(){
+                        step.filters.push(removedFilter[0]);
+                    });
+            }
         };
 
         //---------------------------------------------------------------------------------------------

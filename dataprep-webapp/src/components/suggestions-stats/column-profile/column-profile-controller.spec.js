@@ -172,4 +172,36 @@ describe('ColumnProfile controller', function () {
             expect(StatisticsService.processAggregation).not.toHaveBeenCalled();
         }));
     });
+
+    describe('statistics', function() {
+        beforeEach(inject(function($q, PlaygroundService) {
+            spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+        }));
+
+        it('should manage refresh progress flag', function() {
+            //given
+            var ctrl = createController();
+            expect(ctrl.refreshInProgress).toBe(false);
+
+            //when
+            ctrl.refresh();
+            expect(ctrl.refreshInProgress).toBe(true);
+            scope.$digest();
+
+            //then
+            expect(ctrl.refreshInProgress).toBe(false);
+        });
+
+        it('should trigger statistics refresh', inject(function(PlaygroundService) {
+            //given
+            var ctrl = createController();
+            expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+
+            //when
+            ctrl.refresh();
+
+            //then
+            expect(PlaygroundService.updateStatistics).toHaveBeenCalled();
+        }));
+    });
 });

@@ -178,7 +178,7 @@ describe('Datagrid style service', function () {
         });
 
         beforeEach(inject(function(DatagridService) {
-            spyOn(stateMock.playground.grid.dataView, 'getItem').and.returnValue({'0001': 'cell 1 content'});
+            //spyOn(stateMock.playground.grid.dataView, 'getItem').and.returnValue({'0001': 'cell 1 content'});
             spyOn(DatagridService, 'getSameContentConfig').and.returnValue({
                 5: { '0001': 'highlight' },
                 18: { '0001': 'highlight' },
@@ -190,9 +190,10 @@ describe('Datagrid style service', function () {
 
         it('should configure cells highlight class', inject(function (DatagridStyleService) {
             //given
+            dataViewMock.setItems([{'0001': 'cell 1 content'}]);
             DatagridStyleService.init(gridMock);
             var cell = 1;
-            var row = 28;
+            var row = 0;
             var args = {cell: cell, row: row};
 
             //when
@@ -208,6 +209,22 @@ describe('Datagrid style service', function () {
                 42: { '0001': 'highlight' },
                 43: { '0001': 'highlight' }
             });
+        }));
+
+        it('should remove cells highlight class when there is no row that match index', inject(function (DatagridStyleService) {
+            //given
+            DatagridStyleService.init(gridMock);
+            var cell = 1;
+            var row = 56;
+            var args = {cell: cell, row: row};
+
+            //when
+            var onActiveCellChanged = gridMock.onActiveCellChanged.subscribe.calls.argsFor(0)[0];
+            onActiveCellChanged(null, args);
+            jasmine.clock().tick(200);
+
+            //then
+            expect(gridMock.cssStyleConfig.highlight).toEqual({});
         }));
 
         it('should set "selected" column class', inject(function (DatagridStyleService) {

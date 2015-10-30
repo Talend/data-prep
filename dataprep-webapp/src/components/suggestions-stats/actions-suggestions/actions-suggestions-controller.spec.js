@@ -7,7 +7,7 @@ describe('Actions suggestions-stats controller', function () {
     var stateMock;
 
     beforeEach(module('data-prep.actions-suggestions', function($provide) {
-        stateMock = {playground: {}};
+        stateMock = {playground: {filter: {}}};
         $provide.constant('state', stateMock);
     }));
 
@@ -51,18 +51,6 @@ describe('Actions suggestions-stats controller', function () {
 
             //then
             expect(ctrl.column).toBe(column);
-        }));
-
-        it('should bind "suggestions-stats" getter to SuggestionService.transformations', inject(function (ColumnSuggestionService) {
-            //given
-            var ctrl = createController();
-            var transformations = [{name: 'tolowercase'}, {name: 'touppercase'}];
-
-            //when
-            ColumnSuggestionService.transformations = transformations;
-
-            //then
-            expect(ctrl.columnSuggestions).toBe(transformations);
         }));
 
         it('should bind "tab" getter to SuggestionService.tab', inject(function (SuggestionService) {
@@ -316,6 +304,115 @@ describe('Actions suggestions-stats controller', function () {
 
                 //then
                 expect(ctrl.showModalContent).toBe(true);
+            });
+        });
+    });
+
+    describe('render predicates', function() {
+        describe('transformation', function() {
+            it('should render all transformations when applyTransformationOnFilters flag is true', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = true;
+                var transformation = {category: 'filtered'};
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderTransformation(transformation);
+
+                //then
+                expect(result).toBe(true);
+            });
+
+            it('should render transformations when category is not "filtered"', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = false;
+                var transformation = {category: 'quickfix'};
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderTransformation(transformation);
+
+                //then
+                expect(result).toBe(true);
+            });
+
+            it('should NOT render transformations when category is "filtered" and applyTransformationOnFilters flag is false', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = false;
+                var transformation = {category: 'filtered'};
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderTransformation(transformation);
+
+                //then
+                expect(result).toBe(false);
+            });
+        });
+
+        describe('category', function() {
+            it('should render all categories when applyTransformationOnFilters flag is true', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = true;
+                var categoryTransformations = {
+                    category: 'suggestion',
+                    transformations: [{category: 'filtered'}]
+                };
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderCategory(categoryTransformations);
+
+                //then
+                expect(result).toBeTruthy();
+            });
+
+            it('should render category when category is not "suggestion"', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = false;
+                var categoryTransformations = {
+                    category: 'quickfix',
+                    transformations: [{category: 'filtered'}]
+                };
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderCategory(categoryTransformations);
+
+                //then
+                expect(result).toBeTruthy();
+            });
+
+            it('should render category when it has non "filtered" transformations', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = false;
+                var categoryTransformations = {
+                    category: 'suggestion',
+                    transformations: [{category: 'suggestion'}]
+                };
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderCategory(categoryTransformations);
+
+                //then
+                expect(result).toBeTruthy();
+            });
+
+            it('should NOT render category when category is "suggestion" that only have "filtered" transformations', function() {
+                //given
+                stateMock.playground.filter.applyTransformationOnFilters = false;
+                var categoryTransformations = {
+                    category: 'suggestion',
+                    transformations: [{category: 'filtered'}]
+                };
+                var ctrl = createController();
+
+                //when
+                var result = ctrl.shouldRenderCategory(categoryTransformations);
+
+                //then
+                expect(result).toBeFalsy();
             });
         });
     });

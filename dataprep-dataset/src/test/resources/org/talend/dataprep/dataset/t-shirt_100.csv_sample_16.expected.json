@@ -150,13 +150,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -394,13 +388,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -509,13 +497,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -624,13 +606,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -735,13 +711,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -884,13 +854,13 @@
             "occurrences": 0,
             "range": {
               "min": 99.2,
-              "max": 108.4
+              "max": 108.3
             }
           },
           {
             "occurrences": 0,
             "range": {
-              "min": 108.4,
+              "min": 108.3,
               "max": 117.5
             }
           },
@@ -967,13 +937,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -1179,13 +1143,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -1391,13 +1349,7 @@
       "domain": "",
       "domainLabel": "",
       "domainFrequency": 0.0,
-      "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 100.0
-        }
-      ],
+      "semanticDomains": [],
       "domainForced": false,
       "typeForced": false
     },
@@ -1467,11 +1419,6 @@
       "domainLabel": "",
       "domainFrequency": 8.0,
       "semanticDomains": [
-        {
-          "id": "",
-          "label": "",
-          "frequency": 50.0
-        },
         {
           "id": "FULL_NAME",
           "label": "Full Name",

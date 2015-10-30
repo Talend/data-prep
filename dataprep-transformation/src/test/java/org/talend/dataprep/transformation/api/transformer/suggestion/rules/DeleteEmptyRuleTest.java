@@ -41,7 +41,7 @@ public class DeleteEmptyRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(deleteEmptyRule.apply(new DeleteEmpty(), mostEmptyColumn), is(POSITIVE));
+        assertThat(deleteEmptyRule.apply(new DeleteEmpty(), mostEmptyColumn), is(EMPTY_MGT));
     }
 
 }

@@ -66,6 +66,7 @@
   "_comment": "Common",
   "LOADING": "Loading...",
   "PROCESSING": "Processing",
+  "COMING_SOON": "Coming soon...",
 
   "_comment": "Confirm",
   "DELETE_PERMANENTLY": "You are going to permanently delete the {{type}} \"{{name}}\".",
@@ -73,6 +74,8 @@
   "NO_UNDONE_CONFIRM": "This operation cannot be undone. Are you sure ?",
   "DELETE_STEP": "You are going to remove this action : \"{{action}}\" on \"{{column}}\".",
   "DELETE_STEP_CASCADE_MODE_WARNING": "WARNING : all actions from the selected one to the end will be removed in this mode. If this is not what you want, try to remove a single action instead.",
+  "REMOVE_LAST_STEP_FILTER_TITLE": "WARNING : impossible action",
+  "REMOVE_LAST_STEP_FILTER_CONTENT": "WARNING : this action is not supported as it will remove all the lines",
   "UPDATE_EXISTING_DATASET": "Do you want to update existing \"{{dataset}}\" dataset ?",
 
   "_comment": "import remote dataset",
@@ -134,8 +137,6 @@
 
   "_comment": "Action panel",
   "FIND_FUNCTION": "Find a Function...",
-  "ACTION_SUGGESTION": "Suggestion",
-
 
   "_comment": "Statistics",
   "COUNT": "Count",
@@ -161,6 +162,7 @@
   "APPLY_TO_ALL_CELLS": "Apply to all cells with this value",
   "STRING": "TEXT",
   "FLOAT": "DECIMAL",
+  "NO_ADVANCED_CHART": "No advanced chart for the current selection",
 
   "_comment": "Dataset actions",
   "REPLACE_FILE_CONTENT": "Update dataset with another file",

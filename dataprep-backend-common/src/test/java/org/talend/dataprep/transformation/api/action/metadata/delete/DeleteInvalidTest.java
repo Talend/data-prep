@@ -15,6 +15,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 /**
  * Test class for DeleteInvalid action. Creates one consumer, and test it.
@@ -95,6 +96,41 @@ public class DeleteInvalidTest {
         assertEquals(1, invalidValues.size());
         assertTrue(invalidValues.contains("N"));
     }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-457
+     */
+    @Test
+    public void should_delete_invalid_semantic_value_not_in_metadata() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0001", "CA");
+        values.put("0002", "ZZ"); // invalid value
+        values.put("0003", "NY");
+
+        final RowMetadata rowMetadata = new RowMetadata();
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
+                .type(Type.INTEGER) //
+                .domain(SemanticCategoryEnum.US_STATE_CODE.getId())
+                .computedId("0002") //
+                .invalidValues(new HashSet<>()) // no registered invalid values
+                .build()));
+
+        final DataSetRow row = new DataSetRow(values);
+        row.setRowMetadata(rowMetadata);
+
+        // when
+        deleteInvalid.applyOnColumn(row, new TransformationContext(), parameters, "0002");
+
+        // then row is deleted...
+        assertTrue(row.isDeleted());
+
+        // ... and column metadata invalid values are also updated
+        final Set<String> invalidValues = row.getRowMetadata().getById("0002").getQuality().getInvalidValues();
+        assertEquals(1, invalidValues.size());
+        assertTrue(invalidValues.contains("ZZ"));
+    }
+
 
     @Test
     public void should_accept_column() {

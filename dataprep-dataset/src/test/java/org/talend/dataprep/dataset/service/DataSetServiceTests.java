@@ -1072,6 +1072,18 @@ public class DataSetServiceTests extends DataSetBaseTest {
         assertThat(content, not(containsString("\\u0000")));
     }
 
+    @Test
+    public void invalid_us_states() throws Exception {
+        String dataSetId = given().body(IOUtils.toString(DataSetServiceTests.class.getResourceAsStream("../invalid_us_states.csv")))
+                .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+        assertQueueMessages(dataSetId);
+        InputStream content = when().get("/datasets/{id}/content?metadata=true&columns=true", dataSetId).asInputStream();
+        String contentAsString = IOUtils.toString(content);
+
+        InputStream expected = DataSetServiceTests.class.getResourceAsStream("../invalid_us_states_expected.json");
+        assertThat(contentAsString, sameJSONAsFile(expected));
+    }
+
     private String insertEmptyDataSet() {
         String datasetId = UUID.randomUUID().toString();
         DataSetMetadata dataSetMetadata = metadata().id(datasetId).formatGuessId(new CSVFormatGuess().getBeanId()).build();

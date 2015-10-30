@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     /**
@@ -8,19 +8,24 @@
      * @requires data-prep.services.state.constant:state
      * @requires data-prep.statistics.service:StatisticsService
      * @requires data-prep.services.filter.service:FilterService
+     * @requires data-prep.services.playground.service:PlaygroundService
      */
-    function ColumnProfileCtrl($scope, state, StatisticsService, FilterService) {
+    function ColumnProfileCtrl($scope, state, StatisticsService, FilterService, PlaygroundService) {
         var vm = this;
         vm.statisticsService = StatisticsService;
         vm.chartConfig = {};
+        vm.refreshInProgress = false;
 
         //------------------------------------------------------------------------------------------------------
         //------------------------------------------------FILTER------------------------------------------------
         //------------------------------------------------------------------------------------------------------
         function addExactFilter(value) {
             var column = state.playground.grid.selectedColumn;
-            return value.length?
-                FilterService.addFilterAndDigest('exact', column.id, column.name, {phrase: value, caseSensitive: true}):
+            return value.length ?
+                FilterService.addFilterAndDigest('exact', column.id, column.name, {
+                    phrase: value,
+                    caseSensitive: true
+                }) :
                 FilterService.addFilterAndDigest('empty_records', column.id, column.name);
         }
 
@@ -31,7 +36,7 @@
          * @description Add an "exact" case sensitive filter if the value is not empty, an "empty_records" filter otherwise
          * @type {array}
          */
-        vm.addBarchartFilter = function addBarchartFilter (item){
+        vm.addBarchartFilter = function addBarchartFilter(item) {
             return addExactFilter(item.data);
         };
 
@@ -42,7 +47,7 @@
          * @description Add an "range" value filter
          * @type {array}
          */
-        vm.addRangeFilter = function addRangeFilter (item){
+        vm.addRangeFilter = function addRangeFilter(item) {
             return StatisticsService.addRangeFilter(item.data);
         };
 
@@ -56,7 +61,7 @@
          * @description The list of possible aggregations
          * @type {array}
          */
-        vm.aggregations =  ['SUM', 'MAX', 'MIN', 'AVERAGE'];
+        vm.aggregations = ['SUM', 'MAX', 'MIN', 'AVERAGE'];
 
         /**
          * @ngdoc method
@@ -67,7 +72,7 @@
          */
         vm.getCurrentAggregation = function getCurrentAggregation() {
             return StatisticsService.histogram && StatisticsService.histogram.aggregation ?
-                StatisticsService.histogram.aggregation:
+                StatisticsService.histogram.aggregation :
                 'LINE_COUNT';
         };
 
@@ -80,7 +85,7 @@
          * @description Trigger a new aggregation graph
          */
         vm.changeAggregation = function changeAggregation(column, aggregation) {
-            if(StatisticsService.histogram &&
+            if (StatisticsService.histogram &&
                 StatisticsService.histogram.aggregationColumn === column &&
                 StatisticsService.histogram.aggregation === aggregation) {
                 return;
@@ -97,7 +102,7 @@
          * @param clickFn - the click callback
          * @returns {{exporting: {enabled: boolean}, legend: {enabled: boolean}}}
          */
-        var initCommonChartOptions = function(clickFn) {
+        var initCommonChartOptions = function (clickFn) {
             return {
                 credits: {
                     enabled: false
@@ -128,7 +133,7 @@
          * @param max - max value (defined for color)
          * @returns {{exporting, legend}|{exporting: {enabled: boolean}, legend: {enabled: boolean}}}
          */
-        var initGeoChartOptions = function(clickFn, min, max) {
+        var initGeoChartOptions = function (clickFn, min, max) {
             var options = initCommonChartOptions(clickFn);
 
             options.tooltip = {
@@ -154,9 +159,9 @@
          * Init a geo distribution chart
          * @param column
          */
-        var buildGeoDistribution = function(column) {
-            var geoChartAction = function() {
-                console.log('State: '  + this['hc-key'] + ', value: ' + this.value);
+        var buildGeoDistribution = function (column) {
+            var geoChartAction = function () {
+                console.log('State: ' + this['hc-key'] + ', value: ' + this.value);
                 return addExactFilter(this['hc-key'].substring(3));
             };
 
@@ -191,18 +196,29 @@
         };
 
         //------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------REFRESH----------------------------------------------
+        //------------------------------------------------------------------------------------------------------
+        vm.refresh = function refresh() {
+            vm.refreshInProgress = true;
+            PlaygroundService.updateStatistics()
+                .finally(function () {
+                    vm.refreshInProgress = false;
+                });
+        };
+
+        //------------------------------------------------------------------------------------------------------
         //-------------------------------------------------WATCHERS---------------------------------------------
         //------------------------------------------------------------------------------------------------------
         /**
          * Init chart on column selection change
          */
         $scope.$watch(
-            function() {
+            function () {
                 return StatisticsService.stateDistribution;
             },
-            function(column) {
+            function (column) {
                 vm.stateDistribution = null;
-                if(column) {
+                if (column) {
                     buildGeoDistribution(column);
                 }
             }

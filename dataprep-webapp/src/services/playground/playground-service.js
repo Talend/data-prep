@@ -36,6 +36,7 @@
             initPlayground: initPlayground,     // load dataset
             load: load,                         // load preparation
             loadStep: loadStep,                 // load preparation step
+            updateStatistics: updateStatistics, // load column statistics and trigger statistics update
 
             //preparation
             createOrUpdatePreparation: createOrUpdatePreparation,
@@ -165,6 +166,32 @@
                 .finally(function() {
                     $rootScope.$emit('talend.loading.stop');
                 });
+        }
+
+        /**
+         * @ngdoc method
+         * @name updateStatistics
+         * @methodOf data-prep.services.playground.service:PlaygroundService
+         * @description Get fresh statistics, set them in current columns metadata, then trigger a new statistics computation
+         * @returns {Promise} The process promise
+         */
+        function updateStatistics() {
+            var getContent;
+            if (state.playground.preparation) {
+                var lastActiveStep = RecipeService.getLastActiveStep();
+                var preparationId = state.playground.preparation.id;
+                var stepId = lastActiveStep ? lastActiveStep.transformation.stepId : 'head';
+                getContent = PreparationService.getContent.bind(null, preparationId, stepId);
+            }
+            else {
+                getContent = DatasetService.getContent.bind(null, state.playground.dataset.id, false);
+            }
+
+            return getContent()
+                .then(function (content) {
+                    StateService.updateColumnsStatistics(content.columns);
+                })
+                .then(StatisticsService.updateStatistics);
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -375,7 +402,6 @@
         //------------------------------------------------------------------------------------------------------
         //---------------------------------------------------UTILS----------------------------------------------
         //------------------------------------------------------------------------------------------------------
-
         /**
          * @ngdoc method
          * @name updatePreparationDatagrid

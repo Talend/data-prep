@@ -3,6 +3,8 @@
   "boolean": true,
   "numeric": 10,
   "double": 10.10,
+  "null": null,
+  "empty": "",
   "object": {
     "eq": {
       "field": "nbCommands",

@@ -24,9 +24,9 @@ import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
-import org.talend.dataquality.statistics.quality.ValueQualityStatistics;
 import org.talend.datascience.common.inference.Analyzer;
 import org.talend.datascience.common.inference.Analyzers;
+import org.talend.datascience.common.inference.ValueQualityStatistics;
 
 @Component
 public class QualityAnalysis implements SynchronousDataSetAnalyzer, AsynchronousDataSetAnalyzer {
@@ -89,7 +89,7 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer, Asynchronous
                     LOGGER.debug("Schema information must be computed before quality analysis can be performed, ignoring message");
                     return; // no acknowledge to allow re-poll.
                 }
-                LOGGER.info("Analyzing quality of dataset #{}...", metadata.getId());
+                LOGGER.debug("Analyzing quality of dataset #{}...", metadata.getId());
                 // New data set, or reached the max limit of records for synchronous analysis, trigger a full scan (but
                 // async).
                 final int dataSetSize = metadata.getContent().getNbRecords();
@@ -108,7 +108,7 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer, Asynchronous
                 // ... all quality is now analyzed, mark it so.
                 metadata.getLifecycle().qualityAnalyzed(true);
                 repository.add(metadata);
-                LOGGER.info("Analyzed quality of dataset #{}.", dataSetId);
+                LOGGER.debug("Analyzed quality of dataset #{}.", dataSetId);
             } catch (Exception e) {
                 LOGGER.warn("dataset '{}' generate an error, message: {} ", dataSetId, e.getMessage());
                 throw new TDPException(DataSetErrorCodes.UNABLE_TO_ANALYZE_DATASET_QUALITY, e);

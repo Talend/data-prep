@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.talend.dataprep</groupId>
     <artifactId>dataprep-parent</artifactId>
-    <version>1.0.m9-SNAPSHOT</version>
+    <version>1.0.m10-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>dataprep-parent</name>
     <description>dataprep parent pom</description>

@@ -305,7 +305,8 @@ public class TransformationService {
         final List<ActionMetadata> actions = Stream.of(allActions) //
                 .filter(am -> am.acceptColumn(column)) // Filter on acceptable columns (for type)
                 .collect(toList());
-        return suggestionEngine.score(actions, column).stream() //
+        final List<Suggestion> suggestions = suggestionEngine.score(actions, column);
+        return suggestions.stream() //
                 .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
                 .limit(limit)
                 .map(Suggestion::getAction) // Get the action for positive suggestions

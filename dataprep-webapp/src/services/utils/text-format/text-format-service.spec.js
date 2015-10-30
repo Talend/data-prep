@@ -1,4 +1,4 @@
-describe('text to html adaptation service', function () {
+describe('Text format service', function () {
     'use strict';
 
     beforeEach(module('data-prep.services.utils'));
@@ -57,6 +57,19 @@ describe('text to html adaptation service', function () {
 
             //then
             expect(result).toBe('&lt;b&gt;my value&lt;/b&gt;');
+        }));
+    });
+
+    describe('regex', function() {
+        it('should escape regex special chars with brackets', inject(function(TextFormatService) {
+            //given
+            var value = 'azerty - [] {} () *+?.,\\^$|# qwerty';
+
+            //when
+            var result = TextFormatService.escapeRegex(value);
+
+            //then
+            expect(result).toBe('azerty[ ][-][ ][[][]][ ][{][}][ ][(][)][ ][*][+][?][.][,][\\][^][$][|][#][ ]qwerty');
         }));
     });
 });

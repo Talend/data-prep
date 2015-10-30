@@ -200,11 +200,17 @@ public class ReplaceOnValueTest {
     }
 
     @Test
-    public void test_TDP_796() {
-        String from = "bridge.html?region=FR";
-        String regexp = "bridge.html[?]region=FR";
-        String to = "pont.html?region=FR";
-        Assert.assertEquals(to, action.computeNewValue(from, regexp, to, false));
+    public void should_replace_value_based_on_regex() {
+        //given
+        final String from = "bridge.html?region=FR";
+        final String regexp = "bridge.html[?]region=FR";
+        final String to = "pont.html?region=FR";
+
+        //when
+        final String result = action.computeNewValue(from, regexp, to, false);
+
+        //then
+        assertThat(result, is(to));
     }
 
     @Test

@@ -6,8 +6,9 @@
      * @name data-prep.services.transformation.service:ColumnSuggestionService
      * @description Transformation Column suggestion service. This service provide the current column suggestions
      * @requires data-prep.services.transformation.service:TransformationCacheService
+     * @requires data-prep.services.utils.service:TextFormatService
      */
-    function ColumnSuggestionService($q, TransformationCacheService) {
+    function ColumnSuggestionService($q, TransformationCacheService, TextFormatService) {
         var COLUMN_CATEGORY = 'column_metadata';
         var FILTERED_CATEGORY = 'filtered';
         var SUGGESTION_CATEGORY = 'suggestion';
@@ -140,10 +141,6 @@
         //----------------------------------------------------FILTER----------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------
 
-        function escapeRegex(text) {
-            return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-        }
-
         function categoryMatchSearch(category, searchValue) {
             return category.toLowerCase().indexOf(searchValue) !== -1;
         }
@@ -182,7 +179,7 @@
             var originalValue = object[key];
             if (originalValue.toLowerCase().indexOf(highlightText) !== -1) {
                 object[key] = originalValue.replace(
-                    new RegExp('(' + escapeRegex(highlightText) + ')', 'gi'),
+                    new RegExp('(' + TextFormatService.escapeRegex(highlightText) + ')', 'gi'),
                     '<span class="highlighted">$1</span>');
             }
         }

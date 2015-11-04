@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.2.6.RELEASE</version>
+        <version>1.2.7.RELEASE</version>
         <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
@@ -15,12 +15,15 @@
     <name>dataprep-backend</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>1.2.6.RELEASE</spring.boot.version>
+        <spring.boot.version>1.2.7.RELEASE</spring.boot.version>
         <slf4j.version>1.7.12</slf4j.version>
         <log4j.version>2.2</log4j.version>
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
-        <org.talend.dataquality.version>1.3.1</org.talend.dataquality.version>
+        <org.talend.dataquality.version>1.3.2</org.talend.dataquality.version>
+        <org.talend.dataquality.common.version>1.3.2</org.talend.dataquality.common.version>
+        <org.talend.dataquality.semantic.version>1.3.2</org.talend.dataquality.semantic.version>
+        <org.talend.dataquality.statistics.version>1.3.2</org.talend.dataquality.statistics.version>
         <org.talend.dataquality.record.linkage.version>3.0.0</org.talend.dataquality.record.linkage.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
@@ -42,7 +45,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>org.talend.dataquality.semantic</artifactId>
-                <version>${org.talend.dataquality.version}</version>
+                <version>${org.talend.dataquality.semantic.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -53,7 +56,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>org.talend.dataquality.common</artifactId>
-                <version>${org.talend.dataquality.version}</version>
+                <version>${org.talend.dataquality.common.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -88,7 +91,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>org.talend.dataquality.statistics</artifactId>
-                <version>${org.talend.dataquality.version}</version>
+                <version>${org.talend.dataquality.statistics.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.clearspring.analytics</groupId>
@@ -291,6 +294,12 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-to-slf4j</artifactId>
                 <version>${log4j.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-web</artifactId>
+                <version>2.4.1</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>

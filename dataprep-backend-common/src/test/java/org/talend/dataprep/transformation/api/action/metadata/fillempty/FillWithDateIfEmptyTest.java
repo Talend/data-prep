@@ -102,8 +102,6 @@ public class FillWithDateIfEmptyTest {
     @Test
     public void should_not_accept_column() {
         assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));
     }
 

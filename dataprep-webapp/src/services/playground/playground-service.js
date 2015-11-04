@@ -12,15 +12,17 @@
      * @requires data-prep.services.transformation.service:TransformationCacheService
      * @requires data-prep.services.transformation.service:SuggestionService
      * @requires data-prep.services.preparation.service:PreparationService
-     * @requires data-prep.services.utils.service:MessageService
      * @requires data-prep.services.statistics.service:StatisticsService
      * @requires data-prep.services.history.service:HistoryService
      * @requires data-prep.services.state.service:StateService
      * @requires data-prep.services.onboarding:OnboardingService
+     * @requires data-prep.services.utils.service:MessageService
+     * @requires data-prep.services.utils:TextFormatService
      */
     function PlaygroundService($rootScope, $q, state, DatasetService, DatagridService, PreviewService,
                                RecipeService, TransformationCacheService, SuggestionService, PreparationService,
-                               MessageService, StatisticsService, HistoryService, StateService, OnboardingService) {
+                               StatisticsService, HistoryService, StateService,
+                               OnboardingService, MessageService, TextFormatService) {
         var DEFAULT_NAME = 'Preparation draft';
 
         var service = {
@@ -391,7 +393,7 @@
                 column_id: column.id,
                 column_name: column.name,
                 row_id: rowItem.tdpId,
-                cell_value: rowItem[column.id],
+                cell_value: TextFormatService.escapeRegex(rowItem[column.id]),
                 replace_value: newValue
             };
             var action = 'replace_on_value';

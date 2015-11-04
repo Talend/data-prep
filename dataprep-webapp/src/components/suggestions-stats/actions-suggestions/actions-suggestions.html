@@ -23,7 +23,7 @@
                    ng-model="actionsSuggestionsCtrl.columnSuggestionService.searchActionString"
                    ng-model-options="{debounce: { default: 300, blur: 0 }}"
                    ng-change="actionsSuggestionsCtrl.columnSuggestionService.filterTransformations()"
-                   add-reset-button-to-input>
+                   talend-search-input>
 
             <div class="action-suggestion-tab-items">
                 <div ng-repeat="categoryTransformations in actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations track by $index"

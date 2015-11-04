@@ -104,7 +104,8 @@ public class StatisticsUtilsTest {
 
     @Test
     public void testSemanticType() throws Exception {
-        assertEquals("myId", stringColumn.getDomain());
+        // TODO Can't have "myId" as category because frequency is too low (and no way to set it).
+        assertEquals("", stringColumn.getDomain());
         assertEquals("", stringColumn.getDomainLabel());
     }
 

@@ -78,7 +78,7 @@
       },
       "domain": "US_STATE_CODE",
       "domainLabel": "US State Code",
-      "domainFrequency": 4.0,
+      "domainFrequency": 100.0,
       "semanticDomains": [
         {
           "id": "US_STATE_CODE",
@@ -93,6 +93,11 @@
         {
           "id": "CITY",
           "label": "City",
+          "frequency": 25.0
+        },
+        {
+          "id": "COMPANY",
+          "label": "Company",
           "frequency": 25.0
         }
       ],

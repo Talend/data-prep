@@ -3,9 +3,7 @@ talend-tabs {
 
   >.tabs {
     @include flex-row();
-
-    border-bottom: 1px solid $light-gray;
-    box-shadow: -2px 7px 2px -4px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px -5px 2px -4px rgba(0, 0, 0, 0.1) inset;
     margin-bottom: 0.5em;
 
     background-color: #F1F1F1;
@@ -19,20 +17,26 @@ talend-tabs {
       width: auto;
       padding: 5px 10px;
       position: relative;
+      overflow: hidden;
 
       &.active {
         font-weight: 600;
         color: $black;
 
         &:after {
+          content: "";
           position: absolute;
-          color: #F1F1F1;
-          content: "\25bc";
-          font-size: 1.4em;
-          pointer-events: none;
-          text-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-          top: 1em;
-          left: calc(50% - 10px);
+          width: 30px;
+          height: 30px;
+          background: $white;
+          transform: rotate(45deg);
+          -ms-transform:rotate(45deg); /* IE 9 */
+          -moz-transform:rotate(45deg); /* Firefox */
+          -webkit-transform:rotate(45deg); /* Safari and Chrome */
+          -o-transform:rotate(45deg); /* Opera */
+          top: 28px;
+          left: calc(50% - 15px);
+          box-shadow: -1px -1px 5px 0px rgba(0,0,0,0.3) inset;
         }
       }
     }

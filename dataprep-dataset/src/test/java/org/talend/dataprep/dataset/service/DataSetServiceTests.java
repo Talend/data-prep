@@ -938,7 +938,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
 
         assertThat(column.getDomain(), is("FIRST_NAME"));
         assertThat(column.getDomainLabel(), is("First Name"));
-        assertThat(column.getDomainFrequency(), is(2.0F));
+        assertThat(column.getDomainFrequency(), is(100.0F));
 
         //when
         final Response res = given() //
@@ -977,7 +977,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
 
         assertThat(column.getDomain(), is("FIRST_NAME"));
         assertThat(column.getDomainLabel(), is("First Name"));
-        assertThat(column.getDomainFrequency(), is(2.0F));
+        assertThat(column.getDomainFrequency(), is(100.0F));
         assertThat(column.getType(), is("string"));
 
         //when
@@ -996,7 +996,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
         final ColumnMetadata actual = row.getById("0002");
         assertThat(actual.getDomain(), is("FIRST_NAME"));
         assertThat(actual.getDomainLabel(), is("First Name"));
-        assertThat(actual.getDomainFrequency(), is(2.0F));
+        assertThat(actual.getDomainFrequency(), is(100.0F));
         assertThat(actual.getType(), is("integer"));
     }
 
@@ -1018,7 +1018,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
 
         assertThat(column.getDomain(), is("FIRST_NAME"));
         assertThat(column.getDomainLabel(), is("First Name"));
-        assertThat(column.getDomainFrequency(), is(2.0F));
+        assertThat(column.getDomainFrequency(), is(100.0F));
 
         //when
         final Response res = given() //

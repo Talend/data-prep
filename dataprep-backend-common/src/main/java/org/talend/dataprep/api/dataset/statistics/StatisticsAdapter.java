@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -14,6 +16,7 @@ import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.type.TypeUtils;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.semantic.recognizer.CategoryFrequency;
 import org.talend.dataquality.semantic.statistics.SemanticType;
 import org.talend.dataquality.statistics.cardinality.CardinalityStatistics;
@@ -30,6 +33,7 @@ import org.talend.datascience.common.inference.type.DataType;
 @Component
 public class StatisticsAdapter {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(StatisticsAdapter.class);
     /**
      * Defines the minimum threshold for a semantic type suggestion. Defaults to 40% if not defined.
      */
@@ -88,14 +92,21 @@ public class StatisticsAdapter {
                 // TDP-471: Don't pick semantic type if lower than a threshold.
                 final Optional<Map.Entry<CategoryFrequency, Long>> entry = foundSemanticTypes.entrySet().stream()
                         .filter(e -> !e.getKey().getCategoryName().isEmpty())
-                        .max((o1, o2) -> o1.getValue().intValue() - o2.getValue().intValue());
+                        .max((o1, o2) -> ((int) (o1.getKey().getFrequency() - o2.getKey().getFrequency())));
                 if (entry.isPresent()) {
                     // TODO (TDP-734) Take into account limit of the semantic analyzer.
                     final float percentage = entry.get().getKey().getFrequency();
                     if (percentage > semanticThreshold) {
-                        currentColumn.setDomain(semanticType.getSuggestedCategory());
-                        currentColumn.setDomainLabel(TypeUtils.getDomainLabel(semanticType));
-                        currentColumn.setDomainFrequency(percentage);
+                        final CategoryFrequency key = entry.get().getKey();
+                        final String categoryId = key.getCategoryId();
+                        try {
+                            final SemanticCategoryEnum category = SemanticCategoryEnum.valueOf(categoryId);
+                            currentColumn.setDomain(category.getId());
+                            currentColumn.setDomainLabel(category.getDisplayName());
+                            currentColumn.setDomainFrequency(percentage);
+                        } catch (IllegalArgumentException e) {
+                            LOGGER.error("Could not find {} in known categories.", categoryId);
+                        }
                     } else {
                         // Ensure the domain is cleared if percentage is lower than threshold (earlier analysis - e.g.
                         // on the first 20 lines - may be over threshold, but full scan may decide otherwise.

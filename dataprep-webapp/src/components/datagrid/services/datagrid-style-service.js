@@ -135,7 +135,7 @@
                     }
                 }
 
-                return returnStr + (isInvalid(returnStr) ? '<div title="Invalid Value" class="red-rect"></div>' : '<div class="invisible-rect"></div>');
+                return returnStr + (isInvalid(value) ? '<div title="Invalid Value" class="red-rect"></div>' : '<div class="invisible-rect"></div>');
             };
         }
 

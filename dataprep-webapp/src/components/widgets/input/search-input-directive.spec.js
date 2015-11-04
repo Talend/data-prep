@@ -10,7 +10,7 @@ describe('Add reset button to input directive', function() {
         scope = $rootScope.$new();
         scope.value = '';
         createElement = function() {
-            element = angular.element('<div><input ng-model="value" add-reset-button-to-input></div>');
+            element = angular.element('<div><input ng-model="value" talend-search-input></div>');
             body.append(element);
             $compile(element)(scope);
             scope.$digest();
@@ -22,17 +22,18 @@ describe('Add reset button to input directive', function() {
         element.remove();
     });
 
-    it('should render input', function() {
+    it('should render icons', function() {
         //when
         createElement();
 
         //then
-        expect(element.find('div').length).toBe(3);
-        expect(element.find('img').length).toBe(1);
-        expect(element.find('span').length).toBe(1);
+        var icons = element.find('div.search-input-icon');
+        expect(icons.length).toBe(2);
+        expect(icons.eq(0).find('span[data-icon="d"]').length).toBe(1);
+        expect(icons.eq(1).find('span[data-icon="D"]').length).toBe(1);
 
-        expect(element.find('div').eq(1).css('display')).toEqual('none');
-        expect(element.find('div').eq(2).css('display')).toEqual('block');
+        expect(icons.eq(0).css('display')).toEqual('none');
+        expect(icons.eq(1).css('display')).toEqual('block');
 
     });
 
@@ -43,9 +44,9 @@ describe('Add reset button to input directive', function() {
         scope.$digest();
 
         //then
-        expect(element.find('div').eq(1).css('display')).toEqual('block');
-        expect(element.find('div').eq(2).css('display')).toEqual('none');
-
+        var icons = element.find('div.search-input-icon');
+        expect(icons.eq(0).css('display')).toEqual('block');
+        expect(icons.eq(1).css('display')).toEqual('none');
     });
 
     it('should empty text field when clicking on clear icon', function() {
@@ -55,7 +56,8 @@ describe('Add reset button to input directive', function() {
         scope.$digest();
 
         //when
-        element.find('div').eq(1).click();
+        var clearIcons = element.find('div.clear-icon').eq(0);
+        clearIcons.click();
         scope.$digest();
 
         //then

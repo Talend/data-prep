@@ -47,7 +47,8 @@ public class FillIfEmpty extends ActionMetadata implements ColumnAction {
     /**
      * Component that parses dates.
      */
-    private final DateParser dateParser = new DateParser(); // TODO investigate why this instantiation is required, should be auto with Autowired
+    private final DateParser dateParser = new DateParser(); // TODO investigate why this instantiation is required,
+                                                            // should be auto with Autowired
 
     private final Type type;
 
@@ -69,6 +70,9 @@ public class FillIfEmpty extends ActionMetadata implements ColumnAction {
         switch (type) {
         case STRING:
             return MessagesBundle.getString("action." + FILL_EMPTY_STRING + ".desc");
+        case NUMERIC:
+        case DOUBLE:
+        case FLOAT:
         case INTEGER:
             return MessagesBundle.getString("action." + FILL_EMPTY_INTEGER + ".desc");
         case BOOLEAN:
@@ -85,6 +89,9 @@ public class FillIfEmpty extends ActionMetadata implements ColumnAction {
         switch (type) {
         case STRING:
             return MessagesBundle.getString("action." + FILL_EMPTY_STRING + ".label");
+        case NUMERIC:
+        case DOUBLE:
+        case FLOAT:
         case INTEGER:
             return MessagesBundle.getString("action." + FILL_EMPTY_INTEGER + ".label");
         case BOOLEAN:
@@ -106,14 +113,14 @@ public class FillIfEmpty extends ActionMetadata implements ColumnAction {
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
         switch (type) {
+        case NUMERIC:
+        case DOUBLE:
+        case FLOAT:
         case STRING:
             parameters.add(new Parameter(DEFAULT_VALUE_PARAMETER, //
                     ParameterType.STRING, //
                     StringUtils.EMPTY));
             break;
-        case NUMERIC:
-        case DOUBLE:
-        case FLOAT:
         case INTEGER:
             parameters.add(new Parameter(DEFAULT_VALUE_PARAMETER, //
                     ParameterType.INTEGER, //
@@ -166,6 +173,8 @@ public class FillIfEmpty extends ActionMetadata implements ColumnAction {
         return Type.BOOLEAN.equals(Type.get(column.getType())) //
                 || Type.DATE.equals(Type.get(column.getType())) //
                 || Type.INTEGER.equals(Type.get(column.getType())) //
+                || Type.DOUBLE.equals(Type.get(column.getType())) //
+                || Type.FLOAT.equals(Type.get(column.getType())) //
                 || Type.STRING.equals(Type.get(column.getType()));
     }
 

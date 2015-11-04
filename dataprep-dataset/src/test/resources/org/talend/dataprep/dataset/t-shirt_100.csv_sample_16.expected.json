@@ -1415,9 +1415,9 @@
           "averageLength": 12.1875
         }
       },
-      "domain": "",
-      "domainLabel": "",
-      "domainFrequency": 8.0,
+      "domain": "FULL_NAME",
+      "domainLabel": "Full Name",
+      "domainFrequency": 50.0,
       "semanticDomains": [
         {
           "id": "FULL_NAME",

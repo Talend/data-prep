@@ -25,8 +25,8 @@ import com.hazelcast.core.HazelcastInstance;
 /**
  * Setup Hazelcast client instance.
  *
- * Configuration is only activated when profile "standalone" is active. Standalone indicates each data prep service
- * runs in its own JVM, serving multiple concurrent requests thus the need for a distributed lock system.
+ * Configuration is only activated when profile "standalone" is active. Standalone indicates each data prep service runs
+ * in its own JVM, serving multiple concurrent requests thus the need for a distributed lock system.
  */
 @Configuration
 @Profile("standalone")
@@ -39,7 +39,7 @@ public class HazelcastSetup {
     @Value("${hazelcast.groupName:data-prep}")
     private String groupName;
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public HazelcastInstance hazelcastInstance() {
         Config cfg = new Config();
         cfg.setGroupConfig(new GroupConfig(groupName));
@@ -48,5 +48,4 @@ public class HazelcastSetup {
         cfg.getNetworkConfig().getJoin().getTcpIpConfig().getMembers().add("127.0.0.1"); //$NON-NLS-1$
         return Hazelcast.newHazelcastInstance(cfg);
     }
-
 }

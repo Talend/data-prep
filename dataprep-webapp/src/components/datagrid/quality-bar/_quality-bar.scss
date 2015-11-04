@@ -38,6 +38,10 @@
       border: 1px solid grey;
     }
 
+    .quality-bar-action {
+      height: 100%;
+    }
+
     .quality-bar-menu {
       @include menu-list;
       outline: none;

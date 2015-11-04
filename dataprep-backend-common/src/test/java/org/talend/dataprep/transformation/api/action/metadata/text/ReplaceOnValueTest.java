@@ -200,6 +200,20 @@ public class ReplaceOnValueTest {
     }
 
     @Test
+    public void should_replace_value_based_on_regex() {
+        //given
+        final String from = "bridge.html?region=FR";
+        final String regexp = "bridge.html[?]region=FR";
+        final String to = "pont.html?region=FR";
+
+        //when
+        final String result = action.computeNewValue(from, regexp, to, false);
+
+        //then
+        assertThat(result, is(to));
+    }
+
+    @Test
     public void should_replace_many_values_that_match_on_the_specified_cell() {
         // given
         final String columnId = "firstname";

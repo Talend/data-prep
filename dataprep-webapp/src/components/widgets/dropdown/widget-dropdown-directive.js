@@ -97,15 +97,15 @@
                     function positionMenu() {
                         var position = container.length ? container[0].getBoundingClientRect() : action[0].getBoundingClientRect();
                         menu.css('top', position.bottom + 5);
-                        menu.css('left', position.left);
-                        menu.css('right', 'auto');
-                        menu.removeClass('right');
+                        menu.css('right', $window.innerWidth - position.right);
+                        menu.css('left', 'auto');
+                        menu.addClass('right');
+
                         var menuPosition = menu[0].getBoundingClientRect();
-                        if (menuPosition.right > $window.innerWidth) {
-                            var right = $window.innerWidth - position.right;
-                            menu.css('left', 'auto');
-                            menu.css('right', right > 0 ? right : 0);
-                            menu.addClass('right');
+                        if (menuPosition.left < 0) {
+                            menu.removeClass('right');
+                            menu.css('left', 0);
+                            menu.css('right', 'auto');
                         }
                     }
 

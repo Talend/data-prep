@@ -1025,6 +1025,33 @@ describe('Playground Service', function () {
                 );
             }));
 
+            it('should escape regex chars with brackets in "value to replace"', inject(function ($rootScope, PlaygroundService, PreparationService) {
+                //given
+                var preparationId = '64f3543cd466f545';
+                stateMock.playground.preparation = {id: preparationId};
+
+                var rowItem = {tdpId: 58, '0000': 'McDonald', '0001': 'R?onal.d'};
+                var column = {id: '0001', name: 'firstname'};
+                var newValue = 'Donald';
+                var updateAllCellWithValue = true;
+
+                //when
+                PlaygroundService.editCell(rowItem, column, newValue, updateAllCellWithValue);
+                $rootScope.$digest();
+
+                //then
+                var expectedParams = {
+                    scope: 'column',
+                    column_id: '0001',
+                    column_name: 'firstname',
+                    row_id: 58,
+                    cell_value: 'R[?]onal[.]d',
+                    replace_value: 'Donald'
+                };
+                var actualActionParameters = PreparationService.appendStep.calls.argsFor(0)[1].parameters;
+                expect(actualActionParameters).toEqual(expectedParams);
+            }));
+
             describe('append history', function () {
                 it('should add undo/redo actions after append transformation', inject(function ($rootScope, PlaygroundService, HistoryService) {
                     //given

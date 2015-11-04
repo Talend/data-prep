@@ -2,21 +2,22 @@
 
 @import "../../components/widgets/accordions/accordions";
 @import "../../components/widgets/badge/badge";
-@import "../../components/widgets/dropdown/dropdown";
 @import "../../components/widgets/button-dropdown/button-dropdown";
+@import "../../components/widgets/charts/boxplot-chart/boxplot-chart";
+@import "../../components/widgets/charts/horizontal-barchart/horizontal-barchart";
+@import "../../components/widgets/charts/range-slider/range-slider";
+@import "../../components/widgets/charts/vertical-barchart/vertical-barchart";
+@import "../../components/widgets/dropdown/dropdown";
 @import "../../components/widgets/editable-select/editable-select";
 @import "../../components/widgets/editable-text/editable-text";
+@import "../../components/widgets/file-selector/file-selector";
+@import "../../components/widgets/input/search-input";
 @import "../../components/widgets/loading/loading";
 @import "../../components/widgets/modal/modal";
 @import "../../components/widgets/navbar/navigation";
 @import "../../components/widgets/slidable/slidable";
 @import "../../components/widgets/tabs/tabs";
 @import "../../components/widgets/tooltip/tooltip";
-@import "../../components/widgets/charts/horizontal-barchart/horizontal-barchart";
-@import "../../components/widgets/charts/boxplot-chart/boxplot-chart";
-@import "../../components/widgets/charts/range-slider/range-slider";
-@import "../../components/widgets/charts/vertical-barchart/vertical-barchart";
-@import "../../components/widgets/file-selector/file-selector";
 
 @import "../../components/dataset/list/dataset-list";
 @import "../../components/datagrid/datagrid";

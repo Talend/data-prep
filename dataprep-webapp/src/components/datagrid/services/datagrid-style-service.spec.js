@@ -419,6 +419,22 @@ describe('Datagrid style service', function () {
             expect(result.indexOf('<div title="Invalid Value" class="red-rect"></div>') > 0).toBe(true);
         }));
 
+        it('should add red rectangle on invalid value case of non TEXT domains (ieemail address)', inject(function (DatagridStyleService) {
+            //given
+            DatagridStyleService.init(gridMock);
+            var col = {quality: {invalidValues: ['m&a>al<ej@talend']}};
+            var value = 'm&a>al<ej@talend';
+            var columnDef = gridColumns[1];
+            var dataContext = {};
+
+            //when
+            var formatter = DatagridStyleService.columnFormatter(col);
+            var result = formatter(null, null, value, columnDef, dataContext);
+
+            //then
+            expect(result).toBe('m&amp;a&gt;al&lt;ej@talend<div title="Invalid Value" class="red-rect"></div>');
+        }));
+
         it('should add "deleted" class on deleted row', inject(function (DatagridStyleService) {
             //given
             DatagridStyleService.init(gridMock);

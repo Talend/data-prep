@@ -7,7 +7,7 @@
          title="{{ qualityBarCtrl.quality.valid }} valid records ({{ qualityBarCtrl.percent.valid }}%)">
 
         <div class="dropdown-container">
-            <div class="dropdown-action"></div>
+            <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu">
                 <li ng-click="qualityBarCtrl.filterValidRecords(qualityBarCtrl.column)">
                     <a>Select Valid Records for {{ qualityBarCtrl.column.name | uppercase }}</a>
@@ -24,7 +24,7 @@
          title="{{ qualityBarCtrl.quality.empty }} empty records ({{ qualityBarCtrl.percent.empty }}%)">
 
         <div class="dropdown-container">
-            <div class="dropdown-action"></div>
+            <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu" >
                 <li ng-click="qualityBarCtrl.filterEmptyRecords(qualityBarCtrl.column)">
                     <a>Select Empty Records for {{ qualityBarCtrl.column.name | uppercase
@@ -48,7 +48,7 @@
          title="{{ qualityBarCtrl.quality.invalid }} invalid records ({{ qualityBarCtrl.percent.invalid }}%)">
 
         <div class="dropdown-container">
-            <div class="dropdown-action"></div>
+            <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu" >
                 <li ng-click="qualityBarCtrl.filterInvalidRecords(qualityBarCtrl.column)">
                     <a>Select Invalid Records for {{ qualityBarCtrl.column.name | uppercase

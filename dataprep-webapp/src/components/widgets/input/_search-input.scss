@@ -1,0 +1,12 @@
+.search-input-icon {
+  position: absolute;
+  color: gray;
+  display: none;
+  font-size: 0.5em;
+  right: 15px;
+  top: 5px;
+
+  &.clear-icon {
+    cursor: pointer;
+  }
+}

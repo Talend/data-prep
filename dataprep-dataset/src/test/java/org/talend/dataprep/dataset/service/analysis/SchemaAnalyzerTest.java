@@ -125,9 +125,10 @@ public class SchemaAnalyzerTest {
             assertThat(column.getType(), is(expectedTypes[i].getName()));
             assertThat(column.getDomain(), is(expectedDomains[i++]));
             assertThat(column.getSemanticDomains()).isNotNull().isNotEmpty().hasSize(4).contains(
-                    new SemanticDomain("FR_POSTAL_CODE", "FR Postal Code", (float) 58.0), //
-                    new SemanticDomain("US_POSTAL_CODE", "US Postal Code", (float) 58.0));
-
+                    new SemanticDomain("FR_POSTAL_CODE", "FR Postal Code", (float) 58.33), //
+                    new SemanticDomain("FR_CODE_COMMUNE_INSEE", "FR Insee Code", (float) 58.33), //
+                    new SemanticDomain("DE_POSTAL_CODE", "DE Postal Code", (float) 58.33), //
+                    new SemanticDomain("US_POSTAL_CODE", "US Postal Code", (float) 58.33));
         }
     }
 
@@ -155,8 +156,9 @@ public class SchemaAnalyzerTest {
             assertThat(column.getName(), is(expectedNames[i]));
             assertThat(column.getType(), is(expectedTypes[i].getName()));
             assertThat(column.getDomain(), is(expectedDomains[i++]));
-            assertThat(column.getSemanticDomains()).isNotNull().isNotEmpty().hasSize(1).contains(
-                    new SemanticDomain("GENDER", "Gender", (float) 30));
+            assertThat(column.getSemanticDomains()).isNotNull().isNotEmpty().hasSize(2).contains(
+                    new SemanticDomain("GENDER", "Gender", (float) 30),
+                    new SemanticDomain("COMPANY", "Company", (float) 20));
         }
     }
 

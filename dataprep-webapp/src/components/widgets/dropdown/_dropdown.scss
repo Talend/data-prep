@@ -19,8 +19,6 @@
 
   .dropdown-action {
     cursor: pointer;
-    height: 100%;
-    width: 100%;
   }
 
   .dropdown-button:after {
@@ -47,14 +45,9 @@
       top: -1em;
     }
 
-    &.right {
-      left: auto;
-      right: 0;
-
-      &:before {
+    &.right:before {
         left: auto;
         right: 0;
-      }
     }
   }
 

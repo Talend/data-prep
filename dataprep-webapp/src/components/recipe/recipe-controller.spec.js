@@ -517,4 +517,36 @@ describe('Recipe controller', function() {
             expect(step.filters.length).toBe(1);
         }));
     });
+
+
+    describe('filters', function() {
+        var filters = [
+            {
+                'type': 'exact',
+                'colId': '0000',
+                'colName': 'name',
+                'args': {
+                    'phrase': '        AMC  ',
+                    'caseSensitive': true
+                },
+                'value': '        AMC  '
+            },{
+                'type': 'exact',
+                'colId': '0000',
+                'colName': 'id',
+                'args': {
+                    'phrase': '        AMC  ',
+                    'caseSensitive': true
+                },
+                'value': '        AMC  '
+            }
+        ];
+
+        it('should display all filter name on hover', inject(function() {
+            //given
+            var ctrl = createController();
+            //then
+            expect(ctrl.getAllFiltersNames(filters)).toBe('(NAME, ID)');
+        }));
+    });
 });

@@ -364,6 +364,43 @@ describe('Dataset list controller', function () {
             //then
             expect(dataset.renaming).toBeFalsy();
         }));
+
+        it('should not call service to rename dataset with null name', inject(function ($q, DatasetService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.when(true));
+            var ctrl = createController();
+            var name = 'dataset name';
+            var dataset = {name: name};
+
+
+            //when
+            ctrl.rename(dataset);
+            scope.$digest();
+
+            //then
+            expect(dataset.name).toBe(name);
+            expect(DatasetService.update).not.toHaveBeenCalled();
+            expect(DatasetService.update).not.toHaveBeenCalledWith(dataset);
+        }));
+
+        it('should not call service to rename dataset with empty name', inject(function ($q, DatasetService) {
+            //given
+            spyOn(DatasetService, 'update').and.returnValue($q.when(true));
+            var ctrl = createController();
+            var name = 'dataset name';
+            var dataset = {name: name};
+
+
+            //when
+            ctrl.rename(dataset, '');
+            scope.$digest();
+
+            //then
+            expect(dataset.name).toBe(name);
+            expect(DatasetService.update).not.toHaveBeenCalled();
+            expect(DatasetService.update).not.toHaveBeenCalledWith(dataset);
+        }));
+
     });
 
     describe('cloning dataset', function () {

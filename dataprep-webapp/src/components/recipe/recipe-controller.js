@@ -10,7 +10,7 @@
      * @requires data-prep.services.playground.service:PreviewService
      * @requires data-prep.services.preparation.service:PreparationService
      */
-    function RecipeCtrl(state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterService) {
+    function RecipeCtrl($translate, state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterService) {
         var vm = this;
         vm.recipeService = RecipeService;
 
@@ -174,6 +174,17 @@
             return function(params) {
                 updatePreview(step, params);
             };
+        };
+
+        /**
+         * @ngdoc method
+         * @name getAllFiltersNames
+         * @methodOf data-prep.recipe.controller:RecipeCtrl
+         * @param {array} stepFilters The step filters
+         * @description Get all filters names
+         */
+        vm.getAllFiltersNames = function getAllFiltersNames(stepFilters) {
+            return '(' + _.pluck(stepFilters,'colName').join(', ').toUpperCase() + ')';
         };
 
         /**

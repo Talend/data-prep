@@ -200,4 +200,69 @@ describe('Preparation list controller', function() {
         expect(PreparationService.delete).not.toHaveBeenCalled();
         expect(MessageService.success).not.toHaveBeenCalled();
     }));
+
+
+    describe('rename', function () {
+
+
+        it('should call preparation service to rename the preparation', inject(function ($q, PreparationService) {
+            //given
+            spyOn(PreparationService, 'setName').and.returnValue($q.when(true));
+
+            var ctrl = createController();
+            var preparation = {id: 'foo_beer', name: 'my old name'};
+            var name = 'new preparation name';
+
+            //when
+            ctrl.rename(preparation, name);
+
+            //then
+            expect(PreparationService.setName).toHaveBeenCalledWith(preparation.id,name);
+        }));
+
+        it('should not call preparation service to rename the preparation with empty name', function () {
+            //given
+
+            var ctrl = createController();
+            var preparation = {id: 'foo_beer', name: 'my old name'};
+            var name = '';
+
+            //when
+            ctrl.rename(preparation, name);
+
+        });
+
+        it('should not call preparation service to rename the preparation with null name', function () {
+            //given
+
+            var ctrl = createController();
+            var preparation = {id: 'foo_beer', name: 'my old name'};
+
+            //when
+            ctrl.rename(preparation);
+
+        });
+
+    });
+
+    describe('clone', function () {
+
+
+        it('should call preparation service to clone the preparation', inject(function ($q, PreparationService) {
+            //given
+            spyOn(PreparationService, 'clone').and.returnValue($q.when(true));
+
+            var ctrl = createController();
+            var preparation = {id: 'foo_beer'};
+
+            //when
+            ctrl.clone(preparation);
+
+            //then
+            expect(PreparationService.clone).toHaveBeenCalledWith(preparation.id);
+        }));
+
+
+    });
+
 });

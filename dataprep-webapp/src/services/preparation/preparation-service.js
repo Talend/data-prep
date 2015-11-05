@@ -23,6 +23,7 @@
 
             //preparation lifecycle
             create: create,
+            clone: clone,
             delete: deletePreparation,
             setName: setName,
 
@@ -111,6 +112,19 @@
                     StorageService.savePreparationAggregationsFromDataset(datasetId, preparation.id);
                     return preparation;
                 });
+        }
+
+        /**
+         * @ngdoc method
+         * @name clone
+         * @methodOf data-prep.services.preparation.service:PreparationService
+         * @param {string} preparationId The preparation id
+         * @description Create a new preparation, and keep the current preparation id
+         * @returns {promise} The POST promise
+         */
+        function clone(preparationId) {
+            return PreparationListService.clone(preparationId)
+                .then(consolidatePreparationsAndDatasets);
         }
 
         /**

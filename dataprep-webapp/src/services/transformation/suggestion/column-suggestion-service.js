@@ -12,11 +12,15 @@
         var COLUMN_CATEGORY = 'column_metadata';
         var FILTERED_CATEGORY = 'filtered';
         var SUGGESTION_CATEGORY = 'suggestion';
+        var EMPTY_CELLS = 'empty';
+        var INVALID_CELLS = 'invalid';
 
         var allCategories = null;
         var service = {
             allTransformations: [],                 // all selected column transformations
             allSuggestions: [],                     // all selected column suggestions
+            transformationsForEmptyCells: [],       // all column transformations applied to empty cells
+            transformationsForInvalidCells: [],     // all column transformations applied to invalid cells
             searchActionString: '',                 // current user input to filter transformations
             filteredTransformations: null,          // categories with their transformations to display, result of filter
 
@@ -50,6 +54,13 @@
 
         function labelCriteria(transfo) {
             return transfo.label.toLowerCase();
+        }
+
+
+        function isAplliedToCells(type) {
+            return function (item) {
+                return item.actionScope && (item.actionScope.indexOf(type) !== -1);
+            };
         }
 
         /**
@@ -134,6 +145,15 @@
                     service.filteredTransformations = allCategories;
                     service.allSuggestions = values[0];
                     service.allTransformations = values[1];
+
+                    service.transformationsForEmptyCells = _.chain(values[1])
+                                                            .filter(isAplliedToCells(EMPTY_CELLS))
+                                                            .sortBy(labelCriteria)
+                                                            .value();
+                    service.transformationsForInvalidCells = _.chain(values[1])
+                                                              .filter(isAplliedToCells(INVALID_CELLS))
+                                                              .sortBy(labelCriteria)
+                                                              .value();
                 });
         }
 

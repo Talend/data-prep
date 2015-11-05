@@ -3,7 +3,7 @@
     <id>dist</id>
     <baseDirectory>/</baseDirectory>
     <formats>
-        <format>zip</format>
+        <format>jar</format>
     </formats>
     <fileSets>
         <fileSet>

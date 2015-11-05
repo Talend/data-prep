@@ -1,7 +1,16 @@
 <div class="preparation-list">
-    <div class="preparation" ng-repeat="preparation in preparationListCtrl.preparations track by $index">
+    <div class="preparation" ng-repeat="preparation in preparationListCtrl.preparations track by $index"
+        ng-mouseover="preparationListCtrl.overPreparationEntry(preparation)"
+        ng-mouseleave="preparationListCtrl.leavePreparationEntry(preparation)">
         <div class="information">
-            <p class="title one-line"><a ui-sref="nav.home.preparations({prepid: preparation.id})" title="{{preparation.name}}">{{preparation.name}}</a></p>
+            <div>
+
+                <talend-editable-text text="preparation.name"
+                                      text-class="title one-line"
+                                      on-text-click="preparationListCtrl.load(preparation)"
+                                      on-validate="preparationListCtrl.rename(preparation, text)"></talend-editable-text>
+
+            </div>
             <p class="description">
                 <span translate-once="OWNED_BY"></span> <span class="important" title="{{preparation.author}}" >{{preparation.author}}</span><br/>
                 <span translate-once="LAST_MODIFICATION"></span><span translate-once="COLON"></span>{{preparation.lastModificationDate | TDPMoment}}
@@ -17,6 +26,7 @@
 
         <div class="actions">
             <a class="favorite" data-icon="f" ng-class="{selected: preparation.favorite}" ng-click="preparation.favorite = !preparation.favorite"></a>
+            <a class="clone-btn" data-icon="B" ng-click="preparationListCtrl.clone(preparation)" id="clone_btn_{{preparation.id}}"></a>
             <a class="trash" data-icon="e" ng-click="preparationListCtrl.delete(preparation)"></a>
         </div>
 

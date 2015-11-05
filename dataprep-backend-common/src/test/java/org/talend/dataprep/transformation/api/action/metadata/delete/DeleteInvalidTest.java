@@ -1,8 +1,8 @@
 package org.talend.dataprep.transformation.api.action.metadata.delete;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
@@ -36,6 +36,11 @@ public class DeleteInvalidTest {
         deleteInvalid = new DeleteInvalid();
         parameters = ActionMetadataTestUtils.parseParameters( //
                 DeleteInvalidTest.class.getResourceAsStream("deleteInvalidAction.json"));
+    }
+
+    @Test
+    public void testActionScope() throws Exception {
+        assertThat(deleteInvalid.getActionScope(), hasItem("invalid"));
     }
 
     @Test

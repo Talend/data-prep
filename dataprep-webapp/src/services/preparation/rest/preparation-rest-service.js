@@ -12,6 +12,7 @@
         return {
             //lifecycle
             create: create,
+            clone: clone,
             update: update,
             delete: deletePreparation,
 
@@ -97,6 +98,22 @@
                 }
             };
 
+            return $http(request);
+        }
+
+        /**
+         * @ngdoc method
+         * @name clone
+         * @methodOf data-prep.services.preparation.service:PreparationRestService
+         * @param {string} preparationId The preparation id
+         * @description Clone the preparation
+         * @returns {promise} The PUT promise
+         */
+        function clone(preparationId) {
+            var request = {
+                method: 'PUT',
+                url: RestURLs.preparationUrl + '/clone/' + preparationId
+            };
             return $http(request);
         }
 

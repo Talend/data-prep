@@ -193,6 +193,7 @@ describe('Filter service', function() {
             expect(filterInfo.args).toEqual({interval: [0, 22]});
             expect(filterInfo.filterFn()({col1:'5'})).toBeTruthy();
             expect(filterInfo.filterFn()({col1:'-5'})).toBeFalsy();
+            expect(filterInfo.filterFn()({col1: ''})).toBeFalsy();
 
             var filterInfo2 = StateService.addGridFilter.calls.argsFor(1)[0];
             expect(filterInfo2.type).toBe('inside_range');
@@ -203,6 +204,7 @@ describe('Filter service', function() {
             expect(filterInfo2.args).toEqual({interval:  [0, 1000000]});
             expect(filterInfo2.filterFn()({col2: '1000'})).toBeTruthy();
             expect(filterInfo2.filterFn()({col2: '-5'})).toBeFalsy();
+            expect(filterInfo2.filterFn()({col2: ''})).toBeFalsy();
         }));
 
         it('should not throw exception on non existing column (that could be removed by a step) in contains filter', inject(function(FilterService, StateService) {

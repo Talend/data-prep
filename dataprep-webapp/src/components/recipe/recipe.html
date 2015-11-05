@@ -24,32 +24,40 @@
                 <span translate-once="RECIPE_ITEM_ON_CELL"></span>
             </span>
 
-            <recipe-bullet class="step-trigger" step="step" ></recipe-bullet>
+            <span class="filter-icon"
+                  data-icon="q" ng-if="step.filters.length"
+                  title="{{'FILTERS_APPLIED' | translate}} {{recipeCtrl.getAllFiltersNames(step.filters)}}">
+            </span>
 
-            <div id="step-filters-list" ng-show="step.filters.length">
-                <filter-list class="list"
-                         filters="step.filters"
-                         on-filter-remove="recipeCtrl.removeStepFilter(step, filter)"></filter-list>
-            </div>
+            <recipe-bullet class="step-trigger" step="step" ></recipe-bullet>
         </div>
 
-        <div class="content" ng-if="recipeCtrl.hasParameters(step)">
-            <transform-form ng-if="recipeCtrl.hasStaticParams(step)"
-                              transformation="step.transformation"
-                              on-submit="recipeCtrl.stepUpdateClosure(step)(params)"
-                              on-submit-hover-on="recipeCtrl.previewUpdateClosure(step)(params)"
-                              on-submit-hover-off="recipeCtrl.cancelPreview()"></transform-form>
+        <div class="content" ng-if="recipeCtrl.hasParameters(step) || step.filters.length">
+            <div class="step-filters-list" ng-if="step.filters.length">
+                <filter-list class="list"
+                             filters="step.filters"
+                             on-filter-remove="recipeCtrl.removeStepFilter(step, filter)"></filter-list>
 
-            <talend-modal ng-if="recipeCtrl.hasDynamicParams(step)"
-                          fullscreen="false"
-                          state="recipeCtrl.showModal[$index]"
-                          close-button="true">
-                <div class="modal-title">{{ ::step.transformation.label }}</div>
-                <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
+            </div>
+            <div class="step-parameters-list">
+                <transform-form ng-if="recipeCtrl.hasStaticParams(step)"
+                                transformation="step.transformation"
+                                on-submit="recipeCtrl.stepUpdateClosure(step)(params)"
+                                on-submit-hover-on="recipeCtrl.previewUpdateClosure(step)(params)"
+                                on-submit-hover-off="recipeCtrl.cancelPreview()"></transform-form>
 
-                <transform-form transformation="step.transformation"
-                                  on-submit="recipeCtrl.stepUpdateClosure(step)(params)"></transform-form>
-            </talend-modal>
+                <talend-modal ng-if="recipeCtrl.hasDynamicParams(step)"
+                              fullscreen="false"
+                              state="recipeCtrl.showModal[$index]"
+                              close-button="true">
+                    <div class="modal-title">{{ ::step.transformation.label }}</div>
+                    <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
+
+                    <transform-form transformation="step.transformation"
+                                    on-submit="recipeCtrl.stepUpdateClosure(step)(params)"></transform-form>
+                </talend-modal>
+
+            </div>
         </div>
     </talend-accordions-item>
 </talend-accordions>

@@ -83,8 +83,8 @@
         margin: 0;
         max-height: 25px;
 
-        a {
-          color: $standard-color;
+        &:hover {
+          cursor: pointer;
         }
       }
 
@@ -116,6 +116,21 @@
         font-size: 0.8em;
         display: none;
       }
+
+      &.clone-btn {
+        font-size: .8em;
+        display: none;
+      }
+
+      &.check-btn {
+        margin-left: 5px;
+        color: $white;
+        background-color: $dark-green;
+        font-size: .5em;
+        &:hover
+        { background-color: darken($dark-green, 10%); }
+      }
+
     }
   }
 }

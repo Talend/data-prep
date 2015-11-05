@@ -1,7 +1,7 @@
 describe('rangeSlider directive', function () {
     'use strict';
 
-    var createElement, element, scope, isolateScope;
+    var createElement, element, scope, ctrl;
     var margins = {
         left: 25,
         right: 10
@@ -16,15 +16,8 @@ describe('rangeSlider directive', function () {
         Date.now = now;
     };
 
+    beforeEach(module('htmlTemplates'));
     beforeEach(module('talend.widget'));
-
-    beforeEach(module('pascalprecht.translate', function ($translateProvider) {
-        $translateProvider.translations('en', {
-            'INVALID_VALUE_RANGE_SLIDER': 'Invalid Entered Value',
-            'INVALID_VALUE_RANGE_SLIDER_CONTENT': ': Use \".\" instead of \",\"'
-        });
-        $translateProvider.preferredLanguage('en');
-    }));
 
     beforeEach(inject(function ($rootScope, $compile) {
         scope = $rootScope.$new(true);
@@ -42,7 +35,7 @@ describe('rangeSlider directive', function () {
             element = angular.element('<range-slider id="barChart"' +
                 'id="domId"' +
                 'width="250"' +
-                'height="100"' +
+                'height="60"' +
                 'range-limits="rangeLimits"' +
                 'on-brush-end="brushEnd"' +
                 '></range-slider>');
@@ -51,7 +44,7 @@ describe('rangeSlider directive', function () {
             $compile(element)(scope);
             scope.$digest();
 
-            isolateScope = element.isolateScope();
+            ctrl = element.controller('rangeSlider');
         };
     }));
 
@@ -124,7 +117,7 @@ describe('rangeSlider directive', function () {
             flushAllD3Transitions();
 
             //then
-            expect(isolateScope.brush.extent()).toEqual([20, 20.01]);
+            expect(ctrl.brush.extent()).toEqual([20, 20.01]);
         });
 
         it('should the min and max labels to the provided min/max values', function () {
@@ -159,9 +152,13 @@ describe('rangeSlider directive', function () {
             jasmine.clock().tick(100);
             flushAllD3Transitions();
 
+            //when
+            ctrl.showRangeInputs = true;
+            scope.$digest();
+
             //then
-            expect(document.getElementsByName('minRange')[0].value).toBe('-50000');
-            expect(document.getElementsByName('maxRange')[0].value).toBe('20000');
+            expect(element.find('input').eq(0)[0].value).toBe('-50000');
+            expect(element.find('input').eq(1)[0].value).toBe('20000');
         });
 
         it('should init inputs with the provided filter values', function () {
@@ -178,54 +175,43 @@ describe('rangeSlider directive', function () {
             jasmine.clock().tick(100);
             flushAllD3Transitions();
 
+            //when
+            ctrl.showRangeInputs = true;
+            scope.$digest();
+
             //then
-            expect(document.getElementsByName('minRange')[0].value).toBe('25');
-            expect(document.getElementsByName('maxRange')[0].value).toBe('35');
+            expect(element.find('input').eq(0)[0].value).toBe('25');
+            expect(element.find('input').eq(1)[0].value).toBe('35');
         });
 
         describe('events', function() {
 
             describe('ENTER keyup', function() {
-                it('should update brush with input values', function () {
+                it('should update brush with input values and call brushend callback', function () {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
-                    expect(isolateScope.brush.extent()).toEqual([5, 15]);
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
+
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'10'
+                    };
+                    scope.$digest();
 
                     var minInput = element.find('input').eq(0);
-                    var maxInput = element.find('input').eq(1);
-
-                    minInput[0].value = 8;
-                    maxInput[0].value = 10;
 
                     //when
                     var enterKeyUpEvent = new angular.element.Event('keyup');
                     enterKeyUpEvent.keyCode = 13;
                     minInput.trigger(enterKeyUpEvent);
+                    scope.$digest();
 
                     //then
-                    expect(isolateScope.brush.extent()).toEqual([8, 10]);
-                });
-
-                it('should call brush end callback', function () {
-                    //given
-                    createElement();
-                    jasmine.clock().tick(100);
-                    expect(scope.brushEnd).not.toHaveBeenCalled();
-
-                    var minInput = element.find('input').eq(0);
-                    var maxInput = element.find('input').eq(1);
-
-                    minInput[0].value = 8;
-                    maxInput[0].value = 10;
-
-                    //when
-                    var enterKeyUpEvent = new angular.element.Event('keyup');
-                    enterKeyUpEvent.keyCode = 13;
-                    minInput.trigger(enterKeyUpEvent);
-
-                    //then
+                    expect(ctrl.brush.extent()).toEqual([8, 10]);
                     expect(scope.brushEnd).toHaveBeenCalledWith([8, 10]);
+                    expect(minInput[0].value).toBe('8');
                 });
 
                 it('should invert min and max if min > max at brush end callback', function () {
@@ -234,11 +220,14 @@ describe('rangeSlider directive', function () {
                     jasmine.clock().tick(100);
                     expect(scope.brushEnd).not.toHaveBeenCalled();
 
-                    var minInput = element.find('input').eq(0);
-                    var maxInput = element.find('input').eq(1);
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'10',
+                        maxModel:'8'
+                    };
+                    scope.$digest();
 
-                    minInput[0].value = 10; // > max
-                    maxInput[0].value = 8; // < min
+                    var minInput = element.find('input').eq(0);
 
                     //when
                     var enterKeyUpEvent = new angular.element.Event('keyup');
@@ -249,26 +238,32 @@ describe('rangeSlider directive', function () {
                     expect(scope.brushEnd).toHaveBeenCalledWith([8, 10]);
                 });
 
-                it('should cancel the typed value when value is incorrect', function () {
+                it('should cancel the entered value when value is incorrect', inject(function ($timeout) {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
                     flushAllD3Transitions();
-                    var minInput = element.find('input').eq(0);
-                    expect(minInput[0].value).toEqual('5');
 
-                    minInput[0].value = 'kjhfkjfkl';
-                    var keyUp = new angular.element.Event('keyup');
-                    minInput.trigger(keyUp);
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'kjhfkjfkl',
+                        maxModel:'8'
+                    };
+                    scope.$digest();
+
+                    var minInput = element.find('input').eq(0);
 
                     //when
                     var enterKeyUp = new angular.element.Event('keyup');
                     enterKeyUp.keyCode = 13;
                     minInput.trigger(enterKeyUp);
+                    scope.$digest();
+                    $timeout.flush();
 
                     //then
+                    expect(ctrl.minMaxModel.minModel).toEqual('5');
                     expect(minInput[0].value).toEqual('5');
-                });
+                }));
 
                 it('should NOT call brush end callback when value is incorrect', function () {
                     //given
@@ -277,33 +272,10 @@ describe('rangeSlider directive', function () {
                     flushAllD3Transitions();
 
                     var minInput = element.find('input').eq(0);
-                    minInput[0].value = 'kjhfkjfkl';
-                    var keyUp = new angular.element.Event('keyup');
-                    minInput.trigger(keyUp);
-
-                    expect(scope.brushEnd).not.toHaveBeenCalled();
-
-                    //when
-                    var enterKeyUp = new angular.element.Event('keyup');
-                    enterKeyUp.keyCode = 13;
-                    minInput.trigger(enterKeyUp);
-
-                    //then
-                    expect(scope.brushEnd).not.toHaveBeenCalled();
-                });
-
-                it('should hide error message when value is incorrect', function () {
-                    //given
-                    createElement();
-                    jasmine.clock().tick(100);
-                    flushAllD3Transitions();
-
-                    var minInput = element.find('input').eq(0);
-                    minInput[0].value = 'kjhfkjfkl';
-                    var keyUp = new angular.element.Event('keyup');
-                    minInput.trigger(keyUp);
-
-                    expect(element.find('text.invalid-value-msg').eq(0).text()).toBe('Invalid Entered Value');
+                    ctrl.minMaxModel = {
+                        minModel:'kjhfkjfkl',
+                        maxModel:'15'
+                    };
 
                     //when
                     var enterKeyUp = new angular.element.Event('keyup');
@@ -311,7 +283,7 @@ describe('rangeSlider directive', function () {
                     minInput.trigger(enterKeyUp);
 
                     //then
-                    expect(element.find('text.invalid-value-msg').eq(0).text()).toBe('');
+                    expect(scope.brushEnd).not.toHaveBeenCalled();
                 });
             });
 
@@ -320,13 +292,16 @@ describe('rangeSlider directive', function () {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
-                    expect(isolateScope.brush.extent()).toEqual([5, 15]);
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
 
-                    var minInput = element.find('input').eq(0);
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'10'
+                    };
+                    scope.$digest();
+
                     var maxInput = element.find('input').eq(1);
-
-                    minInput[0].value = 8;
-                    maxInput[0].value = 10;
 
                     //when
                     var tabKeyUpEvent = new angular.element.Event('keyup');
@@ -334,7 +309,7 @@ describe('rangeSlider directive', function () {
                     maxInput.trigger(tabKeyUpEvent);
 
                     //then
-                    expect(isolateScope.brush.extent()).toEqual([8, 10]);
+                    expect(ctrl.brush.extent()).toEqual([8, 10]);
                 });
 
                 it('should call brush end callback', function () {
@@ -343,11 +318,13 @@ describe('rangeSlider directive', function () {
                     jasmine.clock().tick(100);
                     expect(scope.brushEnd).not.toHaveBeenCalled();
 
-                    var minInput = element.find('input').eq(0);
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'10'
+                    };
+                    scope.$digest();
                     var maxInput = element.find('input').eq(1);
-
-                    minInput[0].value = 8;
-                    maxInput[0].value = 10;
 
                     //when
                     var tabKeyUpEvent = new angular.element.Event('keyup');
@@ -364,11 +341,13 @@ describe('rangeSlider directive', function () {
                     jasmine.clock().tick(100);
                     expect(scope.brushEnd).not.toHaveBeenCalled();
 
-                    var minInput = element.find('input').eq(0);
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'10',
+                        maxModel:'8'
+                    };
+                    scope.$digest();
                     var maxInput = element.find('input').eq(1);
-
-                    minInput[0].value = 10; // > max
-                    maxInput[0].value = 8; // < min
 
                     //when
                     var tabKeyUpEvent = new angular.element.Event('keyup');
@@ -379,26 +358,32 @@ describe('rangeSlider directive', function () {
                     expect(scope.brushEnd).toHaveBeenCalledWith([8, 10]);
                 });
 
-                it('should cancel the typed value when value is incorrect', function () {
+                it('should cancel the typed value when value is incorrect', inject(function ($timeout) {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
                     flushAllD3Transitions();
-                    var maxInput = element.find('input').eq(1);
-                    expect(maxInput[0].value).toEqual('15');
 
-                    maxInput[0].value = 'kjhfkjfkl';
-                    var keyUp = new angular.element.Event('keyup');
-                    maxInput.trigger(keyUp);
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'10lkfdsfklds'
+                    };
+                    scope.$digest();
+
+                    var maxInput = element.find('input').eq(1);
 
                     //when
                     var tabKeyUpEvent = new angular.element.Event('keyup');
                     tabKeyUpEvent.keyCode = 9;
                     maxInput.trigger(tabKeyUpEvent);
+                    scope.$digest();
+                    $timeout.flush();
 
                     //then
+                    expect(ctrl.minMaxModel.maxModel).toEqual('15');
                     expect(maxInput[0].value).toEqual('15');
-                });
+                }));
 
                 it('should NOT call brush end callback when value is incorrect', function () {
                     //given
@@ -406,42 +391,19 @@ describe('rangeSlider directive', function () {
                     jasmine.clock().tick(100);
                     flushAllD3Transitions();
 
-                    var maxInput = element.find('input').eq(1);
-                    maxInput[0].value = 'kjhfkjfkl';
-                    var keyUp = new angular.element.Event('keyup');
-                    maxInput.trigger(keyUp);
-
-                    expect(scope.brushEnd).not.toHaveBeenCalled();
+                    var minInput = element.find('input').eq(0);
+                    ctrl.minMaxModel = {
+                        minModel:'kjhfkjfkl',
+                        maxModel:'15'
+                    };
 
                     //when
-                    var tabKeyUpEvent = new angular.element.Event('keyup');
-                    tabKeyUpEvent.keyCode = 9;
-                    maxInput.trigger(tabKeyUpEvent);
+                    var enterKeyUp = new angular.element.Event('keyup');
+                    enterKeyUp.keyCode = 9;
+                    minInput.trigger(enterKeyUp);
 
                     //then
                     expect(scope.brushEnd).not.toHaveBeenCalled();
-                });
-
-                it('should hide error message when value is incorrect', function () {
-                    //given
-                    createElement();
-                    jasmine.clock().tick(100);
-                    flushAllD3Transitions();
-
-                    var maxInput = element.find('input').eq(1);
-                    maxInput[0].value = 'kjhfkjfkl';
-                    var keyUp = new angular.element.Event('keyup');
-                    maxInput.trigger(keyUp);
-
-                    expect(element.find('text.invalid-value-msg').eq(0).text()).toBe('Invalid Entered Value');
-
-                    //when
-                    var tabKeyUpEvent = new angular.element.Event('keyup');
-                    tabKeyUpEvent.keyCode = 9;
-                    maxInput.trigger(tabKeyUpEvent);
-
-                    //then
-                    expect(element.find('text.invalid-value-msg').eq(0).text()).toBe('');
                 });
             });
 
@@ -450,17 +412,48 @@ describe('rangeSlider directive', function () {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
-                    expect(isolateScope.brush.extent()).toEqual([5, 15]);
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
+
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel: '5',
+                        maxModel: '17'
+                    };
+                    scope.$digest();
 
                     var maxInput = element.find('input').eq(1);
-                    maxInput[0].value = 17;
 
                     //when
                     var blurEvent = new angular.element.Event('blur');
                     maxInput.trigger(blurEvent);
+                    scope.$digest();
 
                     //then
-                    expect(isolateScope.brush.extent()).toEqual([5, 17]);
+                    expect(ctrl.brush.extent()).toEqual([5, 17]);
+                });
+
+                it('should NOT update brush with invalid input values', function () {
+                    //given
+                    createElement();
+                    jasmine.clock().tick(100);
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
+
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel: '5',
+                        maxModel: '14kjhjidf7'
+                    };
+                    scope.$digest();
+
+                    var maxInput = element.find('input').eq(1);
+
+                    //when
+                    var blurEvent = new angular.element.Event('blur');
+                    maxInput.trigger(blurEvent);
+                    scope.$digest();
+
+                    //then
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
                 });
 
                 it('should call brush end callback', function () {
@@ -469,8 +462,13 @@ describe('rangeSlider directive', function () {
                     jasmine.clock().tick(100);
                     expect(scope.brushEnd).not.toHaveBeenCalled();
 
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel: '5',
+                        maxModel: '17'
+                    };
+                    scope.$digest();
                     var maxInput = element.find('input').eq(1);
-                    maxInput[0].value = 17;
 
                     //when
                     var blurEvent = new angular.element.Event('blur');
@@ -482,96 +480,182 @@ describe('rangeSlider directive', function () {
             });
 
             describe('ESC keyup', function() {
-                it('should cancel the typed input values', function () {
+                it('should cancel the typed input values even with invalid value', inject(function ($timeout) {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
+                    flushAllD3Transitions();
 
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'1jhkjhjjhkkj0'
+                    };
+                    scope.$digest();
+
+                    var maxInput = element.find('input').eq(1);
                     var minInput = element.find('input').eq(0);
-                    minInput[0].value = 7;
 
                     //when
-                    var escKeyUp = new angular.element.Event('keyup');
-                    escKeyUp.keyCode = 27;
-                    minInput.trigger(escKeyUp);
+                    var tabKeyUpEvent = new angular.element.Event('keyup');
+                    tabKeyUpEvent.keyCode = 27;
+                    maxInput.trigger(tabKeyUpEvent);
+                    scope.$digest();
+                    $timeout.flush();
 
                     //then
-                    expect(element.find('input').eq(0)[0].value).toBe('5');
-                });
+                    expect(ctrl.minMaxModel.minModel).toEqual('5');
+                    expect(minInput[0].value).toEqual('5');
 
-                it('should NOT update brush', function () {
+                    expect(ctrl.minMaxModel.maxModel).toEqual('15');
+                    expect(maxInput[0].value).toEqual('15');
+                }));
+
+                it('should NOT update brush', inject(function ($timeout) {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
-                    expect(isolateScope.brush.extent()).toEqual([5, 15]);
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
 
-                    var minInput = element.find('input').eq(0);
-                    minInput[0].value = 7;
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'10'
+                    };
+                    scope.$digest();
+
+                    var maxInput = element.find('input').eq(1);
 
                     //when
-                    var escKeyUp = new angular.element.Event('keyup');
-                    escKeyUp.keyCode = 27;
-                    minInput.trigger(escKeyUp);
+                    var tabKeyUpEvent = new angular.element.Event('keyup');
+                    tabKeyUpEvent.keyCode = 27;
+                    maxInput.trigger(tabKeyUpEvent);
+                    scope.$digest();
+                    $timeout.flush();
 
                     //then
-                    expect(isolateScope.brush.extent()).toEqual([5, 15]);
-                });
+                    expect(ctrl.brush.extent()).toEqual([5, 15]);
+                }));
 
-                it('should NOT call brush end callback', function () {
+                it('should NOT call brush end callback', inject(function ($timeout) {
                     //given
                     createElement();
                     jasmine.clock().tick(100);
                     expect(scope.brushEnd).not.toHaveBeenCalled();
 
-                    var minInput = element.find('input').eq(0);
-                    minInput[0].value = 7;
+                    ctrl.showRangeInputs = true;
+                    ctrl.minMaxModel = {
+                        minModel:'8',
+                        maxModel:'10'
+                    };
+                    scope.$digest();
+
+                    var maxInput = element.find('input').eq(1);
 
                     //when
-                    var escKeyUp = new angular.element.Event('keyup');
-                    escKeyUp.keyCode = 27;
-                    minInput.trigger(escKeyUp);
+                    var tabKeyUpEvent = new angular.element.Event('keyup');
+                    tabKeyUpEvent.keyCode = 27;
+                    maxInput.trigger(tabKeyUpEvent);
+                    scope.$digest();
+                    $timeout.flush();
 
                     //then
                     expect(scope.brushEnd).not.toHaveBeenCalled();
-                });
+                }));
             });
         });
 
         describe('errors', function() {
-            it('should show error message', function () {
+            it('should show error message when value is incorrect', function () {
                 //given
                 createElement();
                 jasmine.clock().tick(100);
+                flushAllD3Transitions();
 
-                element.find('input').eq(0)[0].value = 'kjhfkjfkl';
+                ctrl.showRangeInputs = true;
+                ctrl.minMaxModel = {
+                    minModel:'kjhfkjfkl'
+                };
+                scope.$digest();
+
+                var minInput = element.find('input').eq(0);
 
                 //when
-                var event2 = new angular.element.Event('keyup');
-                event2.keyCode = 104;//8
-                element.find('input').eq(0).trigger(event2);
+                var keyUp = new angular.element.Event('keyup');
+                keyUp.keyCode = 56;
+                minInput.trigger(keyUp);
+                scope.$digest();
 
                 //then
-                expect(isolateScope.brush.extent()).toEqual([5, 15]);
-                expect(element.find('text.invalid-value-msg').eq(0).text()).toBe('Invalid Entered Value');
+                expect(element.find('.error').eq(0).hasClass('ng-hide')).toBe(false);
+                expect(element.find('.error').eq(1).hasClass('ng-hide')).toBe(true);
             });
 
-            it('should show error message with comma warning', function () {
+            it('should hide error message when value was incorrect and the user hits ENTER', inject(function ($timeout) {
                 //given
                 createElement();
                 jasmine.clock().tick(100);
+                flushAllD3Transitions();
 
-                element.find('input').eq(0)[0].value = 'kjhfkjf,kl';
+                ctrl.showRangeInputs = true;
+                ctrl.minMaxModel = {
+                    minModel:'kjhfkjfkl,'
+                };
+                scope.$digest();
+
+                var minInput = element.find('input').eq(0);
+                var keyUp = new angular.element.Event('keyup');
+                minInput.trigger(keyUp);
+                scope.$digest();
+
+                expect(element.find('.error').eq(0).hasClass('ng-hide')).toBe(false);
+                expect(element.find('.error').eq(1).hasClass('ng-hide')).toBe(false);
 
                 //when
-                var event2 = new angular.element.Event('keyup');
-                event2.keyCode = 104;//8
-                element.find('input').eq(0).trigger(event2);
+                var enterKeyUp = new angular.element.Event('keyup');
+                enterKeyUp.keyCode = 13;
+                minInput.trigger(enterKeyUp);
+                scope.$digest();
+                $timeout.flush();
 
                 //then
-                expect(isolateScope.brush.extent()).toEqual([5, 15]);
-                expect(element.find('text.invalid-value-msg').eq(0).text()).toBe('Invalid Entered Value: Use "." instead of ","');
-            });
+                expect(element.find('.error').eq(0).hasClass('ng-hide')).toBe(true);
+                expect(element.find('.error').eq(1).hasClass('ng-hide')).toBe(true);
+                expect(minInput[0].value).toBe('5');
+            }));
+
+            it('should hide error message when value was incorrect and the user hits TAB', inject(function ($timeout) {
+                //given
+                createElement();
+                jasmine.clock().tick(100);
+                flushAllD3Transitions();
+
+                ctrl.showRangeInputs = true;
+                ctrl.minMaxModel = {
+                    minModel:'kjhfkjfkl,'
+                };
+                scope.$digest();
+
+                var minInput = element.find('input').eq(0);
+                var keyUp = new angular.element.Event('keyup');
+                minInput.trigger(keyUp);
+                scope.$digest();
+
+                expect(element.find('.error').eq(0).hasClass('ng-hide')).toBe(false);
+                expect(element.find('.error').eq(1).hasClass('ng-hide')).toBe(false);
+
+                //when
+                var enterKeyUp = new angular.element.Event('keyup');
+                enterKeyUp.keyCode = 9;
+                minInput.trigger(enterKeyUp);
+                scope.$digest();
+                $timeout.flush();
+
+                //then
+                expect(element.find('.error').eq(0).hasClass('ng-hide')).toBe(true);
+                expect(element.find('.error').eq(1).hasClass('ng-hide')).toBe(true);
+                expect(minInput[0].value).toBe('5');
+            }));
         });
     });
-
 });

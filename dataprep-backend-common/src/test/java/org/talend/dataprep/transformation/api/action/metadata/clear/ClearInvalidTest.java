@@ -1,6 +1,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.clear;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
@@ -49,6 +50,11 @@ public class ClearInvalidTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(), is(ActionCategory.DATA_CLEANSING.getDisplayName()));
+    }
+
+    @Test
+    public void testActionScope() throws Exception {
+        assertThat(action.getActionScope(), hasItem("invalid"));
     }
 
     @Test

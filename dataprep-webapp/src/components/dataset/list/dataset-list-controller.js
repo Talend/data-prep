@@ -167,23 +167,25 @@
          * @description Rename a dataset
          */
         vm.rename = function(dataset, name){
-            if (dataset.renaming){
-                return;
-            }
+            var cleanName = name?name.trim():'';
+            if (cleanName) {
+                if ( dataset.renaming ) {
+                    return;
+                }
 
-            dataset.renaming = true;
-            var oldName = dataset.name;
-            dataset.name = name;
-            return DatasetService.update(dataset)
-                .then(function() {
-                  MessageService.success('DATASET_RENAME_SUCCESS_TITLE', 'DATASET_RENAME_SUCCESS');
-                })
-                .catch(function() {
-                    dataset.name = oldName;
-                })
-                .finally(function () {
-                    dataset.renaming = false;
-                });
+                dataset.renaming = true;
+                var oldName = dataset.name;
+                dataset.name = name;
+                return DatasetService.update(dataset)
+                                    .then(function() {
+                                        MessageService.success( 'DATASET_RENAME_SUCCESS_TITLE',
+                                                                'DATASET_RENAME_SUCCESS' );
+                                    }).catch(function () {
+                                        dataset.name = oldName;
+                                    }).finally(function () {
+                                        dataset.renaming = false;
+                                    });
+            }
         };
 
         /**

@@ -1,14 +1,17 @@
 package org.talend.dataprep.transformation.api.action.metadata.bool;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.text.IsEmptyString;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -16,6 +19,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.metadata.category.ActionScope;
 
 /**
  * Test class for Negate action.
@@ -43,6 +47,11 @@ public class NegateTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(), is(ActionCategory.BOOLEAN.getDisplayName()));
+    }
+
+    @Test
+    public void testActionScope() throws Exception {
+        assertThat(action.getActionScope(), is(new ArrayList<>()));
     }
 
     @Test

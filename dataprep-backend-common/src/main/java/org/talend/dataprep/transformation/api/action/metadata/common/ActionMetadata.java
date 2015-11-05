@@ -3,6 +3,7 @@ package org.talend.dataprep.transformation.api.action.metadata.common;
 import static org.talend.dataprep.api.preparation.Action.Builder.builder;
 import static org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -17,6 +18,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.transformation.api.action.DataSetMetadataAction;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
+import org.talend.dataprep.transformation.api.action.metadata.category.ActionScope;
 import org.talend.dataprep.transformation.api.action.metadata.category.ScopeCategory;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
@@ -98,6 +100,18 @@ public abstract class ActionMetadata {
      */
     public String getDescription() {
         return MessagesBundle.getString("action." + getName() + ".desc");
+    }
+
+    /**
+     * Defines the list of scopes this action belong to.
+     * 
+     * Scope scope is a concept that allow us to describe on which scope(s) each action can be applied.
+     *
+     * @return list of scopes of this action
+     * @see ActionScope
+     */
+    public List<String> getActionScope(){
+        return new ArrayList<>();
     }
 
     /**

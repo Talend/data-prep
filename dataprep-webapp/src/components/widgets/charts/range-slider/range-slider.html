@@ -1,0 +1,34 @@
+<div class="range-slider-id"></div>
+<form name="rangesForm" ng-if="rangeSliderCtrl.showRangeInputs" class="range-inputs-cls">
+    <span class="range-label-input">
+        <!-- did  not use input type="number because the ng-model of '25,' is '25' " -->
+        <b translate-once="MIN"></b>&nbsp;<input type="text"
+                  ng-model="rangeSliderCtrl.minMaxModel.minModel"
+                  ng-blur="rangeSliderCtrl.prepareInputFilter($event)"
+                  ng-keydown="rangeSliderCtrl.stopPropagation($event)"
+                  ng-keyup="rangeSliderCtrl.handleKey('min')($event)"
+            >
+    </span>
+    <span class="range-label-input">
+        <b translate-once="MAX"></b>&nbsp;<input type="text"
+                  ng-model="rangeSliderCtrl.minMaxModel.maxModel"
+                  ng-blur="rangeSliderCtrl.prepareInputFilter($event)"
+                  ng-keydown="rangeSliderCtrl.stopPropagation($event)"
+                  ng-keyup="rangeSliderCtrl.handleKey('max')($event)"
+            >
+    </span>
+
+    <br/>
+
+</form>
+<div class="error-message">
+        <span class="error"
+              ng-show="rangeSliderCtrl.invalidNumber"
+              translate-once="INVALID_VALUE_RANGE_SLIDER"
+                ><!--ng-pattern has not been used because we need to check the case where the user has type a comma ',' --></span>
+
+        <span class="error"
+              ng-show="rangeSliderCtrl.invalidNumberWithComma"
+              translate-once="INVALID_VALUE_RANGE_SLIDER_CONTENT"
+                ></span>
+</div>

@@ -5,6 +5,7 @@
     "dynamic": false,
     "description": "Extracts protocol, host, port, query, etc... from an url in separated columns",
     "label": "Extract url tokens",
+    "actionScope": [],
     "parameters": [
       {
         "name": "column_id",
@@ -95,6 +96,9 @@
     "dynamic": false,
     "description": "Clear cells that have a value recognized as invalid",
     "label": "Clear cells with invalid values",
+    "actionScope": [
+      "invalid"
+    ],
     "parameters": [
       {
         "name": "column_id",
@@ -185,6 +189,9 @@
     "dynamic": false,
     "description": "Delete rows that have this cell empty",
     "label": "Delete lines with empty cell",
+    "actionScope": [
+      "empty"
+    ],
     "parameters": [
       {
         "name": "column_id",
@@ -230,6 +237,9 @@
     "dynamic": false,
     "description": "Delete rows that have this invalid cell",
     "label": "Delete lines with invalid cell",
+    "actionScope": [
+      "invalid"
+    ],
     "parameters": [
       {
         "name": "column_id",

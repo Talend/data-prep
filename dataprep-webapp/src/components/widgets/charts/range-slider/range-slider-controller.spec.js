@@ -16,6 +16,39 @@ describe('RangeSlider controller', function () {
         };
     }));
 
+    it('should check if both of the entered min and max are numbers when entered value is invalid', inject(function () {
+        //given
+        var ctrl = createController();
+
+        ctrl.minMaxModel = {
+            minModel: '5 74',
+            maxModel: '0'
+        };
+
+        //when
+        var result = ctrl.areMinMaxNumbers();
+
+        //then
+        expect(result).toBe(false);
+    }));
+
+    it('should check if both of the entered min and max are numbers when entered value is valid', inject(function () {
+        //given
+        var ctrl = createController();
+
+        ctrl.minMaxModel = {
+            minModel: '574',
+            maxModel: '0'
+        };
+
+        //when
+        var result = ctrl.areMinMaxNumbers();
+
+        //then
+        expect(result).toBe(true);
+    }));
+
+
     it('should transform number string to number', inject(function () {
         //given
         var ctrl = createController();

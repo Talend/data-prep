@@ -16,6 +16,10 @@
       background-color: $light-gray;
       text-decoration: line-through;
     }
+
+    .content {
+      background-color: transparent;
+    }
   }
 
   > .content > .content-container {
@@ -35,9 +39,13 @@
     .step-description {
       padding-right: 30px;
 
+      .filter-icon {
+        color: $dark-gray;
+        font-size: 0.65em;
+        padding: 0 0 0 5px;
+      }
+
       .recipe-description {
-
-
         &.recipe-column-name {
           font-weight: bold;
           text-transform: uppercase;
@@ -66,19 +74,29 @@
   }
 
   /*******************************Step Filters List******************************/
-  #step-filters-list {
+  .step-filters-list {
+    cursor: initial;
     background-color: $shadow-gray;
     color: $dark-gray;
-    max-height: 85px;
+    max-height: 160px;
     overflow-y: auto;
+    padding: 0 0  0 10px;
     @include display(flex);
     @include flex-direction(row);
     .list {
       @include flex-grow(1);
       @include flex-shrink(1);
+
+      li:hover{
+        background-color: transparent;
+      }
     }
   }
 
+  .step-parameters-list {
+    background-color: $shadow-gray;
+    margin-top: 10px;
+  }
   /***********************************Panel hide/show*******************************/
   .action {
     &:hover {

@@ -55,7 +55,7 @@
      * @description Filter service. This service holds the filters list and provide the entry point to datagrid filters
      * @requires data-prep.services.playground.service:DatagridService
      */
-    function FilterService($timeout, state, StateService, DatagridService, NumbersValidityService) {
+    function FilterService($timeout, state, StateService, DatagridService, ConverterService) {
         var service = {
             //utils
             getColumnsContaining: getColumnsContaining,
@@ -228,7 +228,13 @@
         function createRangeFilterFn(colId, values) {
             return function () {
                 return function (item) {
-                    return NumbersValidityService.toNumber(item[colId]) >= values[0] && NumbersValidityService.toNumber(item[colId]) <= values[1];
+                        if(!ConverterService.isNumber(item[colId])){
+                            return false;
+                        }
+                        else{
+                            return ConverterService.adaptValue('integer', item[colId]) >= values[0] &&
+                            ConverterService.adaptValue('integer', item[colId]) <= values[1];
+                        }
                 };
             };
         }

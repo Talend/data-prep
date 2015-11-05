@@ -18,10 +18,10 @@ describe('Column suggestion service', function () {
                 {name: 'cluster', category: 'quickfix', label: 'f', description: 'test'},
                 {name: 'split', category: 'column_metadata', label: 'c', description: 'test'},
                 {name: 'tolowercase', category: 'case', label: 'v', description: 'test'},
-                {name: 'touppercase', category: 'case', label: 'u', description: 'test'},
-                {name: 'removeempty', category: 'clear', label: 'a', description: 'test'},
-                {name: 'totitlecase', category: 'case', label: 't', description: 'test'},
-                {name: 'removetrailingspaces', category: 'quickfix', label: 'm', description: 'test'},
+                {name: 'touppercase', category: 'case', label: 'u', description: 'test',  actionScope: ['unknown']},
+                {name: 'removeempty', category: 'clear', label: 'a', description: 'test', actionScope: ['empty', 'invalid']},
+                {name: 'totitlecase', category: 'case', label: 't', description: 'test', actionScope: ['invalid']},
+                {name: 'removetrailingspaces', category: 'quickfix', label: 'm', description: 'test', actionScope: ['empty', 'unknown']},
                 {name: 'split', category: 'split', label: 'l', dynamic: true, description: 'test'}
             ]
         ));
@@ -207,5 +207,34 @@ describe('Column suggestion service', function () {
         expect(filteredTransformations.length).toBe(1);
         expect(filteredTransformations[0].categoryHtml).toBe('SPLIT');
         expect(filteredTransformations[0].transformations[0].labelHtml).toBe('l<span class="highlighted">...</span>');
+    }));
+
+
+    it('should initialize transformationsForEmptyCells', inject(function ($rootScope, ColumnSuggestionService, TransformationCacheService) {
+        //when
+        ColumnSuggestionService.initTransformations(firstSelectedColumn);
+        $rootScope.$digest();
+
+        //then
+        expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(firstSelectedColumn);
+
+        var transformationsForEmptyCells = ColumnSuggestionService.transformationsForEmptyCells;
+        expect(transformationsForEmptyCells.length).toBe(2);
+        expect(transformationsForEmptyCells[0].label).toBe('a');
+        expect(transformationsForEmptyCells[1].label).toBe('m');
+    }));
+
+    it('should initialize transformationsForInvalidCells', inject(function ($rootScope, ColumnSuggestionService, TransformationCacheService) {
+        //when
+        ColumnSuggestionService.initTransformations(firstSelectedColumn);
+        $rootScope.$digest();
+
+        //then
+        expect(TransformationCacheService.getTransformations).toHaveBeenCalledWith(firstSelectedColumn);
+
+        var transformationsForInvalidCells = ColumnSuggestionService.transformationsForInvalidCells;
+        expect(transformationsForInvalidCells.length).toBe(2);
+        expect(transformationsForInvalidCells[0].label).toBe('a');
+        expect(transformationsForInvalidCells[1].label).toBe('t');
     }));
 });

@@ -10,6 +10,22 @@
 
         /**
          * @ngdoc method
+         * @name toNumber
+         * @methodOf data-prep.services.utils.service:ConverterService
+         * @param {String} type - the type of the given value
+         * @description [PRIVATE] trims and checks if the entered string is valid number
+         * @return Number or undefined
+         */
+        this.isNumber = function toNumber (value) {
+            value = value.trim();
+            if(/^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test(value)){
+                return true;
+            }
+            return false;
+        };
+
+        /**
+         * @ngdoc method
          * @name toInputType
          * @methodOf data-prep.services.utils.service:ConverterService
          * @param {string} type - the type to convert

@@ -11,9 +11,22 @@
 
         /**
          * @ngdoc method
+         * @name areMinMaxNumbers
+         * @propertyOf talend.widget.controller:RangeSliderCtrl
+         * @description checks if both of the entered values are numbers
+         * @returns {boolean}
+         */
+        vm.areMinMaxNumbers = function areMinMaxNumbers(){
+            var isMinNumber = vm.toNumber(vm.minMaxModel.minModel);
+            var isMaxNumber = vm.toNumber(vm.minMaxModel.maxModel);
+            return !(isMinNumber === null || isMaxNumber === null);
+        };
+
+        /**
+         * @ngdoc method
          * @name toNumber
          * @propertyOf talend.widget.controller:RangeSliderCtrl
-         * @description check if the entered value is a number
+         * @description converts the entered string to a number returns null if not a valid number
          * @param {string} value The value to transform
          */
         vm.toNumber = function toNumber(value) {

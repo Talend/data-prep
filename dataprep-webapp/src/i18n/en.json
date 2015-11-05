@@ -34,6 +34,10 @@
   "RECIPE": "recipe",
   "ROWS": "row(s)",
   "STEPS": "step(s)",
+  "PREPARATION_RENAME_SUCCESS_TITLE": "Preparation rename",
+  "PREPARATION_RENAME_SUCCESS": "The preparation has been renamed",
+  "PREPARATION_CLONING_SUCCESS_TITLE": "Preparation cloning",
+  "PREPARATION_CLONING_SUCCESS": "The preparation has been cloned",
 
   "_comment": "Datagrid transformations",
   "RECIPE_ITEM_ON_COL": "on column",
@@ -137,6 +141,9 @@
 
   "_comment": "Action panel",
   "FIND_FUNCTION": "Find a Function...",
+
+  "_comment": "Recipe",
+  "FILTERS_APPLIED": "Filters applied",
 
   "_comment": "Statistics",
   "COUNT": "Count",

@@ -13,6 +13,8 @@
         var MIN_QUALITY_WIDTH = 10;
         var vm = this;
 
+        vm.columnSuggestionService = ColumnSuggestionService;
+
         /**
          * @ngdoc method
          * @name getMinimalPercent
@@ -168,16 +170,46 @@
          * @name applyActionOnColumn
          * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
          * @description Apply a given transformation on the current column
-         * @param {String} actionName The action name
+         * @param {Object} action The action to apply
          */
-        vm.applyActionOnColumn = function applyActionOnColumn(actionName) {
-            var actionToApply = _.find(ColumnSuggestionService.allTransformations, function (action) {
-                return action.name === actionName;
-            });
-            TransformationApplicationService.append(actionToApply, 'column');
+        vm.applyActionOnColumn = function applyActionOnColumn(action) {
+            TransformationApplicationService.append(action, 'column');
         };
     }
 
+    /**
+     * @ngdoc property
+     * @name transformationsForEmptyCells
+     * @propertyOf data-prep.quality-bar.controller:QualityBarCtrl
+     * @description The transformations applied to empty cells.
+     * This is bound to {@link data-prep.services.transformation.service:ColumnSuggestionService ColumnSuggestionService}.transformationsForEmptyCells
+     */
+    Object.defineProperty(QualityBarCtrl.prototype,
+        'transformationsForEmptyCells', {
+            enumerable: true,
+            configurable: false,
+            get: function () {
+                return this.columnSuggestionService.transformationsForEmptyCells;
+            }
+        });
+
+    /**
+     * @ngdoc property
+     * @name transformationsForInvalidCells
+     * @propertyOf data-prep.quality-bar.controller:QualityBarCtrl
+     * @description The transformations column applied to invalid cells.
+     * This is bound to {@link data-prep.services.transformation.service:ColumnSuggestionService ColumnSuggestionService}.transformationsForInvalidCells
+     */
+    Object.defineProperty(QualityBarCtrl.prototype,
+        'transformationsForInvalidCells', {
+            enumerable: true,
+            configurable: false,
+            get: function () {
+                return this.columnSuggestionService.transformationsForInvalidCells;
+            }
+        });
+
     angular.module('data-prep.quality-bar')
         .controller('QualityBarCtrl', QualityBarCtrl);
+
 })();

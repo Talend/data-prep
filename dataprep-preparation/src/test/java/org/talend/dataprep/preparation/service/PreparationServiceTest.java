@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +72,7 @@ public class PreparationServiceTest {
         when().get("/preparations").then().header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT")
                 .header("Access-Control-Max-Age", "3600")
-                .header("Access-Control-Allow-Headers", "x-requested-with, Content-Type");
+                .header( "Access-Control-Allow-Headers", "x-requested-with, Content-Type" );
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -125,12 +127,47 @@ public class PreparationServiceTest {
     @Test
     public void get() throws Exception {
         Preparation preparation = new Preparation("1234", ROOT_STEP);
-        preparation.setCreationDate(0);
-        preparation.setLastModificationDate(12345);
+        preparation.setCreationDate( 0 );
+        preparation.setLastModificationDate( 12345 );
         repository.add(preparation);
         String preparationDetails = when().get("/preparations/{id}", preparation.id()).asString();
-        InputStream expected = PreparationServiceTest.class.getResourceAsStream("preparation_1234.json");
+        InputStream expected = PreparationServiceTest.class.getResourceAsStream( "preparation_1234.json" );
+        assertThat(preparationDetails, sameJSONAsFile( expected ));
+    }
+
+    @Test
+    public void cloning() throws Exception {
+        Preparation preparation = new Preparation("56789", ROOT_STEP);
+        preparation.setName("beer");
+        preparation.setCreationDate(1);
+        preparation.setLastModificationDate(6789);
+        repository.add( preparation );
+        String preparationDetails = when().get("/preparations/{id}", preparation.id()).asString();
+
+        InputStream expected = PreparationServiceTest.class.getResourceAsStream( "preparation_beer.json" );
         assertThat(preparationDetails, sameJSONAsFile(expected));
+
+        ObjectMapper objectMapper = new ObjectMapper() //
+            .configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, Boolean.FALSE );
+
+        Preparation result = objectMapper.reader( Preparation.class ).readValue(preparationDetails);
+
+        Assertions.assertThat(result).isEqualToComparingOnlyGivenFields(preparation, //
+                "name", "lastModificationDate", "creationDate");
+
+        Response cloneResponse =  when().put("/preparations/clone/{id}", preparation.id());
+
+        String cloneId = cloneResponse.asString();
+
+        String preparationDetailsClone = when().get("/preparations/{id}", cloneId).asString();
+
+        Preparation clone = objectMapper.reader( Preparation.class ).readValue(preparationDetailsClone);
+
+        Assertions.assertThat( clone.getCreationDate() ).isGreaterThan( result.getCreationDate() );
+        Assertions.assertThat( clone.getName() ).isEqualTo( result.getName() + " Copy" );
+        Assertions.assertThat( clone.getId() ).isNotEqualTo( result.getId() );
+        Assertions.assertThat( clone.getDataSetId() ).isEqualTo( result.getDataSetId() );
+
     }
 
     @Test

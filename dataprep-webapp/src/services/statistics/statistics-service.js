@@ -325,7 +325,7 @@
                 var actualSelectedColumn = state.playground.grid.selectedColumn;
                 if (filter.colId === actualSelectedColumn.id) {
                     initRangeLimits();
-                    //to reset the bars colors
+                    //to reset the vertical bars colors
                     service.histogram.activeLimits = [selectedColumn.statistics.min, selectedColumn.statistics.max];
                 }
             };

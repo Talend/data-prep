@@ -26,6 +26,7 @@
             refreshMetadataInfos: refreshMetadataInfos,
 
             create: create,
+            clone: clone,
             update: update,
             delete: deletePreparation
         };
@@ -81,6 +82,21 @@
                 })
                 .then(function(preparations) {
                     return _.find(preparations, {id: createdPreparationId});
+                });
+        }
+
+        /**
+         * @ngdoc method
+         * @name create
+         * @methodOf data-prep.services.preparation.service:PreparationListService
+         * @param {string} preparationId The preparation id
+         * @description Clone the preparation
+         * @returns {promise} The GET promise
+         */
+        function clone(preparationId) {
+            return PreparationRestService.clone(preparationId)
+                .then(function(){
+                    return refreshPreparations();
                 });
         }
 

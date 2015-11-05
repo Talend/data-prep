@@ -34,8 +34,8 @@
                 <li><a>Fill Empty records with Top adjacent value</a></li>
                 <li><a>Fill Empty records with Bottom adjacent value</a></li>
 
-                <li ng-click="qualityBarCtrl.applyActionOnColumn('delete_empty')">
-                    <a>Delete lines with Empty cell</a>
+                <li ng-repeat="transfo in qualityBarCtrl.transformationsForEmptyCells" ng-click="qualityBarCtrl.applyActionOnColumn(transfo)">
+                    <a>{{transfo.label}}</a>
                 </li>
             </ul>
         </div>
@@ -58,11 +58,8 @@
                 <li><a>Replace Invalid Records with Top adjacent value</a></li>
                 <li><a>Replace Invalid Records with Bottom adjacent value</a></li>
 
-                <li ng-click="qualityBarCtrl.applyActionOnColumn('delete_invalid')">
-                    <a>Delete lines with invalid cell</a>
-                </li>
-                <li ng-click="qualityBarCtrl.applyActionOnColumn('clear_invalid')">
-                    <a>Clear cells with invalid values</a>
+                <li ng-repeat="transfo in qualityBarCtrl.transformationsForInvalidCells" ng-click="qualityBarCtrl.applyActionOnColumn(transfo)">
+                    <a>{{transfo.label}}</a>
                 </li>
             </ul>
         </div>

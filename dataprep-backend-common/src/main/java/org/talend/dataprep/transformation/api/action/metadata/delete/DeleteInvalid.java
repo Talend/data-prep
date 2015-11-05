@@ -1,11 +1,16 @@
 package org.talend.dataprep.transformation.api.action.metadata.delete;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.transformation.api.action.metadata.category.ActionScope;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadataUtils;
+
+import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.INVALID;
 
 /**
  * Delete row when value is invalid.
@@ -22,6 +27,14 @@ public class DeleteInvalid extends AbstractDelete {
     @Override
     public String getName() {
         return DELETE_INVALID_ACTION_NAME;
+    }
+
+    /**
+     * @see ActionMetadata#getActionScope()
+     */
+    @Override
+    public List<String> getActionScope() {
+        return Arrays.asList(new String[] { INVALID.getDisplayName() });
     }
 
     /**

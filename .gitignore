@@ -15,3 +15,8 @@ dataprep-webapp/src/assets/fonts/font_dl_from_google.sh
 .java-version
 devENV.sh
 dataprep-webapp/run.sh
+
+#generated folders
+cache/
+talend/
+

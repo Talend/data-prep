@@ -1,12 +1,20 @@
 package org.talend.dataprep.api.service;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+import java.io.InputStream;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.talend.dataprep.api.folder.Folder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
 import org.talend.dataprep.api.service.command.folder.CreateFolderEntry;
@@ -19,22 +27,18 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.netflix.hystrix.HystrixCommand;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "api", basePath = "/api", description = "Folders API")
 public class FolderAPI extends APIService {
 
-
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List childs folders of the parameter if null list root childs.", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void childs(@RequestParam(required = false)  String path, final HttpServletResponse response) {
+    public void childs(@RequestParam(required = false) String path, final HttpServletResponse response) {
         try {
             final HystrixCommand<InputStream> foldersList = getCommand(FoldersList.class, getClient(), path);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
@@ -45,7 +49,6 @@ public class FolderAPI extends APIService {
             throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDERS, e);
         }
     }
-
 
     @RequestMapping(value = "/api/folders", method = PUT)
     @ApiOperation(value = "Add a folder.", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,13 +68,14 @@ public class FolderAPI extends APIService {
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
+     * 
      * @param path
      * @return
      */
     @RequestMapping(value = "/api/folders", method = DELETE)
     @ApiOperation(value = "Remove a Folder")
     @Timed
-    public void removeFolder(@RequestParam(required = true) String path){
+    public void removeFolder(@RequestParam(required = true) String path) {
         try {
             final HystrixCommand<Void> removeFolder = getCommand(RemoveFolder.class, getClient(), path);
             removeFolder.execute();
@@ -80,18 +84,17 @@ public class FolderAPI extends APIService {
         }
     }
 
-
-
     /**
      * no javadoc here so see description in @ApiOperation notes.
+     * 
      * @param folderEntry
      * @return
      */
     @RequestMapping(value = "/api/folders/entries", method = PUT, consumes = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Add a FolderEntry", consumes = APPLICATION_JSON_VALUE,produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Add a FolderEntry", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Timed
     @VolumeMetered
-    public void addFolderEntry(@RequestBody FolderEntry folderEntry, final HttpServletResponse response){
+    public void addFolderEntry(@RequestBody FolderEntry folderEntry, final HttpServletResponse response) {
         try {
             final HystrixCommand<InputStream> createFolderEntry = getCommand(CreateFolderEntry.class, getClient(), folderEntry);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
@@ -105,6 +108,7 @@ public class FolderAPI extends APIService {
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
+     * 
      * @param contentId
      * @param contentType
      * @return
@@ -113,20 +117,21 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "Remove a FolderEntry")
     @Timed
     @VolumeMetered
-    public void deleteFolderEntry(@PathVariable(value = "id") String contentId, @PathVariable(value = "contentType") String contentType, //
-                                  @RequestParam String path){
+    public void deleteFolderEntry(@PathVariable(value = "id") String contentId,
+            @PathVariable(value = "contentType") String contentType, //
+            @RequestParam String path) {
         try {
-            final HystrixCommand<Void> createFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), path, contentType, contentId);
+            final HystrixCommand<Void> createFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), path, contentType,
+                    contentId);
             createFolderEntry.execute();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER_ENTRY, e);
         }
     }
 
-
-
     /**
      * no javadoc here so see description in @ApiOperation notes.
+     * 
      * @param path
      * @param contentType
      * @return
@@ -135,9 +140,10 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "List all folder entries of the given content type within the path", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @VolumeMetered
-    public void entries(@RequestParam String path, @RequestParam String contentType, final HttpServletResponse response){
+    public void entries(@RequestParam String path, @RequestParam String contentType, final HttpServletResponse response) {
         try {
-            final HystrixCommand<InputStream> listFolderEntries = getCommand(FolderEntriesList.class, getClient(), path, contentType);
+            final HystrixCommand<InputStream> listFolderEntries = getCommand(FolderEntriesList.class, getClient(), path,
+                    contentType);
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
 
             final ServletOutputStream outputStream = response.getOutputStream();

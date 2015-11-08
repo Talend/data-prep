@@ -34,7 +34,7 @@
                         inputElement.focus();
                         inputElement.select();
                     });
-                });
+                }, 0, false);
 
                 scope.$watch(
                     function() {

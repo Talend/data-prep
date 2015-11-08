@@ -16,10 +16,11 @@ describe('Tabs directive', function () {
 
         createElement = function () {
 
-            scope.resizePanels = jasmine.createSpy('resizePanels');
+            scope.onTabChange = jasmine.createSpy('onTabChange');
+            scope.onTabInit = jasmine.createSpy('onTabInit');
 
-            var template = '<talend-tabs tab="selectedTab" action-on-click="resizePanels()">' +
-                '   <talend-tabs-item tab-title="tab 1 title" action-on-init="resizePanels()">' +
+            var template = '<talend-tabs tab="selectedTab" on-tab-change="onTabChange()">' +
+                '   <talend-tabs-item tab-title="tab 1 title" on-init="onTabInit()">' +
                 '       <div id="tab1Content">Content tab 1</div>' +
                 '   </talend-tabs-item>' +
                 '   <talend-tabs-item tab-title="tab 2 title" default="true">' +
@@ -86,18 +87,35 @@ describe('Tabs directive', function () {
         expect(element.controller('talendTabs').tabs.length).toBe(0);
     });
 
-    it('should call setSelectedTab when tab changes', inject(function ($rootScope) {
+    it('should set new selected tab', inject(function ($rootScope) {
         //given
         createElement();
         var ctrl = element.controller('talendTabs');
-        spyOn(ctrl, 'setSelectedTab');
+        expect(ctrl.tabs[0].active).toBeFalsy();
+        expect(ctrl.tabs[1].active).toBeTruthy();
+        expect(ctrl.tabs[2].active).toBeFalsy();
 
         //when
-        scope.selectedTab = 1;
+        scope.selectedTab = 0;
         $rootScope.$digest();
 
         //then
-        expect(ctrl.setSelectedTab).toHaveBeenCalled();
+        expect(ctrl.tabs[0].active).toBeTruthy();
+        expect(ctrl.tabs[1].active).toBeFalsy();
+        expect(ctrl.tabs[2].active).toBeFalsy();
+    }));
+
+    it('should call tab change callback', inject(function ($rootScope) {
+        //given
+        createElement();
+        expect(scope.onTabChange.calls.count()).toBe(1);
+
+        //when
+        scope.selectedTab = 0;
+        $rootScope.$digest();
+
+        //then
+        expect(scope.onTabChange.calls.count()).toBe(2);
     }));
 
     it('should NOT call setSelectedTab if tab is not defined', inject(function ($rootScope) {
@@ -114,27 +132,12 @@ describe('Tabs directive', function () {
         expect(ctrl.setSelectedTab).not.toHaveBeenCalled();
     }));
 
-
-    it('should resize panel when changing tabs', inject(function () {
-        //given
-        createElement();
-
+    it('should execute callback when initializing the tabs', inject(function () {
         //when
-        var event = angular.element.Event('click');
-        element.find('.tabs-item').eq(0).trigger(event);
-
-        //then
-        expect(scope.resizePanels).toHaveBeenCalled();
-        expect(scope.resizePanels.calls.count()).toBe(2);
-    }));
-
-
-    it('should resize panel when initializing the tabs', inject(function () {
-        //given
         createElement();
 
         //then
-        expect(scope.resizePanels).toHaveBeenCalled();
-        expect(scope.resizePanels.calls.count()).toBe(1);
+        expect(scope.onTabInit).toHaveBeenCalled();
+        expect(scope.onTabInit.calls.count()).toBe(1);
     }));
 });

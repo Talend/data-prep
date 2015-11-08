@@ -19,7 +19,8 @@
         </talend-tabs-item>
      </talend-tabs>
      * @param {string} tabTitle The tab Title to display
-     * @param {boolean} default The default tab to select
+     * @param {boolean} default Is the default tab to select
+     * @param {function} onInit The calback on component init
      */
     function TalendTabsItem() {
         return {
@@ -31,7 +32,7 @@
             scope: {
                 tabTitle: '@',
                 'default': '=',
-                'actionOnInit': '&'
+                onInit: '&'
             },
             bindToController: true,
             controller: function() {},
@@ -50,7 +51,7 @@
                     tabsCtrl.unregister(ctrl);
                 });
 
-                ctrl.actionOnInit();
+                ctrl.onInit();
             }
         };
     }

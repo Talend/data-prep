@@ -5,7 +5,7 @@
 
     <div class="Description" ng-if="!actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">Select a column to display its actions</div>
 
-    <talend-tabs tab="actionsSuggestionsCtrl.tab" action-on-click="actionsSuggestionsCtrl.resizePanels()" ng-if="actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">
+    <talend-tabs tab="actionsSuggestionsCtrl.tab" on-tab-change="actionsSuggestionsCtrl.resizePanels()" ng-if="actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">
         <talend-tabs-item tab-title="Text">
             <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
         </talend-tabs-item>
@@ -15,7 +15,7 @@
         <talend-tabs-item tab-title="Line">
             <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
         </talend-tabs-item>
-        <talend-tabs-item tab-title="Column" default="true" action-on-init="actionsSuggestionsCtrl.resizePanels()">
+        <talend-tabs-item tab-title="Column" default="true">
             <input type="search"
                    class="action-search"
                    id="action-suggestions-search"

@@ -16,6 +16,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.CELL_VALUE_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.REPLACE_ENTIRE_CELL_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.REPLACE_VALUE_PARAMETER;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,6 +89,32 @@ public class SplitTest {
         expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
         expectedValues.put("0003", "Bacon");
         expectedValues.put("0004", "ipsum dolor amet swine leberkas pork belly");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void test_TDP_831() {
+        //given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Je vais bien (tout va bien)");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        parameters.put(Split.SEPARATOR_PARAMETER, "other");
+        parameters.put(Split.MANUAL_SEPARATOR_PARAMETER, "(");
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Je vais bien (tout va bien)");
+        expectedValues.put("0003", "");
+        expectedValues.put("0004", "");
         expectedValues.put("0002", "01/01/2015");
 
         //when

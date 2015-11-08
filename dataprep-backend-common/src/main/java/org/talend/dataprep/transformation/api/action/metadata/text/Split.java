@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.annotation.Nonnull;
 
@@ -44,12 +46,12 @@ public class Split extends ActionMetadata implements ColumnAction {
      * The separator shown to the user as a list. An item in this list is the value 'other', which allow the user to
      * manually enter its separator.
      */
-    private static final String SEPARATOR_PARAMETER = "separator"; //$NON-NLS-1$
+    protected static final String SEPARATOR_PARAMETER = "separator"; //$NON-NLS-1$
 
     /**
      * The separator manually specified by the user. Should be used only if SEPARATOR_PARAMETER value is 'other'.
      */
-    private static final String MANUAL_SEPARATOR_PARAMETER = "manual_separator"; //$NON-NLS-1$
+    protected static final String MANUAL_SEPARATOR_PARAMETER = "manual_separator"; //$NON-NLS-1$
 
     /**
      * Number of items produces by the split
@@ -139,8 +141,19 @@ public class Split extends ActionMetadata implements ColumnAction {
         if (originalValue == null) {
             return;
         }
+
+        String[] split = new String[0];
+        try {
+            Pattern p = Pattern.compile(realSeparator);
+
+            // Next line will be evaluated only if pattern is valid:
+            split = originalValue.split(realSeparator, limit);
+        } catch (PatternSyntaxException e) {
+            // In case the pattern is not valid: nothing to do, empty string will go in the cells.
+        }
+
         final Iterator<String> iterator = newColumns.iterator();
-        final String[] split = originalValue.split(realSeparator, limit);
+
         for (int i = 0; i < limit && iterator.hasNext(); i++) {
             final String newValue = i < split.length ? split[i] : EMPTY;
             row.set(iterator.next(), newValue);
@@ -149,6 +162,7 @@ public class Split extends ActionMetadata implements ColumnAction {
 
     /**
      * Create a new column from current column
+     * 
      * @param column the current column
      * @return the new created column
      */

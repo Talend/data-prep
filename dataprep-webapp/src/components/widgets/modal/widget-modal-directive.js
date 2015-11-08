@@ -92,10 +92,11 @@
          </div>
      </talend-modal>
 
-     * @param {boolean} fullscreen Determine the modal mode. Default `false`
      * @param {boolean} state Flag that represents the modal display state
      * @param {boolean} close-button Display a close button on the top right corner
+     * @param {boolean} fullscreen Determine the modal mode. Default `false`
      * @param {boolean} disable-enter Flag that disable the validation on ENTER press. The validation is a click on the button with `modal-primary-button` class
+     * @param {function} before-close Optional callback that is called before user close event. If the callback return true, the modal is closed.
      * @param {function} on-close Optional close callback which is called at each modal close
      * @param {class} no-focus Prevent the targeted input to be focused on modal show
      * @param {class} talend-modal-close Hide the modal on click
@@ -234,10 +235,10 @@
 
                             setTimeout(function () {
                                 //focus on first input (ignore first because it's the state checkbox)
-                                var inputs = iElement.find('input:not(".no-focus")');
-                                if (inputs.length > 1) {
-                                    inputs.eq(1).focus();
-                                    inputs.eq(1).select();
+                                var inputs = iElement.find('input:not(".no-focus")').eq(1);
+                                if (inputs.length) {
+                                    inputs.focus();
+                                    inputs.select();
                                 }
                             }, 200);
 

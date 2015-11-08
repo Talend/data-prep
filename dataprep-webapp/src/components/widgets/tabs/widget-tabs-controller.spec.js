@@ -12,6 +12,7 @@ describe('Tabs widget controller', function () {
             var ctrl = $controller('TalendTabsCtrl', {
                 $scope: scope
             });
+            ctrl.onTabChange = jasmine.createSpy('onTabChanged');
             return ctrl;
         };
     }));
@@ -80,6 +81,28 @@ describe('Tabs widget controller', function () {
         expect(tab2.active).toBe(false);
         expect(tab3.active).toBe(true);
         expect(tab4.active).toBe(false);
+    });
+
+    it('should execute tab change callback on tab selection', function() {
+        //given
+        var ctrl = createController();
+        var tab = {active : false, tabTitle: 'my tab'};
+        var tab2 = {active : false, tabTitle: 'my tab'};
+        var tab3 = {active : false, tabTitle: 'my tab'};
+        var tab4 = {active : false, tabTitle: 'my tab'};
+
+        ctrl.register(tab);
+        ctrl.register(tab2);
+        ctrl.register(tab3);
+        ctrl.register(tab4);
+
+        expect(ctrl.onTabChange).not.toHaveBeenCalled();
+
+        //when
+        ctrl.select(tab3);
+
+        //then
+        expect(ctrl.onTabChange).toHaveBeenCalled();
     });
 
     it('should unregister tabs', function() {

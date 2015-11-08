@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     function ActionsSuggestions($timeout) {
@@ -10,39 +10,44 @@
             controller: 'ActionsSuggestionsCtrl',
             link: function (scope, iElement, iAttrs, ctrl) {
 
-                ctrl.scrollToBottom = function scrollToBottom(elm) {
-                    $timeout(function(){
-                        var contentContainer = elm.find('>.content-container');
-                        var availablelTopSpace = contentContainer.offset().top - angular.element('.action-suggestion-tab-items').offset().top;
-                        var scrollTo = 0;
-                        if(availablelTopSpace >= contentContainer.context.clientHeight) {
-                            if (contentContainer.offset().top > (angular.element('.split-handler').offset().top -  contentContainer.context.clientHeight)){
-                                scrollTo = angular.element('.action-suggestion-tab-items')[0].scrollTop + contentContainer.context.clientHeight;
-                                angular.element('.action-suggestion-tab-items').animate({
-                                    scrollTop: scrollTo
+                //Scroll the actual tab container to the bottom of the element to display
+                ctrl.scrollToBottom = function scrollToBottom(elementToDisplay) {
+                    $timeout(function () {
+                        var splitHandler = angular.element('.split-handler').eq(0);
+                        var tabContainer = iElement.find('.action-suggestion-tab-items').eq(0);
+                        var etdContainer = elementToDisplay.find('>.content-container');
+
+                        var tabOffset = tabContainer.offset();
+                        var etdOffset = etdContainer.offset();
+
+                        var etdHeight = etdContainer.context.clientHeight;
+
+                        var availableTopSpace = etdOffset.top - tabOffset.top;
+                        var scrollDistance;
+                        if (availableTopSpace >= etdHeight) {
+                            if (etdOffset.top > (splitHandler.offset().top - etdHeight)) {
+                                scrollDistance = tabContainer[0].scrollTop + etdHeight;
+                                tabContainer.animate({
+                                    scrollTop: scrollDistance
                                 }, 500);
                             }
-                        } else {
-                            scrollTo = angular.element('.action-suggestion-tab-items')[0].scrollTop + availablelTopSpace - angular.element('.accordion').height();
-                            angular.element('.action-suggestion-tab-items').animate({
-                                scrollTop: scrollTo
+                        }
+                        else {
+                            scrollDistance = tabContainer[0].scrollTop + availableTopSpace - angular.element('.accordion').height();
+                            tabContainer.animate({
+                                scrollTop: scrollDistance
                             }, 500);
                         }
-                    },200);
+                    }, 200, false);
                 };
 
                 ctrl.resizePanels = function resizePanels() {
-                    $timeout(function(){
+                    $timeout(function () {
                         //Force to resize tabs containers
-                        var panel1 = angular.element('.split-pane1');
-                        var panel2 = angular.element('.split-pane2');
+                        var panel1 = angular.element('.split-pane1').eq(0);
                         var actionHeaderPanelsSizeMargin = 160;
-                        var statHeaderPanelsSizeMargin = 35;
-
-
-                        angular.element('.action-suggestion-tab-items').css('height', panel1.height()- actionHeaderPanelsSizeMargin + 'px');
-                        angular.element('.stat-detail-tab-items').css('height', panel2.height()- statHeaderPanelsSizeMargin + 'px');
-                    },200);
+                        iElement.find('.action-suggestion-tab-items').css('height', panel1.height() - actionHeaderPanelsSizeMargin + 'px');
+                    }, 200, false);
                 };
             }
         };

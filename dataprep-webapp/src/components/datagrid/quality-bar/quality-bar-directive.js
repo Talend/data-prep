@@ -56,12 +56,13 @@
                         valid: 0
                     };
 
-                    $timeout(enableTransition);
+                    $timeout(enableTransition, 0, false);
 
                     $timeout(function() {
                         ctrl.computePercent();
                         ctrl.computeQualityWidth();
-                    }, 300);
+                        scope.$digest();
+                    }, 300, false);
                 };
 
                 /**

@@ -95,7 +95,7 @@
                             updateStyles(activationValues);
                         }
                     );
-                });
+                }, 0, false);
             }
         };
     }

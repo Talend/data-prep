@@ -18,12 +18,10 @@
             Content tab 3
          </talend-tabs-item>
      </talend-tabs>
-     * @param {string} selectedTab The tab to select
-     * @param {string} title The tab title to display
-     * @param {boolean} default The default tab to select
-     * @param {string} selectedTab The tab title to be updated
+     * @param {number} tab The selected tab index
+     * @param {function} onTabChange The callback when the selected tab change
      */
-    function TalendTabs($timeout) {
+    function TalendTabs() {
         return {
             restrict: 'E',
             transclude: true,
@@ -33,25 +31,15 @@
             bindToController: true,
             scope: {
                 tab: '=',
-                actionOnClick: '&'
+                onTabChange: '&'
             },
             link: function (scope, iElement, iAttrs, ctrl) {
-
-                $timeout(function(){
-                    angular.element('.tabs-item').on('click', function(){
-                        ctrl.actionOnClick();
-                    });
-                });
 
                 scope.$watch(
                     function () {
                         return ctrl.tab;
                     },
-                    function (value) {
-                        if (angular.isDefined(value)) {
-                            ctrl.setSelectedTab(value);
-                        }
-                    }
+                    ctrl.setSelectedTab
                 );
             }
         };

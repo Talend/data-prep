@@ -154,7 +154,7 @@
                         attachBlurListener();
                         attachDisableInputClick();
                         attachClickListener();
-                    });
+                    }, 0, false);
 
                     /**
                      * Close transformation menu on retrieve error

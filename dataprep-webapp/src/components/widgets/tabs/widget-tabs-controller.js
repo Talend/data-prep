@@ -42,6 +42,7 @@
                 tabToDeactivate.active = false;
             });
             tab.active = true;
+            vm.onTabChange();
         };
 
         /**
@@ -50,7 +51,7 @@
          * @methodOf talend.widget.controller:TalendTabsCtrl
          * @description Set selected tab
          */
-        vm.setSelectedTab = function select(index) {
+        vm.setSelectedTab = function setSelectedTab(index) {
             var tabToSelect = vm.tabs[index];
             if(tabToSelect) {
                 vm.select(tabToSelect);

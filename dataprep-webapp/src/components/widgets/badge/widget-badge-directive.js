@@ -93,7 +93,7 @@
                                 adjustWidth(input);
                             });
                     }
-                });
+                }, 0, false);
             }
         };
     }

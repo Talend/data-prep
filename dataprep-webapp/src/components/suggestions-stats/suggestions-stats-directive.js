@@ -58,7 +58,7 @@
                     iElement.find('.action-suggestion-tab-items').css('height', panel1.height()- actionHeaderPanelsSizeMargin + 'px');
                     iElement.find('.stat-detail-tab-items').css('height', panel2.height()- statHeaderPanelsSizeMargin + 'px');
 
-                });
+                }, 0, false);
             }
         };
     }

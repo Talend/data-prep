@@ -149,8 +149,8 @@
                 };
 
                 initAccordionItem();
-                $timeout(registerToParent);
-                $timeout(attachTriggerElement);
+                $timeout(registerToParent, 0, false);
+                $timeout(attachTriggerElement, 0, false);
                 attachUnregisterOnDestroy();
 
                 //------------------------------------------------------------------------------------------------

@@ -72,6 +72,8 @@ public class TypeChange extends ActionMetadata implements ColumnAction {
             columnMetadata.setDomain("");
             columnMetadata.setDomainLabel("");
             columnMetadata.setDomainFrequency(0);
+            // We must set this to fix TDP-838: we force the domain to empty
+            columnMetadata.setDomainForced(true);
         }
     }
 

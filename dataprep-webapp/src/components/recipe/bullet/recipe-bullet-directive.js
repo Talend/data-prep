@@ -220,7 +220,7 @@
 
 
                 iElement.closest('.accordion').mouseover(function(){
-                    $timeout(updateSVGSizes);
+                    $timeout(updateSVGSizes, 0, false);
                 });
 
                 iElement.closest('.accordion').click(function(){
@@ -231,7 +231,7 @@
                     updateAllBullets();
                 });
 
-                $timeout(updateSVGSizes);
+                $timeout(updateSVGSizes, 0, false);
 
             }
         };

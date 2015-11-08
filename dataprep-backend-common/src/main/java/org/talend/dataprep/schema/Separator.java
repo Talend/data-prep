@@ -59,4 +59,8 @@ public class Separator {
         this.averagePerLine = averagePerLine;
     }
 
+    @Override
+    public String toString() {
+        return "Separator{" + "value=" + value + ", totalCount=" + totalCount + ", averagePerLine=" + averagePerLine + '}';
+    }
 }

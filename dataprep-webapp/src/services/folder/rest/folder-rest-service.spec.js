@@ -18,7 +18,7 @@ describe('Folder Rest Service', function () {
         var path = '/foo/bar';
 
         $httpBackend
-            .expectDELETE(RestURLs.datasetUrl + '/folders?path=' + encodeURIComponent(path))
+            .expectDELETE(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
             .respond(200);
 
         //when
@@ -33,7 +33,7 @@ describe('Folder Rest Service', function () {
         var path = '/foo/bar';
 
         $httpBackend
-            .expectPUT(RestURLs.datasetUrl + '/folders/add?path=' + encodeURIComponent(path))
+            .expectPUT(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
             .respond(200);
 
         //when
@@ -48,7 +48,7 @@ describe('Folder Rest Service', function () {
         var path = '/foo';
 
         $httpBackend
-            .expectGET(RestURLs.datasetUrl + '/folders?path=' + encodeURIComponent(path))
+            .expectGET(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
             .respond(200);
 
         //when
@@ -62,7 +62,7 @@ describe('Folder Rest Service', function () {
         //given
 
         $httpBackend
-            .expectGET(RestURLs.datasetUrl + '/folders')
+            .expectGET(RestURLs.folderUrl)
             .respond(200);
 
         //when
@@ -77,7 +77,7 @@ describe('Folder Rest Service', function () {
         //given
 
         $httpBackend
-            .expectPUT(RestURLs.datasetUrl + '/folders/entries')
+            .expectPUT(RestURLs.folderUrl + '/entries')
             .respond(200);
 
         //when
@@ -91,7 +91,7 @@ describe('Folder Rest Service', function () {
         //given
 
         $httpBackend
-            .expectDELETE(RestURLs.datasetUrl + '/folders/entries/contentType/contentId?path=thepath')
+            .expectDELETE(RestURLs.folderUrl + '/entries/contentType/contentId?path=thepath')
             .respond(200);
 
         //when
@@ -105,7 +105,7 @@ describe('Folder Rest Service', function () {
         //given
 
         $httpBackend
-            .expectGET(RestURLs.datasetUrl + '/folders/entries?path=thepath&contentType=contentType')
+            .expectGET(RestURLs.folderUrl + '/entries?path=thepath&contentType=contentType')
             .respond(200);
 
         //when
@@ -119,7 +119,7 @@ describe('Folder Rest Service', function () {
         //given
 
         $httpBackend
-            .expectGET(RestURLs.datasetUrl + '/folders/entries?contentType=contentType')
+            .expectGET(RestURLs.folderUrl + '/entries?contentType=contentType')
             .respond(200);
 
         //when

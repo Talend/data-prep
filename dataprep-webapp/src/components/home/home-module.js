@@ -24,6 +24,7 @@
         'data-prep.services.dataset',
         'data-prep.services.utils',
         'data-prep.services.datasetWorkflowService',
-        'data-prep.services.state'
+        'data-prep.services.state',
+        'data-prep.folder'
     ]);
 })();

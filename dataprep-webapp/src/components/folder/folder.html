@@ -1,0 +1,41 @@
+<a data-icon="B" ng-click="folderCtrl.folderNameModal=true">Add Folder</a>
+
+<div class="breadcrumb" style="height: 42px">
+  <ul>
+    <li talend-dropdown>
+      <div class="dropdown-container">
+        <div class="dropdown-action">
+          <a class="dropdown-button" ng-click="folderCtrl.displayRootChilds()">All Files</a>
+        </div>
+        <ul class="dropdown-menu">
+          <li ng-repeat="folder in folderCtrl.folders" ng-click="folderCtrl.goToChild(folder)">
+            {{folder.id}}
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li>Child</li>
+  </ul>
+</div>
+
+
+
+<talend-modal fullscreen="false"
+              close-button="true"
+              state="folderCtrl.folderNameModal">
+  <span translate-once="ENTER_FOLDER_NAME"></span>
+  <form name="folderCtrl.folderNameForm">
+    <input type="text" ng-model="folderCtrl.folderName" required/>
+
+    <div class="modal-buttons">
+      <button class="talend-modal-close btn-secondary modal-secondary-button">
+        <span translate-once="CANCEL"></span>
+      </button>
+      <button class="talend-modal-close btn-primary modal-primary-button"
+              ng-click="folderCtrl.addFolder()"
+              ng-disabled="folderCtrl.folderName.$invalid">
+        <span translate-once="OK"></span>
+      </button>
+    </div>
+  </form>
+</talend-modal>

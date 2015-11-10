@@ -33,7 +33,7 @@
          * @returns {Promise} The DELETE promise
          */
         function deleteFolder(path) {
-            return $http.delete(RestURLs.datasetUrl + '/folders?path=' + encodeURIComponent(path));
+            return $http.delete(RestURLs.folderUrl + '?path=' + encodeURIComponent(path));
         }
 
         /**
@@ -42,10 +42,10 @@
          * @methodOf data-prep.services.folder.service:FolderRestService
          * @description Create a folder
          * @param {string} path the path to create
-         * @returns {Promise} The GET promise
+         * @returns {Promise} The PUT promise
          */
         function createFolder(path){
-            return $http.put(RestURLs.datasetUrl + '/folders/add?path=' + encodeURIComponent(path));
+            return $http.put(RestURLs.folderUrl + '?path=' + encodeURIComponent(path));
         }
 
         /**
@@ -57,7 +57,7 @@
          * @returns {Promise} The GET promise
          */
         function listFolderChilds(path){
-            var url = RestURLs.datasetUrl + '/folders';
+            var url = RestURLs.folderUrl;
             if (path) {
                 url += '?path=' + encodeURIComponent(path);
             }
@@ -72,11 +72,13 @@
          * @name deleteFolderEntry
          * @methodOf data-prep.services.folder.service:FolderRestService
          * @description Delete the folder entry
+         * @param {string} contentType the content type to delete
+         * @param {string} contentId the content id to delete
          * @param {string} path the path to delete
          * @returns {Promise} The DELETE promise
          */
         function deleteFolderEntry(contentType, contentId, path) {
-            var url = RestURLs.datasetUrl + '/folders/entries';
+            var url = RestURLs.folderUrl + '/entries';
             url += '/'+contentType;
             url += '/'+contentId;
             if (path) {
@@ -89,14 +91,16 @@
          * @ngdoc method
          * @name createFolderEntry
          * @methodOf data-prep.services.folder.service:FolderRestService
-         * @description Create a folder
+         * @description Create a folder entry
+         * @param {string} contentType the content type to create
+         * @param {string} contentId the content id to create
          * @param {string} path the path to create
-         * @returns {Promise} The GET promise
+         * @returns {Promise} The PUT promise
          */
         function createFolderEntry(contentType, contentId, path){
             var request = {
                 method: 'PUT',
-                url: RestURLs.datasetUrl+ '/folders/entries',
+                url: RestURLs.folderUrl+ '/entries',
                 data: {
                     contentType: contentType,
                     contentId: contentId,
@@ -111,11 +115,12 @@
          * @name listFolderChilds
          * @methodOf data-prep.services.folder.service:FolderRestService
          * @description List the childs of a folder (or child of root folder)
+         * @param {string} contentType the content type to create
          * @param {string} path optional path to list childs
          * @returns {Promise} The GET promise
          */
         function listFolderEntries(contentType,path){
-            var url = RestURLs.datasetUrl + '/folders/entries';
+            var url = RestURLs.folderUrl + '/entries';
             if (path) {
                 url += '?path=' + encodeURIComponent(path);
             }

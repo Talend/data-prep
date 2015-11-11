@@ -106,8 +106,18 @@ public class Concat extends ActionMetadata implements ColumnAction {
 
         ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
 
-        ColumnMetadata newColumn = createNewColumn(sourceColumn, selectedColumn);
-        String newColumnId = rowMetadata.insertAfter(columnId, newColumn);
+        String concatColumn = context.in(this).column(sourceColumn.getName() + COLUMN_NAMES_SEPARATOR + selectedColumn.getName(),
+                rowMetadata,
+                (r) -> {
+                    final ColumnMetadata c = ColumnMetadata.Builder //
+                            .column() //
+                            .name(sourceColumn.getName() + COLUMN_NAMES_SEPARATOR + selectedColumn.getName()) //
+                            .type(Type.STRING) //
+                            .build();
+                    rowMetadata.insertAfter(columnId, c);
+                    return c;
+                }
+        );
 
         // Set new column value
         String sourceValue = row.get(columnId);
@@ -118,7 +128,7 @@ public class Concat extends ActionMetadata implements ColumnAction {
                 selectedColumnValue + //
                 getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY);
 
-        row.set(newColumnId, newValue);
+        row.set(concatColumn, newValue);
     }
 
     /**
@@ -152,18 +162,4 @@ public class Concat extends ActionMetadata implements ColumnAction {
         return value;
     }
 
-    /**
-     * Create the new "string length" column
-     *
-     * @param sourceColumn The source column to concatenate.
-     * @param selectedColumn The selected column to concatenate.
-     * @return the new column metadata
-     */
-    private ColumnMetadata createNewColumn(ColumnMetadata sourceColumn, ColumnMetadata selectedColumn) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(sourceColumn.getName() + COLUMN_NAMES_SEPARATOR + selectedColumn.getName()) //
-                .type(Type.STRING) //
-                .build();
-    }
 }

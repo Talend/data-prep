@@ -62,8 +62,7 @@ public class FillWithDateIfInvalidTest {
                 .statistics(statistics) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
@@ -97,8 +96,7 @@ public class FillWithDateIfInvalidTest {
                 .statistics(statistics) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
@@ -128,8 +126,7 @@ public class FillWithDateIfInvalidTest {
                 .computedId("0002") //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
         setStatistics(row, "0002", ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"));
 
         Map<String, String> parameters = ActionMetadataTestUtils

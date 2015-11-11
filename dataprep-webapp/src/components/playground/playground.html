@@ -79,16 +79,16 @@
         state="playgroundCtrl.showNameValidation"
         disable-enter="true"
         close-button="true">
-    <div class="modal-title">Save Your Changes ?</div>
+    <div class="modal-title" translate-once="SAVE_CHANGE"></div>
     <br/>
-    You've transformed your dataset in a preparation that can be saved in order to be re-used next time.<br/>
-    Do you want to save it ?
+    <div translate-once="SAVE_CHANGE_DESCRITION_1"></div>
+    <div translate-once="SAVE_CHANGE_DESCRITION_2"></div>
     <br/><br/>
 
     <form id="playground-save-form" name="savePreparationForm" ng-submit="savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
         <div class="modal-form-row">
-            <div class="param-name">Preparation Name: </div>
+            <div class="param-name" translate-once="PREPARATION_NAME"></div>
             <input type="text"
                    id="playground-save-name-input"
                    class="param-input"
@@ -99,12 +99,12 @@
 
         <div class="modal-buttons">
             <a class="modal-secondary-button"
-               ng-click="playgroundCtrl.discardSaveOnClose()">No, Thanks !</a>
+               ng-click="playgroundCtrl.discardSaveOnClose()" translate-once="NO_THANKS"></a>
             <button class="modal-primary-button btn-primary"
                     ng-disabled="savePreparationForm.$invalid || playgroundCtrl.saveInProgress"
                     type="submit"
                     ng-switch="!!playgroundCtrl.saveInProgress">
-                <span ng-switch-when="false">SAVE IT</span>
+                <span ng-switch-when="false" translate-once="SAVE_IT"></span>
                 <span ng-switch-when="true"><i data-icon="c" class="icon continuous-rotate"></i></span>
             </button>
         </div>

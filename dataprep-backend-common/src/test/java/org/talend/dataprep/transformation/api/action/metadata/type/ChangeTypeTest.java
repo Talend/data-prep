@@ -32,8 +32,7 @@ public class ChangeTypeTest {
                 .domainLabel("French Beer") //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         TypeChange typeChange = new TypeChange();
 

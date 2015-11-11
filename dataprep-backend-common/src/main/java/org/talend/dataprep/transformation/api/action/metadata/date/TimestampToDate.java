@@ -76,8 +76,26 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
         // create new column and append it after current column
         final RowMetadata rowMetadata = row.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final String newColumn = rowMetadata.insertAfter(columnId, createNewColumn(column, parameters));
 
+        final String newColumn = context.in(this).column(column.getName() + APPENDIX, rowMetadata, (r) -> {
+            final Type type;
+            if ("custom".equals(parameters.get(NEW_PATTERN))) {
+                // Custom pattern might not be detected as a valid date, create the new column as string for the most
+                // permissive type detection.
+                type = Type.STRING;
+            } else {
+                type = Type.DATE;
+            }
+            final ColumnMetadata c = ColumnMetadata.Builder //
+                    .column() //
+                    .name(column.getName() + APPENDIX) //
+                    .type(type) //
+                    .headerSize(column.getHeaderSize()) //
+                    .build();
+            rowMetadata.insertAfter(columnId, c);
+            return c;
+        });
+        
         final String value = row.get(columnId);
         row.set(newColumn, getTimeStamp(value, newPattern.getFormatter()));
     }
@@ -90,30 +108,6 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
             // empty value if the date cannot be parsed
             return "";
         }
-    }
-
-    /**
-     * Create the new "date" column.
-     *
-     * @param column the current column metadata.
-     * @param parameters action parameters, used to detect if a custom date format is being used.
-     * @return the new column metadata
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column, Map<String, String> parameters) {
-        final Type type;
-        if ("custom".equals(parameters.get(NEW_PATTERN))) {
-            // Custom pattern might not be detected as a valid date, create the new column as string for the most
-            // permissive type detection.
-            type = Type.STRING;
-        } else {
-            type = Type.DATE;
-        }
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + APPENDIX) //
-                .type(type) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
     }
 
 }

@@ -25,6 +25,9 @@ public class XlsFormatGuesser implements FormatGuesser {
 
     @Override
     public FormatGuesser.Result guess(InputStream stream, String encoding) {
+        if (stream == null) {
+            throw new IllegalArgumentException("Content cannot be null.");
+        }
         try {
             Workbook workbook = XlsUtils.getWorkbook(stream);
             // if poi can read it we assume it's correct excel file

@@ -1,7 +1,6 @@
 package org.talend.dataprep.schema;
 
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -12,14 +11,13 @@ public interface FormatGuesser {
     /**
      * Guess the content type of the provided stream.
      *
-     * @param stream The raw data set content.
+     * @param stream The raw data set content. Content cannot be <code>null</code>.
      * @param encoding The encoding to use to read content in <code>stream</code>.
      * @return A {@link org.talend.dataprep.schema.FormatGuess guess} that can never be null (see
      * {@link FormatGuess#getConfidence()}.
+     * @throws IllegalArgumentException If stream is <code>null</code>.
      */
-    default Result guess(InputStream stream, String encoding) {
-        return new Result(new UnsupportedFormatGuess(), "UTF-8", Collections.emptyMap());
-    }
+    Result guess(InputStream stream, String encoding);
 
     class Result {
 

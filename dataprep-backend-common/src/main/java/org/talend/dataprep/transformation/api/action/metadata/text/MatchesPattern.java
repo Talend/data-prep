@@ -1,7 +1,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
 
 import java.util.List;
@@ -113,8 +113,20 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
         // create new column and append it after current column
         final RowMetadata rowMetadata = row.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final ColumnMetadata newCol = createNewColumn(column);
-        final String matchingColumn = rowMetadata.insertAfter(columnId, newCol);
+        // rowMetadata.insertAfter(columnId, newCol)
+        final String matchingColumn = context.in(this).column(column.getName() + APPENDIX, rowMetadata, (r) -> {
+            final ColumnMetadata c = ColumnMetadata.Builder //
+                    .column() //
+                    .name(column.getName() + APPENDIX) //
+                    .type(Type.BOOLEAN) //
+                    .empty(column.getQuality().getEmpty()) //
+                    .invalid(column.getQuality().getInvalid()) //
+                    .valid(column.getQuality().getValid()) //
+                    .headerSize(column.getHeaderSize()) //
+                    .build();
+            rowMetadata.insertAfter(columnId, c);
+            return c;
+        });
 
         final String value = row.get(columnId);
 
@@ -143,24 +155,6 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
             // In case of wrong pattern, consider that value does not match:
             return false;
         }
-    }
-
-    /**
-     * Create the new "string matching" column
-     *
-     * @param column the current column metadata
-     * @return the new column metadata
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + APPENDIX) //
-                .type(Type.BOOLEAN) //
-                .empty(column.getQuality().getEmpty()) //
-                .invalid(column.getQuality().getInvalid()) //
-                .valid(column.getQuality().getValid()) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
     }
 
 }

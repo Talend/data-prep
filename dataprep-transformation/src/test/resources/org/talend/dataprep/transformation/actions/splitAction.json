@@ -1,0 +1,13 @@
+{
+  "actions": [
+    {
+      "action": "split",
+      "parameters": {
+        "column_id": "birth",
+        "scope": "column",
+        "separator": "-",
+        "limit":"3"
+      }
+    }
+  ]
+}

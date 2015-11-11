@@ -46,6 +46,10 @@ public class LineBasedFormatGuesser implements FormatGuesser {
      */
     @Override
     public FormatGuesser.Result guess(InputStream stream, String encoding) {
+        if (stream == null) {
+            throw new IllegalArgumentException("Content cannot be null.");
+        }
+
         Separator sep = guessSeparator(stream, encoding);
 
         // Fallback

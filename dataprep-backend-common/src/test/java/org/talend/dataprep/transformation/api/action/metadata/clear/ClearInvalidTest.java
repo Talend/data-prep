@@ -72,8 +72,7 @@ public class ClearInvalidTest {
                 .invalidValues(newHashSet("N")) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, Object> expectedValues = new HashMap<>();
         expectedValues.put("0001", "David Bowie");
@@ -102,8 +101,7 @@ public class ClearInvalidTest {
                 .invalidValues(newHashSet()) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, Object> expectedValues = new HashMap<>();
         expectedValues.put("0001", "David Bowie");
@@ -132,8 +130,7 @@ public class ClearInvalidTest {
                 .invalidValues(newHashSet()) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, Object> expectedValues = new HashMap<>();
         expectedValues.put("0001", "David Bowie");
@@ -167,8 +164,7 @@ public class ClearInvalidTest {
                 .invalidValues(newHashSet()) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, Object> expectedValues = new HashMap<>();
         expectedValues.put("0001", "David Bowie");
@@ -202,8 +198,7 @@ public class ClearInvalidTest {
                 .invalidValues(newHashSet()) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, Object> expectedValues = new HashMap<>();
         expectedValues.put("0001", "David Bowie");
@@ -236,8 +231,7 @@ public class ClearInvalidTest {
                 .invalidValues(newHashSet()) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, Object> expectedValues = new HashMap<>();
         expectedValues.put("0001", "David Bowie");

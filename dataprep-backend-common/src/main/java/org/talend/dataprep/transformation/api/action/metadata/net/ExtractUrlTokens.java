@@ -1,5 +1,6 @@
 package org.talend.dataprep.transformation.api.action.metadata.net;
 
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.type.Type.STRING;
 
 import java.net.URI;
@@ -67,44 +68,31 @@ public class ExtractUrlTokens extends ActionMetadata implements ColumnAction {
         final RowMetadata rowMetadata = row.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
 
-        ColumnMetadata columnToInsertAfter = column;
-
         URI url = null;
         try {
             url = new URI(originalValue);
         } catch (URISyntaxException | NullPointerException e) {
-            // Nothing to do, silently skip this row, leave url null, will be treated just bellow
+            // Nothing to do, silently skip this row, leave url null, will be treated just below
         }
-
         // if url is null, we still loop on urlTokenExtractors in order to create the column metadata for all rows, even
         // invalid ones.
+        String lastId = column.getId();
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
-
-            final ColumnMetadata newColumnMetadata = createNewColumn(column, urlTokenExtractor.getTokenName(),
-                    urlTokenExtractor.getType());
-            final String local = rowMetadata.insertAfter(columnToInsertAfter.getId(), newColumnMetadata);
-
-            final String tokenValue = url == null ? "" : urlTokenExtractor.extractToken(url);
-
-            row.set(local, tokenValue == null ? "" : tokenValue);
-
-            columnToInsertAfter = newColumnMetadata;
+            final String columnName = column.getName() + urlTokenExtractor.getTokenName();
+            String columnToInsertAfter = lastId;
+            final String id = context.in(this).column(
+                    columnName,
+                    rowMetadata,
+                    (r) -> {
+                        final ColumnMetadata newColumn = column().name(columnName).type(urlTokenExtractor.getType()).build();
+                        rowMetadata.insertAfter(columnToInsertAfter, newColumn);
+                        return newColumn;
+                    }
+            );
+            final String tokenValue = (url == null ? StringUtils.EMPTY : urlTokenExtractor.extractToken(url));
+            row.set(id, (tokenValue == null ? StringUtils.EMPTY : tokenValue));
+            lastId = id;
         }
-    }
-
-    /**
-     * Create a new "local" column
-     *
-     * @param column the current column
-     * @return the new column
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column, String suffix, Type type) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + suffix) //
-                .type(type) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
     }
 
 }

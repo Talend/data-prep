@@ -58,11 +58,9 @@ public class XlsFormatTest {
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void read_null_xls_file() throws Exception {
-        FormatGuess formatGuess = formatGuesser.guess(null, "UTF-8").getFormatGuess();
-        Assert.assertNotNull(formatGuess);
-        Assert.assertTrue(formatGuess instanceof UnsupportedFormatGuess);
+        formatGuesser.guess(null, "UTF-8").getFormatGuess();
     }
 
     @Test

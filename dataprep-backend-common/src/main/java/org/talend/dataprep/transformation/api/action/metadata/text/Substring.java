@@ -98,8 +98,19 @@ public class Substring extends ActionMetadata implements ColumnAction {
         // create the new column
         final RowMetadata rowMetadata = row.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final ColumnMetadata newColumnMetadata = createNewColumn(column);
-        final String substringColumn = rowMetadata.insertAfter(columnId, newColumnMetadata);
+        final String substringColumn = context.in(this).column(column.getName() + APPENDIX, rowMetadata, (r) -> {
+            final ColumnMetadata c = ColumnMetadata.Builder //
+                    .column() //
+                    .name(column.getName() + APPENDIX) //
+                    .type(Type.get(column.getType())) //
+                    .empty(column.getQuality().getEmpty()) //
+                    .invalid(column.getQuality().getInvalid()) //
+                    .valid(column.getQuality().getValid()) //
+                    .headerSize(column.getHeaderSize()) //
+                    .build();
+            rowMetadata.insertAfter(columnId, c);
+            return c;
+        });
 
         // Perform substring
         final String value = row.get(columnId);
@@ -140,21 +151,4 @@ public class Substring extends ActionMetadata implements ColumnAction {
         return Math.min(fromIndex, value.length());
     }
 
-    /**
-     * Create a new column
-     *
-     * @param column the current column metadata
-     * @return the new column
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + APPENDIX) //
-                .type(Type.get(column.getType())) //
-                .empty(column.getQuality().getEmpty()) //
-                .invalid(column.getQuality().getInvalid()) //
-                .valid(column.getQuality().getValid()) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
-    }
 }

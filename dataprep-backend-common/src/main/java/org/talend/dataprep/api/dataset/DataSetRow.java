@@ -25,7 +25,7 @@ public class DataSetRow implements Cloneable {
     public static final Predicate<Map.Entry<String, String>> SKIP_TDP_ID = e -> !DataSetRow.TDP_ID.equals(e.getKey());
 
     /** Metadata information (columns...) about this DataSetRow */
-    private RowMetadata rowMetadata;
+    private final RowMetadata rowMetadata;
 
     /** Values of the dataset row. */
     private SortedMap<String, String> values = new TreeMap<>();
@@ -70,10 +70,6 @@ public class DataSetRow implements Cloneable {
      */
     public RowMetadata getRowMetadata() {
         return rowMetadata;
-    }
-
-    public void setRowMetadata(RowMetadata rowMetadata) {
-        this.rowMetadata = rowMetadata;
     }
 
     /**
@@ -204,7 +200,6 @@ public class DataSetRow implements Cloneable {
     public void clear() {
         deleted = false;
         oldValue = null;
-        rowMetadata = null;
         values.clear();
     }
 
@@ -213,7 +208,7 @@ public class DataSetRow implements Cloneable {
      */
     @Override
     public DataSetRow clone() {
-        final DataSetRow clone = new DataSetRow(rowMetadata.clone(), values);
+        final DataSetRow clone = new DataSetRow(rowMetadata, values);
         clone.setDeleted(this.isDeleted());
         clone.setTdpId(this.tdpId);
         return clone;
@@ -268,7 +263,7 @@ public class DataSetRow implements Cloneable {
             throw new IllegalArgumentException("Columns cannot be null.");
         }
         if (columns.isEmpty()) {
-            return clone();
+            return this;
         }
         if (columns.size() < values.size()) {
             throw new IllegalArgumentException("Expected " + values.size() + " columns but got " + columns.size());
@@ -352,10 +347,6 @@ public class DataSetRow implements Cloneable {
         @Override
         public RowMetadata getRowMetadata() {
             return delegate.getRowMetadata();
-        }
-
-        @Override
-        public void setRowMetadata(RowMetadata rowMetadata) {
         }
 
         /**

@@ -41,6 +41,11 @@ public class LineBasedFormatGuesserTest {
         Assert.assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void read_null_csv_file() throws Exception {
+        guesser.guess(null, "UTF-8").getFormatGuess();
+    }
+
     /**
      * Standard csv file.
      */

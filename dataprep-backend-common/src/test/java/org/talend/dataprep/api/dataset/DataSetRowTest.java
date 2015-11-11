@@ -193,7 +193,7 @@ public class DataSetRowTest {
         DataSetRow row = createRow(defaultValues(), false);
         // Reorder with 0 column is equivalent to clone().
         final DataSetRow order = row.order(Collections.emptyList());
-        assertTrue(row != order);
+        assertTrue(row == order);
         assertThat(row.values(), is(order.values()));
     }
 

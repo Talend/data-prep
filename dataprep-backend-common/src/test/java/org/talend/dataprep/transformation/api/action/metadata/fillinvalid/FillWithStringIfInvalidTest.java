@@ -50,8 +50,7 @@ public class FillWithStringIfInvalidTest {
                 .invalidValues(newHashSet("100")) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidStringAction.json"));

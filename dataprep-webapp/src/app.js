@@ -61,7 +61,7 @@ var fetchConfiguration, bootstrapDataPrepApplication;
                     url: '/recentfiles',
                     views: {
                         'home-content': {
-                            template: '<div style="padding-top:100px; text-align: center;font-size: xx-large;">Coming Soon ...</div>'
+                            template: '<div style="padding-top:100px; text-align: center;font-size: xx-large;" translate-once="COMING_SOON"></div>'
                         }
                     }
                 })
@@ -69,7 +69,7 @@ var fetchConfiguration, bootstrapDataPrepApplication;
                     url: '/favorites',
                     views: {
                         'home-content': {
-                            template: '<div style="padding-top:100px; text-align: center;font-size: xx-large;">Coming Soon ...</div>'
+                            template: '<div style="padding-top:100px; text-align: center;font-size: xx-large;" translate-once="COMING_SOON"></div>'
                         }
                     }
                 });

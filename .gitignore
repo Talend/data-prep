@@ -17,5 +17,4 @@ devENV.sh
 dataprep-webapp/run.sh
 
 #generated folders
-cache/
-
+./cache/

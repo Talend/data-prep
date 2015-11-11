@@ -47,8 +47,7 @@ public class FillWithBooleanIfInvalidTest {
                 .computedId("0003") //
                 .invalidValues(newHashSet("100")).build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidBooleanAction.json"));
@@ -79,8 +78,7 @@ public class FillWithBooleanIfInvalidTest {
                 .invalidValues(new HashSet<>()) // no invalid values
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidBooleanAction.json"));

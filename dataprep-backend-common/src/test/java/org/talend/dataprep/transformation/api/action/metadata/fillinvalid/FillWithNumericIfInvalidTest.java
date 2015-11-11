@@ -48,8 +48,7 @@ public class FillWithNumericIfInvalidTest {
                 .invalidValues(newHashSet("N")) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
@@ -77,8 +76,7 @@ public class FillWithNumericIfInvalidTest {
                 .invalidValues(new HashSet<>()) // no invalid values
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));

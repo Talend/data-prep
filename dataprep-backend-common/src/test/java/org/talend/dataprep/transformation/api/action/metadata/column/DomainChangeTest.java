@@ -47,8 +47,7 @@ public class DomainChangeTest {
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(singletonList(columnMetadata));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(NEW_DOMAIN_ID_PARAMETER_KEY, "AUS_BEER");
@@ -72,8 +71,7 @@ public class DomainChangeTest {
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(singletonList(columnMetadata));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(NEW_DOMAIN_ID_PARAMETER_KEY, "AUS_BEER");

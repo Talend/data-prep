@@ -58,8 +58,7 @@ public class DeleteInvalidTest {
                 .invalidValues(newHashSet("N")) //
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         //when
         deleteInvalid.applyOnColumn( row, new TransformationContext(), parameters, "0002");
@@ -87,8 +86,7 @@ public class DeleteInvalidTest {
                 .invalidValues(new HashSet<>()) // no registered invalid values
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
         deleteInvalid.applyOnColumn(row, new TransformationContext(), parameters, "0002");
@@ -121,8 +119,7 @@ public class DeleteInvalidTest {
                 .invalidValues(new HashSet<>()) // no registered invalid values
                 .build()));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
         deleteInvalid.applyOnColumn(row, new TransformationContext(), parameters, "0002");

@@ -146,8 +146,18 @@ public class NumericOperations extends ActionMetadata implements ColumnAction {
         }
 
         // column creation
-        final ColumnMetadata newColumn = createNewColumn(sourceColumn, operator, operandName);
-        final String newColumnId = rowMetadata.insertAfter(columnId, newColumn);
+        final String newColumnId = context.in(this).column(sourceColumn.getName() + " " + operator + " " + operand,
+                rowMetadata,
+                (r) -> {
+                    final ColumnMetadata c = ColumnMetadata.Builder //
+                            .column() //
+                            .name(sourceColumn.getName() + " " + operator + " " + operandName) //
+                            .type(Type.DOUBLE) //
+                            .build();
+                    rowMetadata.insertAfter(columnId, c);
+                    return c;
+                }
+        );
 
         // set new column value
         final String sourceValue = row.get(columnId);
@@ -209,14 +219,4 @@ public class NumericOperations extends ActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * Create the new result column
-     */
-    private ColumnMetadata createNewColumn(ColumnMetadata sourceColumn, String operator, String operand) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(sourceColumn.getName() + " " + operator + " " + operand) //
-                .type(Type.DOUBLE) //
-                .build();
-    }
 }

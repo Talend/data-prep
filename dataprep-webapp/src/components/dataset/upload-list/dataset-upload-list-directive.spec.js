@@ -48,7 +48,6 @@ describe('Dataset upload list directive', function() {
         //then
         expect(names.length).toBe(1);
         expect(names.eq(0).text()).toBe('remote 1');
-        expect(progress.eq(0).text().trim()).toBe('Processing remote dataset...');
         expect(progress.eq(0).hasClass('error')).toBe(false);
     });
 

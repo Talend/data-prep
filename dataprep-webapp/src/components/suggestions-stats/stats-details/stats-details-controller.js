@@ -8,7 +8,7 @@
      * @requires data-prep.services.transformation.service:SuggestionService
      * @requires data-prep.services.statisticsService.service:StatisticsService
      */
-    function StatsDetailsCtrl(SuggestionService, StatisticsService) {
+    function StatsDetailsCtrl(SuggestionService, StatisticsService, $translate) {
         var vm = this;
         vm.suggestionService = SuggestionService;
         vm.statisticsService = StatisticsService;
@@ -21,7 +21,7 @@
          * @description Add a pattern filter from selected pattern item
          */
         vm.addPatternFilter = function addPatternFilter(item) {
-            alert('The selected pattern is: ' + item.pattern + '. Filtering is coming soon.');
+            alert($translate.instant('SELECT_PATTERN_IS') + item.pattern + '.' + $translate.instant('FILTERING_COMING_SOON'));
         };
     }
 

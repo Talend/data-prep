@@ -33,7 +33,6 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.text.Split;
 
 /**
  * Test class for Split action. Creates one consumer, and test it.
@@ -69,10 +68,10 @@ public class CopyColumnTest {
     }
 
     /**
-     * @see Split#create(Map)
+     * @see CopyColumnMetadata#create(Map)
      */
     @Test
-    public void should_split_row() {
+    public void should_copy_row() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

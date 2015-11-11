@@ -4,13 +4,13 @@
          ng-style="{width: qualityBarCtrl.width.valid + '%'}"
          ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
          ng-if="qualityBarCtrl.quality.valid > 0"
-         title="{{ qualityBarCtrl.quality.valid }} valid records ({{ qualityBarCtrl.percent.valid }}%)">
+         title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)">
 
         <div class="dropdown-container">
             <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu">
                 <li ng-click="qualityBarCtrl.filterValidRecords(qualityBarCtrl.column)">
-                    <a>Select Valid Records for {{ qualityBarCtrl.column.name | uppercase }}</a>
+                    <a><span translate-once="SELECT_VALID_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase }}</a>
                 </li>
             </ul>
         </div>
@@ -21,18 +21,18 @@
          ng-style="{width: qualityBarCtrl.width.empty + '%'}"
          ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
          ng-if="qualityBarCtrl.quality.empty > 0"
-         title="{{ qualityBarCtrl.quality.empty }} empty records ({{ qualityBarCtrl.percent.empty }}%)">
+         title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
 
         <div class="dropdown-container">
             <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu" >
                 <li ng-click="qualityBarCtrl.filterEmptyRecords(qualityBarCtrl.column)">
-                    <a>Select Empty Records for {{ qualityBarCtrl.column.name | uppercase
+                    <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase
                         }}</a>
                 </li>
                 <li class="divider"></li>
-                <li><a>Fill Empty records with Top adjacent value</a></li>
-                <li><a>Fill Empty records with Bottom adjacent value</a></li>
+                <li><a><span translate-once="FILL_EMPTY_WITH_TOP_VALUE"></span></a></li>
+                <li><a><span translate-once="FILL_EMPTY_WITH_BOTTOM_VALUE"></span></a></li>
 
                 <li ng-repeat="transfo in qualityBarCtrl.transformationsForEmptyCells" ng-click="qualityBarCtrl.applyActionOnColumn(transfo)">
                     <a>{{transfo.label}}</a>
@@ -45,18 +45,17 @@
          ng-style="{width: qualityBarCtrl.width.invalid + '%'}"
          ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
          ng-if="qualityBarCtrl.quality.invalid > 0"
-         title="{{ qualityBarCtrl.quality.invalid }} invalid records ({{ qualityBarCtrl.percent.invalid }}%)">
+         title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
 
         <div class="dropdown-container">
             <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu" >
                 <li ng-click="qualityBarCtrl.filterInvalidRecords(qualityBarCtrl.column)">
-                    <a>Select Invalid Records for {{ qualityBarCtrl.column.name | uppercase
-                        }}</a>
+                    <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase}}</a>
                 </li>
                 <li class="divider"></li>
-                <li><a>Replace Invalid Records with Top adjacent value</a></li>
-                <li><a>Replace Invalid Records with Bottom adjacent value</a></li>
+                <li><a><span translate-once="REPLACE_INVALID_WITH_TOP_VALUE"></span></a></li>
+                <li><a><span translate-once="REPLACE_INVALID_WITH_BOTTOM_VALUE"></span></a></li>
 
                 <li ng-repeat="transfo in qualityBarCtrl.transformationsForInvalidCells" ng-click="qualityBarCtrl.applyActionOnColumn(transfo)">
                     <a>{{transfo.label}}</a>

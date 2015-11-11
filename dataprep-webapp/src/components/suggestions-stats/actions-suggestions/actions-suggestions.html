@@ -3,17 +3,17 @@
         <span class="title title-action" title="{{actionsSuggestionsCtrl.column.name}}">{{actionsSuggestionsCtrl.column.name}}</span>
     </div>
 
-    <div class="Description" ng-if="!actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">Select a column to display its actions</div>
+    <div class="Description" ng-if="!actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations" translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
 
     <talend-tabs tab="actionsSuggestionsCtrl.tab" on-tab-change="actionsSuggestionsCtrl.resizePanels()" ng-if="actionsSuggestionsCtrl.columnSuggestionService.filteredTransformations">
         <talend-tabs-item tab-title="Text">
-            <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
+            <div class="action-suggestion-tab-items watermark" translate-once="COMING_SOON"></div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Cell">
-            <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
+            <div class="action-suggestion-tab-items watermark" translate-once="COMING_SOON"></div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Line">
-            <div class="action-suggestion-tab-items watermark">Coming soon ...</div>
+            <div class="action-suggestion-tab-items watermark" translate-once="COMING_SOON"></div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Column" default="true">
             <input type="search"
@@ -70,17 +70,17 @@
             <div class="action-suggestion-tab-items">
                 <talend-accordions class="menu">
                     <talend-accordions-item>
-                        <a>Remove Empty Lines</a>
+                        <a translate-once="REMOVE_EMPTY_LINES"></a>
                     </talend-accordions-item>
                 </talend-accordions>
                 <talend-accordions class="menu">
                     <talend-accordions-item>
-                        <a>Create Email Addresses</a>
+                        <a translate-once="CREATE_EMAIL"></a>
                     </talend-accordions-item>
                 </talend-accordions>
                 <talend-accordions class="menu">
                     <talend-accordions-item>
-                        <a>Correct Postal Addresses</a>
+                        <a translate-once="CORRECT_POSTAL_ADDRESS"></a>
                     </talend-accordions-item>
                 </talend-accordions>
             </div>
@@ -114,11 +114,11 @@
     <div class="filters-actions-form animate-show" ng-show="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length">
         <hr class="hr-style">
         <form name="myForm">
-            Apply changes to:
+            <span translate-once="APPLY_CHANGE_TO"></span>
             <input type="radio" ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters" ng-value="false" />
-            All Lines
+            <span translate-once="ALL_LINES"></span>
             <input type="radio" ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters" ng-value="true" />
-            Filtered Lines
+            <span translate-once="FILTERED_LINED"></span>
         </form>
         <hr class="hr-style">
     </div>

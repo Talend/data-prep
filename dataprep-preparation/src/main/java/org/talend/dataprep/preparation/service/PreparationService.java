@@ -153,6 +153,7 @@ public class PreparationService {
         Preparation preparation = preparationRepository.get(id, Preparation.class);
         preparation.setName( preparation.getName() + " Copy" );
         preparation.setCreationDate(System.currentTimeMillis());
+        preparation.setLastModificationDate(System.currentTimeMillis());
         preparationRepository.add(preparation);
         return preparation.getId();
     }

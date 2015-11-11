@@ -164,6 +164,7 @@ public class PreparationServiceTest {
         Preparation clone = objectMapper.reader( Preparation.class ).readValue(preparationDetailsClone);
 
         Assertions.assertThat( clone.getCreationDate() ).isGreaterThan( result.getCreationDate() );
+        Assertions.assertThat( clone.getLastModificationDate() ).isGreaterThan( result.getLastModificationDate() );
         Assertions.assertThat( clone.getName() ).isEqualTo( result.getName() + " Copy" );
         Assertions.assertThat( clone.getId() ).isNotEqualTo( result.getId() );
         Assertions.assertThat( clone.getDataSetId() ).isEqualTo( result.getDataSetId() );

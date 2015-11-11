@@ -2481,5 +2481,86 @@
         "default": ""
       }
     ]
+  },
+  {
+    "category": "strings advanced",
+    "name": "padding",
+    "dynamic": false,
+    "description": "Add characters on the left of the original value to match expected size",
+    "label": "Padding",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
+      },
+      {
+        "name": "size",
+        "type": "integer",
+        "implicit": false,
+        "canBeBlank": true,
+        "description": "Expected size of the value (values too long won't be truncated)",
+        "label": "Size",
+        "default": "5"
+      },
+      {
+        "name": "padding_char",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": true,
+        "description": "The character to add",
+        "label": "Padding char",
+        "default": "0"
+      },
+      {
+        "name": "padding_position",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "default": "Left",
+        "configuration": {
+          "values": [
+            {
+              "value": "Left"
+            },
+            {
+              "value": "Right"
+            }
+          ],
+          "multiple": false
+        }
+      }
+    ]
   }
 ]

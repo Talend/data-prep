@@ -130,7 +130,23 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         final Map<String, String> dateFieldColumns = new HashMap<>();
         for (DateFieldMappingBean date_field : DATE_FIELDS) {
             if (Boolean.valueOf(parameters.get(date_field.key))) {
-                final String newColumn = rowMetadata.insertAfter(columnId, createNewColumn(column, date_field.key));
+                final String newColumn = context.in(this).column(column.getName() + SEPARATOR + date_field.key,
+                        rowMetadata,
+                        (r) -> {
+                            final ColumnMetadata c = ColumnMetadata.Builder //
+                                    .column() //
+                                    .name(column.getName() + SEPARATOR + date_field.key) //
+                                    .type(Type.INTEGER) //
+                                    .empty(column.getQuality().getEmpty()) //
+                                    .invalid(column.getQuality().getInvalid()) //
+                                    .valid(column.getQuality().getValid()) //
+                                    .headerSize(column.getHeaderSize()) //
+                                    .build();
+                            rowMetadata.insertAfter(columnId, c);
+                            return c;
+                        }
+                );
+
                 dateFieldColumns.put(date_field.key, newColumn);
             }
         }
@@ -159,24 +175,6 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
                 row.set(dateFieldColumns.get(date_field.key), newValue);
             }
         }
-    }
-
-    /**
-     * Create a new column to host the computed extracted data
-     *
-     * @param column the original column metadata
-     * @return the new column metadata
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column, final String suffix) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + SEPARATOR + suffix) //
-                .type(Type.INTEGER) //
-                .empty(column.getQuality().getEmpty()) //
-                .invalid(column.getQuality().getInvalid()) //
-                .valid(column.getQuality().getValid()) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
     }
 
     private static class DateFieldMappingBean {

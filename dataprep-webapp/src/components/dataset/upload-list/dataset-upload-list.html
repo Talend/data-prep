@@ -12,13 +12,13 @@
 
                     <div class="progress-bar" ng-switch-when="file">
                         <span class="meter" style="width: {{ dataset.progress }}%" ng-switch="dataset.progress">
-                            <p ng-switch-when="100">Processing...</p>
+                            <p ng-switch-when="100"><span translate-once="PROCESSING"></span>...</p>
                             <p ng-switch-default="">{{ dataset.progress }} %</p>
                         </span>
                     </div>
                     <div class="progress-bar" ng-switch-when="remote">
                         <span class="meter" style="width: 100%">
-                            <p>Processing remote dataset...</p>
+                            <p translate-once="PROCESSING_REMOTE_DATASET"></p>
                         </span>
                     </div>
 

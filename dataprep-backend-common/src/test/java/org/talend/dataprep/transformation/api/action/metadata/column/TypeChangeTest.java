@@ -47,8 +47,7 @@ public class TypeChangeTest {
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(singletonList(columnMetadata));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(NEW_TYPE_PARAMETER_KEY, "string");
@@ -72,8 +71,7 @@ public class TypeChangeTest {
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(singletonList(columnMetadata));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(NEW_TYPE_PARAMETER_KEY, "string");
@@ -99,8 +97,7 @@ public class TypeChangeTest {
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(singletonList(columnMetadata));
 
-        final DataSetRow row = new DataSetRow(values);
-        row.setRowMetadata(rowMetadata);
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(NEW_TYPE_PARAMETER_KEY, "string");

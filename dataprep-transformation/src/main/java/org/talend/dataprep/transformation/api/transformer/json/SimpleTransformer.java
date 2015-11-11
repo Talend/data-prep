@@ -1,6 +1,8 @@
 package org.talend.dataprep.transformation.api.transformer.json;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,7 +39,11 @@ class SimpleTransformer implements Transformer {
 
     private static final String CONTEXT_ANALYZER = "analyzer";
 
+    private static final int ANALYSIS_BUFFER_SIZE = 20;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTransformer.class);
+
+    private static final NullAnalyzer NULL_ANALYZER = new NullAnalyzer();
 
     @Autowired
     private StatisticsAdapter adapter;
@@ -56,14 +62,71 @@ class SimpleTransformer implements Transformer {
     @Autowired
     private AnalyzerService analyzerService;
 
+    private final List<DataSetRow> initialAnalysisBuffer = new ArrayList<>(ANALYSIS_BUFFER_SIZE + 1);
+
+    private enum AnalysisStatus {
+        /**
+         * Status indicating transformation hasn't yet decided what is the schema of the transformed content.
+         */
+        SCHEMA_ANALYSIS,
+        /**
+         * Schema was detected (based on first {@link #ANALYSIS_BUFFER_SIZE} rows). This status indicates transformer has
+         * enough information (about type & al.) to perform a full analysis of the data.
+         */
+        FULL_ANALYSIS
+    }
+
+    // Indicate what the current status related to Analyzer configuration.
+    private AnalysisStatus currentAnalysisStatus = AnalysisStatus.SCHEMA_ANALYSIS;
+
     private Analyzer<Analyzers.Result> configureAnalyzer(TransformationContext context, DataSetRow row) {
+        switch (currentAnalysisStatus) {
+            case SCHEMA_ANALYSIS:
+                if (initialAnalysisBuffer.size() < ANALYSIS_BUFFER_SIZE) {
+                    initialAnalysisBuffer.add(row.clone());
+                    return NULL_ANALYZER; // Returns a no op (like a "> /dev/null").
+                } else {
+                    emptyInitialAnalysisBuffer(context, row);
+                    return configureFullAnalyzer(context, row.getRowMetadata().getColumns());
+                }
+            case FULL_ANALYSIS:
+                return configureFullAnalyzer(context, row.getRowMetadata().getColumns());
+            default:
+                throw new UnsupportedOperationException("Unable to process state '" + currentAnalysisStatus + "'.");
+        }
+    }
+
+    // Get or create a full analyzer (with all possible analysis), columns must contain correct type information.
+    private Analyzer<Analyzers.Result> configureFullAnalyzer(TransformationContext context, List<ColumnMetadata> columns) {
         Analyzer<Analyzers.Result> analyzer = (Analyzer<Analyzers.Result>) context.get(CONTEXT_ANALYZER);
         if (analyzer == null) {
-            final List<ColumnMetadata> columns = row.getRowMetadata().getColumns();
             analyzer = analyzerService.full(columns);
             context.put(CONTEXT_ANALYZER, analyzer);
         }
         return analyzer;
+    }
+
+    // Empty the initial buffer and perform an early schema analysis, configure a full analyzer, run full analysis on
+    private void emptyInitialAnalysisBuffer(TransformationContext context, DataSetRow row) {
+        if (currentAnalysisStatus == AnalysisStatus.FULL_ANALYSIS || initialAnalysisBuffer.isEmpty()) {
+            // Got called for nothing
+            return;
+        }
+        // Perform a first rough guess of records in reservoir
+        final List<ColumnMetadata> columns = row.getRowMetadata().getColumns();
+        final Analyzer<Analyzers.Result> schema = analyzerService.schemaAnalysis(columns);
+        for (DataSetRow dataSetRow : initialAnalysisBuffer) {
+            schema.analyze(dataSetRow.order(columns).toArray(DataSetRow.SKIP_TDP_ID));
+        }
+        adapter.adapt(columns, schema.getResult());
+        // Now configure the actual (full) analysis and don't forget to process stored records
+        Analyzer<Analyzers.Result> analyzer = configureFullAnalyzer(context, columns);
+        for (DataSetRow dataSetRow : initialAnalysisBuffer) {
+            analyzer.analyze(dataSetRow.order(columns).toArray(DataSetRow.SKIP_TDP_ID));
+        }
+        // Clear all stored records and set current status to FULL_ANALYSIS for further records.
+        initialAnalysisBuffer.clear();
+        currentAnalysisStatus = AnalysisStatus.FULL_ANALYSIS;
     }
 
     /**
@@ -82,12 +145,14 @@ class SimpleTransformer implements Transformer {
             final List<DataSetRowAction> rowActions = parsedActions.getRowTransformers();
             final boolean transformColumns = !input.getColumns().isEmpty();
             TransformationContext context = configuration.getTransformationContext();
+            final AtomicBoolean wroteMetadata = new AtomicBoolean(false);
             // Row transformations
             Stream<DataSetRow> records = input.getRecords();
             // Apply actions to records
             for (DataSetRowAction action : rowActions) {
                 records = records.map(r -> action.apply(r, context));
             }
+            // Analyze content after all actions were applied to row
             records = records.map(r -> {
                 if (transformColumns) {
                     // Use analyzer (for empty values, semantic...)
@@ -99,7 +164,6 @@ class SimpleTransformer implements Transformer {
                 return r;
             });
             // Write transformed records to stream
-            final AtomicBoolean wroteMetadata = new AtomicBoolean(false); // Flag to prevent multiple writes of header
             final Stack<DataSetRow> postProcessQueue = new Stack<>(); // Stack to remember last processed row.
             writer.fieldName("records");
             writer.startArray();
@@ -114,6 +178,7 @@ class SimpleTransformer implements Transformer {
                     }
                     if (row.shouldWrite()) {
                         writer.write(row);
+                        context.freezeActionContexts();
                     }
                     postProcessQueue.push(row); // In the end, last row remains in stack.
                 } catch (IOException e) {
@@ -126,6 +191,7 @@ class SimpleTransformer implements Transformer {
                 writer.fieldName("columns");
                 final DataSetRow row = postProcessQueue.pop();
                 // End analysis and set the statistics
+                emptyInitialAnalysisBuffer(context, row); // Call in case row number < ANALYSIS_BUFFER_SIZE
                 final Analyzer<Analyzers.Result> analyzer = (Analyzer<Analyzers.Result>) context.get(CONTEXT_ANALYZER);
                 if (analyzer != null) {
                     // Analyzer may not be initialized when all rows were deleted.
@@ -150,4 +216,40 @@ class SimpleTransformer implements Transformer {
         return Configuration.class.equals(configuration.getClass()) && configuration.volume() == Configuration.Volume.SMALL;
     }
 
+    /**
+     * An implementation of {@link Analyzer} that does not record nor analyze anything.
+     */
+    private static class NullAnalyzer implements Analyzer<Analyzers.Result> {
+        @Override
+        public void init() {
+            // Nothing to do
+        }
+
+        @Override
+
+        public boolean analyze(String... strings) {
+            // Nothing to do
+            return true;
+        }
+
+        @Override
+        public void end() {
+            // Nothing to do
+        }
+
+        @Override
+        public List<Analyzers.Result> getResult() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Analyzer<Analyzers.Result> merge(Analyzer<Analyzers.Result> analyzer) {
+            return this;
+        }
+
+        @Override
+        public void close() throws Exception {
+            // Nothing to do
+        }
+    }
 }

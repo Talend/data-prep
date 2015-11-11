@@ -57,29 +57,24 @@ public class ComputeLength extends ActionMetadata implements ColumnAction {
         // create new column and append it after current column
         final RowMetadata rowMetadata = row.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
-        final ColumnMetadata newCol = createNewColumn(column);
-        final String lengthColumn = rowMetadata.insertAfter(columnId, newCol);
+        //
+        final String lengthColumn = context.in(this).column(column.getName() + APPENDIX, rowMetadata, (r) -> {
+            final ColumnMetadata c = ColumnMetadata.Builder //
+                    .column() //
+                    .name(column.getName() + APPENDIX) //
+                    .type(Type.INTEGER) //
+                    .empty(column.getQuality().getEmpty()) //
+                    .invalid(column.getQuality().getInvalid()) //
+                    .valid(column.getQuality().getValid()) //
+                    .headerSize(column.getHeaderSize()) //
+                    .build();
+            rowMetadata.insertAfter(columnId, c);
+            return c;
+        });
 
         // Set length value
         final String value = row.get(columnId);
         row.set(lengthColumn, value == null ? "0" : String.valueOf(value.length()));
     }
 
-    /**
-     * Create the new "string length" column
-     *
-     * @param column the current column metadata
-     * @return the new column metadata
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + APPENDIX) //
-                .type(Type.INTEGER) //
-                .empty(column.getQuality().getEmpty()) //
-                .invalid(column.getQuality().getInvalid()) //
-                .valid(column.getQuality().getValid()) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
-    }
 }

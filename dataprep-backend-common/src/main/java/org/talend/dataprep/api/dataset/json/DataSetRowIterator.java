@@ -89,7 +89,6 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
             String currentFieldName = StringUtils.EMPTY;
             JsonToken nextToken;
             row.clear();
-            row.setRowMetadata(rowMetadata.clone());
             if (addTdpId) {
                 row.setTdpId(nextRowId++);
             }

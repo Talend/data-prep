@@ -66,7 +66,6 @@ public class RowMetadata implements Serializable {
         return columnMetadata;
     }
 
-
     /**
      * @return the row size.
      */
@@ -165,8 +164,10 @@ public class RowMetadata implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RowMetadata that = (RowMetadata) o;
         return Objects.equals(columns, that.columns);
     }
@@ -183,7 +184,8 @@ public class RowMetadata implements Serializable {
      * Insert a new column in this metadata right after the existing <code>columnId</code>. If no column with
      * <code>columnId</code> is to be found, append new column at the end of this row's columns.
      * 
-     * @param columnId A non null column id. Empty string is allowed.
+     * @param columnId A non null column id. Empty string is allowed, in this case, column will be appended at the end
+     * of existing columns.
      * @param column A non null column to insert in this row's metadata.
      * @return The column id of the newly inserted column.
      */

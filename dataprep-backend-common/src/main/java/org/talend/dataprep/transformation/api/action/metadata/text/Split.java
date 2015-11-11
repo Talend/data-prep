@@ -3,10 +3,7 @@ package org.talend.dataprep.transformation.api.action.metadata.text;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -128,12 +125,23 @@ public class Split extends ActionMetadata implements ColumnAction {
         final RowMetadata rowMetadata = row.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
         final List<String> newColumns = new ArrayList<>();
-        String lastColumnId = columnId;
+        final Stack<String> lastColumnId = new Stack<>();
+        lastColumnId.push(columnId);
         for (int i = 0; i < limit; i++) {
-            final ColumnMetadata newColumnMetadata = createNewColumn(column);
-            final String newColumnId = rowMetadata.insertAfter(lastColumnId, newColumnMetadata);
-            newColumns.add(newColumnId);
-            lastColumnId = newColumnId;
+            newColumns.add(context.in(this).column(column.getName() + SPLIT_APPENDIX + i,
+                rowMetadata,
+                (r) -> {
+                    final ColumnMetadata c = ColumnMetadata.Builder //
+                            .column() //
+                            .copy(column) //
+                            .type(Type.STRING) //
+                            .computedId(StringUtils.EMPTY) //
+                            .name(column.getName() + SPLIT_APPENDIX) //
+                            .build();
+                    lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
+                    return c;
+                }
+            ));
         }
 
         // Set the split values in newly created columns
@@ -160,21 +168,4 @@ public class Split extends ActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * Create a new column from current column
-     * 
-     * @param column the current column
-     * @return the new created column
-     */
-    private ColumnMetadata createNewColumn(final ColumnMetadata column) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .name(column.getName() + SPLIT_APPENDIX) //
-                .type(Type.get(column.getType())) //
-                .empty(column.getQuality().getEmpty()) //
-                .invalid(column.getQuality().getInvalid()) //
-                .valid(column.getQuality().getValid()) //
-                .headerSize(column.getHeaderSize()) //
-                .build();
-    }
 }

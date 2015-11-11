@@ -1,5 +1,5 @@
 <div class="actions-suggestions" ng-switch="!!statsDetailsCtrl.statistics">
-    <div class="Description" ng-if="!statsDetailsCtrl.statistics">Select a column to display its statistics</div>
+    <div class="Description" ng-if="!statsDetailsCtrl.statistics" translate-once="SELECT_COLUMN_TO_DISPLAY_STATS"></div>
 
     <talend-tabs ng-if="statsDetailsCtrl.statistics">
         <talend-tabs-item class="tab-container" tab-title="Chart" default="true">

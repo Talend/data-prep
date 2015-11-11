@@ -6,6 +6,8 @@
   "EDIT_PROFIL": "Edit profil",
   "SEARCH": "Search anything here",
   "LOGOUT": "Logout",
+  "MENU": "MENU",
+
 
   "_comment": "Left side menu",
   "ALL_FOLDERS": "All Datasets",
@@ -71,6 +73,7 @@
   "LOADING": "Loading...",
   "PROCESSING": "Processing",
   "COMING_SOON": "Coming soon...",
+  "PROCESSING_REMOTE_DATASET": "Processing remote dataset...",
 
   "_comment": "Confirm",
   "DELETE_PERMANENTLY": "You are going to permanently delete the {{type}} \"{{name}}\".",
@@ -81,6 +84,9 @@
   "REMOVE_LAST_STEP_FILTER_TITLE": "WARNING : impossible action",
   "REMOVE_LAST_STEP_FILTER_CONTENT": "WARNING : this action is not supported as it will remove all the lines",
   "UPDATE_EXISTING_DATASET": "Do you want to update existing \"{{dataset}}\" dataset ?",
+  "SUBMIT": "Submit",
+  "YES": "YES",
+  "NO": "NO",
 
   "_comment": "import remote dataset",
   "ENTER_HTTP_DATASET_URL": "Enter the HTTP dataset url",
@@ -130,7 +136,7 @@
   "SERVER_ERROR_TITLE": "Server error",
   "SERVICE_UNAVAILABLE": "Service unavailable",
   "UNSUPPORTED_CONTENT_TITLE": "Unsupported content",
-  "UNSUPPORTED_CONTENT": "Unable to create data set, content is not supported.",
+  "UNSUPPORTED_CONTENT": "Unable to create data set, content is not supported. Try with a csv or xls file!",
 
   "_comment": "Transformation",
   "NO_CLUSTERS_ACTION_MSG":"No Clusters Were Found !!!",
@@ -138,9 +144,22 @@
   "NO_PARAMS_ACTION_MSG":"No Simple Parameters Were Found !!!",
   "COLUMN_TYPE_IS": "This column is a",
   "COLUMN_TYPE_SET": "Set as",
+  "DATE_FORMAT_ERROR": "This must be a date in the format 'DD/MM/YYYY hh:mm:ss'",
+  "FIT_TO_CONTENT": "Fit to Content",
+  "DELETE": "Delete",
+  "NOT_DEFINED": "not defined",
+  "SORT_IS": "Sort is ",
+  "FILTER_IS": "Filter is ",
 
   "_comment": "Action panel",
   "FIND_FUNCTION": "Find a Function...",
+  "REMOVE_EMPTY_LINES": "Remove Empty Lines",
+  "CREATE_EMAIL": "Create Email Addresses",
+  "CORRECT_POSTAL_ADDRESS": "Correct Postal Addresses",
+  "SELECT_COLUMN_TO_DISPLAY_ACTIONS": "Select a column to display its actions",
+  "APPLY_CHANGE_TO": "Apply changes to:",
+  "ALL_LINES": "All Lines",
+  "FILTERED_LINED": "Filtered Lines",
 
   "_comment": "Recipe",
   "FILTERS_APPLIED": "Filters applied",
@@ -170,8 +189,12 @@
   "STRING": "TEXT",
   "FLOAT": "DECIMAL",
   "NO_ADVANCED_CHART": "No advanced chart for the current selection",
+  "SELECT_COLUMN_TO_DISPLAY_STATS": "Select a column to display its statistics",
+  "SELECT_PATTERN_IS": "The selected pattern is: ",
+  "FILTERING_COMING_SOON": "Filtering is coming soon.",
 
-  "_comment": "Dataset actions",
+
+"_comment": "Dataset actions",
   "REPLACE_FILE_CONTENT": "Update dataset with another file",
   "OPEN_ACTION": "Open {{type}} \"{{name}}\"",
   "CERTIFY_ACTION": "Certify {{type}} \"{{name}}\"",
@@ -180,5 +203,24 @@
 
   "_comment": "Range slider",
   "INVALID_VALUE_RANGE_SLIDER": "Invalid Entered Value",
-  "INVALID_VALUE_RANGE_SLIDER_CONTENT": ": Use \".\" instead of \",\""
+  "INVALID_VALUE_RANGE_SLIDER_CONTENT": ": Use \".\" instead of \",\"",
+
+  "_comment": "Confirm Popup",
+  "SAVE_CHANGE": "Save Your Changes ?",
+  "SAVE_CHANGE_DESCRITION_1": "You've transformed your dataset in a preparation that can be saved in order to be re-used next time.",
+  "SAVE_CHANGE_DESCRITION_2": "Do you want to save it ?",
+  "PREPARATION_NAME": "Preparation Name: ",
+  "SAVE_IT": "SAVE IT",
+
+  "_comment": "Quality Bar",
+  "VALID_RECORDS": "valid records",
+  "INVALID_RECORDS": "invalid records",
+  "EMPTY_RECORDS": "empty records",
+  "SELECT_VALID_RECORDS": "Select Valid Records for ",
+  "SELECT_INVALID_RECORDS": "Select Invalid Records for ",
+  "SELECT_EMPTY_RECORDS": "Select Empty Records for ",
+  "FILL_EMPTY_WITH_TOP_VALUE": "Fill Empty records with Top adjacent value",
+  "FILL_EMPTY_WITH_BOTTOM_VALUE": "Fill Empty records with Bottom adjacent value",
+  "REPLACE_INVALID_WITH_TOP_VALUE": "Replace Invalid Records with Top adjacent value",
+  "REPLACE_INVALID_WITH_BOTTOM_VALUE": "Replace Invalid Records with Bottom adjacent value"
 }

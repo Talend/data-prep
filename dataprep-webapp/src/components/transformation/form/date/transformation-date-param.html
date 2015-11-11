@@ -10,8 +10,8 @@
         </talend-datetime-picker>
 
         <div class="param-error error"
-             ng-if="paramsCtrl.paramForm[dateParamCtrl.parameter.name].$error.isDateTimeValidation">
-            This must be a date in the format 'DD/MM/YYYY hh:mm:ss'
+             ng-if="paramsCtrl.paramForm[dateParamCtrl.parameter.name].$error.isDateTimeValidation"
+                translate-once="DATE_FORMAT_ERROR">
         </div>
     </div>
 

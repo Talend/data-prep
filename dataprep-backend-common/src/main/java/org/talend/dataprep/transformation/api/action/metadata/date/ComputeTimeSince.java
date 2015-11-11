@@ -10,6 +10,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -88,8 +89,22 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         final ColumnMetadata column = row.getRowMetadata().getById(columnId);
 
         // create the new column and add the new column after the current one
-        final ColumnMetadata newColumnMetadata = createNewColumn(column, unit);
-        row.getRowMetadata().insertAfter(columnId, newColumnMetadata);
+        String computeTimeSinceColumn = context.in(this).column(PREFIX + column.getName() + SUFFIX + unit.toString().toLowerCase(),
+            row.getRowMetadata(),
+            (r) -> {
+                final ColumnMetadata c = ColumnMetadata.Builder //
+                        .column() //
+                        .copy(column)//
+                        .computedId(StringUtils.EMPTY) //
+                        .name(PREFIX + column.getName() + SUFFIX + unit.toString().toLowerCase()) //
+                        .computedId(null) // remove the id
+                        .statistics(new Statistics()) // clear the statistics
+                        .type(INTEGER)//
+                        .build();
+                row.getRowMetadata().insertAfter(columnId, c);
+                return c;
+            }
+        );
 
         // parse the date
         final String value = row.get(columnId);
@@ -97,29 +112,12 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             final LocalDateTime temporalAccessor = dateParser.parse(value, row.getRowMetadata().getById(columnId));
             final Temporal valueAsDate = LocalDateTime.from(temporalAccessor);
             final long newValue = unit.between(valueAsDate, now);
-            row.set(newColumnMetadata.getId(), newValue + "");
+            row.set(computeTimeSinceColumn, String.valueOf(newValue));
         } catch (DateTimeException e) {
             // Nothing to do: in this case, temporalAccessor is left null
             LOGGER.debug("Unable to parse date {} for {} @ {}", value, columnId, row.getTdpId(), e);
-            row.set(newColumnMetadata.getId(), "");
+            row.set(computeTimeSinceColumn, StringUtils.EMPTY);
         }
-    }
-
-    /**
-     * Create a new column to host the computed time
-     *
-     * @param column the original column metadata
-     * @return the new column metadata
-     */
-    private ColumnMetadata createNewColumn(ColumnMetadata column, TemporalUnit unit) {
-        return ColumnMetadata.Builder //
-                .column() //
-                .copy(column)//
-                .name(PREFIX + column.getName() + SUFFIX + unit.toString().toLowerCase()) //
-                .computedId(null) // remove the id
-                .statistics(new Statistics()) // clear the statistics
-                .type(INTEGER)//
-                .build();
     }
 
 }

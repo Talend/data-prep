@@ -2,6 +2,8 @@ package org.talend.dataprep.transformation.api.action.context;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
@@ -14,6 +16,8 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
  * @see ActionMetadata#create(Map)
  */
 public final class TransformationContext {
+
+    private final Map<ActionMetadata, ActionContext> contexts = new HashMap<>();
 
     /** The context itself. */
     private Map<String, Object> context;
@@ -45,4 +49,24 @@ public final class TransformationContext {
         return context.get(key);
     }
 
+    /**
+     * Returns a transformation context specific to the current action. Use this to create columns (see
+     * {@link ActionContext#column(String, Supplier, Consumer)} for more details).
+     *
+     * @param actionMetadata An instance of action used as key for finding context
+     * @return An {@link ActionContext context} ready to be used.
+     */
+    public ActionContext in(ActionMetadata actionMetadata) {
+        if (contexts.containsKey(actionMetadata)) {
+            return contexts.get(actionMetadata);
+        } else {
+            ActionContext actionContext = new ActionContext(this);
+            contexts.put(actionMetadata, actionContext);
+            return actionContext;
+        }
+    }
+
+    public void freezeActionContexts() {
+        contexts.replaceAll((actionMetadata, actionContext) -> actionContext.asImmutable());
+    }
 }

@@ -17,7 +17,7 @@
             <input name="{{::(simpleParamCtrl.parameter.name)}}"
                    type="{{::simpleParamCtrl.parameter.inputType}}"
                    ng-model="simpleParamCtrl.parameter.value"
-                   ng-model-options="{debounce: { 'default': 500, 'blur': 0 }}"
+                   ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                    ng-trim="false"
                    is-type="{{::simpleParamCtrl.parameter.type}}"
                    can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>

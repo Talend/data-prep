@@ -86,12 +86,14 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             } else {
                 folderPath = getRootFolder();
             }
+            if (Files.notExists(folderPath)){
+                return Collections.emptyList();
+            }
             Stream<Path> childStream = Files.list(folderPath);
             List<Folder> childs = new ArrayList<>();
             childStream.forEach(path -> {
                     if (Files.isDirectory( path )) {
                         childs.add(Folder.Builder.folder() //
-                                .name(path.getFileName().toString()) //
                                 .path(pathAsString(path)) //
                                 .build());
                     }
@@ -118,6 +120,10 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     public Folder addFolder(String path) {
         try {
 
+            if (!StringUtils.startsWith( path, "/" )){
+                path = "/" + path;
+            }
+
             List<String> pathParts = Lists.newArrayList(StringUtils.split(path, PATH_SEPARATOR));
 
             Path pathToCreate = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
@@ -126,7 +132,6 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                 Files.createDirectories(pathToCreate, defaultFilePermissions);
             }
             return Folder.Builder.folder() //
-                    .name(pathToCreate.getFileName().toString()) //
                     .path(path) //
                     .build();
         } catch (IOException e) {
@@ -216,7 +221,7 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
         Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
 
-        if (!Files.exists( path )){
+        if (Files.notExists(path)){
             return Collections.emptyList();
         }
 

@@ -61,8 +61,6 @@ public abstract class AbstractFolderTest {
         // - beer-
         //       | - bar
 
-        Folder rootFolder = Folder.Builder.folder().name("").build();
-
         int sizeBefore = getFolderRepository().size();
 
 

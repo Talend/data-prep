@@ -1,22 +1,39 @@
 <a data-icon="B" ng-click="folderCtrl.folderNameModal=true">Add Folder</a>
 
-<div class="breadcrumb" style="height: 42px">
+
+<div class="breadcrumb">
   <ul>
-    <li talend-dropdown>
-      <div class="dropdown-container">
-        <div class="dropdown-action">
-          <a class="dropdown-button" ng-click="folderCtrl.displayRootChilds()">All Files</a>
+    <li>
+      <talend-dropdown>
+        <div class="dropdown-container">
+          <div class="dropdown-action">
+            <a ng-click="folderCtrl.initChilds(-1)">All Files</a>
+          </div>
+          <ul class="dropdown-menu">
+            <li ng-repeat="child in folderCtrl.currentChilds" ng-click="folderCtrl.goToChild(child)">
+              {{child.path}}
+            </li>
+          </ul>
         </div>
-        <ul class="dropdown-menu">
-          <li ng-repeat="folder in folderCtrl.folders" ng-click="folderCtrl.goToChild(folder)">
-            {{folder.id}}
-          </li>
-        </ul>
-      </div>
+      </talend-dropdown>
     </li>
-    <li>Child</li>
+    <li ng-repeat="path in folderCtrl.currentPathParts">
+      <talend-dropdown>
+        <div class="dropdown-container">
+          <div class="dropdown-action">
+            <a ng-click="folderCtrl.initChilds($index)">{{::path}}</a>
+          </div>
+          <ul class="dropdown-menu">
+            <li ng-repeat="child in folderCtrl.currentChilds" ng-click="folderCtrl.goToChild(child)">
+              {{child.path}}
+            </li>
+          </ul>
+        </div>
+      </talend-dropdown>
+    </li>
   </ul>
 </div>
+
 
 
 

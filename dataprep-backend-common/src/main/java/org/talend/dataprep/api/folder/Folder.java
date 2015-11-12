@@ -70,8 +70,6 @@ public class Folder extends Identifiable implements Serializable {
 
     public static class Builder {
 
-        private String name;
-
         private String path;
 
         public static Builder folder() {
@@ -80,11 +78,6 @@ public class Folder extends Identifiable implements Serializable {
 
         public Folder.Builder path(String path) {
             this.path = path;
-            return this;
-        }
-
-         public Folder.Builder name(String name) {
-            this.name = name;
             return this;
         }
 

@@ -88,5 +88,12 @@
       padding: 0 ($breadcrumb-height / 2) 0 ($breadcrumb-height / 1.5);
     }
   }
+
+  .dropdown-menu{
+    li{
+      display: list-item;
+    }
+  }
+
 }
 

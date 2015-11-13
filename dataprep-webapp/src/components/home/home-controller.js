@@ -300,7 +300,7 @@
                 })
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data)
-                        .then(FolderService.createFolderEntry('dataset', event.data, 'folder-1'))
+                        .then(FolderService.createFolderEntry('dataset', event.data,state.folder.currentFolder))
                         .then(UploadWorkflowService.openDataset);
                 })
                 .catch(function () {

@@ -3,9 +3,10 @@
 
     var state = {};
 
-    function StateService(PlaygroundStateService, playgroundState, DatasetStateService, datasetState) {
+    function StateService(PlaygroundStateService, playgroundState, DatasetStateService, datasetState, FolderStateService, folderState) {
         state.playground = playgroundState;
         state.dataset = datasetState;
+        state.folder = folderState;
 
         return {
             //playground
@@ -35,7 +36,10 @@
             
             //dataset
             startUploadingDataset: DatasetStateService.startUploadingDataset,
-            finishUploadingDataset: DatasetStateService.finishUploadingDataset
+            finishUploadingDataset: DatasetStateService.finishUploadingDataset,
+
+            //folder
+            setCurrentFolder: FolderStateService.setCurrentFolder
         };
     }
 

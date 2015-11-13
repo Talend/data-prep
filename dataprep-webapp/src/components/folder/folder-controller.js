@@ -7,7 +7,7 @@
      * @description Export controller.
      * @requires data-prep.services.folder.service:FolderService
      */
-    function FolderCtrl(FolderService) {
+    function FolderCtrl(FolderService,StateService,state) {
         var vm = this;
         vm.showAddModal = false;
         vm.contentType='';
@@ -38,6 +38,13 @@
         vm.goToFolder = function(folder){
             vm.currentFolder=folder;
             loadFolders();
+            // loading folder entries
+            if (folder.path){
+                FolderService.listFolderEntries( 'dataset', folder.id );
+            }else{
+                // if root load all!!
+            }
+            StateService.setCurrentFolder(folder.id);
         };
 
         // -1 is the root folder
@@ -71,9 +78,6 @@
                     });
                     vm.currentPathParts = _.filter(_.trim(vm.currentFolder.id).split('/'),function(path){
                         return path.length>0;
-                    });
-                    _.forEach(vm.currentPathParts, function(n){
-                        console.log('n:'+n);
                     });
                 });
         };

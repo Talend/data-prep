@@ -11,8 +11,9 @@
      * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
      * @requires data-prep.services.state.service:StateService
      * @requires data-prep.services.state.constant:state
+     * @requires data-prep.services.folder.service:FolderService
      */
-    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state) {
+    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state, FolderService) {
         var vm = this;
         var DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
 
@@ -298,7 +299,9 @@
                     dataset.progress = parseInt(100.0 * event.loaded / event.total);
                 })
                 .then(function (event) {
-                    DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    DatasetService.getDatasetById(event.data)
+                        .then(FolderService.createFolderEntry('dataset', event.data, 'folder-1'))
+                        .then(UploadWorkflowService.openDataset);
                 })
                 .catch(function () {
                     dataset.error = true;

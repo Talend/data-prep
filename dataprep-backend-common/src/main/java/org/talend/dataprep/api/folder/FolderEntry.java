@@ -12,10 +12,9 @@ public class FolderEntry extends Identifiable implements Serializable {
     @JsonProperty("id")
     private String id;
 
-    // FIXME olamy: not sure we need to export that in json result
-    @JsonProperty("contentClass")
+    @JsonProperty("contentType")
     /**
-     * this is the class of the content Dataset or Preparation or something else.. (we use fqcn)
+     * this is the type of the content dataset or preparation or something else..
      */
     private String contentType;
 
@@ -36,7 +35,13 @@ public class FolderEntry extends Identifiable implements Serializable {
         this.contentType = contentType;
         this.contentId = contentId;
         this.path = path;
-        this.id = contentType + '@' + contentId;
+        this.buildId();
+    }
+
+    public void buildId(){
+        if (this.id == null){
+            this.id = contentType + '@' + contentId;
+        }
     }
 
 

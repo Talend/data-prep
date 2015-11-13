@@ -17,7 +17,7 @@
             // folder entry operations
             createFolderEntry: createFolderEntry,
             deleteFolderEntry: deleteFolderEntry,
-            listFolderEntries: listFolderEntries,
+            listFolderEntries: listFolderEntries
 
         };
 

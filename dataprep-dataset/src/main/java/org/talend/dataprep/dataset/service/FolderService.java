@@ -2,6 +2,7 @@ package org.talend.dataprep.dataset.service;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -89,6 +90,8 @@ public class FolderService {
     @Timed
     @VolumeMetered
     public FolderEntry addFolderEntry(@RequestBody FolderEntry folderEntry){
+        // jackson/json deserialization use empty constructor so we need to ensure id is build
+        folderEntry.buildId();
         return folderRepository.addFolderEntry( folderEntry );
     }
 

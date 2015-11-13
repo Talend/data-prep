@@ -1,16 +1,17 @@
-<a data-icon="B" ng-click="folderCtrl.folderNameModal=true">Add Folder</a>
-
+<a data-icon="B" ng-click="folderCtrl.folderNameModal=true" title="Add Folder"></a>
 
 <div class="breadcrumb">
   <ul>
     <li>
       <talend-dropdown>
         <div class="dropdown-container">
-          <div class="dropdown-action">
-            <a ng-click="folderCtrl.initChilds(-1)">All Files</a>
-          </div>
+          <a ng-click="folderCtrl.goToPath(-1)">All Files</a>
+          <span class="dropdown-action">
+            <a class="dropdown-button" ng-click="folderCtrl.initChilds(-1)"></a>
+          </span>
           <ul class="dropdown-menu">
-            <li ng-repeat="child in folderCtrl.currentChilds" ng-click="folderCtrl.goToChild(child)">
+            <li ng-if="folderCtrl.loadingChilds" translate-once="LOADING"></li>
+            <li ng-repeat="child in folderCtrl.currentChilds" ng-click="folderCtrl.goToFolder(child)">
               {{child.path}}
             </li>
           </ul>
@@ -20,11 +21,13 @@
     <li ng-repeat="path in folderCtrl.currentPathParts">
       <talend-dropdown>
         <div class="dropdown-container">
-          <div class="dropdown-action">
-            <a ng-click="folderCtrl.initChilds($index)">{{::path}}</a>
-          </div>
+          <a ng-click="folderCtrl.goToPath($index)">{{::path}}</a>
+          <span class="dropdown-action">
+            <a class="dropdown-button" ng-click="folderCtrl.initChilds($index)"></a>
+          </span>
           <ul class="dropdown-menu">
-            <li ng-repeat="child in folderCtrl.currentChilds" ng-click="folderCtrl.goToChild(child)">
+            <li ng-if="folderCtrl.loadingChilds" translate-once="LOADING"></li>
+            <li ng-repeat="child in folderCtrl.currentChilds" ng-click="folderCtrl.goToFolder(child)">
               {{child.path}}
             </li>
           </ul>

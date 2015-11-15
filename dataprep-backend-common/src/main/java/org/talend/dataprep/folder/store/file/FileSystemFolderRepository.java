@@ -287,7 +287,8 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                         properties.load(inputStream);
                         if (StringUtils.equals( properties.getProperty( "contentId" ), contentId ) && //
                             StringUtils.equals( properties.getProperty( "contentType" ), contentType )){
-                            folderEntries.add( new FolderEntry( contentType,  contentId, file.getParent().toString()));
+                            folderEntries.add( new FolderEntry( contentType,  contentId, //
+                                                                getRootFolder().relativize( file.getParent()).toString()));
                         }
                     }
                     return FileVisitResult.CONTINUE;

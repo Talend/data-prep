@@ -29,6 +29,7 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
+import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.dataset.service.analysis.*;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
@@ -39,6 +40,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
+import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
@@ -111,6 +113,9 @@ public class DataSetService {
     /** DataPrep abstraction to the underlying security (whether it's enabled or not). */
     @Autowired
     private Security security;
+
+    @Autowired
+    private FolderRepository folderRepository;
 
     /**
      * Sort the synchronous analyzers.
@@ -401,6 +406,14 @@ public class DataSetService {
         } finally {
             lock.unlock();
         }
+
+        // TODO make this async
+        for( FolderEntry folderEntry : folderRepository.findFolderEntries( dataSetId, "dataset" )){
+            folderRepository.removeFolderEntry( folderEntry.getPath(), //
+                                                folderEntry.getContentId(), //
+                                                folderEntry.getContentType() );
+        }
+
     }
 
     @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)

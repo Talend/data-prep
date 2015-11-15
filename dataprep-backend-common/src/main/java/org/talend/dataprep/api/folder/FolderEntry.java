@@ -111,13 +111,19 @@ public class FolderEntry extends Identifiable implements Serializable {
 
         FolderEntry that = (FolderEntry) o;
 
-        return !( id != null ? !id.equals( that.id ) : that.id != null );
+        if ( id != null ? !id.equals( that.id ) : that.id != null )
+        {
+            return false;
+        }
+        return !( path != null ? !path.equals( that.path ) : that.path != null );
 
     }
 
     @Override
     public int hashCode()
     {
-        return id != null ? id.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( path != null ? path.hashCode() : 0 );
+        return result;
     }
 }

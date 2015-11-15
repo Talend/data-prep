@@ -4,17 +4,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
@@ -256,6 +261,53 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Iterable<FolderEntry> findFolderEntries(String contentId, String contentType) {
+        Set<FolderEntry> folderEntries = new HashSet<>();
+
+        try {
+            Files.walkFileTree(getRootFolder(), new FileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    final AtomicBoolean filesFound = new AtomicBoolean( false );
+
+                    Files.list( dir ).parallel().forEach( path -> {
+                        filesFound.set(true); } );
+
+                    return filesFound.get()? FileVisitResult.CONTINUE: FileVisitResult.SKIP_SUBTREE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    try (InputStream inputStream = Files.newInputStream(file)) {
+                        Properties properties = new Properties();
+                        properties.load(inputStream);
+                        if (StringUtils.equals( properties.getProperty( "contentId" ), contentId ) && //
+                            StringUtils.equals( properties.getProperty( "contentType" ), contentType )){
+                            folderEntries.add( new FolderEntry( contentType,  contentId, file.getParent().toString()));
+                        }
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
+        return folderEntries;
     }
 
     @Override

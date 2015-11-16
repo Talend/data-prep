@@ -300,15 +300,16 @@
                 })
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data)
+                        // once the dataset entry has been created we need to refresh/filter the dataset list
                         .then(FolderService.createFolderEntry('dataset',event.data,state.folder.currentFolder)
-                                  .then(function(){
-                                      if (state.folder.currentFolder){
-                                        FolderService.listFolderEntries( 'dataset', state.folder.currentFolder)
-                                                .then( function ( response ) {
-                                                    DatasetService.filterDatasets( response.data );
-                                                })
-                                        }
-                                  })
+                            .then(function(){
+                                if (state.folder.currentFolder){
+                                    FolderService.listFolderEntries( 'dataset', state.folder.currentFolder)
+                                        .then( function ( response ) {
+                                            DatasetService.filterDatasets( response.data );
+                                        })
+                                }
+                            })
                         )
                         .then(UploadWorkflowService.openDataset);
                 })

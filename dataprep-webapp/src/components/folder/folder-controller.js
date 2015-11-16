@@ -18,12 +18,25 @@
         vm.currentChilds=[];
         vm.loadingChilds=true;
 
+        /**
+         * @ngdoc method
+         * @name addFolder
+         * @methodOf data-prep.folder.controller:FolderCtrl
+         * @description Create a new folder
+         */
         vm.addFolder = function(){
             FolderService.create(vm.currentFolder.id + '/' + vm.folderName)
                 .then(vm.folderName='')
                 .then(loadFolders);
         };
 
+        /**
+         * @ngdoc method
+         * @name goToPath
+         * @methodOf data-prep.folder.controller:FolderCtrl
+         * @param {number} index - the index of the part of the current path parts to go to
+         * @description go to path of the given index
+         */
         vm.goToPath = function(index){
             // -1 is root
             var path = '';
@@ -35,6 +48,12 @@
             vm.goToFolder(folder);
         };
 
+        /**
+         * @ngdoc method
+         * @name goToFolder
+         * @methodOf data-prep.folder.controller:FolderCtrl
+         * @param {object} folder - the folder to go
+         */
         vm.goToFolder = function(folder){
             vm.currentFolder=folder;
             loadFolders();
@@ -51,8 +70,15 @@
 
         };
 
-        // -1 is the root folder
+        /**
+         * @ngdoc method
+         * @name initChilds
+         * @methodOf data-prep.folder.controller:FolderCtrl
+         * @param {number} index - the index of the part of the current path parts to get childs
+         * @description build the child list of the part part given by the index parameter
+         */
         vm.initChilds = function(index){
+            // -1 is the root folder
             var path='';
             for(var i = 0; i<=index;i++){
                 path = path + '/' + vm.currentPathParts[i];
@@ -66,9 +92,7 @@
                        }
                    });
                  })
-                 .then(function(){
-                     vm.loadingChilds=false;
-                 });
+                 .then(vm.loadingChilds=false);
         };
 
         var loadFolders = function(){
@@ -86,6 +110,13 @@
                 });
         };
 
+        /**
+         * @ngdoc method
+         * @name cleanupPath
+         * @methodOf data-prep.folder.controller:FolderCtrl
+         * @param {string} str - the path to clean
+         * @description remove / character
+         */
         var cleanupPath = function(str){
             return str.split('/').join('');
         };

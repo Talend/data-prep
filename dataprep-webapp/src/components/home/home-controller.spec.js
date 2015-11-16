@@ -237,12 +237,15 @@ describe('Home controller', function () {
 
             describe('step 2 with unique name', function () {
 
-                beforeEach(inject(function ($rootScope, DatasetService) {
+                beforeEach(inject(function ($q, $rootScope, DatasetService, FolderService, state) {
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(null);
+                    spyOn(FolderService,'createFolderEntry').and.returnValue();
+
                     spyOn($rootScope, '$emit').and.returnValue();
+                    state.folder = {currentFolder: '/foo/bar'};
                 }));
 
-                it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService) {
+                it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService,FolderService,state) {
                     //given
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     ctrl.uploadDatasetName();
@@ -254,6 +257,7 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
+                    expect(FolderService.createFolderEntry).toHaveBeenCalled();
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                     expect(UploadWorkflowService.openDataset).toHaveBeenCalled();

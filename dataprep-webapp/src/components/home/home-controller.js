@@ -307,7 +307,7 @@
                                     FolderService.listFolderEntries( 'dataset', state.folder.currentFolder)
                                         .then( function ( response ) {
                                             DatasetService.filterDatasets( response.data );
-                                        })
+                                        });
                                 }
                             })
                         )

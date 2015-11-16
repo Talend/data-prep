@@ -223,6 +223,13 @@
             return datasetsPromise;
         }
 
+        /**
+         * @ngdoc method
+         * @name filterDatasets
+         * @methodOf data-prep.services.dataset.service:DatasetListService
+         * @param {object[]} folderEntries list
+         * @description will filter the current dataset list with the given folder entries list
+         */
         function filterDatasets(ids){
             var idsArray = [];
             _.forEach(ids,function(folder){

@@ -300,7 +300,16 @@
                 })
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data)
-                        .then(FolderService.createFolderEntry('dataset', event.data,state.folder.currentFolder))
+                        .then(FolderService.createFolderEntry('dataset',event.data,state.folder.currentFolder)
+                                  .then(function(){
+                                      if (state.folder.currentFolder){
+                                        FolderService.listFolderEntries( 'dataset', state.folder.currentFolder)
+                                                .then( function ( response ) {
+                                                    DatasetService.filterDatasets( response.data );
+                                                })
+                                        }
+                                  })
+                        )
                         .then(UploadWorkflowService.openDataset);
                 })
                 .catch(function () {

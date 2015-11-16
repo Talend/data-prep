@@ -7,7 +7,7 @@
      * @description Export controller.
      * @requires data-prep.services.folder.service:FolderService
      */
-    function FolderCtrl(FolderService,StateService,state) {
+    function FolderCtrl(FolderService,StateService,state,DatasetListService) {
         var vm = this;
         vm.showAddModal = false;
         vm.contentType='';
@@ -40,11 +40,15 @@
             loadFolders();
             // loading folder entries
             if (folder.path){
-                FolderService.listFolderEntries( 'dataset', folder.id );
+                FolderService.listFolderEntries( 'dataset', folder.id )
+                    .then(function(response){
+                        DatasetListService.filterDatasets(response.data);
+                    });
             }else{
-                // if root load all!!
+                DatasetListService.filterDatasets();
             }
             StateService.setCurrentFolder(folder.id);
+
         };
 
         // -1 is the root folder

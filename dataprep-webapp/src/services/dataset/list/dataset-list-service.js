@@ -25,6 +25,7 @@
             refreshDefaultPreparation : refreshDefaultPreparation,
             getDatasetsPromise : getDatasetsPromise,
             hasDatasetsPromise: hasDatasetsPromise,
+            filterDatasets: filterDatasets,
             datasets: null
         };
 
@@ -220,6 +221,23 @@
          */
         function hasDatasetsPromise() {
             return datasetsPromise;
+        }
+
+        function filterDatasets(ids){
+            var idsArray = [];
+            _.forEach(ids,function(folder){
+               idsArray.push(folder.contentId);
+            });
+            if(ids){
+                refreshDatasets().then(function(){
+                    service.datasets = _.filter(service.datasets,function(dataset){
+                                            return _.includes(idsArray, dataset.id);
+                                        });
+                });
+            } else {
+                refreshDatasets();
+            }
+
         }
 
     }

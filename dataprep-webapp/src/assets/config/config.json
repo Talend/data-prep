@@ -1,4 +1,4 @@
 {
-  "serverUrl": "http://localhost:8083",
+  "serverUrl": "http://10.42.10.99:8888",
   "enableDebug": false
 }

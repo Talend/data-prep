@@ -259,8 +259,6 @@
                         StateService.addGridFilter(filterInfo);
                     };
 
-                    updateFilter = function updateFilter() {};
-
                     doesFilterExist = function compareFilter() {
                         return true;
                     };
@@ -272,9 +270,6 @@
                         StateService.addGridFilter(filterInfo);
                     };
 
-                    updateFilter = function updateFilter() {
-                    };
-
                     doesFilterExist = function compareFilter() {
                         return true;
                     };
@@ -284,9 +279,6 @@
                         filterFn = createValidFilterFn(colId);
                         filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
                         StateService.addGridFilter(filterInfo);
-                    };
-
-                    updateFilter = function updateFilter() {
                     };
 
                     doesFilterExist = function compareFilter() {

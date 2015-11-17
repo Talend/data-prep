@@ -7,7 +7,7 @@
      * @description Export controller.
      * @requires data-prep.services.folder.service:FolderService
      */
-    function FolderCtrl(FolderService,StateService,DatasetService) {
+    function FolderCtrl(FolderService,StateService,DatasetService,state) {
         var vm = this;
         vm.showAddModal = false;
         vm.contentType='';
@@ -15,8 +15,8 @@
         vm.currentPathParts=[];
         vm.folders=[];
         vm.folderName='';
-        vm.currentChilds=[];
         vm.loadingChilds=true;
+        vm.state=state;
 
         /**
          * @ngdoc method
@@ -45,7 +45,7 @@
             }
             var folder = {id:path,path: path};
 
-            vm.goToFolder(folder);
+            vm.goToFolder(folder,index);
         };
 
         /**
@@ -54,7 +54,7 @@
          * @methodOf data-prep.folder.controller:FolderCtrl
          * @param {object} folder - the folder to go
          */
-        vm.goToFolder = function(folder){
+        vm.goToFolder = function(folder,index){
             vm.currentFolder=folder;
             loadFolders();
             // loading folder entries
@@ -62,7 +62,8 @@
                 FolderService.listFolderEntries( 'dataset', folder.id )
                     .then(function(response){
                         DatasetService.filterDatasets(response.data);
-                    });
+                    })
+                    .then(vm.initChilds(index));
             }else{
                 DatasetService.filterDatasets();
             }
@@ -86,11 +87,11 @@
             vm.loadingChilds=true;
             FolderService.folders(path)
                  .then(function(response){
-                   vm.currentChilds=_.forEach(response.data,function(folder){
+                     StateService.setCurrentChilds (_.forEach(response.data,function(folder){
                        if (folder.path){
                            folder.path = cleanupPath(folder.path.substring(path.length-1,folder.path.length));
                        }
-                   });
+                   }));
                  })
                  .then(vm.loadingChilds=false);
         };
@@ -127,6 +128,22 @@
         loadFolders();
 
     }
+
+    /**
+     * @ngdoc property
+     * @name currentChilds
+     * @propertyOf data-prep.folder.controller:FolderCtrl
+     * @description The childs list.
+     * This list is bound to {@link data-prep.services.state.service:FolderStateService}.folderState.currentChilds
+     */
+    Object.defineProperty(FolderCtrl.prototype,
+        'currentChilds', {
+            enumerable: true,
+            configurable: false,
+            get: function () {
+                return this.state.folder.currentChilds;
+                }
+        });
 
     angular.module('data-prep.folder')
         .controller('FolderCtrl', FolderCtrl);

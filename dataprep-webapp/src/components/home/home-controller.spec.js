@@ -245,7 +245,7 @@ describe('Home controller', function () {
                     state.folder = {currentFolder: '/foo/bar'};
                 }));
 
-                it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService,FolderService,state) {
+                it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService, FolderService) {
                     //given
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     ctrl.uploadDatasetName();

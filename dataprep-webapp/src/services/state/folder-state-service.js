@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    var folderState = {currentFolder:''};
+    var folderState = {currentFolder:'', currentChilds: []};
 
     /**
      * @ngdoc service
@@ -10,7 +10,8 @@
      */
     function FolderStateService() {
         return {
-            setCurrentFolder: setCurrentFolder
+            setCurrentFolder: setCurrentFolder,
+            setCurrentChilds: setCurrentChilds
         };
 
         /**
@@ -22,6 +23,10 @@
          */
         function setCurrentFolder(folder) {
             folderState.currentFolder = folder;
+        }
+
+        function setCurrentChilds(childs){
+            folderState.currentChilds = childs;
         }
 
     }

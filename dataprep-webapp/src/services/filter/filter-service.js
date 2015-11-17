@@ -214,43 +214,111 @@
         function addFilter(type, colId, colName, args, removeFilterFn) {
             var filterFn;
             var filterInfo;
+
+            var existingColTypeFilter = _.find(state.playground.filter.gridFilters, function (filter) {
+                return filter.colId === colId && filter.type === type;
+            });
+
+            var createFilter, updateFilter, doesFilterExist;
+
             switch (type) {
                 case 'contains':
-                    filterFn = createContainFilterFn(colId, args.phrase);
-                    filterInfo = FilterAdapterService.createFilter(type, colId, colName, true, args, filterFn, removeFilterFn);
+                    createFilter = function createFilter() {
+                        filterFn = createContainFilterFn(colId, args.phrase);
+                        filterInfo = FilterAdapterService.createFilter(type, colId, colName, true, args, filterFn, removeFilterFn);
+                        StateService.addGridFilter(filterInfo);
+                    };
+
+                    updateFilter = function updateFilter() {
+                        service.updateFilter(existingColTypeFilter, args.phrase);
+                    };
+
+                    doesFilterExist = function compareFilter() {
+                        return existingColTypeFilter.args.phrase === args.phrase;
+                    };
                     break;
                 case 'exact':
-                    filterFn = createExactFilterFn(colId, args.phrase, args.caseSensitive);
-                    filterInfo = FilterAdapterService.createFilter(type, colId, colName, true, args, filterFn, removeFilterFn);
+                    createFilter = function createFilter() {
+                        filterFn = createExactFilterFn(colId, args.phrase, args.caseSensitive);
+                        filterInfo = FilterAdapterService.createFilter(type, colId, colName, true, args, filterFn, removeFilterFn);
+                        StateService.addGridFilter(filterInfo);
+                    };
+
+                    updateFilter = function updateFilter() {
+                        service.updateFilter(existingColTypeFilter, args.phrase);
+                    };
+
+                    doesFilterExist = function compareFilter() {
+                        return existingColTypeFilter.args.phrase === args.phrase;
+                    };
                     break;
                 case 'invalid_records':
-                    filterFn = createInvalidFilterFn(colId);
-                    filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
+                    createFilter = function createFilter() {
+                        filterFn = createInvalidFilterFn(colId);
+                        filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
+                        StateService.addGridFilter(filterInfo);
+                    };
+
+                    updateFilter = function updateFilter() {};
+
+                    doesFilterExist = function compareFilter() {
+                        return true;
+                    };
                     break;
                 case 'empty_records':
-                    filterFn = createEmptyFilterFn(colId);
-                    filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
+                    createFilter = function createFilter() {
+                        filterFn = createEmptyFilterFn(colId);
+                        filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
+                        StateService.addGridFilter(filterInfo);
+                    };
+
+                    updateFilter = function updateFilter() {
+                    };
+
+                    doesFilterExist = function compareFilter() {
+                        return true;
+                    };
                     break;
                 case 'valid_records':
-                    filterFn = createValidFilterFn(colId);
-                    filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
+                    createFilter = function createFilter() {
+                        filterFn = createValidFilterFn(colId);
+                        filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
+                        StateService.addGridFilter(filterInfo);
+                    };
+
+                    updateFilter = function updateFilter() {
+                    };
+
+                    doesFilterExist = function compareFilter() {
+                        return true;
+                    };
                     break;
                 case 'inside_range':
-                    var existingNumColFilter = _.find(state.playground.filter.gridFilters, function (filter) {
-                        return filter.colId === colId && filter.type === 'inside_range';
-                    });
-
-                    if (existingNumColFilter) {
-                        service.updateFilter(existingNumColFilter, args.interval);
-                        return;
-                    }
-                    else {
+                    createFilter = function createFilter() {
                         filterFn = createRangeFilterFn(colId, args.interval);
                         filterInfo = FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
-                    }
+                        StateService.addGridFilter(filterInfo);
+                    };
+
+                    updateFilter = function updateFilter() {
+                        service.updateFilter(existingColTypeFilter, args.interval);
+                    };
+
+                    doesFilterExist = function compareFilter() {
+                        return _.isEqual(existingColTypeFilter.args.interval, args.interval);
+                    };
                     break;
             }
-            StateService.addGridFilter(filterInfo);
+
+            if(!existingColTypeFilter) {
+                createFilter();
+            }
+            else if(doesFilterExist()) {
+                service.removeFilter(existingColTypeFilter);
+            }
+            else {
+                updateFilter();
+            }
         }
 
         /**

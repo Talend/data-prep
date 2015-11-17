@@ -93,6 +93,21 @@ public class FolderAPITest extends ApiServiceTestBase {
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2) //
                 .usingElementComparatorOnFields("path").containsAll(expected);
 
+        // requesting all folders
+        response = RestAssured.given() //
+                .when() //
+                .get("/api/folders/all");
+
+        folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
+        });
+
+        expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer/").build(), //
+                Folder.Builder.folder().path("foo/wine/").build(), //
+                Folder.Builder.folder().path("foo/").build());
+
+        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(3) //
+                .usingElementComparatorOnFields("path").containsAll(expected);
+
         response = RestAssured.given() //
                 .queryParam("path", "foo/wine") //
                 .when() //
@@ -205,41 +220,41 @@ public class FolderAPITest extends ApiServiceTestBase {
         // RequestParam path
 
         response = RestAssured.given() //
-                .queryParam( "path", "/beer" ) //
-                .pathParam( "contentType", DataSet.class.getName() ) //
-                .pathParam( "id", anOtherfolderEntry.getContentId() ) //
-                .delete( "/api/folders/entries/{contentType}/{id}" );
+                .queryParam("path", "/beer") //
+                .pathParam("contentType", DataSet.class.getName()) //
+                .pathParam("id", anOtherfolderEntry.getContentId()) //
+                .delete("/api/folders/entries/{contentType}/{id}");
 
         logger.info("search response: {}", response.asString());
 
         response = RestAssured.given() //
-                .queryParam( "path", "/beer" ) //
-                .queryParam( "contentType", DataSet.class.getName() ) //
-                .get( "/api/folders/entries" );
+                .queryParam("path", "/beer") //
+                .queryParam("contentType", DataSet.class.getName()) //
+                .get("/api/folders/entries");
 
         folderEntries = objectMapper.readValue(response.asString(), new TypeReference<List<FolderEntry>>() {
         });
 
         Assertions.assertThat(folderEntries).isNotNull() //
                 .isNotEmpty() //
-                .hasSize( 1 ) //
-                .contains( created );
+                .hasSize(1) //
+                .contains(created);
 
         response = RestAssured.given() //
-            .queryParam("path", "beer") //
-            .when() //
-            .delete("/api/folders");
+                .queryParam("path", "beer") //
+                .when() //
+                .delete("/api/folders");
 
         // delete the folder
         response = RestAssured.given() //
-            .queryParam( "path", "/beer" ) //
-            .queryParam( "contentType", DataSet.class.getName() ) //
-            .get( "/api/folders/entries" );
+                .queryParam("path", "/beer") //
+                .queryParam("contentType", DataSet.class.getName()) //
+                .get("/api/folders/entries");
 
         folderEntries = objectMapper.readValue(response.asString(), new TypeReference<List<FolderEntry>>() {
         });
 
-        Assertions.assertThat( folderEntries ).isNotNull().isEmpty();
+        Assertions.assertThat(folderEntries).isNotNull().isEmpty();
     }
 
 }

@@ -72,10 +72,16 @@ public abstract class AbstractFolderTest {
 
         int sizeAfter = getFolderRepository().size();
 
+        List<Folder> folders = new ArrayList<>();
+        Iterable<Folder> iterable =  getFolderRepository().allFolder();
+        iterable.forEach(folders::add);
+
+        Assertions.assertThat(folders).isNotEmpty().hasSize( sizeBefore + 3);
+
         Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 3);
 
-        Iterable<Folder> iterable = getFolderRepository().childs("");
-        List<Folder> folders = new ArrayList<>();
+        iterable = getFolderRepository().childs("");
+        folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);

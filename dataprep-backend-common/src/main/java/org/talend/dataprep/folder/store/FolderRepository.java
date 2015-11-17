@@ -4,6 +4,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.lock.DistributedLock;
 
+
 public interface FolderRepository {
 
     char PATH_SEPARATOR = '/';
@@ -68,6 +69,12 @@ public interface FolderRepository {
      * @return the number of created {@link Folder}
      */
     int size();
+
+    /**
+     *
+     * @return A {@link Iterable} containing all folders
+     */
+    Iterable<Folder> allFolder();
 
     DistributedLock createFolderLock(String id);
 

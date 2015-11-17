@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.service.command.folder.AllFoldersList;
 import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
 import org.talend.dataprep.api.service.command.folder.CreateFolderEntry;
 import org.talend.dataprep.api.service.command.folder.FolderEntriesList;
@@ -41,6 +42,21 @@ public class FolderAPI extends APIService {
     public void childs(@RequestParam(required = false) String path, final HttpServletResponse response) {
         try {
             final HystrixCommand<InputStream> foldersList = getCommand(FoldersList.class, getClient(), path);
+            response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
+            final ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copyLarge(foldersList.execute(), outputStream);
+            outputStream.flush();
+        } catch (Exception e) {
+            throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDERS, e);
+        }
+    }
+
+    @RequestMapping(value = "/api/folders/all", method = GET)
+    @ApiOperation(value = "List all folders.", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public void allFolder(final HttpServletResponse response) {
+        try {
+            final HystrixCommand<InputStream> foldersList = getCommand( AllFoldersList.class, getClient());
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(foldersList.execute(), outputStream);

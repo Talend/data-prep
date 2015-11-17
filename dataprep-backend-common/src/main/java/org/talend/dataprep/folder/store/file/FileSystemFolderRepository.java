@@ -321,6 +321,54 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     }
 
     @Override
+    public Iterable<Folder> allFolder()
+    {
+        
+        Set<Folder> folders = new HashSet<>();
+
+        try {
+            Files.walkFileTree(getRootFolder(), new FileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    final AtomicBoolean filesFound = new AtomicBoolean(false);
+
+                    Files.list(dir).parallel().forEach(path -> {
+                        if (Files.isDirectory(path)) {
+                            folders.add(Folder.Builder.folder() //
+                                            .path(pathAsString(path)) //
+                                            .build() );
+                            filesFound.set(true);
+                        }
+                    });
+
+                    return filesFound.get() ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }        
+        
+        return folders;
+    }
+
+    @Override
     public int size() {
         int number = foldersNumber( getRootFolder() );
         return number;

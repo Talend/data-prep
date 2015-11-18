@@ -106,8 +106,9 @@
         var loadFolders = function(folder){
             FolderService.folders(state.folder.currentFolder.id)
                 .then(function(folders){
+                    // do not configure childs if it's the first loading
                     if(!folder) {
-                        StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ) );
+                        StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ));
                     }
                         // special case for root
                     if(!state.folder.currentFolder.id){

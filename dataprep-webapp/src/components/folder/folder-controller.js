@@ -103,15 +103,15 @@
             }
         };
 
-        var loadFolders = function(folder){
+        var loadFolders = function(folder,loadController){
             FolderService.folders(state.folder.currentFolder.id)
                 .then(function(folders){
                     // do not configure childs if it's the first loading
                     if(!folder) {
                         StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ));
                     }
-                        // special case for root
-                    if(!state.folder.currentFolder.id){
+                    // special case for root
+                    if(!state.folder.currentFolder.id && loadController){
                         vm.foldersStack.push(state.folder.currentFolder);
                     }
                 });
@@ -143,7 +143,7 @@
         /**
          * Load folders on start
          */
-        loadFolders();
+        loadFolders(null,true);
 
     }
 

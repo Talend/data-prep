@@ -9,44 +9,16 @@
      */
     function FolderCtrl(FolderService,StateService,DatasetService,state) {
         var vm = this;
-        vm.showAddModal = false;
         vm.contentType='';
-        vm.currentFolder={id:''};
+
         vm.currentPathParts=[];
         vm.folders=[];
-        vm.folderName='';
         vm.loadingChilds=true;
         vm.state=state;
 
-        /**
-         * @ngdoc method
-         * @name addFolder
-         * @methodOf data-prep.folder.controller:FolderCtrl
-         * @description Create a new folder
-         */
-        vm.addFolder = function(){
-            FolderService.create(vm.currentFolder.id + '/' + vm.folderName)
-                .then(vm.folderName='')
-                .then(loadFolders);
-        };
+        vm.foldersStack=[];
+        vm.childsList=[];
 
-        /**
-         * @ngdoc method
-         * @name goToPath
-         * @methodOf data-prep.folder.controller:FolderCtrl
-         * @param {number} index - the index of the part of the current path parts to go to
-         * @description go to path of the given index
-         */
-        vm.goToPath = function(index){
-            // -1 is root
-            var path = '';
-            for(var i = 0; i<=index;i++){
-                path = path + vm.currentPathParts[i] + '/';
-            }
-            var folder = {id:path,path: path};
-
-            vm.goToFolder(folder,index);
-        };
 
         /**
          * @ngdoc method
@@ -54,20 +26,27 @@
          * @methodOf data-prep.folder.controller:FolderCtrl
          * @param {object} folder - the folder to go
          */
-        vm.goToFolder = function(folder,index){
-            vm.currentFolder=folder;
-            loadFolders();
+        vm.goToFolder = function(folder){
+            console.log('goToFolder:\''+folder.id+'\'');
+
+            buidStackFromId(folder.id);
+
+            console.log('goToFolder vm.foldersStack.length:\''+vm.foldersStack.length+'\'');
+
+            StateService.setCurrentFolder(folder);
+
+
+            loadFolders(folder);
             // loading folder entries
-            if (folder.path){
+            if (folder.id){
                 FolderService.listFolderEntries( 'dataset', folder.id )
                     .then(function(response){
                         DatasetService.filterDatasets(response.data);
                     })
-                    .then(vm.initChilds(index));
-            }else{
+                    .then(vm.initChilds(folder,true));
+            } else {
                 DatasetService.filterDatasets();
             }
-            StateService.setCurrentFolder(folder.id);
 
         };
 
@@ -75,40 +54,78 @@
          * @ngdoc method
          * @name initChilds
          * @methodOf data-prep.folder.controller:FolderCtrl
-         * @param {number} index - the index of the part of the current path parts to get childs
          * @description build the child list of the part part given by the index parameter
          */
-        vm.initChilds = function(index){
-            // -1 is the root folder
-            var path='';
-            for(var i = 0; i<=index;i++){
-                path = path + '/' + vm.currentPathParts[i];
-            }
+        vm.initChilds = function(folder,setCurrentChilds){
+            // 0 is the root folder
+            console.log('initChilds, folder.id\''+folder.id+'\'');
+
+            // special for root folder
+            var currentPath = folder.id?folder.path:'';
+
             vm.loadingChilds=true;
-            FolderService.folders(path)
+            FolderService.folders(folder.id)
                  .then(function(response){
-                     StateService.setCurrentChilds (_.forEach(response.data,function(folder){
-                       if (folder.path){
-                           folder.path = cleanupPath(folder.path.substring(path.length-1,folder.path.length));
-                       }
-                   }));
+                     var foundChilds = cleanupPathFolderArray(response.data,currentPath);
+                     console.log('foundChilds:'+foundChilds.length);
+                     vm.childsList = foundChilds;
+                     if(setCurrentChilds){
+                         StateService.setCurrentChilds(vm.childsList);
+                     }
                  })
                  .then(vm.loadingChilds=false);
         };
 
-        var loadFolders = function(){
-            FolderService.folders(vm.currentFolder.id)
-                .then(function(folders){
-                    vm.folders=_.forEach(folders.data,function(folder){
-                        if (folder.path){
-                            // we remove the current path from the path to display only subfolder path
-                            folder.path = cleanupPath(folder.path.substring(vm.currentFolder.id.length-1,folder.path.length));
+        var buidStackFromId = function(folderId){
+
+            // folder.id can be:
+            // foo/bar
+            // foo
+            // foo/
+            // so parse that to generate the stack
+            vm.foldersStack = [];
+            // TODO root folder as a constant
+            vm.foldersStack.push({id:'',path:'All files'});
+
+            if(folderId) {
+                var paths = folderId.split('/');
+                console.log('buidStackFromId:'+folderId+',paths'+paths.length);
+
+                for(var i = 0;i<=paths.length;i++){
+                    if(paths[i]) {
+                        if ( i > 0 ) {
+                            vm.foldersStack.push( {id: vm.foldersStack[i - 1].path + '/' + paths[i], path: paths[i]} );
+                        } else {
+                            vm.foldersStack.push( {id: paths[i], path: paths[i]} );
                         }
-                    });
-                    vm.currentPathParts = _.filter(_.trim(vm.currentFolder.id).split('/'),function(path){
-                        return path.length>0;
-                    });
+                    }
+                }
+            }
+        };
+
+        var loadFolders = function(folder){
+            FolderService.folders(state.folder.currentFolder.id)
+                .then(function(folders){
+                    if(!folder) {
+                        StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ) );
+                    }
+                        // special case for root
+                    if(!state.folder.currentFolder.id){
+                        vm.foldersStack.push(state.folder.currentFolder);
+                    }
                 });
+        };
+
+        var cleanupPathFolderArray = function(folders,path){
+            var cleaned = _.filter(folders,function(folder){
+                console.log('before cleanupPathFolderArray:\''+folder.path+'\' with path:\''+path+'\'');
+                if (folder.path){
+                    folder.path = cleanupPath(folder.path.substring(path.length,folder.path.length));
+                }
+                console.log('after cleanupPathFolderArray:\''+folder.path+'\' with path:\''+path+'\'');
+                return true;
+            });
+            return cleaned;
         };
 
         /**
@@ -128,22 +145,6 @@
         loadFolders();
 
     }
-
-    /**
-     * @ngdoc property
-     * @name currentChilds
-     * @propertyOf data-prep.folder.controller:FolderCtrl
-     * @description The childs list.
-     * This list is bound to {@link data-prep.services.state.service:FolderStateService}.folderState.currentChilds
-     */
-    Object.defineProperty(FolderCtrl.prototype,
-        'currentChilds', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.state.folder.currentChilds;
-                }
-        });
 
     angular.module('data-prep.folder')
         .controller('FolderCtrl', FolderCtrl);

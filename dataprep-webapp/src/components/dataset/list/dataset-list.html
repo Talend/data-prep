@@ -1,4 +1,9 @@
 <div class="inventory dataset">
+    <div>
+        <button class="btn-primary modal-primary-button" ng-click="datasetListCtrl.folderNameModal=true">
+            Add Folder
+        </button>
+    </div>
     <div class="inventory-sort">
         <div translate-once="SORTED_BY"></div>
         <div class="button-switch">
@@ -24,8 +29,8 @@
     <div class="inventory-list" id="datasets-list">
         <div>
           <ul>
-            <li ng-repeat="child in datasetListCtrl.currentChildsFolders">
-             <img src="assets/images/folder/folder-icon.png"/> {{child.path}}
+            <li ng-repeat="child in datasetListCtrl.currentFolderChilds">
+             <img src="assets/images/folder/folder-icon.png"/>{{child.path}}
             </li>
           </ul>
         </div>
@@ -105,4 +110,26 @@
         </div>
     </div>
 
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="datasetListCtrl.folderNameModal">
+        <span translate-once="ENTER_FOLDER_NAME"></span>
+        <form name="datasetListCtrl.folderNameForm">
+            <input type="text" ng-model="datasetListCtrl.folderName" required/>
+
+            <div class="modal-buttons">
+                <button class="talend-modal-close btn-secondary modal-secondary-button">
+                    <span translate-once="CANCEL"></span>
+                </button>
+                <button class="talend-modal-close btn-primary modal-primary-button"
+                        ng-click="datasetListCtrl.addFolder()"
+                        ng-disabled="datasetListCtrl.folderName.$invalid">
+                    <span translate-once="OK"></span>
+                </button>
+            </div>
+        </form>
+    </talend-modal>
+
 </div>
+
+

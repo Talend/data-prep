@@ -330,7 +330,13 @@
                 }
             };
 
-            var filterFn = FilterService.addFilter.bind(null, 'inside_range', selectedColumn.id, selectedColumn.name, {interval: interval}, removeFilterFn);
+            var filterFn = FilterService.addFilter.bind(null,
+                'inside_range',
+                selectedColumn.id,
+                selectedColumn.name,
+                {interval: [interval[0], interval[1]]},
+                removeFilterFn
+            );
             $timeout(function () {
                 filterFn();
                 initRangeLimits();

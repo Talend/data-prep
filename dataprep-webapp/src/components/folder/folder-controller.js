@@ -35,7 +35,6 @@
 
             StateService.setCurrentFolder(folder);
 
-
             loadFolders(folder);
             // loading folder entries
             if (folder.id){
@@ -46,6 +45,7 @@
                     .then(vm.initChilds(folder,true));
             } else {
                 DatasetService.filterDatasets();
+                vm.initChilds(folder,true);
             }
 
         };

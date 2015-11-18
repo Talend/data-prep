@@ -1,7 +1,11 @@
 (function() {
     'use strict';
 
-    var folderState = {currentFolder:'', currentChilds: []};
+    // currentFolder is initalized with root value
+    var folderState = {
+                        currentFolder:{id:'', path: 'All files'},
+                        currentFolderChilds: []
+                      };
 
     /**
      * @ngdoc service
@@ -18,7 +22,7 @@
          * @ngdoc method
          * @name setCurrentFolder
          * @methodOf data-prep.services.state.service:FolderStateService
-         * @param {string} the current folder
+         * @param {object} the current folder
          * @description Update the current folder
          */
         function setCurrentFolder(folder) {
@@ -26,7 +30,7 @@
         }
 
         function setCurrentChilds(childs){
-            folderState.currentChilds = childs;
+            folderState.currentFolderChilds = childs;
         }
 
     }

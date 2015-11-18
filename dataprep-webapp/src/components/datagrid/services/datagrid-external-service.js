@@ -29,11 +29,12 @@
          * @methodOf data-prep.datagrid.service:DatagridExternalService
          * @param {string} column The selected column
          * @param {string} tab The suggestion tab to select
+         * @param {boolean} updateImmediately Update suggestions without timeout
          * @description Set the selected column into external services except the index column. This will trigger actions that use this property
          * Ex : StatisticsService for dataviz, ColumnSuggestionService for transformation list
          */
 
-        function updateSuggestionPanel(column, tab) {
+        function updateSuggestionPanel(column, tab, updateImmediately) {
             if (column.id === 'tdpId') {
                 $timeout.cancel(suggestionTimeout);
                 $timeout(function () {
@@ -41,10 +42,14 @@
                     SuggestionService.reset();
                     StatisticsService.reset(true, true, true);
                 });
+                lastSelectedColumn = null;
             }
             else {
                 var tabHasChanged = tab !== lastSelectedTab;
                 var columnHasChanged = column.tdpColMetadata !== lastSelectedColumn;
+
+                var waitingTime = updateImmediately ? 0 : 300;
+
 
                 if (!tabHasChanged && !columnHasChanged) {
                     return;
@@ -63,7 +68,7 @@
                         StatisticsService.updateStatistics();
                         SuggestionService.setColumn(lastSelectedColumn);
                     }
-                }, 200);
+                }, waitingTime);
             }
         }
 
@@ -78,7 +83,7 @@
             grid.onActiveCellChanged.subscribe(function (e, args) {
                 if (angular.isDefined(args.cell)) {
                     var column = grid.getColumns()[args.cell];
-                    updateSuggestionPanel(column, 'COLUMN'); //TODO : change this to CELL when cell actions are supported
+                    updateSuggestionPanel(column, 'COLUMN', false); //TODO : change this to CELL when cell actions are supported
                 }
             });
         }
@@ -93,7 +98,7 @@
             function attachColumnCallback(args) {
                 var columnId = args.column.id;
                 var column = _.find(grid.getColumns(), {id: columnId});
-                updateSuggestionPanel(column, 'COLUMN');
+                updateSuggestionPanel(column, 'COLUMN', false);
             }
 
             grid.onHeaderContextMenu.subscribe(function (e, args) {

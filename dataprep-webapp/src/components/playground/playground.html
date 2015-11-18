@@ -69,7 +69,13 @@
         </div>
 
         <talend-slidable visible="true" side="right" class="flex-side suggestions">
-            <suggestions-stats></suggestions-stats>
+            <div ng-if="playgroundCtrl.state.playground.suggestionsStats.visible">
+                <suggestions-stats></suggestions-stats>
+            </div>
+            <div class="suggestions-loading-div" ng-if="!playgroundCtrl.state.playground.suggestionsStats.visible">
+                <span class="suggestions-loading continuous-rotate" ><i data-icon="c" class="icon"></i></span>
+            </div>
+
         </talend-slidable>
     </div>
 </talend-modal>

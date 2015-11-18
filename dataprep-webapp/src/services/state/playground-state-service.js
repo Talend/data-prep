@@ -6,11 +6,13 @@
     function PlaygroundStateService(
         RecipeStateService, recipeState,
         GridStateService, gridState,
-        FilterStateService, filterState) {
+        FilterStateService, filterState,
+        SuggestionsStatsState, suggestionsStatsState) {
 
         playgroundState.recipe = recipeState;
         playgroundState.grid = gridState;
         playgroundState.filter = filterState;
+        playgroundState.suggestionsStats = suggestionsStatsState;
 
         return {
             //playground
@@ -36,7 +38,11 @@
             addGridFilter: addGridFilter,
             updateGridFilter: updateGridFilter,
             removeGridFilter: removeGridFilter,
-            removeAllGridFilters: removeAllGridFilters
+            removeAllGridFilters: removeAllGridFilters,
+
+            //Suggestion-Stats
+            showSuggestionStats: SuggestionsStatsState.show,
+            hideSuggestionStats: SuggestionsStatsState.hide
         };
 
         //--------------------------------------------------------------------------------------------------------------

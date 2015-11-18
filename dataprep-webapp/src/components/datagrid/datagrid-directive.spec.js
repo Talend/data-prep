@@ -207,7 +207,7 @@ describe('Datagrid directive', function() {
                 jasmine.clock().tick(1);
 
                 //then
-                expect(DatagridExternalService.updateSuggestionPanel).toHaveBeenCalledWith(data.columns[1]);
+                expect(DatagridExternalService.updateSuggestionPanel).toHaveBeenCalledWith(data.columns[1], '', true);
             }));
 
             it('should NOT update suggestion panel when in preview mode', inject(function(DatagridService, DatagridStyleService, DatagridExternalService) {

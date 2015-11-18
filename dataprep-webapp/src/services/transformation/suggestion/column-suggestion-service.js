@@ -7,8 +7,9 @@
      * @description Transformation Column suggestion service. This service provide the current column suggestions
      * @requires data-prep.services.transformation.service:TransformationCacheService
      * @requires data-prep.services.utils.service:TextFormatService
+     * @requires data-prep.state.service:StateService
      */
-    function ColumnSuggestionService($q, TransformationCacheService, TextFormatService) {
+    function ColumnSuggestionService($q, TransformationCacheService, TextFormatService, StateService) {
         var COLUMN_CATEGORY = 'column_metadata';
         var FILTERED_CATEGORY = 'filtered';
         var SUGGESTION_CATEGORY = 'suggestion';
@@ -129,6 +130,8 @@
          * @description Get and process the transformations from backend
          */
         function initTransformations(column) {
+
+            StateService.hideSuggestionStats();
             reset();
 
             $q
@@ -154,6 +157,9 @@
                                                               .filter(isAplliedToCells(INVALID_CELLS))
                                                               .sortBy(labelCriteria)
                                                               .value();
+                })
+                .finally(function () {
+                    StateService.showSuggestionStats();
                 });
         }
 

@@ -158,13 +158,13 @@
          * @description build childs for root folder
          */
         function loadFolders(){
+
             FolderRestService.folders('')
                 .then(function(folders){
                     StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ));
-                    var foldersStack = [];
-                    foldersStack.push(state.folder.currentFolder);
-                    StateService.setFoldersStack(foldersStack);
-
+                    // build for root
+                    buidStackFromId();
+                    console.log('loadFolders:'+state.folder.foldersStack.length);
                 });
         }
 

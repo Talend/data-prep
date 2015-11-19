@@ -15,11 +15,6 @@
         vm.loadingChilds=true;
         vm.state=state;
 
-
-        vm.foldersStack = vm.state.folder.foldersStack;
-
-        vm.menuChilds = vm.state.folder.menuChilds;
-
         /**
          * @ngdoc method
          * @name goToFolder

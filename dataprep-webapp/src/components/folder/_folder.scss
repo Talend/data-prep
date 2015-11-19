@@ -1,68 +1,56 @@
 // Folders
+
 .breadcrumb {
-  $base-border-color: gainsboro !default;
-  $base-border-radius: 3px !default;
-  $base-background-color: white !default;
-  $base-spacing: 1.5em !default;
-  $action-color: #477DCA !default;
-  $medium-gray: #999 !default;
-  $light-gray: #DDD !default;
-  $medium-screen: em(640) !default;
-  $breadcrumb-border-color: $base-border-color;
-  $breadcrumb-border: 1px solid $breadcrumb-border-color;
-  $breadcrumb-height: $base-spacing * 1.5;
-  $breadcrumb-arrow-color: $breadcrumb-border-color;
-  $breadcrumb-background: $base-background-color;
-  $breadcrumb-inactive-hover-color: $breadcrumb-background;
-  $breadcrumb-color: $medium-gray;
-  $breadcrumb-color-hover: $action-color;
-  $breadcrumb-color-active: $breadcrumb-color;
 
   display: inline-block;
-  margin-bottom: $base-spacing;
+  margin: 8px 0px 15px 0px;
   text-align: left;
 
   li {
-    background-color: $breadcrumb-background;
-    border-left: 0;
-    border: $breadcrumb-border;
-    color: $breadcrumb-color;
+    background-color: transparent;
     display: inline-block;
-    font-size: 0.8em;
-    line-height: $breadcrumb-height;
-    margin-bottom: 2px;
-    margin-right: -5px;
-    padding: 0 ($breadcrumb-height / 4) 0 ($breadcrumb-height / 2);
     position: relative;
-    text-decoration: none;
+
+    a {
+      font-size: 1em;
+      color: $black;
+
+      &:hover {
+        cursor: pointer;
+        color: $dark-blue;
+        text-decoration: underline;
+      }
+    }
+    a.dropdown-button {
+      color: transparent;
+      &:hover {
+        cursor: pointer;
+        color: $dark-blue;
+        text-decoration: none;
+      }
+    }
 
     &:first-child {
-      border-bottom-left-radius: $base-border-radius;
-      border-left: $breadcrumb-border;
-      border-top-left-radius: $base-border-radius;
-      padding-left: $breadcrumb-height / 2;
+      padding: 0px 0px 0px 10px;
     }
 
     &:last-child {
-      background-color: $breadcrumb-background;
-      border-bottom-right-radius: $base-border-radius;
-      border-top-right-radius: $base-border-radius;
-      color: $breadcrumb-color-active;
-      padding-right: $breadcrumb-height / 2;
     }
 
     &:focus,
     &:hover {
-      background-color: $breadcrumb-inactive-hover-color;
-      color: $breadcrumb-color-hover;
+      color: $dark-blue;
     }
 
     &:after,
     &:before {
       @include position(absolute, 0px auto 0px 100%);
-      border-bottom: $breadcrumb-height / 2 solid transparent;
-      border-left: $breadcrumb-height / 4 solid transparent;
-      border-top: $breadcrumb-height / 2 solid transparent;
+      border-color: $dark-gray;
+      border-style: solid;
+      border-width: 2px 2px 0 0;
+      height: 14px;
+      width: 14px;
+      transform: rotate(45deg);
       content: '';
       display: block;
       margin: auto;
@@ -75,23 +63,30 @@
     }
 
     &:before {
-      border-left-color: $breadcrumb-arrow-color;
-      margin-left: 1px;
-      z-index: 1;
     }
     &:after {
-      border-left-color: $breadcrumb-background;
     }
 
     @include media($medium-screen) {
       font-size: 1em;
-      padding: 0 ($breadcrumb-height / 2) 0 ($breadcrumb-height / 1.5);
+      padding: 0px 0px 0px 30px;
     }
   }
 
   .dropdown-menu{
     li{
       display: list-item;
+      @include media($medium-screen) {
+        font-size: 1em;
+        padding: 0px 30px 0px 10px;
+      }
+      &:after,
+      &:before {
+        border-color: transparent;
+      }
+    }
+    &:focus {
+      outline: none;
     }
   }
 

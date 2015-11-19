@@ -3,7 +3,17 @@ describe('Home directive', function() {
 
     var scope, createElement, element;
 
-    beforeEach(module('data-prep.home'));
+    beforeEach(module('data-prep.home', function ($provide) {
+        var StateMock = {
+            dataset: {
+                uploadingDatasets:[]
+            },
+            folder: {
+                currentFolder: {}
+            }
+        };
+        $provide.constant('state', StateMock);
+    }));
     beforeEach(module('htmlTemplates'));
 
     beforeEach(inject(function($rootScope, $compile) {

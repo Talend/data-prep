@@ -16,6 +16,10 @@
         vm.state=state;
 
 
+        vm.foldersStack = vm.state.folder.foldersStack;
+
+        vm.menuChilds = vm.state.folder.menuChilds;
+
         /**
          * @ngdoc method
          * @name goToFolder
@@ -43,26 +47,6 @@
          * Load folders on start
          */
         FolderService.loadFolders();
-
-
-
-        Object.defineProperty(FolderCtrl.prototype,
-            'foldersStack', {
-                enumerable: true,
-                configurable: false,
-                get: function () {
-                    return this.state.folder.foldersStack;
-                }
-            });
-
-        Object.defineProperty(FolderCtrl.prototype,
-            'menuChilds', {
-                enumerable: true,
-                configurable: false,
-                get: function () {
-                    return this.state.folder.menuChilds;
-                }
-            });
 
     }
 

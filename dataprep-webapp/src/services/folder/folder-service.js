@@ -104,7 +104,7 @@
          * @name listFolderChilds
          * @methodOf data-prep.services.folder.service:FolderService
          * @description List the childs of a folder (or child of root folder)
-         * @param {object} Folder the folder to create the entry
+         * @param {object} Folder the folder to list entries
          * @returns {Promise} The GET promise
          */
         function listFolderEntries(contentType,folder){

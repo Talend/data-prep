@@ -7,7 +7,7 @@
      * @description Export controller.
      * @requires data-prep.services.folder.service:FolderService
      */
-    function FolderCtrl(FolderService,StateService,DatasetService,state) {
+    function FolderCtrl(FolderService,state) {
         var vm = this;
         vm.state = state;
         vm.contentType='';

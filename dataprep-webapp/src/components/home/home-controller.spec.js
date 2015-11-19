@@ -9,6 +9,9 @@ describe('Home controller', function () {
         StateMock = {
             dataset: {
                 uploadingDatasets:[]
+            },
+            folder: {
+                currentFolder: {}
             }
         };
         $provide.constant('state', StateMock);
@@ -237,12 +240,13 @@ describe('Home controller', function () {
 
             describe('step 2 with unique name', function () {
 
-                beforeEach(inject(function ($q, $rootScope, DatasetService, FolderService, state) {
+                beforeEach(inject(function ($q, $rootScope, DatasetService, FolderService) {
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(null);
-                    spyOn(FolderService,'createFolderEntry').and.returnValue();
+                    spyOn(DatasetService, 'filterDatasets').and.returnValue(null);
+                    spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
+                    spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
 
                     spyOn($rootScope, '$emit').and.returnValue();
-                    state.folder = {currentFolder: '/foo/bar'};
                 }));
 
                 it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService, FolderService) {
@@ -258,6 +262,7 @@ describe('Home controller', function () {
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
                     expect(FolderService.createFolderEntry).toHaveBeenCalled();
+                    expect(FolderService.listFolderEntries).toHaveBeenCalled();
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                     expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
@@ -306,15 +311,18 @@ describe('Home controller', function () {
                 };
                 var confirmDefer;
 
-                beforeEach(inject(function ($rootScope, $q, StateService, DatasetService, UpdateWorkflowService, TalendConfirmService) {
+                beforeEach(inject(function ($rootScope, $q, StateService, DatasetService, UpdateWorkflowService, TalendConfirmService, FolderService) {
                     confirmDefer = $q.defer();
 
                     spyOn(StateService, 'resetPlayground').and.returnValue();
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(dataset);
                     spyOn(DatasetService, 'getUniqueName').and.returnValue('my cool dataset (1)');
+                    spyOn(DatasetService,'filterDatasets').and.returnValue($q.when(true));
                     spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
                     spyOn($rootScope, '$emit').and.returnValue();
                     spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue();
+                    spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
+                    spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
 
                 }));
 

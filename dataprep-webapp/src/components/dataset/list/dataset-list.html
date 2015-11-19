@@ -27,15 +27,16 @@
     </div>
 
     <div class="inventory-list" id="datasets-list">
-        <div>
-          <ul>
-            <li ng-repeat="child in datasetListCtrl.currentFolderChilds">
-             <img src="assets/images/folder/folder-icon.png"/><a ng-click="datasetListCtrl.goToFolder(child)">{{child.path}}</a>
-            </li>
-          </ul>
+        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderChilds">
+          <div class="inventory-icon">
+              <img src="assets/images/folder/folder-icon.png"/>
+          </div>
+          <div class="inventory-text">
+             <a ng-click="datasetListCtrl.goToFolder(child)">{{child.path}}</a>
+          </div>
         </div>
-        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}"
-             ng-mouseover="datasetListCtrl.overDataset(dataset,true)" ng-mouseleave="datasetListCtrl.overDataset(dataset,false)">
+
+        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}">
 
             <div class="inventory-icon"
                  translate-once-title="OPEN_ACTION"

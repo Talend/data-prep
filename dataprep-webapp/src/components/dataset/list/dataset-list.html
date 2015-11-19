@@ -30,7 +30,7 @@
         <div>
           <ul>
             <li ng-repeat="child in datasetListCtrl.currentFolderChilds">
-             <img src="assets/images/folder/folder-icon.png"/>{{child.path}}
+             <img src="assets/images/folder/folder-icon.png"/><a ng-click="datasetListCtrl.goToFolder(child)">{{child.path}}</a>
             </li>
           </ul>
         </div>

@@ -4,7 +4,9 @@
     // currentFolder is initalized with root value
     var folderState = {
                         currentFolder:{id:'', path: 'All files'},
-                        currentFolderChilds: []
+                        currentFolderChilds: [],
+                        foldersStack: [],
+                        menuChilds: []
                       };
 
     /**
@@ -15,7 +17,9 @@
     function FolderStateService() {
         return {
             setCurrentFolder: setCurrentFolder,
-            setCurrentChilds: setCurrentChilds
+            setCurrentChilds: setCurrentChilds,
+            setFoldersStack: setFoldersStack,
+            setMenuChilds: setMenuChilds
         };
 
         /**
@@ -31,6 +35,14 @@
 
         function setCurrentChilds(childs){
             folderState.currentFolderChilds = childs;
+        }
+
+        function setFoldersStack(stack){
+            folderState.foldersStack = stack;
+        }
+
+        function setMenuChilds(childs){
+            folderState.menuChilds = childs;
         }
 
     }

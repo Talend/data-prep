@@ -40,7 +40,9 @@
 
             //folder
             setCurrentFolder: FolderStateService.setCurrentFolder,
-            setCurrentChilds: FolderStateService.setCurrentChilds
+            setCurrentChilds: FolderStateService.setCurrentChilds,
+            setFoldersStack: FolderStateService.setFoldersStack,
+            setMenuChilds: FolderStateService.setMenuChilds
         };
     }
 

@@ -5,11 +5,11 @@
         <div class="dropdown-container">
           <a ng-click="folderCtrl.goToFolder(folder)">{{::folder.path}}</a>
           <span class="dropdown-action">
-            <a class="dropdown-button" ng-click="folderCtrl.initChilds(folder,$index)"></a>
+            <a class="dropdown-button" ng-click="folderCtrl.initMenuChilds(folder)"></a>
           </span>
           <ul class="dropdown-menu">
             <li ng-if="folderCtrl.loadingChilds" translate-once="LOADING"></li>
-            <li ng-repeat="child in folderCtrl.childsList" ng-click="folderCtrl.goToFolder(child)">
+            <li ng-repeat="child in folderCtrl.menuChilds" ng-click="folderCtrl.goToFolder(child)">
               {{child.path}}
             </li>
           </ul>

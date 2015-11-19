@@ -4,9 +4,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.lock.DistributedLock;
 
-/**
- *
- */
+
 public interface FolderRepository {
 
     char PATH_SEPARATOR = '/';
@@ -32,12 +30,11 @@ public interface FolderRepository {
 
     /**
      * remove a {@link FolderEntry}
-     * @param folderPath the folder path containing the entry (TODO optional and search for removing it?)
+     * @param folderPath the folder path containing the entry
      * @param contentId the id
-     * @param contentType  the type dataset, preparation as fqcn
+     * @param contentType  the type dataset, preparation
      */
     void removeFolderEntry(String folderPath, String contentId, String contentType);
-
 
     /**
      * remove folder and content recursively
@@ -55,6 +52,13 @@ public interface FolderRepository {
     Iterable<FolderEntry> entries(String path, String contentType);
 
     /**
+     * @param contentId the id
+     * @param contentType  the type dataset, preparation
+     * @return A {@link Iterable} of the {@link FolderEntry} containing the folderEntry as described by contentType and contentId
+     */
+    Iterable<FolderEntry> findFolderEntries(String contentId, String contentType);
+
+    /**
      * clear the whole content
      */
     void clear();
@@ -65,6 +69,12 @@ public interface FolderRepository {
      * @return the number of created {@link Folder}
      */
     int size();
+
+    /**
+     *
+     * @return A {@link Iterable} containing all folders
+     */
+    Iterable<Folder> allFolder();
 
     DistributedLock createFolderLock(String id);
 

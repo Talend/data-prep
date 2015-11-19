@@ -38,7 +38,9 @@
 
             //utils
             getUniqueName: getUniqueName,
-            createDatasetInfo: createDatasetInfo
+            createDatasetInfo: createDatasetInfo,
+
+            filterDatasets: filterDatasets
         };
 
         //--------------------------------------------------------------------------------------------------------------
@@ -132,6 +134,9 @@
             return DatasetListService.datasets;
         }
 
+        function filterDatasets(ids){
+            DatasetListService.filterDatasets(ids);
+        }
 
         /**
          * @ngdoc method

@@ -16,11 +16,13 @@
      * @requires data-prep.services.datasetWorkflowService:UpdateWorkflowService
      */
     function DatasetListCtrl(UpdateWorkflowService, $stateParams, DatasetService, DatasetListSortService, PlaygroundService,
-                             TalendConfirmService, MessageService, UploadWorkflowService, StateService) {
+                             TalendConfirmService, MessageService, UploadWorkflowService, StateService, state, FolderService) {
         var vm = this;
 
         vm.datasetService = DatasetService;
         vm.uploadWorkflowService = UploadWorkflowService;
+        vm.state=state;
+        vm.folderName='';
 
         /**
          * @ngdoc property
@@ -210,6 +212,36 @@
             }
         };
 
+        //-------------------------------
+        // Folder
+        //-------------------------------
+
+        /**
+         * @ngdoc method
+         * @name addFolder
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Create a new folder
+         */
+        vm.addFolder = function(){
+            var pathToCreate = (state.folder.currentFolder.id?state.folder.currentFolder.id:'') + '/' + vm.folderName;
+            FolderService.create( pathToCreate )
+                .then(vm.folderName='');
+
+            // TODO force refresh of folders in state
+
+        };
+
+        /**
+         * @ngdoc method
+         * @name goToFolder
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @param {object} folder - the folder to go
+         * @description Go to the folder given as parameter
+         */
+        vm.goToFolder = function(folder){
+            FolderService.goToFolder(folder);
+        };
+
         // load the datasets
         DatasetService
             .getDatasets()
@@ -229,6 +261,22 @@
             configurable: false,
             get: function () {
                 return this.datasetService.datasetsList();
+            }
+        });
+
+    /**
+     * @ngdoc property
+     * @name currentChilds
+     * @propertyOf data-prep.folder.controller:FolderCtrl
+     * @description The childs list.
+     * This list is bound to {@link data-prep.services.state.service:FolderStateService}.folderState.currentFolderChilds
+     */
+    Object.defineProperty(DatasetListCtrl.prototype,
+        'currentFolderChilds', {
+            enumerable: true,
+            configurable: false,
+            get: function () {
+                return this.state.folder.currentFolderChilds;
             }
         });
 

@@ -49,6 +49,18 @@ public class FolderService {
         return folderRepository.childs(path == null ? "" : path);
     }
 
+    /**
+     * no javadoc here so see description in @ApiOperation notes.
+     * @return
+     */
+    @RequestMapping(value = "/folders/all", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "All Folders", produces = MediaType.APPLICATION_JSON_VALUE, notes = "List all existing folders")
+    @Timed
+    @VolumeMetered
+    public Iterable<Folder> allFolder( ){
+        return folderRepository.allFolder();
+    }
+
 
     /**
      * no javadoc here so see description in @ApiOperation notes.
@@ -124,5 +136,7 @@ public class FolderService {
     public Iterable<FolderEntry> entries(@RequestParam String path, @RequestParam String contentType){
         return folderRepository.entries( path, contentType );
     }
+
+
 
 }

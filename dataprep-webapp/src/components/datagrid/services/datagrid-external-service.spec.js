@@ -338,6 +338,26 @@ describe('Datagrid external service', function () {
             expect(SuggestionService.reset).toHaveBeenCalled();
         }));
 
+
+        it('should update suggestions and stats without timeout', inject(function ($timeout, DatagridExternalService, StatisticsService, SuggestionService) {
+            //given
+            var headerClickArgs = {
+                column: {
+                    id: '0001',
+                    tdpColMetadata : {}
+                }
+            };
+
+            //when
+            DatagridExternalService.updateSuggestionPanel(headerClickArgs.column, 'Cell', true);
+            $timeout.flush();
+
+            //then
+            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+            expect(SuggestionService.setColumn).toHaveBeenCalled();
+            expect(SuggestionService.selectTab).toHaveBeenCalled();
+        }));
+
     });
 
     describe('on scroll event', function () {

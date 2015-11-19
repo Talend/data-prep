@@ -116,6 +116,13 @@
         //   shared ui management
         //----------------------------------------------
 
+        /**
+         * @ngdoc method
+         * @name buidStackFromId
+         * @methodOf data-prep.services.folder.service:FolderService
+         * @description build the folder stack from the the given id
+         * @param {string} the folder id
+         */
         function buidStackFromId(folderId){
 
             // folder.id can be:
@@ -144,28 +151,36 @@
             StateService.setFoldersStack(foldersStack);
         }
 
-        function loadFolders(folder,loadController){
-            FolderRestService.folders(state.folder.currentFolder.id)
+        /**
+         * @ngdoc method
+         * @name loadFolders
+         * @methodOf data-prep.services.folder.service:FolderService
+         * @description build childs for root folder
+         */
+        function loadFolders(){
+            FolderRestService.folders('')
                 .then(function(folders){
-                    // do not configure childs if it's the first loading
-                    if(!folder) {
-                        StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ));
-                    }
-                    // special case for root and first time loading
-                    if(!state.folder.currentFolder.id && loadController){
-                        var foldersStack = [];
-                        foldersStack.push(state.folder.currentFolder);
-                        StateService.setFoldersStack(foldersStack);
-                    }
+                    StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ));
+                    var foldersStack = [];
+                    foldersStack.push(state.folder.currentFolder);
+                    StateService.setFoldersStack(foldersStack);
+
                 });
         }
 
+        /**
+         * @ngdoc method
+         * @name loadFolders
+         * @methodOf data-prep.services.folder.service:FolderService
+         * @param {array} array of Folder
+         * @param {string} path - the origin path
+         * @description cleanup the path for all folder in the array
+         */
         function cleanupPathFolderArray(folders,path){
             _.forEach(folders,function(folder){
                 if (folder.path){
                     folder.path = cleanupPath(folder.path.substring(path.length,folder.path.length));
                 }
-
             });
             return folders;
         }
@@ -228,14 +243,14 @@
         function goToFolder(folder){
             buidStackFromId(folder.id);
             StateService.setCurrentFolder(folder);
-            loadFolders(folder);
+            //loadFolders(folder);
             // loading folder entries
             if (folder.id){
                 listFolderEntries( 'dataset', folder )
                     .then(function(response){
                         DatasetService.filterDatasets(response.data);
                     })
-                    .then(populateChilds(folder,true));
+                    .then(populateChilds(folder));
             } else {
                 DatasetService.filterDatasets();
                 populateChilds(folder);

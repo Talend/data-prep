@@ -28,9 +28,10 @@
 
         /**
          * @ngdoc method
-         * @name initChilds
+         * @name initMenuChilds
          * @methodOf data-prep.folder.controller:FolderCtrl
-         * @description build the child list of the part part given by the index parameter
+         * @param {object} folder - the folder
+         * @description build the child list of the folder menu entry as parameter
          */
         vm.initMenuChilds = function(folder){
             vm.loadingChilds=true;
@@ -41,7 +42,7 @@
         /**
          * Load folders on start
          */
-        FolderService.loadFolders(null,true);
+        FolderService.loadFolders();
 
 
 

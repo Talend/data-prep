@@ -33,14 +33,32 @@
             folderState.currentFolder = folder;
         }
 
+        /**
+         * @ngdoc method
+         * @name setCurrentChilds
+         * @methodOf data-prep.services.state.service:FolderStateService
+         * @param {object} array the childs of the current folder
+         */
         function setCurrentChilds(childs){
             folderState.currentFolderChilds = childs;
         }
 
+        /**
+         * @ngdoc method
+         * @name setFoldersStack
+         * @methodOf data-prep.services.state.service:FolderStateService
+         * @param {object} the current folders stack
+         */
         function setFoldersStack(stack){
             folderState.foldersStack = stack;
         }
 
+        /**
+         * @ngdoc method
+         * @name setCurrentChilds
+         * @methodOf data-prep.services.state.service:FolderStateService
+         * @param {object} array the current childs of the current menu entry
+         */
         function setMenuChilds(childs){
             folderState.menuChilds = childs;
         }

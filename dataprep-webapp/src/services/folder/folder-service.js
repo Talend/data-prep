@@ -90,11 +90,13 @@
          * @name createFolderEntry
          * @methodOf data-prep.services.folder.service:FolderRestService
          * @description Create a folder
-         * @param {string} path the path to create
+         * @param contentType the entry content type
+         * @param contentId the id of the entry content type
+         * @param {object} Folder the folder to create the entry
          * @returns {Promise} The PUT promise
          */
-        function createFolderEntry(contentType, contentId, path){
-            return FolderRestService.createFolderEntry(contentType, contentId, path);
+        function createFolderEntry(contentType, contentId, folder){
+            return FolderRestService.createFolderEntry(contentType, contentId, folder.id);
         }
 
         /**
@@ -102,11 +104,11 @@
          * @name listFolderChilds
          * @methodOf data-prep.services.folder.service:FolderService
          * @description List the childs of a folder (or child of root folder)
-         * @param {string} path optional path to list childs
+         * @param {object} Folder the folder to create the entry
          * @returns {Promise} The GET promise
          */
-        function listFolderEntries(contentType,path){
-            return FolderRestService.listFolderEntries(contentType, path);
+        function listFolderEntries(contentType,folder){
+            return FolderRestService.listFolderEntries(contentType, folder.id);
         }
 
 
@@ -187,7 +189,6 @@
          */
         function populateChilds(folder){
             // special for root folder
-            console.log('populateChilds:'+folder.id);
             var currentPath = folder.id?folder.path:'';
             var promise = FolderRestService.folders(folder.id);
 
@@ -207,7 +208,6 @@
          */
         function populateMenuChilds(folder){
             // special for root folder
-            console.log('initMenuChilds:'+folder.id);
             var currentPath = folder.id?folder.path:'';
             var promise = FolderRestService.folders(folder.id);
 
@@ -231,7 +231,7 @@
             loadFolders(folder);
             // loading folder entries
             if (folder.id){
-                listFolderEntries( 'dataset', folder.id )
+                listFolderEntries( 'dataset', folder )
                     .then(function(response){
                         DatasetService.filterDatasets(response.data);
                     })

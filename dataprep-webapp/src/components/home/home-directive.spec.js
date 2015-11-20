@@ -22,15 +22,16 @@ describe('Home directive', function() {
         element.remove();
     });
 
-    it('should render subheader bar', function() {
+    it('should render subheader bar', inject(function (FolderService) {
         //when
         createElement();
 
         //then
         expect(element.find('header.subheader').length).toBe(1);
-    });
+        expect(FolderService.loadFolders).toHaveBeenCalled();
+    }));
 
-    it('should render home main panel', function() {
+    it('should render home main panel', inject(function (FolderService) {
         //when
         createElement();
 
@@ -40,5 +41,6 @@ describe('Home directive', function() {
         expect(home.find('.side-menu').length).toBe(1);
         expect(home.find('ui-view[name="home-content"]').length).toBe(1);
         expect(home.find('.inventory-data').length).toBe(1);
-    });
+        expect(FolderService.loadFolders).toHaveBeenCalled();
+    }));
 });

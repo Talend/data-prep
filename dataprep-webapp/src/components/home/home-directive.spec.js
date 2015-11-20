@@ -6,7 +6,7 @@ describe('Home directive', function() {
     beforeEach(module('data-prep.home'));
     beforeEach(module('htmlTemplates'));
 
-    beforeEach(inject(function($rootScope, $compile) {
+    beforeEach(inject(function($rootScope, $compile, $q, FolderService) {
         scope = $rootScope.$new();
         createElement = function () {
             element = angular.element('<home></home>');
@@ -14,6 +14,7 @@ describe('Home directive', function() {
             scope.$digest();
             return element;
         };
+        spyOn(FolderService, 'loadFolders').and.returnValue($q.when(true));
     }));
 
     afterEach(function() {

@@ -14,6 +14,7 @@ describe('Folder controller', function () {
             });
         };
         spyOn(FolderService, 'goToFolder').and.returnValue($q.when(true));
+        spyOn(FolderService, 'loadFolders').and.returnValue($q.when(true));
     }));
 
     it('should call goToFolder', inject(function (FolderService) {

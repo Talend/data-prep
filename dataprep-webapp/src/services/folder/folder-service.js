@@ -6,8 +6,10 @@
      * @name data-prep.services.folder.service:FolderService
      * @description Folder service. This service provide the entry point to the Folder service.
      * @requires data-prep.services.folder.service:FolderRestService
+     * @requires data-prep.services.state.service:StateService
+     * @requires data-prep.services.dataset.service:DatasetService
      */
-    function FolderService(FolderRestService,StateService,state,DatasetService) {
+    function FolderService(FolderRestService,StateService,DatasetService,state) {
 
         return {
             // folder operations

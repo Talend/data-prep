@@ -7,6 +7,8 @@
      * @description This module contains the services to manipulate folders
      */
     angular.module('data-prep.services.folder', [
+        'data-prep.services.dataset',
+        'data-prep.services.state',
         'data-prep.services.utils'
     ]);
 })();

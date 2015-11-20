@@ -28,10 +28,10 @@
 
     <div class="inventory-list" id="datasets-list">
         <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderChilds" ng-click="datasetListCtrl.goToFolder(child)">
-          <div class="inventory-icon">
+          <div class="inventory-icon inventory-folder">
               <img src="assets/images/folder/folder-icon.png"/>
           </div>
-          <div class="inventory-text">
+          <div class="inventory-text inventory-folder">
              <span class="folder-name">{{child.path}}</span>
           </div>
         </div>

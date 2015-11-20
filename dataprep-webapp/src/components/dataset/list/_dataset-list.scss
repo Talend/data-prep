@@ -27,9 +27,16 @@
       }
     }
     .add-folder-button {
+      .btn-primary {
+        color: $dark-gray !important;
+        background-color: $light-gray!important;
+        border-color: $medium-gray;
+        text-transform: none;
+        height: 30px;
+      }
       position: absolute;
       left: 15px;
-      top: 8px;
+      top: 11px;
     }
   }
 
@@ -60,8 +67,8 @@
 
     .folder-name{
       padding: 2px 0;
-      font-size: 1.2em;
-      font-weight: 600;
+      font-size: 1.1em;
+      font-weight: 700;
       text-transform: uppercase;
       cursor: pointer;
       &:hover {

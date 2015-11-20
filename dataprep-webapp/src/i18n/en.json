@@ -29,6 +29,8 @@
   "SORT_IN": "in",
   "SORT_ORDER": "order",
   "UPLOAD_ERROR": "An error occurred during file upload",
+  "CREATE_FOLDER": "Create Folder",
+  "ENTER_FOLDER_NAME" : "Enter Folder Name",
 
   "_comment": "Preparations",
   "LAST_MODIFICATION": "last change",

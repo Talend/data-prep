@@ -226,7 +226,9 @@
         vm.addFolder = function(){
             var pathToCreate = (state.folder.currentFolder.id?state.folder.currentFolder.id:'') + '/' + vm.folderName;
             FolderService.create( pathToCreate )
-                .then(vm.folderName='');
+                .then(function() {
+                    FolderService.goToFolder(state.folder.currentFolder);
+                });
 
             // TODO force refresh of folders in state
 

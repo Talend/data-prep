@@ -26,6 +26,11 @@
         text-decoration: underline;
       }
     }
+    .add-folder-button {
+      position: absolute;
+      left: 15px;
+      top: 8px;
+    }
   }
 
   #datasets-list {
@@ -50,6 +55,18 @@
     .inventory-entry:hover {
       .edit-btn {
         visibility: visible;
+      }
+    }
+
+    .folder-name{
+      padding: 2px 0;
+      font-size: 1.2em;
+      font-weight: 600;
+      text-transform: uppercase;
+      cursor: pointer;
+      &:hover {
+        color: $dark-blue;
+        text-decoration: underline;
       }
     }
   }

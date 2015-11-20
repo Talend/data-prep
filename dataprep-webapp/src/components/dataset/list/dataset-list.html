@@ -1,10 +1,10 @@
 <div class="inventory dataset">
-    <div>
-        <button class="btn-primary modal-primary-button" ng-click="datasetListCtrl.folderNameModal=true">
-            Add Folder
-        </button>
-    </div>
     <div class="inventory-sort">
+        <div class="add-folder-button">
+            <button class="btn-primary modal-primary-button" ng-click="datasetListCtrl.folderNameModal=true">
+                <span translate-once="CREATE_FOLDER"></span>
+            </button>
+        </div>
         <div translate-once="SORTED_BY"></div>
         <div class="button-switch">
             <talend-button-switch
@@ -27,12 +27,12 @@
     </div>
 
     <div class="inventory-list" id="datasets-list">
-        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderChilds">
+        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderChilds" ng-click="datasetListCtrl.goToFolder(child)">
           <div class="inventory-icon">
               <img src="assets/images/folder/folder-icon.png"/>
           </div>
           <div class="inventory-text">
-             <a ng-click="datasetListCtrl.goToFolder(child)">{{child.path}}</a>
+             <span class="folder-name">{{child.path}}</span>
           </div>
         </div>
 
@@ -116,7 +116,7 @@
                   state="datasetListCtrl.folderNameModal">
         <span translate-once="ENTER_FOLDER_NAME"></span>
         <form name="datasetListCtrl.folderNameForm">
-            <input type="text" ng-model="datasetListCtrl.folderName" required/>
+            <input type="text" ng-model="datasetListCtrl.folderName"/>
 
             <div class="modal-buttons">
                 <button class="talend-modal-close btn-secondary modal-secondary-button">
@@ -124,7 +124,7 @@
                 </button>
                 <button class="talend-modal-close btn-primary modal-primary-button"
                         ng-click="datasetListCtrl.addFolder()"
-                        ng-disabled="datasetListCtrl.folderName.$invalid">
+                        ng-disabled="datasetListCtrl.folderName === ''">
                     <span translate-once="OK"></span>
                 </button>
             </div>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.junit.After;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.folder.Folder;
@@ -13,6 +14,11 @@ import org.talend.dataprep.folder.store.FolderRepository;
 public abstract class AbstractFolderTest {
 
     protected abstract FolderRepository getFolderRepository();
+
+    @After
+    public void cleanAfter(){
+        getFolderRepository().clear();
+    }
 
     /**
      *
@@ -201,5 +207,114 @@ public abstract class AbstractFolderTest {
         Assertions.assertThat(folders).isNotNull().isEmpty();
 
     }
+
+
+    /**
+     *
+     * This test create two folders and a folder entry then copy to the other folder
+     */
+    @Test
+    public void create_entry_then_copy() throws Exception {
+
+        int sizeBefore = getFolderRepository().size();
+
+        Folder foo = getFolderRepository().addFolder("foo");
+
+        Folder bar = getFolderRepository().addFolder("bar");
+
+        int sizeAfter = getFolderRepository().size();
+
+        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+
+        Iterable<Folder> iterable = getFolderRepository().childs("");
+        List<Folder> folders = new ArrayList<>();
+        iterable.forEach(folders::add);
+
+        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
+
+
+        FolderEntry wineEntry = new FolderEntry(DataSet.class.getName(), "bordeaux", "foo");
+
+        getFolderRepository().addFolderEntry(wineEntry);
+
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
+        List<FolderEntry> entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains( wineEntry );
+
+        getFolderRepository().copyFolderEntry( wineEntry, "bar" );
+
+        folderEntries = getFolderRepository().entries("bar", DataSet.class.getName());
+        entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+        // path has changed
+        wineEntry.setPath( "bar" );
+        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains( wineEntry );
+
+        // still in foo as it's a copy
+        folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
+        entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+
+        wineEntry.setPath( "foo" );
+        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains( wineEntry );
+
+    }
+
+
+    /**
+     *
+     * This test create two folders and a folder entry then copy to the other folder
+     */
+    @Test
+    public void create_entry_then_move() throws Exception {
+
+        int sizeBefore = getFolderRepository().size();
+
+        Folder foo = getFolderRepository().addFolder("foo");
+
+        Folder bar = getFolderRepository().addFolder("bar");
+
+        int sizeAfter = getFolderRepository().size();
+
+        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+
+        Iterable<Folder> iterable = getFolderRepository().childs("");
+        List<Folder> folders = new ArrayList<>();
+        iterable.forEach(folders::add);
+
+        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
+
+
+        FolderEntry wineEntry = new FolderEntry(DataSet.class.getName(), "bordeaux", "foo");
+
+        getFolderRepository().addFolderEntry(wineEntry);
+
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
+        List<FolderEntry> entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains( wineEntry );
+
+        getFolderRepository().moveFolderEntry( wineEntry, "bar" );
+
+        folderEntries = getFolderRepository().entries("bar", DataSet.class.getName());
+        entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains( wineEntry );
+
+        // still in foo as it's a copy
+        folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
+        entries = new ArrayList<>();
+        folderEntries.forEach(entries::add);
+
+        Assertions.assertThat(entries).isNotNull().isEmpty();
+
+    }
+
 
 }

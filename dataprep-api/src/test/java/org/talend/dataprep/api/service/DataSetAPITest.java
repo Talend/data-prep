@@ -12,13 +12,17 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.json.JsonErrorCode;
+import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -360,5 +364,158 @@ public class DataSetAPITest extends ApiServiceTestBase {
         assertThat(code.getCode(), is(DataSetErrorCodes.UNSUPPORTED_CONTENT.getCode()));
         assertThat(dataSetMetadataRepository.size(), is(metadataCount)); // No data set metadata should be created
     }
+
+
+    //-----------------------------------
+    // folder tests
+    //-----------------------------------
+
+    @Test
+    public void testDataSetListWithDateOrderWithinFolder() throws Exception {
+
+        // create folders
+        // create beer under foo
+        Response response = RestAssured.given() //
+            .queryParam("path", "foo/beer") //
+            .when() //
+            .put("/api/folders");
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo/bar") //
+            .when() //
+            .put("/api/folders");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        // given
+        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
+
+        FolderEntry folderEntry = new FolderEntry( "dataset", dataSetId1, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        folderEntry = new FolderEntry( "dataset", dataSetId3, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        // when (sort by date, order is desc)
+        String list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "desc", "foo")  //
+            .asString();
+
+        // then
+        Iterator<JsonNode> elements = mapper.readTree(list).elements();
+        String[] expectedNames = new String[] {dataSetId3, dataSetId1};
+        int i = 0;
+        while (elements.hasNext()) {
+            assertThat(elements.next().get("id").asText(), is(expectedNames[i++]));
+        }
+
+        // when (sort by date, order is desc)
+        list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "foo") //
+            .asString();
+
+        // then
+        elements = mapper.readTree(list).elements();
+        expectedNames = new String[] {dataSetId1, dataSetId3};
+        i = 0;
+        while (elements.hasNext()) {
+            assertThat(elements.next().get("id").asText(), is(expectedNames[i++]));
+        }
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo") //
+            .when() //
+            .delete("/api/folders");
+    }
+
+    @Test
+    public void testDataSetListWithNameOrderWithinFolder() throws Exception {
+
+        // create folders
+        // create beer under foo
+        Response response = RestAssured.given() //
+            .queryParam("path", "foo/beer") //
+            .when() //
+            .put("/api/folders");
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo/bar") //
+            .when() //
+            .put("/api/folders");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        // given
+        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
+
+        FolderEntry folderEntry = new FolderEntry( "dataset", dataSetId1, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        folderEntry = new FolderEntry( "dataset", dataSetId3, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        // when (sort by date, order is desc)
+        String list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "name", "desc", "foo") //
+            .asString();
+
+        // then
+        Iterator<JsonNode> elements = mapper.readTree(list).elements();
+        String[] expectedNames = new String[] {dataSetId3, dataSetId1};
+        int i = 0;
+        while (elements.hasNext()) {
+            assertThat(elements.next().get("id").asText(), is(expectedNames[i++]));
+        }
+
+        // when (sort by date, order is desc)
+        list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "foo").asString();
+
+        // then
+        elements = mapper.readTree(list).elements();
+        expectedNames = new String[] {dataSetId1, dataSetId3};
+        i = 0;
+        while (elements.hasNext()) {
+            assertThat(elements.next().get("id").asText(), is(expectedNames[i++]));
+        }
+
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo") //
+            .when() //
+            .delete("/api/folders");
+    }
+
+
 
 }

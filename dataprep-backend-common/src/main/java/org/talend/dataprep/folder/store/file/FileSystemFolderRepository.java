@@ -14,6 +14,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -366,6 +367,40 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         }        
         
         return folders;
+    }
+
+
+    @Override
+    public void copyFolderEntry( FolderEntry folderEntry, String destinationPath )
+    {
+        Path path = Paths.get(getRootFolder().toString(), StringUtils.split(destinationPath, PATH_SEPARATOR));
+
+        if (Files.notExists( path )){
+            throw new IllegalArgumentException( "destinationPath doesn't exists" );
+        }
+
+        Path entry = Paths.get( getRootFolder().toString(), StringUtils.split(folderEntry.getPath(), PATH_SEPARATOR) );
+        Path originFile = Paths.get( entry.toString(), folderEntry.id() );
+
+        if (Files.notExists( originFile )){
+            throw new IllegalArgumentException( "entry doesn't exists" );
+        }
+
+        try {
+
+            Path destinationFile = Paths.get( path.toString(), folderEntry.id() );
+            Files.copy( originFile, destinationFile );
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
+
+    }
+
+    @Override
+    public void moveFolderEntry( FolderEntry folderEntry, String destinationPath )
+    {
+
     }
 
     @Override

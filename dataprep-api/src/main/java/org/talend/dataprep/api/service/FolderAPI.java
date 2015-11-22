@@ -10,7 +10,6 @@ import java.io.InputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wordnik.swagger.annotations.ApiParam;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.springframework.http.MediaType;
@@ -19,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.talend.dataprep.api.folder.FolderContent;
 import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.service.command.dataset.DataSetList;
 import org.talend.dataprep.api.service.command.folder.AllFoldersList;
 import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
 import org.talend.dataprep.api.service.command.folder.CreateFolderEntry;
+import org.talend.dataprep.api.service.command.folder.FolderDataSetList;
 import org.talend.dataprep.api.service.command.folder.FolderEntriesList;
 import org.talend.dataprep.api.service.command.folder.FoldersList;
 import org.talend.dataprep.api.service.command.folder.RemoveFolder;
@@ -37,6 +37,7 @@ import org.talend.dataprep.metrics.VolumeMetered;
 import com.netflix.hystrix.HystrixCommand;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "api", basePath = "/api", description = "Folders API")
@@ -62,7 +63,7 @@ public class FolderAPI extends APIService {
     @Timed
     public void allFolder(final HttpServletResponse response) {
         try {
-            final HystrixCommand<InputStream> foldersList = getCommand( AllFoldersList.class, getClient());
+            final HystrixCommand<InputStream> foldersList = getCommand(AllFoldersList.class, getClient());
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(foldersList.execute(), outputStream);
@@ -176,7 +177,6 @@ public class FolderAPI extends APIService {
         }
     }
 
-
     /**
      * no javadoc here so see description in @ApiOperation notes.
      *
@@ -189,25 +189,21 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "List all datasets within the folder and sorted by key/date", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @VolumeMetered
-    public void datasets(@ApiParam(value = "Folder id to search datasets") @RequestParam(defaultValue = "", required = false) String folder,
-                         @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE", required = false) String sort,
-                         @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC", required = false) String order,
-                         HttpServletResponse response) {
+    public FolderContent datasets(
+            @ApiParam(value = "Folder id to search datasets") @RequestParam(defaultValue = "", required = false) String folder,
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE", required = false) String sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC", required = false) String order,
+            HttpServletResponse response) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing datasets (pool: {})...", getConnectionManager().getTotalStats());
         }
         response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
         HttpClient client = getClient();
-        HystrixCommand<InputStream> listCommand = getCommand( DataSetList.class, client, sort, order, folder);
-        try (InputStream content = listCommand.execute()) {
-            ServletOutputStream outputStream = response.getOutputStream();
-            IOUtils.copyLarge(content, outputStream);
-            outputStream.flush();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Listing datasets (pool: {}) done.", getConnectionManager().getTotalStats());
-            }
-        } catch (IOException e) {
-            throw new TDPException( CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        HystrixCommand<FolderContent> listCommand = getCommand( FolderDataSetList.class, client, sort, order, folder);
+        try {
+            return listCommand.execute();
+        } catch (Exception e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 

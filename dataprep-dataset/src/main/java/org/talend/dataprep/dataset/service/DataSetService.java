@@ -166,7 +166,6 @@ public class DataSetService {
                                           @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order,
                                           @ApiParam(value = "Folder id to search datasets") @RequestParam(defaultValue = "", required = false) String folder) {
 
-        add folders
 
         Spliterator<DataSetMetadata> iterator;
         if (StringUtils.isNotEmpty( folder )) {

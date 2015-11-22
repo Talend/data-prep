@@ -1,8 +1,10 @@
 package org.talend.dataprep.api.service;
 
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -10,7 +12,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContent;
 import org.talend.dataprep.api.folder.FolderEntry;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,6 +23,10 @@ import com.google.common.collect.Lists;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
+
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class FolderAPITest extends ApiServiceTestBase {
 
@@ -255,6 +263,176 @@ public class FolderAPITest extends ApiServiceTestBase {
         });
 
         Assertions.assertThat(folderEntries).isNotNull().isEmpty();
+    }
+
+
+    //-----------------------------------
+    // dataset list content
+    //-----------------------------------
+
+    @Test
+    public void testDataSetListWithDateOrderWithinFolder() throws Exception {
+
+        // create folders
+        // create beer under foo
+        Response response = RestAssured.given() //
+            .queryParam("path", "foo/beer") //
+            .when() //
+            .put("/api/folders");
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo/bar") //
+            .when() //
+            .put("/api/folders");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        // given
+        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
+
+        FolderEntry folderEntry = new FolderEntry( "dataset", dataSetId1, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        folderEntry = new FolderEntry( "dataset", dataSetId3, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        // when (sort by date, order is desc)
+        String list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "desc", "foo")  //
+            .asString();
+
+        // then
+        FolderContent folderContent = mapper.readValue( list, FolderContent.class );
+
+        String[] expectedIds = new String[] {dataSetId3, dataSetId1};
+        int i = 0;
+        Iterator<DataSetMetadata> iterator = folderContent.getDatasets().iterator();
+        while (iterator.hasNext()) {
+            assertThat(iterator.next().getId(), is(expectedIds[i++]));
+        }
+
+        Assertions.assertThat( folderContent.getFolders() ).isNotNull() //
+            .isNotEmpty().hasSize( 2 );
+
+        // when (sort by date, order is desc)
+        list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "foo") //
+            .asString();
+
+        // then
+        folderContent = mapper.readValue( list, FolderContent.class );
+        expectedIds = new String[] {dataSetId1, dataSetId3};
+        i = 0;
+        iterator = folderContent.getDatasets().iterator();
+        while (iterator.hasNext()) {
+            assertThat(iterator.next().getId(), is(expectedIds[i++]));
+        }
+
+
+        Assertions.assertThat( folderContent.getFolders() ).isNotNull() //
+            .isNotEmpty().hasSize( 2 );
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo") //
+            .when() //
+            .delete("/api/folders");
+    }
+
+    @Test
+    public void testDataSetListWithNameOrderWithinFolder() throws Exception {
+
+        // create folders
+        // create beer under foo
+        Response response = RestAssured.given() //
+            .queryParam("path", "foo/beer") //
+            .when() //
+            .put("/api/folders");
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo/bar") //
+            .when() //
+            .put("/api/folders");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        // given
+        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        Thread.sleep(100);
+        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
+
+        FolderEntry folderEntry = new FolderEntry( "dataset", dataSetId1, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        folderEntry = new FolderEntry( "dataset", dataSetId3, "/foo");
+
+        // create a folderentry in this directory
+        response = RestAssured.given() //
+            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
+            .contentType( ContentType.JSON) //
+            .when() //
+            .put("/api/folders/entries");
+
+        // when (sort by date, order is desc)
+        String list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "name", "desc", "foo") //
+            .asString();
+
+        // then
+        FolderContent folderContent = mapper.readValue( list, FolderContent.class );
+        String[] expectedIds = new String[] {dataSetId3, dataSetId1};
+        int i = 0;
+        Iterator<DataSetMetadata> iterator = folderContent.getDatasets().iterator();
+        while (iterator.hasNext()) {
+            assertThat(iterator.next().getId(), is(expectedIds[i++]));
+        }
+
+
+        Assertions.assertThat( folderContent.getFolders() ).isNotNull() //
+            .isNotEmpty().hasSize( 2 );
+
+        // when (sort by date, order is desc)
+        list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "foo").asString();
+
+        // then
+        folderContent = mapper.readValue( list, FolderContent.class );
+        expectedIds = new String[] {dataSetId1, dataSetId3};
+        i = 0;
+        iterator = folderContent.getDatasets().iterator();
+        while (iterator.hasNext()) {
+            assertThat(iterator.next().getId(), is(expectedIds[i++]));
+        }
+
+
+        Assertions.assertThat( folderContent.getFolders() ).isNotNull() //
+            .isNotEmpty().hasSize( 2 );
+
+        response = RestAssured.given() //
+            .queryParam("path", "foo") //
+            .when() //
+            .delete("/api/folders");
     }
 
 }

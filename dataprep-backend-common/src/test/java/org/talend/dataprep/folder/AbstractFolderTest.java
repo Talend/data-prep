@@ -211,7 +211,7 @@ public abstract class AbstractFolderTest {
 
     /**
      *
-     * This test create two folders and a folder entry then copy to the other folder
+     * This test create two folders and a folder entry then copy it to the other folder
      */
     @Test
     public void create_entry_then_copy() throws Exception {
@@ -267,7 +267,7 @@ public abstract class AbstractFolderTest {
 
     /**
      *
-     * This test create two folders and a folder entry then copy to the other folder
+     * This test create two folders and a folder entry then move it to the other folder
      */
     @Test
     public void create_entry_then_move() throws Exception {
@@ -305,9 +305,12 @@ public abstract class AbstractFolderTest {
         entries = new ArrayList<>();
         folderEntries.forEach(entries::add);
 
+        // new path is bar for assert
+        wineEntry.setPath( "bar" );
+
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains( wineEntry );
 
-        // still in foo as it's a copy
+        // not in foo as it's a move
         folderEntries = getFolderRepository().entries("foo", DataSet.class.getName());
         entries = new ArrayList<>();
         folderEntries.forEach(entries::add);

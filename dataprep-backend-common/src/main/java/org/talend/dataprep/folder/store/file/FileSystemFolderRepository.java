@@ -400,7 +400,26 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
     @Override
     public void moveFolderEntry( FolderEntry folderEntry, String destinationPath )
     {
+        Path path = Paths.get(getRootFolder().toString(), StringUtils.split(destinationPath, PATH_SEPARATOR));
 
+        if (Files.notExists( path )){
+            throw new IllegalArgumentException( "destinationPath doesn't exists" );
+        }
+
+        Path entry = Paths.get( getRootFolder().toString(), StringUtils.split(folderEntry.getPath(), PATH_SEPARATOR) );
+        Path originFile = Paths.get( entry.toString(), folderEntry.id() );
+
+        if (Files.notExists( originFile )){
+            throw new IllegalArgumentException( "entry doesn't exists" );
+        }
+
+        try {
+
+            Path destinationFile = Paths.get( path.toString(), folderEntry.id() );
+            Files.move( originFile, destinationFile );
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override

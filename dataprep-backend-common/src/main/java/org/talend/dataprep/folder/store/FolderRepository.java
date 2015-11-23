@@ -1,11 +1,14 @@
 package org.talend.dataprep.folder.store;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.lock.DistributedLock;
 
 
 public interface FolderRepository {
+
+    String HOME_FOLDER_KEY = "HOME_FOLDER";
 
     char PATH_SEPARATOR = '/';
 
@@ -23,6 +26,21 @@ public interface FolderRepository {
     Folder addFolder(String path);
 
     /**
+     * remove folder and content recursively
+     * 
+     * @param path the path to remove only the last part is remove
+     */
+    void removeFolder(String path);
+
+    /**
+     * remove folder and content recursively
+     *
+     * @param path the path to rename
+     * @param newPath the full new path
+     */
+    void renameFolder(String path, String newPath);
+
+    /**
      * add or update (if already exists) the entry
      * @param folderEntry the {@link FolderEntry} to add
      */
@@ -35,13 +53,6 @@ public interface FolderRepository {
      * @param contentType  the type dataset, preparation
      */
     void removeFolderEntry(String folderPath, String contentId, String contentType);
-
-    /**
-     * remove folder and content recursively
-     * 
-     * @param path the path to remove only the last part is remove
-     */
-    void removeFolder(String path);
 
     /**
      *
@@ -93,5 +104,18 @@ public interface FolderRepository {
     Iterable<Folder> allFolder();
 
     DistributedLock createFolderLock(String id);
+
+    /**
+     * @param path a path as /beer/wine /foo
+     * @return extract last part of a path /beer/wine -> wine /foo -> foo, / -> HOME_FOLDER
+     */
+    default String extractName(String path) {
+        if (StringUtils.isEmpty(path) || StringUtils.equals(path, "/")) {
+            return HOME_FOLDER_KEY;
+        }
+
+        return StringUtils.contains(path, "/") ? //
+                StringUtils.substringAfterLast(path, "/") : path;
+    }
 
 }

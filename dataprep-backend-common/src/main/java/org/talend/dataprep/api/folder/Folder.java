@@ -17,6 +17,8 @@ public class Folder extends Identifiable implements Serializable {
     @JsonProperty("path")
     private String path;
 
+    @JsonProperty("name")
+    private String name;
 
     public Folder() {
         // no op
@@ -49,6 +51,16 @@ public class Folder extends Identifiable implements Serializable {
         this.id = path;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName( String name )
+    {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -66,16 +78,21 @@ public class Folder extends Identifiable implements Serializable {
         return Objects.hash(path);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString()
+    {
         return "Folder{" +
-                "id='" + id + '\'' +
-                ", path='" + path + '\'' +
-                '}';
+            "name='" + name + '\'' +
+            ", id='" + id + '\'' +
+            ", path='" + path + '\'' +
+            '}';
     }
 
     public static class Builder {
 
         private String path;
+
+        private String name;
 
         public static Builder folder() {
             return new Folder.Builder();
@@ -86,11 +103,16 @@ public class Folder extends Identifiable implements Serializable {
             return this;
         }
 
+        public Folder.Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
         public Folder build() {
 
             Folder folder = new Folder();
             folder.setPath(path);
-
+            folder.setName( name );
             return folder;
         }
 

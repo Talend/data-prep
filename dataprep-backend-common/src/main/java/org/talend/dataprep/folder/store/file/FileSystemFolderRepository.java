@@ -14,7 +14,6 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -97,12 +96,15 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             }
             Stream<Path> childStream = Files.list(folderPath);
             List<Folder> childs = new ArrayList<>();
-            childStream.forEach(path -> {
-                    if (Files.isDirectory( path )) {
-                        childs.add(Folder.Builder.folder() //
-                                .path(pathAsString(path)) //
-                                .build());
-                    }
+            childStream.parallel() //
+                    .forEach(path -> {
+                        if (Files.isDirectory(path)) {
+                            String pathStr = pathAsString(path);
+                            childs.add(Folder.Builder.folder() //
+                                    .path(pathStr) //
+                                    .name(extractName(pathStr)) //
+                                    .build());
+                        }
             });
             return childs;
         } catch (IOException e) {
@@ -119,14 +121,14 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         Path relativePath = path.subpath(getRootFolder().getNameCount(), path.getNameCount());
         final StringBuilder stringBuilder = new StringBuilder(PATH_SEPARATOR);
         relativePath.iterator().forEachRemaining(thePath -> stringBuilder.append(thePath.toString()).append(PATH_SEPARATOR));
-        return stringBuilder.toString();
+        return StringUtils.removeEnd( stringBuilder.toString(), "/");
     }
 
     @Override
     public Folder addFolder(String path) {
         try {
 
-            if (!StringUtils.startsWith( path, "/" )){
+            if (!StringUtils.startsWith(path, "/")) {
                 path = "/" + path;
             }
 
@@ -139,6 +141,7 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             }
             return Folder.Builder.folder() //
                     .path(path) //
+                    .name(extractName(path)) //
                     .build();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -336,9 +339,11 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
                     Files.list(dir).parallel().forEach(path -> {
                         if (Files.isDirectory(path)) {
+                            String pathStr = pathAsString(path);
                             folders.add(Folder.Builder.folder() //
-                                            .path(pathAsString(path)) //
-                                            .build() );
+                                    .path(pathStr) //
+                                    .name(extractName(pathStr)) //
+                                    .build());
                             filesFound.set(true);
                         }
                     });
@@ -454,4 +459,6 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+
 }

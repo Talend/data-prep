@@ -99,6 +99,8 @@ public abstract class AbstractFolderTest {
         iterable.forEach(folders::add);
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
+        Assertions.assertThat( folders.get( 0 ).getPath() ).isEqualToIgnoringCase( "beer/bar" );
+        Assertions.assertThat( folders.get( 0 ).getName() ).isEqualToIgnoringCase( "bar" );
 
         getFolderRepository().removeFolder("/beer/bar");
 

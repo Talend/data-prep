@@ -60,6 +60,7 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     public Folder addFolder(String path) {
         path = cleanPath(path);
         Folder folder = new Folder(path);
+        folder.setName( extractName( path ) );
         foldersMap.put(path, folder);
         return folder;
     }

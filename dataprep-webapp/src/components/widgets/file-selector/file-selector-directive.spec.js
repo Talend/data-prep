@@ -14,7 +14,7 @@ describe('Upload File directive', function() {
             scope.updateDatasetFile = 'file';
             scope.uploadUpdatedDatasetFile = function(){};
 
-            element = angular.element('<talend-file-selector button-data-icon="g" button-title="REPLACE_FILE_CONTENT" file-model="updateDatasetFile" on-file-change="uploadUpdatedDatasetFile(dataset)">'+
+            element = angular.element('<talend-file-selector button-data-icon="E" button-title="REPLACE_FILE_CONTENT" file-model="updateDatasetFile" on-file-change="uploadUpdatedDatasetFile(dataset)">'+
                    '</talend-file-selector>');
             body.append(element);
             $compile(element)(scope);
@@ -36,7 +36,7 @@ describe('Upload File directive', function() {
         //when
         element.find('span').trigger(event);
         //then
-        expect(ctrl.buttonDataIcon).toBe('g');
+        expect(ctrl.buttonDataIcon).toBe('E');
         expect(ctrl.buttonTitle).toBe('REPLACE_FILE_CONTENT');
         expect(ctrl.fileModel).toBe('file');
         expect(clicked).toBeTruthy();

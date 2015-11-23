@@ -11,6 +11,24 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+/**
+ * <h3>CSV implementation of the formatGuesser</h3>
+ *
+ * <p>
+ * Read the first 100 lines or 64k chars to check if given dataset is a CSV as well as its potential separator.
+ * </p>
+ *
+ * <p>
+ * Separator are chosen out of these rules :
+ * <ul>
+ * <li>highest average occurrence per line</li>
+ * <li>lowest standard deviation (all the lines should have the same number of separators)</li>
+ * <li>is known to be an allowed separator (see LineBasedFormatGuesser#validSeparators)</li>
+ * </ul>
+ * </p>
+ *
+ * @see FormatGuesser
+ */
 @Component
 public class LineBasedFormatGuesser implements FormatGuesser {
 
@@ -20,7 +38,7 @@ public class LineBasedFormatGuesser implements FormatGuesser {
     /** Detectors used to check the encoding. */
     private List<WrongEncodingDetector> detectors = Arrays.asList( //
             new WrongEncodingDetector(65533), //
-            new WrongEncodingDetector(0000) //
+            new WrongEncodingDetector(0) //
     );
 
     /** The csv format guesser. */
@@ -42,15 +60,15 @@ public class LineBasedFormatGuesser implements FormatGuesser {
     };
 
     /**
-     * @see FormatGuesser#guess(InputStream, String)
+     * @see FormatGuesser#guess(SchemaParser.Request, String)
      */
     @Override
-    public FormatGuesser.Result guess(InputStream stream, String encoding) {
-        if (stream == null) {
+    public FormatGuesser.Result guess(SchemaParser.Request request, String encoding) {
+        if (request == null || request.getContent() == null) {
             throw new IllegalArgumentException("Content cannot be null.");
         }
 
-        Separator sep = guessSeparator(stream, encoding);
+        Separator sep = guessSeparator(request.getContent(), encoding);
 
         // Fallback
         if (sep == null) {
@@ -74,7 +92,6 @@ public class LineBasedFormatGuesser implements FormatGuesser {
         try {
             Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
             try (LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
-                List<Separator> separators = new ArrayList<>();
                 Map<Character, Separator> separatorMap = new HashMap<>();
                 long totalChars = 0;
                 int lineCount = 0;
@@ -89,31 +106,28 @@ public class LineBasedFormatGuesser implements FormatGuesser {
                         lineCount++;
                     }
                     for (int i = 0; i < s.length(); i++) {
+
                         char c = s.charAt(i);
+
                         // check the encoding
-                        for (WrongEncodingDetector detector : detectors) {
-                            try {
-                                detector.checkChar(c, totalChars);
-                            } catch (IOException e) {
-                                LOGGER.debug(encoding + " is assumed wrong" + e);
-                                return null;
-                            }
+                        try {
+                            checkEncoding(c, totalChars);
+                        } catch (IOException e) {
+                            LOGGER.debug(encoding + " is assumed wrong" + e);
+                            return null;
                         }
+
                         if ('"' == c) {
                             inQuote = !inQuote;
                         }
-                        if (!Character.isLetterOrDigit(c) && !"\"' .-".contains(s.subSequence(i, i + 1)) && (!inQuote)) {
-                            Separator separator = separatorMap.get(c);
-                            if (separator == null) {
-                                separator = new Separator(c);
-                                separatorMap.put(c, separator);
-                                separators.add(separator);
-                            }
-                            separator.totalCountPlusOne();
+
+                        if (!inQuote) {
+                            processCharAsSeparatorCandidate(c, separatorMap, lineCount);
                         }
+
                     }
                 }
-                return chooseSeparator(separators, lineCount);
+                return chooseSeparator(new ArrayList<>(separatorMap.values()), lineCount);
             }
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_CONTENT, e);
@@ -124,7 +138,38 @@ public class LineBasedFormatGuesser implements FormatGuesser {
     }
 
     /**
-     * Choose the best separator out of the ones.
+     * Check the encoding with every WrongEncodingDetector.
+     *
+     * @param c the current char to check.
+     * @param totalChars the total number of chars so far.
+     * @throws IOException if the encoding is assumed wrong.
+     */
+    private void checkEncoding(char c, long totalChars) throws IOException {
+        for (WrongEncodingDetector detector : detectors) {
+            detector.checkChar(c, totalChars);
+        }
+    }
+
+    /**
+     * Detects if the given char is a separator candidate. If true, the separator is added within the separators map.
+     *
+     * @param candidate the candidate to analyse.
+     * @param separatorMap the map of current candidates.
+     * @param lineNumber the current line number.
+     */
+    protected void processCharAsSeparatorCandidate(char candidate, Map<Character, Separator> separatorMap, int lineNumber) {
+        if (!Character.isLetterOrDigit(candidate)) {
+            Separator separator = separatorMap.get(candidate);
+            if (separator == null) {
+                separator = new Separator(candidate);
+                separatorMap.put(candidate, separator);
+            }
+            separator.incrementCount(lineNumber);
+        }
+    }
+
+    /**
+     * Choose the best separator out of the given ones.
      *
      * @param separators the list of separators found in the CSV (may be empty but not null.
      * @param lineCount number of lines in the CSV.
@@ -146,20 +191,38 @@ public class LineBasedFormatGuesser implements FormatGuesser {
             return separators.get(0);
         }
 
-        // compute the average per line for separators
-        separators.forEach(s -> {
-            double averagePerLine = s.getTotalCount() / lineCount;
-            s.setAveragePerLine(averagePerLine);
-        });
+        // compute the score for each separator
+        separators.forEach(s -> computeScore(s, lineCount));
 
-        // remove irrelevant separators (0 as average per line that can happen when you read binary files)
-        return separators.stream()
-                .filter(separator -> separator.getAveragePerLine() > 0) //
-                .sorted((sep0, sep1) -> Double.compare(sep1.getAveragePerLine(), sep0.getAveragePerLine())) //
+        // filter and sort separators
+        // @formatter:off
+        return separators.stream().filter(separator -> separator.getAveragePerLine() >= 1) // remove irrelevant separators
+                .sorted((s0, s1) -> Double.compare(s1.getAveragePerLine(), s0.getAveragePerLine())) // sort by average (the highest the better)
+                .sorted((s0, s1) -> Double.compare(s0.getStandardDeviation(), s1.getStandardDeviation())) // sort by sddev (the lowest the better)
                 .filter(sep -> validSeparators.contains(sep.getSeparator())) // filter out invalid separators
                 .findFirst() //
                 .get();
+        // @formatter:on
+    }
 
+    /**
+     * Compute the score (average per line and standard deviation) for each separator.
+     *
+     * @param separator the separator to compute the score for.
+     * @param lineCount how many lines have been read.
+     */
+    protected void computeScore(Separator separator, double lineCount) {
+        // compute average per line
+        double averagePerLine = separator.getTotalCount() / lineCount;
+        separator.setAveragePerLine(averagePerLine);
+
+        // compute the standard deviation
+        double sum = 0;
+        for (int currentLine = 1; currentLine <= lineCount; currentLine++) {
+            final double currentLineCount = separator.getCount(currentLine);
+            sum += currentLineCount * Math.pow(currentLine - averagePerLine, 2);
+        }
+        separator.setStandardDeviation(Math.sqrt(sum / separator.getTotalCount()));
     }
 
     /**

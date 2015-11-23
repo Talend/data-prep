@@ -310,7 +310,7 @@
       },
       {
         "name": "value",
-        "type": "string",
+        "type": "regex",
         "implicit": false,
         "canBeBlank": true,
         "description": "The value to search",
@@ -978,7 +978,7 @@
       },
       {
         "name": "pattern",
-        "type": "string",
+        "type": "regex",
         "implicit": false,
         "canBeBlank": true,
         "description": "The pattern to cut in this column",
@@ -1323,7 +1323,6 @@
         "implicit": false,
         "canBeBlank": true,
         "description": "Number of token to split the value in",
-        "label": "Limit",
         "default": "2"
       },
       {
@@ -1353,7 +1352,7 @@
               "parameters": [
                 {
                   "name": "manual_separator",
-                  "type": "string",
+                  "type": "regex",
                   "implicit": false,
                   "canBeBlank": true,
                   "description": "Choose your own separator",
@@ -1416,7 +1415,7 @@
       },
       {
         "name": "cell_value",
-        "type": "string",
+        "type": "regex",
         "implicit": false,
         "canBeBlank": true,
         "description": "The current cell value",
@@ -1519,7 +1518,7 @@
               "parameters": [
                 {
                   "name": "manual_pattern",
-                  "type": "string",
+                  "type": "regex",
                   "implicit": false,
                   "canBeBlank": true,
                   "description": "Set your own pattern",
@@ -2207,7 +2206,7 @@
     "name": "copy",
     "dynamic": false,
     "description": "Creates an exact copy of this column",
-    "label": "Duplicate",
+    "label": "Duplicate column",
     "parameters": [
       {
         "name": "column_id",
@@ -2288,15 +2287,6 @@
         "default": ""
       },
       {
-        "name": "selected_column",
-        "type": "column",
-        "implicit": false,
-        "canBeBlank": false,
-        "description": "Combine the current column with this one",
-        "label": "Column",
-        "default": ""
-      },
-      {
         "name": "prefix",
         "type": "string",
         "implicit": false,
@@ -2306,13 +2296,40 @@
         "default": ""
       },
       {
-        "name": "concat_separator",
-        "type": "string",
-        "implicit": false,
-        "canBeBlank": true,
-        "description": "Optional new column separator",
-        "label": "Separator",
-        "default": ""
+        "name": "other_column?",
+        "type": "select",
+        "default": "Another column",
+        "configuration": {
+          "values": [
+            {
+              "value": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "description": "Combine the current column with this one",
+                  "label": "Column",
+                  "default": ""
+                },
+                {
+                  "name": "concat_separator",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "description": "Optional new column separator",
+                  "label": "Separator",
+                  "default": ""
+                }
+              ]
+            },
+            {
+              "value": "No other column"
+            }
+          ],
+          "multiple": false
+        }
       },
       {
         "name": "suffix",
@@ -2380,7 +2397,7 @@
     "name": "rename_column",
     "dynamic": false,
     "description": "Rename this column",
-    "label": "Rename"
+    "label": "Rename column"
   },
   {
     "category": "column_metadata",
@@ -2550,6 +2567,51 @@
           ],
           "multiple": false
         }
+      }
+    ]
+  },
+  {
+    "category": "column_metadata",
+    "name": "delete_column",
+    "dynamic": false,
+    "description": "Delete this column",
+    "label": "Delete Column",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The column on which apply this action to",
+        "label": "Column",
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The row on which apply this action to",
+        "label": "Row",
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "label": "Scope",
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "description": "An optional filter to apply action on matching values only.",
+        "label": "Filter",
+        "default": ""
       }
     ]
   }

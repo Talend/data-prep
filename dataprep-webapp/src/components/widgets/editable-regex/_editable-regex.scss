@@ -1,0 +1,55 @@
+.editable-regex {
+  $height: 35px;
+  $keySize: 30px;
+
+  .dropdown-action {
+    background: $light-gray;
+    color: $black;
+
+    height: $height;
+    width: $height;
+
+    float: left;
+    cursor: pointer;
+    border-radius: 3px 0 0 3px;
+    padding: 0;
+
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .dropdown-menu {
+    outline: none;
+
+    .regex-type-item {
+      display: table-row;
+      height: $keySize;
+
+      &:hover {
+        background-color: $light-gray;
+      }
+
+      .regex-type-item-key {
+        border-right: 1px solid $light-gray;
+        display: table-cell;
+        text-align: center;
+        width: $keySize;
+      }
+
+      .regex-type-item-label {
+        display: table-cell;
+        font-size: 0.9em;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    }
+  }
+
+  input {
+    float: left;
+    height: $height;
+    margin: 0;
+    width: 79%;
+    border-radius: 0 3px 3px 0;
+  }
+}

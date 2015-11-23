@@ -1,14 +1,5 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
-
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -16,12 +7,20 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
-import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.SPLIT;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.REGEX;
 
 /**
  * Split a cell value on a separator.
@@ -68,14 +67,14 @@ public class Split extends ActionMetadata implements ColumnAction {
      */
     @Override
     public String getCategory() {
-        return ActionCategory.SPLIT.getDisplayName();
+        return SPLIT.getDisplayName();
     }
 
     @Override
     @Nonnull
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(LIMIT, ParameterType.INTEGER, "2"));
+        parameters.add(new Parameter(LIMIT, INTEGER, "2"));
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                         .name(SEPARATOR_PARAMETER)
@@ -84,7 +83,7 @@ public class Split extends ActionMetadata implements ColumnAction {
                         .item(" ")
                         .item(",")
                         .item("-")
-                        .item("other", new Parameter(MANUAL_SEPARATOR_PARAMETER, STRING, EMPTY))
+                        .item("other", new Parameter(MANUAL_SEPARATOR_PARAMETER, REGEX, EMPTY))
                         .defaultValue(":")
                         .build()
         );
@@ -129,18 +128,18 @@ public class Split extends ActionMetadata implements ColumnAction {
         lastColumnId.push(columnId);
         for (int i = 0; i < limit; i++) {
             newColumns.add(context.in(this).column(column.getName() + SPLIT_APPENDIX + i,
-                rowMetadata,
-                (r) -> {
-                    final ColumnMetadata c = ColumnMetadata.Builder //
-                            .column() //
-                            .copy(column) //
-                            .type(Type.STRING) //
-                            .computedId(StringUtils.EMPTY) //
-                            .name(column.getName() + SPLIT_APPENDIX) //
-                            .build();
-                    lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
-                    return c;
-                }
+                    rowMetadata,
+                    (r) -> {
+                        final ColumnMetadata c = ColumnMetadata.Builder //
+                                .column() //
+                                .copy(column) //
+                                .type(Type.STRING) //
+                                .computedId(EMPTY) //
+                                .name(column.getName() + SPLIT_APPENDIX) //
+                                .build();
+                        lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
+                        return c;
+                    }
             ));
         }
 
@@ -152,9 +151,10 @@ public class Split extends ActionMetadata implements ColumnAction {
 
         String[] split = new String[0];
         try {
-            Pattern p = Pattern.compile(realSeparator);
+            // Check if separator is a valid regex
+            Pattern.compile(realSeparator);
 
-            // Next line will be evaluated only if pattern is valid:
+            // execute split when separator is valid
             split = originalValue.split(realSeparator, limit);
         } catch (PatternSyntaxException e) {
             // In case the pattern is not valid: nothing to do, empty string will go in the cells.

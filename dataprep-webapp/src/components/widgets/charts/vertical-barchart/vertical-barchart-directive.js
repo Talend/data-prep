@@ -23,7 +23,8 @@
      * @param {array} visuData The value array to render
      * @param {string} keyField The key property name in visuData elements
      * @param {object} keyLabel The label property name in visuData elements
-     * @param {string} valueField The value property name in visuData elements
+     * @param {string} valueField The value property name in visuData elements used for 1st column
+     * @param {string} valueField2 The value property name in visuData elements used for 2nd column
      * @param {array} activeLimits The filter limits
      * */
 
@@ -35,12 +36,14 @@
                 visuData: '=',
                 keyField: '@',
                 valueField: '@',
+                valueField2: '@',
                 keyLabel: '@',
                 activeLimits: '='
             },
             link: function (scope, element, attrs) {
                 var xField = scope.keyField;//data
                 var yField = scope.valueField;
+                var yField2 = scope.valueField2;
                 var labelTooltip = scope.keyLabel;
                 var activeLimits = scope.activeLimits;
                 var renderTimeout, updateBarsTimeout;
@@ -67,10 +70,13 @@
                         .offset([0, -11])
                         .direction('w')
                         .html(function (d) {
-                            return '<strong>' + labelTooltip + ':</strong> <span style="color:yellow">' + d[yField] + '</span>' +
+                            var interval =  d[xField];
+                            var uniqueValue = interval[0] === interval[1];
+                            return '<strong>' + labelTooltip + ':</strong> <span style="color:yellow">' + d[yField2] + ' / ' + d[yField] + '</span>' +
                                 '<br/>' +
                                 '<br/>' +
-                                '<strong>Range:</strong> <span style="color:yellow">[' + d[xField] + ']</span>';
+                                '<strong>' + (uniqueValue ? 'Value:' : 'Range:') + '</strong> ' +
+                                '<span style="color:yellow">' + (uniqueValue ? interval[0] : '[' + interval + '[') + '</span>';
                         });
 
                     var svg = d3.select('#' + container).append('svg')
@@ -117,6 +123,35 @@
                             return y(d[yField]);
                         });
 
+                    svg.append('g').selectAll('.filterBar')
+                        .data(statData)
+                        .enter().append('rect')
+                        .attr('class', 'filterBar')
+                        .attr('x', function (d) {
+                            return x(d[xField]);
+                        })
+                        .attr('width', x.rangeBand())
+                        .attr('y', function () {
+                            return y(0);
+                        })
+                        .attr('height', 0)
+                        .transition().ease('cubic').delay(function (d, i) {
+                            return i * 10;
+                        })
+                        .attr('height', function (d) {
+                            if (typeof d[yField2] !== 'undefined') {
+                                return h - y(d[yField2]);
+                            }
+                            return h - y(0);
+                        })
+                        .attr('y', function (d) {
+                            if (typeof d[yField2] !== 'undefined') {
+                                return y(d[yField2]);
+                            }
+                            return y(0);
+                        });
+
+
                     scope.buckets = d3.selectAll('rect.bar');
                     /****************** Horizontal grid **********************/
                     var hGrid = svg.append('g')
@@ -126,7 +161,7 @@
                             .orient('right')
                             .tickSize(w, 0, 0)
                             .tickFormat(d3.format(',d'))
-                            .ticks(9)
+                            .ticks(Math.ceil(h / 18))
                     );
 
                     hGrid.selectAll('.tick text')
@@ -167,7 +202,7 @@
                             tip.hide(d);
                         })
                         .on('click', function (d) {
-                            scope.onClick()(d);
+                            scope.onClick({interval: d.data});
                         });
                     finishedRendering = true;
                 }

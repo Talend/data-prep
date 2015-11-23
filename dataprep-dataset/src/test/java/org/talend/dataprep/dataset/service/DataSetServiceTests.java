@@ -507,7 +507,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
 
         dataSet = objectMapper.reader(DataSet.class).readValue(json);
 
-        Assertions.assertThat(dataSet.getColumns()).isNotNull().isNotEmpty().isNotEmpty().hasSize(7);
+        Assertions.assertThat(dataSet.getColumns()).isNotNull().isNotEmpty().isNotEmpty().hasSize(8);
 
     }
 

@@ -1,6 +1,5 @@
 package org.talend.dataprep.schema;
 
-import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -11,42 +10,74 @@ public interface FormatGuesser {
     /**
      * Guess the content type of the provided stream.
      *
-     * @param stream The raw data set content. Content cannot be <code>null</code>.
+     * @param request The Schema parser request. Content cannot be <code>null</code>.
      * @param encoding The encoding to use to read content in <code>stream</code>.
      * @return A {@link org.talend.dataprep.schema.FormatGuess guess} that can never be null (see
      * {@link FormatGuess#getConfidence()}.
      * @throws IllegalArgumentException If stream is <code>null</code>.
      */
-    Result guess(InputStream stream, String encoding);
+    Result guess(SchemaParser.Request request, String encoding);
 
+    /**
+     * Format guess result.
+     */
     class Result {
 
+        /** The format guess. */
         private FormatGuess formatGuess;
 
+        /** The parameters (e.g. separator for CSV). */
         private Map<String, String> parameters;
 
+        /** The encoding. */
         private String encoding;
 
+        /**
+         * Constructor.
+         *
+         * @param formatGuess the format guess.
+         * @param encoding the encoding to use.
+         * @param parameters the needed parameters.
+         */
         public Result(FormatGuess formatGuess, String encoding, Map<String, String> parameters) {
             this.formatGuess = formatGuess;
             this.encoding = encoding;
             this.parameters = parameters;
         }
 
+        /**
+         * @return the FormatGuess.
+         */
         public FormatGuess getFormatGuess() {
             return formatGuess;
         }
 
+        /**
+         * @param formatGuess the formatGuess to set.
+         */
         public void setFormatGuess(FormatGuess formatGuess) {
             this.formatGuess = formatGuess;
         }
 
+        /**
+         * @return the Parameters.
+         */
         public Map<String, String> getParameters() {
             return parameters;
         }
 
+        /**
+         * @param parameters the parameters to set.
+         */
         public void setParameters(Map<String, String> parameters) {
             this.parameters = parameters;
+        }
+
+        /**
+         * @return the Encoding.
+         */
+        public String getEncoding() {
+            return encoding;
         }
 
         @Override
@@ -74,8 +105,10 @@ public interface FormatGuesser {
             return result;
         }
 
-        public String getEncoding() {
-            return encoding;
+        @Override
+        public String toString() {
+            return "Result{" + "formatGuess=" + formatGuess != null ? formatGuess.getClass().getSimpleName()
+                    : "null" + ", encoding='" + encoding + '\'' + '}';
         }
     }
 }

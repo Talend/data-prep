@@ -7,32 +7,39 @@
      * @description Converter service. This service help to convert data
      */
     function ConverterService() {
+        return {
+            isNumber: isNumber,
 
-        /**
-         * @ngdoc method
-         * @name toNumber
-         * @methodOf data-prep.services.utils.service:ConverterService
-         * @param {String} type - the type of the given value
-         * @description [PRIVATE] trims and checks if the entered string is valid number
-         * @return Number or undefined
-         */
-        this.isNumber = function toNumber (value) {
-            value = value.trim();
-            if(/^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/.test(value)){
-                return true;
-            }
-            return false;
+            //types
+            toInputType: toInputType,
+            simplifyType: simplifyType,
+            adaptValue: adaptValue
         };
 
         /**
          * @ngdoc method
+         * @name isNumber
+         * @methodOf data-prep.services.utils.service:ConverterService
+         * @param {String} value The value to test
+         * @description Check if the entered string is valid number
+         * @return {boolean}
+         */
+        function isNumber (value) {
+            return /^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/.test(value);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------TYPES---------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        /**
+         * @ngdoc method
          * @name toInputType
          * @methodOf data-prep.services.utils.service:ConverterService
-         * @param {string} type - the type to convert
+         * @param {string} type The type to convert
          * @description Convert backend type to HTML input type
-         * @returns {string} - the converted type
+         * @returns {string} The converted type
          */
-        this.toInputType = function (type) {
+        function toInputType(type) {
             switch (type) {
                 case 'numeric':
                 case 'integer':
@@ -44,17 +51,17 @@
                 default:
                     return 'text';
             }
-        };
+        }
 
         /**
          * @ngdoc method
          * @name simplifyType
          * @methodOf data-prep.services.utils.service:ConverterService
-         * @param {string} type - the type to convert
+         * @param {string} type The type to convert
          * @description Convert backend type to a simplified, more user friendly, one
-         * @returns {string} - the simplified type
+         * @returns {string} The simplified type
          */
-        this.simplifyType = function (type) {
+        function simplifyType(type) {
             switch (type.toLowerCase()) {
                 case 'numeric':
                 case 'integer':
@@ -73,17 +80,18 @@
                 default:
                     return 'unknown';
             }
-        };
+        }
 
         /**
          * @ngdoc method
          * @name adaptValue
          * @methodOf data-prep.services.utils.service:ConverterService
-         * @param {object} type - the target type of the given value
-         * @param {object} value - the value to adapt
+         * @param {object} type The target type of the given value
+         * @param {object} value The value to adapt
          * @description [PRIVATE] Adapt the given value to the target type
+         * @returns {Object} The adapted value
          */
-        this.adaptValue = function (type, value) {
+        function adaptValue(type, value) {
             switch (type) {
                 case 'numeric':
                 case 'integer':
@@ -95,7 +103,7 @@
                 default :
                     return value;
             }
-        };
+        }
     }
 
     angular.module('data-prep.services.utils')

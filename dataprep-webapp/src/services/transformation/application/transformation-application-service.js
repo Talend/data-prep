@@ -7,8 +7,9 @@
      * @description Manage parameters and apply transformations
      * @requires data-prep.services.playground.service:PlaygroundService
      * @requires data-prep.services.state.constant:state
+     * @requires data-prep.services.filters.service:FilterAdapterService
      */
-    function TransformationApplicationService(PlaygroundService, state, FilterService) {
+    function TransformationApplicationService(PlaygroundService, state, FilterAdapterService) {
         return {
             append: append,
             appendClosure: appendClosure
@@ -42,8 +43,8 @@
                 params.column_id = column.id;
                 params.column_name = column.name;
 
-                var stepFilters = FilterService.convertFiltersArrayToTreeFormat(state.playground.filter.gridFilters);
                 if(state.playground.filter.applyTransformationOnFilters){
+                    var stepFilters = FilterAdapterService.toTree(state.playground.filter.gridFilters);
                     _.extend(params, stepFilters);
                 }
 

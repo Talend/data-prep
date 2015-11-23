@@ -1,0 +1,18 @@
+<div class="editable-regex">
+    <talend-dropdown force-side="left">
+        <button class="dropdown-action" type="button">{{editableRegexCtrl.selectedType.key}}</button>
+        <ul class="dropdown-menu">
+            <li ng-repeat="type in ::editableRegexCtrl.types track by $index"
+                ng-click="editableRegexCtrl.setSelectedType(type)"
+                class="regex-type-item">
+                <div class="regex-type-item-key">{{::type.key}}</div>
+                <div class="regex-type-item-label">{{::type.label}}</div>
+            </li>
+        </ul>
+    </talend-dropdown>
+
+    <input type="text"
+           ng-model="editableRegexCtrl.regex"
+           ng-model-options="{debounce: { 'default': 300, 'blur': 0 }}"
+           ng-change="editableRegexCtrl.updateModel()"/>
+</div>

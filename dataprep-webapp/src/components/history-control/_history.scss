@@ -5,6 +5,7 @@
     color: $white;
     float: left;
     position: relative;
+    font-size: 0.9em;
 
     &.inactive {
       color: $medium-gray;
@@ -13,12 +14,12 @@
     }
 
     &.redo {
-      @include transform(rotate(90deg));
-      margin-left: 8px;
+      //@include transform(rotate(90deg));
+      margin-left: 10px;
     }
     &.undo {
-      @include transform(rotate(-90deg));
-      margin-right: 8px;
+      //@include transform(rotate(-90deg));
+      margin-right: 10px;
     }
   }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.dataset.statistics.StreamHistogramAnalyzer;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.type.TypeUtils;
 import org.talend.dataprep.exception.TDPException;
@@ -25,7 +26,6 @@ import org.talend.dataquality.standardization.index.ClassPathDirectory;
 import org.talend.dataquality.statistics.cardinality.CardinalityAnalyzer;
 import org.talend.dataquality.statistics.frequency.DataFrequencyAnalyzer;
 import org.talend.dataquality.statistics.frequency.PatternFrequencyAnalyzer;
-import org.talend.dataquality.statistics.numeric.histogram.HistogramAnalyzer;
 import org.talend.dataquality.statistics.numeric.histogram.HistogramColumnParameter;
 import org.talend.dataquality.statistics.numeric.histogram.HistogramParameter;
 import org.talend.dataquality.statistics.numeric.quantile.QuantileAnalyzer;
@@ -97,8 +97,9 @@ public class AnalyzerService implements DisposableBean {
                     histogramParameter.putColumnParameter(i, columnParameter);
                 }
             }
+
         }
-        final HistogramAnalyzer histogramAnalyzer = new HistogramAnalyzer(types, histogramParameter);
+        final StreamHistogramAnalyzer histogramAnalyzer = new StreamHistogramAnalyzer(types, histogramParameter);
         final SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(categoryBuilder);
         // Configure value quality analysis
         final ValueQualityAnalyzer valueQualityAnalyzer = qualityAnalyzer(columns);

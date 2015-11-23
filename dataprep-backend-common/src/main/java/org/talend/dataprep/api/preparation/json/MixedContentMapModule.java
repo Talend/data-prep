@@ -71,6 +71,8 @@ public class MixedContentMapModule extends SimpleModule {
                         // Value is a JSON object, get content as is
                         map.put(currentKey, jsonParser.readValueAsTree().toString());
                         jsonParser.skipChildren();
+                    } else if (token == JsonToken.VALUE_NULL) {
+                        map.put(currentKey, null);
                     }
                     currentKey = null;
                 } else if (token == JsonToken.FIELD_NAME) {

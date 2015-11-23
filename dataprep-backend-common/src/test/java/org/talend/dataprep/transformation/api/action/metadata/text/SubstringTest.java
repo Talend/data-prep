@@ -196,6 +196,65 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
+
+    /**
+     * Test when 'from' index is negative.
+     */
+    @Test
+    public void test_TDP_870_1() throws IOException {
+        //given
+        parameters.put(FROM_INDEX_PARAMETER, "-1");
+        parameters.put(TO_INDEX_PARAMETER, "5");
+
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
+        expectedValues.put("0003", "");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    /**
+     * Test when 'to' index is greater than string length.
+     */
+    @Test
+    public void test_TDP_870_2() throws IOException {
+        //given
+        parameters.put(FROM_INDEX_PARAMETER, "1");
+        parameters.put(TO_INDEX_PARAMETER, "50");
+
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon");
+        expectedValues.put("0003", "acon");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
     /**
      * @throws IOException
      * @see Split#create(Map)

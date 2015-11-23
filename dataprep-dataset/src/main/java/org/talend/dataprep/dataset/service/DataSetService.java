@@ -274,6 +274,7 @@ public class DataSetService {
 
         // Create the new data set
         dataSetMetadataRepository.add(dataSetMetadata);
+        LOG.debug(marker, "dataset metadata stored {}", dataSetMetadata);
 
         // Queue events (format analysis, content indexing for search...)
         queueEvents(id);

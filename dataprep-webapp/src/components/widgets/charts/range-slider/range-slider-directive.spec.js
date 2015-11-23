@@ -37,7 +37,7 @@ describe('rangeSlider directive', function () {
                 'width="250"' +
                 'height="60"' +
                 'range-limits="rangeLimits"' +
-                'on-brush-end="brushEnd"' +
+                'on-brush-end="brushEnd(interval)"' +
                 '></range-slider>');
 
             angular.element('body').append(element);

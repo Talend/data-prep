@@ -1,0 +1,14 @@
+<div class="param">
+    <div class="param-row">
+        <div class="param-name"
+             data-prep-tooltip="{{::regexParamCtrl.parameter.description}}">
+            {{::regexParamCtrl.parameter.label}}<span translate-once="COLON"></span>
+        </div>
+
+        <div class="param-input">
+            <talend-editable-regex
+                    ng-model="regexParamCtrl.parameter.value"
+                    can-be-blank="{{::regexParamCtrl.parameter.canBeBlank}}"></talend-editable-regex>
+        </div>
+    </div>
+</div>

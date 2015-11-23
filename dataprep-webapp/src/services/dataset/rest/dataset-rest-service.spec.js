@@ -44,7 +44,7 @@ describe('Dataset Rest Service', function () {
             {name: 'Customers (1K lines)'}
         ];
         $httpBackend
-            .expectGET(RestURLs.datasetUrl+ '?sort=name&order=asc')
+            .expectGET(RestURLs.datasetUrl + '?sort=name&order=asc')
             .respond(200, datasets);
 
         //when
@@ -67,11 +67,11 @@ describe('Dataset Rest Service', function () {
             {name: 'Customers (1K lines)'}
         ];
         $httpBackend
-            .expectGET(RestURLs.datasetUrl+ '?sort=name')
+            .expectGET(RestURLs.datasetUrl + '?sort=name')
             .respond(200, datasets);
 
         //when
-        DatasetRestService.getDatasets('name',undefined, $q.defer()).then(function (response) {
+        DatasetRestService.getDatasets('name', undefined, $q.defer()).then(function (response) {
             result = response.data;
         });
         $httpBackend.flush();
@@ -90,7 +90,7 @@ describe('Dataset Rest Service', function () {
             {name: 'Customers (1K lines)'}
         ];
         $httpBackend
-            .expectGET(RestURLs.datasetUrl+ '?order=asc')
+            .expectGET(RestURLs.datasetUrl + '?order=asc')
             .respond(200, datasets);
 
         //when
@@ -131,9 +131,9 @@ describe('Dataset Rest Service', function () {
         var importParameters = {
             type: 'http',
             name: 'greatremotedataset',
-            url:  'moc.dnelat//:ptth'
+            url: 'moc.dnelat//:ptth'
         };
-        var headers = {'Content-Type': 'application/vnd.remote-ds.http', 'Accept':'application/json, text/plain, */*'};
+        var headers = {'Content-Type': 'application/vnd.remote-ds.http', 'Accept': 'application/json, text/plain, */*'};
 
         $httpBackend
             .expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset', importParameters, headers)
@@ -251,7 +251,7 @@ describe('Dataset Rest Service', function () {
 
         //when
         DatasetRestService.getSheetPreview(datasetId)
-            .then(function(response) {
+            .then(function (response) {
                 result = response.data;
             });
         $httpBackend.flush();
@@ -274,7 +274,7 @@ describe('Dataset Rest Service', function () {
 
         //when
         DatasetRestService.getSheetPreview(datasetId, sheetName)
-            .then(function(response) {
+            .then(function (response) {
                 result = response.data;
             });
         $httpBackend.flush();
@@ -306,8 +306,10 @@ describe('Dataset Rest Service', function () {
 
     it('should call set favorite', inject(function ($rootScope, DatasetRestService, RestURLs) {
         //given
-        var dataset = {name: 'my dataset', file: {path: '/path/to/file'}, error: false, id: 'e85afAa78556d5425bc2',
-        favorite:true};
+        var dataset = {
+            name: 'my dataset', file: {path: '/path/to/file'}, error: false, id: 'e85afAa78556d5425bc2',
+            favorite: true
+        };
 
         $httpBackend
             .expectPOST(RestURLs.datasetUrl + '/favorite/e85afAa78556d5425bc2?unset=true')
@@ -341,6 +343,41 @@ describe('Dataset Rest Service', function () {
 
         //then
         //expect POST not to throw any exception;
+    }));
+
+    it('should call clone w/o new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        //given
+        var dataset = {id: 'foobar'};
+
+        $httpBackend
+            .expectGET(RestURLs.datasetUrl + '/clone/foobar')
+            .respond(200);
+
+        //when
+        DatasetRestService.clone(dataset);
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+        //then
+        //expect GET not to throw any exception;
+    }));
+
+    it('should call clone with a new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        //given
+        var dataset = {id: 'foobar'};
+        var newName = 'wine';
+
+        $httpBackend
+            .expectGET(RestURLs.datasetUrl + '/clone/foobar?name=' + encodeURIComponent(newName))
+            .respond(200);
+
+        //when
+        DatasetRestService.clone(dataset, newName);
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+        //then
+        //expect GET not to throw any exception;
     }));
 
 });

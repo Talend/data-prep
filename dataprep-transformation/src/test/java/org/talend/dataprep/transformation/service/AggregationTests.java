@@ -69,6 +69,25 @@ public class AggregationTests extends TransformationServiceBaseTests {
         assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/sum_expected.json")));
     }
 
+    @Test
+    public void shouldAggregateSumWithFilter() throws IOException {
+        // when
+        final String actual = aggregate("../aggregation/sum_filter.json", "../aggregation/aggregation_dataset_input.json");
+
+        // then
+        assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/sum_filter_expected.json")));
+    }
+
+    @Test
+    public void shouldAggregateSumWithNullFilter() throws IOException {
+        // when
+        final String actual = aggregate("../aggregation/sum_filter_null.json", "../aggregation/aggregation_dataset_input.json");
+
+        // then
+        assertThat(actual, sameJSONAsFile(this.getClass().getResourceAsStream("../aggregation/sum_expected.json")));
+    }
+
+
     private String aggregate(String action, String content) throws IOException {
         // given
         final String actions = IOUtils.toString(this.getClass().getResourceAsStream(action));

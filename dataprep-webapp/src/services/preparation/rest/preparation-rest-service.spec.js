@@ -165,6 +165,26 @@ describe('Preparation REST Service', function () {
             //then
             expect(deleted).toBe(true);
         }));
+
+        it('should clone the preparation', inject(function($rootScope, RestURLs, PreparationRestService) {
+            //given
+            var cloned = false;
+            var preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
+            $httpBackend
+                .expectPUT(RestURLs.preparationUrl + '/clone/' + preparationId)
+                .respond(200);
+
+            //when
+            PreparationRestService.clone(preparationId)
+                .then(function() {
+                    cloned = true;
+                });
+            $httpBackend.flush();
+            $rootScope.$digest();
+
+            //then
+            expect(cloned).toBe(true);
+        }));
     });
 
     describe('preparation getters', function() {

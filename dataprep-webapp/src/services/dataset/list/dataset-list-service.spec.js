@@ -163,6 +163,7 @@ describe('Dataset List Service', function () {
         spyOn(DatasetRestService, 'import').and.returnValue($q.when(true));
         spyOn(DatasetRestService, 'update').and.returnValue($q.when(true));
         spyOn(DatasetRestService, 'delete').and.returnValue($q.when(true));
+        spyOn(DatasetRestService, 'clone').and.returnValue($q.when(true));
         spyOn(DatasetRestService, 'processCertification').and.returnValue($q.when(true));
 
         spyOn(DatasetListSortService, 'getSort').and.returnValue('name');
@@ -180,7 +181,6 @@ describe('Dataset List Service', function () {
         //then
         expect(DatasetListService.datasets).toEqual(datasets);
     }));
-
 
     it('should trigger another refresh when one is already pending with different sort condition', inject(function ($rootScope, DatasetListService, DatasetRestService) {
         //given
@@ -364,7 +364,7 @@ describe('Dataset List Service', function () {
         expect(result).toEqual(datasets);
     }));
 
-    it('should call refreshDatasets when datasetsPromise is false', inject(function ($q, DatasetRestService, DatasetListService) {
+    it('should call refreshDatasets when datasetsPromise is false', inject(function (DatasetRestService, DatasetListService) {
         //when
         DatasetListService.getDatasetsPromise();
 
@@ -372,8 +372,7 @@ describe('Dataset List Service', function () {
         expect(DatasetRestService.getDatasets).toHaveBeenCalled();
     }));
 
-
-    it('should return datasetsPromise when datasetsPromise is not false', inject(function ($q, DatasetRestService, DatasetListService) {
+    it('should return datasetsPromise when datasetsPromise is not false', inject(function (DatasetRestService, DatasetListService) {
 
         //given
         DatasetListService.datasets = null;
@@ -386,7 +385,7 @@ describe('Dataset List Service', function () {
         expect(DatasetRestService.getDatasets.calls.count()).toBe(1);
     }));
 
-    it('should return datasetsPromise', inject(function ($q, DatasetRestService, DatasetListService) {
+    it('should return datasetsPromise', inject(function (DatasetRestService, DatasetListService) {
         //when
         var datasetsPromise = DatasetListService.hasDatasetsPromise();
 
@@ -394,4 +393,20 @@ describe('Dataset List Service', function () {
         expect(datasetsPromise).toBeFalsy();
     }));
 
+    it('should call rest service clone', inject(function (DatasetRestService, DatasetListService) {
+        //when
+        DatasetListService.clone(datasets[0], 'beer');
+
+        //then
+        expect(DatasetRestService.clone).toHaveBeenCalledWith(datasets[0], 'beer');
+    }));
+
+    it('should call rest service clone', inject(function ($rootScope, DatasetRestService, DatasetListService) {
+        //when
+        DatasetListService.clone(datasets[0], 'beer');
+        $rootScope.$digest();
+
+        //then
+        expect(DatasetRestService.getDatasets).toHaveBeenCalled();
+    }));
 });

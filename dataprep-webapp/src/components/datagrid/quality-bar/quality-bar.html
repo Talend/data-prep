@@ -27,7 +27,7 @@
             <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu" >
                 <li ng-click="qualityBarCtrl.filterEmptyRecords(qualityBarCtrl.column)">
-                    <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase
+                    <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase
                         }}</a>
                 </li>
                 <li class="divider"></li>
@@ -51,7 +51,7 @@
             <div class="dropdown-action quality-bar-action"></div>
             <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu" >
                 <li ng-click="qualityBarCtrl.filterInvalidRecords(qualityBarCtrl.column)">
-                    <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase}}</a>
+                    <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ qualityBarCtrl.column.name | uppercase}}</a>
                 </li>
                 <li class="divider"></li>
                 <li><a><span translate-once="REPLACE_INVALID_WITH_TOP_VALUE"></span></a></li>

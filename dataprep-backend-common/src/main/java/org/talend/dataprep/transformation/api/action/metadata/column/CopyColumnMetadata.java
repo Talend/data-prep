@@ -1,7 +1,10 @@
 package org.talend.dataprep.transformation.api.action.metadata.column;
 
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.COLUMN_METADATA;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -52,6 +55,15 @@ public class CopyColumnMetadata extends ActionMetadata implements ColumnAction {
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
         return true;
+    }
+
+
+    /**
+     * @see ActionMetadata#getActionScope()
+     */
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
     /**

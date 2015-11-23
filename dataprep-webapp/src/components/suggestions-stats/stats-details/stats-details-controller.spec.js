@@ -43,20 +43,6 @@ describe('Stats-details controller', function () {
         expect(ctrl.boxPlot).toBe(data);
     }));
 
-    it('should bind rangeLimits getter to StatisticsService.rangeLimits', inject(function (StatisticsService) {
-        //given
-        var ctrl = createController();
-        expect(ctrl.statistics).toBeFalsy();
-
-        var rangeLimits = {min:0, max:8};
-
-        //when
-        StatisticsService.rangeLimits = rangeLimits;
-
-        //then
-        expect(ctrl.rangeLimits).toBe(rangeLimits);
-    }));
-
     it('should bind patternFrequencyTable getter to SuggestionService.currentColumn.patternFrequencyTable', inject(function (SuggestionService) {
         //given
         var ctrl = createController();

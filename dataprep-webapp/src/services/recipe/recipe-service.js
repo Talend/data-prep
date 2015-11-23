@@ -7,8 +7,9 @@
      * @description Recipe service. This service provide the entry point to manipulate properly the recipe
      * @requires data-prep.services.preparation.service:PreparationService
      * @requires data-prep.services.transformation.service:TransformationService
+     * @requires data-prep.services.filters.service:FilterAdapterService
      */
-    function RecipeService(state, PreparationService, TransformationService, FilterService) {
+    function RecipeService(state, PreparationService, TransformationService, FilterAdapterService) {
         var clusterType = 'CLUSTER';
 
         /**
@@ -334,9 +335,6 @@
             var metadata = actionStep[2];
             var diff = actionStep[3];
 
-            var flatFilters = [];
-            FilterService.flattenFiltersTree(actionValues.parameters.filter, flatFilters);
-
             var item = {
                 column: {
                     /*jshint camelcase: false */
@@ -353,7 +351,7 @@
                 },
                 actionParameters: actionValues,
                 diff: diff,
-                filters: flatFilters
+                filters: FilterAdapterService.fromTree(actionValues.parameters.filter)
             };
 
             TransformationService.initParamsValues(item.transformation, actionValues.parameters);

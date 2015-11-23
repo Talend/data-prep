@@ -163,6 +163,7 @@ describe('Preparation list service', function() {
         spyOn(PreparationRestService, 'create').and.returnValue($q.when({data: createdPreparationId}));
         spyOn(PreparationRestService, 'update').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'delete').and.returnValue($q.when(true));
+        spyOn(PreparationRestService, 'clone').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'updateStep').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'appendStep').and.returnValue($q.when(true));
     }));
@@ -346,5 +347,29 @@ describe('Preparation list service', function() {
 
         //then
         expect(result).toEqual(preparations);
+    }));
+
+    it('should clone a preparation', inject(function($q, $rootScope, PreparationListService, PreparationRestService) {
+        //given
+        PreparationListService.preparations = preparations.slice(0);
+
+        //when
+        PreparationListService.clone(preparations[0].id);
+        $rootScope.$digest();
+
+        //then
+        expect(PreparationRestService.clone).toHaveBeenCalledWith(preparations[0].id);
+    }));
+
+    it('should refresh preparations list on clone', inject(function($rootScope, PreparationListService, PreparationRestService) {
+        //given
+        PreparationListService.preparations = preparations.slice(0);
+
+        //when
+        PreparationListService.clone(preparations[0].id);
+        $rootScope.$digest();
+
+        //then
+        expect(PreparationRestService.getPreparations).toHaveBeenCalled();
     }));
 });

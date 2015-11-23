@@ -4,6 +4,7 @@ describe('ColumnProfile controller', function () {
     var createController, scope;
 
     var stateMock;
+    var removeFilterFn = function() {};
 
     beforeEach(module('data-prep.column-profile', function($provide) {
         stateMock = {playground: {grid: {}}};
@@ -23,7 +24,7 @@ describe('ColumnProfile controller', function () {
     describe('filter', function() {
         beforeEach(inject(function(FilterService, StatisticsService) {
             spyOn(FilterService, 'addFilterAndDigest').and.returnValue();
-            spyOn(StatisticsService, 'addRangeFilter').and.returnValue();
+            spyOn(StatisticsService, 'getRangeFilterRemoveFn').and.returnValue(removeFilterFn);
         }));
 
         it('should add a new "exact" filter', inject(function (FilterService) {
@@ -43,16 +44,22 @@ describe('ColumnProfile controller', function () {
             expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('exact', '0001', 'firstname', {phrase: 'Ulysse', caseSensitive: true});
         }));
 
-        it('should add a new "range" filter from StatisticsService', inject(function (StatisticsService) {
+        it('should add a new "range" filter from StatisticsService', inject(function (StatisticsService, FilterService) {
             //given
             var ctrl = createController();
-            var obj = {data : {min: '5', max: '15'}};
+            var interval = [5, 15];
+
+            stateMock.playground.grid.selectedColumn = {
+                id: '0001',
+                name: 'firstname'
+            };
 
             //when
-            ctrl.addRangeFilter(obj);
+            ctrl.addRangeFilter(interval);
 
             //then
-            expect(StatisticsService.addRangeFilter).toHaveBeenCalledWith(obj.data);
+            expect(StatisticsService.getRangeFilterRemoveFn).toHaveBeenCalled();
+            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('inside_range', '0001', 'firstname', {interval: interval}, removeFilterFn);
         }));
 
         it('should add a new "empty_records" filter from exact_filter on barchart click callback', inject(function (StatisticsService, FilterService) {

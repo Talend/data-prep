@@ -56,7 +56,8 @@
       box-shadow: 5px 4px 6px -4px $dark-gray;
 
       .actions a {
-        &.trash {
+        &.trash,
+        &.clone-btn {
           display: block;
         }
       }
@@ -112,13 +113,9 @@
         }
       }
 
-      &.trash {
-        font-size: 0.8em;
-        display: none;
-      }
-
+      &.trash,
       &.clone-btn {
-        font-size: .8em;
+        font-size: 0.8em;
         display: none;
       }
 

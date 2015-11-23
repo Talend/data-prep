@@ -235,4 +235,97 @@ describe('Grid state service', function () {
             expect(gridState.selectedLine).toBe(null);
         }));
     });
+
+    describe('filtered values', function() {
+        var filteredRecords = [
+            {'0000': '0000', '0001': 'Jimmy', '0002': 'Somsanith', '0003': 'DEV'},
+            {'0000': '0001', '0001': 'Charles', '0002': 'Nguyen', '0003': 'DEV'},
+            {'0000': '0002', '0001': 'Stéphane', '0002': 'Mallet', '0003': 'CP'}
+        ];
+
+        beforeEach(inject(function(gridState) {
+            gridState.dataView.setItems(filteredRecords);
+        }));
+
+        it('should update filtered records on filter change', inject(function(gridState, GridStateService) {
+            //given
+            gridState.filteredRecords = null;
+            gridState.selectedColumn = {
+                id: '0003'
+            };
+
+            //when
+            GridStateService.setFilter([], {columns: [], records: filteredRecords});
+
+            //then
+            expect(gridState.filteredRecords).toEqual(filteredRecords);
+        }));
+
+        it('should update filtered records occurrences on filter change', inject(function(gridState, GridStateService) {
+            //given
+            gridState.filteredOccurences = null;
+            gridState.selectedColumn = {
+                id: '0003'
+            };
+
+            //when
+            GridStateService.setFilter([], {columns: [], records: filteredRecords});
+
+            //then
+            expect(gridState.filteredOccurences).toEqual({
+                'DEV': 2,
+                'CP': 1
+            });
+        }));
+
+        it('should update filtered records on data change', inject(function(gridState, GridStateService) {
+            //given
+            gridState.filteredRecords = null;
+            gridState.selectedColumn = {
+                id: '0003'
+            };
+
+            //when
+            GridStateService.setData({columns: [{id: '0003'}], records: filteredRecords});
+
+            //then
+            expect(gridState.filteredRecords).toEqual(filteredRecords);
+        }));
+
+        it('should update filtered records occurrences on data change', inject(function(gridState, GridStateService) {
+            //given
+            gridState.filteredOccurences = null;
+            gridState.selectedColumn = {
+                id: '0003'
+            };
+
+            //when
+            GridStateService.setData({columns: [{id: '0003'}], records: filteredRecords});
+
+            //then
+            expect(gridState.filteredOccurences).toEqual({
+                'DEV': 2,
+                'CP': 1
+            });
+        }));
+
+        it('should update filtered records occurrences on grid selection', inject(function(gridState, GridStateService) {
+            //given
+            gridState.filteredRecords = filteredRecords;
+            gridState.filteredOccurences = null;
+
+            var column = {
+                id: '0003'
+            };
+
+            //when
+            GridStateService.setGridSelection(column, null);
+
+            //then
+            expect(gridState.filteredOccurences).toEqual({
+                'DEV': 2,
+                'CP': 1
+            });
+        }));
+    });
 });

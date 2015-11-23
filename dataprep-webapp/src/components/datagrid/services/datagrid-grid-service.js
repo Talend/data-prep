@@ -125,7 +125,6 @@
 
             //init other services
             initGridServices();
-
             return grid;
         }
     }

@@ -2,6 +2,7 @@ package org.talend.dataprep.dataset.store.metadata.memory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,9 @@ public class InMemoryDataSetMetadataRepository extends DataSetMetadataRepository
      */
     @Override
     public Iterable<DataSetMetadata> list() {
-        return store.values();
+        final Collection<DataSetMetadata> values = store.values();
+        LOG.debug("list {} dataset metadata", values.size());
+        return values;
     }
 
     /**

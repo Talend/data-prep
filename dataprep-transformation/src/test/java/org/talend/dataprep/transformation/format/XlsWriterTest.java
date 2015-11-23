@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.io.XlsUtils;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
@@ -50,7 +52,9 @@ public class XlsWriterTest extends BaseFormatTest {
                 exporter.transform(dataSet, configuration);
             }
         }
-        Workbook workbook = XlsUtils.getWorkbook(Files.newInputStream(path));
+        DataSetMetadata metadata = DataSetMetadata.Builder.metadata().id("123").build();
+        SchemaParser.Request request = new SchemaParser.Request(Files.newInputStream(path), metadata);
+        Workbook workbook = XlsUtils.getWorkbook(request);
         assertThat(workbook).isNotNull();
         assertThat(workbook.getNumberOfSheets()).isEqualTo(1);
 

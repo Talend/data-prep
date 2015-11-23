@@ -24,6 +24,7 @@ describe('Dataset Service', function () {
         spyOn(DatasetListService, 'create').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'importRemoteDataset').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'update').and.returnValue(promiseWithProgress);
+        spyOn(DatasetListService, 'clone').and.returnValue($q.when(true));
         spyOn(DatasetListService, 'processCertification').and.returnValue($q.when(true));
 
         spyOn(DatasetRestService, 'getContent').and.returnValue($q.when({}));
@@ -154,6 +155,34 @@ describe('Dataset Service', function () {
 
                 //then
                 expect(StorageService.removeAllAggregations).toHaveBeenCalledWith(dataset.id);
+            }));
+        });
+
+        describe('clone', function() {
+            it('should clone a dataset and return the http promise (with progress function)', inject(function ($rootScope, DatasetService, DatasetListService) {
+                //given
+                var dataset = DatasetListService.datasets[0];
+                var name = 'my clone';
+
+                //when
+                DatasetService.clone(dataset, name);
+
+                //then
+                expect(DatasetListService.clone).toHaveBeenCalledWith(dataset, name);
+            }));
+
+            it('should consolidate preparations and datasets', inject(function ($rootScope, DatasetService, DatasetListService, PreparationListService) {
+                //given
+                var dataset = DatasetListService.datasets[0];
+                var name = 'my clone';
+
+                //when
+                DatasetService.clone(dataset, name);
+                $rootScope.$digest();
+
+                //then
+                expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
+                expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
             }));
         });
     });

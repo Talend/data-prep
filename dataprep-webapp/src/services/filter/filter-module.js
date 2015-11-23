@@ -9,6 +9,7 @@
      */
     angular.module('data-prep.services.filter', [
         'data-prep.services.playground',
+        'data-prep.services.statistics',
         'data-prep.services.utils'
     ]);
 })();

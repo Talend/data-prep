@@ -9,8 +9,9 @@
      * @requires data-prep.services.playground.service:PlaygroundService
      * @requires data-prep.services.playground.service:PreviewService
      * @requires data-prep.services.preparation.service:PreparationService
+     * @requires data-prep.services.filters.service:FilterAdapterService
      */
-    function RecipeCtrl($translate, state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterService) {
+    function RecipeCtrl(state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterAdapterService) {
         var vm = this;
         vm.recipeService = RecipeService;
 
@@ -78,10 +79,11 @@
             else{
                 var filterPos = step.filters.indexOf(filter);
                 var removedFilter = step.filters.splice(filterPos, 1);
-                var stepFiltersTree = FilterService.convertFiltersArrayToTreeFormat(step.filters);
+                var stepFiltersTree = FilterAdapterService.toTree(step.filters);
 
-                //_.omit for the case where all the step filters have been removed because in that case stepFiltersTree === {}
-                vm.updateStep(step, _.extend({}, _.omit(step.actionParameters.parameters, 'filter'), stepFiltersTree))
+                //get step parameters and replace filter field (it is removed when there is no filter anymore)
+                var updatedParameters = _.extend({}, _.omit(step.actionParameters.parameters, 'filter'), stepFiltersTree);
+                vm.updateStep(step, updatedParameters)
                     .catch(function(){
                         step.filters.push(removedFilter[0]);
                     });

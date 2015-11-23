@@ -114,7 +114,7 @@
                     function triggerFilter(filterToTrigger){
                         //check if the minFilter < maxFilter
                         filterToTrigger = filterToTrigger[0] > filterToTrigger[1] ? [filterToTrigger[1], filterToTrigger[0]] : filterToTrigger;
-                        ctrl.onBrushEnd()(filterToTrigger);
+                        ctrl.onBrushEnd({interval: filterToTrigger});
                     }
 
                     function prepareBrushFilter(initialBrushValues){

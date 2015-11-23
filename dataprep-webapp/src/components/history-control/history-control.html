@@ -1,11 +1,11 @@
 <div class="history-control">
     <a ng-click="historyCtrl.service.undo()"
        ng-class="{'inactive': !historyCtrl.service.canUndo()}"
-       class="icon undo" data-icon="z" alt="UNDO ({{historyCtrl.service.canUndo()}})">
+       class="icon undo" data-icon="F" alt="UNDO ({{historyCtrl.service.canUndo()}})">
     </a>
 
     <a ng-click="historyCtrl.service.redo()"
        ng-class="{'inactive': !historyCtrl.service.canRedo()}"
-       class="icon redo" data-icon="z" alt="REDO ({{historyCtrl.service.canRedo()}})">
+       class="icon redo" data-icon="G" alt="REDO ({{historyCtrl.service.canRedo()}})">
     </a>
 </div>

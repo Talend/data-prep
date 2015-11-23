@@ -6,27 +6,18 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.location.HttpLocation;
-import org.talend.dataprep.dataset.Application;
+import org.talend.dataprep.dataset.DataSetBaseTest;
 
 /**
  * Unit test for the HttpDataSetLocator.
  * 
  * @see HttpDataSetLocator
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest
-public class HttpDataSetLocatorTest {
+public class HttpDataSetLocatorTest extends DataSetBaseTest {
 
     /** The dataset locator to test. */
     @Autowired

@@ -135,7 +135,7 @@
 
             // TODO root folder as a constant
             var foldersStack = [];
-            foldersStack.push({id:'',path:'All files'});
+            foldersStack.push({id:'',path:'Home'});
 
             if(folderId) {
                 var paths = folderId.split('/');

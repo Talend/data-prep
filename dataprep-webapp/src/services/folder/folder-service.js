@@ -139,12 +139,12 @@
 
             if(folderId) {
                 var paths = folderId.split('/');
-                for(var i = 0;i<=paths.length;i++){
-                    if(paths[i]) {
-                        if ( i > 0 ) {
-                            foldersStack.push( {id: foldersStack[i - 1].path + '/' + paths[i], path: paths[i]} );
+                for(var i = 1;i<=paths.length + 1;i++){
+                    if(paths[i-1]) {
+                        if ( i > 1 ) {
+                            foldersStack.push( {id: foldersStack[i - 1].id + '/' + paths[i-1], path: paths[i-1]} );
                         } else {
-                            foldersStack.push( {id: paths[i], path: paths[i]} );
+                            foldersStack.push( {id: paths[i-1], path: paths[i-1]} );
                         }
                     }
                 }

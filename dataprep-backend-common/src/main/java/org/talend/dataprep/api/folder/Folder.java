@@ -1,9 +1,6 @@
 package org.talend.dataprep.api.folder;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
@@ -20,6 +17,14 @@ public class Folder extends Identifiable implements Serializable {
     @JsonProperty("path")
     private String path;
 
+
+    public Folder() {
+        // no op
+    }
+
+    public Folder(String path) {
+        this.path = path;
+    }
 
     @Override
     public String getId() {

@@ -7,12 +7,12 @@
         RecipeStateService, recipeState,
         GridStateService, gridState,
         FilterStateService, filterState,
-        SuggestionsStatsState, suggestionsStatsState) {
+        SuggestionsState, suggestionsState) {
 
         playgroundState.recipe = recipeState;
         playgroundState.grid = gridState;
         playgroundState.filter = filterState;
-        playgroundState.suggestionsStats = suggestionsStatsState;
+        playgroundState.suggestions = suggestionsState;
 
         return {
             //playground
@@ -41,8 +41,7 @@
             removeAllGridFilters: removeAllGridFilters,
 
             //Suggestion-Stats
-            showSuggestionStats: SuggestionsStatsState.show,
-            hideSuggestionStats: SuggestionsStatsState.hide
+            setSuggestionsLoading: SuggestionsState.setLoading
         };
 
         //--------------------------------------------------------------------------------------------------------------
@@ -116,6 +115,7 @@
 
             GridStateService.reset();
             FilterStateService.reset();
+            SuggestionsState.reset();
         }
     }
 

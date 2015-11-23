@@ -350,7 +350,7 @@ describe('Datagrid external service', function () {
 
             //when
             DatagridExternalService.updateSuggestionPanel(headerClickArgs.column, 'Cell', true);
-            $timeout.flush();
+            $timeout.flush(0);
 
             //then
             expect(StatisticsService.updateStatistics).toHaveBeenCalled();

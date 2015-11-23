@@ -47,16 +47,12 @@
             else {
                 var tabHasChanged = tab !== lastSelectedTab;
                 var columnHasChanged = column.tdpColMetadata !== lastSelectedColumn;
-
-                var waitingTime = updateImmediately ? 0 : 300;
-
-
                 if (!tabHasChanged && !columnHasChanged) {
                     return;
                 }
 
+                var debounceTime = updateImmediately ? 0 : 300;
                 $timeout.cancel(suggestionTimeout);
-
                 suggestionTimeout = $timeout(function () {
                     lastSelectedColumn = column.tdpColMetadata;
                     lastSelectedTab = tab;
@@ -68,7 +64,7 @@
                         StatisticsService.updateStatistics();
                         SuggestionService.setColumn(lastSelectedColumn);
                     }
-                }, waitingTime);
+                }, debounceTime);
             }
         }
 

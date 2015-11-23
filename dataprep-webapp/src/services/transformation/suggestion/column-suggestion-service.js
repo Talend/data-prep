@@ -36,7 +36,7 @@
         //--------------------------------------------------------------------------------------------------------------
 
         function setHtmlDisplayLabels(transformations) {
-            _.forEach(transformations, function(transfo) {
+            _.forEach(transformations, function (transfo) {
                 transfo.labelHtml = transfo.label + (transfo.parameters || transfo.dynamic ? '...' : '');
             });
         }
@@ -58,7 +58,7 @@
         }
 
 
-        function isAplliedToCells(type) {
+        function isAppliedToCells(type) {
             return function (item) {
                 return item.actionScope && (item.actionScope.indexOf(type) !== -1);
             };
@@ -83,7 +83,7 @@
 
             var adaptedTransformations = _.chain(Object.getOwnPropertyNames(groupedTransformations))
                 .sort()
-                .map(function(key) {
+                .map(function (key) {
                     return {
                         category: key,
                         categoryHtml: key.toUpperCase(),
@@ -130,8 +130,7 @@
          * @description Get and process the transformations from backend
          */
         function initTransformations(column) {
-
-            StateService.hideSuggestionStats();
+            StateService.setSuggestionsLoading(true);
             reset();
 
             $q
@@ -150,16 +149,16 @@
                     service.allTransformations = values[1];
 
                     service.transformationsForEmptyCells = _.chain(values[1])
-                                                            .filter(isAplliedToCells(EMPTY_CELLS))
-                                                            .sortBy(labelCriteria)
-                                                            .value();
+                        .filter(isAppliedToCells(EMPTY_CELLS))
+                        .sortBy(labelCriteria)
+                        .value();
                     service.transformationsForInvalidCells = _.chain(values[1])
-                                                              .filter(isAplliedToCells(INVALID_CELLS))
-                                                              .sortBy(labelCriteria)
-                                                              .value();
+                        .filter(isAppliedToCells(INVALID_CELLS))
+                        .sortBy(labelCriteria)
+                        .value();
                 })
                 .finally(function () {
-                    StateService.showSuggestionStats();
+                    StateService.setSuggestionsLoading(false);
                 });
         }
 
@@ -172,20 +171,20 @@
         }
 
         function transfosMatchSearch(searchValue) {
-            return function(transfo) {
+            return function (transfo) {
                 return transfo.labelHtml.toLowerCase().indexOf(searchValue) !== -1 ||
                     transfo.description.toLowerCase().indexOf(searchValue) !== -1;
             };
         }
 
         function extractTransfosThatMatch(searchValue) {
-            return function(catTransfos) {
+            return function (catTransfos) {
                 var category = catTransfos.category;
                 var transformations = catTransfos.transformations;
 
                 //category matches : display all this category transformations
                 //category does NOT match : filter to only have matching displayed label or description
-                if(! categoryMatchSearch(category, searchValue)) {
+                if (!categoryMatchSearch(category, searchValue)) {
                     transformations = _.filter(transformations, transfosMatchSearch(searchValue));
                 }
 
@@ -211,9 +210,9 @@
         }
 
         function highlightDisplayedLabels(searchValue) {
-            return function(catTransfo) {
+            return function (catTransfo) {
                 highlight(catTransfo, 'categoryHtml', searchValue);
-                _.forEach(catTransfo.transformations, function(transfo) {
+                _.forEach(catTransfo.transformations, function (transfo) {
                     highlight(transfo, 'labelHtml', searchValue);
                 });
                 return catTransfo;

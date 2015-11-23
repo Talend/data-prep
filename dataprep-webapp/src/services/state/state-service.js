@@ -33,11 +33,9 @@
             removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
             updateGridFilter: PlaygroundStateService.updateGridFilter,
 
-            //playground - Suggestion-Stats
-            showSuggestionStats: PlaygroundStateService.showSuggestionStats,
-            hideSuggestionStats: PlaygroundStateService.hideSuggestionStats,
+            //playground - Suggestions
+            setSuggestionsLoading: PlaygroundStateService.setSuggestionsLoading,
 
-            
             //dataset
             startUploadingDataset: DatasetStateService.startUploadingDataset,
             finishUploadingDataset: DatasetStateService.finishUploadingDataset

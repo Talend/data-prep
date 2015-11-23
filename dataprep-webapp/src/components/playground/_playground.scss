@@ -166,15 +166,4 @@
       }
     }
   }
-  .suggestions-loading-div {
-    height: 100%;
-    width: 100%;
-    .suggestions-loading {
-      color: $dark-gray;
-      position: absolute;
-      top : calc(50vh - 30px);
-      left: 50%;
-    }
-  }
-
 }

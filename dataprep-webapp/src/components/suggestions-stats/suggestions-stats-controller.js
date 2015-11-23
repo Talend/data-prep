@@ -1,7 +1,8 @@
 (function() {
     'use strict';
 
-    function SuggestionsStatsCtrl() {
+    function SuggestionsStatsCtrl(state) {
+        this.state = state;
     }
 
     angular.module('data-prep.suggestions-stats')

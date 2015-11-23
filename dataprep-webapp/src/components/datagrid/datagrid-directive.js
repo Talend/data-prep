@@ -120,7 +120,7 @@
                         clearTimeout(externalTimeout);
                         if(!data.preview) {
                             externalTimeout = setTimeout(function () {
-                                 DatagridExternalService.updateSuggestionPanel(selectedColumn, '', true);
+                                 DatagridExternalService.updateSuggestionPanel(selectedColumn, null, true);
                             }, 0);
                         }
 

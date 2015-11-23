@@ -146,6 +146,35 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void renameFolder( String path, String newPath )
+    {
+        if (StringUtils.isEmpty(path) //
+                || StringUtils.isEmpty(newPath) //
+                || StringUtils.containsOnly(path, "/")) {
+            throw new IllegalArgumentException("path cannot be empty");
+        }
+
+        String originalPath = path;
+        if (!StringUtils.startsWith(originalPath, "/")) {
+            originalPath = "/" + originalPath;
+        }
+
+        List<String> pathParts = Lists.newArrayList(StringUtils.split(originalPath, PATH_SEPARATOR));
+
+        Path folderPath = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+
+        pathParts = Lists.newArrayList(StringUtils.split(newPath, PATH_SEPARATOR));
+
+        Path newFolderPath = Paths.get(getRootFolder().toString(), pathParts.toArray(new String[pathParts.size()]));
+
+        try {
+            FileUtils.moveDirectory(folderPath.toFile(), newFolderPath.toFile());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
 
     }
 

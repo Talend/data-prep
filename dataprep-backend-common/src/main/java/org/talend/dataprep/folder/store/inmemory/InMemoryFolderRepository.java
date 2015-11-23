@@ -3,9 +3,7 @@ package org.talend.dataprep.folder.store.inmemory;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.annotation.PostConstruct;
@@ -97,6 +95,38 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
         });
 
         return childs;
+    }
+
+    @Override
+    public void renameFolder(String path, String newPath) {
+        // TODO we should have a lock here around those operations
+        String cleanPath = cleanPath( path );
+        String cleanNewPath = cleanPath( newPath );
+
+        this.foldersMap.keySet().parallelStream().forEach( key -> {
+            if (StringUtils.startsWith( key, cleanPath )){
+                Folder folder = this.foldersMap.get( key );
+                this.foldersMap.remove( key );
+                String newFolderPath = StringUtils.replace( folder.getPath(), cleanPath, cleanNewPath, 1 );
+                folder.setPath(newFolderPath );
+                folder.setName( extractName( folder.getPath() ) );
+                String newKey = StringUtils.replace( key, cleanPath, cleanNewPath, 1 );
+                this.foldersMap.put( newKey, folder );
+            }
+        });
+
+        this.folderEntriesMap.keySet().parallelStream().forEach( key -> {
+            if (StringUtils.startsWith( key, cleanPath )){
+                List<FolderEntry> entries = this.folderEntriesMap.get( key );
+                String newKey = StringUtils.replace( key, cleanPath, cleanNewPath, 1 );
+                this.folderEntriesMap.put( newKey, entries );
+                this.folderEntriesMap.remove( key );
+                entries.parallelStream().forEach( folderEntry -> {
+                    String newFolderPath = StringUtils.replace( folderEntry.getPath(), cleanPath, cleanNewPath, 1 );
+                    folderEntry.setPath( newFolderPath );
+                });
+            }
+        });
     }
 
     @Override

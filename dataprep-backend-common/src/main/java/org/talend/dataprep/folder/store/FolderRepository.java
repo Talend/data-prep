@@ -26,6 +26,21 @@ public interface FolderRepository {
     Folder addFolder(String path);
 
     /**
+     * remove folder and content recursively
+     * 
+     * @param path the path to remove only the last part is remove
+     */
+    void removeFolder(String path);
+
+    /**
+     * remove folder and content recursively
+     *
+     * @param path the path to rename
+     * @param newPath the full new path
+     */
+    void renameFolder(String path, String newPath);
+
+    /**
      * add or update (if already exists) the entry
      * @param folderEntry the {@link FolderEntry} to add
      */
@@ -38,13 +53,6 @@ public interface FolderRepository {
      * @param contentType  the type dataset, preparation
      */
     void removeFolderEntry(String folderPath, String contentId, String contentType);
-
-    /**
-     * remove folder and content recursively
-     * 
-     * @param path the path to remove only the last part is remove
-     */
-    void removeFolder(String path);
 
     /**
      *

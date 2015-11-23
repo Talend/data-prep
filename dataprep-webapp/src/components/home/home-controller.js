@@ -13,9 +13,10 @@
      * @requires data-prep.services.state.constant:state
      * @requires data-prep.services.folder.service:FolderService
      */
-    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state, FolderService) {
+    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state, FolderService, $state) {
         var vm = this;
         var DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
+        vm.$state = $state;
 
         /**
          * @ngdoc property

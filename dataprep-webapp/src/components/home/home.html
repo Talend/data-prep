@@ -25,7 +25,7 @@
                        ng-file-change="homeCtrl.uploadDatasetFile()"/>
             </li>
 
-            <li>
+            <li ng-if="homeCtrl.$state.includes('nav.home.datasets')">
                 <folder type="dataset"></folder>
             </li>
         </ul>

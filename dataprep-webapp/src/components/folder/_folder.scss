@@ -34,14 +34,6 @@
       padding: 0px 0px 0px 10px;
     }
 
-    &:last-child {
-    }
-
-    &:focus,
-    &:hover {
-      color: $dark-blue;
-    }
-
     &:after,
     &:before {
       @include position(absolute, 0px auto 0px 100%);
@@ -62,11 +54,6 @@
       border: none;
     }
 
-    &:before {
-    }
-    &:after {
-    }
-
     @include media($medium-screen) {
       font-size: 1em;
       padding: 0px 0px 0px 30px;
@@ -84,6 +71,10 @@
       &:before {
         border-color: transparent;
       }
+    }
+
+    li:hover{
+      background-color: $dark-green;
     }
     &:focus {
       outline: none;

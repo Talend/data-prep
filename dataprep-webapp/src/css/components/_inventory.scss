@@ -58,11 +58,7 @@ $border-color: #CECECE;
       cursor: pointer;
 
       &.inventory-folder{
-        margin: 8px 0px;
-      }
-
-      &:hover {
-        padding: 0 2px;
+        padding-top: 12px;
       }
 
       &.no-link:hover {
@@ -95,7 +91,7 @@ $border-color: #CECECE;
       white-space: nowrap;
 
       &.inventory-folder {
-        padding-top: 12px;
+        padding-top: 15px;
       }
 
       .inventory-title {

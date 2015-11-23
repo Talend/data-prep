@@ -4,7 +4,7 @@
     // currentFolder is initalized with root value
     var folderState = {
                         currentFolder:{id:'', path: 'All files'},
-                        currentFolderChilds: [],
+                        currentFolderContent: {},
                         foldersStack: [],
                         menuChilds: []
                       };
@@ -17,7 +17,7 @@
     function FolderStateService() {
         return {
             setCurrentFolder: setCurrentFolder,
-            setCurrentChilds: setCurrentChilds,
+            setCurrentFolderContent: setCurrentFolderContent,
             setFoldersStack: setFoldersStack,
             setMenuChilds: setMenuChilds
         };
@@ -39,8 +39,8 @@
          * @methodOf data-prep.services.state.service:FolderStateService
          * @param {object} array the childs of the current folder
          */
-        function setCurrentChilds(childs){
-            folderState.currentFolderChilds = childs;
+        function setCurrentFolderContent(childs){
+            folderState.currentFolderContent = childs;
         }
 
         /**

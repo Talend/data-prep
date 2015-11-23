@@ -7,15 +7,14 @@
      * @description Folder service. This service provide the entry point to the Folder service.
      * @requires data-prep.services.folder.service:FolderRestService
      * @requires data-prep.services.state.service:StateService
-     * @requires data-prep.services.dataset.service:DatasetService
      */
-    function FolderService(FolderRestService,StateService,DatasetService,state) {
+    function FolderService(FolderRestService,StateService) {
 
         return {
             // folder operations
             create: createFolder,
             delete: deleteFolder,
-            folders: listFolderChilds,
+            getFolderContent: getFolderContent,
 
             // folder entry operations
             createFolderEntry: createFolderEntry,
@@ -24,10 +23,6 @@
 
             // shared folder ui mngt
             buidStackFromId: buidStackFromId,
-            loadFolders: loadFolders,
-            cleanupPathFolderArray: cleanupPathFolderArray,
-            populateChilds: populateChilds,
-            goToFolder: goToFolder,
             populateMenuChilds: populateMenuChilds
         };
 
@@ -56,18 +51,6 @@
          */
         function createFolder(path){
             return FolderRestService.create(path);
-        }
-
-        /**
-         * @ngdoc method
-         * @name listFolderChilds
-         * @methodOf data-prep.services.folder.service:FolderService
-         * @description List the childs of a folder (or child of root folder)
-         * @param {string} path optional path to list childs
-         * @returns {Promise} The GET promise
-         */
-        function listFolderChilds(path){
-            return FolderRestService.folders(path);
         }
 
         //----------------------------------------------
@@ -127,13 +110,6 @@
          */
         function buidStackFromId(folderId){
 
-            // folder.id can be:
-            // foo/bar
-            // foo
-            // foo/
-            // so parse that to generate the stack
-
-            // TODO root folder as a constant
             var foldersStack = [];
             foldersStack.push({id:'',path:'Home'});
 
@@ -155,84 +131,15 @@
 
         /**
          * @ngdoc method
-         * @name loadFolders
-         * @methodOf data-prep.services.folder.service:FolderService
-         * @description build childs for root folder
-         */
-        function loadFolders(){
-
-            FolderRestService.folders('')
-                .then(function(folders){
-                    StateService.setCurrentChilds( cleanupPathFolderArray( folders.data, '' ));
-                    // build for root
-                    buidStackFromId();
-                    console.log('loadFolders:'+state.folder.foldersStack.length);
-                });
-        }
-
-        /**
-         * @ngdoc method
-         * @name loadFolders
-         * @methodOf data-prep.services.folder.service:FolderService
-         * @param {array} array of Folder
-         * @param {string} path - the origin path
-         * @description cleanup the path for all folder in the array
-         */
-        function cleanupPathFolderArray(folders,path){
-            _.forEach(folders,function(folder){
-                if (folder.path){
-                    folder.path = cleanupPath(folder.path.substring(path.length,folder.path.length));
-                }
-            });
-            return folders;
-        }
-
-        /**
-         * @ngdoc method
-         * @name cleanupPath
-         * @methodOf data-prep.folder.controller:FolderCtrl
-         * @param {string} str - the path to clean
-         * @description remove / character
-         */
-        function cleanupPath(str){
-            return str.split('/').join('');
-        }
-
-        /**
-         * @ngdoc method
-         * @name populateChilds
-         * @methodOf data-prep.folder.controller:FolderCtrl
-         * @description build the child list of the part part given by the index parameter
-         */
-        function populateChilds(folder){
-            // special for root folder
-            var currentPath = folder.id?folder.path:'';
-            var promise = FolderRestService.folders(folder.id);
-
-            promise.then(function(response){
-                    var foundChilds = cleanupPathFolderArray(response.data,currentPath);
-                    StateService.setCurrentChilds(foundChilds);
-                });
-
-            return promise;
-        }
-
-        /**
-         * @ngdoc method
          * @name populateMenuChilds
          * @methodOf data-prep.folder.controller:FolderCtrl
          * @description build the child list of the part part given by the index parameter
          */
         function populateMenuChilds(folder){
-            // special for root folder
-            var currentPath = folder.id?folder.path:'';
-            var promise = FolderRestService.folders(folder.id);
-
-            promise.then(function(response){
-                var foundChilds = cleanupPathFolderArray(response.data,currentPath);
-                StateService.setMenuChilds(foundChilds);
+            var promise = FolderRestService.getFolderContent(folder);
+            promise.then(function(content){
+                StateService.setMenuChilds(content.data.folders);
             });
-
             return promise;
         }
 
@@ -242,21 +149,12 @@
          * @methodOf data-prep.folder.controller:FolderCtrl
          * @param {object} folder - the folder to go
          */
-        function goToFolder(folder){
-            buidStackFromId(folder.id);
-            StateService.setCurrentFolder(folder);
-            //loadFolders(folder);
-            // loading folder entries
-            if (folder.id){
-                listFolderEntries( 'dataset', folder )
-                    .then(function(response){
-                        DatasetService.filterDatasets(response.data);
-                    })
-                    .then(populateChilds(folder));
-            } else {
-                DatasetService.filterDatasets();
-                populateChilds(folder);
-            }
+        function getFolderContent(folder){
+            FolderRestService.getFolderContent(folder).then(function(content){
+                StateService.setCurrentFolder(folder? folder : {id:'',path:'Home'});
+                StateService.setCurrentFolderContent(content.data);
+                buidStackFromId(folder? folder.id : "");
+            });
 
         }
 

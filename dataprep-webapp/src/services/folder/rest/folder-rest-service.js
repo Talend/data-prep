@@ -13,7 +13,7 @@
             // folder operations
             create: createFolder,
             delete: deleteFolder,
-            folders: listFolderChilds,
+            getFolderContent: getFolderContent,
 
             // folder entry operations
             createFolderEntry: createFolderEntry,
@@ -50,16 +50,18 @@
 
         /**
          * @ngdoc method
-         * @name listFolderChilds
+         * @name getFolderContent
          * @methodOf data-prep.services.folder.service:FolderRestService
-         * @description List the childs of a folder (or child of root folder)
-         * @param {string} path optional path to list childs
+         * @description List the childs (folders or datasets) of a folder (or child of root folder)
+         * @param {object} folder - the current folder
          * @returns {Promise} The GET promise
          */
-        function listFolderChilds(path){
-            var url = RestURLs.folderUrl;
-            if (path) {
-                url += '?path=' + encodeURIComponent(path);
+        function getFolderContent(folder){
+            var url = RestURLs.folderUrl + '/datasets';
+            if (folder && folder.id) {
+                url += '?folder=' + encodeURIComponent(folder.id);
+            } else {
+                url += '?folder=/';
             }
             return $http.get(url);
         }

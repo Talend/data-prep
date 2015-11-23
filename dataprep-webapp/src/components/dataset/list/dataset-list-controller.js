@@ -232,13 +232,9 @@
             var pathToCreate = (state.folder.currentFolder.id?state.folder.currentFolder.id:'') + '/' + vm.folderName;
             FolderService.create( pathToCreate )
                 .then(function() {
-                    FolderService.goToFolder(state.folder.currentFolder);
+                    vm.goToFolder(state.folder.currentFolder);
                 });
-
-            // TODO force refresh of folders in state
-
         };
-
         /**
          * @ngdoc method
          * @name goToFolder
@@ -247,7 +243,7 @@
          * @description Go to the folder given as parameter
          */
         vm.goToFolder = function(folder){
-            FolderService.goToFolder(folder);
+            FolderService.getFolderContent(folder);
         };
 
         // load the datasets
@@ -280,11 +276,11 @@
      * This list is bound to {@link data-prep.services.state.service:FolderStateService}.folderState.currentFolderChilds
      */
     Object.defineProperty(DatasetListCtrl.prototype,
-        'currentFolderChilds', {
+        'currentFolderContent', {
             enumerable: true,
             configurable: false,
             get: function () {
-                return this.state.folder.currentFolderChilds;
+                return this.state.folder.currentFolderContent;
             }
         });
 

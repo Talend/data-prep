@@ -22,7 +22,7 @@
          * @param {object} folder - the folder to go
          */
         vm.goToFolder = function(folder){
-            FolderService.goToFolder(folder);
+            FolderService.getFolderContent(folder);
         };
 
         /**
@@ -33,15 +33,18 @@
          * @description build the child list of the folder menu entry as parameter
          */
         vm.initMenuChilds = function(folder){
-            vm.loadingChilds=true;
+            vm.loadingChilds = true;
             FolderService.populateMenuChilds(folder)
-                .then(vm.loadingChilds=false);
+                .finally(
+                    function(){
+                        vm.loadingChilds = false;
+                    });
         };
 
         /**
          * Load folders on start
          */
-        FolderService.loadFolders();
+        FolderService.getFolderContent();
 
     }
 

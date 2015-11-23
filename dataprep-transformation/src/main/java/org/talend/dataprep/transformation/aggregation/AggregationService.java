@@ -1,8 +1,12 @@
 package org.talend.dataprep.transformation.aggregation;
 
+import java.util.function.Predicate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
@@ -19,6 +23,9 @@ public class AggregationService {
     /** Aggregator factory. */
     @Autowired
     private AggregatorFactory factory;
+
+    @Autowired
+    private FilterService filterService;
 
     /**
      * Process an aggregation.
@@ -39,8 +46,11 @@ public class AggregationService {
         // get the aggregator
         Aggregator aggregator = factory.get(parameters);
 
+        // Build optional filter
+        final Predicate<DataSetRow> filter = filterService.build(parameters.getFilter());
+
         // process the dataset
-        dataset.getRecords().forEach(row -> aggregator.accept(row, result));
+        dataset.getRecords().filter(filter).forEach(row -> aggregator.accept(row, result));
 
         return result;
     }

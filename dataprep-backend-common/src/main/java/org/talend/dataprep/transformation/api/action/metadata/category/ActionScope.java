@@ -12,7 +12,8 @@ package org.talend.dataprep.transformation.api.action.metadata.category;
 public enum ActionScope {
 
     INVALID, //
-    EMPTY;
+    EMPTY, //
+    COLUMN_METADATA;
 
     public String getDisplayName() {
         return name().toLowerCase();

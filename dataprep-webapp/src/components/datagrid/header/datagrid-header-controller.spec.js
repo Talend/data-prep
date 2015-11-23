@@ -13,24 +13,28 @@ describe('Datagrid header controller', function () {
             {
                 'name': 'uppercase',
                 'category': 'case',
+                'actionScope': [],
                 'items': null,
                 'parameters': null
             },
             {
                 'name': 'rename',
                 'category': 'column_metadata',
+                'actionScope': ['column_metadata'],
                 'items': null,
                 'parameters': null
             },
             {
                 'name': 'lowercase',
                 'category': 'case',
+                'actionScope': [],
                 'items': null,
                 'parameters': null
             },
             {
                 'name': 'withParam',
                 'category': 'case',
+                'actionScope': [],
                 'items': null,
                 'parameters': [
                     {
@@ -44,6 +48,7 @@ describe('Datagrid header controller', function () {
             {
                 'name': 'split',
                 'category': 'column_metadata',
+                'actionScope': ['column_metadata'],
                 'parameters': null,
                 'items': [
                     {

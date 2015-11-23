@@ -23,6 +23,10 @@ describe('Transformation params directive', function () {
         };
     }));
 
+    afterEach(function() {
+        scope.$destroy();
+    });
+
     it('should render simple parameters', function () {
         //given
         scope.parameters = [
@@ -47,6 +51,24 @@ describe('Transformation params directive', function () {
 
         //then
         expect(element.find('transform-simple-param').length).toBe(2);
+    });
+
+    it('should render regex parameters', function () {
+        //given
+        scope.parameters = [
+            {
+                'name': 'param1',
+                'label': 'Param 1',
+                'type': 'regex',
+                'default': ''
+            }
+        ];
+
+        //when
+        var element = createElement();
+
+        //then
+        expect(element.find('transform-regex-param').length).toBe(1);
     });
 
     it('should render choice', function () {

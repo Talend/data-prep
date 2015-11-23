@@ -17,6 +17,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.Serializer;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -32,7 +33,7 @@ public class XlsSerializer implements Serializer {
 
         try {
 
-            Workbook workbook = XlsUtils.getWorkbook(rawContent);
+            Workbook workbook = XlsUtils.getWorkbook(new SchemaParser.Request(rawContent, metadata));
 
             StringWriter writer = new StringWriter();
             JsonGenerator generator = new JsonFactory().createGenerator(writer);

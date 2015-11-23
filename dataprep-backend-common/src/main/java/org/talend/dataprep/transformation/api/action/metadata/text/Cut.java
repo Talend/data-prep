@@ -1,21 +1,23 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
-import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
+
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.STRINGS;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.REGEX;
 
 @Component(Cut.ACTION_BEAN_PREFIX + Cut.CUT_ACTION_NAME)
 public class Cut extends ActionMetadata implements ColumnAction {
@@ -43,7 +45,7 @@ public class Cut extends ActionMetadata implements ColumnAction {
      */
     @Override
     public String getCategory() {
-        return ActionCategory.STRINGS.getDisplayName();
+        return STRINGS.getDisplayName();
     }
 
     /**
@@ -52,7 +54,7 @@ public class Cut extends ActionMetadata implements ColumnAction {
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(PATTERN_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
+        parameters.add(new Parameter(PATTERN_PARAMETER, REGEX, EMPTY));
         return parameters;
     }
 
@@ -61,7 +63,7 @@ public class Cut extends ActionMetadata implements ColumnAction {
      */
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType()));
+        return STRING.equals(Type.get(column.getType()));
     }
 
     /**

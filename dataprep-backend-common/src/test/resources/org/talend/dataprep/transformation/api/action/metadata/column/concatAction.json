@@ -5,6 +5,7 @@
       "parameters": {
         "column_id": "0000",
         "scope": "column",
+        "other_column?": "Another column",
         "selected_column": "0001",
         "prefix": "<",
         "concat_separator": "-",

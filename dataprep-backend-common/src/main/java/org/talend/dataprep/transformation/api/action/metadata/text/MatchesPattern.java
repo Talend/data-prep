@@ -1,17 +1,5 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
-import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
-
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.annotation.Nonnull;
-
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -23,6 +11,19 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.api.type.Type.BOOLEAN;
+import static org.talend.dataprep.api.type.Type.STRING;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.REGEX;
 
 @Component(MatchesPattern.ACTION_BEAN_PREFIX + MatchesPattern.MATCHES_PATTERN_ACTION_NAME)
 public class MatchesPattern extends ActionMetadata implements ColumnAction {
@@ -36,6 +37,15 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
      * The column appendix.
      */
     public static final String APPENDIX = "_matching"; //$NON-NLS-1$
+    /**
+     * The pattern shown to the user as a list. An item in this list is the value 'other', which allow the user to
+     * manually enter his pattern.
+     */
+    private static final String PATTERN_PARAMETER = "proposed_pattern"; //$NON-NLS-1$
+    /**
+     * The pattern manually specified by the user. Should be used only if PATTERN_PARAMETER value is 'other'.
+     */
+    private static final String MANUAL_PATTERN_PARAMETER = "manual_pattern"; //$NON-NLS-1$
 
     /**
      * @see ActionMetadata#getName()
@@ -46,22 +56,11 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
     }
 
     /**
-     * The pattern shown to the user as a list. An item in this list is the value 'other', which allow the user to
-     * manually enter his pattern.
-     */
-    private static final String PATTERN_PARAMETER = "proposed_pattern"; //$NON-NLS-1$
-
-    /**
-     * The pattern manually specified by the user. Should be used only if PATTERN_PARAMETER value is 'other'.
-     */
-    private static final String MANUAL_PATTERN_PARAMETER = "manual_pattern"; //$NON-NLS-1$
-
-    /**
      * @see ActionMetadata#acceptColumn(ColumnMetadata)
      */
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType()));
+        return STRING.equals(Type.get(column.getType()));
     }
 
     /**
@@ -86,7 +85,7 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
 				.item("[a-zA-Z0-9]*")
 				.item(" *")
 				.item(".*")
-				.item("other", new Parameter(MANUAL_PATTERN_PARAMETER, STRING, EMPTY))
+				.item("other", new Parameter(MANUAL_PATTERN_PARAMETER, REGEX, EMPTY))
 				.defaultValue("[a-zA-Z]*")
 				.build());
 		// @formatter:on
@@ -98,8 +97,8 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
      * @return the pattern to use according to the given parameters.
      */
     private String getPattern(Map<String, String> parameters) {
-        return ("other").equals(parameters.get(PATTERN_PARAMETER)) ? parameters.get(MANUAL_PATTERN_PARAMETER) : parameters
-                .get(PATTERN_PARAMETER);
+        return ("other").equals(parameters.get(PATTERN_PARAMETER)) ? parameters.get(MANUAL_PATTERN_PARAMETER)
+                : parameters.get(PATTERN_PARAMETER);
     }
 
     /**
@@ -118,7 +117,7 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
             final ColumnMetadata c = ColumnMetadata.Builder //
                     .column() //
                     .name(column.getName() + APPENDIX) //
-                    .type(Type.BOOLEAN) //
+                    .type(BOOLEAN) //
                     .empty(column.getQuality().getEmpty()) //
                     .invalid(column.getQuality().getInvalid()) //
                     .valid(column.getQuality().getValid()) //

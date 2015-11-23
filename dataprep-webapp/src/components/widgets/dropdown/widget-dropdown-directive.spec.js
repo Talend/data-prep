@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Dropdown directive', function () {
-    var scope, element, html;
+    var scope, element;
 
     beforeEach(module('talend.widget'));
     beforeEach(module('htmlTemplates'));
@@ -32,13 +32,13 @@ describe('Dropdown directive', function () {
 
             scope = $rootScope.$new();
 
-            html = '<talend-dropdown id="dropdown1">' +
+            var html = '<talend-dropdown id="dropdown1">' +
                 '    <div class="dropdown-container grid-header">' +
                 '        <div class="dropdown-action">' +
                 '            <div class="grid-header-title dropdown-button">{{ column.id }}</div>' +
                 '            <div class="grid-header-type">{{ column.type }}</div>' +
                 '        </div>' +
-                '        <ul class="dropdown-menu grid-header-menu" style="display:none;">' +
+                '        <ul class="dropdown-menu grid-header-menu">' +
                 '            <li role="presentation"><a role="menuitem" href="#">Hide Column</a></li>' +
                 '            <li class="divider"></li>' +
                 '            <li role="presentation"><a role="menuitem" href="#">Split first Space</a></li>' +
@@ -230,13 +230,13 @@ describe('Dropdown directive', function () {
         beforeEach(inject(function ($rootScope, $compile) {
             scope = $rootScope.$new();
 
-            html = '<talend-dropdown id="dropdown1" close-on-select="false">' +
+            var html = '<talend-dropdown id="dropdown1" close-on-select="false">' +
                 '    <div class="dropdown-container grid-header">' +
                 '        <div class="dropdown-action">' +
                 '            <div class="grid-header-title dropdown-button">{{ column.id }}</div>' +
                 '            <div class="grid-header-type">{{ column.type }}</div>' +
                 '        </div>' +
-                '        <ul class="dropdown-menu grid-header-menu" style="display:none;">' +
+                '        <ul class="dropdown-menu grid-header-menu">' +
                 '            <li role="presentation"><a role="menuitem" href="#">Hide Column</a></li>' +
                 '            <li class="divider"></li>' +
                 '            <li role="presentation"><a role="menuitem" href="#">Split first Space</a></li>' +
@@ -264,17 +264,15 @@ describe('Dropdown directive', function () {
     describe('with onOpen action', function () {
         beforeEach(inject(function ($rootScope, $compile) {
             scope = $rootScope.$new();
-            scope.onOpen = function () {
-            };
-            spyOn(scope, 'onOpen').and.returnValue(true);
+            scope.onOpen = jasmine.createSpy('onOpen');
 
-            html = '<talend-dropdown id="dropdown1" on-open="onOpen()">' +
+            var html = '<talend-dropdown id="dropdown1" on-open="onOpen()">' +
                 '    <div class="dropdown-container grid-header">' +
                 '        <div class="dropdown-action">' +
                 '            <div class="grid-header-title dropdown-button">{{ column.id }}</div>' +
                 '            <div class="grid-header-type">{{ column.type }}</div>' +
                 '        </div>' +
-                '        <ul class="dropdown-menu grid-header-menu" style="display:none;">' +
+                '        <ul class="dropdown-menu grid-header-menu">' +
                 '            <li role="presentation"><a role="menuitem" href="#">Hide Column</a></li>' +
                 '            <li class="divider"></li>' +
                 '            <li role="presentation"><a role="menuitem" href="#">Split first Space</a></li>' +
@@ -295,6 +293,73 @@ describe('Dropdown directive', function () {
 
             //then
             expect(scope.onOpen).toHaveBeenCalled();
+        });
+    });
+
+    describe('force placement side', function () {
+        var createElement;
+
+        beforeEach(inject(function ($rootScope, $compile) {
+            scope = $rootScope.$new();
+
+            createElement = function() {
+                var html = '<talend-dropdown id="dropdown1" force-side="{{side}}">' +
+                    '    <div class="dropdown-container grid-header">' +
+                    '        <div class="dropdown-action">Action</div>' +
+                    '        <ul class="dropdown-menu grid-header-menu">' +
+                    '            <li role="presentation">toto</li>' +
+                    '        </ul>' +
+                    '    </div>' +
+                    '</talend-dropdown>';
+                element = angular.element(html);
+                $compile(element)(scope);
+                scope.$digest();
+            };
+        }));
+
+        it('should set menu placement to the right by default', function () {
+            //given
+            scope.side = null;
+            createElement();
+
+            var menu = element.find('.dropdown-menu').eq(0);
+            expect(menu.hasClass('right')).toBe(false);
+
+            //when
+            clickDropdownToggle();
+
+            //then
+            expect(menu.hasClass('right')).toBe(true);
+        });
+
+        it('should force menu placement to the left', function () {
+            //given
+            scope.side = 'left';
+            createElement();
+
+            var menu = element.find('.dropdown-menu').eq(0);
+            menu.addClass('right');
+
+            //when
+            clickDropdownToggle();
+
+            //then
+            expect(menu.hasClass('right')).toBe(false);
+        });
+
+        it('should force menu placement to the right', function () {
+            //given
+            scope.side = 'right';
+            createElement();
+
+            var menu = element.find('.dropdown-menu').eq(0);
+            expect(menu.hasClass('right')).toBe(false);
+
+            //when
+            clickDropdownToggle();
+
+            //then
+            expect(menu.hasClass('right')).toBe(true);
         });
     });
 });

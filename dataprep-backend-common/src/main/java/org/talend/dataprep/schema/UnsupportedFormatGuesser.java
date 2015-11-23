@@ -1,6 +1,5 @@
 package org.talend.dataprep.schema;
 
-import java.io.InputStream;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ public class UnsupportedFormatGuesser implements FormatGuesser {
     private UnsupportedFormatGuess noOpFormatGuess;
 
     @Override
-    public FormatGuesser.Result guess(InputStream stream, String encoding) {
+    public FormatGuesser.Result guess(SchemaParser.Request request, String encoding) {
         return new FormatGuesser.Result(noOpFormatGuess, "UTF-8", Collections.emptyMap());
     }
 

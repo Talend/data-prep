@@ -50,6 +50,7 @@
                              on-click="columnProfileCtrl.addBarchartFilter"
                              visu-data="columnProfileCtrl.histogram.data"
                              value-field="formattedValue"
+                             value-field-2="filteredOccurrences"
                              key-field="{{columnProfileCtrl.histogram.key}}"
                              key-label="{{columnProfileCtrl.histogram.label}}"></horizontal-barchart>
 
@@ -57,9 +58,10 @@
                            ng-if="columnProfileCtrl.histogram.vertical"
                            width="300"
                            height="150"
-                           on-click="columnProfileCtrl.addRangeFilter"
+                           on-click="columnProfileCtrl.addRangeFilter(interval)"
                            visu-data="columnProfileCtrl.histogram.data"
                            value-field="{{columnProfileCtrl.histogram.key}}"
+                           value-field-2="filteredOccurrences"
                            key-field="data"
                            active-limits="columnProfileCtrl.histogram.activeLimits"
                            key-label="{{columnProfileCtrl.histogram.label}}"></vertical-barchart>
@@ -67,5 +69,12 @@
         <highchart id="geochart"
                    ng-if="columnProfileCtrl.stateDistribution"
                    config="columnProfileCtrl.chartConfig"></highchart>
+
+        <range-slider id="rangeSliderId"
+                      width="300"
+                      height="60"
+                      range-limits="columnProfileCtrl.statisticsService.rangeLimits"
+                      on-brush-end="columnProfileCtrl.addRangeFilter(interval)">
+        </range-slider>
     </div>
 </div>

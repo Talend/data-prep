@@ -187,11 +187,13 @@
                         <configuration>
                             <classifier>lib</classifier>
                             <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                            <excludes>
+                                <exclude>*.properties</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

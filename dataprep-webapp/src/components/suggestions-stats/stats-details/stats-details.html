@@ -1,32 +1,28 @@
 <div class="actions-suggestions" ng-switch="!!statsDetailsCtrl.statistics">
     <div class="Description" ng-if="!statsDetailsCtrl.statistics" translate-once="SELECT_COLUMN_TO_DISPLAY_STATS"></div>
 
-    <talend-tabs ng-if="statsDetailsCtrl.statistics">
+    <talend-tabs ng-if="statsDetailsCtrl.statistics" on-tab-change="statsDetailsCtrl.resizePanels()">
         <talend-tabs-item class="tab-container" tab-title="Chart" default="true">
             <div class="stat-detail-tab-items">
                 <column-profile></column-profile>
-                <range-slider id="rangeSliderId"
-                              width="300"
-                              height="60"
-                              range-limits="statsDetailsCtrl.rangeLimits"
-                              on-brush-end="statsDetailsCtrl.statisticsService.addRangeFilter">
-                </range-slider>
             </div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Value">
-            <div class="two-columns-values stat-detail-tab-items">
-                <table class="stat-table">
-                    <tr ng-repeat="(key, val) in statsDetailsCtrl.statistics.common track by $index">
-                        <td class="stat-key">{{key | translate}}: </td>
-                        <td class="stat-value">{{val}}</td>
-                    </tr>
-                </table>
-                <table class="stat-table">
-                    <tr ng-repeat="(key, val) in statsDetailsCtrl.statistics.specific track by $index">
-                        <td class="stat-key">{{key | translate}}: </td>
-                        <td class="stat-value">{{val}}</td>
-                    </tr>
-                </table>
+            <div class="stat-detail-tab-items">
+                <div class="two-columns-values">
+                    <table class="stat-table">
+                        <tr ng-repeat="(key, val) in statsDetailsCtrl.statistics.common track by $index">
+                            <td class="stat-key">{{key | translate}}: </td>
+                            <td class="stat-value">{{val}}</td>
+                        </tr>
+                    </table>
+                    <table class="stat-table">
+                        <tr ng-repeat="(key, val) in statsDetailsCtrl.statistics.specific track by $index">
+                            <td class="stat-key">{{key | translate}}: </td>
+                            <td class="stat-value">{{val}}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Pattern">
@@ -38,6 +34,7 @@
                                      visu-data="statsDetailsCtrl.patternFrequencyTable"
                                      key-field="occurrences"
                                      value-field="pattern"
+                                     value-field-2="filteredOccurrences"
                                      raw-data="statsDetailsCtrl.patternFrequencyTable">
                 </horizontal-barchart>
             </div>

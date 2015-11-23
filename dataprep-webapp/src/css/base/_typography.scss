@@ -22,6 +22,10 @@ button {
   font-family: $base-font-family;
 }
 
+input[type="search"] {
+  font-family: $base-font-family;
+}
+
 .error {
   color: red !important;
 }

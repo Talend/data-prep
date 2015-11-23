@@ -22,7 +22,7 @@
             "type": "integer",
             "implicit": false,
             "canBeBlank": false,
-            "label": "Limit",
+            "label": "Number of token",
             "description": "Number of token to split the value in",
             "default": ""
           }

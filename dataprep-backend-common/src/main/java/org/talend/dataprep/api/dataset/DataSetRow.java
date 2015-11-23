@@ -278,6 +278,24 @@ public class DataSetRow implements Cloneable {
     }
 
     /**
+     * Removes the value with the specified id and removes the column metadata if it has not been already removed, and
+     * returns <tt>true</tt> if the value has been removed. If this dataset row does not contain the specified it, it
+     * is unchanged and returns <tt>false</tt>.
+     *
+     * @param id the id of the value to be removed
+     * @return <tt>true</tt> if the specified column metadata is in this datasetrow and <tt>false</tt> otherwise
+     */
+    public boolean deleteColumnById(String id) {
+        rowMetadata.deleteColumnById(id);
+
+        if (values.containsKey(id)) {
+            values.remove(id);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Returns the current row as an array of Strings.
      *
      * @param filters An optional set of {@link Predicate filters} to be used to filter values. See {@link #SKIP_TDP_ID}

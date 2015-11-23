@@ -2,9 +2,9 @@ package org.talend.dataprep.transformation.api.action.context;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**
@@ -51,7 +51,7 @@ public final class TransformationContext {
 
     /**
      * Returns a transformation context specific to the current action. Use this to create columns (see
-     * {@link ActionContext#column(String, Supplier, Consumer)} for more details).
+     * {@link ActionContext#column(String, RowMetadata, Function)} for more details).
      *
      * @param actionMetadata An instance of action used as key for finding context
      * @return An {@link ActionContext context} ready to be used.

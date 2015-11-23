@@ -9,6 +9,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetContent;
@@ -19,6 +20,7 @@ import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
+import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.schema.*;
 
 /**
@@ -48,6 +50,8 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
             throw new IllegalArgumentException("Data set id cannot be null or empty.");
         }
 
+        final Marker marker = Markers.dataset(dataSetId);
+
         DistributedLock datasetLock = repository.createDatasetMetadataLock(dataSetId);
         datasetLock.lock();
         try {
@@ -72,6 +76,8 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                 Float.compare(g2.getFormatGuess().getConfidence(), g1.getFormatGuess().getConfidence()));
 
                 FormatGuesser.Result bestGuessResult = orderedGuess.get(0);
+                LOG.debug(marker, "using {} to parse the dataset", bestGuessResult);
+
                 FormatGuess bestGuess = bestGuessResult.getFormatGuess();
                 DataSetContent dataSetContent = metadata.getContent();
                 dataSetContent.setParameters(bestGuessResult.getParameters());
@@ -79,14 +85,14 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                 dataSetContent.setMediaType(bestGuess.getMediaType());
                 metadata.setEncoding(bestGuessResult.getEncoding());
 
-                LOG.debug("Parsing column information...");
+                LOG.debug(marker, "Parsing column information...");
                 parseColumnNameInformation(dataSetId, metadata, bestGuess);
-                LOG.debug("Parsed column information.");
+                LOG.debug(marker, "Parsed column information.");
 
                 repository.add(metadata);
-                LOG.debug("format analysed for dataset: '{}'", dataSetId);
+                LOG.debug(marker, "format analysed for dataset");
             } else {
-                LOG.info("Data set #{} no longer exists.", dataSetId);
+                LOG.info(marker, "Data set no longer exists.");
             }
         } finally {
             datasetLock.unlock();
@@ -101,23 +107,33 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
      * @return a set of FormatGuesser.Result.
      */
     private Set<FormatGuesser.Result> guessMediaTypes(String dataSetId, DataSetMetadata metadata) {
+
+        final Marker marker = Markers.dataset(dataSetId);
         Set<FormatGuesser.Result> mediaTypes = new HashSet<>();
+
         for (FormatGuesser guesser : guessers) {
+
+            // not worth spending time reading
+            if (guesser instanceof UnsupportedFormatGuesser) {
+                continue;
+            }
+
             // Try to read content given certified encodings
             final Collection<Charset> availableCharsets = ListUtils.union(getCertifiedCharsets(), getSupportedCharsets());
             for (Charset charset : availableCharsets) {
                 try (InputStream content = store.getAsRaw(metadata)) {
-                    FormatGuesser.Result mediaType = guesser.guess(content, charset.name());
+                    LOG.debug(marker, "try reading with {} encoded in {}", guesser.getClass().getSimpleName(), charset.name());
+                    FormatGuesser.Result mediaType = guesser.guess(new SchemaParser.Request(content, metadata), charset.name());
                     mediaTypes.add(mediaType);
                     if (!(mediaType.getFormatGuess() instanceof UnsupportedFormatGuess)) {
                         break;
                     }
                 } catch (IOException e) {
-                    LOG.debug("Unable to use guesser '" + guesser + "' on data set #" + dataSetId, e);
+                    LOG.debug(marker, "cannot be processed by {}", guesser, e);
                 }
             }
-            LOG.debug("Done using guesser {}", guesser.getClass());
         }
+        LOG.debug(marker, "found {}", mediaTypes);
         return mediaTypes;
     }
 
@@ -163,7 +179,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                 metadata.setDraft(true);
                 metadata.setSchemaParserResult(schemaParserResult);
                 repository.add(metadata);
-                LOG.info("format analysed for dataset: '{}'", dataSetId);
+                LOG.info(Markers.dataset(dataSetId), "format analysed");
                 return;
             }
             metadata.setDraft(false);

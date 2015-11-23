@@ -24,10 +24,15 @@ public interface SchemaParser {
      */
     SchemaParserResult parse(Request request);
 
+    /**
+     * Schema parser request.
+     */
     class Request {
 
+        /** The dataset content as input stream. */
         InputStream content;
 
+        /** The dataset metadata. */
         DataSetMetadata metadata;
 
         /**
@@ -42,10 +47,16 @@ public interface SchemaParser {
             this.metadata = metadata;
         }
 
+        /**
+         * @return the dataset content.
+         */
         public InputStream getContent() {
             return content;
         }
 
+        /**
+         * @return the dataset metadata.
+         */
         public DataSetMetadata getMetadata() {
             return metadata;
         }

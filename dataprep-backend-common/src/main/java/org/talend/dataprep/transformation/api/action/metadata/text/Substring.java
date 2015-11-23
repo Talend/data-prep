@@ -5,6 +5,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.category.Ac
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -32,12 +33,15 @@ public class Substring extends ActionMetadata implements ColumnAction {
     private static final String APPENDIX = "_substring"; //$NON-NLS-1$
 
     private static final String FROM_BEGINNING = "From beginning"; //$NON-NLS-1$
+
     private static final String TO_END = "To end"; //$NON-NLS-1$
 
     protected static final String FROM_MODE_PARAMETER = "from_mode"; //$NON-NLS-1$
+
     protected static final String FROM_INDEX_PARAMETER = "from_index"; //$NON-NLS-1$
 
     protected static final String TO_MODE_PARAMETER = "to_mode"; //$NON-NLS-1$
+
     protected static final String TO_INDEX_PARAMETER = "to_index"; //$NON-NLS-1$
 
     /**
@@ -119,15 +123,21 @@ public class Substring extends ActionMetadata implements ColumnAction {
         }
         final int realFromIndex = getStartIndex(parameters, value);
         final int realToIndex = getEndIndex(parameters, value);
-        final String newValue = realFromIndex < realToIndex ? value.substring(realFromIndex, realToIndex) : "";
-        row.set(substringColumn, newValue);
+
+        try {
+            final String newValue = value.substring(realFromIndex, realToIndex);
+            row.set(substringColumn, newValue);
+        } catch (IndexOutOfBoundsException e) {
+            // Nothing to do in that case, just set with the empty string:
+            row.set(substringColumn, StringUtils.EMPTY);
+        }
     }
 
     /**
      * Compute the end index. This won't be more than the value length
      *
      * @param parameters the parameters
-     * @param value      the value to substring
+     * @param value the value to substring
      * @return the end index
      */
     private int getEndIndex(final Map<String, String> parameters, final String value) {
@@ -142,7 +152,7 @@ public class Substring extends ActionMetadata implements ColumnAction {
      * Compute the start index. This won't be more than the value length
      *
      * @param parameters the parameters
-     * @param value      the value to substring
+     * @param value the value to substring
      * @return the start index
      */
     private int getStartIndex(final Map<String, String> parameters, String value) {

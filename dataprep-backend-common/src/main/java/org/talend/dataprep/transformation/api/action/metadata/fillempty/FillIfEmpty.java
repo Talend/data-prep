@@ -36,7 +36,7 @@ public class FillIfEmpty extends ActionMetadata implements ColumnAction {
 
     public static final String FILL_EMPTY_STRING = "fillemptywithdefault"; //$NON-NLS-1$
 
-    private static final String DEFAULT_VALUE_PARAMETER = "empty_default_value"; //$NON-NLS-1$
+    protected static final String DEFAULT_VALUE_PARAMETER = "empty_default_value"; //$NON-NLS-1$
 
     private static final String DATE_PATTERN = "dd/MM/yyyy HH:mm:ss";
 

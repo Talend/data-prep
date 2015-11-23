@@ -28,7 +28,7 @@ describe('verticalBarchart directive', function () {
             scope.onClick = jasmine.createSpy('onClick');
 
             element = angular.element('<vertical-barchart id="barChart" width="250" height="400"' +
-                'on-click="onClick"' +
+                'on-click="onClick(interval)"' +
                 'visu-data="visData"' +
                 'key-field="data"' +
                 'active-limits="existingFilter"' +
@@ -63,7 +63,7 @@ describe('verticalBarchart directive', function () {
         jasmine.clock().tick(100);
 
         //then
-        expect(element.find('rect').length).toBe(statsData.length * 2);
+        expect(element.find('rect').length).toBe(statsData.length * 3); // 3 chart columns
         expect(element.find('.bg-rect').length).toBe(statsData.length);
         expect(element.find('.bar').length).toBe(statsData.length);
         expect(element.find('.grid').length).toBe(1);

@@ -7,19 +7,10 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.talend.dataprep.dataset.Application;
+import org.talend.dataprep.dataset.DataSetBaseTest;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest
-public class DataSetAnalyzersTest {
+public class DataSetAnalyzersTest extends DataSetBaseTest {
 
     @Autowired
     List<DataSetAnalyzer> allAnalyzers;

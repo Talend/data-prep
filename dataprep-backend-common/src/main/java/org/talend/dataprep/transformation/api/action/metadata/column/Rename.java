@@ -1,7 +1,9 @@
 package org.talend.dataprep.transformation.api.action.metadata.column;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.COLUMN_METADATA;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +68,15 @@ public class Rename extends ActionMetadata implements ColumnAction {
     @Override
     public String getCategory() {
         return ActionCategory.COLUMN_METADATA.getDisplayName();
+    }
+
+
+    /**
+     * @see ActionMetadata#getActionScope()
+     */
+    @Override
+    public List<String> getActionScope() {
+        return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
     /**

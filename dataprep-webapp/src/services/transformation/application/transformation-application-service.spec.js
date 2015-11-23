@@ -13,9 +13,9 @@ describe('Transformation Application Service', function () {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function ($q, PlaygroundService, FilterService) {
+    beforeEach(inject(function ($q, PlaygroundService, FilterAdapterService) {
         spyOn(PlaygroundService, 'appendStep').and.returnValue();
-        spyOn(FilterService, 'convertFiltersArrayToTreeFormat').and.returnValue({
+        spyOn(FilterAdapterService, 'toTree').and.returnValue({
             filter:{
                 eq:{
                     field:'0001',

@@ -1,0 +1,20 @@
+{
+  "preparationId": 12345,
+  "stepId": 756984,
+  "groupBy": [
+    "0001"
+  ],
+  "operations": [
+    {
+      "columnId": "0003",
+      "operator": "SUM"
+    }
+  ],
+  "sampleSize": 5000,
+  "filter": {
+    "eq": {
+      "field": "0002",
+      "value": "Rhone-Alpes"
+    }
+  }
+}

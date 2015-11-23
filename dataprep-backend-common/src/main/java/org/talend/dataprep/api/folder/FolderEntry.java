@@ -22,7 +22,6 @@ public class FolderEntry extends Identifiable implements Serializable {
     @JsonProperty("contentId")
     private String contentId;
 
-
     @JsonProperty("path")
     private String path;
 

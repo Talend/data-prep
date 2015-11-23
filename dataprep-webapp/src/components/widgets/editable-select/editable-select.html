@@ -1,10 +1,4 @@
 <div class="editable-select">
-
-    <select ng-options="val for val in editableSelectCtrl.list" ng-model="editableSelectCtrl.value">
-        <!--
-    <select ng-model="editableSelectCtrl.value">
-        <option ng-repeat="val in editableSelectCtrl.list track by $index" value="{{val}}">{{val}}</option>
-    </select>
-    -->
+    <select ng-options="val for val in editableSelectCtrl.list" ng-model="editableSelectCtrl.value"></select>
     <input type="text" ng-model="editableSelectCtrl.value" />
 </div>

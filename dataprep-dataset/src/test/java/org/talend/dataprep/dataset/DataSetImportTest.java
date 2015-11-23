@@ -14,39 +14,24 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.service.analysis.SynchronousDataSetAnalyzer;
-import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
-
-import com.jayway.restassured.RestAssured;
 
 /**
  * This test ensures the data set service behaves as stated in <a
  * href="https://jira.talendforge.org/browse/TDP-157">https://jira.talendforge.org/browse/TDP-157</a>.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest
-public class DataSetImportTest {
 
-    @Value("${local.server.port}")
-    public int port;
+public class DataSetImportTest extends DataSetBaseTest {
 
-    @Autowired
-    DataSetMetadataRepository dataSetMetadataRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSetImportTest.class);
 
     private String dataSetId;
 
@@ -62,27 +47,19 @@ public class DataSetImportTest {
         System.setProperty("DataSetImportTest.PausedAnalyzer", "0"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    @Before
-    public void setUp() {
-        RestAssured.port = port;
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        dataSetMetadataRepository.clear();
-    }
-
     /**
      * Test 'importing' status: the data set should remain in 'importing' state as long as create operation isn't
      * completed.
      */
     @Test
     public void testImportStatus() throws Exception {
+
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
                 dataSetId = given().body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv")))
                         .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                LOGGER.debug("testImportStatus dataset created #{}", dataSetId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -129,7 +106,7 @@ public class DataSetImportTest {
         Thread creationThread = new Thread(creation);
         creationThread.start();
         // Wait for creation of data set object
-        while (!dataSetMetadataRepository.list().iterator().hasNext()) {
+        while (dataSetMetadataRepository.size() == 0) {
             TimeUnit.MILLISECONDS.sleep(20);
         }
         // Find data set being imported...
@@ -158,26 +135,34 @@ public class DataSetImportTest {
      */
     @Test
     public void testCannotOpenDataSetBeingImported() throws Exception {
+
+        LOGGER.info("testCannotOpenDataSetBeingImported started");
+
+        assertThat(dataSetMetadataRepository.size(), is(0));
+        LOGGER.debug("dataSetMetadata repository is empty");
+
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
                 dataSetId = given().body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv")))
                         .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                LOGGER.debug("testCannotOpenDataSetBeingImported dataset created #{}", dataSetId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         };
+
         Thread creationThread = new Thread(creation);
         creationThread.start();
         // Wait for creation of data set object
         while (dataSetMetadataRepository.size() == 0) {
-            TimeUnit.MILLISECONDS.sleep(50);
+            TimeUnit.MILLISECONDS.sleep(20);
         }
         // Find data set being imported...
-        final Iterable<DataSetMetadata> list = dataSetMetadataRepository.list();
-        final Iterator<DataSetMetadata> iterator = list.iterator();
+        final Iterator<DataSetMetadata> iterator = dataSetMetadataRepository.list().iterator();
         assertThat(iterator.hasNext(), is(true));
         final DataSetMetadata next = iterator.next();
+        LOGGER.info("found {}", next);
         assertThat(next.getLifecycle().importing(), is(true));
         // ... get operation should *not* return data set being imported but report an error ...
         int statusCode = when().get("/datasets/{id}/content", next.getId()).getStatusCode();

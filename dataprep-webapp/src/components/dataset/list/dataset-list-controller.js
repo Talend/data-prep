@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     /**
@@ -6,18 +6,18 @@
      * @name data-prep.dataset-list.controller:DatasetListCtrl
      * @description Dataset list controller.
      On creation, it fetch dataset list from backend and load playground if 'datasetid' query param is provided
+     * @requires data-prep.services.state.service:StateService
      * @requires data-prep.services.dataset.service:DatasetService
      * @requires data-prep.services.dataset.service:DatasetListSortService
      * @requires data-prep.services.playground.service:PlaygroundService
      * @requires talend.widget.service:TalendConfirmService
      * @requires data-prep.services.utils.service:MessageService
      * @requires data-prep.services.uploadWorkflowService.service:UploadWorkflowService
-     * @requires data-prep.services.state.service:StateService
      * @requires data-prep.services.datasetWorkflowService:UpdateWorkflowService
      * @requires data-prep.services.folder.service:FolderService
      */
-    function DatasetListCtrl(UpdateWorkflowService, $stateParams, DatasetService, DatasetListSortService, PlaygroundService,
-                             TalendConfirmService, MessageService, UploadWorkflowService, StateService, state, FolderService) {
+    function DatasetListCtrl($stateParams, StateService, DatasetService, DatasetListSortService, PlaygroundService,
+                             TalendConfirmService, MessageService, UploadWorkflowService, UpdateWorkflowService, FolderService, state) {
         var vm = this;
 
         vm.datasetService = DatasetService;
@@ -68,8 +68,8 @@
          * @description sort dataset by sortType by calling refreshDatasets from DatasetService
          * @param {object} sortType Criteria to sort
          */
-        vm.updateSortBy = function(sortType) {
-            if(vm.sortSelected === sortType) {
+        vm.updateSortBy = function (sortType) {
+            if (vm.sortSelected === sortType) {
                 return;
             }
 
@@ -78,7 +78,7 @@
             DatasetListSortService.setSort(sortType.id);
 
             DatasetService.refreshDatasets()
-                .catch(function() {
+                .catch(function () {
                     vm.sortSelected = oldSort;
                     DatasetListSortService.setSort(oldSort.id);
                 });
@@ -91,8 +91,8 @@
          * @description sort dataset in order (ASC or DESC) by calling refreshDatasets from DatasetService
          * @param {object} order Sort order ASC(ascending) or DESC(descending)
          */
-        vm.updateSortOrder = function(order) {
-            if(vm.sortOrderSelected === order) {
+        vm.updateSortOrder = function (order) {
+            if (vm.sortOrderSelected === order) {
                 return;
             }
 
@@ -101,7 +101,7 @@
             DatasetListSortService.setOrder(order.id);
 
             DatasetService.refreshDatasets()
-                .catch(function() {
+                .catch(function () {
                     vm.sortOrderSelected = oldSort;
                     DatasetListSortService.setOrder(oldSort.id);
                 });
@@ -114,7 +114,7 @@
          * @description [PRIVATE] Initiate a new preparation from dataset
          * @param {object} dataset The dataset to open
          */
-        var open = function(dataset) {
+        var open = function (dataset) {
             PlaygroundService.initPlayground(dataset)
                 .then(StateService.showPlayground);
         };
@@ -125,7 +125,7 @@
          * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
          * @description [PRIVATE] updates the existing dataset with the uploadd one
          */
-        vm.uploadUpdatedDatasetFile = function uploadUpdatedDatasetFile(dataset){
+        vm.uploadUpdatedDatasetFile = function uploadUpdatedDatasetFile(dataset) {
             UpdateWorkflowService.updateDataset(vm.updateDatasetFile[0], dataset);
         };
 
@@ -136,13 +136,19 @@
          * @description Delete a dataset
          * @param {object} dataset - the dataset to delete
          */
-        vm.delete = function(dataset) {
-            TalendConfirmService.confirm({disableEnter: true}, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {type: 'dataset', name: dataset.name})
-                .then(function() {
+        vm.delete = function (dataset) {
+            TalendConfirmService.confirm({disableEnter: true}, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {
+                    type: 'dataset',
+                    name: dataset.name
+                })
+                .then(function () {
                     return DatasetService.delete(dataset);
                 })
-                .then(function() {
-                    MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {type: 'dataset', name: dataset.name});
+                .then(function () {
+                    MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {
+                        type: 'dataset',
+                        name: dataset.name
+                    });
                 });
         };
 
@@ -153,11 +159,10 @@
          * @description Clone a dataset
          * @param {object} dataset - the dataset to clone
          */
-        vm.clone = function(dataset){
-            // TODO ask a new name?
+        vm.clone = function clone(dataset) {
             DatasetService.clone(dataset)
-                .then(function() {
-                          MessageService.success('CLONE_SUCCESS_TITLE', 'CLONE_SUCCESS');
+                .then(function () {
+                    MessageService.success('CLONE_SUCCESS_TITLE', 'CLONE_SUCCESS');
                 });
         };
 
@@ -169,10 +174,10 @@
          * @param {string} name The new name
          * @description Rename a dataset
          */
-        vm.rename = function(dataset, name){
-            var cleanName = name?name.trim():'';
+        vm.rename = function rename(dataset, name) {
+            var cleanName = name ? name.trim() : '';
             if (cleanName) {
-                if ( dataset.renaming ) {
+                if (dataset.renaming) {
                     return;
                 }
 
@@ -180,14 +185,14 @@
                 var oldName = dataset.name;
                 dataset.name = name;
                 return DatasetService.update(dataset)
-                                    .then(function() {
-                                        MessageService.success( 'DATASET_RENAME_SUCCESS_TITLE',
-                                                                'DATASET_RENAME_SUCCESS' );
-                                    }).catch(function () {
-                                        dataset.name = oldName;
-                                    }).finally(function () {
-                                        dataset.renaming = false;
-                                    });
+                    .then(function () {
+                        MessageService.success('DATASET_RENAME_SUCCESS_TITLE',
+                            'DATASET_RENAME_SUCCESS');
+                    }).catch(function () {
+                        dataset.name = oldName;
+                    }).finally(function () {
+                        dataset.renaming = false;
+                    });
             }
         };
 
@@ -198,13 +203,13 @@
          * @description [PRIVATE] Load playground with provided dataset id, if present in route param
          * @param {object[]} datasets List of all user's datasets
          */
-        var loadUrlSelectedDataset = function(datasets) {
-            if($stateParams.datasetid) {
-                var selectedDataset = _.find(datasets, function(dataset) {
+        var loadUrlSelectedDataset = function loadUrlSelectedDataset(datasets) {
+            if ($stateParams.datasetid) {
+                var selectedDataset = _.find(datasets, function (dataset) {
                     return dataset.id === $stateParams.datasetid;
                 });
 
-                if(selectedDataset) {
+                if (selectedDataset) {
                     open(selectedDataset);
                 }
                 else {

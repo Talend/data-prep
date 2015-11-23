@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     /**
@@ -54,10 +54,10 @@
          * @description Delete a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} delete function
          * @returns {promise} The pending DELETE promise
          */
-        function deleteDataset (dataset) {
+        function deleteDataset(dataset) {
             return DatasetListService.delete(dataset)
                 .then(consolidatePreparationsAndDatasets)
-                .then(function(response) {
+                .then(function (response) {
                     StorageService.removeAllAggregations(dataset.id);
                     return response;
                 });
@@ -110,12 +110,12 @@
          * @name clone
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} dataset The dataset to clone
-         * @param {String} the new name otherwise null as using default name
-         * @description Clone a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} create function
+         * @param {String} name The new name
+         * @description Clone a dataset
          * @returns {promise} The pending CREATE promise
          */
-        function cloneDataset(dataset,name) {
-            var promise = DatasetListService.clone(dataset,name);
+        function cloneDataset(dataset, name) {
+            var promise = DatasetListService.clone(dataset, name);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }
@@ -197,7 +197,7 @@
          * @returns {promise} The pending POST promise
          */
         function toggleFavorite(dataset) {
-            return DatasetRestService.toggleFavorite(dataset).then(function(){
+            return DatasetRestService.toggleFavorite(dataset).then(function () {
                 dataset.favorite = !dataset.favorite;
             });
         }
@@ -212,7 +212,7 @@
          * @returns {object} The dataset
          */
         function getDatasetByName(name) {
-            return _.find(DatasetListService.datasets, function(dataset) {
+            return _.find(DatasetListService.datasets, function (dataset) {
                 return dataset.name === name;
             });
         }
@@ -226,8 +226,8 @@
          * @returns {promise} The dataset
          */
         function getDatasetById(datasetId) {
-            return DatasetListService.getDatasetsPromise().then(function(datasetList) {
-                return _.find(datasetList, function(dataset) {
+            return DatasetListService.getDatasetsPromise().then(function (datasetList) {
+                return _.find(datasetList, function (dataset) {
                     return dataset.id === datasetId;
                 });
             });
@@ -270,9 +270,9 @@
             var result = cleanedName;
 
             var index = 1;
-            while(getDatasetByName(result)) {
+            while (getDatasetByName(result)) {
                 result = cleanedName + ' (' + index + ')';
-                index ++;
+                index++;
             }
 
             return result;

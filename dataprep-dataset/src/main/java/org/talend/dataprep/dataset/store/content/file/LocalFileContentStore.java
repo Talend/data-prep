@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.store.content.DataSetContentStoreAdapter;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.log.Markers;
 
 /**
  * Local dataset content that stores content in files.
@@ -49,15 +51,16 @@ public class LocalFileContentStore extends DataSetContentStoreAdapter {
 
     @Override
     public void storeAsRaw(DataSetMetadata dataSetMetadata, InputStream dataSetContent) {
+        final Marker marker = Markers.dataset(dataSetMetadata.getId());
         try {
             if (dataSetContent.available() > 0) {
                 File dataSetFile = getFile(dataSetMetadata);
                 FileUtils.touch(dataSetFile);
                 FileOutputStream fos = new FileOutputStream(dataSetFile);
                 IOUtils.copy(dataSetContent, fos);
-                LOGGER.debug("Data set #{} stored to '{}'.", dataSetMetadata.getId(), dataSetFile);
+                LOGGER.debug(marker, "Data set stored to '{}'.", dataSetFile);
             } else {
-                LOGGER.debug("Ignore update of data set #{} as content seems empty", dataSetMetadata.getId());
+                LOGGER.debug(marker, "Ignore update of data set as content seems empty");
             }
         } catch (IOException e) {
             throw new TDPException(DataSetErrorCodes.UNABLE_TO_STORE_DATASET_CONTENT, e, ExceptionContext.build().put("id",

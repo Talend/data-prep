@@ -18,6 +18,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
+import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 /**
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
@@ -56,6 +57,14 @@ public class Concat extends ActionMetadata implements ColumnAction {
      */
     public static final String COLUMN_NAMES_SEPARATOR = "_"; //$NON-NLS-1$
 
+
+    /**
+     * Say either we concatenate to another column or not (constant mode).
+     */
+    public static final String OTHER_COLUMN_PARAMETER = "other_column?"; //$NON-NLS-1$
+    public static final String CONCAT_WITH_ANOTHER_COLUMN = "Another column"; //$NON-NLS-1$
+    public static final String CONCAT_WITH_CONSTANT = "No other column"; //$NON-NLS-1$
+
     /**
      * @see ActionMetadata#getName()
      */
@@ -78,9 +87,19 @@ public class Concat extends ActionMetadata implements ColumnAction {
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false));
+
         parameters.add(new Parameter(PREFIX_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
-        parameters.add(new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
+
+        parameters.add(SelectParameter.Builder
+                .builder()
+                .name(OTHER_COLUMN_PARAMETER)
+                .item(CONCAT_WITH_ANOTHER_COLUMN,
+                        new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false),
+                        new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY)) //
+                .item(CONCAT_WITH_CONSTANT) //
+                .defaultValue(CONCAT_WITH_ANOTHER_COLUMN) //
+                .build());
+
         parameters.add(new Parameter(SUFFIX_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
         return parameters;
     }
@@ -104,45 +123,61 @@ public class Concat extends ActionMetadata implements ColumnAction {
 
         checkSelectedColumnParameter(parameters, row);
 
-        ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+        final String newColumnName = evalNewColumnName(sourceColumn.getName(), rowMetadata, parameters);
 
-        String concatColumn = context.in(this).column(sourceColumn.getName() + COLUMN_NAMES_SEPARATOR + selectedColumn.getName(),
-                rowMetadata,
-                (r) -> {
-                    final ColumnMetadata c = ColumnMetadata.Builder //
-                            .column() //
-                            .name(sourceColumn.getName() + COLUMN_NAMES_SEPARATOR + selectedColumn.getName()) //
-                            .type(Type.STRING) //
-                            .build();
-                    rowMetadata.insertAfter(columnId, c);
-                    return c;
-                }
-        );
+        String concatColumn = context.in(this).column(newColumnName, rowMetadata, (r) -> {
+            final ColumnMetadata c = ColumnMetadata.Builder //
+                    .column() //
+                    .name(newColumnName) //
+                    .type(Type.STRING) //
+                    .build();
+            rowMetadata.insertAfter(columnId, c);
+            return c;
+        });
 
         // Set new column value
         String sourceValue = row.get(columnId);
-        String selectedColumnValue = row.get(selectedColumn.getId());
-        String newValue = getParameter(parameters, PREFIX_PARAMETER, StringUtils.EMPTY) + //
-                sourceValue + //
-                getParameter(parameters, SEPARATOR_PARAMETER, StringUtils.EMPTY) + //
-                selectedColumnValue + //
-                getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY);
+
+        String newValue = getParameter(parameters, PREFIX_PARAMETER, StringUtils.EMPTY);
+
+        newValue += sourceValue;
+
+        if (parameters.get(OTHER_COLUMN_PARAMETER).equals(CONCAT_WITH_ANOTHER_COLUMN)) {
+            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            String selectedColumnValue = row.get(selectedColumn.getId());
+            newValue += getParameter(parameters, SEPARATOR_PARAMETER, StringUtils.EMPTY) + selectedColumnValue;
+        }
+
+        newValue += getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY);
 
         row.set(concatColumn, newValue);
     }
 
+    private String evalNewColumnName(String sourceColumnName, RowMetadata rowMetadata, Map<String, String> parameters) {
+        final String prefix = getParameter(parameters, PREFIX_PARAMETER, StringUtils.EMPTY);
+        final String suffix = getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY);
+
+        if (parameters.get(OTHER_COLUMN_PARAMETER).equals(CONCAT_WITH_ANOTHER_COLUMN)) {
+            ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            return sourceColumnName + COLUMN_NAMES_SEPARATOR + selectedColumn.getName();
+        } else {
+            return prefix + sourceColumnName + suffix;
+        }
+    }
+    
     /**
-     * Check that the selected column parameter is correct : defined in the parameters and there's a matching column. If
-     * the parameter is invalid, an exception is thrown.
+     * Check that the selected column parameter is correct in case we concatenate with another column: defined in the
+     * parameters and there's a matching column. If the parameter is invalid, an exception is thrown.
      *
      * @param parameters where to look the parameter value.
      * @param row the row where to look for the column.
      */
     private void checkSelectedColumnParameter(Map<String, String> parameters, DataSetRow row) {
-        if (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
-                || row.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
+        if (parameters.get(OTHER_COLUMN_PARAMETER).equals(CONCAT_WITH_ANOTHER_COLUMN)
+                && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER) || row.getRowMetadata().getById(
+                        parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
+                    SELECTED_COLUMN_PARAMETER));
         }
     }
 

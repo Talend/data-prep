@@ -6,10 +6,14 @@
   }
 
   .bar rect {
-    fill: $dark-blue;
+    fill: $light-blue;
   }
 
-  .bar text.value {
+  .frontBar rect {
+    fill: $dark-blue ;
+  }
+
+  .frontBar text.value {
     font-size: .8em;
     fill: $dark-green;
   }

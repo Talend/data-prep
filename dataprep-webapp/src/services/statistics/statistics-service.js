@@ -5,16 +5,16 @@
      * @name data-prep.services.statistics.service:StatisticsService
      * @description Extracts/structures the data to be visualized in charts
      * @requires data-prep.services.playground.service:DatagridService
-     * @requires data-prep.services.filter.service:FilterService
      * @requires data-prep.services.recipe.service:RecipeService
      * @requires data-prep.services.statistics.service:StatisticsRestService
      * @requires data-prep.services.utils.service:ConverterService
+     * @requires data-prep.services.utils.service:FilterAdapterService
      * @requires data-prep.services.utils.service:TextFormatService
      * @requires data-prep.services.utils.service:StorageService
      */
-    function StatisticsService($timeout, $filter, state,
-                               DatagridService, FilterService, RecipeService, StatisticsRestService,
-                               ConverterService, TextFormatService, StorageService) {
+    function StatisticsService($filter, state,
+                               DatagridService, RecipeService, StatisticsRestService,
+                               ConverterService, FilterAdapterService, TextFormatService, StorageService) {
 
         var service = {
             boxPlot: null,
@@ -22,8 +22,11 @@
             stateDistribution: null,
             statistics: null,
 
+            //update range
+            initRangeLimits: initRangeLimits,
+
             //filters
-            addRangeFilter: addRangeFilter,
+            getRangeFilterRemoveFn: getRangeFilterRemoveFn,
 
             //statistics entry points
             processData: processData,                       // basic charts
@@ -97,6 +100,32 @@
 
         /**
          * @ngdoc method
+         * @name getRangeFilteredOccurrence
+         * @methodOf data-prep.services.statistics.service:StatisticsService
+         * @param {number} min Minimum value
+         * @param {number} max Maximum value
+         * @description Compute The filtered records number with value inside the provided range [min, max[
+         * @returns {number} The Number of records
+         */
+        function getRangeFilteredOccurrence(min, max) {
+            return _.chain(state.playground.grid.filteredOccurences)
+                .keys()
+                .filter(function(key) {
+                    var numberValue = Number(key);
+                    return !isNaN(numberValue) &&
+                        ((numberValue === min) || (numberValue > min && numberValue < max));
+                })
+                .map(function(key) {
+                    return state.playground.grid.filteredOccurences[key];
+                })
+                .reduce(function(accu, value) {
+                    return accu + value;
+                }, 0)
+                .value();
+        }
+
+        /**
+         * @ngdoc method
          * @name initRangeHistogram
          * @methodOf data-prep.services.statistics.service:StatisticsService
          * @param {Array} histoData Array of data
@@ -106,11 +135,25 @@
             var rangeData = _.map(histoData, function (histDatum) {
                 return {
                     'data': [histDatum.range.min, histDatum.range.max],
-                    'occurrences': histDatum.occurrences
+                    'occurrences': histDatum.occurrences,
+                    'filteredOccurrences': getRangeFilteredOccurrence(histDatum.range.min, histDatum.range.max)
                 };
             });
 
             initVerticalHistogram('occurrences', 'Occurrences', rangeData);
+        }
+
+        /**
+         * @ngdoc method
+         * @name getClassicFilteredOccurrence
+         * @methodOf data-prep.services.statistics.service:StatisticsService
+         * @param {string} value The value to have
+         * @description Get the occurrence of the provided value
+         * @returns {number} The Number of records
+         */
+        function getClassicFilteredOccurrence(value) {
+            var occurrence = state.playground.grid.filteredOccurences[value];
+            return occurrence || 0;
         }
 
         /**
@@ -120,14 +163,41 @@
          * @param {string} key The value key
          * @param {string} label The value label
          * @param {Array} dataTable The table to display
-         * @description Set the frequency table that fit the histogram format
+         * @description Set the frequency table that fit the histogram format (filter is managed in frontend)
          */
         function initClassicHistogram(key, label, dataTable) {
+            var adaptedData = _.map(dataTable, function (rec) {
+                rec.formattedValue = TextFormatService.adaptToGridConstraints(rec.data);
+                rec.filteredOccurrences = getClassicFilteredOccurrence(rec.data);
+                return rec;
+            });
+
             service.histogram = {
-                data: _.map(dataTable, function (rec) {
-                    rec.formattedValue = TextFormatService.adaptToGridConstraints(rec.data);
-                    return rec;
-                }),
+                data: adaptedData,
+                key: key,
+                label: label,
+                column: state.playground.grid.selectedColumn
+            };
+        }
+
+
+        /**
+         * @ngdoc method
+         * @name initAggregationHistogram
+         * @methodOf data-prep.services.statistics.service:StatisticsService
+         * @param {string} key The value key
+         * @param {string} label The value label
+         * @param {Array} dataTable The table to display
+         * @description Set the frequency table that fit the histogram format for aggregation (filter is managed in backend)
+         */
+        function initAggregationHistogram(key, label, dataTable) {
+            var adaptedData = _.map(dataTable, function (rec) {
+                rec.formattedValue = TextFormatService.adaptToGridConstraints(rec.data);
+                return rec;
+            });
+
+            service.histogram = {
+                data: adaptedData,
                 key: key,
                 label: label,
                 column: state.playground.grid.selectedColumn
@@ -314,27 +384,23 @@
 
         /**
          * @ngdoc method
-         * @name addRangeFilter
+         * @name getRangeFilterRemoveFn
          * @methodOf data-prep.services.statistics.service:StatisticsService
-         * @param {Array} interval of the filter
-         * @description Adds a rangefilter in the angular context
+         * @description Create a remove callback to reinit the current active limits on the current column range chart
          */
-        function addRangeFilter(interval) {
+        function getRangeFilterRemoveFn() {
             var selectedColumn = state.playground.grid.selectedColumn;
-            var removeFilterFn = function removeFilterFn(filter) {
+            var columnMin = selectedColumn.statistics.min;
+            var columnMax = selectedColumn.statistics.max;
+
+            return function removeFilterFn(filter) {
                 var actualSelectedColumn = state.playground.grid.selectedColumn;
                 if (filter.colId === actualSelectedColumn.id) {
                     initRangeLimits();
                     //to reset the vertical bars colors
-                    service.histogram.activeLimits = [selectedColumn.statistics.min, selectedColumn.statistics.max];
+                    service.histogram.activeLimits = [columnMin, columnMax];
                 }
             };
-
-            var filterFn = FilterService.addFilter.bind(null, 'inside_range', selectedColumn.id, selectedColumn.name, {interval: interval}, removeFilterFn);
-            $timeout(function () {
-                filterFn();
-                initRangeLimits();
-            });
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -407,7 +473,7 @@
          * @name processAggregation
          * @methodOf data-prep.services.statistics.service:StatisticsService
          * @param {object} column The column to visualize
-         * @param {object} aggregation The column to visualize
+         * @param {string} aggregation The aggregation to perform
          * @description Processes the statistics aggregation for visualization
          */
         function processAggregation(column, aggregation) {
@@ -433,9 +499,12 @@
                 groupBy: [selectedColumn.id]
             };
 
+            //add filter in parameters only if there are filters
+            aggregationParameters = _.extend(aggregationParameters, FilterAdapterService.toTree(state.playground.filter.gridFilters));
+
             StatisticsRestService.getAggregations(aggregationParameters)
                 .then(function (response) {
-                    initClassicHistogram(aggregation, $filter('translate')(aggregation), response);
+                    initAggregationHistogram(aggregation, $filter('translate')(aggregation), response);
                     service.histogram.aggregationColumn = column;
                     service.histogram.aggregation = aggregation;
 
@@ -451,8 +520,8 @@
          */
         function getSavedColumnAggregation() {
             var datasetId = state.playground.dataset && state.playground.dataset.id;
-            var preparationId = state.playground.preparation &&  state.playground.preparation.id;
-            var columnId = state.playground.grid.selectedColumn &&  state.playground.grid.selectedColumn.id;
+            var preparationId = state.playground.preparation && state.playground.preparation.id;
+            var columnId = state.playground.grid.selectedColumn && state.playground.grid.selectedColumn.id;
             return StorageService.getAggregation(datasetId, preparationId, columnId);
         }
 
@@ -464,8 +533,8 @@
          */
         function removeSavedColumnAggregation() {
             var datasetId = state.playground.dataset && state.playground.dataset.id;
-            var preparationId = state.playground.preparation &&  state.playground.preparation.id;
-            var columnId = state.playground.grid.selectedColumn &&  state.playground.grid.selectedColumn.id;
+            var preparationId = state.playground.preparation && state.playground.preparation.id;
+            var columnId = state.playground.grid.selectedColumn && state.playground.grid.selectedColumn.id;
             return StorageService.removeAggregation(datasetId, preparationId, columnId);
         }
 
@@ -477,8 +546,8 @@
          */
         function saveColumnAggregation() {
             var datasetId = state.playground.dataset && state.playground.dataset.id;
-            var preparationId = state.playground.preparation &&  state.playground.preparation.id;
-            var columnId = state.playground.grid.selectedColumn &&  state.playground.grid.selectedColumn.id;
+            var preparationId = state.playground.preparation && state.playground.preparation.id;
+            var columnId = state.playground.grid.selectedColumn && state.playground.grid.selectedColumn.id;
 
             var aggregation = {};
             aggregation.aggregation = service.histogram.aggregation;
@@ -530,18 +599,18 @@
          * @description Removes data depending on the parameters
          */
         function reset(charts, statistics, cache) {
-            if(charts) {
+            if (charts) {
                 service.boxPlot = null;
                 service.histogram = null;
                 service.rangeLimits = null;
                 service.stateDistribution = null;
             }
 
-            if(statistics) {
+            if (statistics) {
                 service.statistics = null;
             }
 
-            if(cache) {
+            if (cache) {
                 StatisticsRestService.resetCache();
             }
         }

@@ -61,7 +61,7 @@ describe('horizontalBarchart directive', function () {
         expect(element.find('rect').length).toBe(statsData.length * 2);
         expect(element.find('.foreign-object-body').length).toBe(statsData.length);
         expect(element.find('.bg-rect').length).toBe(statsData.length);
-        expect(element.find('.bar').length).toBe(statsData.length);
+        expect(element.find('.frontBar').length).toBe(statsData.length);
     });
 
     //waiting for a solution for this issue PhantomJs + svg :

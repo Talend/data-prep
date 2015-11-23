@@ -6,6 +6,10 @@ import java.util.List;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.talend.dataprep.validation.OneNotBlank;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * JavaBean used to model aggregation parameters.
  */
@@ -28,6 +32,10 @@ public class AggregationParameters {
     /** List of aggregation operations to apply. */
     @NotEmpty
     private List<AggregationOperation> operations;
+
+    @JsonProperty("filter")
+    @JsonRawValue
+    private Object filter;
 
     /** Optional sample size (null for the whole thing). */
     private String sampleSize;
@@ -103,6 +111,27 @@ public class AggregationParameters {
      */
     public void addGroupBy(String groupBy) {
         this.groupBy.add(groupBy);
+    }
+
+    /**
+     * @return The filter (as raw JSON) for the aggregation.
+     * @see org.talend.dataprep.api.filter.FilterService
+     */
+    @JsonRawValue
+    public String getFilter() {
+        return filter == null ? null : filter.toString();
+    }
+
+    /**
+     * @param filter The filter (as raw JSON) for the aggregation.
+     * @see org.talend.dataprep.api.filter.FilterService
+     */
+    public void setFilter(JsonNode filter) {
+        if (filter == null || filter.isNull()) {
+            this.filter = null;
+        } else {
+            this.filter = filter;
+        }
     }
 
     /**

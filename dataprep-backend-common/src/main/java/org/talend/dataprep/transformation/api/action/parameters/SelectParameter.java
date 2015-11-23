@@ -5,6 +5,7 @@ import static java.util.Collections.singletonList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -197,23 +198,11 @@ public class SelectParameter extends Parameter implements Serializable {
          * Add an item to the select parameter builder.
          *
          * @param value the item value.
-         * @param parameters the item optional parameters.
-         * @return the builder to carry on building the column.
-         */
-        public SelectParameter.Builder item(String value, List<Parameter> parameters) {
-            this.items.add(new Item(value, parameters));
-            return this;
-        }
-
-        /**
-         * Add an item to the select parameter builder.
-         *
-         * @param value the item value.
          * @param parameter the item optional parameter.
          * @return the builder to carry on building the column.
          */
-        public SelectParameter.Builder item(String value, Parameter parameter) {
-            this.items.add(new Item(value, singletonList(parameter)));
+        public SelectParameter.Builder item(String value, Parameter... parameter) {
+            this.items.add(new Item(value, Arrays.asList(parameter)));
             return this;
         }
 

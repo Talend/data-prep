@@ -23,6 +23,7 @@
                 case 'cluster':
                 case 'date':
                 case 'column':
+                case 'regex':
                     return type;
                 default:
                     return 'simple';

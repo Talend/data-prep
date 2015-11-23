@@ -1,36 +1,43 @@
 package org.talend.dataprep.api.service;
 
+import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.client.HttpClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.talend.dataprep.api.folder.FolderContent;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.service.command.folder.AllFoldersList;
 import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
 import org.talend.dataprep.api.service.command.folder.CreateFolderEntry;
+import org.talend.dataprep.api.service.command.folder.FolderDataSetList;
 import org.talend.dataprep.api.service.command.folder.FolderEntriesList;
 import org.talend.dataprep.api.service.command.folder.FoldersList;
 import org.talend.dataprep.api.service.command.folder.RemoveFolder;
 import org.talend.dataprep.api.service.command.folder.RemoveFolderEntry;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "api", basePath = "/api", description = "Folders API")
@@ -56,7 +63,7 @@ public class FolderAPI extends APIService {
     @Timed
     public void allFolder(final HttpServletResponse response) {
         try {
-            final HystrixCommand<InputStream> foldersList = getCommand( AllFoldersList.class, getClient());
+            final HystrixCommand<InputStream> foldersList = getCommand(AllFoldersList.class, getClient());
             response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             final ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(foldersList.execute(), outputStream);
@@ -167,6 +174,36 @@ public class FolderAPI extends APIService {
             outputStream.flush();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDER_ENTRIES, e);
+        }
+    }
+
+    /**
+     * no javadoc here so see description in @ApiOperation notes.
+     *
+     * @param folder
+     * @param sort
+     * @param order
+     * @return
+     */
+    @RequestMapping(value = "/api/folders/datasets", method = GET, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List all datasets within the folder and sorted by key/date", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @VolumeMetered
+    public FolderContent datasets(
+            @ApiParam(value = "Folder id to search datasets") @RequestParam(defaultValue = "", required = false) String folder,
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE", required = false) String sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC", required = false) String order,
+            HttpServletResponse response) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Listing datasets (pool: {})...", getConnectionManager().getTotalStats());
+        }
+        response.setHeader("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
+        HttpClient client = getClient();
+        HystrixCommand<FolderContent> listCommand = getCommand( FolderDataSetList.class, client, sort, order, folder);
+        try {
+            return listCommand.execute();
+        } catch (Exception e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 

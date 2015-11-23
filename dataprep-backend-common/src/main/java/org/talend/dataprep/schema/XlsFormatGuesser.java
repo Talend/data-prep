@@ -1,7 +1,6 @@
 package org.talend.dataprep.schema;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,14 +23,13 @@ public class XlsFormatGuesser implements FormatGuesser {
     private UnsupportedFormatGuess fallbackGuess;
 
     @Override
-    public FormatGuesser.Result guess(InputStream stream, String encoding) {
-        if (stream == null) {
+    public FormatGuesser.Result guess(SchemaParser.Request request, String encoding) {
+        if (request == null || request.getContent() == null) {
             throw new IllegalArgumentException("Content cannot be null.");
         }
         try {
-            Workbook workbook = XlsUtils.getWorkbook(stream);
-            // if poi can read it we assume it's correct excel file
-            // && at least one sheet
+            Workbook workbook = XlsUtils.getWorkbook(request);
+            // if poi can read it we assume it's correct excel file && at least one sheet
             if (workbook != null && workbook.getNumberOfSheets() > 0) {
                 return new FormatGuesser.Result(xlsFormatGuess, encoding, Collections.emptyMap());
             }

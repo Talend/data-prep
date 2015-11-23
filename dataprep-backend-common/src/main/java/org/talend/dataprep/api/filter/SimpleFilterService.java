@@ -85,7 +85,13 @@ public class SimpleFilterService implements FilterService {
                 final String end = currentNodeContent.get("end").asText();
                 return safe(r -> {
                     final double columnValue = Double.parseDouble(r.get(columnName));
-                    return columnValue >= Double.parseDouble(start) && columnValue <= Double.parseDouble(end);
+                    final double min = Double.parseDouble(start);
+                    final double max = Double.parseDouble(end);
+                    if (min != max) {
+                        return columnValue >= min && columnValue < max;
+                    } else {
+                        return columnValue == min;
+                    }
                 });
             } else if (currentNode.has("and")) {
                 if (currentNodeContent.size() != 2) {

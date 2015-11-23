@@ -8,28 +8,15 @@ import static org.talend.dataprep.api.dataset.DataSetMetadata.Builder.metadata;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.Quality;
-import org.talend.dataprep.dataset.Application;
+import org.talend.dataprep.dataset.DataSetBaseTest;
 import org.talend.dataprep.dataset.service.DataSetServiceTests;
-import org.talend.dataprep.dataset.store.content.DataSetContentStore;
-import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest
-public class QualityAnalyzerTest {
+public class QualityAnalyzerTest extends DataSetBaseTest {
 
     @Autowired
     FormatAnalysis formatAnalysis;
@@ -40,35 +27,22 @@ public class QualityAnalyzerTest {
     @Autowired
     SchemaAnalysis schemaAnalysis;
 
-    @Autowired
-    @Qualifier("ContentStore#local")
-    DataSetContentStore contentStore;
-
-    @Autowired
-    DataSetMetadataRepository repository;
-
-    @After
-    public void tearDown() throws Exception {
-        repository.clear();
-        contentStore.clear();
-    }
-
     @Test
     public void testNoDataSetFound() throws Exception {
         qualityAnalysis.analyze("1234");
-        assertThat(repository.get("1234"), nullValue());
+        assertThat(dataSetMetadataRepository.get("1234"), nullValue());
     }
 
     @Test
     public void testAnalysis() throws Exception {
         final DataSetMetadata metadata = metadata().id("1234").build();
-        repository.add(metadata);
+        dataSetMetadataRepository.add(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTests.class.getResourceAsStream("../avengers.csv"));
         formatAnalysis.analyze("1234");
         schemaAnalysis.analyze("1234");
         // Analyze quality
         qualityAnalysis.analyze("1234");
-        final DataSetMetadata actual = repository.get("1234");
+        final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
         assertThat(actual.getLifecycle().qualityAnalyzed(), is(true));
         assertThat(actual.getContent().getNbRecords(), is(5));
         for (ColumnMetadata column : actual.getRow().getColumns()) {
@@ -83,13 +57,13 @@ public class QualityAnalyzerTest {
     public void testAnalysisWithInvalidValues() throws Exception {
         String dsId = "4321";
         final DataSetMetadata metadata = metadata().id(dsId).build();
-        repository.add(metadata);
+        dataSetMetadataRepository.add(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTests.class.getResourceAsStream("../dataset_with_invalid_records.csv"));
         formatAnalysis.analyze(dsId);
         schemaAnalysis.analyze(dsId);
         // Analyze quality
         qualityAnalysis.analyze(dsId);
-        final DataSetMetadata actual = repository.get(dsId);
+        final DataSetMetadata actual = dataSetMetadataRepository.get(dsId);
         assertThat(actual.getLifecycle().qualityAnalyzed(), is(true));
         assertThat(actual.getContent().getNbRecords(), is(9));
         assertThat(actual.getRow().getColumns().size(), is(2));

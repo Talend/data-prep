@@ -130,22 +130,36 @@ public class FilterServiceTest {
 
     @Test
     public void testRange() throws Exception {
-        // Test match on "0 <= 0002 <= 2"
-        final Predicate<DataSetRow> matchPredicate = service.build("{\"range\": {\"field\": \"0002\",\"start\": \"0\",\"end\": \"2\"}}");
+        // Test match on "0 <= 0002 < 3"
+        final Predicate<DataSetRow> matchPredicate = service.build("{\"range\": {\"field\": \"0002\",\"start\": \"0\",\"end\": \"3\"}}");
         assertThat(matchPredicate.test(row), is(true));
-        // Test non match on "0 <= 0002 <= 1"
+        // Test non match on "0 <= 0002 < 1"
         final Predicate<DataSetRow> nonMatchPredicate = service.build("{\"range\": {\"field\": \"0002\",\"start\": \"0\",\"end\": \"1\"}}");
         assertThat(nonMatchPredicate.test(row), is(false));
     }
 
     @Test
     public void testRangeOnDouble() throws Exception {
-        // Test match on "0 <= 0002 <= 2"
+        // Test match on "10.4 <= 0004 < 10.6"
         final Predicate<DataSetRow> matchPredicate = service.build("{\"range\": {\"field\": \"0004\",\"start\": \"10.4\",\"end\": \"10.6\"}}");
         assertThat(matchPredicate.test(row), is(true));
-        // Test non match on "0 <= 0002 <= 1"
+        // Test non match on "10.1 <= 0004 < 10.4"
         final Predicate<DataSetRow> nonMatchPredicate = service.build("{\"range\": {\"field\": \"0004\",\"start\": \"10.1\",\"end\": \"10.4\"}}");
         assertThat(nonMatchPredicate.test(row), is(false));
+    }
+
+    @Test
+    public void testRangeOnDoubleInMax() throws Exception {
+        // Test non match on "10.1 <= 0004 < 10.5"
+        final Predicate<DataSetRow> nonMatchPredicate = service.build("{\"range\": {\"field\": \"0004\",\"start\": \"10.1\",\"end\": \"10.5\"}}");
+        assertThat(nonMatchPredicate.test(row), is(false));
+    }
+
+    @Test
+    public void testRangeMinEqualsMax() throws Exception {
+        // Test non match on "10.5 <= 0004 < 10.5" -> should be equivalent to "0004 = 10.5"
+        final Predicate<DataSetRow> nonMatchPredicate = service.build("{\"range\": {\"field\": \"0004\",\"start\": \"10.5\",\"end\": \"10.5\"}}");
+        assertThat(nonMatchPredicate.test(row), is(true));
     }
 
     @Test

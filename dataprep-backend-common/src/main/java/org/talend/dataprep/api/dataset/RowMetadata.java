@@ -9,6 +9,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.formula.functions.Column;
 import org.talend.dataprep.api.dataset.diff.Flag;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,6 +56,24 @@ public class RowMetadata implements Serializable {
 
     private ColumnMetadata addColumn(ColumnMetadata columnMetadata) {
         return addColumn(columnMetadata, columns.size());
+    }
+
+    /**
+     * Removes the column metadata corresponding to the specified id from the columns of this row metadata, and returns
+     * <tt>the deleted column metadata</tt> if it is present. If the specified id does not correspond to a column
+     * metadata or if this row metadata does not contain the specified column metadata, the row metadata remains
+     * unchanged and returns <tt>null</tt>.
+     *
+     * @param id the specified id corresponding to a column metadata to be deleted
+     * @return <tt>the deleted column metadata</tt> if the column metadata corresponding to the specified id is in this
+     * row metadata and <tt>null</tt> otherwise
+     */
+    public ColumnMetadata deleteColumnById(String id) {
+        ColumnMetadata column = getById(id);
+        if (column != null && columns.remove(column)) {
+            return column;
+        }
+        return null;
     }
 
     private ColumnMetadata addColumn(ColumnMetadata columnMetadata, int index) {

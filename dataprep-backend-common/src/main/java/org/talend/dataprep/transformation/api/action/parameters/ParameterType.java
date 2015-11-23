@@ -31,7 +31,11 @@ public enum ParameterType {
     /**
      * A filter parameter used to filter values in current view.
      */
-    FILTER;
+    FILTER,
+    /**
+     * A regular expression parameter
+     */
+    REGEX;
 
     public String asString() {
         return this.name().toLowerCase();

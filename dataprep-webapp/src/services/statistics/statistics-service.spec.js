@@ -83,6 +83,50 @@ describe('Statistics service', function () {
         }
     };
 
+    var barChartStrCol2 = {
+        id: '0010',
+        'domain': 'barchartAndString',
+        'type': 'string',
+        'statistics': {
+            'frequencyTable': [
+                {
+                    'data': '   toto',
+                    'occurences': 1
+                },
+                {
+                    'data': 'titi',
+                    'occurences': 1
+                },
+                {
+                    'data': 'coucou',
+                    'occurences': 1
+                },
+                {
+                    'data': 'cici',
+                    'occurences': 1
+                }
+            ],
+            textLengthSummary: {
+                averageLength: 10.13248646854654,
+                minimalLength: 12,
+                maximalLength: 14
+            },
+            count: 4,
+            distinctCount: 5,
+            duplicateCount: 6,
+            empty: 7,
+            invalid: 8,
+            valid: 9,
+            min: 10,
+            max: 11,
+            mean: 12,
+            variance: 13,
+            quantiles: {
+                lowerQuantile: 'NaN'
+            }
+        }
+    };
+
     var mapCol = {
         'domain': 'US_STATE_CODE',
         'type': '',
@@ -163,67 +207,24 @@ describe('Statistics service', function () {
             spyOn(FilterService, 'addFilter').and.returnValue();
         }));
 
-        it('should add a new "inside_range" filter', inject(function (StatisticsService, FilterService, $timeout) {
+        it('should create a function that reinit range limits when the selected column is the same', inject(function (StatisticsService) {
             //given
-            StatisticsService.rangeLimits = {};
-            stateMock.playground.grid.selectedColumn = {id: '0000', statistics: {min: 5, max: 55}};
-
-            //when
-            StatisticsService.addRangeFilter([0, 22]);
-            $timeout.flush();
-
-            //then
-            expect(FilterService.addFilter).toHaveBeenCalled();
-
-            var args = FilterService.addFilter.calls.argsFor(0);
-            expect(args[0]).toBe('inside_range');
-            expect(args[1]).toBe('0000');
-            expect(args[2]).not.toBeDefined();
-            expect(args[3]).toEqual({interval: [0, 22]});
-        }));
-
-        it('should update rangeLimits brush on new "inside_range" filter add', inject(function (StatisticsService, $timeout) {
-            //given
-            StatisticsService.rangeLimits = {};
-            StatisticsService.histogram = {};
-            stateMock.playground.grid.selectedColumn = {id: '0000', statistics: {min: 5, max: 55}};
-
-            //when
-            stateMock.playground.filter.gridFilters = [{colId: '0000', type: 'inside_range', args: {interval: [10, 22]}}];
-            StatisticsService.addRangeFilter([10, 22]);
-            $timeout.flush();
-
-            //then
-            expect(StatisticsService.rangeLimits.minBrush).toBe(10);
-            expect(StatisticsService.rangeLimits.maxBrush).toBe(22);
-            expect(StatisticsService.histogram.activeLimits).toEqual([10, 22]);
-        }));
-
-        it('should reinit range limits on "inside_range" filter remove when the selected column is the same', inject(function (StatisticsService, FilterService, $timeout) {
-            //given
-            var originalRangeLimits = {};
-            StatisticsService.histogram = {};
-            StatisticsService.rangeLimits = originalRangeLimits;
-            var column = {id: '0000', statistics: {min: 5, max: 55}};
-            stateMock.playground.grid.selectedColumn = column;
-
-            stateMock.playground.filter.gridFilters = [{colId: '0000', type: 'inside_range', args: {interval: [0, 22]}}];
-            StatisticsService.addRangeFilter([0, 22]);
-            $timeout.flush();
-
-            expect(StatisticsService.rangeLimits).toEqual({
+            var originalRangeLimits = {
                 min: 5,
                 max: 55,
                 minBrush: 5,
                 maxBrush: 22,
                 minFilterVal: 0,
                 maxFilterVal: 22
-            });
-            expect(FilterService.addFilter).toHaveBeenCalled();
-            var removeCallback = FilterService.addFilter.calls.argsFor(0)[4];
+            };
+            StatisticsService.histogram = {};
+            StatisticsService.rangeLimits = originalRangeLimits;
+            var column = {id: '0000', statistics: {min: 5, max: 55}};
+            stateMock.playground.grid.selectedColumn = column;
+
+            var removeCallback = StatisticsService.getRangeFilterRemoveFn();
 
             //when
-            stateMock.playground.filter.gridFilters = [];
             removeCallback({colId: '0000'});
 
             //then
@@ -235,23 +236,27 @@ describe('Statistics service', function () {
             expect(StatisticsService.histogram.activeLimits).toEqual([column.statistics.min, column.statistics.max]);
         }));
 
-        it('should do nothing on "inside_range" filter remove when the selected column is NOT the same', inject(function (StatisticsService, FilterService, $timeout) {
+        it('should create a function that do nothing when the selected column is NOT the same', inject(function (StatisticsService) {
             //given
-            StatisticsService.rangeLimits = {};
+            var originalRangeLimits = {
+                min: 5,
+                max: 55,
+                minBrush: 5,
+                maxBrush: 22,
+                minFilterVal: 0,
+                maxFilterVal: 22
+            };
             StatisticsService.histogram = {};
+            StatisticsService.rangeLimits = originalRangeLimits;
             stateMock.playground.grid.selectedColumn = {id: '0000', statistics: {min: 5, max: 55}};
-            StatisticsService.addRangeFilter([0, 22]);
-            $timeout.flush();
 
-            expect(FilterService.addFilter).toHaveBeenCalled();
-            var removeCallback = FilterService.addFilter.calls.argsFor(0)[4];
+            var removeCallback = StatisticsService.getRangeFilterRemoveFn();
 
             //when
-            removeCallback({colId: '0001'});
+            removeCallback({colId: '0001'}); // not the same column as the filters one
 
             //then
-            expect(StatisticsService.rangeLimits).toEqual(
-                {min: 5, max: 55});
+            expect(StatisticsService.rangeLimits).toBe(originalRangeLimits);
         }));
     });
 
@@ -288,6 +293,7 @@ describe('Statistics service', function () {
             it('should reset non histogram data when column type is "string"', inject(function (StatisticsService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartStrCol;
+                stateMock.playground.grid.filteredOccurences = {'   toto': 3, 'titi': 2};
                 StatisticsService.boxPlot = {};
                 StatisticsService.stateDistribution = {};
 
@@ -299,9 +305,10 @@ describe('Statistics service', function () {
                 expect(StatisticsService.stateDistribution).toBeFalsy();
             }));
 
-            it('should set the frequency data with formatted value when column type is "string"', inject(function (StatisticsService) {
+            it('should set the frequency data with formatted value when column type is "string" with filter', inject(function (StatisticsService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartStrCol;
+                stateMock.playground.grid.filteredOccurences = {'   toto': 3, 'titi': 2};
                 expect(StatisticsService.histogram).toBeFalsy();
 
                 //when
@@ -310,10 +317,10 @@ describe('Statistics service', function () {
                 //then
                 expect(StatisticsService.histogram).toEqual({
                     data: [
-                        {data: '   toto', occurences: 202, formattedValue: '<span class="hiddenChars">   </span>toto'},
-                        {data: 'titi', occurences: 2, formattedValue: 'titi'},
-                        {data: 'coucou', occurences: 102, formattedValue: 'coucou'},
-                        {data: 'cici', occurences: 22, formattedValue: 'cici'}
+                        {data: '   toto', occurences: 202, formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3},
+                        {data: 'titi', occurences: 2, formattedValue: 'titi', filteredOccurrences: 2},
+                        {data: 'coucou', occurences: 102, formattedValue: 'coucou', filteredOccurrences: 0},
+                        {data: 'cici', occurences: 22, formattedValue: 'cici', filteredOccurrences: 0}
                     ],
                     key: 'occurrences',
                     label: 'Occurrences',
@@ -321,9 +328,33 @@ describe('Statistics service', function () {
                 });
             }));
 
+            it('should set the frequency data with formatted value when column type is "string" without filter', inject(function (StatisticsService) {
+                //given
+                stateMock.playground.grid.selectedColumn = barChartStrCol2;
+                stateMock.playground.grid.filteredOccurences = {'   toto': 1, 'coucou': 1, 'cici': 1, 'titi': 1};
+                expect(StatisticsService.histogram).toBeFalsy();
+
+                //when
+                StatisticsService.processData();
+
+                //then
+                expect(StatisticsService.histogram).toEqual({
+                    data: [
+                        {data: '   toto', occurences: 1, formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 1},
+                        {data: 'titi', occurences: 1, formattedValue: 'titi', filteredOccurrences: 1},
+                        {data: 'coucou', occurences: 1, formattedValue: 'coucou', filteredOccurrences: 1},
+                        {data: 'cici', occurences: 1, formattedValue: 'cici', filteredOccurrences: 1}
+                    ],
+                    key: 'occurrences',
+                    label: 'Occurrences',
+                    column: barChartStrCol2
+                });
+            }));
+
             it('should reset non histogram data when column type is "boolean"', inject(function (StatisticsService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartBoolCol;
+                stateMock.playground.grid.filteredOccurences = {'true': 3, 'false': 2};
                 StatisticsService.boxPlot = {};
                 StatisticsService.stateDistribution = {};
 
@@ -338,6 +369,7 @@ describe('Statistics service', function () {
             it('should set the frequency data when column type is "boolean"', inject(function (StatisticsService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartBoolCol;
+                stateMock.playground.grid.filteredOccurences = {'true': 3, 'false': 2};
                 expect(StatisticsService.histogram).toBeFalsy();
 
                 //when
@@ -352,9 +384,10 @@ describe('Statistics service', function () {
                 });
             }));
 
-            it('should set the range data frequency when column type is "number"', inject(function (StatisticsService) {
+            it('should set the range data frequency when column type is "number" with filters', inject(function (StatisticsService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartNumCol;
+                stateMock.playground.grid.filteredOccurences = {1: 2, 3: 4, 11: 1};
                 StatisticsService.statistics = {
                     common: {
                         COUNT: 4,
@@ -369,8 +402,10 @@ describe('Statistics service', function () {
 
                 //when
                 StatisticsService.processData();
-
                 //then
+                expect(StatisticsService.histogram.data[0].filteredOccurrences).toBe(6); //[0, 10[
+                expect(StatisticsService.histogram.data[0].data).toEqual([barChartNumCol.statistics.histogram[0].range.min, barChartNumCol.statistics.histogram[0].range.max]);
+                expect(StatisticsService.histogram.data[1].filteredOccurrences).toBe(1); //[10, 20[
                 expect(StatisticsService.histogram.data[1].data).toEqual([barChartNumCol.statistics.histogram[1].range.min, barChartNumCol.statistics.histogram[1].range.max]);
             }));
 
@@ -707,9 +742,10 @@ describe('Statistics service', function () {
         }));
 
         describe('with NO provided aggregation', function () {
-            it('should update histogram data with classical occurrence histogram', inject(function ($q, $rootScope, StatisticsService, StatisticsRestService) {
+            it('should update histogram data with classical occurrence histogram with filter', inject(function ($q, $rootScope, StatisticsService, StatisticsRestService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartStrCol;
+                stateMock.playground.grid.filteredOccurences = {'   toto': 3, 'titi': 2};
                 spyOn(StatisticsRestService, 'getAggregations').and.returnValue($q.when());
 
                 //when
@@ -719,10 +755,10 @@ describe('Statistics service', function () {
                 expect(StatisticsRestService.getAggregations).not.toHaveBeenCalled();
                 expect(StatisticsService.histogram).toEqual({
                     data: [
-                        {data: '   toto', occurences: 202, formattedValue: '<span class="hiddenChars">   </span>toto'},
-                        {data: 'titi', occurences: 2, formattedValue: 'titi'},
-                        {data: 'coucou', occurences: 102, formattedValue: 'coucou'},
-                        {data: 'cici', occurences: 22, formattedValue: 'cici'}
+                        {data: '   toto', occurences: 202, formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3 },
+                        {data: 'titi', occurences: 2, formattedValue: 'titi', filteredOccurrences: 2},
+                        {data: 'coucou', occurences: 102, formattedValue: 'coucou', filteredOccurrences: 0},
+                        {data: 'cici', occurences: 22, formattedValue: 'cici', filteredOccurrences: 0}
                     ],
                     key: 'occurrences',
                     label: 'Occurrences',
@@ -733,6 +769,7 @@ describe('Statistics service', function () {
             it('should remove saved aggregation on current column/preparation/dataset from storage', inject(function ($q, $rootScope, StatisticsService, StatisticsRestService, StorageService) {
                 //given
                 stateMock.playground.grid.selectedColumn = barChartStrCol;
+                stateMock.playground.grid.filteredOccurences = {'   toto': 3, 'titi': 2};
                 spyOn(StatisticsRestService, 'getAggregations').and.returnValue($q.when());
                 expect(StorageService.removeAggregation).not.toHaveBeenCalled();
 
@@ -1034,9 +1071,10 @@ describe('Statistics service', function () {
             spyOn(StorageService, 'removeAggregation').and.returnValue();
         }));
 
-        it('should update histogram data with classical occurrence when there is no saved aggregation on the current preparation/dataset/column', inject(function ($rootScope, StatisticsService, StorageService) {
+        it('should update histogram data with classical occurrence when there is no saved aggregation on the current preparation/dataset/column with filter', inject(function ($rootScope, StatisticsService, StorageService) {
             //given
             stateMock.playground.grid.selectedColumn = barChartStrCol;
+            stateMock.playground.grid.filteredOccurences = {'   toto': 3, 'titi': 2};
             spyOn(StorageService, 'getAggregation').and.returnValue();
 
             //when
@@ -1047,10 +1085,10 @@ describe('Statistics service', function () {
             expect(StorageService.getAggregation).toHaveBeenCalledWith(datasetId, preparationId, barChartStrCol.id);
             expect(StatisticsService.histogram).toEqual({
                 data: [
-                    {data: '   toto', occurences: 202, formattedValue: '<span class="hiddenChars">   </span>toto'},
-                    {data: 'titi', occurences: 2, formattedValue: 'titi'},
-                    {data: 'coucou', occurences: 102, formattedValue: 'coucou'},
-                    {data: 'cici', occurences: 22, formattedValue: 'cici'}
+                    {data: '   toto', occurences: 202, formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3},
+                    {data: 'titi', occurences: 2, formattedValue: 'titi', filteredOccurrences: 2},
+                    {data: 'coucou', occurences: 102, formattedValue: 'coucou', filteredOccurrences: 0},
+                    {data: 'cici', occurences: 22, formattedValue: 'cici', filteredOccurrences: 0}
                 ],
                 key: 'occurrences',
                 label: 'Occurrences',

@@ -88,6 +88,25 @@ public class ConcatTest {
     }
 
     @Test
+    public void should_set_new_column_name_without_other_column() {
+        // given
+        DataSetRow row = getRow("first", "second", "Done !");
+        row.getRowMetadata().getById("0000").setName("source");
+        row.getRowMetadata().getById("0001").setName("selected");
+
+        parameters.put(Concat.OTHER_COLUMN_PARAMETER, Concat.CONCAT_WITH_CONSTANT);
+        parameters.remove(Concat.SELECTED_COLUMN_PARAMETER);
+
+        // when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0000");
+
+        // then
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("<source>").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void should_apply_without_separator() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -112,6 +131,20 @@ public class ConcatTest {
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "first-second>");
+        assertEquals(expected, row);
+    }
+
+    @Test
+    public void should_apply_without_other_column() {
+        // given
+        DataSetRow row = getRow("first", "second", "Done !");
+        parameters.put(Concat.OTHER_COLUMN_PARAMETER, Concat.CONCAT_WITH_CONSTANT);
+
+        // when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0000");
+
+        // then
+        DataSetRow expected = getRow("first", "second", "Done !", "<first>");
         assertEquals(expected, row);
     }
 

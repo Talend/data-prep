@@ -1,14 +1,5 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.api.type.Type.STRING;
-
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -20,6 +11,17 @@ import org.talend.dataprep.transformation.api.action.metadata.common.CellAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
+
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.REGEX;
+import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
 
 @Component(ReplaceOnValue.ACTION_BEAN_PREFIX + ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
 public class ReplaceOnValue extends ActionMetadata implements ColumnAction, CellAction {
@@ -66,9 +68,9 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(CELL_VALUE_PARAMETER, ParameterType.STRING, EMPTY));
-        parameters.add(new Parameter(REPLACE_VALUE_PARAMETER, ParameterType.STRING, EMPTY));
-        parameters.add(new Parameter(REPLACE_ENTIRE_CELL_PARAMETER, ParameterType.BOOLEAN, "false"));
+        parameters.add(new Parameter(CELL_VALUE_PARAMETER, REGEX, EMPTY));
+        parameters.add(new Parameter(REPLACE_VALUE_PARAMETER, STRING, EMPTY));
+        parameters.add(new Parameter(REPLACE_ENTIRE_CELL_PARAMETER, BOOLEAN, "false"));
         return parameters;
     }
 
@@ -77,7 +79,7 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
      */
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return STRING.equals(Type.get(column.getType()));
+        return Type.STRING.equals(Type.get(column.getType()));
     }
 
     private void apply(DataSetRow row, Map<String, String> parameters, String columnId) {
@@ -97,7 +99,7 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
 
     protected String computeNewValue(String originalValue, String regexp, String replacement, boolean replaceEntireCell) {
         if (originalValue == null) {
-            return originalValue;
+            return null;
         }
 
         try {
@@ -105,8 +107,8 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
                 regexp = ".*" + regexp + ".*";
             }
 
-            Pattern p = Pattern.compile(regexp);
-            final Matcher matcher = p.matcher(originalValue);
+            // regex validity check
+            final Matcher matcher = Pattern.compile(regexp).matcher(originalValue);
 
             if (replaceEntireCell) {
                 if (matcher.matches()) {
@@ -136,7 +138,7 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
      */
     @Override
     public void applyOnCell(DataSetRow row, TransformationContext context, Map<String, String> parameters, Long rowId,
-            String columnId) {
+                            String columnId) {
         apply(row, parameters, columnId);
     }
 }

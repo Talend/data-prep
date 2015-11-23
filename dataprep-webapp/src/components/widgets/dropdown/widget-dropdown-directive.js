@@ -26,6 +26,8 @@
      </talend-dropdown>
      * @param {boolean} closeOnSelect Default `true`. If set to false, dropdown will not close on inner item click
      * @param {function} onOpen The callback to execute on dropdown open
+     * @param {string} forceSide Force display on the specified side (left | right)
+     *
      * @param {class} dropdown-action Action zone that trigger menu toggle
      * @param {class} dropdown-button Add a caret at the end off element
      * @param {class} dropdown-menu The menu to open
@@ -34,12 +36,12 @@
     function TalendDropdown($window) {
         return {
             restrict: 'EA',
-            replace: true,
             transclude: true,
             templateUrl: 'components/widgets/dropdown/dropdown.html',
             scope: {
                 closeOnSelect: '=',
-                onOpen: '&'
+                onOpen: '&',
+                forceSide: '@'
             },
             bindToController: true,
             controller: function () {
@@ -91,21 +93,38 @@
                         setFocusOn(menu);
                     }
 
+                    function positionMenuRight(position) {
+                        menu.addClass('right');
+                        menu.css('right', $window.innerWidth - position.right);
+                        menu.css('left', 'auto');
+                    }
+
+                    function positionMenuLeft(position) {
+                        menu.removeClass('right');
+                        menu.css('left', position.left);
+                        menu.css('right', 'auto');
+                    }
+
                     /**
                      * Move the menu to the right place, depending on the window width and the dropdown position
                      */
                     function positionMenu() {
                         var position = container.length ? container[0].getBoundingClientRect() : action[0].getBoundingClientRect();
                         menu.css('top', position.bottom + 5);
-                        menu.css('right', $window.innerWidth - position.right);
-                        menu.css('left', 'auto');
-                        menu.addClass('right');
 
-                        var menuPosition = menu[0].getBoundingClientRect();
-                        if (menuPosition.left < 0) {
-                            menu.removeClass('right');
-                            menu.css('left', 0);
-                            menu.css('right', 'auto');
+                        switch(ctrl.forceSide) {
+                            case 'left':
+                                positionMenuLeft(position);
+                                break;
+                            case 'right':
+                                positionMenuRight(position);
+                                break;
+                            default:
+                                positionMenuRight(position);
+                                var menuPosition = menu[0].getBoundingClientRect();
+                                if (menuPosition.left < 0) {
+                                    positionMenuLeft(position);
+                                }
                         }
                     }
 

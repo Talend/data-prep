@@ -9,6 +9,7 @@
      * @requires data-prep.services.transformation.service:SuggestionService
      * @requires data-prep.services.transformation.service:ColumnSuggestionService
      * @requires data-prep.services.playground.service:PreviewService
+     *
      */
     function DatagridExternalService($timeout, StatisticsService, SuggestionService, PreviewService) {
         var grid;
@@ -36,6 +37,7 @@
             if (column.id === 'tdpId') {
                 $timeout.cancel(suggestionTimeout);
                 $timeout(function () {
+                    lastSelectedColumn = null;
                     SuggestionService.reset();
                     StatisticsService.reset(true, true, true);
                 });

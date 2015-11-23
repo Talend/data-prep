@@ -428,13 +428,15 @@ describe('Recipe service', function () {
         ]
     };
 
+    var filtersFromTree = [];
+
     var stateMock;
 
     beforeEach(module('data-prep.services.recipe', function($provide) {
         stateMock = {playground: {}};
         $provide.constant('state', stateMock);
     }));
-    beforeEach(inject(function($q, PreparationService, TransformationService, FilterService) {
+    beforeEach(inject(function($q, PreparationService, TransformationService, FilterAdapterService) {
         spyOn(PreparationService, 'getDetails').and.returnValue($q.when({
             data: preparationDetails()
         }));
@@ -444,7 +446,7 @@ describe('Recipe service', function () {
             return $q.when(transformation);
         });
         spyOn(TransformationService, 'initParamsValues').and.callThrough();
-        spyOn(FilterService, 'flattenFiltersTree').and.returnValue();
+        spyOn(FilterAdapterService, 'fromTree').and.returnValue(filtersFromTree);
     }));
 
     describe('refresh', function() {
@@ -588,7 +590,20 @@ describe('Recipe service', function () {
 
             expect(TransformationService.initDynamicParameters).toHaveBeenCalledWith(recipe[4].transformation, { columnId: '1', preparationId: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4', stepId: '1e1f41dd6d4554705abebd8d1896022acdbad217' });
             expect(TransformationService.initParamsValues).toHaveBeenCalledWith(recipe[4].transformation, recipe[4].actionParameters.parameters);
-            expect(FilterService.flattenFiltersTree).toHaveBeenCalledWith(recipe[0].actionParameters.parameters.filter, []);
+        }));
+
+        it('should init step filters from backend tree', inject(function(FilterAdapterService, $rootScope, RecipeService) {
+            //given
+            stateMock.playground.preparation = {id: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4'};
+
+            //when
+            RecipeService.refresh();
+            $rootScope.$digest();
+
+            //then
+            var recipe = RecipeService.getRecipe();
+            expect(FilterAdapterService.fromTree).toHaveBeenCalledWith(recipe[0].actionParameters.parameters.filter);
+            expect(recipe[0].filters).toBe(filtersFromTree);
         }));
 
         it('should reuse dynamic params from previous recipe if ids are the same, on refresh', inject(function($rootScope, RecipeService, TransformationService) {

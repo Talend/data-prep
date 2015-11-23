@@ -51,4 +51,5 @@ public class CSVFormatGuess implements FormatGuess {
     public String getBeanId() {
         return BEAN_ID;
     }
+
 }

@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     /**
@@ -23,7 +23,7 @@
          * @param {object} preparation - the preparation to load
          * @description Load a preparation in the playground
          */
-        vm.load = function(preparation) {
+        vm.load = function (preparation) {
             PlaygroundService
                 .load(preparation)
                 .then(StateService.showPlayground);
@@ -36,13 +36,19 @@
          * @param {object} preparation - the preparation to delete
          * @description Delete a preparation
          */
-        vm.delete = function(preparation) {
-            TalendConfirmService.confirm({disableEnter: true}, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {type:'preparation', name: preparation.name})
-                .then(function() {
+        vm.delete = function (preparation) {
+            TalendConfirmService.confirm({disableEnter: true}, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {
+                    type: 'preparation',
+                    name: preparation.name
+                })
+                .then(function () {
                     return PreparationService.delete(preparation);
                 })
-                .then(function() {
-                    MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {type:'preparation', name: preparation.name});
+                .then(function () {
+                    MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {
+                        type: 'preparation',
+                        name: preparation.name
+                    });
                 });
         };
 
@@ -50,23 +56,20 @@
          * @ngdoc method
          * @name rename
          * @methodOf data-prep.preparation-list.controller:PreparationListCtrl
-         * @param {object} preparation - the preparation to rename
-         * @param {string} newName - the new name for the given preparation
-         * @description trigger backend call to update preparation name
+         * @param {object} preparation The preparation to rename
+         * @param {string} newName The new name for the given preparation
+         * @description Trigger backend call to update preparation name
          */
-        vm.rename = function(preparation,newName){
-            var cleanName = newName?newName.trim():'';
-            if(cleanName) {
+        vm.rename = function (preparation, newName) {
+            var cleanName = newName ? newName.trim() : '';
+            if (cleanName) {
                 $rootScope.$emit('talend.loading.start');
-                return PreparationService.setName( preparation.id, newName )
+                return PreparationService.setName(preparation.id, newName)
                     .then(function () {
-                        preparation.showChangeName = false;
+                        MessageService.success('PREPARATION_RENAME_SUCCESS_TITLE', 'PREPARATION_RENAME_SUCCESS');
                     })
-                    .then(function() {
-                        MessageService.success( 'PREPARATION_RENAME_SUCCESS_TITLE', 'PREPARATION_RENAME_SUCCESS' );
-                    } )//hide loading screen
                     .finally(function () {
-                        $rootScope.$emit( 'talend.loading.stop' );
+                        $rootScope.$emit('talend.loading.stop');
                     });
             }
         };
@@ -78,39 +81,15 @@
          * @param {object} preparation - the preparation to clone
          * @description trigger backend call to clone preparation
          */
-        vm.clone = function(preparation){
+        vm.clone = function (preparation) {
             $rootScope.$emit('talend.loading.start');
             return PreparationService.clone(preparation.id)
-                .then(function() {
+                .then(function () {
                     MessageService.success('PREPARATION_CLONING_SUCCESS_TITLE', 'PREPARATION_CLONING_SUCCESS');
                 })
-                //hide loading screen
                 .finally(function () {
                     $rootScope.$emit('talend.loading.stop');
                 });
-        };
-
-        /**
-         * @ngdoc method
-         * @name overPreparationEntry
-         * @methodOf data-prep.preparation-list.controller:PreparationListCtrl
-         * @param {object} preparation - the preparation
-         * @description show edit and clone buttons when over a preparation
-         */
-        vm.overPreparationEntry = function ( preparation ) {
-            angular.element('#edit_btn_'+preparation.id).show();
-            angular.element('#clone_btn_'+preparation.id).show();
-        };
-
-        /**
-         * @ngdoc method
-         * @name leavePreparationEntry
-         * @methodOf data-prep.preparation-list.controller:PreparationListCtrl
-         * @param {object} preparation - the preparation
-         * @description hide edit and clone buttons when out of a preparation
-         */
-        vm.leavePreparationEntry = function ( preparation ) {
-            angular.element('#clone_btn_'+preparation.id).hide();
         };
 
         /**
@@ -120,13 +99,13 @@
          * @param {object} preparations - list of all user's preparation
          * @description [PRIVATE] Load playground with provided preparation id, if present in route param
          */
-        var loadUrlSelectedPreparation = function(preparations) {
-            if($stateParams.prepid) {
-                var selectedPrep = _.find(preparations, function(preparation) {
+        var loadUrlSelectedPreparation = function (preparations) {
+            if ($stateParams.prepid) {
+                var selectedPrep = _.find(preparations, function (preparation) {
                     return preparation.id === $stateParams.prepid;
                 });
-                
-                if(selectedPrep) {
+
+                if (selectedPrep) {
                     vm.load(selectedPrep);
                 }
                 else {

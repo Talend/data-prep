@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_FOLDER;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_LIST_FOLDERS;
 
 @Component
@@ -34,7 +35,7 @@ public class CreateChildFolder extends GenericCommand<InputStream> {
     private CreateChildFolder(HttpClient client, String path) {
         super(APIService.DATASET_GROUP, client);
         execute(() -> onExecute(path));
-        onError(e -> new TDPException(UNABLE_TO_LIST_FOLDERS, e, ExceptionContext.build()));
+        onError(e -> new TDPException(UNABLE_TO_CREATE_FOLDER, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());
     }
 

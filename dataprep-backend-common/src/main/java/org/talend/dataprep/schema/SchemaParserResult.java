@@ -42,18 +42,32 @@ public class SchemaParserResult implements Serializable {
         return sheetName;
     }
 
+    /**
+     * Xls sheet content.
+     */
     public static class SheetContent implements Serializable {
 
+        /** The sheet name. */
         @JsonProperty("name")
         private String name;
 
+        /** List of column metadata. */
         @JsonProperty("columnMetadatas")
         private List<ColumnMetadata> columnMetadatas;
 
+        /**
+         * Default empty constructor.
+         */
         public SheetContent() {
             // no op
         }
 
+        /**
+         * Constructor.
+         *
+         * @param name the sheet name.
+         * @param columnMetadatas the list of column metadata.
+         */
         public SheetContent(String name, List<ColumnMetadata> columnMetadatas) {
             this.name = name;
             this.columnMetadatas = columnMetadatas;

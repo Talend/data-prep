@@ -59,6 +59,22 @@ public interface FolderRepository {
     Iterable<FolderEntry> findFolderEntries(String contentId, String contentType);
 
     /**
+     * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>
+     *
+     * @param folderEntry the {@link FolderEntry} to move
+     * @param destinationPath the destination where to move the entry
+     */
+    void moveFolderEntry(FolderEntry folderEntry, String destinationPath);
+
+    /**
+     * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>
+     *
+     * @param folderEntry the {@link FolderEntry} to move
+     * @param destinationPath the destination where to copy the entry
+     */
+    void copyFolderEntry(FolderEntry folderEntry, String destinationPath);
+
+    /**
      * clear the whole content
      */
     void clear();

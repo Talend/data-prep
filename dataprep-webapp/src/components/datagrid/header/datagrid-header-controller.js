@@ -10,7 +10,7 @@
      * @requires data-prep.services.playground.service:PlaygroundService
      */
     function DatagridHeaderCtrl(TransformationCacheService, ConverterService, PlaygroundService) {
-        var COLUMN_CATEGORY = 'column_metadata';
+        var ACTION_SCOPE = 'column_metadata';
         var RENAME_ACTION = 'rename_column';
         var originalName;
 
@@ -58,7 +58,7 @@
                 TransformationCacheService.getTransformations(vm.column, true)
                     .then(function(menus) {
                         vm.transformations = _.filter(menus, function(menu) {
-                            return menu.category === COLUMN_CATEGORY;
+                            return (menu.actionScope.indexOf(ACTION_SCOPE) !== -1);
                         });
                     })
                     .catch(function() {

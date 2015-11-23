@@ -8,7 +8,7 @@
      * @requires data-prep.services.folder.service:FolderRestService
      * @requires data-prep.services.state.service:StateService
      */
-    function FolderService(FolderRestService,StateService) {
+    function FolderService(FolderRestService,StateService, DatasetListSortService) {
 
         return {
             // folder operations
@@ -111,16 +111,16 @@
         function buidStackFromId(folderId){
 
             var foldersStack = [];
-            foldersStack.push({id:'',path:'Home'});
+            foldersStack.push({id:'', path:'', name:'Home'});
 
             if(folderId) {
                 var paths = folderId.split('/');
                 for(var i = 1;i<=paths.length + 1;i++){
                     if(paths[i-1]) {
                         if ( i > 1 ) {
-                            foldersStack.push( {id: foldersStack[i - 1].id + '/' + paths[i-1], path: paths[i-1]} );
+                            foldersStack.push({id: foldersStack[i - 1].id + '/' + paths[i-1], path: foldersStack[i - 1].id + '/' + paths[i-1], name: paths[i-1]});
                         } else {
-                            foldersStack.push( {id: paths[i-1], path: paths[i-1]} );
+                            foldersStack.push({id: paths[i-1], path: paths[i-1],name: paths[i-1]});
                         }
                     }
                 }
@@ -137,6 +137,7 @@
          */
         function populateMenuChilds(folder){
             var promise = FolderRestService.getFolderContent(folder);
+
             promise.then(function(content){
                 StateService.setMenuChilds(content.data.folders);
             });
@@ -150,12 +151,17 @@
          * @param {object} folder - the folder to go
          */
         function getFolderContent(folder){
-            FolderRestService.getFolderContent(folder).then(function(content){
-                StateService.setCurrentFolder(folder? folder : {id:'',path:'Home'});
-                StateService.setCurrentFolderContent(content.data);
-                buidStackFromId(folder? folder.id : "");
-            });
 
+            var sort = DatasetListSortService.getSort();
+            var order = DatasetListSortService.getOrder();
+            var promise = FolderRestService.getFolderContent(folder, sort, order);
+
+            promise.then(function(content){
+                StateService.setCurrentFolder(folder? folder : {id:'', path:'', name:'Home'});
+                StateService.setCurrentFolderContent(content.data);
+                buidStackFromId(folder? folder.id : '');
+            });
+            return promise;
         }
 
     }

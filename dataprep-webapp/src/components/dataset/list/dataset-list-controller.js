@@ -77,7 +77,7 @@
             vm.sortSelected = sortType;
             DatasetListSortService.setSort(sortType.id);
 
-            DatasetService.refreshDatasets()
+            FolderService.getFolderContent(state.folder.currentFolder)
                 .catch(function () {
                     vm.sortSelected = oldSort;
                     DatasetListSortService.setSort(oldSort.id);
@@ -100,7 +100,7 @@
             vm.sortOrderSelected = order;
             DatasetListSortService.setOrder(order.id);
 
-            DatasetService.refreshDatasets()
+            FolderService.getFolderContent(state.folder.currentFolder)
                 .catch(function () {
                     vm.sortOrderSelected = oldSort;
                     DatasetListSortService.setOrder(oldSort.id);
@@ -145,6 +145,7 @@
                     return DatasetService.delete(dataset);
                 })
                 .then(function () {
+                    vm.goToFolder(state.folder.currentFolder);
                     MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {
                         type: 'dataset',
                         name: dataset.name

@@ -54,15 +54,25 @@
          * @methodOf data-prep.services.folder.service:FolderRestService
          * @description List the childs (folders or datasets) of a folder (or child of root folder)
          * @param {object} folder - the current folder
+         * @param {string} sortType Sort by specified type
+         * @param {string} sortOrder Sort in specified order
          * @returns {Promise} The GET promise
          */
-        function getFolderContent(folder){
+        function getFolderContent(folder, sortType, sortOrder){
             var url = RestURLs.folderUrl + '/datasets';
             if (folder && folder.id) {
                 url += '?folder=' + encodeURIComponent(folder.id);
             } else {
                 url += '?folder=/';
             }
+
+            if (sortType) {
+                url += '&sort=' + sortType;
+            }
+            if (sortOrder) {
+                url += '&order=' + sortOrder;
+            }
+
             return $http.get(url);
         }
 
@@ -125,13 +135,11 @@
             var url = RestURLs.folderUrl + '/entries';
             if (path) {
                 url += '?path=' + encodeURIComponent(path);
+            } else {
+                url += '?path=/';
             }
             if (contentType) {
-                if (path) {
-                    url += '&contentType=' + encodeURIComponent( contentType );
-                } else {
-                    url += '?contentType=' + encodeURIComponent( contentType );
-                }
+                url += '&contentType=' + encodeURIComponent( contentType );
             }
 
             return $http.get(url);

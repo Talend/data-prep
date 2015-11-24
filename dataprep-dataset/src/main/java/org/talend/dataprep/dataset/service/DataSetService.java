@@ -402,7 +402,9 @@ public class DataSetService {
 
         // Save data set content
         LOG.debug( marker, "Storing content..." );
-        contentStore.storeAsRaw( dataSetMetadata, contentStore.getAsRaw( dataSet.getMetadata() ) );
+        try (InputStream inputStream = contentStore.getAsRaw( dataSet.getMetadata())){
+            contentStore.storeAsRaw( dataSetMetadata, inputStream );
+        }
         LOG.debug( marker, "Content stored." );
 
         queueEvents(newId);

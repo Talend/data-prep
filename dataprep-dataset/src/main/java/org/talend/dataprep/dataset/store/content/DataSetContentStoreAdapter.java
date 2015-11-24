@@ -1,5 +1,6 @@
 package org.talend.dataprep.dataset.store.content;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public abstract class DataSetContentStoreAdapter implements DataSetContentStore 
     public InputStream get(DataSetMetadata dataSetMetadata) {
         DataSetContent content = dataSetMetadata.getContent();
         Serializer serializer = factory.getFormatGuess(content.getFormatGuessId()).getSerializer();
-        return serializer.serialize(getAsRaw(dataSetMetadata), dataSetMetadata);
+        try (InputStream inputStream = getAsRaw(dataSetMetadata)) {
+            return serializer.serialize( inputStream, dataSetMetadata );
+        } catch ( IOException e ) {
+            throw new RuntimeException( e.getMessage(), e);
+        }
     }
 }

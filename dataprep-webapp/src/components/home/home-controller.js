@@ -237,8 +237,7 @@
             var name = vm.datasetName;
 
             // if the name exists, ask for update or creation
-            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder);
-            console.log('uploadDatasetName:'+vm.existingDatasetFromName);
+            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name);
             if (vm.existingDatasetFromName) {
                 TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], {dataset: vm.datasetName})
                     .then(

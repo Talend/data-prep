@@ -9,9 +9,8 @@
      * @requires data-prep.services.dataset.service:DatasetRestService
      * @requires data-prep.services.preparation.service:PreparationListService
      * @requires data-prep.services.utils.service:StorageService
-     * @requires data-prep.services.folder.service:FolderService
      */
-    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService, FolderService) {
+    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService) {
         return {
             //lifecycle
             import: importRemoteDataset,
@@ -219,11 +218,10 @@
          * @name getDatasetByNameAndFolder
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {string} name The dataset name
-         * @param {object} folder the folder
          * @description Get the dataset that has the wanted name within the folder
          * @returns {object} The dataset
          */
-        function getDatasetByNameAndFolder(name, folder) {
+        function getDatasetByNameAndFolder(name) {
 
             return _.find(state.folder.currentFolderContent.datasets, function(dataset){
                 return dataset.name === name;

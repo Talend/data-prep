@@ -22,7 +22,7 @@ describe('Home directive', function() {
         element.remove();
     });
 
-    it('should render subheader bar', inject(function (FolderService) {
+    it('should render subheader bar', inject(function () { // FolderService
         //when
         createElement();
 
@@ -33,7 +33,7 @@ describe('Home directive', function() {
         //expect(FolderService.getFolderContent).toHaveBeenCalled();
     }));
 
-    it('should render home main panel', inject(function (FolderService) {
+    it('should render home main panel', inject(function () { //FolderService
         //when
         createElement();
 

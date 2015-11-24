@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -100,12 +101,18 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                     .forEach(path -> {
                         if (Files.isDirectory(path)) {
                             String pathStr = pathAsString(path);
-                            childs.add(Folder.Builder.folder() //
-                                    .path(pathStr) //
-                                    .name(extractName(pathStr)) //
-                                    .build());
+                            try {
+                                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                                childs.add(Folder.Builder.folder() //
+                                        .path(pathStr) //
+                                        .name(extractName(pathStr)) //
+                                        .modificationDate(attr.lastModifiedTime().to(TimeUnit.MILLISECONDS))//
+                                        .creationDate(attr.creationTime().to(TimeUnit.MILLISECONDS)).build());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e.getMessage(), e);
+                            }
                         }
-            });
+                    });
             return childs;
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);

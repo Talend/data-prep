@@ -27,12 +27,16 @@
     </div>
 
     <div class="inventory-list" id="datasets-list">
-        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderContent.folders" ng-click="datasetListCtrl.goToFolder(child)">
-          <div class="inventory-icon inventory-folder">
+        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderContent.folders">
+          <div class="inventory-icon inventory-folder" ng-click="datasetListCtrl.goToFolder(child)">
               <img src="assets/images/folder/folder-icon.png"/>
           </div>
           <div class="inventory-text inventory-folder">
-             <span class="folder-name">{{child.name}}</span>
+             <!--span class="folder-name">{{child.name}}</span-->
+              <talend-editable-text text="child.name"
+                                    text-class="title one-line"
+                                    on-text-click="datasetListCtrl.goToFolder(child)"
+                                    on-validate="datasetListCtrl.renameFolder(child.id, text)"></talend-editable-text>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -429,10 +430,57 @@ public class FolderAPITest extends ApiServiceTestBase {
         Assertions.assertThat( folderContent.getFolders() ).isNotNull() //
             .isNotEmpty().hasSize( 2 );
 
+
+        // test delete dataset
+        response = when().delete("/api/datasets/" + dataSetId1);
+
+        Assertions.assertThat( response.getStatusCode() ).isEqualTo( 200 );
+
+        list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "foo").asString();
+
+        // then
+        folderContent = mapper.readValue( list, FolderContent.class );
+
+        expectedIds = new String[] {dataSetId3};
+        i = 0;
+        iterator = folderContent.getDatasets().iterator();
+        while (iterator.hasNext()) {
+            assertThat(iterator.next().getId(), is(expectedIds[i++]));
+        }
+
+        Assertions.assertThat( folderContent.getDatasets() ).isNotNull() //
+            .isNotEmpty().hasSize( 1 );
+
+        // rename folder foo to beer
+        response =  RestAssured.given() //
+            .queryParam( "path", "foo" ) //
+            .queryParam( "newPath", "beer" ) //
+            .put("/api/folders/rename");
+
+        Assertions.assertThat( response.getStatusCode() ).isEqualTo( 200 );
+
+        list = when() //
+            .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "beer").asString();
+
+        // then
+        folderContent = mapper.readValue( list, FolderContent.class );
+
+        expectedIds = new String[] {dataSetId3};
+        i = 0;
+        iterator = folderContent.getDatasets().iterator();
+        while (iterator.hasNext()) {
+            assertThat(iterator.next().getId(), is(expectedIds[i++]));
+        }
+
         response = RestAssured.given() //
-            .queryParam("path", "foo") //
+            .queryParam("path", "beer") //
             .when() //
             .delete("/api/folders");
+
+        Assertions.assertThat( response.getStatusCode() ).isEqualTo( 200 );
+
+
     }
 
 }

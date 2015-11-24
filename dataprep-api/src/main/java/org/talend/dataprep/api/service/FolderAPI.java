@@ -11,6 +11,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import org.talend.dataprep.api.service.command.folder.FolderEntriesList;
 import org.talend.dataprep.api.service.command.folder.FoldersList;
 import org.talend.dataprep.api.service.command.folder.RemoveFolder;
 import org.talend.dataprep.api.service.command.folder.RemoveFolderEntry;
+import org.talend.dataprep.api.service.command.folder.RenameFolder;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -104,6 +106,31 @@ public class FolderAPI extends APIService {
             removeFolder.execute();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER, e);
+        }
+    }
+
+    /**
+     * no javadoc here so see description in @ApiOperation notes.
+     * @param path
+     * @param newPath
+     */
+    @RequestMapping(value = "/api/folders/rename", method = PUT)
+    @ApiOperation(value = "Rename a Folder")
+    @Timed
+    @VolumeMetered
+    public void renameFolder(@RequestParam String path, @RequestParam String newPath){
+
+        if ( StringUtils.isEmpty( path) //
+            || StringUtils.isEmpty(newPath) //
+            || StringUtils.containsOnly(path, "/")) {
+
+            throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER);
+        }
+        try {
+            final HystrixCommand<Void> renameFolder = getCommand( RenameFolder.class, getClient(), path, newPath);
+            renameFolder.execute();
+        } catch (Exception e) {
+            throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER, e);
         }
     }
 

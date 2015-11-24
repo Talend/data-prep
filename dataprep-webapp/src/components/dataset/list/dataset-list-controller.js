@@ -247,6 +247,22 @@
             FolderService.getFolderContent(folder);
         };
 
+        /**
+         * @ngdoc method
+         * @name renameFolder
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Rename a folder
+         * @param {string} path the path to rename
+         * @param {string} newPath the new path
+         */
+        vm.renameFolder = function(path, newPath){
+            FolderService.renameFolder(path, newPath)
+                .then(function() {
+                    vm.goToFolder(state.folder.currentFolder);
+                    // or to newOne?
+                });
+        };
+
         // load the datasets
         DatasetService
             .getDatasets()

@@ -14,6 +14,7 @@
             // folder operations
             create: createFolder,
             delete: deleteFolder,
+            renameFolder: renameFolder,
             getFolderContent: getFolderContent,
 
             // folder entry operations
@@ -51,6 +52,19 @@
          */
         function createFolder(path){
             return FolderRestService.create(path);
+        }
+
+        /**
+         * @ngdoc method
+         * @name renameFolder
+         * @methodOf data-prep.services.folder.service:FolderService
+         * @description Rename a folder
+         * @param {string} path the path to rename
+         * @param {string} newPath the new path
+         * @returns {Promise} The PUT promise
+         */
+        function renameFolder(path, newPath){
+            return FolderRestService.renameFolder(path, newPath);
         }
 
         //----------------------------------------------

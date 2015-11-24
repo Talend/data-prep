@@ -14,6 +14,7 @@
             create: createFolder,
             delete: deleteFolder,
             getFolderContent: getFolderContent,
+            renameFolder: renameFolder,
 
             // folder entry operations
             createFolderEntry: createFolderEntry,
@@ -74,6 +75,19 @@
             }
 
             return $http.get(url);
+        }
+
+        /**
+         * @ngdoc method
+         * @name renameFolder
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Rename a folder
+         * @param {string} path the path to rename
+         * @param {string} newPath the new path
+         * @returns {Promise} The PUT promise
+         */
+        function renameFolder(path, newPath){
+            return $http.put(RestURLs.folderUrl + '/rename?path=' + encodeURIComponent(path) + '&newPath=' + encodeURIComponent(newPath) );
         }
 
         //----------------------------------------------

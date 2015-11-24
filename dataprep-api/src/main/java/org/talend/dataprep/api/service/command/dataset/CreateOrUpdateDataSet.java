@@ -41,12 +41,13 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
      * @param name the dataset name.
      * @param dataSetContent the new dataset content.
      */
-    private CreateOrUpdateDataSet(HttpClient client, String id, String name, InputStream dataSetContent) {
+    private CreateOrUpdateDataSet(HttpClient client, String id, String name, InputStream dataSetContent, String folderPath) {
         super(PreparationAPI.DATASET_GROUP, client);
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/raw/") //
-                    .addParameter( "name", name );
+                    .addParameter( "name", name ) //
+                    .addParameter( "folderPath", folderPath );
                 final HttpPut put = new HttpPut(uriBuilder.build()); // $NON-NLS-1$ //$NON-NLS-2$
                 put.setEntity(new InputStreamEntity(dataSetContent));
                 return put;

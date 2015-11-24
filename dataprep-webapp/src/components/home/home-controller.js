@@ -216,7 +216,7 @@
             vm.datasetName = name;
 
             // show dataset name popup when name already exists
-            if(DatasetService.getDatasetByName(name)) {
+            if(DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder)) {
                 vm.datasetNameModal = true;
             }
             // create dataset with calculated name if it is unique
@@ -237,7 +237,8 @@
             var name = vm.datasetName;
 
             // if the name exists, ask for update or creation
-            vm.existingDatasetFromName = DatasetService.getDatasetByName(name);
+            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder);
+            console.log('uploadDatasetName:'+vm.existingDatasetFromName);
             if (vm.existingDatasetFromName) {
                 TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], {dataset: vm.datasetName})
                     .then(

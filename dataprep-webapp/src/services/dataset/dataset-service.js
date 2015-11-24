@@ -9,8 +9,9 @@
      * @requires data-prep.services.dataset.service:DatasetRestService
      * @requires data-prep.services.preparation.service:PreparationListService
      * @requires data-prep.services.utils.service:StorageService
+     * @requires data-prep.services.folder.service:FolderService
      */
-    function DatasetService(DatasetListService, DatasetRestService, PreparationListService, StorageService) {
+    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService, FolderService) {
         return {
             //lifecycle
             import: importRemoteDataset,
@@ -35,10 +36,10 @@
             getDatasetByName: getDatasetByName, //retrieve dataset by name
             getSheetPreview: getSheetPreview,
             setDatasetSheet: setDatasetSheet,
-
+            getDatasetByNameAndFolder: getDatasetByNameAndFolder,
             //utils
             getUniqueName: getUniqueName,
-            createDatasetInfo: createDatasetInfo,
+            createDatasetInfo: createDatasetInfo
 
         };
 
@@ -199,6 +200,7 @@
 
 
         /**
+         * FIXME still used??
          * @ngdoc method
          * @name getDatasetByName
          * @methodOf data-prep.services.dataset.service:DatasetService
@@ -211,6 +213,32 @@
                 return dataset.name === name;
             });
         }
+
+        /**
+         * @ngdoc method
+         * @name getDatasetByNameAndFolder
+         * @methodOf data-prep.services.dataset.service:DatasetService
+         * @param {string} name The dataset name
+         * @param {object} folder the folder
+         * @description Get the dataset that has the wanted name within the folder
+         * @returns {object} The dataset
+         */
+        function getDatasetByNameAndFolder(name, folder) {
+
+            return _.find(state.folder.currentFolderContent.datasets, function(dataset){
+                return dataset.name === name;
+            });
+
+            // TODO get fresh list from backend?
+            /*
+            return FolderService.getFolderContent(folder).then(function(content) {
+                return _.find(content.data.datasets, function(dataset){
+                    return dataset.name === name;
+                });
+            });
+            */
+        }
+
 
         /**
          * @ngdoc method

@@ -7,10 +7,10 @@ describe('Folder services', function () {
     beforeEach(inject(function($q, FolderRestService) {
         spyOn(FolderRestService, 'delete').and.returnValue($q.when());
         spyOn(FolderRestService, 'create').and.returnValue($q.when());
-        spyOn(FolderRestService, 'folders').and.returnValue($q.when());
         spyOn(FolderRestService, 'deleteFolderEntry').and.returnValue($q.when());
         spyOn(FolderRestService, 'createFolderEntry').and.returnValue($q.when());
         spyOn(FolderRestService, 'listFolderEntries').and.returnValue($q.when());
+        spyOn(FolderRestService, 'renameFolder').and.returnValue($q.when());
 
     }));
 
@@ -30,24 +30,6 @@ describe('Folder services', function () {
 
         //then
         expect(FolderRestService.create).toHaveBeenCalledWith('/foo');
-    }));
-
-    it('should call rest folders with a path', inject(function ($rootScope, FolderService, FolderRestService) {
-        //when
-        FolderService.folders('/foo');
-        $rootScope.$digest();
-
-        //then
-        expect(FolderRestService.folders).toHaveBeenCalledWith('/foo');
-    }));
-
-    it('should call rest folders w/o path', inject(function ($rootScope, FolderService, FolderRestService) {
-        //when
-        FolderService.folders('');
-        $rootScope.$digest();
-
-        //then
-        expect(FolderRestService.folders).toHaveBeenCalledWith('');
     }));
 
     it('should call rest deleteFolderEntry', inject(function ($rootScope, FolderService, FolderRestService) {
@@ -75,6 +57,15 @@ describe('Folder services', function () {
 
         //then
         expect(FolderRestService.listFolderEntries).toHaveBeenCalledWith('contentType', '/beer');
+    }));
+
+    it('should call rest renameFolder', inject(function ($rootScope, FolderService, FolderRestService) {
+        //when
+        FolderService.renameFolder('foo', 'beer');
+        $rootScope.$digest();
+
+        //then
+        expect(FolderRestService.renameFolder).toHaveBeenCalledWith('foo', 'beer');
     }));
 
 });

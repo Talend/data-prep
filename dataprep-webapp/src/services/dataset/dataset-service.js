@@ -40,7 +40,6 @@
             getUniqueName: getUniqueName,
             createDatasetInfo: createDatasetInfo,
 
-            filterDatasets: filterDatasets
         };
 
         //--------------------------------------------------------------------------------------------------------------
@@ -132,10 +131,6 @@
          */
         function datasetsList() {
             return DatasetListService.datasets;
-        }
-
-        function filterDatasets(ids){
-            DatasetListService.filterDatasets(ids);
         }
 
         /**

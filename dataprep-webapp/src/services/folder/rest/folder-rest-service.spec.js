@@ -43,35 +43,6 @@ describe('Folder Rest Service', function () {
 
     }));
 
-    it('should call get folders', inject(function ($rootScope, FolderRestService, RestURLs) {
-        //given
-        var path = '/foo';
-
-        $httpBackend
-            .expectGET(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
-            .respond(200);
-
-        //when
-        FolderRestService.folders(path);
-        $httpBackend.flush();
-        $rootScope.$digest();
-
-    }));
-
-    it('should call get folders root', inject(function ($rootScope, FolderRestService, RestURLs) {
-        //given
-
-        $httpBackend
-            .expectGET(RestURLs.folderUrl)
-            .respond(200);
-
-        //when
-        FolderRestService.folders();
-        $httpBackend.flush();
-        $rootScope.$digest();
-
-    }));
-
 
     it('should call create folder entry', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
@@ -119,11 +90,25 @@ describe('Folder Rest Service', function () {
         //given
 
         $httpBackend
-            .expectGET(RestURLs.folderUrl + '/entries?contentType=contentType')
+            .expectGET(RestURLs.folderUrl + '/entries?path='+encodeURIComponent('/')+'&contentType=contentType')
             .respond(200);
 
         //when
         FolderRestService.listFolderEntries('contentType');
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+    }));
+
+    it('should call rename', inject(function ($rootScope, FolderRestService, RestURLs) {
+        //given
+
+        $httpBackend
+            .expectPUT(RestURLs.folderUrl + '/rename?path=foo&newPath=beer')
+            .respond(200);
+
+        //when
+        FolderRestService.renameFolder('foo', 'beer');
         $httpBackend.flush();
         $rootScope.$digest();
 

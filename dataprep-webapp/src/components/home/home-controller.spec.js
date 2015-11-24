@@ -242,9 +242,9 @@ describe('Home controller', function () {
 
                 beforeEach(inject(function ($q, $rootScope, DatasetService, FolderService) {
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(null);
-                    spyOn(DatasetService, 'filterDatasets').and.returnValue(null);
                     spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
                     spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
+                    spyOn(FolderService,'getFolderContent').and.returnValue($q.when(true));
 
                     spyOn($rootScope, '$emit').and.returnValue();
                 }));
@@ -262,7 +262,8 @@ describe('Home controller', function () {
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
                     expect(FolderService.createFolderEntry).toHaveBeenCalled();
-                    expect(FolderService.listFolderEntries).toHaveBeenCalled();
+                    //expect(FolderService.listFolderEntries).toHaveBeenCalled();
+                    expect(FolderService.getFolderContent).toHaveBeenCalled();
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                     expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
@@ -317,12 +318,12 @@ describe('Home controller', function () {
                     spyOn(StateService, 'resetPlayground').and.returnValue();
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(dataset);
                     spyOn(DatasetService, 'getUniqueName').and.returnValue('my cool dataset (1)');
-                    spyOn(DatasetService,'filterDatasets').and.returnValue($q.when(true));
                     spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
                     spyOn($rootScope, '$emit').and.returnValue();
                     spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue();
                     spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
                     spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
+                    spyOn(FolderService,'getFolderContent').and.returnValue($q.when(true));
 
                 }));
 
@@ -341,7 +342,7 @@ describe('Home controller', function () {
                     expect(DatasetService.update).not.toHaveBeenCalled();
                 }));
 
-                it('should create dataset with modified name', inject(function ($rootScope, TalendConfirmService, DatasetService) {
+                it('should create dataset with modified name', inject(function ($rootScope, TalendConfirmService, DatasetService, FolderService) {
                     //given
                     ctrl.uploadDatasetName();
 
@@ -353,6 +354,7 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.createDatasetInfo).toHaveBeenCalledWith(ctrl.datasetFile[0], 'my cool dataset (1)');
+                    expect(FolderService.getFolderContent).toHaveBeenCalled();
                 }));
 
                 it('should update existing dataset', inject(function (UpdateWorkflowService) {

@@ -64,7 +64,7 @@
             if (folder && folder.id) {
                 url += '?folder=' + encodeURIComponent(folder.id);
             } else {
-                url += '?folder=/';
+                url += '?folder='+encodeURIComponent('/');
             }
 
             if (sortType) {
@@ -150,7 +150,7 @@
             if (path) {
                 url += '?path=' + encodeURIComponent(path);
             } else {
-                url += '?path=/';
+                url += '?path='+encodeURIComponent('/');
             }
             if (contentType) {
                 url += '&contentType=' + encodeURIComponent( contentType );

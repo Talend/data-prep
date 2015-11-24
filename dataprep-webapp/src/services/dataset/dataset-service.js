@@ -9,8 +9,10 @@
      * @requires data-prep.services.dataset.service:DatasetRestService
      * @requires data-prep.services.preparation.service:PreparationListService
      * @requires data-prep.services.utils.service:StorageService
+     * @requires data-prep.services.folder.service:FolderService
+     *
      */
-    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService) {
+    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService, FolderService) {
         return {
             //lifecycle
             import: importRemoteDataset,
@@ -67,11 +69,12 @@
          * @name create
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} dataset The dataset to create
+         * @param {object} folder - the dataset folder
          * @description Create a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} create function
          * @returns {promise} The pending CREATE promise
          */
-        function create(dataset) {
-            var promise = DatasetListService.create(dataset);
+        function create(dataset, folder) {
+            var promise = DatasetListService.create(dataset, folder);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }
@@ -221,20 +224,12 @@
          * @description Get the dataset that has the wanted name within the folder
          * @returns {object} The dataset
          */
-        function getDatasetByNameAndFolder(name) {
-
-            return _.find(state.folder.currentFolderContent.datasets, function(dataset){
-                return dataset.name === name;
-            });
-
-            // TODO get fresh list from backend?
-            /*
+        function getDatasetByNameAndFolder(name, folder) {
             return FolderService.getFolderContent(folder).then(function(content) {
                 return _.find(content.data.datasets, function(dataset){
-                    return dataset.name === name;
+                    return dataset.name.toLowerCase() === name.toLowerCase();
                 });
             });
-            */
         }
 
 

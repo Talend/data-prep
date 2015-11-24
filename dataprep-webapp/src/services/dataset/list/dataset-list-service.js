@@ -69,11 +69,12 @@
          * @name create
          * @methodOf data-prep.services.dataset.service:DatasetListService
          * @param {object} dataset The dataset to create
+         * @param {object} folder - the dataset folder
          * @description Create a dataset from backend and refresh its internal list
          * @returns {promise} The pending POST promise
          */
-        function create(dataset) {
-            var promise = DatasetRestService.create(dataset);
+        function create(dataset, folder) {
+            var promise = DatasetRestService.create(dataset, folder);
 
             //The appended promise is not returned because DatasetRestService.create return a $upload object with progress function
             //which is used by the caller

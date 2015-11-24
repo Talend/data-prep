@@ -237,7 +237,7 @@
             var name = vm.datasetName;
 
             // if the name exists, ask for update or creation
-            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name);
+            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder);
             if (vm.existingDatasetFromName) {
                 TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], {dataset: vm.datasetName})
                     .then(
@@ -295,20 +295,20 @@
             var dataset = DatasetService.createDatasetInfo(file, name);
             StateService.startUploadingDataset(dataset);
 
-            DatasetService.create(dataset)
+            DatasetService.create(dataset, state.folder.currentFolder)
                 .progress(function (event) {
                     dataset.progress = parseInt(100.0 * event.loaded / event.total);
                 })
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data)
-                        // once the dataset entry has been created we need to refresh/filter the dataset list
-                        .then(FolderService.createFolderEntry('dataset',event.data,state.folder.currentFolder)
-                            .then(function(){
-                                if (state.folder.currentFolder){
-                                    FolderService.getFolderContent(state.folder.currentFolder);
-                                }
-                            })
-                        )
+                        //// once the dataset entry has been created we need to refresh/filter the dataset list
+                        //.then(FolderService.createFolderEntry('dataset',event.data,state.folder.currentFolder)
+                        //    .then(function(){
+                        //        if (state.folder.currentFolder){
+                        //            FolderService.getFolderContent(state.folder.currentFolder);
+                        //        }
+                        //    })
+                        //)
                         .then(UploadWorkflowService.openDataset);
                 })
                 .catch(function () {

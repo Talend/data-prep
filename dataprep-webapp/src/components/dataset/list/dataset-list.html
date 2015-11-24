@@ -1,7 +1,7 @@
 <div class="inventory dataset">
     <div class="inventory-sort">
         <div class="add-folder-button">
-            <button class="btn-primary modal-primary-button" ng-click="datasetListCtrl.folderNameModal=true">
+            <button class="btn-primary modal-primary-button" ng-click="datasetListCtrl.actionsOnAddFolderClick()">
                 <span translate-once="CREATE_FOLDER"></span>
             </button>
         </div>
@@ -119,7 +119,10 @@
                   state="datasetListCtrl.folderNameModal">
         <span translate-once="ENTER_FOLDER_NAME"></span>
         <form name="datasetListCtrl.folderNameForm">
-            <input type="text" ng-model="datasetListCtrl.folderName"/>
+            <input type="text"
+                   ng-model="datasetListCtrl.folderName"
+                   ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                   ng-change="datasetListCtrl.folderExistInCurrentFolder(datasetListCtrl.folderName)"/>
 
             <div class="modal-buttons">
                 <button class="talend-modal-close btn-secondary modal-secondary-button">
@@ -127,7 +130,7 @@
                 </button>
                 <button class="talend-modal-close btn-primary modal-primary-button"
                         ng-click="datasetListCtrl.addFolder()"
-                        ng-disabled="datasetListCtrl.folderName === ''">
+                        ng-disabled="datasetListCtrl.folderExistAlreadyInCurrentFolder">
                     <span translate-once="OK"></span>
                 </button>
             </div>

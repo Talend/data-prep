@@ -15,15 +15,34 @@
      * @requires data-prep.services.uploadWorkflowService.service:UploadWorkflowService
      * @requires data-prep.services.datasetWorkflowService:UpdateWorkflowService
      * @requires data-prep.services.folder.service:FolderService
+     * @requires data-prep.services.folder.service:FolderRestService
      */
     function DatasetListCtrl($stateParams, StateService, DatasetService, DatasetListSortService, PlaygroundService,
-                             TalendConfirmService, MessageService, UploadWorkflowService, UpdateWorkflowService, FolderService, state) {
+                             TalendConfirmService, MessageService, UploadWorkflowService, UpdateWorkflowService, FolderService, state, FolderRestService) {
         var vm = this;
 
         vm.datasetService = DatasetService;
         vm.uploadWorkflowService = UploadWorkflowService;
-        vm.state=state;
-        vm.folderName='';
+        vm.state = state;
+
+        /**
+         * @ngdoc property
+         * @name folderName
+         * @propertyOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description The folder name
+         * @type {String}
+         */
+        vm.folderName = '';
+
+
+        /**
+         * @ngdoc property
+         * @name folderExistAlreadyInCurrentFolder
+         * @propertyOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description The flag checking if the folder exist already in the current folder
+         * @type {Boolean}
+         */
+        vm.folderExistAlreadyInCurrentFolder = true;
 
         /**
          * @ngdoc property
@@ -222,6 +241,38 @@
         //-------------------------------
         // Folder
         //-------------------------------
+
+        /**
+         * @ngdoc method
+         * @name folderExistInCurrentFolder
+         * @methodOf  data-prep.dataset-list.controller:DatasetListCtrl
+         * @param {string} name The dataset name
+         * @description Check if folder that has the wanted name within the folder
+         * @returns {boolean} True if folder already, False if otherwise
+         */
+        vm.folderExistInCurrentFolder = function (name) {
+            if (name === '') {
+                vm.folderExistAlreadyInCurrentFolder = true;
+            } else {
+                FolderRestService.getFolderContent(state.folder.currentFolder).then(function(content) {
+                    vm.folderExistAlreadyInCurrentFolder = !!_.find(content.data.folders, function(folder){
+                        return folder.name.toLowerCase() === name.toLowerCase();
+                    });
+                });
+            }
+        };
+
+        /**
+         * @ngdoc method
+         * @name actionsOnAddFolderClick
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description run these action when clicking on Add Folder button
+         */
+        vm.actionsOnAddFolderClick = function(){
+            vm.folderExistAlreadyInCurrentFolder = true;
+            vm.folderNameModal = true;
+            vm.folderName = '';
+        };
 
         /**
          * @ngdoc method

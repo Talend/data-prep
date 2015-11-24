@@ -91,6 +91,19 @@ public class FolderService {
     }
 
 
+    /**
+     * no javadoc here so see description in @ApiOperation notes.
+     * @param path
+     * @param newPath
+     */
+    @RequestMapping(value = "/folders/rename", method = PUT)
+    @ApiOperation(value = "Rename a Folder", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @VolumeMetered
+    public void renameFolder(@RequestParam String path, @RequestParam String newPath){
+        folderRepository.renameFolder( path, newPath );
+    }
+
 
     /**
      * no javadoc here so see description in @ApiOperation notes.

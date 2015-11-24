@@ -8,7 +8,7 @@
      * @requires data-prep.services.folder.service:FolderRestService
      * @requires data-prep.services.state.service:StateService
      */
-    function FolderService(FolderRestService,StateService, DatasetListSortService) {
+    function FolderService(FolderRestService,StateService, DatasetListSortService, $translate) {
 
         return {
             // folder operations
@@ -125,7 +125,7 @@
         function buidStackFromId(folderId){
 
             var foldersStack = [];
-            foldersStack.push({id:'', path:'', name:'Home'});
+            foldersStack.push({id:'', path:'', name: $translate.instant('HOME_FOLDER')});
 
             if(folderId) {
                 var paths = folderId.split('/');
@@ -171,7 +171,7 @@
             var promise = FolderRestService.getFolderContent(folder, sort, order);
 
             promise.then(function(content){
-                StateService.setCurrentFolder(folder? folder : {id:'', path:'', name:'Home'});
+                StateService.setCurrentFolder(folder? folder : {id:'', path:'', name: $translate.instant('HOME_FOLDER')});
                 StateService.setCurrentFolderContent(content.data);
                 buidStackFromId(folder? folder.id : '');
             });

@@ -11,7 +11,11 @@ describe('Home controller', function () {
                 uploadingDatasets:[]
             },
             folder: {
-                currentFolder: {}
+                currentFolder: {},
+                currentFolderContent: {
+                    folders: [],
+                    datasets: []
+                }
             }
         };
         $provide.constant('state', StateMock);
@@ -212,10 +216,10 @@ describe('Home controller', function () {
                 expect(ctrl.datasetName).toBe('my dataset');
             });
 
-            it('should display name modal on step 1 when name already exists', inject(function (DatasetService) {
+            it('should display name modal on step 1 when name already exists', inject(function ($q, DatasetService) {
                 //given
                 expect(ctrl.datasetNameModal).toBeFalsy();
-                spyOn(DatasetService, 'getDatasetByName').and.returnValue({});
+                spyOn(DatasetService, 'getDatasetByNameAndFolder').and.returnValue($q.when(dataset));
 
                 //when
                 ctrl.uploadDatasetFile();
@@ -324,6 +328,7 @@ describe('Home controller', function () {
                     spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
                     spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
                     spyOn(FolderService,'getFolderContent').and.returnValue($q.when(true));
+                    spyOn(DatasetService, 'getDatasetByNameAndFolder').and.returnValue(dataset);
 
                 }));
 
@@ -336,7 +341,7 @@ describe('Home controller', function () {
                     scope.$digest();
 
                     //then
-                    expect(DatasetService.getDatasetByName).toHaveBeenCalledWith(ctrl.datasetName);
+                    expect(DatasetService.getDatasetByNameAndFolder).toHaveBeenCalledWith(ctrl.datasetName);
                     expect(TalendConfirmService.confirm).toHaveBeenCalledWith(null, ['UPDATE_EXISTING_DATASET'], {dataset: 'my cool dataset'});
                     expect(DatasetService.create).not.toHaveBeenCalled();
                     expect(DatasetService.update).not.toHaveBeenCalled();

@@ -32,9 +32,8 @@
               <img src="assets/images/folder/folder-icon.png"/>
           </div>
           <div class="inventory-text inventory-folder">
-             <!--span class="folder-name">{{child.name}}</span-->
               <talend-editable-text text="child.name"
-                                    text-class="title one-line"
+                                    text-class="inventory-title"
                                     on-text-click="datasetListCtrl.goToFolder(child)"
                                     on-validate="datasetListCtrl.renameFolder(child.id, text)"></talend-editable-text>
           </div>

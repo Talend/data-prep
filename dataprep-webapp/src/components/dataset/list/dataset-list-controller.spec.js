@@ -1,7 +1,7 @@
 describe('Dataset list controller', function () {
     'use strict';
 
-    var createController, scope;
+    var createController, scope, stateMock;
     var datasets = [
         {id: 'ec4834d9bc2af8', name: 'Customers (50 lines)'},
         {id: 'ab45f893d8e923', name: 'Us states'},
@@ -12,7 +12,12 @@ describe('Dataset list controller', function () {
         {id: 'ab45f893d8e923', name: 'Us states'}
     ];
 
-    beforeEach(module('data-prep.dataset-list'));
+    beforeEach(module('data-prep.dataset-list', function ($provide) {
+        stateMock = {folder: {
+            currentFolder: {id : 'toto/', path: 'toto/', name: 'toto'}
+        }};
+        $provide.constant('state', stateMock);
+    }));
 
     beforeEach(inject(function ($rootScope, $controller, $q, $state, DatasetService, PlaygroundService, MessageService, DatasetListSortService, StateService) {
         var datasetsValues = [datasets, refreshedDatasets];
@@ -83,11 +88,11 @@ describe('Dataset list controller', function () {
     describe('sort parameters', function () {
 
         describe('with dataset refresh success', function () {
-            beforeEach(inject(function ($q, DatasetService) {
-                spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.when(true));
+            beforeEach(inject(function ($q, FolderService) {
+                spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
             }));
 
-            it('should refresh dataset when sort is changed', inject(function ($q, DatasetService) {
+            it('should refresh dataset when sort is changed', inject(function ($q, FolderService) {
                 //given
                 var ctrl = createController();
                 ctrl.sortSelected = {id: 'date', name: 'DATE_SORT'};
@@ -97,10 +102,10 @@ describe('Dataset list controller', function () {
                 ctrl.updateSortBy(newSort);
 
                 //then
-                expect(DatasetService.refreshDatasets).toHaveBeenCalledWith();
+                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto/', path: 'toto/', name: 'toto'});
             }));
 
-            it('should refresh dataset when order is changed', inject(function ($q, DatasetService) {
+            it('should refresh dataset when order is changed', inject(function ($q, FolderService) {
                 //given
                 var ctrl = createController();
                 ctrl.selectedOrder = {id: 'desc', name: 'DESC_ORDER'};
@@ -110,10 +115,10 @@ describe('Dataset list controller', function () {
                 ctrl.updateSortOrder(newSortOrder);
 
                 //then
-                expect(DatasetService.refreshDatasets).toHaveBeenCalledWith();
+                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto/', path: 'toto/', name: 'toto'});
             }));
 
-            it('should not refresh dataset when requested sort is already the selected one', inject(function (DatasetService) {
+            it('should not refresh dataset when requested sort is already the selected one', inject(function (FolderService) {
                 //given
                 var ctrl = createController();
                 var newSort = {id: 'name', name: 'NAME_SORT'};
@@ -123,10 +128,10 @@ describe('Dataset list controller', function () {
                 ctrl.updateSortBy(newSort);
 
                 //then
-                expect(DatasetService.refreshDatasets.calls.count()).toBe(1);
+                expect(FolderService.getFolderContent.calls.count()).toBe(1);
             }));
 
-            it('should not refresh dataset when requested order is already the selected one', inject(function (DatasetService) {
+            it('should not refresh dataset when requested order is already the selected one', inject(function (FolderService) {
                 //given
                 var ctrl = createController();
                 var newSortOrder = {id: 'desc', name: 'ASC_ORDER'};
@@ -136,7 +141,7 @@ describe('Dataset list controller', function () {
                 ctrl.updateSortOrder(newSortOrder);
 
                 //then
-                expect(DatasetService.refreshDatasets.calls.count()).toBe(1);
+                expect(FolderService.getFolderContent.calls.count()).toBe(1);
             }));
 
             it('should update sort parameter', inject(function (DatasetService, DatasetListSortService) {
@@ -166,8 +171,8 @@ describe('Dataset list controller', function () {
         });
 
         describe('with dataset refresh failure', function () {
-            beforeEach(inject(function ($q, DatasetService) {
-                spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.reject(false));
+            beforeEach(inject(function ($q, FolderService) {
+                spyOn(FolderService, 'getFolderContent').and.returnValue($q.reject(false));
             }));
 
             it('should set the old sort parameter', function () {
@@ -207,8 +212,9 @@ describe('Dataset list controller', function () {
     });
 
     describe('delete dataset', function () {
-        beforeEach(inject(function ($q, MessageService, DatasetService, TalendConfirmService) {
+        beforeEach(inject(function ($q, MessageService, DatasetService, TalendConfirmService, FolderService) {
             spyOn(DatasetService, 'refreshDatasets').and.returnValue($q.when(true));
+            spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
             spyOn(DatasetService, 'delete').and.returnValue($q.when(true));
             spyOn(MessageService, 'success').and.returnValue();
             spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when(true));

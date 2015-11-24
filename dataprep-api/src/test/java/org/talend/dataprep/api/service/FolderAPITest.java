@@ -96,11 +96,11 @@ public class FolderAPITest extends ApiServiceTestBase {
         List<Folder> folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
 
-        List<Folder> expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer/").build(), //
-                Folder.Builder.folder().path("foo/wine/").build());
+        List<Folder> expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer").name( "beer" ).build(), //
+                Folder.Builder.folder().path("foo/wine").name( "wine" ).build());
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2) //
-                .usingElementComparatorOnFields("path").containsAll(expected);
+            .usingElementComparatorOnFields( "path", "name" ).containsAll(expected);
 
         // requesting all folders
         response = RestAssured.given() //
@@ -110,9 +110,9 @@ public class FolderAPITest extends ApiServiceTestBase {
         folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
 
-        expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer/").build(), //
-                Folder.Builder.folder().path("foo/wine/").build(), //
-                Folder.Builder.folder().path("foo/").build());
+        expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer").build(), //
+                Folder.Builder.folder().path("foo/wine").build(), //
+                Folder.Builder.folder().path("foo").build());
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(3) //
                 .usingElementComparatorOnFields("path").containsAll(expected);
@@ -134,7 +134,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         folders = objectMapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
 
-        expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer/").build());
+        expected = Lists.newArrayList(Folder.Builder.folder().path("foo/beer").build());
 
         Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1) //
                 .usingElementComparatorOnFields("path").containsAll(expected);

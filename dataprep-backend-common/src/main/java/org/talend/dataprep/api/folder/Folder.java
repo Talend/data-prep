@@ -20,6 +20,12 @@ public class Folder extends Identifiable implements Serializable {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("creationDate")
+    private long creationDate;
+
+    @JsonProperty("modificationDate")
+    private long modificationDate;
+
     public Folder() {
         // no op
     }
@@ -61,6 +67,26 @@ public class Folder extends Identifiable implements Serializable {
         this.name = name;
     }
 
+    public long getCreationDate()
+    {
+        return creationDate;
+    }
+
+    public void setCreationDate( long creationDate )
+    {
+        this.creationDate = creationDate;
+    }
+
+    public long getModificationDate()
+    {
+        return modificationDate;
+    }
+
+    public void setModificationDate( long modificationDate )
+    {
+        this.modificationDate = modificationDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -85,6 +111,8 @@ public class Folder extends Identifiable implements Serializable {
             "name='" + name + '\'' +
             ", id='" + id + '\'' +
             ", path='" + path + '\'' +
+            ", creationDate='" + creationDate + '\'' +
+            ", modificationDate='" + modificationDate + '\'' +
             '}';
     }
 
@@ -93,6 +121,10 @@ public class Folder extends Identifiable implements Serializable {
         private String path;
 
         private String name;
+
+        private long creationDate;
+
+        private long modificationDate;
 
         public static Builder folder() {
             return new Folder.Builder();
@@ -108,11 +140,23 @@ public class Folder extends Identifiable implements Serializable {
             return this;
         }
 
+        public Folder.Builder creationDate(long creationDate) {
+            this.creationDate = creationDate;
+            return this;
+        }
+
+        public Folder.Builder modificationDate(long modificationDate) {
+            this.modificationDate = modificationDate;
+            return this;
+        }
+
         public Folder build() {
 
             Folder folder = new Folder();
             folder.setPath(path);
             folder.setName( name );
+            folder.setCreationDate( creationDate );
+            folder.setModificationDate( modificationDate );
             return folder;
         }
 

@@ -98,9 +98,18 @@ public abstract class ApiServiceTestBase {
     }
 
     protected String createDataset(final String file, final String name, final String type) throws IOException {
+        return createDataset( file, name, type, null);
+    }
+
+    protected String createDataset(final String file, final String name, final String type, final String folderPath) throws IOException {
         final String datasetContent = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(file));
-        final Response post = given().contentType(ContentType.JSON).body(datasetContent).queryParam("Content-Type", type)
-                .when().post("/api/datasets?name={name}", name);
+        final Response post = given() //
+            .contentType(ContentType.JSON) //
+            .body(datasetContent) //
+            .queryParam("Content-Type", type) //
+            .when() //
+            .post("/api/datasets?name={name}&folderPath={folderPath}", name, folderPath);
+
         final int statusCode = post.getStatusCode();
         if(statusCode != 200) {
             LOGGER.error("Unable to create dataset (HTTP " + statusCode + "). Error: {}", post.asString());

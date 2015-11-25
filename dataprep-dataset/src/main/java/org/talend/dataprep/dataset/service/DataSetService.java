@@ -241,6 +241,7 @@ public class DataSetService {
     @VolumeMetered
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
+            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "", required = false) String folderPath,
             @RequestHeader("Content-Type") String contentType, @ApiParam(value = "content") InputStream content,
             HttpServletResponse response) throws IOException {
 

@@ -4,11 +4,13 @@ import static org.talend.dataprep.api.service.command.common.Defaults.*;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -36,9 +38,9 @@ public class CreateDataSet extends GenericCommand<String> {
      * @param contentType content-type of the dataset.
      * @param dataSetContent Dataset content or import parameters in json for remote datasets.
      */
-    private CreateDataSet(HttpClient client, String name, String contentType, InputStream dataSetContent) {
+    private CreateDataSet(HttpClient client, String name, String contentType, InputStream dataSetContent, String folderPath) {
         super(PreparationAPI.DATASET_GROUP, client);
-        execute(() -> onExecute(name, contentType, dataSetContent));
+        execute(() -> onExecute(name, contentType, dataSetContent, folderPath));
         onError(e -> {
             if (e instanceof TDPException) {
                 // Go for a pass-through for "UNSUPPORTED CONTENT"
@@ -54,13 +56,16 @@ public class CreateDataSet extends GenericCommand<String> {
         on(HttpStatus.OK).then(asString());
     }
 
-    private HttpRequestBase onExecute(String name, String contentType, InputStream dataSetContent) {
+    private HttpRequestBase onExecute(String name, String contentType, InputStream dataSetContent, String folderPath) {
         try {
-            final HttpPost post = new HttpPost(datasetServiceUrl + "/datasets/?name=" + URLEncoder.encode(name, "UTF-8"));//$NON-NLS-1$ //$NON-NLS-2$
+            URIBuilder uriBuilder = new URIBuilder( datasetServiceUrl + "/datasets"  );
+            uriBuilder.addParameter( "name", name);
+            uriBuilder.addParameter( "folderPath", folderPath);
+            final HttpPost post = new HttpPost(uriBuilder.build());
             post.addHeader("Content-Type", contentType); //$NON-NLS-1$
             post.setEntity(new InputStreamEntity(dataSetContent));
             return post;
-        } catch (UnsupportedEncodingException e) {
+        } catch (URISyntaxException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }

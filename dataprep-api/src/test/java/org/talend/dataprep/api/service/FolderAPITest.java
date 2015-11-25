@@ -364,36 +364,23 @@ public class FolderAPITest extends ApiServiceTestBase {
             .when() //
             .put("/api/folders");
 
+        Assertions.assertThat( response.getStatusCode() ).isEqualTo( 200 );
+
+        // create bar under foo
         response = RestAssured.given() //
             .queryParam("path", "foo/bar") //
             .when() //
             .put("/api/folders");
 
+        Assertions.assertThat( response.getStatusCode() ).isEqualTo( 200 );
+
         final ObjectMapper mapper = new ObjectMapper();
         // given
-        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
+        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv", "/foo");
         Thread.sleep(100);
-        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
+        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv", "/foo/bar");
         Thread.sleep(100);
-        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
-
-        FolderEntry folderEntry = new FolderEntry( "dataset", dataSetId1, "/foo");
-
-        // create a folderentry in this directory
-        response = RestAssured.given() //
-            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
-            .contentType( ContentType.JSON) //
-            .when() //
-            .put("/api/folders/entries");
-
-        folderEntry = new FolderEntry( "dataset", dataSetId3, "/foo");
-
-        // create a folderentry in this directory
-        response = RestAssured.given() //
-            .body(mapper.writer().writeValueAsBytes(folderEntry)) //
-            .contentType( ContentType.JSON) //
-            .when() //
-            .put("/api/folders/entries");
+        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv", "/foo");
 
         // when (sort by date, order is desc)
         String list = when() //

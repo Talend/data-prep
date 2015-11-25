@@ -11,7 +11,7 @@ describe('Home controller', function () {
                 uploadingDatasets:[]
             },
             folder: {
-                currentFolder: {},
+                currentFolder: {id : '', path: '', name: 'Home'},
                 currentFolderContent: {
                     folders: [],
                     datasets: []
@@ -65,7 +65,7 @@ describe('Home controller', function () {
     describe('with created controller', function () {
         var uploadDefer;
 
-        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService) {
+        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService, FolderService) {
 
             ctrl = createController();
             ctrl.datasetFile = [{name: 'my dataset.csv'}];
@@ -88,6 +88,8 @@ describe('Home controller', function () {
 
             spyOn(StateService, 'startUploadingDataset').and.returnValue();
             spyOn(StateService, 'finishUploadingDataset').and.returnValue();
+
+            spyOn(FolderService, 'getFolderContent').and.returnValue();
         }));
 
         describe('right panel management', function() {
@@ -154,7 +156,7 @@ describe('Home controller', function () {
                 expect(ctrl.datasetHttpModal).toBeTruthy();
             });
 
-            it('should create remote http dataset', inject(function (StateService, DatasetService, UploadWorkflowService) {
+            it('should create remote http dataset', inject(function (StateService, DatasetService, UploadWorkflowService, FolderService) {
                 //given
                 expect(ctrl.uploadingDatasets.length).toBe(0);
                 ctrl.importHttpDataSet();
@@ -171,6 +173,7 @@ describe('Home controller', function () {
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
                 expect(StateService.finishUploadingDataset).toHaveBeenCalled();
+                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
             }));
 
             it('should display hdfs import form', function () {
@@ -184,7 +187,7 @@ describe('Home controller', function () {
                 expect(ctrl.datasetHdfsModal).toBeTruthy();
             });
 
-            it('should create remote hdfs dataset', inject(function (StateService, DatasetService, UploadWorkflowService) {
+            it('should create remote hdfs dataset', inject(function (StateService, DatasetService, UploadWorkflowService, FolderService) {
                 //given
                 expect(ctrl.uploadingDatasets.length).toBe(0);
                 ctrl.importHdfsDataSet();
@@ -201,6 +204,7 @@ describe('Home controller', function () {
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
                 expect(StateService.finishUploadingDataset).toHaveBeenCalled();
+                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
             }));
         });
 
@@ -248,7 +252,6 @@ describe('Home controller', function () {
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(null);
                     spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
                     spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
-                    spyOn(FolderService,'getFolderContent').and.returnValue($q.when(true));
 
                     spyOn($rootScope, '$emit').and.returnValue();
                 }));
@@ -265,8 +268,6 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
-                    expect(FolderService.createFolderEntry).toHaveBeenCalled();
-                    //expect(FolderService.listFolderEntries).toHaveBeenCalled();
                     expect(FolderService.getFolderContent).toHaveBeenCalled();
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
@@ -327,7 +328,6 @@ describe('Home controller', function () {
                     spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue();
                     spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
                     spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
-                    spyOn(FolderService,'getFolderContent').and.returnValue($q.when(true));
                     spyOn(DatasetService, 'getDatasetByNameAndFolder').and.returnValue(dataset);
 
                 }));
@@ -341,7 +341,7 @@ describe('Home controller', function () {
                     scope.$digest();
 
                     //then
-                    expect(DatasetService.getDatasetByNameAndFolder).toHaveBeenCalledWith(ctrl.datasetName);
+                    expect(DatasetService.getDatasetByNameAndFolder).toHaveBeenCalledWith(ctrl.datasetName, { id: '', path: '', name: 'Home' });
                     expect(TalendConfirmService.confirm).toHaveBeenCalledWith(null, ['UPDATE_EXISTING_DATASET'], {dataset: 'my cool dataset'});
                     expect(DatasetService.create).not.toHaveBeenCalled();
                     expect(DatasetService.update).not.toHaveBeenCalled();

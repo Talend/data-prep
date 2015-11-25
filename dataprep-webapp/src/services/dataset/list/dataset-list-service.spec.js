@@ -210,13 +210,14 @@ describe('Dataset List Service', function () {
     it('should create dataset', inject(function ($rootScope, DatasetListService, DatasetRestService) {
         //given
         var dataset = {name: 'my dataset'};
+        var folder = {id : '', path: '', name: 'Home'};
 
         //when
-        DatasetListService.create(dataset);
+        DatasetListService.create(dataset, folder);
         $rootScope.$apply();
 
         //then
-        expect(DatasetRestService.create).toHaveBeenCalledWith(dataset);
+        expect(DatasetRestService.create).toHaveBeenCalledWith(dataset, folder);
     }));
 
     it('should import remote dataset', inject(function ($rootScope, DatasetListService, DatasetRestService) {
@@ -226,13 +227,14 @@ describe('Dataset List Service', function () {
             name: 'great remote dataset',
             url: 'moc.dnelat//:ptth'
         };
+        var folder = {id : '', path: '', name: 'Home'};
 
         //when
-        DatasetListService.importRemoteDataset(importParameters);
+        DatasetListService.importRemoteDataset(importParameters, folder);
         $rootScope.$apply();
 
         //then
-        expect(DatasetRestService.import).toHaveBeenCalledWith(importParameters);
+        expect(DatasetRestService.import).toHaveBeenCalledWith(importParameters, folder);
     }));
 
     it('should refresh datasets list on dataset creation', inject(function ($rootScope, DatasetListService, DatasetRestService) {

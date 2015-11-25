@@ -17,8 +17,20 @@ var filesToExclude = {
         'src/components/**/*.spec.js'
     ],
     components: [
-        'src/services/**/*.spec.js'
+        'src/services/**/*.spec.js',
+        'src/components/widgets/**/*.spec.js'
+    ],
+    widgets: [
+        'src/services/**/*.spec.js',
+        'src/components/!(widgets)/**/*.spec.js'
     ]
+};
+
+
+var filesToCover = {
+    services: 'src/services/**/!(*spec|*mock).js',
+    components: 'src/components/!(widgets)/**/!(*spec|*mock).js',
+    widgets: 'src/components/widgets/**/!(*spec|*mock).js'
 };
 
 function runTests(singleRun, done, karmaConfPath, type) {
@@ -34,9 +46,7 @@ function runTests(singleRun, done, karmaConfPath, type) {
     var preprocessors = {
         'src/**/*.html':['ng-html2js']
     };
-    var toCover = type ?
-        'src/' + type + '/**/!(*spec|*mock).js' :
-        'src/**/!(*spec|*mock).js';
+    var toCover = type ? filesToCover [type] : 'src/**/!(*spec|*mock).js';
     preprocessors[toCover] = ['coverage'];
 
     return gulp.src([])
@@ -64,8 +74,12 @@ gulp.task('test:services', function (done) {
     return runTests(true /* singleRun */, done, 'karma.conf.js', 'services')
 });
 
+gulp.task('test:widgets', function (done) {
+    return runTests(true /* singleRun */, done, 'karma.conf.js', 'widgets')
+});
+
 gulp.task('test:parts', function(done) {
-    return runSequence('test:services', 'test:components', done);
+    return runSequence('test:services', 'test:components', 'test:widgets', done);
 });
 
 gulp.task('test', function (done) {

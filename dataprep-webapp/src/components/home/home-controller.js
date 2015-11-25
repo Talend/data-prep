@@ -300,16 +300,8 @@
                     dataset.progress = parseInt(100.0 * event.loaded / event.total);
                 })
                 .then(function (event) {
-                    DatasetService.getDatasetById(event.data)
-                        //// once the dataset entry has been created we need to refresh/filter the dataset list
-                        //.then(FolderService.createFolderEntry('dataset',event.data,state.folder.currentFolder)
-                        //    .then(function(){
-                        //        if (state.folder.currentFolder){
-                        //            FolderService.getFolderContent(state.folder.currentFolder);
-                        //        }
-                        //    })
-                        //)
-                        .then(UploadWorkflowService.openDataset);
+                    DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    FolderService.getFolderContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;

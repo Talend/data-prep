@@ -202,16 +202,15 @@
 
 
         /**
-         * FIXME still used??
          * @ngdoc method
          * @name getDatasetByName
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {string} name The dataset name
-         * @description Get the dataset that has the wanted name
+         * @description Get the dataset that has the wanted name in the current folder
          * @returns {object} The dataset
          */
         function getDatasetByName(name) {
-            return _.find(DatasetListService.datasets, function (dataset) {
+            return _.find(state.folder.currentFolderContent.datasets, function (dataset) {
                 return dataset.name === name;
             });
         }
@@ -224,11 +223,9 @@
          * @description Get the dataset that has the wanted name within the folder
          * @returns {object} The dataset
          */
-        function getDatasetByNameAndFolder(name, folder) {
-            return FolderService.getFolderContent(folder).then(function(content) {
-                return _.find(content.data.datasets, function(dataset){
-                    return dataset.name.toLowerCase() === name.toLowerCase();
-                });
+        function getDatasetByNameAndFolder(name) {
+            return _.find(state.folder.currentFolderContent.datasets, function(dataset){
+                return dataset.name === name;
             });
         }
 

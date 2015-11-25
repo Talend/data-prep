@@ -248,10 +248,8 @@ describe('Home controller', function () {
 
             describe('step 2 with unique name', function () {
 
-                beforeEach(inject(function ($q, $rootScope, DatasetService, FolderService) {
+                beforeEach(inject(function ($q, $rootScope, DatasetService) {
                     spyOn(DatasetService, 'getDatasetByName').and.returnValue(null);
-                    spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
-                    spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
 
                     spyOn($rootScope, '$emit').and.returnValue();
                 }));
@@ -317,7 +315,7 @@ describe('Home controller', function () {
                 };
                 var confirmDefer;
 
-                beforeEach(inject(function ($rootScope, $q, StateService, DatasetService, UpdateWorkflowService, TalendConfirmService, FolderService) {
+                beforeEach(inject(function ($rootScope, $q, StateService, DatasetService, UpdateWorkflowService, TalendConfirmService) {
                     confirmDefer = $q.defer();
 
                     spyOn(StateService, 'resetPlayground').and.returnValue();
@@ -326,8 +324,6 @@ describe('Home controller', function () {
                     spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
                     spyOn($rootScope, '$emit').and.returnValue();
                     spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue();
-                    spyOn(FolderService,'createFolderEntry').and.returnValue($q.when(true));
-                    spyOn(FolderService,'listFolderEntries').and.returnValue($q.when(true));
                     spyOn(DatasetService, 'getDatasetByNameAndFolder').and.returnValue(dataset);
 
                 }));

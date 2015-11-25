@@ -14,7 +14,7 @@ describe('Dataset list controller', function () {
 
     beforeEach(module('data-prep.dataset-list', function ($provide) {
         stateMock = {folder: {
-            currentFolder: {id : 'toto/', path: 'toto/', name: 'toto'}
+            currentFolder: {id : 'toto', path: 'toto', name: 'toto'}
         }};
         $provide.constant('state', stateMock);
     }));
@@ -102,7 +102,7 @@ describe('Dataset list controller', function () {
                 ctrl.updateSortBy(newSort);
 
                 //then
-                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto/', path: 'toto/', name: 'toto'});
+                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto', path: 'toto', name: 'toto'});
             }));
 
             it('should refresh dataset when order is changed', inject(function ($q, FolderService) {
@@ -115,7 +115,7 @@ describe('Dataset list controller', function () {
                 ctrl.updateSortOrder(newSortOrder);
 
                 //then
-                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto/', path: 'toto/', name: 'toto'});
+                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto', path: 'toto', name: 'toto'});
             }));
 
             it('should not refresh dataset when requested sort is already the selected one', inject(function (FolderService) {
@@ -279,6 +279,99 @@ describe('Dataset list controller', function () {
             //then
             expect(ctrl.datasets).toBe(refreshedDatasets);
         }));
+
+
+        it('should update folderExistAlreadyInCurrentFolder when folderExistInCurrentFolder is called with empty name', inject(function () {
+            //given
+            var ctrl = createController();
+
+            //when
+            ctrl.folderExistInCurrentFolder('');
+            scope.$digest();
+
+            //then
+            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(true);
+        }));
+
+        it('should update folderExistAlreadyInCurrentFolder when folderExistInCurrentFolder is called with a existing name', inject(function ($q, FolderRestService) {
+            //given
+            var ctrl = createController();
+            var folders = {data: {
+                folders: [{id : 'toto', path: 'toto', name: 'toto'}]
+            }};
+            spyOn(FolderRestService, 'getFolderContent').and.returnValue($q.when(folders));
+
+            //when
+            ctrl.folderExistInCurrentFolder('TOTO');
+            scope.$digest();
+
+            //then
+            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(true);
+        }));
+
+        it('should update folderExistAlreadyInCurrentFolder when folderExistInCurrentFolder is called with a name', inject(function ($q, FolderRestService) {
+            //given
+            var ctrl = createController();
+            var folders = {data: {
+                folders: [{id : 'toto', path: 'toto', name: 'toto'}]
+            }};
+            spyOn(FolderRestService, 'getFolderContent').and.returnValue($q.when(folders));
+
+            //when
+            ctrl.folderExistInCurrentFolder('1');
+            scope.$digest();
+
+            //then
+            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(false);
+        }));
+
+        it('should reset parameters when click on add folder button', inject(function () {
+            //given
+            var ctrl = createController();
+
+            //when
+            ctrl.actionsOnAddFolderClick();
+
+            //then
+            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(true);
+            expect(ctrl.folderNameModal).toBe(true);
+            expect(ctrl.folderName).toBe('');
+        }));
+
+        it('should add folder with current folder path', inject(function ($q, FolderService) {
+            //given
+            var ctrl = createController();
+            ctrl.folderName = '1';
+            spyOn(FolderService, 'create').and.returnValue($q.when(true));
+            spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
+
+            //when
+            ctrl.addFolder();
+            scope.$digest();
+            //then
+            expect(FolderService.create).toHaveBeenCalledWith('toto/1');
+            expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto', path: 'toto', name: 'toto'});
+
+        }));
+
+
+        it('should add folder with root folder path', inject(function ($q, FolderService) {
+            //given
+            stateMock.folder.currentFolder = {id : '', path: '', name: 'Home'};
+
+            var ctrl = createController();
+            ctrl.folderName = '1';
+            spyOn(FolderService, 'create').and.returnValue($q.when(true));
+            spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
+
+            //when
+            ctrl.addFolder();
+            scope.$digest();
+            //then
+            expect(FolderService.create).toHaveBeenCalledWith('/1');
+            expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
+
+        }));
     });
 
     describe('rename', function () {
@@ -403,6 +496,21 @@ describe('Dataset list controller', function () {
             expect(dataset.name).toBe(name);
             expect(DatasetService.update).not.toHaveBeenCalled();
             expect(DatasetService.update).not.toHaveBeenCalledWith(dataset);
+        }));
+
+
+        it('should rename folder', inject(function ($q, FolderService) {
+            //given
+            spyOn(FolderService, 'renameFolder').and.returnValue($q.when(true));
+            spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
+            var ctrl = createController();
+
+            //when
+            ctrl.renameFolder ('toto/1', '2');
+            scope.$digest();
+            //then
+            expect(FolderService.renameFolder).toHaveBeenCalledWith('toto/1', 'toto/2');
+            expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto', path: 'toto', name: 'toto'});
         }));
 
     });

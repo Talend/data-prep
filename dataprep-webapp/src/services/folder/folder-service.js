@@ -13,14 +13,8 @@
         return {
             // folder operations
             create: createFolder,
-            delete: deleteFolder,
             renameFolder: renameFolder,
             getFolderContent: getFolderContent,
-
-            // folder entry operations
-            createFolderEntry: createFolderEntry,
-            deleteFolderEntry: deleteFolderEntry,
-            listFolderEntries: listFolderEntries,
 
             // shared folder ui mngt
             buidStackFromId: buidStackFromId,
@@ -30,17 +24,6 @@
         //----------------------------------------------
         //   folders
         //----------------------------------------------
-        /**
-         * @ngdoc method
-         * @name deleteFolder
-         * @methodOf data-prep.services.folder.service:FolderService
-         * @description Delete the folder
-         * @param {string} path the path to delete
-         * @returns {Promise} The DELETE promise
-         */
-        function deleteFolder(path) {
-            return FolderRestService.delete(path);
-        }
 
         /**
          * @ngdoc method
@@ -65,49 +48,6 @@
          */
         function renameFolder(path, newPath){
             return FolderRestService.renameFolder(path, newPath);
-        }
-
-        //----------------------------------------------
-        //   folder entries
-        //----------------------------------------------
-        /**
-         * @ngdoc method
-         * @name deleteFolderEntry
-         * @methodOf data-prep.services.folder.service:FolderService
-         * @description Delete the folder entry
-         * @param {string} contentType the content type
-         * @param {string} contentId the content id
-         * @param {string} path the path to delete
-         * @returns {Promise} The DELETE promise
-         */
-        function deleteFolderEntry(contentType, contentId, path) {
-            return FolderRestService.deleteFolderEntry(contentType, contentId, path);
-        }
-
-        /**
-         * @ngdoc method
-         * @name createFolderEntry
-         * @methodOf data-prep.services.folder.service:FolderRestService
-         * @description Create a folder
-         * @param contentType the entry content type
-         * @param contentId the id of the entry content type
-         * @param {object} Folder the folder to create the entry
-         * @returns {Promise} The PUT promise
-         */
-        function createFolderEntry(contentType, contentId, folder){
-            return FolderRestService.createFolderEntry(contentType, contentId, folder.id);
-        }
-
-        /**
-         * @ngdoc method
-         * @name listFolderChilds
-         * @methodOf data-prep.services.folder.service:FolderService
-         * @description List the childs of a folder (or child of root folder)
-         * @param {object} Folder the folder to list entries
-         * @returns {Promise} The GET promise
-         */
-        function listFolderEntries(contentType,folder){
-            return FolderRestService.listFolderEntries(contentType, folder.id);
         }
 
 

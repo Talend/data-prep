@@ -12,22 +12,6 @@ describe('Folder Rest Service', function () {
         spyOn($rootScope, '$emit').and.returnValue();
     }));
 
-
-    it('should call delete folder', inject(function ($rootScope, FolderRestService, RestURLs) {
-        //given
-        var path = '/foo/bar';
-
-        $httpBackend
-            .expectDELETE(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
-            .respond(200);
-
-        //when
-        FolderRestService.delete(path);
-        $httpBackend.flush();
-        $rootScope.$digest();
-
-    }));
-
     it('should call create folder', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
         var path = '/foo/bar';
@@ -43,60 +27,69 @@ describe('Folder Rest Service', function () {
 
     }));
 
-
-    it('should call create folder entry', inject(function ($rootScope, FolderRestService, RestURLs) {
+    it('should get root folder content', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
+        var folder = {id : '', path: '', name: 'Home'};
+        var sort = 'name';
+        var order = 'asc';
+        var result='';
 
         $httpBackend
-            .expectPUT(RestURLs.folderUrl + '/entries')
-            .respond(200);
+            .expectGET(RestURLs.folderUrl + '/datasets' + '?folder=%2F&sort=name&order=asc')
+            .respond(200, 'content');
 
         //when
-        FolderRestService.createFolderEntry('contentType', 'contentId', 'thepath');
+        FolderRestService.getFolderContent(folder, sort, order).then(function (res) {
+            result = res.data;
+        });
         $httpBackend.flush();
         $rootScope.$digest();
+
+        expect(result).toBe('content');
+
 
     }));
 
-    it('should call delete folder entry', inject(function ($rootScope, FolderRestService, RestURLs) {
+    it('should get folder content', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
+        var folder = {id : 'toto', path: 'toto', name: 'toto'};
+        var sort = 'name';
+        var order = 'asc';
+        var result='';
 
         $httpBackend
-            .expectDELETE(RestURLs.folderUrl + '/entries/contentType/contentId?path=thepath')
-            .respond(200);
+            .expectGET(RestURLs.folderUrl + '/datasets' + '?folder=toto&sort=name&order=asc')
+            .respond(200, 'content');
 
         //when
-        FolderRestService.deleteFolderEntry('contentType', 'contentId', 'thepath');
+        FolderRestService.getFolderContent(folder, sort, order).then(function (res) {
+            result = res.data;
+        });
         $httpBackend.flush();
         $rootScope.$digest();
+
+        expect(result).toBe('content');
 
     }));
 
-    it('should call list folder entries', inject(function ($rootScope, FolderRestService, RestURLs) {
+
+    it('should get folder content without sort&order', inject(function ($rootScope, FolderRestService, RestURLs) {
         //given
+        var folder = {id : 'toto', path: 'toto', name: 'toto'};
+        var result='';
 
         $httpBackend
-            .expectGET(RestURLs.folderUrl + '/entries?path=thepath&contentType=contentType')
-            .respond(200);
+            .expectGET(RestURLs.folderUrl + '/datasets' + '?folder=toto')
+            .respond(200, 'content');
 
         //when
-        FolderRestService.listFolderEntries('contentType', 'thepath');
+        FolderRestService.getFolderContent(folder).then(function (res) {
+            result = res.data;
+        });
         $httpBackend.flush();
         $rootScope.$digest();
 
-    }));
-
-    it('should call list folder entries w/o path', inject(function ($rootScope, FolderRestService, RestURLs) {
-        //given
-
-        $httpBackend
-            .expectGET(RestURLs.folderUrl + '/entries?path='+encodeURIComponent('/')+'&contentType=contentType')
-            .respond(200);
-
-        //when
-        FolderRestService.listFolderEntries('contentType');
-        $httpBackend.flush();
-        $rootScope.$digest();
+        expect(result).toBe('content');
 
     }));
 

@@ -197,6 +197,12 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             // we delete it if exists
             Files.deleteIfExists(path);
 
+            Path parentPath = path.getParent();
+            // check parent path first
+            if (Files.notExists( parentPath )){
+                Files.createDirectories( parentPath );
+            }
+
             path = Files.createFile(path);
 
             Properties properties = new Properties();

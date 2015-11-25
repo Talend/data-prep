@@ -25,10 +25,6 @@ public abstract class DataSetContentStoreAdapter implements DataSetContentStore 
     public InputStream get(DataSetMetadata dataSetMetadata) {
         DataSetContent content = dataSetMetadata.getContent();
         Serializer serializer = factory.getFormatGuess(content.getFormatGuessId()).getSerializer();
-        try (InputStream inputStream = getAsRaw(dataSetMetadata)) {
-            return serializer.serialize( inputStream, dataSetMetadata );
-        } catch ( IOException e ) {
-            throw new RuntimeException( e.getMessage(), e);
-        }
+        return serializer.serialize( getAsRaw(dataSetMetadata), dataSetMetadata );
     }
 }

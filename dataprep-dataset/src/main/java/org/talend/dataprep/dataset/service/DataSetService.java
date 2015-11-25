@@ -241,8 +241,8 @@ public class DataSetService {
     @VolumeMetered
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
-            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "", required = false) String folderPath,
             @RequestHeader("Content-Type") String contentType, @ApiParam(value = "content") InputStream content,
+            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "", required = false) String folderPath,
             HttpServletResponse response) throws IOException {
 
         response.setHeader("Content-Type", MediaType.TEXT_PLAIN_VALUE); //$NON-NLS-1$
@@ -279,7 +279,13 @@ public class DataSetService {
 
         // Queue events (format analysis, content indexing for search...)
         queueEvents(id);
+
+        // create associated folderEntry
+        FolderEntry folderEntry = new FolderEntry( "dataset", id, folderPath );
+        folderRepository.addFolderEntry( folderEntry );
+
         LOG.debug(marker, "Created!");
+
         return id;
     }
 
@@ -403,9 +409,9 @@ public class DataSetService {
 
         // Save data set content
         LOG.debug( marker, "Storing content..." );
-        try (InputStream inputStream = contentStore.getAsRaw( dataSet.getMetadata())){
-            contentStore.storeAsRaw( dataSetMetadata, inputStream );
-        }
+
+        contentStore.storeAsRaw( dataSetMetadata, contentStore.getAsRaw( dataSet.getMetadata()) );
+
         LOG.debug( marker, "Content stored." );
 
         queueEvents(newId);
@@ -435,7 +441,8 @@ public class DataSetService {
             lock.unlock();
         }
 
-        // TODO make this async
+        // delete the associated folder entries
+        // TODO make this async?
         for( FolderEntry folderEntry : folderRepository.findFolderEntries( dataSetId, "dataset" )){
             folderRepository.removeFolderEntry( folderEntry.getPath(), //
                                                 folderEntry.getContentId(), //
@@ -506,6 +513,7 @@ public class DataSetService {
             // Save data set content
             contentStore.storeAsRaw(dataSetMetadata, dataSetContent);
             dataSetMetadataRepository.add(dataSetMetadata);
+            // create the associated folder entry
             FolderEntry folderEntry = new FolderEntry( "dataset", dataSetId, folderPath );
             folderRepository.addFolderEntry( folderEntry );
         } finally {

@@ -97,8 +97,7 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             }
             Stream<Path> childStream = Files.list(folderPath);
             List<Folder> childs = new ArrayList<>();
-            childStream.parallel() //
-                    .forEach(path -> {
+            childStream.forEach(path -> { //
                         if (Files.isDirectory(path)) {
                             String pathStr = pathAsString(path);
                             try {
@@ -230,7 +229,6 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
 
             Files.list( path ) //
                 .filter( pathFound -> !Files.isDirectory(pathFound)) //
-                .parallel() //
                 .forEach( pathFile -> {
                     try {
                         try (InputStream inputStream = Files.newInputStream(pathFile)) {
@@ -280,7 +278,6 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
             List<FolderEntry> folderEntries = new ArrayList<>();
             Files.list(path) //
                     .filter(pathFound -> !Files.isDirectory(pathFound)) //
-                    .parallel() //
                     .forEach(pathFile -> {
                             try {
                                 try (InputStream inputStream = Files.newInputStream(pathFile)) {
@@ -320,8 +317,9 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     final AtomicBoolean filesFound = new AtomicBoolean( false );
 
-                    Files.list( dir ).parallel().forEach( path -> {
-                        filesFound.set(true); } );
+                    Files.list(dir).forEach(path -> {
+                        filesFound.set(true);
+                    });
 
                     return filesFound.get()? FileVisitResult.CONTINUE: FileVisitResult.SKIP_SUBTREE;
                 }
@@ -379,7 +377,7 @@ public class FileSystemFolderRepository  extends FolderRepositoryAdapter impleme
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     final AtomicBoolean filesFound = new AtomicBoolean(false);
 
-                    Files.list(dir).parallel().forEach(path -> {
+                    Files.list(dir).forEach(path -> {
                         if (Files.isDirectory(path)) {
                             String pathStr = pathAsString(path);
                             folders.add(Folder.Builder.folder() //

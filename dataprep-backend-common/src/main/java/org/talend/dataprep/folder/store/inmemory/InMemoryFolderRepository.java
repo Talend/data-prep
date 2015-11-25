@@ -72,7 +72,7 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     public Iterable<Folder> childs(String path) {
         final List<Folder> childs = new CopyOnWriteArrayList<>();
         final String cleanedPath = cleanPath(path);
-        this.foldersMap.values().stream().parallel().forEach(folder -> {
+        this.foldersMap.values().stream().forEach(folder -> {
             // root path need special favour...
             if (StringUtils.equals(cleanedPath, "/")) {
                 if (StringUtils.countMatches(folder.getPath(), "/") < 1) {
@@ -103,7 +103,7 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
         String cleanPath = cleanPath( path );
         String cleanNewPath = cleanPath( newPath );
 
-        this.foldersMap.keySet().parallelStream().forEach( key -> {
+        this.foldersMap.keySet().forEach( key -> {
             if (StringUtils.startsWith( key, cleanPath )){
                 Folder folder = this.foldersMap.get( key );
                 this.foldersMap.remove( key );
@@ -115,13 +115,13 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
             }
         });
 
-        this.folderEntriesMap.keySet().parallelStream().forEach( key -> {
+        this.folderEntriesMap.keySet().forEach( key -> {
             if (StringUtils.startsWith( key, cleanPath )){
                 List<FolderEntry> entries = this.folderEntriesMap.get( key );
                 String newKey = StringUtils.replace( key, cleanPath, cleanNewPath, 1 );
                 this.folderEntriesMap.put( newKey, entries );
                 this.folderEntriesMap.remove( key );
-                entries.parallelStream().forEach( folderEntry -> {
+                entries.forEach( folderEntry -> {
                     String newFolderPath = StringUtils.replace( folderEntry.getPath(), cleanPath, cleanNewPath, 1 );
                     folderEntry.setPath( newFolderPath );
                 });
@@ -176,8 +176,8 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     public Iterable<FolderEntry> findFolderEntries(String contentId, String contentType) {
         List<FolderEntry> entries = new CopyOnWriteArrayList<>();
 
-        this.folderEntriesMap.values().stream().parallel().forEach(folderEntries -> {
-            folderEntries.stream().parallel().forEach(folderEntry -> {
+        this.folderEntriesMap.values().stream().forEach(folderEntries -> {
+            folderEntries.stream().forEach(folderEntry -> {
                 if (StringUtils.equalsIgnoreCase(contentId, folderEntry.getContentId()) //
                         && StringUtils.equalsIgnoreCase(contentType, folderEntry.getContentType())) {
                     entries.add(folderEntry);

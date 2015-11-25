@@ -3,9 +3,10 @@
     {
       "action": "fillinvalidwithdefaultdate",
       "parameters": {
-        "invalid_default_value": "09/07/2015 13:31:36",
+        "default_value": "09/07/2015 13:31:36",
         "scope": "column",
         "column_id": "0002",
+        "mode": "Constant",
         "column_name": "date"
       }
     }

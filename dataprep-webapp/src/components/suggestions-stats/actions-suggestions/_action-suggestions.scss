@@ -4,71 +4,78 @@
   $menu-background: $super-light-gray;
 
   .actions-suggestions{
-    .label-switch{
-      padding: 0;
-      input[type="checkbox"] + .checkbox {
-        margin-top: 0;
+    @include flex-column();
+    height: 100%;
+
+    .suggestions-title {
+      padding-right: 20px;
+      background-color: #F1F1F1;
+      @include flex-basis(58px);
+      @include flex-grow(0);
+      @include flex-shrink(0);
+
+      .title{
+        width: 320px;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: bottom;
       }
     }
 
-    .action-category {
-      background-color: #F1F1F1;
-      color: $black;
-      font-weight: 300;
-      padding-left: 5px;
-    }
+    >talend-tabs {
+      position: relative;
+      @include flex-grow(1);
+      @include flex-shrink(1);
 
-    .title-div{
-      padding-right: 20px;
-      background-color: #F1F1F1;
-    }
+      .action-search {
+        width: 94%;
+        height: 25px;
+        font-size: 0.8em;
+        padding: 0 0 0 5px;
+        margin: 5px 10px 5px 10px;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-left: 1px solid transparent;
+        box-shadow: none;
+      };
 
-    .title-action{
-      width: 320px;
-      display: inline-block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      vertical-align: bottom;
+      .action-suggestion-tab-items {
+        height: calc(100% - 75px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: absolute;
+        width: 100%;
+      }
 
-    }
-    .title-view-all {
-      width: 100px;
-      display: inline-block;
-      font-size: 0.9em;
-      color: cornflowerblue;
-      overflow: hidden;
+      .action-category {
+        background-color: #F1F1F1;
+        color: $black;
+        font-weight: 300;
+        padding-left: 5px;
+      }
     }
 
     .filters-actions-form{
+      @include flex-basis(30px);
+      @include flex-grow(0);
+      @include flex-shrink(0);
+
+      &.ng-enter {
+        @include animation(fadeIn 0.5s);
+      }
+
+      &.ng-leave {
+        @include animation(fadeOut 0.5s);
+      }
+
       background-color: #DDDDDD;
       font-size: 0.8em;
       font-weight: 600;
       right: 10px;
-      .hr-style{
-        margin:auto;
-        border: 0;
-        height: 0;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-      }
-      &.animate-show.ng-hide-add, &.animate-show.ng-hide-remove {
-        transition: all linear 0.5s;
-      }
-      &.animate-show.ng-hide {
-        opacity: 0;
-      }
-      &.animate-show {
-        opacity: 1;
-      }
+      padding: 5px;
     }
-
-  }
-
-  .action-suggestion-tab-items{
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
   }
 
   .menu {
@@ -100,19 +107,6 @@
       }
     }
   }
-
-  .action-search {
-    width: 94%;
-    height: 25px;
-    font-size: 0.8em;
-    margin: 5px auto;
-    padding: 0 0 0 5px;
-    margin: 5px 10px 5px 10px;
-    border-top: 1px solid transparent;
-    border-right: 1px solid transparent;
-    border-left: 1px solid transparent;
-    box-shadow: none;
-  };
 
   .highlighted{
     background-color: yellow;

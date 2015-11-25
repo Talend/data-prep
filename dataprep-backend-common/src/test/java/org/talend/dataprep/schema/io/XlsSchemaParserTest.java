@@ -53,7 +53,8 @@ public class XlsSchemaParserTest {
     @Test
     public void shouldParseFileWithEmptyColumn() throws Exception {
         String fileName = "org/talend/dataprep/schema/empty_column.xlsx";
-        final List<String> expected = Arrays.asList("First Name", "Last Name", "Company", "Email Address", "Current Product",
+        final List<String> expected = Arrays.asList("First Name", "Last Name", "Company", "Email Address", "col_5",
+                "Current Product",
                 "Product to send");
         checkColumnsName(fileName, expected);
     }

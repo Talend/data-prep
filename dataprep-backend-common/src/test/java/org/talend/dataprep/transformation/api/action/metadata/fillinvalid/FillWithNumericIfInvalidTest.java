@@ -7,6 +7,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.ActionMetad
 
 import java.util.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -14,6 +15,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillIfEmpty;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillInvalid;
 
 /**
  * Unit test for the FillWithNumericIfInvalid action.
@@ -91,6 +94,33 @@ public class FillWithNumericIfInvalidTest {
         final Set<String> invalidValues = row.getRowMetadata().getById("0002").getQuality().getInvalidValues();
         assertEquals(1, invalidValues.size());
         assertTrue(invalidValues.contains("_______wljh_"));
+    }
+
+    @Test
+    public void should_fill_empty_integer_other_column() throws Exception {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0001", "David Bowie");
+        values.put("0002", "A text");
+        values.put("0003", "10");
+
+        final RowMetadata rowMetadata = new RowMetadata();
+        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.INTEGER).computedId("0002").build());
+        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.INTEGER).computedId("0003").build());
+
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
+                this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
+
+        // when
+        parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.COLUMN_MODE);
+        parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0003");
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0002");
+
+        // then
+        Assert.assertEquals("10", row.get("0002"));
+        Assert.assertEquals("David Bowie", row.get("0001"));
     }
 
     @Test

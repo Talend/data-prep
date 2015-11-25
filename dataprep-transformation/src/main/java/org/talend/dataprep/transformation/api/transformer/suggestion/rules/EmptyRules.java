@@ -2,14 +2,13 @@ package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
 import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.EMPTY_MGT;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.NEGATIVE;
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.POSITIVE;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.rules.GenericRule.GenericRuleBuilder.forActions;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.delete.DeleteEmpty;
-import org.talend.dataprep.transformation.api.action.metadata.fillempty.FillIfEmpty;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillIfEmpty;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
 @Component

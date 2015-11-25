@@ -266,13 +266,17 @@ describe('Recipe controller', function () {
     }));
 
     describe('step parameters', function () {
-        it('should return added columns names given the ids', function () {
+        it('should return 3 added columns names given the ids', function () {
             //given
             var ctrl = createController();
             var step = {
                 actionParameters: {
                     parameters: {
-                        lookup_selected_cols : [{id:'0001', name:'firstname'},{id:'0002', name:'lastname'}]
+                        lookup_selected_cols : [
+                            {id:'0001', name:'firstname'},
+                            {id:'0002', name:'lastname'},
+                            {id:'0003', name:'city'}
+                        ]
                     }
                 }
             };
@@ -281,7 +285,66 @@ describe('Recipe controller', function () {
             var namesString = ctrl.getAddedColumnsInLookup(step);
 
             //then
-            expect(namesString).toBe('firstname, lastname');
+            expect(namesString).toEqual({
+                initialColsNbr: 3,
+                firstCol: 'firstname',
+                secondCol: 'lastname' ,
+                restOfColsNbr: 1,
+                restOfCols: 'city'
+            });
+        });
+
+        it('should return 2 added columns names given the ids', function () {
+            //given
+            var ctrl = createController();
+            var step = {
+                actionParameters: {
+                    parameters: {
+                        lookup_selected_cols : [
+                            {id:'0001', name:'firstname'},
+                            {id:'0002', name:'lastname'}
+                        ]
+                    }
+                }
+            };
+
+            //when
+            var namesString = ctrl.getAddedColumnsInLookup(step);
+
+            //then
+            expect(namesString).toEqual({
+                initialColsNbr: 2,
+                firstCol: 'firstname',
+                secondCol: 'lastname' ,
+                restOfColsNbr: 0,
+                restOfCols: ''
+            });
+        });
+
+        it('should return 1 added column names given the ids', function () {
+            //given
+            var ctrl = createController();
+            var step = {
+                actionParameters: {
+                    parameters: {
+                        lookup_selected_cols : [
+                            {id:'0001', name:'firstname'}
+                        ]
+                    }
+                }
+            };
+
+            //when
+            var namesString = ctrl.getAddedColumnsInLookup(step);
+
+            //then
+            expect(namesString).toEqual({
+                initialColsNbr: 1,
+                firstCol: 'firstname',
+                secondCol: '' ,
+                restOfColsNbr: 0,
+                restOfCols: ''
+            });
         });
 
         it('should return that step has dynamic parameters when it has cluster', function () {

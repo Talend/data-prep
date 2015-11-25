@@ -4,7 +4,8 @@
       "action": "fillemptywithdefault",
       "parameters": {
         "column_id": "tagada",
-        "empty_default_value": "True",
+        "default_value": "True",
+        "mode": "Constant",
         "scope": "column"
       }
     }

@@ -500,14 +500,14 @@ public class DataSetServiceTests extends DataSetBaseTest {
         String json = given().contentType(JSON).get("/datasets/{id}/preview?sheetName=Leads", dataSetId).asString();
         DataSet dataSet = objectMapper.reader(DataSet.class).readValue(json);
 
-        Assertions.assertThat(dataSet.getColumns()).isNotNull().isNotEmpty().hasSize(14);
+        Assertions.assertThat(dataSet.getColumns()).isNotNull().isNotEmpty().hasSize(21);
 
         json = given().contentType(JSON).get("/datasets/{id}/preview?sheetName=Tableau de bord", dataSetId)
                 .asString();
 
         dataSet = objectMapper.reader(DataSet.class).readValue(json);
 
-        Assertions.assertThat(dataSet.getColumns()).isNotNull().isNotEmpty().isNotEmpty().hasSize(8);
+        Assertions.assertThat(dataSet.getColumns()).isNotNull().isNotEmpty().isNotEmpty().hasSize(10);
 
     }
 

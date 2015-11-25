@@ -142,6 +142,48 @@ describe('Recipe directive', function () {
                 }
             },
             preview: true
+        },
+        {
+            'column': {
+                'id': '0000',
+                'name': 'id'
+            },
+            transformation: {
+                parameters: [],
+                label: 'Lookup'
+            },
+            'actionParameters': {
+                'action': 'lookup',
+                'parameters': {
+                    'column_id': '0000',
+                    'filter': '',
+                    'lookup_ds_name': 'customers_100_with_pb',
+                    'lookup_ds_id': '14d116a0-b180-4c5f-ba25-46807fc61e42',
+                    'lookup_ds_url': 'http://172.17.0.30:8080/datasets/14d116a0-b180-4c5f-ba25-46807fc61e42/content?metadata=true',
+                    'lookup_join_on': '0000',
+                    'lookup_join_on_name': 'id',
+                    'lookup_selected_cols': [
+                        {
+                            'name': 'firstname',
+                            'id': '0001'
+                        },
+                        {
+                            'name': 'lastname',
+                            'id': '0002'
+                        },
+                        {
+                            'name': 'state',
+                            'id': '0003'
+                        },
+                        {
+                            'name': 'registration',
+                            'id': '0004'
+                        }
+                    ],
+                    'column_name': 'id',
+                    'scope': 'dataset'
+                }
+            }
         }
     ];
     var recipeWithDiff = [
@@ -641,7 +683,14 @@ describe('Recipe directive', function () {
     beforeEach(module('pascalprecht.translate', function ($translateProvider) {
         $translateProvider.translations('en', {
             'RECIPE_ITEM_ON_COL': 'on column',
-            'RECIPE_ITEM_ON_CELL': 'on cell'
+            'RECIPE_ITEM_ON_CELL': 'on cell',
+            'RECIPE_LOOKUP_MADE_ON_COL':'made on the column',
+            'RECIPE_LOOKUP_OF_DS':'done with dataset ',
+            'RECIPE_LOOKUP_JOIN_COLS': 'Join has been set between',
+            'AND': 'and',
+            'OTHER': 'other',
+            'RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_PLURAL':'column(s) have been added.',
+            'RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_SINGULAR':'column has been added.'
         });
         $translateProvider.preferredLanguage('en');
     }));
@@ -670,6 +719,16 @@ describe('Recipe directive', function () {
         expect(element.find('>ul .accordion .trigger').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Split on column col1');
         expect(element.find('>ul .accordion .trigger').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2. To uppercase on column col2');
         expect(element.find('>ul .accordion .trigger').eq(2).text().trim().replace(/\s+/g, ' ')).toBe('3. Replace value on cell');
+    }));
+
+    it('should render recipe Lookup entry', inject(function (RecipeService) {
+        //when
+        RecipeService.getRecipe().push(recipe[recipe.length - 1]);
+        scope.$digest();
+
+        //then
+        expect(element.find('>ul .accordion').length).toBe(1);
+        expect(element.find('>ul .accordion .trigger').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Lookup done with dataset customers_100_with_pb. Join has been set between id and id. firstname , lastname and 2 other column(s) have been added.');
     }));
 
     it('should render early preview step', inject(function (RecipeService) {

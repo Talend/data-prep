@@ -120,12 +120,46 @@
         "default": ""
       },
       {
-        "name": "empty_default_value",
-        "type": "string",
+        "name": "mode",
+        "type": "select",
         "implicit": false,
-        "canBeBlank": true,
-        "label": "Value",
-        "default": ""
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "Constant",
+              "parameters": [
+                {
+                  "name": "default_value",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "description": "The value to set in cells",
+                  "label": "Value",
+                  "default": ""
+                }
+              ]
+            },
+            {
+              "value": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "description": "Combine the current column with this one",
+                  "label": "Column",
+                  "default": ""
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "description": "Select if you want to compute against a constant value or to another column",
+        "label": "Compute with",
+        "default": "Constant"
       }
     ],
     "dynamic": false
@@ -251,13 +285,46 @@
         "default": ""
       },
       {
-        "name": "invalid_default_value",
-        "type": "string",
+        "name": "mode",
+        "type": "select",
         "implicit": false,
         "canBeBlank": false,
-        "description": "The value to set in invalid cells",
-        "label": "Value",
-        "default": ""
+        "configuration": {
+          "values": [
+            {
+              "value": "Constant",
+              "parameters": [
+                {
+                  "name": "default_value",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "description": "The value to set in cells",
+                  "label": "Value",
+                  "default": ""
+                }
+              ]
+            },
+            {
+              "value": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "description": "Combine the current column with this one",
+                  "label": "Column",
+                  "default": ""
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "description": "Select if you want to compute against a constant value or to another column",
+        "label": "Compute with",
+        "default": "Constant"
       }
     ],
     "dynamic": false

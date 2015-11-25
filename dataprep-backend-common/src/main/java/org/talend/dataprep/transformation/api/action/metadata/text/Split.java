@@ -128,18 +128,17 @@ public class Split extends ActionMetadata implements ColumnAction {
         lastColumnId.push(columnId);
         for (int i = 0; i < limit; i++) {
             newColumns.add(context.in(this).column(column.getName() + SPLIT_APPENDIX + i,
-                    rowMetadata,
-                    (r) -> {
-                        final ColumnMetadata c = ColumnMetadata.Builder //
-                                .column() //
-                                .copy(column) //
-                                .type(Type.STRING) //
-                                .computedId(EMPTY) //
-                                .name(column.getName() + SPLIT_APPENDIX) //
-                                .build();
-                        lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
-                        return c;
-                    }
+                rowMetadata,
+                (r) -> {
+                    final ColumnMetadata c = ColumnMetadata.Builder //
+                            .column() //
+                            .type(Type.STRING) //
+                            .computedId(StringUtils.EMPTY) //
+                            .name(column.getName() + SPLIT_APPENDIX) //
+                            .build();
+                    lastColumnId.push(rowMetadata.insertAfter(lastColumnId.pop(), c));
+                    return c;
+                }
             ));
         }
 

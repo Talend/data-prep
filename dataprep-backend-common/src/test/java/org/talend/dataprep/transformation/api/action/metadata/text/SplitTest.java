@@ -21,16 +21,16 @@ import static org.talend.dataprep.transformation.api.action.metadata.text.Replac
 import static org.talend.dataprep.transformation.api.action.metadata.text.ReplaceOnValue.REPLACE_VALUE_PARAMETER;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.location.SemanticDomain;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
@@ -77,7 +77,7 @@ public class SplitTest {
      */
     @Test
     public void should_split_row() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
         values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
@@ -91,16 +91,16 @@ public class SplitTest {
         expectedValues.put("0004", "ipsum dolor amet swine leberkas pork belly");
         expectedValues.put("0002", "01/01/2015");
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
 
-        //then
+        // then
         assertEquals(expectedValues, row.values());
     }
 
     @Test
     public void test_TDP_831() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
         values.put("0001", "Je vais bien (tout va bien)");
@@ -117,11 +117,44 @@ public class SplitTest {
         expectedValues.put("0004", "");
         expectedValues.put("0002", "01/01/2015");
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
 
-        //then
+        // then
         assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    /**
+     * @see SplitTest#should_split_row()
+     */
+    public void test_TDP_876() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        Statistics originalStats = row.getRowMetadata().getById("0001").getStatistics();
+        Quality originalQuality = row.getRowMetadata().getById("0001").getQuality();
+        List<SemanticDomain> originalDomains = row.getRowMetadata().getById("0001").getSemanticDomains();
+
+        // when
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
+
+        // then
+        assertTrue(originalStats == row.getRowMetadata().getById("0001").getStatistics());
+        assertTrue(originalQuality == row.getRowMetadata().getById("0001").getQuality());
+        assertTrue(originalDomains == row.getRowMetadata().getById("0001").getSemanticDomains());
+
+        assertTrue(originalStats != row.getRowMetadata().getById("0003").getStatistics());
+        assertTrue(originalQuality != row.getRowMetadata().getById("0003").getQuality());
+        assertTrue(originalDomains == Collections.<SemanticDomain>emptyList() || originalDomains != row.getRowMetadata().getById("0003").getSemanticDomains());
+
+        assertTrue(originalStats != row.getRowMetadata().getById("0004").getStatistics());
+        assertTrue(originalQuality != row.getRowMetadata().getById("0004").getQuality());
+        assertTrue(originalDomains == Collections.<SemanticDomain>emptyList() || originalDomains != row.getRowMetadata().getById("0004").getSemanticDomains());
     }
 
     /**
@@ -129,7 +162,7 @@ public class SplitTest {
      */
     @Test
     public void should_split_row_twice() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
         values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
@@ -145,11 +178,11 @@ public class SplitTest {
         expectedValues.put("0004", "ipsum dolor amet swine leberkas pork belly");
         expectedValues.put("0002", "01/01/2015");
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
         action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
 
-        //then
+        // then
         assertEquals(expectedValues, row.values());
     }
 
@@ -158,7 +191,7 @@ public class SplitTest {
      */
     @Test
     public void should_split_row_with_separator_at_the_end() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
         values.put("0001", "Bacon ");
@@ -172,10 +205,10 @@ public class SplitTest {
         expectedValues.put("0004", "");
         expectedValues.put("0002", "01/01/2015");
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
 
-        //then
+        // then
         assertEquals(expectedValues, row.values());
     }
 
@@ -184,7 +217,7 @@ public class SplitTest {
      */
     @Test
     public void should_split_row_no_separator() {
-        //given
+        // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
         values.put("0001", "Bacon");
@@ -198,20 +231,19 @@ public class SplitTest {
         expectedValues.put("0004", "");
         expectedValues.put("0002", "01/01/2015");
 
-        //when
+        // when
         action.applyOnColumn(row, new TransformationContext(), parameters, "0001");
 
-        //then
+        // then
         assertEquals(expectedValues, row.values());
     }
-
 
     /**
      * @see Action#getRowAction()
      */
     @Test
     public void should_update_metadata() {
-        //given
+        // given
         final List<ColumnMetadata> input = new ArrayList<>();
         input.add(createMetadata("0000", "recipe"));
         input.add(createMetadata("0001", "steps"));
@@ -225,10 +257,10 @@ public class SplitTest {
         expected.add(createMetadata("0004", "steps_split"));
         expected.add(createMetadata("0002", "last update"));
 
-        //when
+        // when
         action.applyOnColumn(new DataSetRow(rowMetadata), new TransformationContext(), parameters, "0001");
 
-        //then
+        // then
         assertEquals(expected, rowMetadata.getColumns());
     }
 
@@ -237,7 +269,7 @@ public class SplitTest {
      */
     @Test
     public void should_update_metadata_twice() {
-        //given
+        // given
         final List<ColumnMetadata> input = new ArrayList<>();
         input.add(createMetadata("0000", "recipe"));
         input.add(createMetadata("0001", "steps"));
@@ -253,13 +285,12 @@ public class SplitTest {
         expected.add(createMetadata("0004", "steps_split"));
         expected.add(createMetadata("0002", "last update"));
 
-        //when
+        // when
         action.applyOnColumn(new DataSetRow(rowMetadata), new TransformationContext(), parameters, "0001");
         action.applyOnColumn(new DataSetRow(rowMetadata), new TransformationContext(), parameters, "0001");
 
         assertEquals(expected, rowMetadata.getColumns());
     }
-
 
     @Test
     public void should_not_split_because_null_separator() throws IOException {
@@ -275,7 +306,7 @@ public class SplitTest {
         values.put("last update", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
-        //when
+        // when
         nullSeparatorAction.applyOnColumn(row, new TransformationContext(), parameters, "steps");
 
         // then

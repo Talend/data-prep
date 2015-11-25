@@ -130,9 +130,8 @@ public class XlsSchemaParser implements SchemaParser {
 
         LOGGER.debug(Markers.dataset(datasetId), "parsing sheet '{}'", sheet.getSheetName());
 
+        // Map<ColId, Map<RowId, type>>
         SortedMap<Integer, SortedMap<Integer, String>> cellsTypeMatrix = collectSheetTypeMatrix(sheet);
-        removeEmptyColumns(cellsTypeMatrix);
-
         int averageHeaderSize = guessHeaderSize(cellsTypeMatrix);
 
         // here we have information regarding types for each rows/col (yup a Matrix!! :-) )
@@ -152,14 +151,13 @@ public class XlsSchemaParser implements SchemaParser {
 
             // header text cannot be null so use a default one
             if (StringUtils.isEmpty(headerText)) {
-                headerText = "col_" + colId;
+                headerText = "col_" + (colId + 1); // +1 because it starts from 0
             }
 
             // FIXME what do we do if header size is > 1 concat all lines?
             columnsMetadata.add(ColumnMetadata.Builder //
                     .column() //
                     .headerSize(averageHeaderSize) //
-                    .id(colId) //
                     .name(headerText) //
                     .type(type) //
                     .build());
@@ -167,32 +165,6 @@ public class XlsSchemaParser implements SchemaParser {
         });
 
         return columnsMetadata;
-    }
-
-    /**
-     * Remove empty columns so that the dataset is not "polluted" with irrelevant data.
-     * 
-     * @param cellsTypeMatrix the cell type matrix Map&lt;colId, Map&lt;rowId, Type&gt;&gt;
-     */
-    private void removeEmptyColumns(SortedMap<Integer, SortedMap<Integer, String>> cellsTypeMatrix) {
-
-        final Iterator<Integer> colIterator = cellsTypeMatrix.keySet().iterator();
-        while (colIterator.hasNext()) {
-            final Integer colId = colIterator.next();
-            // if there's only "blank" type in the column, it's removed
-            final long distinctBlankCount = cellsTypeMatrix.get(colId) //
-                    .values() //
-                    .stream() //
-                    .distinct() //
-                    .filter(t -> !StringUtils.equals(BLANK, t)) // keep only blank values
-                    .count();
-
-            if (distinctBlankCount == 0) {
-                LOGGER.debug("col #{} removed because it contains only blank rows", colId);
-                colIterator.remove();
-            }
-        }
-
     }
 
     /**

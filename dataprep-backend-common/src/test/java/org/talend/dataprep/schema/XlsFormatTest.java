@@ -330,7 +330,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
 
             logger.debug("columnMetadatas: {}", columnMetadatas);
 
-            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(14);
+            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(21);
 
             ColumnMetadata columnMetadata = columnMetadatas.get(7);
             Assertions.assertThat(columnMetadata.getHeaderSize()).isEqualTo(1);

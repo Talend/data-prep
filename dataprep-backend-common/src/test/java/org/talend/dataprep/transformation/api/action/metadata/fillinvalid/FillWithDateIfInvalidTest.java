@@ -23,6 +23,8 @@ import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTest
 import org.talend.dataprep.transformation.api.action.metadata.date.ChangeDatePatternTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillIfEmpty;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillInvalid;
 
 /**
  * Unit test for FillWithDateIfInvalid action.
@@ -137,6 +139,35 @@ public class FillWithDateIfInvalidTest {
 
         // then
         Assert.assertEquals("2015-07-09", row.get("0002"));
+        Assert.assertEquals("David Bowie", row.get("0001"));
+    }
+
+    @Test
+    public void should_fill_empty_string_other_column() throws Exception {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0001", "David Bowie");
+        values.put("0002", "Ouf");
+        values.put("0003", "15/10/1999");
+
+        final RowMetadata rowMetadata = new RowMetadata();
+        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.DATE).computedId("0002").build());
+        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.DATE).computedId("0003").build());
+
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+        setStatistics(row, "0002", ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"));
+
+        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
+                this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
+
+        // when
+        parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.COLUMN_MODE);
+        parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0003");
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0002");
+
+        // then
+        Assert.assertEquals("15/10/1999", row.get("0003"));
+        Assert.assertEquals("1999-10-15", row.get("0002"));
         Assert.assertEquals("David Bowie", row.get("0001"));
     }
 

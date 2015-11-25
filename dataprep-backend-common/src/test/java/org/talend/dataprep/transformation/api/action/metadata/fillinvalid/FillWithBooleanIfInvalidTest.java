@@ -7,6 +7,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.ActionMetad
 
 import java.util.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -14,6 +15,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.api.action.metadata.fill.AbstractFillWith;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillInvalid;
 
 /**
  * Unit test for FillWithBooleanIfInvalid action.
@@ -95,6 +98,33 @@ public class FillWithBooleanIfInvalidTest {
         assertTrue(invalidValues.contains("753"));
     }
 
+    @Test
+    public void should_fill_empty_string_other_column() throws Exception {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0001", "David Bowie");
+        values.put("0002", "12");
+        values.put("0003", "False");
+
+        final RowMetadata rowMetadata = new RowMetadata();
+        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.BOOLEAN).computedId("0002").build());
+        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.BOOLEAN).computedId("0003").build());
+
+        final DataSetRow row = new DataSetRow(rowMetadata, values);
+
+        Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //
+                this.getClass().getResourceAsStream("fillInvalidBooleanAction.json"));
+
+        // when
+        parameters.put(AbstractFillWith.MODE_PARAMETER, AbstractFillWith.COLUMN_MODE);
+        parameters.put(AbstractFillWith.SELECTED_COLUMN_PARAMETER, "0003");
+        action.applyOnColumn(row, new TransformationContext(), parameters, "0002");
+
+        // then
+        Assert.assertEquals("False", row.get("0002"));
+        Assert.assertEquals("David Bowie", row.get("0001"));
+    }
+    
     @Test
     public void should_accept_column() {
         assertTrue(action.acceptColumn(getColumn(Type.BOOLEAN)));

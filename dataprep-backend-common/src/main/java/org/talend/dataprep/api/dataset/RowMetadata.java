@@ -54,7 +54,7 @@ public class RowMetadata implements Serializable {
         columnMetadata.forEach(this::addColumn);
     }
 
-    private ColumnMetadata addColumn(ColumnMetadata columnMetadata) {
+    public ColumnMetadata addColumn(ColumnMetadata columnMetadata) {
         return addColumn(columnMetadata, columns.size());
     }
 

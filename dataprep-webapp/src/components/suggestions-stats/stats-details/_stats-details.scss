@@ -6,9 +6,12 @@
   }
 
   .stat-detail-tab-items{
-    height: 100%;
+    height: calc(100% - 45px);
     overflow-y: auto;
+    overflow-x: hidden;
     padding-top: 15px;
+    position: absolute;
+    width: 100%;
   }
 
   .two-columns-values{

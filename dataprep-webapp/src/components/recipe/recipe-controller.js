@@ -111,11 +111,18 @@
          * @methodOf data-prep.recipe.controller:RecipeCtrl
          * @param {object} step The current step
          * @description having the Ids od the added columns, it collects the responding names
-         * @returns {String} array of the added columns names
+         * @returns {Object} 2 arrays of the added columns names
          */
         vm.getAddedColumnsInLookup = function getAddedColumnsInLookup(step){
             /*jshint camelcase: false */
-            return _.pluck(step.actionParameters.parameters.lookup_selected_cols, 'name').join(', ');
+            var allAddedCols =  _.pluck(step.actionParameters.parameters.lookup_selected_cols, 'name');
+            var addedColsDetails = {};
+            addedColsDetails.initialColsNbr = allAddedCols.length;
+            addedColsDetails.firstCol = allAddedCols.splice(0,1).join();
+            addedColsDetails.secondCol = allAddedCols.splice(0,1).join();
+            addedColsDetails.restOfColsNbr = allAddedCols.length;
+            addedColsDetails.restOfCols = allAddedCols.join(', ');
+            return addedColsDetails;
         };
 
         /**

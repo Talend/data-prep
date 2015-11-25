@@ -40,15 +40,6 @@
                         }
                     }, 200, false);
                 };
-
-                ctrl.resizePanels = function resizePanels() {
-                    $timeout(function () {
-                        //Force to resize tabs containers
-                        var panel1 = angular.element('.split-pane1').eq(0);
-                        var actionHeaderPanelsSizeMargin = 160;
-                        iElement.find('.action-suggestion-tab-items').css('height', panel1.height() - actionHeaderPanelsSizeMargin + 'px');
-                    }, 200, false);
-                };
             }
         };
     }

@@ -1,14 +1,13 @@
 .lookup {
   overflow: hidden;
   .lookup-header {
-    height: 15px;
-    hr{
-      margin:0px;
-    }
+    height: 23px;
+    border-top: 1px solid #5B558E;
+    border-bottom: 1px solid #5B558E;
   }
 
   .lookup-container {
-    height: 280px;
+    height: 277px;
 
     #lookup-left {
       float: left;
@@ -21,11 +20,11 @@
     #lookup-right {
       float: right;
       width: 29.5%;
-      height: 280px;
+      height: 277px;
       background-color: #DDDDDD;
       .lookup-descripton{
         margin-left: 10px;
-        width: 60%;
+        width: 70%;
         p{
           margin-left:15px;
           color:#505E98;
@@ -46,14 +45,12 @@
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+    border-top: 1px solid #5B558E;
     ul{
       li{
         display: inline;
         padding-right: 15px;
       }
-    }
-    hr{
-      margin:0px;
     }
   }
 }

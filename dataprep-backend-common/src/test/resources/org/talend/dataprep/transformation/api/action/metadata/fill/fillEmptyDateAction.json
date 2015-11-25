@@ -3,9 +3,10 @@
     {
       "action": "fillemptywithdefault",
       "parameters": {
-        "empty_default_value": "True",
+        "default_value": "01/01/1970 10:00:00",
         "scope": "column",
         "column_id": "0002",
+        "mode": "Constant",
         "column_name": "age"
       }
     }

@@ -3,9 +3,10 @@
     {
       "action": "fillinvalidwithdefaultstring",
       "parameters": {
-        "invalid_default_value": "beer",
+        "default_value": "beer",
         "scope": "column",
         "column_id": "0002",
+        "mode": "Constant",
         "column_name": "age"
       }
     }

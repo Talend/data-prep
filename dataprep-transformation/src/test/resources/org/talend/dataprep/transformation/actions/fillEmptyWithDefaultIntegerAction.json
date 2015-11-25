@@ -4,7 +4,8 @@
       "action": "fillemptywithdefault",
       "parameters": {
         "column_id": "nbCommands",
-        "empty_default_value": 5,
+        "default_value": 5,
+        "mode": "Constant",
         "scope": "column"
       }
     }

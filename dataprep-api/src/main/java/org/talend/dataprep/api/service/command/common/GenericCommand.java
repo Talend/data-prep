@@ -52,7 +52,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Value("${dataset.service.url}")
     protected String datasetServiceUrl;
 
-    @Value("${api.service.url}")
+    @Value("http://${server.ip}:${server.port}")
     protected String apiServiceUrl;
 
     @Value("${preparation.service.url}")

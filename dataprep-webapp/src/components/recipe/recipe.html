@@ -25,17 +25,33 @@
             </span>
 
             <span ng-switch-when="dataset">
-                <span translate-once="RECIPE_ITEM_ON_COL"></span>
-                <span class="recipe-description recipe-column-name">{{::step.column.name}}</span>
-
-                <span translate-once="RECIPE_LOOKUP_MADE_ON_COL"></span>
-                <span class="recipe-description recipe-column-name">{{::step.actionParameters.parameters.lookup_join_on_name}}</span>
-
                 <span translate-once="RECIPE_LOOKUP_OF_DS"></span>
                 <span class="recipe-description recipe-column-name">{{::step.actionParameters.parameters.lookup_ds_name}}.</span>
 
-                <span translate-once="RECIPE_LOOKUP_FOLLOWING_COLS_ADDED"></span>
-                <span class="recipe-description recipe-column-name">{{recipeCtrl.getAddedColumnsInLookup(step)}}</span>
+                <span translate-once="RECIPE_LOOKUP_JOIN_COLS"></span>
+                <span class="recipe-description recipe-column-name">{{::step.column.name}}</span>
+
+                <span translate-once="AND"></span>
+                <span class="recipe-description recipe-column-name">{{::step.actionParameters.parameters.lookup_join_on_name}}. </span>
+
+                <span class="recipe-description recipe-column-name">{{recipeCtrl.getAddedColumnsInLookup(step).firstCol}}</span>
+
+                <span translate-once="AND" ng-if="recipeCtrl.getAddedColumnsInLookup(step).secondCol && !recipeCtrl.getAddedColumnsInLookup(step).restOfColsNbr"></span>
+                <span ng-if="recipeCtrl.getAddedColumnsInLookup(step).restOfColsNbr && recipeCtrl.getAddedColumnsInLookup(step).secondCol">,</span>
+
+                <span class="recipe-description recipe-column-name">{{recipeCtrl.getAddedColumnsInLookup(step).secondCol}}</span>
+
+                <span translate-once="AND" ng-if="recipeCtrl.getAddedColumnsInLookup(step).restOfColsNbr"></span>
+                <span class="recipe-description recipe-column-name"
+                      title="{{recipeCtrl.getAddedColumnsInLookup(step).restOfCols}}"
+                      ng-if="recipeCtrl.getAddedColumnsInLookup(step).restOfColsNbr"
+                        >
+                    {{recipeCtrl.getAddedColumnsInLookup(step).restOfColsNbr}}
+                </span>
+
+                <span translate-once="OTHER" ng-if="recipeCtrl.getAddedColumnsInLookup(step).restOfColsNbr"></span>
+                <span translate-once="RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_PLURAL" ng-if="recipeCtrl.getAddedColumnsInLookup(step).initialColsNbr > 1"></span>
+                <span translate-once="RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_SINGULAR" ng-if="recipeCtrl.getAddedColumnsInLookup(step).initialColsNbr === 1"></span>
             </span>
 
             <span class="filter-icon"

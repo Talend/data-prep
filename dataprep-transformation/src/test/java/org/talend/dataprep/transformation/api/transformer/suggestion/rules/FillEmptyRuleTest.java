@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.api.action.metadata.fillempty.FillIfEmpty;
+import org.talend.dataprep.transformation.api.action.metadata.fill.FillIfEmpty;
 import org.talend.dataprep.transformation.api.action.metadata.text.ProperCase;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 

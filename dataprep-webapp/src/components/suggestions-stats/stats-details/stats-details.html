@@ -1,7 +1,7 @@
 <div class="actions-suggestions" ng-switch="!!statsDetailsCtrl.statistics">
     <div class="Description" ng-if="!statsDetailsCtrl.statistics" translate-once="SELECT_COLUMN_TO_DISPLAY_STATS"></div>
 
-    <talend-tabs ng-if="statsDetailsCtrl.statistics" on-tab-change="statsDetailsCtrl.resizePanels()">
+    <talend-tabs ng-if="statsDetailsCtrl.statistics">
         <talend-tabs-item class="tab-container" tab-title="Chart" default="true">
             <div class="stat-detail-tab-items">
                 <column-profile></column-profile>

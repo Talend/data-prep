@@ -1,0 +1,12 @@
+<div class="datagrid-lookup"
+     ng-class="{lookup : lookupDatagridCtrl.state.playground.lookupVisibility}">
+    <section id="lookup-datagrid" style="width: 100%; height: 94%"></section>
+</div>
+<span id="lookup-tooltip-ruler" class="tooltip-ruler"></span>
+
+<talend-tooltip
+        position="lookupDatagridCtrl.tooltip.position"
+        requested-state="lookupDatagridCtrl.showTooltip"
+        class="datagrid-tooltip-lookup">
+    <div ng-bind-html="lookupDatagridCtrl.tooltip.htmlStr" class="datagrid-tooltip-content"></div>
+</talend-tooltip>

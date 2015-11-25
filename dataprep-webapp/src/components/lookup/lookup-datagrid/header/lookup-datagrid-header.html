@@ -1,0 +1,26 @@
+<div class="whole-grid-header">
+    <div class="grid-header">
+        <div class="talend-dropdown-text-div">
+            <div class="grid-header-title" title="{{ lookupDatagridHeaderCtrl.column.name }}">{{ lookupDatagridHeaderCtrl.column.name }}</div>
+        </div>
+
+        <div class="grid-header-type" ng-if="lookupDatagridHeaderCtrl.column.domain">{{ lookupDatagridHeaderCtrl.column.domain }}</div>
+        <div class="grid-header-type" ng-if="(!lookupDatagridHeaderCtrl.column.domain)">{{ lookupDatagridHeaderCtrl.converterService.simplifyType(lookupDatagridHeaderCtrl.column.type) }}</div>
+    </div>
+
+    <lookup-quality-bar
+            quality="lookupDatagridHeaderCtrl.column.quality"
+            column="lookupDatagridHeaderCtrl.column">
+    </lookup-quality-bar>
+
+    <div class="add-to-lookup">
+        <div ng-if="lookupDatagridHeaderCtrl.showHideCheckbox()">
+            <input type="checkbox"
+                   ng-model="lookupDatagridHeaderCtrl.added.isAdded"
+                   ng-click="lookupDatagridHeaderCtrl.updateColsToAdd($event)">
+            Add to lookup
+        </div>
+        <span>&nbsp;</span>
+    </div>
+
+</div>

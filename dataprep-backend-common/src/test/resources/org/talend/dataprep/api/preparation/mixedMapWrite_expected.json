@@ -6,5 +6,10 @@
       "field": "nbCommands",
       "value": "13"
     }
-  }
+  },
+  "array": [
+    1,
+    2,
+    3
+  ]
 }

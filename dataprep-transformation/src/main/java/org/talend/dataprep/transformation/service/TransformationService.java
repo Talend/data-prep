@@ -44,6 +44,7 @@ import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
 import org.talend.dataprep.transformation.api.action.dynamic.DynamicType;
 import org.talend.dataprep.transformation.api.action.dynamic.GenericParameter;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
+import org.talend.dataprep.transformation.api.action.metadata.datablending.Lookup;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.api.transformer.configuration.PreviewConfiguration;
@@ -282,6 +283,7 @@ public class TransformationService {
     public List<ActionMetadata> actions(@RequestBody(required = false) ColumnMetadata column) {
         // look for all actions applicable to the column type
         return Stream.of(allActions) //
+                .filter(a -> !StringUtils.equals(Lookup.LOOKUP_ACTION_NAME, a.getName())) // lookup managed at API level
                 .map(am -> column != null ? am.adapt(column) : am) //
                 .collect(toList());
     }

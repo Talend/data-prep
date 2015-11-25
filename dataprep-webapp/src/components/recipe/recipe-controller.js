@@ -107,6 +107,19 @@
         //---------------------------------------------------------------------------------------------
         /**
          * @ngdoc method
+         * @name getAddedColumnsInLookup
+         * @methodOf data-prep.recipe.controller:RecipeCtrl
+         * @param {object} step The current step
+         * @description having the Ids od the added columns, it collects the responding names
+         * @returns {String} array of the added columns names
+         */
+        vm.getAddedColumnsInLookup = function getAddedColumnsInLookup(step){
+            /*jshint camelcase: false */
+            return _.pluck(step.actionParameters.parameters.lookup_selected_cols, 'name').join(', ');
+        };
+
+        /**
+         * @ngdoc method
          * @name hasParameters
          * @methodOf data-prep.recipe.controller:RecipeCtrl
          * @param {object} step The step to test

@@ -4,7 +4,7 @@
     /**
      * @ngdoc service
      * @name data-prep.services.utils.service:TextFormatService
-     * @description Text formatting service. It helps to adapt values in datagrid (show spaces, newlines, etc)
+     * @description Text formatting service. It helps to adapt values in lookup-datagrid (show spaces, newlines, etc)
      */
     function TextFormatService() {
         return {
@@ -34,7 +34,7 @@
          * @ngdoc method
          * @name adaptToGridConstraints
          * @methodOf data-prep.services.utils:TextFormatService
-         * @description Adapt value to the datagrid display constraint (show spaces, escape, etc)
+         * @description Adapt value to the lookup-datagrid display constraint (show spaces, escape, etc)
          * @param {string} value The value to adapt
          */
         function adaptToGridConstraints(value) {

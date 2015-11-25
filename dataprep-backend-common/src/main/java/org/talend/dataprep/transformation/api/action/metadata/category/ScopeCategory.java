@@ -12,7 +12,10 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitPar
  * List all scope category.
  */
 public enum ScopeCategory {
-    CELL(ROW_ID, COLUMN_ID), COLUMN(COLUMN_ID), LINE(ROW_ID), TABLE;
+                           CELL(ROW_ID, COLUMN_ID),
+                           COLUMN(COLUMN_ID),
+                           LINE(ROW_ID),
+                           DATASET;
 
     private final Predicate<Map<String, String>> mandatoryParametersChecker;
 

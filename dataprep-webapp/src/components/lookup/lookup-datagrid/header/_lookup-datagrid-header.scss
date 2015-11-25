@@ -1,0 +1,45 @@
+$datagrid-header-bkg: $dark-gray;
+
+.grid-header {
+  $datagrid-header: #266092;
+  $datagrid-header-bkg-active: darken($datagrid-header-bkg, 10%);
+
+  $datagrid-headercell-font-size: .95em;
+
+  background-color: $datagrid-header-bkg;
+  border: 1px solid transparent; /*rgb(221, 221, 221);*/
+  color: $white;
+  text-transform: uppercase;
+  font-family: $monospace;
+  font-weight: 700;
+  font-size: $datagrid-headercell-font-size;
+  cursor: default;
+  padding: 5px 5px 0;
+
+  &:hover {
+    background-color: $datagrid-header-bkg-active;
+    border: 1px solid gray;
+    cursor: default;
+  }
+
+  .grid-header-type {
+    height: 100%;
+    text-transform: lowercase;
+    font-size: 0.75em;
+    font-weight: 300;
+    text-align: right;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  .talend-dropdown-text-div {
+    overflow: hidden;
+    max-width: 90%;
+  }
+}
+
+.add-to-lookup{
+  background-color: $datagrid-header-bkg;
+  color: $white;
+  padding-left: 5px;
+}

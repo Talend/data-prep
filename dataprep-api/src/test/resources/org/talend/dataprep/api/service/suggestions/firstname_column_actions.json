@@ -3,16 +3,12 @@
     "category": "split",
     "name": "extract_url_tokens",
     "dynamic": false,
-    "description": "Extracts protocol, host, port, query, etc... from an url in separated columns",
-    "label": "Extract url tokens",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -20,8 +16,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -29,8 +23,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -38,8 +30,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -48,16 +38,12 @@
     "category": "split",
     "name": "extractemaildomain",
     "dynamic": false,
-    "description": "Extract local and domain parts from an email",
-    "label": "Extract email tokens",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -65,8 +51,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -74,8 +58,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -83,8 +65,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -93,16 +73,12 @@
     "category": "data cleansing",
     "name": "clear_invalid",
     "dynamic": false,
-    "description": "Clear cells that have a value recognized as invalid",
-    "label": "Clear cells with invalid values",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -110,8 +86,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -119,8 +93,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -128,8 +100,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -138,16 +108,12 @@
     "category": "filtered",
     "name": "delete_lines",
     "dynamic": false,
-    "description": "Delete lines that match filter",
-    "label": "Delete lines",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -155,8 +121,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -164,8 +128,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -173,8 +135,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -183,16 +143,12 @@
     "name": "delete_empty",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Delete rows that have this cell empty",
-    "label": "Delete lines with empty cell",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -200,8 +156,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -209,8 +163,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -218,8 +170,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -228,16 +178,12 @@
     "name": "delete_invalid",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Delete rows that have this invalid cell",
-    "label": "Delete lines with invalid cell",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -245,8 +191,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -254,8 +198,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -263,8 +205,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -277,8 +217,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -286,8 +224,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -295,8 +231,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -304,8 +238,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -313,30 +245,22 @@
         "type": "regex",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The value to search",
-        "label": "Value",
         "default": ""
       }
     ],
     "category": "data cleansing",
-    "dynamic": false,
-    "description": "Delete rows that have a specific value in cell in this column",
-    "label": "Delete lines that match"
+    "dynamic": false
   },
   {
     "category": "filtered",
     "name": "keep_only",
     "dynamic": false,
-    "description": "Keep only lines that match filter",
-    "label": "Keep only",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -344,8 +268,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -353,8 +275,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -362,8 +282,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -376,8 +294,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -385,8 +301,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -394,8 +308,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -403,8 +315,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -434,8 +344,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Enter your own date pattern",
                   "default": ""
                 }
               ]
@@ -443,8 +351,6 @@
           ],
           "multiple": false
         },
-        "description": "Choose the date pattern to use in the list or make your own",
-        "label": "New date pattern to use",
         "default": "MM.dd.yyyy"
       }
     ],
@@ -476,8 +382,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Enter your own date pattern",
                   "default": ""
                 }
               ]
@@ -485,15 +389,11 @@
           ],
           "multiple": false
         },
-        "description": "Choose the date pattern to use in the list or make your own",
-        "label": "New date pattern to use",
         "default": "MM.dd.yyyy"
       }
     ],
     "category": "dates",
-    "dynamic": false,
-    "description": "Change date pattern to use on a date column",
-    "label": "Change date pattern"
+    "dynamic": false
   },
   {
     "name": "compute_time_since",
@@ -503,8 +403,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -512,8 +410,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -521,8 +417,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -530,8 +424,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -556,15 +448,11 @@
           ],
           "multiple": false
         },
-        "description": "The unit in which you want the result",
-        "label": "Time unit",
         "default": "HOURS"
       }
     ],
     "category": "dates",
-    "dynamic": false,
-    "description": "Computes elapsed time since this date, in the desired unit (year, month, day, hour)",
-    "label": "Compute time since"
+    "dynamic": false
   },
   {
     "category": "dates",
@@ -575,8 +463,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -584,8 +470,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -593,8 +477,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -602,8 +484,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -633,8 +513,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Enter your own date pattern",
                   "default": ""
                 }
               ]
@@ -642,8 +520,6 @@
           ],
           "multiple": false
         },
-        "description": "Choose the date pattern to use in the list or make your own",
-        "label": "New date pattern to use",
         "default": "MM.dd.yyyy"
       }
     ],
@@ -675,8 +551,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Enter your own date pattern",
                   "default": ""
                 }
               ]
@@ -684,14 +558,10 @@
           ],
           "multiple": false
         },
-        "description": "Choose the date pattern to use in the list or make your own",
-        "label": "New date pattern to use",
         "default": "MM.dd.yyyy"
       }
     ],
-    "dynamic": false,
-    "description": "Given a timestamp (ellapsed time since epoch in second), will create a new column with the date",
-    "label": "Compute timestamp to date"
+    "dynamic": false
   },
   {
     "name": "extract_date_tokens",
@@ -701,8 +571,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -710,8 +578,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -719,8 +585,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -728,8 +592,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -737,8 +599,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts year field",
-        "label": "Year",
         "default": "true"
       },
       {
@@ -746,8 +606,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts month of year field",
-        "label": "Month of year",
         "default": "true"
       },
       {
@@ -755,8 +613,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts day of month field",
-        "label": "Day of month",
         "default": "true"
       },
       {
@@ -764,8 +620,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts the hour within the AM/PM, from 0 to 11",
-        "label": "Hour of am-pm",
         "default": "false"
       },
       {
@@ -773,8 +627,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts the AM/PM within the day, from 0 (AM) to 1 (PM)",
-        "label": "The am-pm-of-day",
         "default": "false"
       },
       {
@@ -782,8 +634,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts the hour within the day, from 0 to 23",
-        "label": "Hour of day",
         "default": "true"
       },
       {
@@ -791,8 +641,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts minute of hour",
-        "label": "Minute",
         "default": "true"
       },
       {
@@ -800,8 +648,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts second of minute",
-        "label": "Second",
         "default": "false"
       },
       {
@@ -809,8 +655,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts the day of week, such as Tuesday",
-        "label": "Day of week",
         "default": "false"
       },
       {
@@ -818,8 +662,6 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts the day of year. This has values from 1 to 365 in standard years and 1 to 366 in leap years",
-        "label": "Day of year",
         "default": "false"
       },
       {
@@ -827,20 +669,14 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Extracts concept of the count of weeks within the period of a year where the weeks are aligned to the start of the year",
-        "label": "Week of year",
         "default": "false"
       }
     ],
     "category": "dates",
-    "dynamic": false,
-    "description": "Creates columns with year, month, day, hour, minute, second, etc...",
-    "label": "Extract date tokens"
+    "dynamic": false
   },
   {
-    "description": "Fill invalid cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill invalid cells with value",
     "name": "fillinvalidwithdefault",
     "parameters": [
       {
@@ -848,8 +684,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -857,8 +691,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -866,8 +698,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -875,8 +705,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -884,8 +712,6 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": false,
-        "description": "The value to set in invalid cells",
-        "label": "Value",
         "default": ""
       }
     ],
@@ -895,16 +721,12 @@
     "category": "strings",
     "name": "compute_length",
     "dynamic": false,
-    "description": "Extracts the number of digits of this column",
-    "label": "Compute length",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -912,8 +734,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -921,8 +741,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -930,8 +748,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -945,8 +761,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -954,8 +768,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -963,8 +775,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -972,8 +782,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -981,29 +789,21 @@
         "type": "regex",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The pattern to cut in this column",
-        "label": "Pattern",
         "default": ""
       }
     ],
-    "dynamic": false,
-    "description": "Remove specified text from cells in this column",
-    "label": "Remove part of the text"
+    "dynamic": false
   },
   {
     "category": "strings",
     "name": "uppercase",
     "dynamic": false,
-    "description": "Converts all of the cell values in this column to upper case",
-    "label": "Change case to UPPER",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1011,8 +811,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1020,8 +818,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1029,8 +825,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1039,16 +833,12 @@
     "category": "strings advanced",
     "name": "remove_non_num_chars",
     "dynamic": false,
-    "description": "For example â¬10.5k will become 10.5",
-    "label": "Remove all non numeric characters",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1056,8 +846,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1065,8 +853,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1074,8 +860,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1084,16 +868,12 @@
     "dynamic": true,
     "category": "strings advanced",
     "name": "textclustering",
-    "description": "Replace all similar values with the right one (i.e. cluster)",
-    "label": "Find and group similar text",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1101,8 +881,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1110,8 +888,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1119,8 +895,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1134,8 +908,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1143,8 +915,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1152,8 +922,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1161,8 +929,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -1183,8 +949,6 @@
                   "type": "integer",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Index of the original value that starts the new one",
-                  "label": "Beginning index",
                   "default": "0"
                 }
               ]
@@ -1192,8 +956,6 @@
           ],
           "multiple": false
         },
-        "description": "Select beginning mode of the substring",
-        "label": "From",
         "default": "From beginning"
       },
       {
@@ -1214,8 +976,6 @@
                   "type": "integer",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Index of the original value that ends the new one",
-                  "label": "End index",
                   "default": "5"
                 }
               ]
@@ -1223,29 +983,21 @@
           ],
           "multiple": false
         },
-        "description": "Select end mode of the substring",
-        "label": "To",
         "default": "To index"
       }
     ],
-    "dynamic": false,
-    "description": "Extracts substring in a new column",
-    "label": "Substring"
+    "dynamic": false
   },
   {
     "category": "strings",
     "name": "lowercase",
     "dynamic": false,
-    "description": "Converts all of the cell values in this column to lower case",
-    "label": "Change case to lower",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1253,8 +1005,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1262,8 +1012,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1271,8 +1019,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1286,8 +1032,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1295,8 +1039,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1304,8 +1046,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1313,8 +1053,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -1322,7 +1060,6 @@
         "type": "integer",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Number of token to split the value in",
         "default": "2"
       },
       {
@@ -1355,8 +1092,6 @@
                   "type": "regex",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Choose your own separator",
-                  "label": "Manual separator",
                   "default": ""
                 }
               ]
@@ -1364,14 +1099,10 @@
           ],
           "multiple": false
         },
-        "description": "Character to use as separator",
-        "label": "Separator",
         "default": ":"
       }
     ],
-    "dynamic": false,
-    "description": "Split column from separators",
-    "label": "Split the text in parts"
+    "dynamic": false
   },
   {
     "category": "strings",
@@ -1382,8 +1113,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1391,8 +1120,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1400,8 +1127,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1409,8 +1134,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -1418,8 +1141,6 @@
         "type": "regex",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The current cell value",
-        "label": "Current",
         "default": ""
       },
       {
@@ -1427,8 +1148,6 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The new value to set",
-        "label": "Replace",
         "default": ""
       },
       {
@@ -1436,14 +1155,10 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Defines greedy level. If checked: will replace the entire cell, if not: on ly the part of the value that matches.",
-        "label": "Replace entire cell",
         "default": "false"
       }
     ],
-    "dynamic": false,
-    "description": "Replace cells that have a specific value",
-    "label": "Replace cells that match"
+    "dynamic": false
   },
   {
     "category": "strings",
@@ -1454,8 +1169,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1463,8 +1176,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1472,8 +1183,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1481,8 +1190,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -1521,8 +1228,6 @@
                   "type": "regex",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Set your own pattern",
-                  "label": "Manual pattern",
                   "default": ""
                 }
               ]
@@ -1530,29 +1235,21 @@
           ],
           "multiple": false
         },
-        "description": "Pattern to use",
-        "label": "Pattern",
         "default": "[a-zA-Z]*"
       }
     ],
-    "dynamic": false,
-    "description": "Creates a new column fill with <i>true</i> or <i>false</i> regarding if the value matches or not given pattern",
-    "label": "Matches Pattern"
+    "dynamic": false
   },
   {
     "category": "strings advanced",
     "name": "remove_non_alpha_num_chars",
     "dynamic": false,
-    "description": "For example â¬10.5k will become 105",
-    "label": "Remove all non alpha numeric characters",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1560,8 +1257,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1569,8 +1264,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1578,8 +1271,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1588,16 +1279,12 @@
     "category": "strings",
     "name": "propercase",
     "dynamic": false,
-    "description": "Converts all of the cell values in this column to title case (i.e. \"data prep\" -> \"Data Prep\") ",
-    "label": "Change case to Title",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1605,8 +1292,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1614,8 +1299,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1623,8 +1306,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1633,16 +1314,12 @@
     "category": "strings",
     "name": "trim",
     "dynamic": false,
-    "description": "Remove trailing and leading spaces (i.e. trim)",
-    "label": "Remove trailing and leading spaces",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1650,8 +1327,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1659,8 +1334,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1668,16 +1341,12 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
   },
   {
-    "description": "Fill empty cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill empty cells with text",
     "name": "fillemptywithdefault",
     "parameters": [
       {
@@ -1685,8 +1354,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1694,8 +1361,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1703,8 +1368,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1712,8 +1375,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -1721,8 +1382,6 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The value to set in empty cells",
-        "label": "Value",
         "default": ""
       }
     ],
@@ -1732,16 +1391,12 @@
     "category": "strings advanced",
     "name": "normalize",
     "dynamic": false,
-    "description": "Simplify content of this column (ie: FranÃ§ois -> francois)",
-    "label": "Simplify Text (remove case, accent, etc.)",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1749,8 +1404,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1758,8 +1411,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1767,8 +1418,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1777,16 +1426,12 @@
     "name": "floor",
     "category": "math",
     "dynamic": false,
-    "description": "Round value to the largest integer value that is less than or equal to the argument",
-    "label": "Floor value",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1794,8 +1439,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1803,8 +1446,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1812,8 +1453,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1822,16 +1461,12 @@
     "name": "delete_negative_values",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Lines with a negative value in this column will be deleted",
-    "label": "Remove negative values",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1839,8 +1474,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1848,8 +1481,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1857,8 +1488,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1867,16 +1496,12 @@
     "name": "round",
     "category": "math",
     "dynamic": false,
-    "description": "Round value to the closest integer",
-    "label": "Round value",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1884,8 +1509,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1893,8 +1516,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1902,16 +1523,12 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
   },
   {
-    "description": "Compute the absolute value for all numeric values of this column.",
     "category": "math",
-    "label": "Absolute value",
     "name": "absolute",
     "dynamic": false,
     "parameters": [
@@ -1920,8 +1537,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1929,8 +1544,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1938,8 +1551,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1947,8 +1558,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -1962,8 +1571,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -1971,8 +1578,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -1980,8 +1585,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -1989,8 +1592,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -2015,8 +1616,6 @@
           ],
           "multiple": false
         },
-        "description": "Operator to use for this operation",
-        "label": "Operator",
         "default": "x"
       },
       {
@@ -2034,8 +1633,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Fixed value to use as operand",
-                  "label": "Operand",
                   "default": "2"
                 }
               ]
@@ -2048,8 +1645,6 @@
                   "type": "column",
                   "implicit": false,
                   "canBeBlank": false,
-                  "description": "Combine the current column with this one",
-                  "label": "Column",
                   "default": ""
                 }
               ]
@@ -2057,29 +1652,21 @@
           ],
           "multiple": false
         },
-        "description": "Select if you want to compute against a constant value or to another column",
-        "label": "Compute with",
         "default": "Constant"
       }
     ],
-    "dynamic": false,
-    "description": "Add (+), multiply (x), substract (-), or divide(/) this column with another or with a fixed value",
-    "label": "Add, multiply, substract or divide"
+    "dynamic": false
   },
   {
     "name": "round_down",
     "category": "math",
     "dynamic": false,
-    "description": "Round towards zero. Never increments the digit prior to a discarded fraction (i.e. truncates)",
-    "label": "Remove fractional part",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2087,8 +1674,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2096,8 +1681,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2105,8 +1688,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -2115,16 +1696,12 @@
     "name": "ceil",
     "category": "math",
     "dynamic": false,
-    "description": "Round value to the smallest integer value that is greater than or equal to the argument",
-    "label": "Ceil value",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2132,8 +1709,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2141,8 +1716,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2150,8 +1723,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -2160,16 +1731,12 @@
     "category": "boolean",
     "name": "negate",
     "dynamic": false,
-    "description": "Reverse the boolean value of cells in this column",
-    "label": "Negate value",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2177,8 +1744,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2186,8 +1751,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2195,8 +1758,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -2205,16 +1766,12 @@
     "category": "column_metadata",
     "name": "copy",
     "dynamic": false,
-    "description": "Creates an exact copy of this column",
-    "label": "Duplicate column",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2222,8 +1779,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2231,8 +1786,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2240,8 +1793,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -2255,8 +1806,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2264,8 +1813,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2273,8 +1820,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2282,8 +1827,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -2291,8 +1834,6 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Optional new column prefix",
-        "label": "Prefix",
         "default": ""
       },
       {
@@ -2309,8 +1850,6 @@
                   "type": "column",
                   "implicit": false,
                   "canBeBlank": false,
-                  "description": "Combine the current column with this one",
-                  "label": "Column",
                   "default": ""
                 },
                 {
@@ -2318,8 +1857,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Optional new column separator",
-                  "label": "Separator",
                   "default": ""
                 }
               ]
@@ -2336,14 +1873,10 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Optional new column suffix",
-        "label": "Suffix",
         "default": ""
       }
     ],
-    "dynamic": false,
-    "description": "Combine this column with another one",
-    "label": "Concatenate with"
+    "dynamic": false
   },
   {
     "parameters": [
@@ -2352,8 +1885,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2361,8 +1892,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2370,8 +1899,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2379,8 +1906,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -2388,31 +1913,23 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": false,
-        "description": "The new column name",
-        "label": "New name",
         "default": "firstname"
       }
     ],
     "category": "column_metadata",
     "name": "rename_column",
-    "dynamic": false,
-    "description": "Rename this column",
-    "label": "Rename column"
+    "dynamic": false
   },
   {
     "category": "column_metadata",
     "name": "domain_change",
     "dynamic": false,
-    "description": "Change semantic domain of this column",
-    "label": "Change Domain",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2420,8 +1937,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2429,8 +1944,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2438,8 +1951,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -2448,16 +1959,12 @@
     "category": "column_metadata",
     "name": "type_change",
     "dynamic": false,
-    "description": "Change type of this column",
-    "label": "Change Type",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2465,8 +1972,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2474,8 +1979,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2483,8 +1986,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]
@@ -2493,16 +1994,12 @@
     "category": "strings advanced",
     "name": "padding",
     "dynamic": false,
-    "description": "Add characters on the left of the original value to match expected size",
-    "label": "Padding",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2510,8 +2007,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2519,8 +2014,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2528,8 +2021,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       },
       {
@@ -2537,8 +2028,6 @@
         "type": "integer",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Expected size of the value (values too long won't be truncated)",
-        "label": "Size",
         "default": "5"
       },
       {
@@ -2546,8 +2035,6 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The character to add",
-        "label": "Padding char",
         "default": "0"
       },
       {
@@ -2574,16 +2061,12 @@
     "category": "column_metadata",
     "name": "delete_column",
     "dynamic": false,
-    "description": "Delete this column",
-    "label": "Delete Column",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
-        "label": "Column",
         "default": ""
       },
       {
@@ -2591,8 +2074,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
-        "label": "Row",
         "default": ""
       },
       {
@@ -2600,8 +2081,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
-        "label": "Scope",
         "default": ""
       },
       {
@@ -2609,8 +2088,6 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
         "default": ""
       }
     ]

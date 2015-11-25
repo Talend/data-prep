@@ -2,8 +2,11 @@ package org.talend.dataprep.transformation.api.action.context;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 
+import java.math.BigInteger;
+import java.util.Collections;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -12,8 +15,12 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 
+/**
+ * Unit test for the action context.
+ */
 public class ActionContextTest {
 
+    /** The context to test. */
     private ActionContext context;
 
     private RowMetadata row;
@@ -106,6 +113,28 @@ public class ActionContextTest {
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalCreate() throws Exception {
         context.column("test", row, (r) -> null);
+    }
+
+    @Test
+    public void testGetCreate() {
+
+        Object actual = context.get("test", Collections.emptyMap(), (p) -> "new object");
+
+        assertThat(actual, is("new object"));
+    }
+
+    @Test
+    public void testGetCache() {
+
+        Object toTheCache = context.get("testCache", Collections.emptyMap(), (p) -> new BigInteger("123"));
+        assertThat(toTheCache, is(new BigInteger("123")));
+
+        // the second call has another supplier that fails the test
+        Object actual = context.get("testCache", Collections.emptyMap(), (p) -> {
+            fail("should not be invoked");
+            return new BigInteger("123");
+        });
+        assertThat(actual, is(new BigInteger("123")));
     }
 
 }

@@ -1,0 +1,88 @@
+.quality-bar {
+
+  box-sizing: border-box;
+  position:relative;
+  height: 14px;
+  line-height: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+
+  &.border {
+    border: 1px solid white;
+  }
+
+  &.big {
+    height: 25px;
+
+    .sub-bar{
+      line-height: 23px;
+    }
+  }
+
+  &.center {
+    text-align: center;
+  }
+
+  .sub-bar {
+    @include transition(width .75s ease-out);
+    border: 1px solid transparent;
+    height: 100%;
+    display: inline-block;
+    float: left;
+
+    &.no-transition {
+      @include transition(none);
+    }
+
+    &:hover {
+      border: 1px solid grey;
+    }
+
+    .quality-bar-action {
+      height: 100%;
+    }
+
+    .quality-bar-menu {
+      @include menu-list;
+      outline: none;
+    }
+  }
+
+  .record-ok {
+    @extend .sub-bar;
+    background-color: $ok-color;
+
+    &:hover {
+      background-color: $ok-color;
+    }
+  }
+
+  .record-empty {
+    @extend .sub-bar;
+    background-color: $empty-color;
+
+    &:hover {
+      background-color: $empty-color;
+    }
+  }
+
+  .record-nok {
+    @extend .sub-bar;
+    background-color: $nok-color;
+
+    &:hover {
+      background-color: $nok-color;
+    }
+  }
+
+  .record-unknown {
+    @extend .sub-bar;
+    width: 100%;
+    background-color: $unknown-color;
+
+    &:hover {
+      background-color: $unknown-color;
+    }
+  }
+
+}

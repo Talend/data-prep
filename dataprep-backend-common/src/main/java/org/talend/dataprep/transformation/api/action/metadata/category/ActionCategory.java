@@ -16,7 +16,8 @@ public enum ActionCategory {
     DATE("dates"), //
     BOOLEAN("boolean"), //
     DATA_CLEANSING("data cleansing"), //
-    FILTERED("filtered");
+    FILTERED("filtered"), //
+    DATA_BLENDING("data_blending");
 
     /** The category display name. */
     private final String displayName;

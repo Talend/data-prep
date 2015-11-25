@@ -5,7 +5,6 @@
      * @ngdoc service
      * @name data-prep.datagrid.service:DatagridTooltipService
      * @description Datagrid private service that manage the grid tooltip
-     * @requires data-prep.datagrid.service:DatagridStyleService
      * @requires data-prep.services.playground.service:DatagridService
      * @requires data-prep.services.utils.service:TextFormatService
      */

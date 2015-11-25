@@ -20,6 +20,7 @@
             resetPlayground: PlaygroundStateService.reset,
             setCurrentDataset: PlaygroundStateService.setDataset,
             setCurrentData: PlaygroundStateService.setData,
+            setCurrentLookupData: PlaygroundStateService.setLookupData,
             setCurrentPreparation: PlaygroundStateService.setPreparation,
             setLookupVisibility: PlaygroundStateService.setLookupVisibility,
             setNameEditionMode: PlaygroundStateService.setNameEditionMode,
@@ -33,12 +34,22 @@
             setColumnFocus: PlaygroundStateService.setColumnFocus,
             setGridSelection: PlaygroundStateService.setGridSelection,
 
+            //playground - lookupGrid
+            setLookupColumnFocus: PlaygroundStateService.setLookupColumnFocus,
+            setLookupGridSelection: PlaygroundStateService.setLookupGridSelection,
+            setLookupDataset: PlaygroundStateService.setLookupDataset,
+            setLookupColumnsToAdd: PlaygroundStateService.setLookupColumnsToAdd,
+            resetLookup: PlaygroundStateService.resetLookup,
+
             //playground - filters
             addGridFilter: PlaygroundStateService.addGridFilter,
             removeGridFilter: PlaygroundStateService.removeGridFilter,
             removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
             updateGridFilter: PlaygroundStateService.updateGridFilter,
-            
+
+            //playground - Suggestions
+            setSuggestionsLoading: PlaygroundStateService.setSuggestionsLoading,
+
             //dataset
             startUploadingDataset: DatasetStateService.startUploadingDataset,
             finishUploadingDataset: DatasetStateService.finishUploadingDataset,

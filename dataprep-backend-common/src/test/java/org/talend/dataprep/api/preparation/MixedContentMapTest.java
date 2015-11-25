@@ -40,6 +40,8 @@ public class MixedContentMapTest {
         assertThat(map.get("empty"), is(""));
         final String object = map.get("object");
         assertThat(object, sameJSONAs("{\"eq\": { \"field\": \"nbCommands\",\"value\": \"13\" }}"));
+        final String array = map.get("array");
+        assertThat(array, sameJSONAs("[1, 2, 3]"));
     }
 
     @Test
@@ -50,6 +52,7 @@ public class MixedContentMapTest {
         map.put("null", null);
         map.put("empty", "");
         map.put("object", "{\"eq\": { \"field\": \"nbCommands\",\"value\": \"13\" }}");
+        map.put("array", "[1, 2, 3]");
         final StringWriter writer = new StringWriter();
         mapper.writer().writeValue(writer, map);
         final InputStream expected = MixedContentMapTest.class.getResourceAsStream("mixedMapWrite_expected.json");

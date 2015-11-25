@@ -3,7 +3,7 @@ describe('Text format service', function () {
 
     beforeEach(module('data-prep.services.utils'));
 
-    describe('datagrid constraints', function () {
+    describe('lookup-datagrid constraints', function () {
         it('should return value when it is empty', inject(function (TextFormatService) {
             //given
             var value = '';

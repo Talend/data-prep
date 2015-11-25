@@ -2,6 +2,7 @@ package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -10,11 +11,14 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -27,6 +31,7 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 
@@ -163,8 +168,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
         assertThat( statusCode, is( 409 ) );
 
         final String responseAsString = response.asString();
-        final JsonPath json = JsonPath.from( responseAsString );
-        assertThat( json.get( "code" ), is( "TDP_API_DATASET_STILL_IN_USE" ) );
+        final JsonPath json = from(responseAsString);
+        assertThat(json.get("code"), is("TDP_API_DATASET_STILL_IN_USE"));
     }
 
     @Test
@@ -319,6 +324,41 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // then
         assertThat(contentAsString, sameJSONAs("[]"));
+    }
+
+    @Test
+    public void testLookupActionsActions() throws Exception {
+        // given
+        final String firstDataSetId = createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+        final String dataSetId = createDataset("dataset/dataset_cars.csv", "cars", "text/csv");
+        final String thirdDataSetId = createDataset("dataset/dataset.csv", "third", "text/csv");
+
+        List<String> expectedIds = Arrays.asList(firstDataSetId, thirdDataSetId);
+
+        // when
+        final String actions = when().get("/api/datasets/{id}/actions", dataSetId).asString();
+
+        // then
+        final JsonNode jsonNode = builder.build().readTree(actions);
+        // response is an array
+        assertThat(jsonNode.isArray(), is(true));
+        // an array of 2 entries
+        ArrayNode lookups = (ArrayNode) jsonNode;
+        assertThat(lookups.size(), is(2));
+
+        // let's check the url of the possible lookups
+        for (int i = 0; i < lookups.size(); i++) {
+            final JsonNode lookup = lookups.get(i);
+            final ArrayNode parameters = (ArrayNode) lookup.get("parameters");
+            for (int j = 0; j < parameters.size(); j++) {
+                final JsonNode parameter = parameters.get(j);
+                if (StringUtils.equals(parameter.get("name").asText(), "url")) {
+                    final String url = parameter.get("default").asText();
+                    // the url id must be known
+                    assertThat(expectedIds.stream().filter(s -> url.contains(s)).count(), is(1L));
+                }
+            }
+        }
     }
 
     @Test

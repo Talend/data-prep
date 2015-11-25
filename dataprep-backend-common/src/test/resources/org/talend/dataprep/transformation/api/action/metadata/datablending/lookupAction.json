@@ -1,0 +1,27 @@
+{
+  "actions": [
+    {
+      "action": "lookup",
+      "parameters": {
+        "column_id": "0003",
+        "column_name": "State",
+        "scope": "dataset",
+        "lookup_ds_name": "us_states",
+        "lookup_ds_id": "us_states",
+        "lookup_ds_url": "should be updated in unit test",
+        "lookup_join_on": "0000",
+        "lookup_join_on_name": "0000",
+        "lookup_selected_cols": [
+          {
+            "id": "0001",
+            "name": "state"
+          },
+          {
+            "id": "0002",
+            "name": "capital"
+          }
+        ]
+      }
+    }
+  ]
+}

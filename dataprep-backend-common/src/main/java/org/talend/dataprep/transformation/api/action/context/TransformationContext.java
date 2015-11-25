@@ -17,6 +17,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
  */
 public final class TransformationContext {
 
+    /** Map of action context for each action instance within a transformation. */
     private final Map<ActionMetadata, ActionContext> contexts = new HashMap<>();
 
     /** The context itself. */
@@ -51,7 +52,7 @@ public final class TransformationContext {
 
     /**
      * Returns a transformation context specific to the current action. Use this to create columns (see
-     * {@link ActionContext#column(String, RowMetadata, Function)} for more details).
+     * {@link ActionContext#column(String, RowMetadata, Function)} for more details.
      *
      * @param actionMetadata An instance of action used as key for finding context
      * @return An {@link ActionContext context} ready to be used.

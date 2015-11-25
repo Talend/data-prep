@@ -28,7 +28,6 @@
           "type": "string",
           "implicit": true,
           "canBeBlank": true,
-          "description": "The column on which apply this action to",
           "label": "Column",
           "default": ""
         },
@@ -37,7 +36,6 @@
           "type": "string",
           "implicit": true,
           "canBeBlank": true,
-          "description": "The row on which apply this action to",
           "label": "Row",
           "default": ""
         },
@@ -46,7 +44,7 @@
           "type": "string",
           "implicit": true,
           "canBeBlank": true,
-          "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+          "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
           "label": "Scope",
           "default": ""
         },

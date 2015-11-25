@@ -1209,7 +1209,7 @@ describe('Statistics service', function () {
             expect(StatisticsRestService.resetCache).not.toHaveBeenCalled();
         }));
 
-        it('should get numeric columns (as aggregation columns) from datagrid service', inject(function (StatisticsService, DatagridService) {
+        it('should get numeric columns (as aggregation columns) from lookup-datagrid service', inject(function (StatisticsService, DatagridService) {
             //given
             var selectedcolumn = {id: '0001'};
             stateMock.playground.grid.selectedColumn = selectedcolumn;

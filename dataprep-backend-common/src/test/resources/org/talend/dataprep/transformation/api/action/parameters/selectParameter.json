@@ -4,7 +4,7 @@
   "implicit": false,
   "canBeBlank": false,
   "label": "Column",
-  "description": "The column on which apply this action to",
+  "description": "The column to which you want to apply this action",
   "default": "",
   "configuration": {
     "values": [
@@ -22,8 +22,8 @@
             "type": "integer",
             "implicit": false,
             "canBeBlank": false,
-            "label": "Number of token",
-            "description": "Number of token to split the value in",
+            "label": "Parts",
+            "description": "Number of Parts to split the value in",
             "default": ""
           }
         ]

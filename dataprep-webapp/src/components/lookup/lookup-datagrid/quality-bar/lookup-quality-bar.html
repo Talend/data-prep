@@ -1,0 +1,24 @@
+<div class="quality-bar">
+    <div talend-dropdown
+         class="record-ok"
+         ng-style="{width: lookupQualityBarCtrl.width.valid + '%'}"
+         ng-class="{'no-transition' : lookupQualityBarCtrl.blockTransition}"
+         ng-if="lookupQualityBarCtrl.quality.valid > 0"
+         title="{{ lookupQualityBarCtrl.quality.valid }} valid records ({{ lookupQualityBarCtrl.percent.valid }}%)">
+    </div>
+
+    <div talend-dropdown
+         class="record-empty"
+         ng-style="{width: lookupQualityBarCtrl.width.empty + '%'}"
+         ng-class="{'no-transition' : lookupQualityBarCtrl.blockTransition}"
+         ng-if="lookupQualityBarCtrl.quality.empty > 0"
+         title="{{ lookupQualityBarCtrl.quality.empty }} empty records ({{ lookupQualityBarCtrl.percent.empty }}%)">
+    </div>
+
+    <div class="record-nok" talend-dropdown
+         ng-style="{width: lookupQualityBarCtrl.width.invalid + '%'}"
+         ng-class="{'no-transition' : lookupQualityBarCtrl.blockTransition}"
+         ng-if="lookupQualityBarCtrl.quality.invalid > 0"
+         title="{{ lookupQualityBarCtrl.quality.invalid }} invalid records ({{ lookupQualityBarCtrl.percent.invalid }}%)">
+    </div>
+</div>

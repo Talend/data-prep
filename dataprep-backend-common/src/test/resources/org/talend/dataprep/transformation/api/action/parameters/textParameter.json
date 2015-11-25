@@ -4,6 +4,6 @@
   "implicit": true,
   "canBeBlank": false,
   "label": "Column",
-  "description": "The column on which apply this action to",
+  "description": "The column to which you want to apply this action",
   "default": "0001"
 }

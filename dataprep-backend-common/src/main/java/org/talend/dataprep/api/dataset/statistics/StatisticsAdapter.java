@@ -1,5 +1,6 @@
 package org.talend.dataprep.api.dataset.statistics;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -34,6 +35,7 @@ import org.talend.datascience.common.inference.type.DataType;
 public class StatisticsAdapter {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(StatisticsAdapter.class);
+
     /**
      * Defines the minimum threshold for a semantic type suggestion. Defaults to 40% if not defined.
      */
@@ -174,30 +176,18 @@ public class StatisticsAdapter {
             // Histogram
             if (isNumeric && result.exist(StreamHistogramStatistics.class)) {
                 final StreamHistogramStatistics histogramStatistics = result.get(StreamHistogramStatistics.class);
-                // Build a decimal format based on most frequent pattern
-                final String pattern = statistics.getPatternFrequencies().get(0).getPattern().replace('9', '#');
-                final NumberFormat format;
-                if (pattern.indexOf('a') < 0) {
-                    format = new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-                } else {
-                    format = DecimalFormat.getInstance(Locale.ENGLISH);
-                }
+                final NumberFormat format = DecimalFormat.getInstance(Locale.ENGLISH);
                 // Set histogram ranges
                 statistics.getHistogram().clear();
                 histogramStatistics.getHistogram().forEach((r, v) -> {
                     final HistogramRange range = new HistogramRange();
-                    if (pattern.isEmpty()) {
+                    try {
+                        range.getRange().setMax(new Double(format.format(r.getUpper())));
+                        range.getRange().setMin(new Double(format.format(r.getLower())));
+                    } catch (NumberFormatException e) {
+                        // Fallback to unformatted numbers (unable to parse numbers).
                         range.getRange().setMax(r.getUpper());
                         range.getRange().setMin(r.getLower());
-                    } else {
-                        try {
-                            range.getRange().setMax(new Double(format.format(r.getUpper())));
-                            range.getRange().setMin(new Double(format.format(r.getLower())));
-                        } catch (NumberFormatException e) {
-                            // Fallback to unformatted numbers (unable to parse numbers).
-                            range.getRange().setMax(r.getUpper());
-                            range.getRange().setMin(r.getLower());
-                        }
                     }
                     range.setOccurrences(v);
                     statistics.getHistogram().add(range);

@@ -100,7 +100,7 @@ describe('Onboarding service', function() {
         expect(introJsMock.setOptions).toHaveBeenCalled();
         var options = introJsMock.setOptions.calls.argsFor(0)[0];
         expect(options.steps[1]).toEqual({
-            element: '#datagrid .slick-header-columns-right > .slick-header-column',
+            element: '#lookup-datagrid .slick-header-columns-right > .slick-header-column',
             position: 'right',
             intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">Select a column to discover the transformation actions you can apply to the data.</div>'
         });

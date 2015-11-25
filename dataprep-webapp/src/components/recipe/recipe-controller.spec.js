@@ -8,7 +8,25 @@ describe('Recipe controller', function () {
     var stateMock;
 
     beforeEach(module('data-prep.recipe', function ($provide) {
-        stateMock = {playground: {preparation: {id: '132da49ef87694ab64e6'}}};
+        stateMock = {
+            playground: {
+                preparation: {
+                    id: '132da49ef87694ab64e6'
+                },
+                lookupData:{
+                    columns: [{
+                        id:'0000',
+                        name:'id'
+                    },{
+                        id:'0001',
+                        name:'firstName'
+                    },{
+                        id:'0002',
+                        name:'lastName'
+                    }]
+                }
+            }
+        };
         $provide.constant('state', stateMock);
     }));
 
@@ -248,6 +266,24 @@ describe('Recipe controller', function () {
     }));
 
     describe('step parameters', function () {
+        it('should return added columns names given the ids', function () {
+            //given
+            var ctrl = createController();
+            var step = {
+                actionParameters: {
+                    parameters: {
+                        lookup_selected_cols : [{id:'0001', name:'firstname'},{id:'0002', name:'lastname'}]
+                    }
+                }
+            };
+
+            //when
+            var namesString = ctrl.getAddedColumnsInLookup(step);
+
+            //then
+            expect(namesString).toBe('firstname, lastname');
+        });
+
         it('should return that step has dynamic parameters when it has cluster', function () {
             //given
             var ctrl = createController();

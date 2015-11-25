@@ -3,15 +3,12 @@
     "name": "delete_empty",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Delete rows that have this cell empty",
-    "label": "Delete lines with empty cell",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -20,7 +17,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -29,7 +25,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -45,9 +41,7 @@
     ]
   },
   {
-    "description": "Fill empty cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill empty cells with value",
     "name": "fillemptywithdefault",
     "parameters": [
       {
@@ -55,7 +49,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -64,7 +57,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -73,7 +65,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -91,7 +83,6 @@
         "type": "integer",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The value to set in empty cells",
         "label": "Value",
         "default": "0"
       }
@@ -102,15 +93,12 @@
     "name": "delete_negative_values",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Lines with a negative value in this column will be deleted",
-    "label": "Remove negative values",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -119,7 +107,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -128,7 +115,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -144,9 +131,7 @@
     ]
   },
   {
-    "description": "Compute the absolute value for all numeric values of this column.",
     "category": "math",
-    "label": "Absolute value",
     "name": "absolute",
     "dynamic": false,
     "parameters": [
@@ -155,7 +140,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -164,7 +148,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -173,7 +156,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -192,15 +175,12 @@
     "category": "data cleansing",
     "name": "clear_invalid",
     "dynamic": false,
-    "description": "Clear cells that have a value recognized as invalid",
-    "label": "Clear cells with invalid values",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -209,7 +189,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -218,7 +197,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -237,15 +216,12 @@
     "name": "delete_invalid",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Delete rows that have this invalid cell",
-    "label": "Delete lines with invalid cell",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -254,7 +230,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -263,7 +238,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -279,9 +254,7 @@
     ]
   },
   {
-    "description": "Fill invalid cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill invalid cells with value",
     "name": "fillinvalidwithdefault",
     "parameters": [
       {
@@ -289,7 +262,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -298,7 +270,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -307,7 +278,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -325,7 +296,6 @@
         "type": "integer",
         "implicit": false,
         "canBeBlank": false,
-        "description": "The value to set in invalid cells",
         "label": "Value",
         "default": "0"
       }

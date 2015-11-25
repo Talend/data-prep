@@ -86,7 +86,7 @@ describe('Datagrid external service', function () {
             expect(SuggestionService.setColumn).not.toHaveBeenCalled();
             expect(SuggestionService.selectTab).not.toHaveBeenCalled();
 
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics).toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe('Datagrid external service', function () {
 
             var onActiveCellChanged = gridMock.onActiveCellChanged.subscribe.calls.argsFor(0)[0];
             onActiveCellChanged(null, args);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
             expect(SuggestionService.setColumn.calls.count()).toBe(1);
@@ -110,7 +110,7 @@ describe('Datagrid external service', function () {
 
             //when
             onActiveCellChanged(null, args);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
@@ -164,7 +164,7 @@ describe('Datagrid external service', function () {
             expect(SuggestionService.setColumn).not.toHaveBeenCalled();
             expect(SuggestionService.selectTab).not.toHaveBeenCalled();
 
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics).toHaveBeenCalled();
@@ -195,7 +195,7 @@ describe('Datagrid external service', function () {
     });
 
     describe('on header click event', function () {
-        it('should update playground right panel on header click after a 200ms delay', inject(function ($timeout, DatagridExternalService, StatisticsService, SuggestionService) {
+        it('should update playground right panel on header click after a 300ms delay', inject(function ($timeout, DatagridExternalService, StatisticsService, SuggestionService) {
             //given
             DatagridExternalService.init(gridMock);
             var args = {
@@ -210,7 +210,7 @@ describe('Datagrid external service', function () {
             expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
             expect(SuggestionService.setColumn).not.toHaveBeenCalled();
 
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics).toHaveBeenCalled();
@@ -218,7 +218,7 @@ describe('Datagrid external service', function () {
             expect(SuggestionService.selectTab).toHaveBeenCalledWith('COLUMN');
         }));
 
-        it('should update playground right panel on header right click after a 200ms delay', inject(function ($timeout, DatagridExternalService, StatisticsService, SuggestionService) {
+        it('should update playground right panel on header right click after a 300ms delay', inject(function ($timeout, DatagridExternalService, StatisticsService, SuggestionService) {
             //given
             DatagridExternalService.init(gridMock);
             var args = {
@@ -234,7 +234,7 @@ describe('Datagrid external service', function () {
             expect(SuggestionService.setColumn).not.toHaveBeenCalled();
             expect(SuggestionService.selectTab).not.toHaveBeenCalled();
 
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics).toHaveBeenCalled();
@@ -251,7 +251,7 @@ describe('Datagrid external service', function () {
 
             var onHeaderClick = gridMock.onHeaderClick.subscribe.calls.argsFor(0)[0];
             onHeaderClick(null, args);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
             expect(SuggestionService.setColumn.calls.count()).toBe(1);
@@ -259,7 +259,7 @@ describe('Datagrid external service', function () {
 
             //when
             onHeaderClick(null, args);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
@@ -276,7 +276,7 @@ describe('Datagrid external service', function () {
 
             var onHeaderContextMenu = gridMock.onHeaderContextMenu.subscribe.calls.argsFor(0)[0];
             onHeaderContextMenu(null, args);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
             expect(SuggestionService.setColumn.calls.count()).toBe(1);
@@ -284,7 +284,7 @@ describe('Datagrid external service', function () {
 
             //when
             onHeaderContextMenu(null, args);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
@@ -299,7 +299,7 @@ describe('Datagrid external service', function () {
 
             var onActiveCellChanged = gridMock.onActiveCellChanged.subscribe.calls.argsFor(0)[0];
             onActiveCellChanged(null, activeCellArgs);
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
             expect(SuggestionService.setColumn.calls.count()).toBe(1);
@@ -313,7 +313,7 @@ describe('Datagrid external service', function () {
             var onHeaderClick = gridMock.onHeaderClick.subscribe.calls.argsFor(0)[0];
             onHeaderClick(null, headerClickArgs);
 
-            $timeout.flush(200);
+            $timeout.flush(300);
 
             //then : only tab is updated, NOT stats or suggestions
             expect(StatisticsService.updateStatistics.calls.count()).toBe(1);
@@ -338,10 +338,30 @@ describe('Datagrid external service', function () {
             expect(SuggestionService.reset).toHaveBeenCalled();
         }));
 
+
+        it('should update suggestions and stats without timeout', inject(function ($timeout, DatagridExternalService, StatisticsService, SuggestionService) {
+            //given
+            var headerClickArgs = {
+                column: {
+                    id: '0001',
+                    tdpColMetadata : {}
+                }
+            };
+
+            //when
+            DatagridExternalService.updateSuggestionPanel(headerClickArgs.column, 'Cell', true);
+            $timeout.flush(0);
+
+            //then
+            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+            expect(SuggestionService.setColumn).toHaveBeenCalled();
+            expect(SuggestionService.selectTab).toHaveBeenCalled();
+        }));
+
     });
 
     describe('on scroll event', function () {
-        it('should update preview range on scroll after a 200ms delay', inject(function (DatagridExternalService, PreviewService) {
+        it('should update preview range on scroll after a 300ms delay', inject(function (DatagridExternalService, PreviewService) {
             //given
             DatagridExternalService.init(gridMock);
 
@@ -353,7 +373,7 @@ describe('Datagrid external service', function () {
             //when
             var onScroll = gridMock.onScroll.subscribe.calls.argsFor(0)[0];
             onScroll();
-            jasmine.clock().tick(200);
+            jasmine.clock().tick(300);
 
             //then
             expect(PreviewService.gridRangeIndex).toBe(range);

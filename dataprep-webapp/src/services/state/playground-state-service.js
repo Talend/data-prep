@@ -6,11 +6,15 @@
     function PlaygroundStateService(
         RecipeStateService, recipeState,
         GridStateService, gridState,
-        FilterStateService, filterState) {
+        FilterStateService, filterState,
+        SuggestionsState, suggestionsState,
+        LookupGridStateService, lookupGridState) {
 
         playgroundState.recipe = recipeState;
         playgroundState.grid = gridState;
+        playgroundState.lookupGrid = lookupGridState;
         playgroundState.filter = filterState;
+        playgroundState.suggestions = suggestionsState;
 
         return {
             //playground
@@ -21,6 +25,7 @@
             setNameEditionMode: setNameEditionMode,
             reset: reset,
             setData: setData,
+            setLookupData: setLookupData,
             setLookupVisibility: setLookupVisibility,
             updateColumnsStatistics: updateColumnsStatistics,
 
@@ -32,11 +37,21 @@
             setColumnFocus: GridStateService.setColumnFocus,
             setGridSelection: GridStateService.setGridSelection,
 
+            //lookup-datagrid
+            setLookupColumnFocus: LookupGridStateService.setColumnFocus,
+            setLookupGridSelection: LookupGridStateService.setGridSelection,
+            setLookupDataset: LookupGridStateService.setDataset,
+            setLookupColumnsToAdd: LookupGridStateService.setLookupColumnsToAdd,
+            resetLookup: LookupGridStateService.reset,
+
             //filters
             addGridFilter: addGridFilter,
             updateGridFilter: updateGridFilter,
             removeGridFilter: removeGridFilter,
-            removeAllGridFilters: removeAllGridFilters
+            removeAllGridFilters: removeAllGridFilters,
+
+            //Suggestion-Stats
+            setSuggestionsLoading: SuggestionsState.setLoading
         };
 
         //--------------------------------------------------------------------------------------------------------------
@@ -49,6 +64,11 @@
         function setData(data) {
             playgroundState.data = data;
             GridStateService.setData(data);
+        }
+
+        function setLookupData(data) {
+            playgroundState.lookupData = data;
+            LookupGridStateService.setData(data);
         }
 
         function setPreparation(preparation) {
@@ -107,9 +127,12 @@
             playgroundState.preparation = null;
             playgroundState.nameEditionMode = false;
             playgroundState.lookupVisibility = false;
+            playgroundState.lookupData = null;
 
             GridStateService.reset();
+            LookupGridStateService.reset();
             FilterStateService.reset();
+            SuggestionsState.reset();
         }
     }
 

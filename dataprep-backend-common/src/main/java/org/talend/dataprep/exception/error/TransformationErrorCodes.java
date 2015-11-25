@@ -14,14 +14,17 @@ import org.talend.daikon.exception.error.ErrorCode;
  * Transformation error codes.
  */
 public enum TransformationErrorCodes implements ErrorCode {
-    // 404
-    UNKNOWN_DYNAMIC_ACTION(NOT_FOUND, "value"),
-    // 415
-    OUTPUT_TYPE_NOT_SUPPORTED(UNSUPPORTED_MEDIA_TYPE),
-    // 500
-    UNABLE_TO_COMPUTE_DATASET_ACTIONS(INTERNAL_SERVER_ERROR),
-    UNABLE_TRANSFORM_DATASET(INTERNAL_SERVER_ERROR),
-    UNEXPECTED_EXCEPTION(INTERNAL_SERVER_ERROR);
+                                                           // 400
+                                                           BAD_LOOKUP_PARAMETER(BAD_REQUEST),
+                                                           // 404
+                                                           UNKNOWN_DYNAMIC_ACTION(NOT_FOUND, "value"),
+                                                           // 415
+                                                           OUTPUT_TYPE_NOT_SUPPORTED(UNSUPPORTED_MEDIA_TYPE),
+                                                           // 500
+                                                           UNABLE_TO_COMPUTE_DATASET_ACTIONS(INTERNAL_SERVER_ERROR),
+                                                           UNABLE_TRANSFORM_DATASET(INTERNAL_SERVER_ERROR),
+                                                           UNEXPECTED_EXCEPTION(INTERNAL_SERVER_ERROR),
+                                                           UNABLE_TO_READ_LOOKUP_DATASET(INTERNAL_SERVER_ERROR);
 
     /** The http status to use. */
     private int httpStatus;

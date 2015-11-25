@@ -223,11 +223,21 @@
   "VALID_RECORDS": "valid records",
   "INVALID_RECORDS": "invalid records",
   "EMPTY_RECORDS": "empty records",
-  "SELECT_VALID_RECORDS": "Select valid vecords for ",
+  "SELECT_VALID_RECORDS": "Select valid records for ",
   "SELECT_INVALID_RECORDS": "Select invalid records for ",
   "SELECT_EMPTY_RECORDS": "Select empty records for ",
   "FILL_EMPTY_WITH_TOP_VALUE": "Fill empty records with top adjacent value",
   "FILL_EMPTY_WITH_BOTTOM_VALUE": "Fill empty records with bottom adjacent value",
-  "REPLACE_INVALID_WITH_TOP_VALUE": "Replace invalid Records with top adjacent value",
-  "REPLACE_INVALID_WITH_BOTTOM_VALUE": "Replace invalid Records with bottom adjacent value"
+  "REPLACE_INVALID_WITH_TOP_VALUE": "Replace invalid records with top adjacent value",
+  "REPLACE_INVALID_WITH_BOTTOM_VALUE": "Replace invalid records with bottom adjacent value",
+
+  "_comment": "Lookup",
+  "CONFIRM_LOOKUP": "Confirm",
+  "LOOKUP_STEPS_1": "1. Select the columns from each dataset you want to use for join.",
+  "LOOKUP_STEPS_2": "2. In the Lookup, check the columns you want to add into your main dataset",
+  "LOOKUP_STEPS_3": "3. Click Confirm",
+  "LOOKUP_DESC_TITLE": "ADD DATA FROM LOOKUP",
+  "RECIPE_LOOKUP_MADE_ON_COL":"made on the column",
+  "RECIPE_LOOKUP_OF_DS":"of the dataset",
+  "RECIPE_LOOKUP_FOLLOWING_COLS_ADDED": "The following columns  were added"
 }

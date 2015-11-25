@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.command.dataset.*;
 import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
+import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.metrics.Timed;
@@ -251,10 +252,13 @@ public class DataSetAPI extends APIService {
         // Get dataset metadata
         HttpClient client = getClient();
         HystrixCommand<DataSetMetadata> retrieveMetadata = getCommand(DataSetGetMetadata.class, client, dataSetId);
-        // Asks transformation service for suggested actions for column type and domain
-        HystrixCommand<InputStream> getSuggestedActions = getCommand(SuggestDataSetActions.class, client, retrieveMetadata);
+        // Asks transformation service for suggested actions for column type and domain...
+        HystrixCommand<String> getSuggestedActions = getCommand(SuggestDataSetActions.class, client, retrieveMetadata);
+        // ... also adds lookup actions
+        HystrixCommand<InputStream> getLookupActions = getCommand(SuggestLookupActions.class, client, getSuggestedActions,
+                dataSetId);
         // Returns actions
-        try (InputStream content = getSuggestedActions.execute()) {
+        try (InputStream content = getLookupActions.execute()) {
             ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copyLarge(content, outputStream);
             outputStream.flush();

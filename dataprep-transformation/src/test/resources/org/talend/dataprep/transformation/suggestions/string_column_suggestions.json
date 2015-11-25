@@ -3,15 +3,12 @@
     "category": "split",
     "name": "extractemaildomain",
     "dynamic": false,
-    "description": "Extract local and domain parts from an email",
-    "label": "Extract email tokens",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -20,7 +17,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -29,7 +25,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -48,15 +44,12 @@
     "name": "delete_empty",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Delete rows that have this cell empty",
-    "label": "Delete lines with empty cell",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -65,7 +58,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -74,7 +66,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -90,9 +82,7 @@
     ]
   },
   {
-    "description": "Fill empty cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill empty cells with text",
     "name": "fillemptywithdefault",
     "parameters": [
       {
@@ -100,7 +90,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -109,7 +98,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -118,7 +106,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -136,7 +124,6 @@
         "type": "string",
         "implicit": false,
         "canBeBlank": true,
-        "description": "The value to set in empty cells",
         "label": "Value",
         "default": ""
       }
@@ -147,15 +134,12 @@
     "category": "data cleansing",
     "name": "clear_invalid",
     "dynamic": false,
-    "description": "Clear cells that have a value recognized as invalid",
-    "label": "Clear cells with invalid values",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -164,7 +148,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -173,7 +156,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -192,15 +175,12 @@
     "name": "delete_invalid",
     "category": "data cleansing",
     "dynamic": false,
-    "description": "Delete rows that have this invalid cell",
-    "label": "Delete lines with invalid cell",
     "parameters": [
       {
         "name": "column_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -209,7 +189,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -218,7 +197,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -234,9 +213,7 @@
     ]
   },
   {
-    "description": "Fill invalid cells of this column with given value",
     "category": "data cleansing",
-    "label": "Fill invalid cells with value",
     "name": "fillinvalidwithdefault",
     "parameters": [
       {
@@ -244,7 +221,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The column on which apply this action to",
         "label": "Column",
         "default": ""
       },
@@ -253,7 +229,6 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The row on which apply this action to",
         "label": "Row",
         "default": ""
       },
@@ -262,7 +237,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | TABLE)",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },

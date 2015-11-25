@@ -2,8 +2,8 @@
   "type": "cluster",
   "details": {
     "titles": [
-      "We found these values",
-      "And we'll keep this value"
+      "These values have been found",
+      "This value will be kept"
     ],
     "clusters": [
       {

@@ -3,6 +3,49 @@
         visible="lookupCtrl.visible"
         side="bottom"
         control-bar="false">
-    <img id="lookup-left" src="assets/images/lookup/lookup-left.png">
-    <img id="lookup-right" src="assets/images/lookup/lookup-right.png">
+
+   <div class="lookup-header">
+       <hr>
+       <hr>
+   </div>
+
+   <div class="lookup-container">
+       <div id="lookup-left">
+           <lookup-datagrid></lookup-datagrid>
+       </div>
+
+       <div id="lookup-right">
+           <div class="lookup-descripton">
+               <br>
+               <strong><span translate-once="LOOKUP_DESC_TITLE"></span></strong>
+               <br>
+               <p>
+                   <p translate-once="LOOKUP_STEPS_1"></p>
+                   <p translate-once="LOOKUP_STEPS_2"></p>
+                   <p translate-once="LOOKUP_STEPS_3"></p>
+               </p>
+           </div>
+
+           <button ng-disabled="!lookupCtrl.state.playground.lookupGrid.lookupColumnsToAdd.length ||
+                                !lookupCtrl.state.playground.lookupGrid.selectedColumn ||
+                                !lookupCtrl.state.playground.grid.selectedColumn"
+                   class="param-primary-button btn-primary"
+                   ng-click="lookupCtrl.submitLookup()"
+                   ng-mouseenter="lookupCtrl.hoverSubmitBtn()"
+                   ng-mouseleave="lookupCtrl.cancelEarlyPreview()"
+                   translate-once="CONFIRM_LOOKUP"
+                   id="lookup-submit-btn-id">
+           </button>
+       </div>
+   </div>
+
+    <div class="lookup-footer">
+        <hr>
+        <ul>
+           <li ng-repeat="lookupDs in lookupCtrl.potentialTransformations track by $index"
+               ng-click="lookupCtrl.loadSelectedLookupContent(lookupCtrl.potentialTransformations[$index])">
+               <a>{{lookupDs.parameters[2].default}}</a>
+           </li>
+        </ul>
+   </div>
 </talend-slidable>

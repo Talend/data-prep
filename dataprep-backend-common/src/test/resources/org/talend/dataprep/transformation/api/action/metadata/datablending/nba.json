@@ -1,0 +1,1749 @@
+{
+  "columns": [
+    {
+      "name": "Division",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0000",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 24,
+        "distinctCount": 6,
+        "frequencyTable": [
+          {
+            "data": "Northwest",
+            "occurrences": 5
+          },
+          {
+            "data": "Southwest",
+            "occurrences": 5
+          },
+          {
+            "data": "Pacific",
+            "occurrences": 5
+          },
+          {
+            "data": "Central",
+            "occurrences": 5
+          },
+          {
+            "data": "Southeast",
+            "occurrences": 5
+          },
+          {
+            "data": "Atlantic",
+            "occurrences": 5
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "Aaaaaaaaa",
+            "occurrences": 15
+          },
+          {
+            "pattern": "Aaaaaaa",
+            "occurrences": 10
+          },
+          {
+            "pattern": "Aaaaaaaa",
+            "occurrences": 5
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 7.0,
+          "maximalLength": 9.0,
+          "averageLength": 8.166666666666666
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 50.0
+        },
+        {
+          "id": "CITY",
+          "label": "City",
+          "frequency": 16.0
+        },
+        {
+          "id": "US_COUNTY",
+          "label": "US County",
+          "frequency": 33.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Team",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0001",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 0,
+        "distinctCount": 30,
+        "frequencyTable": [
+          {
+            "data": "Memphis Grizzlies",
+            "occurrences": 1
+          },
+          {
+            "data": "Los Angeles Clippers",
+            "occurrences": 1
+          },
+          {
+            "data": "San Antonio Spurs",
+            "occurrences": 1
+          },
+          {
+            "data": "Boston Celtics",
+            "occurrences": 1
+          },
+          {
+            "data": "Utah Jazz",
+            "occurrences": 1
+          },
+          {
+            "data": "Milwaukee Bucks",
+            "occurrences": 1
+          },
+          {
+            "data": "Los Angeles Lakers",
+            "occurrences": 1
+          },
+          {
+            "data": "Sacramento Kings",
+            "occurrences": 1
+          },
+          {
+            "data": "Charlotte Hornets",
+            "occurrences": 1
+          },
+          {
+            "data": "Indiana Pacers",
+            "occurrences": 1
+          },
+          {
+            "data": "Oklahoma City Thunder",
+            "occurrences": 1
+          },
+          {
+            "data": "Philadelphia 76ers",
+            "occurrences": 1
+          },
+          {
+            "data": "Portland Trail Blazers",
+            "occurrences": 1
+          },
+          {
+            "data": "Miami Heat",
+            "occurrences": 1
+          },
+          {
+            "data": "Brooklyn Nets",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "Aaaaaaa Aaaaaaa",
+            "occurrences": 3
+          },
+          {
+            "pattern": "Aaaaaaa Aaaaa",
+            "occurrences": 3
+          },
+          {
+            "pattern": "Aaa Aaaaaaa Aaaaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "Aaaaaa Aaaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "Aaaaaaaaaaaa 99aaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaaa Aaaaaaaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaa Aaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaa Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaa Aaaaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaa Aaaaaaa Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa Aaaaa Aaaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaa Aaaaa Aaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaa Aaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaa Aaaa Aaaaaa",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 9.0,
+          "maximalLength": 22.0,
+          "averageLength": 16.066666666666666
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 100.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "City/Area",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0002",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 2,
+        "distinctCount": 28,
+        "frequencyTable": [
+          {
+            "data": "New York",
+            "occurrences": 2
+          },
+          {
+            "data": "Los Angeles",
+            "occurrences": 2
+          },
+          {
+            "data": "Milwaukee",
+            "occurrences": 1
+          },
+          {
+            "data": "Oklahoma City",
+            "occurrences": 1
+          },
+          {
+            "data": "Charlotte",
+            "occurrences": 1
+          },
+          {
+            "data": "Portland",
+            "occurrences": 1
+          },
+          {
+            "data": "Oakland",
+            "occurrences": 1
+          },
+          {
+            "data": "Cleveland",
+            "occurrences": 1
+          },
+          {
+            "data": "Auburn Hills",
+            "occurrences": 1
+          },
+          {
+            "data": "Washington",
+            "occurrences": 1
+          },
+          {
+            "data": "Minneapolis",
+            "occurrences": 1
+          },
+          {
+            "data": "Atlanta",
+            "occurrences": 1
+          },
+          {
+            "data": "Phoenix",
+            "occurrences": 1
+          },
+          {
+            "data": "New Orleans",
+            "occurrences": 1
+          },
+          {
+            "data": "Denver",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "Aaaaaaa",
+            "occurrences": 8
+          },
+          {
+            "pattern": "Aaa Aaaaaaa",
+            "occurrences": 4
+          },
+          {
+            "pattern": "Aaaaaa",
+            "occurrences": 3
+          },
+          {
+            "pattern": "Aaaaaaaaa",
+            "occurrences": 3
+          },
+          {
+            "pattern": "Aaaaaaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "Aaa Aaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "Aaaaaaaaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaa Aaaa Aaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaa Aaaa",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 5.0,
+          "maximalLength": 14.0,
+          "averageLength": 8.933333333333334
+        }
+      },
+      "domain": "CITY",
+      "domainLabel": "City",
+      "domainFrequency": 29.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 3.0
+        },
+        {
+          "id": "CITY",
+          "label": "City",
+          "frequency": 96.0
+        },
+        {
+          "id": "US_COUNTY",
+          "label": "US County",
+          "frequency": 46.0
+        },
+        {
+          "id": "FIRST_NAME",
+          "label": "First Name",
+          "frequency": 26.0
+        },
+        {
+          "id": "US_STATE",
+          "label": "US State",
+          "frequency": 10.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "State",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 2,
+        "valid": 28,
+        "invalidValues": [
+          "D.C.",
+          "ON"
+        ]
+      },
+      "id": "0003",
+      "statistics": {
+        "count": 30,
+        "valid": 28,
+        "invalid": 2,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 7,
+        "distinctCount": 23,
+        "frequencyTable": [
+          {
+            "data": "CA",
+            "occurrences": 4
+          },
+          {
+            "data": "TX",
+            "occurrences": 3
+          },
+          {
+            "data": "FL",
+            "occurrences": 2
+          },
+          {
+            "data": "NY",
+            "occurrences": 2
+          },
+          {
+            "data": "MN",
+            "occurrences": 1
+          },
+          {
+            "data": "IL",
+            "occurrences": 1
+          },
+          {
+            "data": "OR",
+            "occurrences": 1
+          },
+          {
+            "data": "IN",
+            "occurrences": 1
+          },
+          {
+            "data": "D.C.",
+            "occurrences": 1
+          },
+          {
+            "data": "CO",
+            "occurrences": 1
+          },
+          {
+            "data": "PA",
+            "occurrences": 1
+          },
+          {
+            "data": "WI",
+            "occurrences": 1
+          },
+          {
+            "data": "MA",
+            "occurrences": 1
+          },
+          {
+            "data": "NC",
+            "occurrences": 1
+          },
+          {
+            "data": "LA",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "AA",
+            "occurrences": 29
+          },
+          {
+            "pattern": "A.A.",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 2.0,
+          "maximalLength": 4.0,
+          "averageLength": 2.066666666666667
+        }
+      },
+      "domain": "US_STATE_CODE",
+      "domainLabel": "US State Code",
+      "domainFrequency": 28.0,
+      "semanticDomains": [
+        {
+          "id": "US_STATE_CODE",
+          "label": "US State Code",
+          "frequency": 93.0
+        },
+        {
+          "id": "",
+          "label": "",
+          "frequency": 3.0
+        },
+        {
+          "id": "COUNTRY_CODE_ISO2",
+          "label": "Country Code ISO2",
+          "frequency": 50.0
+        },
+        {
+          "id": "CITY",
+          "label": "City",
+          "frequency": 20.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Arena",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0004",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 1,
+        "distinctCount": 29,
+        "frequencyTable": [
+          {
+            "data": "Staples Center",
+            "occurrences": 2
+          },
+          {
+            "data": "AT&T Center",
+            "occurrences": 1
+          },
+          {
+            "data": "Barclays Center",
+            "occurrences": 1
+          },
+          {
+            "data": "American Airlines Center",
+            "occurrences": 1
+          },
+          {
+            "data": "TD Garden",
+            "occurrences": 1
+          },
+          {
+            "data": "Amway Center",
+            "occurrences": 1
+          },
+          {
+            "data": "Oracle Arena",
+            "occurrences": 1
+          },
+          {
+            "data": "The Palace of Auburn Hills",
+            "occurrences": 1
+          },
+          {
+            "data": "Sleep Train Arena",
+            "occurrences": 1
+          },
+          {
+            "data": "Verizon Center",
+            "occurrences": 1
+          },
+          {
+            "data": "United Center",
+            "occurrences": 1
+          },
+          {
+            "data": "Smoothie King Center",
+            "occurrences": 1
+          },
+          {
+            "data": "Bankers Life Fieldhouse",
+            "occurrences": 1
+          },
+          {
+            "data": "Time Warner Cable Arena",
+            "occurrences": 1
+          },
+          {
+            "data": "Philips Arena",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "Aaaaaa Aaaaaa",
+            "occurrences": 3
+          },
+          {
+            "pattern": "Aaaaaaa Aaaaaa",
+            "occurrences": 3
+          },
+          {
+            "pattern": "Aaaaa Aaaaaa",
+            "occurrences": 2
+          },
+          {
+            "pattern": "AA Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "AA&A Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaa Aaaaaa Aaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaa Aaaaaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaa Aaaaaa aa Aaaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaa Aaaaa Aaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaa Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaa Aaaaaa Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "AaaAaAaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaaaaaaa Aaaaaa",
+            "occurrences": 1
+          },
+          {
+            "pattern": "Aaa Aaaaaa Aaaaaa",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 9.0,
+          "maximalLength": 26.0,
+          "averageLength": 17.133333333333333
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 96.0
+        },
+        {
+          "id": "ADDRESS_LINE",
+          "label": "Address Line",
+          "frequency": 3.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Capacity",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0005",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 1,
+        "distinctCount": 29,
+        "frequencyTable": [
+          {
+            "data": "18,055",
+            "occurrences": 2
+          },
+          {
+            "data": "19,812",
+            "occurrences": 1
+          },
+          {
+            "data": "20,328",
+            "occurrences": 1
+          },
+          {
+            "data": "19,911",
+            "occurrences": 1
+          },
+          {
+            "data": "19,356",
+            "occurrences": 1
+          },
+          {
+            "data": "20,562",
+            "occurrences": 1
+          },
+          {
+            "data": "18,119",
+            "occurrences": 1
+          },
+          {
+            "data": "18,997",
+            "occurrences": 1
+          },
+          {
+            "data": "19,155",
+            "occurrences": 1
+          },
+          {
+            "data": "19,077",
+            "occurrences": 1
+          },
+          {
+            "data": "16,867",
+            "occurrences": 1
+          },
+          {
+            "data": "19,596",
+            "occurrences": 1
+          },
+          {
+            "data": "18,717",
+            "occurrences": 1
+          },
+          {
+            "data": "19,800",
+            "occurrences": 1
+          },
+          {
+            "data": "19,600",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "99,999",
+            "occurrences": 30
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 6.0,
+          "maximalLength": 6.0,
+          "averageLength": 6.0
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 100.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Coordinates",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0006",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 1,
+        "distinctCount": 29,
+        "frequencyTable": [
+          {
+            "data": "34.043056°N 118.267222°W",
+            "occurrences": 2
+          },
+          {
+            "data": "39.901111°N 75.171944°W",
+            "occurrences": 1
+          },
+          {
+            "data": "35.463333°N 97.515°W",
+            "occurrences": 1
+          },
+          {
+            "data": "29.750833°N 95.362222°W",
+            "occurrences": 1
+          },
+          {
+            "data": "40.750556°N 73.993611°W",
+            "occurrences": 1
+          },
+          {
+            "data": "25.781389°N 80.188056°W",
+            "occurrences": 1
+          },
+          {
+            "data": "42.366303°N 71.062228°W",
+            "occurrences": 1
+          },
+          {
+            "data": "33.445833°N 112.071389°W",
+            "occurrences": 1
+          },
+          {
+            "data": "41.496389°N 81.688056°W",
+            "occurrences": 1
+          },
+          {
+            "data": "40.768333°N 111.901111°W",
+            "occurrences": 1
+          },
+          {
+            "data": "28.539167°N 81.383611°W",
+            "occurrences": 1
+          },
+          {
+            "data": "29.948889°N 90.081944°W",
+            "occurrences": 1
+          },
+          {
+            "data": "43.643333°N 79.379167°W",
+            "occurrences": 1
+          },
+          {
+            "data": "44.979444°N 93.276111°W",
+            "occurrences": 1
+          },
+          {
+            "data": "41.880556°N 87.674167°W",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "99.999999°A 99.999999°A",
+            "occurrences": 18
+          },
+          {
+            "pattern": "99.999999°A 999.999999°A",
+            "occurrences": 7
+          },
+          {
+            "pattern": "99.99999°A 99.999999°A",
+            "occurrences": 1
+          },
+          {
+            "pattern": "99.999999°A 99.9999°A",
+            "occurrences": 1
+          },
+          {
+            "pattern": "99.999999°A 999.9999°A",
+            "occurrences": 1
+          },
+          {
+            "pattern": "99.999999°A 99.999°A",
+            "occurrences": 1
+          },
+          {
+            "pattern": "99.999°A 99.999999°A",
+            "occurrences": 1
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 20.0,
+          "maximalLength": 24.0,
+          "averageLength": 22.9
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 100.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Founded",
+      "headerSize": 0,
+      "type": "string",
+      "quality": {
+        "empty": 0,
+        "invalid": 0,
+        "valid": 30,
+        "invalidValues": []
+      },
+      "id": "0007",
+      "statistics": {
+        "count": 30,
+        "valid": 30,
+        "invalid": 0,
+        "empty": 0,
+        "max": "NaN",
+        "min": "NaN",
+        "mean": "NaN",
+        "variance": "NaN",
+        "duplicateCount": 10,
+        "distinctCount": 20,
+        "frequencyTable": [
+          {
+            "data": "1967*",
+            "occurrences": 4
+          },
+          {
+            "data": "1946*",
+            "occurrences": 3
+          },
+          {
+            "data": "1970",
+            "occurrences": 2
+          },
+          {
+            "data": "1946",
+            "occurrences": 2
+          },
+          {
+            "data": "1968",
+            "occurrences": 2
+          },
+          {
+            "data": "1967",
+            "occurrences": 2
+          },
+          {
+            "data": "1989",
+            "occurrences": 2
+          },
+          {
+            "data": "1970*",
+            "occurrences": 1
+          },
+          {
+            "data": "1941*",
+            "occurrences": 1
+          },
+          {
+            "data": "1974*",
+            "occurrences": 1
+          },
+          {
+            "data": "1961*",
+            "occurrences": 1
+          },
+          {
+            "data": "1995*",
+            "occurrences": 1
+          },
+          {
+            "data": "1923*",
+            "occurrences": 1
+          },
+          {
+            "data": "1988*",
+            "occurrences": 1
+          },
+          {
+            "data": "1947*",
+            "occurrences": 1
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "9999*",
+            "occurrences": 16
+          },
+          {
+            "pattern": "9999",
+            "occurrences": 14
+          }
+        ],
+        "quantiles": {
+          "median": "NaN",
+          "lowerQuantile": "NaN",
+          "upperQuantile": "NaN"
+        },
+        "histogram": [],
+        "textLengthSummary": {
+          "minimalLength": 4.0,
+          "maximalLength": 5.0,
+          "averageLength": 4.533333333333333
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 100.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    },
+    {
+      "name": "Joined",
+      "headerSize": 0,
+      "type": "integer",
+      "quality": {
+        "empty": 21,
+        "invalid": 0,
+        "valid": 9,
+        "invalidValues": []
+      },
+      "id": "0008",
+      "statistics": {
+        "count": 30,
+        "valid": 9,
+        "invalid": 0,
+        "empty": 21,
+        "max": 1976.0,
+        "min": 1948.0,
+        "mean": 1960.6666666666667,
+        "variance": 211.7499999999996,
+        "duplicateCount": 26,
+        "distinctCount": 4,
+        "frequencyTable": [
+          {
+            "data": "",
+            "occurrences": 21
+          },
+          {
+            "data": "1976",
+            "occurrences": 4
+          },
+          {
+            "data": "1948",
+            "occurrences": 3
+          },
+          {
+            "data": "1949",
+            "occurrences": 2
+          }
+        ],
+        "patternFrequencyTable": [
+          {
+            "pattern": "",
+            "occurrences": 21
+          },
+          {
+            "pattern": "9999",
+            "occurrences": 9
+          }
+        ],
+        "quantiles": {
+          "median": 1949.0,
+          "lowerQuantile": 1948.0,
+          "upperQuantile": 1976.0
+        },
+        "histogram": [
+          {
+            "occurrences": 5,
+            "range": {
+              "min": 1948.0,
+              "max": 1949.4
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1949.4,
+              "max": 1950.8000000000002
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1950.8000000000002,
+              "max": 1952.2000000000003
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1952.2000000000003,
+              "max": 1953.6000000000004
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1953.6000000000004,
+              "max": 1955.0000000000005
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1955.0000000000005,
+              "max": 1956.4000000000005
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1956.4000000000005,
+              "max": 1957.8000000000006
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1957.8000000000006,
+              "max": 1959.2000000000007
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1959.2000000000007,
+              "max": 1960.6000000000008
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1960.6000000000008,
+              "max": 1962.000000000001
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1962.000000000001,
+              "max": 1963.400000000001
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1963.400000000001,
+              "max": 1964.800000000001
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1964.800000000001,
+              "max": 1966.2000000000012
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1966.2000000000012,
+              "max": 1967.6000000000013
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1967.6000000000013,
+              "max": 1969.0000000000014
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1969.0000000000014,
+              "max": 1970.4000000000015
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1970.4000000000015,
+              "max": 1971.8000000000015
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1971.8000000000015,
+              "max": 1973.2000000000016
+            }
+          },
+          {
+            "occurrences": 0,
+            "range": {
+              "min": 1973.2000000000016,
+              "max": 1974.6000000000017
+            }
+          },
+          {
+            "occurrences": 4,
+            "range": {
+              "min": 1974.6000000000017,
+              "max": 1976.0
+            }
+          }
+        ],
+        "textLengthSummary": {
+          "minimalLength": "NaN",
+          "maximalLength": "NaN",
+          "averageLength": "NaN"
+        }
+      },
+      "domain": "",
+      "domainLabel": "",
+      "domainFrequency": 0.0,
+      "semanticDomains": [
+        {
+          "id": "",
+          "label": "",
+          "frequency": 100.0
+        }
+      ],
+      "domainForced": false,
+      "typeForced": false
+    }
+  ],
+  "records": [
+    {
+      "0000": "Atlantic",
+      "0001": "Boston Celtics",
+      "0002": "Boston",
+      "0003": "MA",
+      "0004": "TD Garden",
+      "0005": "18,624",
+      "0006": "42.366303°N 71.062228°W",
+      "0007": "1946",
+      "0008": "",
+      "tdpId": 1
+    },
+    {
+      "0000": "Atlantic",
+      "0001": "Brooklyn Nets",
+      "0002": "New York",
+      "0003": "NY",
+      "0004": "Barclays Center",
+      "0005": "17,732",
+      "0006": "40.68265°N 73.974689°W",
+      "0007": "1967*",
+      "0008": "1976",
+      "tdpId": 2
+    },
+    {
+      "0000": "Atlantic",
+      "0001": "New York Knicks",
+      "0002": "New York",
+      "0003": "NY",
+      "0004": "Madison Square Garden",
+      "0005": "19,812",
+      "0006": "40.750556°N 73.993611°W",
+      "0007": "1946",
+      "0008": "",
+      "tdpId": 3
+    },
+    {
+      "0000": "Atlantic",
+      "0001": "Philadelphia 76ers",
+      "0002": "Philadelphia",
+      "0003": "PA",
+      "0004": "Wells Fargo Center",
+      "0005": "20,328",
+      "0006": "39.901111°N 75.171944°W",
+      "0007": "1946*",
+      "0008": "1949",
+      "tdpId": 4
+    },
+    {
+      "0000": "Atlantic",
+      "0001": "Toronto Raptors",
+      "0002": "Toronto",
+      "0003": "ON",
+      "0004": "Air Canada Centre",
+      "0005": "19,800",
+      "0006": "43.643333°N 79.379167°W",
+      "0007": "1995",
+      "0008": "",
+      "tdpId": 5
+    },
+    {
+      "0000": "Central",
+      "0001": "Chicago Bulls",
+      "0002": "Chicago",
+      "0003": "IL",
+      "0004": "United Center",
+      "0005": "20,917",
+      "0006": "41.880556°N 87.674167°W",
+      "0007": "1966",
+      "0008": "",
+      "tdpId": 6
+    },
+    {
+      "0000": "Central",
+      "0001": "Cleveland Cavaliers",
+      "0002": "Cleveland",
+      "0003": "OH",
+      "0004": "Quicken Loans Arena",
+      "0005": "20,562",
+      "0006": "41.496389°N 81.688056°W",
+      "0007": "1970",
+      "0008": "",
+      "tdpId": 7
+    },
+    {
+      "0000": "Central",
+      "0001": "Detroit Pistons",
+      "0002": "Auburn Hills",
+      "0003": "MI",
+      "0004": "The Palace of Auburn Hills",
+      "0005": "21,231",
+      "0006": "42.696944°N 83.245556°W",
+      "0007": "1941*",
+      "0008": "1948",
+      "tdpId": 8
+    },
+    {
+      "0000": "Central",
+      "0001": "Indiana Pacers",
+      "0002": "Indianapolis",
+      "0003": "IN",
+      "0004": "Bankers Life Fieldhouse",
+      "0005": "18,165",
+      "0006": "39.763889°N 86.155556°W",
+      "0007": "1967",
+      "0008": "1976",
+      "tdpId": 9
+    },
+    {
+      "0000": "Central",
+      "0001": "Milwaukee Bucks",
+      "0002": "Milwaukee",
+      "0003": "WI",
+      "0004": "BMO Harris Bradley Center",
+      "0005": "18,717",
+      "0006": "43.043611°N 87.916944°W",
+      "0007": "1968",
+      "0008": "",
+      "tdpId": 10
+    },
+    {
+      "0000": "Southeast",
+      "0001": "Atlanta Hawks",
+      "0002": "Atlanta",
+      "0003": "GA",
+      "0004": "Philips Arena",
+      "0005": "18,047",
+      "0006": "33.757222°N 84.396389°W",
+      "0007": "1946*",
+      "0008": "1949",
+      "tdpId": 11
+    },
+    {
+      "0000": "Southeast",
+      "0001": "Charlotte Hornets",
+      "0002": "Charlotte",
+      "0003": "NC",
+      "0004": "Time Warner Cable Arena",
+      "0005": "19,077",
+      "0006": "35.225°N 80.839167°W",
+      "0007": "1988*",
+      "0008": "",
+      "tdpId": 12
+    },
+    {
+      "0000": "Southeast",
+      "0001": "Miami Heat",
+      "0002": "Miami",
+      "0003": "FL",
+      "0004": "American Airlines Arena",
+      "0005": "19,600",
+      "0006": "25.781389°N 80.188056°W",
+      "0007": "1988",
+      "0008": "",
+      "tdpId": 13
+    },
+    {
+      "0000": "Southeast",
+      "0001": "Orlando Magic",
+      "0002": "Orlando",
+      "0003": "FL",
+      "0004": "Amway Center",
+      "0005": "18,846",
+      "0006": "28.539167°N 81.383611°W",
+      "0007": "1989",
+      "0008": "",
+      "tdpId": 14
+    },
+    {
+      "0000": "Southeast",
+      "0001": "Washington Wizards",
+      "0002": "Washington",
+      "0003": "D.C.",
+      "0004": "Verizon Center",
+      "0005": "20,356",
+      "0006": "38.898056°N 77.020833°W",
+      "0007": "1961*",
+      "0008": "",
+      "tdpId": 15
+    },
+    {
+      "0000": "Northwest",
+      "0001": "Denver Nuggets",
+      "0002": "Denver",
+      "0003": "CO",
+      "0004": "Pepsi Center",
+      "0005": "19,155",
+      "0006": "39.748611°N 105.0075°W",
+      "0007": "1967",
+      "0008": "1976",
+      "tdpId": 16
+    },
+    {
+      "0000": "Northwest",
+      "0001": "Minnesota Timberwolves",
+      "0002": "Minneapolis",
+      "0003": "MN",
+      "0004": "Target Center",
+      "0005": "19,356",
+      "0006": "44.979444°N 93.276111°W",
+      "0007": "1989",
+      "0008": "",
+      "tdpId": 17
+    },
+    {
+      "0000": "Northwest",
+      "0001": "Oklahoma City Thunder",
+      "0002": "Oklahoma City",
+      "0003": "OK",
+      "0004": "Chesapeake Energy Arena",
+      "0005": "18,203",
+      "0006": "35.463333°N 97.515°W",
+      "0007": "1967*",
+      "0008": "",
+      "tdpId": 18
+    },
+    {
+      "0000": "Northwest",
+      "0001": "Portland Trail Blazers",
+      "0002": "Portland",
+      "0003": "OR",
+      "0004": "Moda Center",
+      "0005": "19,441",
+      "0006": "45.531667°N 122.666667°W",
+      "0007": "1970",
+      "0008": "",
+      "tdpId": 19
+    },
+    {
+      "0000": "Northwest",
+      "0001": "Utah Jazz",
+      "0002": "Salt Lake City",
+      "0003": "UT",
+      "0004": "Vivint Smart Home Arena",
+      "0005": "19,911",
+      "0006": "40.768333°N 111.901111°W",
+      "0007": "1974*",
+      "0008": "",
+      "tdpId": 20
+    },
+    {
+      "0000": "Pacific",
+      "0001": "Golden State Warriors",
+      "0002": "Oakland",
+      "0003": "CA",
+      "0004": "Oracle Arena",
+      "0005": "19,596",
+      "0006": "37.750278°N 122.203056°W",
+      "0007": "1946*",
+      "0008": "",
+      "tdpId": 21
+    },
+    {
+      "0000": "Pacific",
+      "0001": "Los Angeles Clippers",
+      "0002": "Los Angeles",
+      "0003": "CA",
+      "0004": "Staples Center",
+      "0005": "19,060",
+      "0006": "34.043056°N 118.267222°W",
+      "0007": "1970*",
+      "0008": "",
+      "tdpId": 22
+    },
+    {
+      "0000": "Pacific",
+      "0001": "Los Angeles Lakers",
+      "0002": "Los Angeles",
+      "0003": "CA",
+      "0004": "Staples Center",
+      "0005": "18,997",
+      "0006": "34.043056°N 118.267222°W",
+      "0007": "1947*",
+      "0008": "1948",
+      "tdpId": 23
+    },
+    {
+      "0000": "Pacific",
+      "0001": "Phoenix Suns",
+      "0002": "Phoenix",
+      "0003": "AZ",
+      "0004": "Talking Stick Resort Arena",
+      "0005": "18,055",
+      "0006": "33.445833°N 112.071389°W",
+      "0007": "1968",
+      "0008": "",
+      "tdpId": 24
+    },
+    {
+      "0000": "Pacific",
+      "0001": "Sacramento Kings",
+      "0002": "Sacramento",
+      "0003": "CA",
+      "0004": "Sleep Train Arena",
+      "0005": "17,317",
+      "0006": "38.649167°N 121.518056°W",
+      "0007": "1923*",
+      "0008": "1948",
+      "tdpId": 25
+    },
+    {
+      "0000": "Southwest",
+      "0001": "Dallas Mavericks",
+      "0002": "Dallas",
+      "0003": "TX",
+      "0004": "American Airlines Center",
+      "0005": "19,200",
+      "0006": "32.790556°N 96.810278°W",
+      "0007": "1980",
+      "0008": "",
+      "tdpId": 26
+    },
+    {
+      "0000": "Southwest",
+      "0001": "Houston Rockets",
+      "0002": "Houston",
+      "0003": "TX",
+      "0004": "Toyota Center",
+      "0005": "18,055",
+      "0006": "29.750833°N 95.362222°W",
+      "0007": "1967*",
+      "0008": "",
+      "tdpId": 27
+    },
+    {
+      "0000": "Southwest",
+      "0001": "Memphis Grizzlies",
+      "0002": "Memphis",
+      "0003": "TN",
+      "0004": "FedExForum",
+      "0005": "18,119",
+      "0006": "35.138333°N 90.050556°W",
+      "0007": "1995*",
+      "0008": "",
+      "tdpId": 28
+    },
+    {
+      "0000": "Southwest",
+      "0001": "New Orleans Pelicans",
+      "0002": "New Orleans",
+      "0003": "LA",
+      "0004": "Smoothie King Center",
+      "0005": "16,867",
+      "0006": "29.948889°N 90.081944°W",
+      "0007": "2002*",
+      "0008": "",
+      "tdpId": 29
+    },
+    {
+      "0000": "Southwest",
+      "0001": "San Antonio Spurs",
+      "0002": "San Antonio",
+      "0003": "TX",
+      "0004": "AT&T Center",
+      "0005": "18,581",
+      "0006": "29.426944°N 98.4375°W",
+      "0007": "1967*",
+      "0008": "1976",
+      "tdpId": 30
+    }
+  ],
+  "metadata": {
+    "id": "611e01ad-3377-4aa7-9e01-8eff851422db",
+    "favorite": false,
+    "lifecycle": {
+      "inProgress": false,
+      "importing": false,
+      "contentAnalyzed": true,
+      "schemaAnalyzed": true,
+      "qualityAnalyzed": true
+    },
+    "records": 30,
+    "nbLinesHeader": 1,
+    "nbLinesFooter": 0,
+    "type": "text/csv",
+    "parameters": {
+      "SEPARATOR": ";"
+    },
+    "formatGuess": "formatGuess#csv",
+    "certificationStep": "NONE",
+    "location": {
+      "type": "local"
+    },
+    "name": "nba_franchises",
+    "author": "anonymousUser",
+    "created": 1446198414863,
+    "sheetName": null,
+    "draft": false,
+    "schemaParserResult": null,
+    "encoding": "UTF-8"
+  }
+}

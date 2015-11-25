@@ -24,6 +24,7 @@
         'data-prep.services.recipe',
         'data-prep.services.statistics',
         'data-prep.services.state',
-        'data-prep.services.utils'
+        'data-prep.services.utils',
+        'data-prep.services.lookup'
     ]);
 })();

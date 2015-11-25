@@ -38,7 +38,7 @@ public class MixedContentMapModule extends SimpleModule {
                     jsonGenerator.writeNull();
                 } else if (value.isEmpty()) {
                     jsonGenerator.writeString(StringUtils.EMPTY);
-                } else if (value.charAt(0) == '{') {
+                } else if (value.charAt(0) == '{' || value.charAt(0) == '[') {
                     jsonGenerator.writeRaw(':' + value);
                 } else {
                     jsonGenerator.writeString(value);
@@ -67,7 +67,7 @@ public class MixedContentMapModule extends SimpleModule {
                         map.put(currentKey, String.valueOf(jsonParser.getValueAsDouble()));
                     } else if (token == JsonToken.VALUE_TRUE || token == JsonToken.VALUE_FALSE) {
                         map.put(currentKey, String.valueOf(jsonParser.getValueAsBoolean()));
-                    } else if (token == JsonToken.START_OBJECT) {
+                    } else if (token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) {
                         // Value is a JSON object, get content as is
                         map.put(currentKey, jsonParser.readValueAsTree().toString());
                         jsonParser.skipChildren();

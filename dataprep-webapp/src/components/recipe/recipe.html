@@ -24,10 +24,25 @@
                 <span translate-once="RECIPE_ITEM_ON_CELL"></span>
             </span>
 
+            <span ng-switch-when="dataset">
+                <span translate-once="RECIPE_ITEM_ON_COL"></span>
+                <span class="recipe-description recipe-column-name">{{::step.column.name}}</span>
+
+                <span translate-once="RECIPE_LOOKUP_MADE_ON_COL"></span>
+                <span class="recipe-description recipe-column-name">{{::step.actionParameters.parameters.lookup_join_on_name}}</span>
+
+                <span translate-once="RECIPE_LOOKUP_OF_DS"></span>
+                <span class="recipe-description recipe-column-name">{{::step.actionParameters.parameters.lookup_ds_name}}.</span>
+
+                <span translate-once="RECIPE_LOOKUP_FOLLOWING_COLS_ADDED"></span>
+                <span class="recipe-description recipe-column-name">{{recipeCtrl.getAddedColumnsInLookup(step)}}</span>
+            </span>
+
             <span class="filter-icon"
                   data-icon="q" ng-if="step.filters.length"
                   title="{{'FILTERS_APPLIED' | translate}} {{recipeCtrl.getAllFiltersNames(step.filters)}}">
             </span>
+
 
             <recipe-bullet class="step-trigger" step="step" ></recipe-bullet>
         </div>
@@ -39,7 +54,7 @@
                              on-filter-remove="recipeCtrl.removeStepFilter(step, filter)"></filter-list>
 
             </div>
-            <div class="step-parameters-list">
+            <div class="step-parameters-list" ng-if="step.transformation.name !== 'lookup'">
                 <transform-form ng-if="recipeCtrl.hasStaticParams(step)"
                                 transformation="step.transformation"
                                 on-submit="recipeCtrl.stepUpdateClosure(step)(params)"

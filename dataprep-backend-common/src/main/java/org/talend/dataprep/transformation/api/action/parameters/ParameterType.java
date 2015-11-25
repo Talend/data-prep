@@ -35,10 +35,12 @@ public enum ParameterType {
     /**
      * A regular expression parameter
      */
-    REGEX;
-
+    REGEX,
+    /**
+    * This kind of parameter allow users to pass along multiple values as an array.
+    */
+    LIST;
     public String asString() {
         return this.name().toLowerCase();
     }
-
 }

@@ -78,8 +78,8 @@ public class ActionMetadataTest {
 
     @Test
     public void acceptScope_should_pass_with_table_transformation() throws Exception {
-        // when
-        final boolean result = tableTransformation.acceptScope(TABLE);
+        //when
+        final boolean result = tableTransformation.acceptScope(DATASET);
 
         // then
         assertThat(result, is(true));
@@ -114,8 +114,8 @@ public class ActionMetadataTest {
 
     @Test
     public void acceptScope_should_fail_with_non_table_transformation() throws Exception {
-        // when
-        final boolean result = columnTransformation.acceptScope(TABLE);
+        //when
+        final boolean result = columnTransformation.acceptScope(DATASET);
 
         // then
         assertThat(result, is(false));
@@ -269,7 +269,7 @@ public class ActionMetadataTest {
     public void create_result_should_call_execute_on_table() throws Exception {
         // given
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put("scope", "table");
+        parameters.put("scope", "dataset");
 
         final Map<String, String> rowValues = new HashMap<>();
         rowValues.put("0001", "toto");

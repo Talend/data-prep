@@ -37,6 +37,18 @@
       z-index: 10;
     }
   }
+
+  .suggestions-loading-div {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+
+    .suggestions-loading {
+      color: $dark-gray;
+      position: absolute;
+      top: 50%;
+    }
+  }
 }
 
 @import "actions-suggestions/action-suggestions";

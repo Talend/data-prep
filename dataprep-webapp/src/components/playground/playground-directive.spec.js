@@ -12,6 +12,56 @@ describe('Playground directive', function () {
         records: '3'
     };
 
+    var $httpBackend;
+    var datasetActions = [
+        {
+            'category': 'data_blending',
+            'name': 'lookup',
+            'parameters': [
+                {
+                    'name': 'column_id',
+                    'type': 'string',
+                    'default': ''
+                },
+                {
+                    'name': 'filter',
+                    'type': 'filter',
+                    'default': ''
+                },
+                {
+                    'name': 'lookup_ds_name',
+                    'type': 'string',
+                    'default': 'lookup_2'
+                },
+                {
+                    'name': 'lookup_ds_id',
+                    'type': 'string',
+                    'default': '9e739b88-5ec9-4b58-84b5-2127a7e2eac7'
+                },
+                {
+                    'name': 'lookup_ds_url',
+                    'type': 'string',
+                    'default': 'http://172.17.0.211:8080/datasets/9ee2eac7/content?metadata=true'
+                },
+                {
+                    'name': 'lookup_join_on',
+                    'type': 'string',
+                    'default': ''
+                },
+                {
+                    'name': 'lookup_join_on_name',
+                    'type': 'string',
+                    'default': ''
+                },
+                {
+                    'name': 'lookup_selected_cols',
+                    'type': 'list',
+                    'default': ''
+                }
+            ]
+        }
+    ];
+
     beforeEach(module('data-prep.playground', function($provide) {
         stateMock = {playground: {visible: true, filter: {gridFilters: []}}};
         $provide.constant('state', stateMock);
@@ -44,6 +94,13 @@ describe('Playground directive', function () {
         spyOn(ExportService, 'refreshTypes').and.returnValue($q.when([]));
         spyOn(ExportService, 'getParameters').and.returnValue({});
 
+    }));
+
+    beforeEach(inject(function ($injector, RestURLs) {
+        $httpBackend = $injector.get('$httpBackend');
+        $httpBackend
+            .expectGET(RestURLs.datasetActionsUrl+ '/' + metadata.id +'/actions')
+            .respond(200, datasetActions);
     }));
 
     afterEach(inject(function ($stateParams) {

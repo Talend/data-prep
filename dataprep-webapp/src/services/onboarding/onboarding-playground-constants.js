@@ -9,13 +9,13 @@
             position: 'right'
         },
         {
-            element: '#datagrid .slick-header-columns-right > .slick-header-column',
+            element: '#lookup-datagrid .slick-header-columns-right > .slick-header-column',
             title: '',
             content: 'Select a column to discover the transformation actions you can apply to the data.',
             position: 'right'
         },
         {
-            element: '#datagrid .quality-bar',
+            element: '#lookup-datagrid .quality-bar',
             title: '',
             content: 'Use the bar below to identify:<ul><li> - valid records (in green),</li><li> - empty records (in white)</li><li> - invalid records (in orange).</li></ul>Click one of the record types to perform actions on it.',
             position: 'right'

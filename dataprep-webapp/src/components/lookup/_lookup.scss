@@ -1,17 +1,59 @@
 .lookup {
-  .content-container {
-    background: url("/assets/images/lookup/lookup-center.png") repeat-x !important;
+  overflow: hidden;
+  .lookup-header {
+    height: 15px;
+    hr{
+      margin:0px;
+    }
   }
 
-  &.slide-bottom {
-    @include slidable-bottom(320px, 0);
+  .lookup-container {
+    height: 280px;
+
+    #lookup-left {
+      float: left;
+      height: inherit;
+      overflow-x: auto;
+      overflow-y: hidden;
+      width: 70%;
+    }
+
+    #lookup-right {
+      float: right;
+      width: 29.5%;
+      height: 280px;
+      background-color: #DDDDDD;
+      .lookup-descripton{
+        margin-left: 10px;
+        width: 60%;
+        p{
+          margin-left:15px;
+          color:#505E98;
+        }
+      }
+      button{
+        float:right;
+        margin: 10px;
+        position: absolute;
+        right: 0;
+        bottom: 30px;
+      }
+    }
   }
 
-  #lookup-left {
-    float: left;
-  }
-
-  #lookup-right {
-    float: right;
+  .lookup-footer {
+    height: 30px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    ul{
+      li{
+        display: inline;
+        padding-right: 15px;
+      }
+    }
+    hr{
+      margin:0px;
+    }
   }
 }

@@ -304,10 +304,14 @@
          * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
          * @description Rename a folder
          * @param {string} path the path to rename
-         * @param {string} newPath the new path
+         * @param {string} newPath the new last part of the path
          */
         vm.renameFolder = function(path, newPath){
-            FolderService.renameFolder(path, newPath)
+            // the service only use full path so we build the new full folder path
+            var n = path.lastIndexOf('/');
+            var str = path;
+            str = str.substring(0,n) + '/' + newPath;
+            FolderService.renameFolder(path, str)
                 .then(function() {
                     vm.goToFolder(state.folder.currentFolder);
                     // or to newOne?

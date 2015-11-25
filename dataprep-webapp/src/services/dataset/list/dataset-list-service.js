@@ -109,11 +109,12 @@
          * @name importRemoteDataset
          * @methodOf data-prep.services.dataset.service:DatasetListService
          * @param {object} parameters The import parameters to import
+         * @param {object} folder - the dataset folder
          * @description Import a remote dataset from backend and refresh its internal list
          * @returns {promise} The pending POST promise
          */
-        function importRemoteDataset(parameters) {
-            var promise = DatasetRestService.import(parameters);
+        function importRemoteDataset(parameters, folder) {
+            var promise = DatasetRestService.import(parameters, folder);
 
             //The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
             //which is used by the caller

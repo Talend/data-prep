@@ -9,10 +9,9 @@
      * @requires data-prep.services.dataset.service:DatasetRestService
      * @requires data-prep.services.preparation.service:PreparationListService
      * @requires data-prep.services.utils.service:StorageService
-     * @requires data-prep.services.folder.service:FolderService
      *
      */
-    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService, FolderService) {
+    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService) {
         return {
             //lifecycle
             import: importRemoteDataset,
@@ -84,11 +83,12 @@
          * @name importRemoteDataset
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} parameters The import parameters (type, url, username...)
+         * @param {object} folder - the dataset folder
          * @description Import call the backend to import the remote. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} import function
          * @returns {promise} The pending IMPORT promise
          */
-        function importRemoteDataset(parameters) {
-            var promise = DatasetListService.importRemoteDataset(parameters);
+        function importRemoteDataset(parameters, folder) {
+            var promise = DatasetListService.importRemoteDataset(parameters, folder);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }

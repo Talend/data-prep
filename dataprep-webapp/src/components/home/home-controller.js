@@ -160,9 +160,10 @@
             var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
             StateService.startUploadingDataset(dataset);
 
-            DatasetService.import(importParameters)
+            DatasetService.import(importParameters, state.folder.currentFolder)
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    FolderService.getFolderContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;
@@ -188,9 +189,10 @@
             var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
             StateService.startUploadingDataset(dataset);
 
-            DatasetService.import(importParameters)
+            DatasetService.import(importParameters, state.folder.currentFolder)
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    FolderService.getFolderContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;

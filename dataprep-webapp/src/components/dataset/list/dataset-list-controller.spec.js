@@ -280,51 +280,6 @@ describe('Dataset list controller', function () {
             expect(ctrl.datasets).toBe(refreshedDatasets);
         }));
 
-
-        it('should update folderExistAlreadyInCurrentFolder when folderExistInCurrentFolder is called with empty name', inject(function () {
-            //given
-            var ctrl = createController();
-
-            //when
-            ctrl.folderExistInCurrentFolder('');
-            scope.$digest();
-
-            //then
-            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(true);
-        }));
-
-        it('should update folderExistAlreadyInCurrentFolder when folderExistInCurrentFolder is called with a existing name', inject(function ($q, FolderRestService) {
-            //given
-            var ctrl = createController();
-            var folders = {data: {
-                folders: [{id : 'toto', path: 'toto', name: 'toto'}]
-            }};
-            spyOn(FolderRestService, 'getFolderContent').and.returnValue($q.when(folders));
-
-            //when
-            ctrl.folderExistInCurrentFolder('TOTO');
-            scope.$digest();
-
-            //then
-            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(true);
-        }));
-
-        it('should update folderExistAlreadyInCurrentFolder when folderExistInCurrentFolder is called with a name', inject(function ($q, FolderRestService) {
-            //given
-            var ctrl = createController();
-            var folders = {data: {
-                folders: [{id : 'toto', path: 'toto', name: 'toto'}]
-            }};
-            spyOn(FolderRestService, 'getFolderContent').and.returnValue($q.when(folders));
-
-            //when
-            ctrl.folderExistInCurrentFolder('1');
-            scope.$digest();
-
-            //then
-            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(false);
-        }));
-
         it('should reset parameters when click on add folder button', inject(function () {
             //given
             var ctrl = createController();
@@ -333,7 +288,6 @@ describe('Dataset list controller', function () {
             ctrl.actionsOnAddFolderClick();
 
             //then
-            expect(ctrl.folderExistAlreadyInCurrentFolder).toBe(true);
             expect(ctrl.folderNameModal).toBe(true);
             expect(ctrl.folderName).toBe('');
         }));
@@ -342,13 +296,17 @@ describe('Dataset list controller', function () {
             //given
             var ctrl = createController();
             ctrl.folderName = '1';
+            ctrl.folderNameForm = {};
+            ctrl.folderNameForm.$commitViewValue = function(){};
             spyOn(FolderService, 'create').and.returnValue($q.when(true));
             spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
+            spyOn(ctrl.folderNameForm, '$commitViewValue').and.returnValue();
 
             //when
             ctrl.addFolder();
             scope.$digest();
             //then
+            expect(ctrl.folderNameForm.$commitViewValue).toHaveBeenCalled();
             expect(FolderService.create).toHaveBeenCalledWith('toto/1');
             expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto', path: 'toto', name: 'toto'});
 
@@ -361,13 +319,17 @@ describe('Dataset list controller', function () {
 
             var ctrl = createController();
             ctrl.folderName = '1';
+            ctrl.folderNameForm = {};
+            ctrl.folderNameForm.$commitViewValue = function(){};
             spyOn(FolderService, 'create').and.returnValue($q.when(true));
             spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
+            spyOn(ctrl.folderNameForm, '$commitViewValue').and.returnValue();
 
             //when
             ctrl.addFolder();
             scope.$digest();
             //then
+            expect(ctrl.folderNameForm.$commitViewValue).toHaveBeenCalled();
             expect(FolderService.create).toHaveBeenCalledWith('/1');
             expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
 

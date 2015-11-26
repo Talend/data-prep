@@ -118,20 +118,17 @@
                   close-button="true"
                   state="datasetListCtrl.folderNameModal">
         <span translate-once="ENTER_FOLDER_NAME"></span>
-        <form name="datasetListCtrl.folderNameForm">
+        <form name="datasetListCtrl.folderNameForm" ng-submit="datasetListCtrl.folderNameForm.$valid && datasetListCtrl.addFolder()">
             <input type="text"
                    ng-model="datasetListCtrl.folderName"
                    ng-model-options="{debounce: { default: 300, blur: 0 }}"
-                   ng-change="datasetListCtrl.folderExistInCurrentFolder(datasetListCtrl.folderName)"/>
+                   unique-folder="datasetListCtrl.currentFolderContent.folders"/>
 
             <div class="modal-buttons">
-                <button class="talend-modal-close btn-secondary modal-secondary-button">
-                    <span translate-once="CANCEL"></span>
+                <button type="button" class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL">
                 </button>
-                <button class="talend-modal-close btn-primary modal-primary-button"
-                        ng-click="datasetListCtrl.addFolder()"
-                        ng-disabled="datasetListCtrl.folderExistAlreadyInCurrentFolder">
-                    <span translate-once="OK"></span>
+                <button class="btn-primary modal-primary-button" translate-once="OK"
+                        ng-disabled="datasetListCtrl.folderNameForm.$invalid">
                 </button>
             </div>
         </form>

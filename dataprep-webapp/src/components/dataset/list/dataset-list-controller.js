@@ -227,6 +227,22 @@
             }
         };
 
+
+        /**
+         * @ngdoc method
+         * @name processCertification
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description [PRIVATE] Ask certification for a dataset
+         * @param {object[]} dataset Ask certification for the dataset
+         */
+        vm.processCertification = function (dataset) {
+            vm.datasetService.processCertification(dataset).then(
+                function() {
+                    vm.goToFolder(state.folder.currentFolder);
+                }
+            );
+        };
+
         //-------------------------------
         // Folder
         //-------------------------------

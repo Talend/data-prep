@@ -334,6 +334,20 @@ describe('Dataset list controller', function () {
             expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
 
         }));
+
+        it('should process certification', inject(function ($q, FolderService, DatasetService) {
+            //given
+            var ctrl = createController();
+            spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
+
+            //when
+            ctrl.processCertification(datasets[0]);
+            scope.$digest();
+            //then
+            expect(DatasetService.processCertification).toHaveBeenCalledWith(datasets[0]);
+            expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : 'toto', path: 'toto', name: 'toto'});
+
+        }));
     });
 
     describe('rename', function () {

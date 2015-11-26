@@ -29,6 +29,7 @@ import org.talend.dataprep.api.Application;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
+import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 
@@ -67,6 +68,9 @@ public abstract class ApiServiceTestBase {
     @Autowired
     protected ContentCache cache;
 
+    @Autowired
+    private FolderRepository folderRepository;
+
     @Before
     public void setUp() {
         RestAssured.port = port;
@@ -94,9 +98,18 @@ public abstract class ApiServiceTestBase {
     }
 
     protected String createDataset(final String file, final String name, final String type) throws IOException {
+        return createDataset( file, name, type, null);
+    }
+
+    protected String createDataset(final String file, final String name, final String type, final String folderPath) throws IOException {
         final String datasetContent = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(file));
-        final Response post = given().contentType(ContentType.JSON).body(datasetContent).queryParam("Content-Type", type)
-                .when().post("/api/datasets?name={name}", name);
+        final Response post = given() //
+            .contentType(ContentType.JSON) //
+            .body(datasetContent) //
+            .queryParam("Content-Type", type) //
+            .when() //
+            .post("/api/datasets?name={name}&folderPath={folderPath}", name, folderPath);
+
         final int statusCode = post.getStatusCode();
         if(statusCode != 200) {
             LOGGER.error("Unable to create dataset (HTTP " + statusCode + "). Error: {}", post.asString());

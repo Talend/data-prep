@@ -25,11 +25,8 @@
                        ng-file-change="homeCtrl.uploadDatasetFile()"/>
             </li>
 
-            <!-- FOR DEMO PURPOSE ONLY -->
-            <li>
-                <img src="/assets/images/images/breadcrumb.png"
-                     alt="this is a fake breadcrumb for demo purpose" height="42"
-                     width="565">
+            <li ng-if="homeCtrl.$state.includes('nav.home.datasets')">
+                <folder type="dataset"></folder>
             </li>
         </ul>
         <div class="subheader-right">

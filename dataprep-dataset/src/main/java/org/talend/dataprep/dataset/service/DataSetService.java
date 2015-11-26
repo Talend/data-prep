@@ -7,7 +7,15 @@ import static org.talend.dataprep.api.dataset.DataSetMetadata.Builder.metadata;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,13 +32,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.dataset.*;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
+import org.talend.dataprep.api.dataset.DataSetLocation;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
+import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.user.UserData;
-import org.talend.dataprep.dataset.service.analysis.*;
+import org.talend.dataprep.dataset.service.analysis.AsynchronousDataSetAnalyzer;
+import org.talend.dataprep.dataset.service.analysis.ContentAnalysis;
+import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
+import org.talend.dataprep.dataset.service.analysis.FormatAnalysis;
+import org.talend.dataprep.dataset.service.analysis.QualityAnalysis;
+import org.talend.dataprep.dataset.service.analysis.SchemaAnalysis;
+import org.talend.dataprep.dataset.service.analysis.StatisticsAnalysis;
+import org.talend.dataprep.dataset.service.analysis.SynchronousDataSetAnalyzer;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.service.locator.DataSetLocatorService;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
@@ -39,6 +67,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
+import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
@@ -49,7 +78,11 @@ import org.talend.dataprep.schema.SchemaParserResult;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import com.wordnik.swagger.annotations.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @RestController
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")
@@ -112,6 +145,9 @@ public class DataSetService {
     @Autowired
     private Security security;
 
+    @Autowired
+    private FolderRepository folderRepository;
+
     /**
      * Sort the synchronous analyzers.
      */
@@ -158,8 +194,32 @@ public class DataSetService {
     @ApiOperation(value = "List all data sets", notes = "Returns the list of data sets the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed
     public Iterable<DataSetMetadata> list(@ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "DATE", required = false) String sort,
-                                          @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
-        final Spliterator<DataSetMetadata> iterator = dataSetMetadataRepository.list().spliterator();
+                                          @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order,
+                                          @ApiParam(value = "Folder id to search datasets") @RequestParam(defaultValue = "", required = false) String folder) {
+
+
+        Spliterator<DataSetMetadata> iterator;
+        if (StringUtils.isNotEmpty( folder )) {
+            // TODO dataset must be a constant somewhere!!
+            Iterable<FolderEntry> entries = folderRepository.entries( folder, "dataset" );
+            final List<DataSetMetadata> metadatas = new ArrayList<>( );
+            entries.forEach( folderEntry ->
+                             {
+                                 DataSetMetadata dataSetMetadata =
+                                     dataSetMetadataRepository.get( folderEntry.getContentId() );
+                                 if (dataSetMetadata != null){
+                                     metadatas.add( dataSetMetadataRepository.get( folderEntry.getContentId() ) );
+                                 } else {
+                                    folderRepository.removeFolderEntry( folderEntry.getPath(), //
+                                                                        folderEntry.getContentId(), //
+                                                                        folderEntry.getContentType() );
+                                 }
+                             } );
+            iterator = metadatas.spliterator();
+        } else {
+            iterator = dataSetMetadataRepository.list().spliterator();
+        }
+
         Stream<DataSetMetadata> stream = StreamSupport.stream(iterator, false);
         // Select order (asc or desc)
         final Comparator<String> comparisonOrder;
@@ -213,6 +273,7 @@ public class DataSetService {
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
             @RequestHeader("Content-Type") String contentType, @ApiParam(value = "content") InputStream content,
+            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "/", required = false) String folderPath,
             HttpServletResponse response) throws IOException {
 
         response.setHeader("Content-Type", MediaType.TEXT_PLAIN_VALUE); //$NON-NLS-1$
@@ -249,7 +310,13 @@ public class DataSetService {
 
         // Queue events (format analysis, content indexing for search...)
         queueEvents(id);
+
+        // create associated folderEntry
+        FolderEntry folderEntry = new FolderEntry( "dataset", id, folderPath );
+        folderRepository.addFolderEntry( folderEntry );
+
         LOG.debug(marker, "Created!");
+
         return id;
     }
 
@@ -373,7 +440,9 @@ public class DataSetService {
 
         // Save data set content
         LOG.debug( marker, "Storing content..." );
-        contentStore.storeAsRaw( dataSetMetadata, contentStore.getAsRaw( dataSet.getMetadata() ) );
+
+        contentStore.storeAsRaw( dataSetMetadata, contentStore.getAsRaw( dataSet.getMetadata()) );
+
         LOG.debug( marker, "Content stored." );
 
         queueEvents(newId);
@@ -402,6 +471,15 @@ public class DataSetService {
         } finally {
             lock.unlock();
         }
+
+        // delete the associated folder entries
+        // TODO make this async?
+        for( FolderEntry folderEntry : folderRepository.findFolderEntries( dataSetId, "dataset" )){
+            folderRepository.removeFolderEntry( folderEntry.getPath(), //
+                                                folderEntry.getContentId(), //
+                                                folderEntry.getContentType() );
+        }
+
     }
 
     @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -453,7 +531,8 @@ public class DataSetService {
     public void updateRawDataSet(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId, //
             @RequestParam(value = "name", required = false) @ApiParam(name = "name", value = "New value for the data set name") String name, //
-            @ApiParam(value = "content") InputStream dataSetContent) {
+            @ApiParam(value = "content") InputStream dataSetContent,
+            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "/", required = false) String folderPath) {
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock( dataSetId );
         try {
             lock.lock();
@@ -465,6 +544,9 @@ public class DataSetService {
             // Save data set content
             contentStore.storeAsRaw(dataSetMetadata, dataSetContent);
             dataSetMetadataRepository.add(dataSetMetadata);
+            // create the associated folder entry
+            FolderEntry folderEntry = new FolderEntry("dataset", dataSetId, folderPath);
+            folderRepository.addFolderEntry(folderEntry);
         } finally {
             lock.unlock();
         }

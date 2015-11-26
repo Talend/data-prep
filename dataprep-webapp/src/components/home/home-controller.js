@@ -11,10 +11,12 @@
      * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
      * @requires data-prep.services.state.service:StateService
      * @requires data-prep.services.state.constant:state
+     * @requires data-prep.services.folder.service:FolderService
      */
-    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state) {
+    function HomeCtrl($window, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, StateService, state, FolderService, $state) {
         var vm = this;
         var DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
+        vm.$state = $state;
 
         /**
          * @ngdoc property
@@ -158,9 +160,10 @@
             var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
             StateService.startUploadingDataset(dataset);
 
-            DatasetService.import(importParameters)
+            DatasetService.import(importParameters, state.folder.currentFolder)
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    FolderService.getFolderContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;
@@ -186,9 +189,10 @@
             var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
             StateService.startUploadingDataset(dataset);
 
-            DatasetService.import(importParameters)
+            DatasetService.import(importParameters, state.folder.currentFolder)
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    FolderService.getFolderContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;
@@ -214,7 +218,7 @@
             vm.datasetName = name;
 
             // show dataset name popup when name already exists
-            if(DatasetService.getDatasetByName(name)) {
+            if(DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder)) {
                 vm.datasetNameModal = true;
             }
             // create dataset with calculated name if it is unique
@@ -235,7 +239,7 @@
             var name = vm.datasetName;
 
             // if the name exists, ask for update or creation
-            vm.existingDatasetFromName = DatasetService.getDatasetByName(name);
+            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder);
             if (vm.existingDatasetFromName) {
                 TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], {dataset: vm.datasetName})
                     .then(
@@ -293,18 +297,20 @@
             var dataset = DatasetService.createDatasetInfo(file, name);
             StateService.startUploadingDataset(dataset);
 
-            DatasetService.create(dataset)
+            DatasetService.create(dataset, state.folder.currentFolder)
                 .progress(function (event) {
                     dataset.progress = parseInt(100.0 * event.loaded / event.total);
                 })
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+                    FolderService.getFolderContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;
                 })
                 .finally(function () {
                     StateService.finishUploadingDataset(dataset);
+
                 });
         };
     }

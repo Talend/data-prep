@@ -6,7 +6,7 @@ describe('Home directive', function() {
     beforeEach(module('data-prep.home'));
     beforeEach(module('htmlTemplates'));
 
-    beforeEach(inject(function($rootScope, $compile) {
+    beforeEach(inject(function($rootScope, $compile, $q, FolderService) {
         scope = $rootScope.$new();
         createElement = function () {
             element = angular.element('<home></home>');
@@ -14,6 +14,7 @@ describe('Home directive', function() {
             scope.$digest();
             return element;
         };
+        spyOn(FolderService, 'getFolderContent').and.returnValue($q.when(true));
     }));
 
     afterEach(function() {
@@ -21,15 +22,18 @@ describe('Home directive', function() {
         element.remove();
     });
 
-    it('should render subheader bar', function() {
+    it('should render subheader bar', inject(function () { // FolderService
         //when
         createElement();
 
         //then
         expect(element.find('header.subheader').length).toBe(1);
-    });
+        // TODO called only if homeCtrl.$state.includes('nav.home.datasets')
+        // maybe worth to test that
+        //expect(FolderService.getFolderContent).toHaveBeenCalled();
+    }));
 
-    it('should render home main panel', function() {
+    it('should render home main panel', inject(function () { //FolderService
         //when
         createElement();
 
@@ -39,5 +43,8 @@ describe('Home directive', function() {
         expect(home.find('.side-menu').length).toBe(1);
         expect(home.find('ui-view[name="home-content"]').length).toBe(1);
         expect(home.find('.inventory-data').length).toBe(1);
-    });
+        // TODO called only if homeCtrl.$state.includes('nav.home.datasets')
+        // maybe worth to test that
+        //expect(FolderService.getFolderContent).toHaveBeenCalled();
+    }));
 });

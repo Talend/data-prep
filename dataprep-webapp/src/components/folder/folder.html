@@ -1,0 +1,21 @@
+<div class="breadcrumb">
+  <ul>
+    <li ng-repeat="folder in folderCtrl.state.folder.foldersStack">
+      <talend-dropdown>
+        <div class="dropdown-container">
+          <a ng-click="folderCtrl.goToFolder(folder)">{{::folder.name}}</a>
+          <span class="dropdown-action">
+            <a class="dropdown-button" ng-click="folderCtrl.initMenuChilds(folder)"></a>
+          </span>
+          <ul class="dropdown-menu">
+            <li ng-if="folderCtrl.loadingChilds" translate-once="LOADING"></li>
+            <li ng-repeat="child in folderCtrl.state.folder.menuChilds" ng-click="folderCtrl.goToFolder(child)">
+              {{child.name}}
+            </li>
+          </ul>
+        </div>
+      </talend-dropdown>
+    </li>
+  </ul>
+
+</div>

@@ -1,5 +1,10 @@
 <div class="inventory dataset">
     <div class="inventory-sort">
+        <div class="add-folder-button">
+            <button class="btn-primary modal-primary-button" ng-click="datasetListCtrl.actionsOnAddFolderClick()">
+                <span translate-once="CREATE_FOLDER"></span>
+            </button>
+        </div>
         <div translate-once="SORTED_BY"></div>
         <div class="button-switch">
             <talend-button-switch
@@ -22,8 +27,19 @@
     </div>
 
     <div class="inventory-list" id="datasets-list">
-        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}"
-             ng-mouseover="datasetListCtrl.overDataset(dataset,true)" ng-mouseleave="datasetListCtrl.overDataset(dataset,false)">
+        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderContent.folders">
+          <div class="inventory-icon inventory-folder" ng-click="datasetListCtrl.goToFolder(child)">
+              <img src="assets/images/folder/folder-icon.png"/>
+          </div>
+          <div class="inventory-text inventory-folder">
+              <talend-editable-text text="child.name"
+                                    text-class="inventory-title"
+                                    on-text-click="datasetListCtrl.goToFolder(child)"
+                                    on-validate="datasetListCtrl.renameFolder(child.id, text)"></talend-editable-text>
+          </div>
+        </div>
+
+        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.currentFolderContent.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}">
 
             <div class="inventory-icon"
                  translate-once-title="OPEN_ACTION"
@@ -87,7 +103,7 @@
                    class="btn-icon btn-transparent"
                    translate-once-title="CERTIFY_ACTION"
                    translate-values="{type: 'dataset', name: dataset.name}"
-                   ng-click="datasetListCtrl.datasetService.processCertification(dataset)"></a>
+                   ng-click="datasetListCtrl.processCertification(dataset)"></a>
                 <a data-icon="f"
                    class="btn-icon btn-transparent favorite"
                    translate-once-title="FAVORITE_ACTION"
@@ -98,4 +114,26 @@
         </div>
     </div>
 
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="datasetListCtrl.folderNameModal">
+        <span translate-once="ENTER_FOLDER_NAME"></span>
+        <form name="datasetListCtrl.folderNameForm" ng-submit="datasetListCtrl.folderNameForm.$valid && datasetListCtrl.addFolder()">
+            <input type="text"
+                   ng-model="datasetListCtrl.folderName"
+                   ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                   unique-folder="datasetListCtrl.currentFolderContent.folders"/>
+
+            <div class="modal-buttons">
+                <button type="button" class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL">
+                </button>
+                <button class="btn-primary modal-primary-button" translate-once="OK"
+                        ng-disabled="datasetListCtrl.folderNameForm.$invalid">
+                </button>
+            </div>
+        </form>
+    </talend-modal>
+
 </div>
+
+

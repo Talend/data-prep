@@ -47,7 +47,8 @@ var fetchConfiguration, bootstrapDataPrepApplication;
                         'home-content': {
                             template: '<dataset-list></dataset-list>'
                         }
-                    }
+                    },
+                    folder: 'dataset'
                 })
                 .state('nav.home.preparations', {
                     url: '/preparations?prepid',

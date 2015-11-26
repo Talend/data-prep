@@ -3,9 +3,15 @@
 
     var state = {};
 
-    function StateService(PlaygroundStateService, playgroundState, DatasetStateService, datasetState) {
+    /**
+     * @ngdoc service
+     * @name data-prep.services.state.service:StateService
+     * @description Entry level for State services
+     */
+    function StateService(PlaygroundStateService, playgroundState, DatasetStateService, datasetState, FolderStateService, folderState) {
         state.playground = playgroundState;
         state.dataset = datasetState;
+        state.folder = folderState;
 
         return {
             //playground
@@ -46,7 +52,13 @@
 
             //dataset
             startUploadingDataset: DatasetStateService.startUploadingDataset,
-            finishUploadingDataset: DatasetStateService.finishUploadingDataset
+            finishUploadingDataset: DatasetStateService.finishUploadingDataset,
+
+            //folder
+            setCurrentFolder: FolderStateService.setCurrentFolder,
+            setCurrentFolderContent: FolderStateService.setCurrentFolderContent,
+            setFoldersStack: FolderStateService.setFoldersStack,
+            setMenuChilds: FolderStateService.setMenuChilds
         };
     }
 

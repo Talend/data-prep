@@ -14,6 +14,8 @@
      * @requires data-prep.services.utils
      * @requires data-prep.services.datasetWorkflowService
      * @requires data-prep.services.state
+     * @requires data-prep.folder
+     * @requires data-prep.services.folder
      */
     angular.module('data-prep.home', [
         'talend.widget',
@@ -24,6 +26,8 @@
         'data-prep.services.dataset',
         'data-prep.services.utils',
         'data-prep.services.datasetWorkflowService',
-        'data-prep.services.state'
+        'data-prep.services.state',
+        'data-prep.services.folder',
+        'data-prep.folder'
     ]);
 })();

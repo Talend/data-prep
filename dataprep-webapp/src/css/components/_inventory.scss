@@ -57,8 +57,8 @@ $border-color: #CECECE;
       position: relative;
       cursor: pointer;
 
-      &:hover {
-        padding: 0 2px;
+      &.inventory-folder{
+        padding-top: 12px;
       }
 
       &.no-link:hover {
@@ -89,6 +89,10 @@ $border-color: #CECECE;
 
       text-overflow: ellipsis;
       white-space: nowrap;
+
+      &.inventory-folder {
+        padding-top: 15px;
+      }
 
       .inventory-title {
         font-size: 1.1em;

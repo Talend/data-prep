@@ -1,0 +1,85 @@
+// Folders
+
+.breadcrumb {
+
+  display: inline-block;
+  margin: 8px 0px 15px 0px;
+  text-align: left;
+
+  li {
+    background-color: transparent;
+    display: inline-block;
+    position: relative;
+
+    a {
+      font-size: 1em;
+      color: $black;
+
+      &:hover {
+        cursor: pointer;
+        color: $dark-blue;
+        text-decoration: underline;
+      }
+    }
+    a.dropdown-button {
+      color: transparent;
+      &:hover {
+        cursor: pointer;
+        color: $dark-blue;
+        text-decoration: none;
+      }
+    }
+
+    &:first-child {
+      padding: 0px 0px 0px 10px;
+    }
+
+    &:after,
+    &:before {
+      @include position(absolute, 0px auto 0px 100%);
+      border-color: $dark-gray;
+      border-style: solid;
+      border-width: 2px 2px 0 0;
+      height: 14px;
+      width: 14px;
+      transform: rotate(45deg);
+      content: '';
+      display: block;
+      margin: auto;
+      z-index: 2;
+    }
+
+    &:last-child:after,
+    &:last-child:before {
+      border: none;
+    }
+
+    @include media($medium-screen) {
+      font-size: 1em;
+      padding: 0px 0px 0px 30px;
+    }
+  }
+
+  .dropdown-menu{
+    li{
+      display: list-item;
+      @include media($medium-screen) {
+        font-size: 1em;
+        padding: 0px 30px 0px 10px;
+      }
+      &:after,
+      &:before {
+        border-color: transparent;
+      }
+    }
+
+    li:hover{
+      background-color: $dark-green;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+
+}
+

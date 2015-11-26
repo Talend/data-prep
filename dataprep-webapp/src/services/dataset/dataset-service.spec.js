@@ -7,10 +7,17 @@ describe('Dataset Service', function () {
         {id: '44', name: 'my second dataset (2)'}];
 
     var preparationConsolidation, datasetConsolidation;
-    var promiseWithProgress;
+    var promiseWithProgress, stateMock;
     var preparations = [{id: '4385fa764bce39593a405d91bc23'}];
 
-    beforeEach(module('data-prep.services.dataset'));
+    beforeEach(module('data-prep.services.dataset', function ($provide) {
+        stateMock = {folder: {
+            currentFolderContent : {
+                datasets : datasets
+            }
+        }};
+        $provide.constant('state', stateMock);
+    }));
 
     beforeEach(inject(function ($q, DatasetListService, DatasetRestService, PreparationListService) {
         preparationConsolidation = $q.when(preparations);
@@ -51,13 +58,15 @@ describe('Dataset Service', function () {
                     url: 'http://talend.com'
                 };
 
+                var folder = {id : '', path: '', name: 'Home'};
+
                 //when
-                var result = DatasetService.import(importParameters);
+                var result = DatasetService.import(importParameters, folder);
                 $rootScope.$digest();
 
                 //then
                 expect(result).toBe(promiseWithProgress);
-                expect(DatasetListService.importRemoteDataset).toHaveBeenCalledWith(importParameters);
+                expect(DatasetListService.importRemoteDataset).toHaveBeenCalledWith(importParameters, folder);
             }));
         });
 
@@ -65,14 +74,15 @@ describe('Dataset Service', function () {
             it('should create a dataset and return the http promise (with progress function)', inject(function ($rootScope, DatasetService, DatasetListService) {
                 //given
                 var dataset = DatasetListService.datasets[0];
+                var folder = {id : '', path: '', name: 'Home'};
 
                 //when
-                var result = DatasetService.create(dataset);
+                var result = DatasetService.create(dataset, folder);
                 $rootScope.$digest();
 
                 //then
                 expect(result).toBe(promiseWithProgress);
-                expect(DatasetListService.create).toHaveBeenCalledWith(dataset);
+                expect(DatasetListService.create).toHaveBeenCalledWith(dataset, folder);
             }));
 
             it('should consolidate preparations and datasets', inject(function ($rootScope, DatasetService, DatasetListService, PreparationListService) {
@@ -373,10 +383,7 @@ describe('Dataset Service', function () {
             expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
         }));
 
-        it('should find dataset by name', inject(function (DatasetService, DatasetListService) {
-            //given
-            DatasetListService.datasets = datasets;
-
+        it('should find dataset by name', inject(function (DatasetService) {
             //when
             var actual = DatasetService.getDatasetByName(datasets[1].name);
 
@@ -384,10 +391,7 @@ describe('Dataset Service', function () {
             expect(actual).toBe(datasets[1]);
         }));
 
-        it('should not find dataset by name', inject(function (DatasetService, DatasetListService) {
-            //given
-            DatasetListService.datasets = datasets;
-
+        it('should not find dataset by name', inject(function (DatasetService) {
             //when
             var actual = DatasetService.getDatasetByName('unknown');
 

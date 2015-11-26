@@ -13,14 +13,25 @@
      * @requires talend.widget.service:TalendConfirmService
      * @requires data-prep.services.utils.service:MessageService
      * @requires data-prep.services.uploadWorkflowService.service:UploadWorkflowService
-     * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
+     * @requires data-prep.services.datasetWorkflowService:UpdateWorkflowService
+     * @requires data-prep.services.folder.service:FolderService
      */
     function DatasetListCtrl($stateParams, StateService, DatasetService, DatasetListSortService, PlaygroundService,
-                             TalendConfirmService, MessageService, UploadWorkflowService, UpdateWorkflowService) {
+                             TalendConfirmService, MessageService, UploadWorkflowService, UpdateWorkflowService, FolderService, state) {
         var vm = this;
 
         vm.datasetService = DatasetService;
         vm.uploadWorkflowService = UploadWorkflowService;
+        vm.state = state;
+
+        /**
+         * @ngdoc property
+         * @name folderName
+         * @propertyOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description The folder name
+         * @type {String}
+         */
+        vm.folderName = '';
 
         /**
          * @ngdoc property
@@ -74,7 +85,7 @@
             vm.sortSelected = sortType;
             DatasetListSortService.setSort(sortType.id);
 
-            DatasetService.refreshDatasets()
+            FolderService.getFolderContent(state.folder.currentFolder)
                 .catch(function () {
                     vm.sortSelected = oldSort;
                     DatasetListSortService.setSort(oldSort.id);
@@ -97,7 +108,7 @@
             vm.sortOrderSelected = order;
             DatasetListSortService.setOrder(order.id);
 
-            DatasetService.refreshDatasets()
+            FolderService.getFolderContent(state.folder.currentFolder)
                 .catch(function () {
                     vm.sortOrderSelected = oldSort;
                     DatasetListSortService.setOrder(oldSort.id);
@@ -142,6 +153,7 @@
                     return DatasetService.delete(dataset);
                 })
                 .then(function () {
+                    vm.goToFolder(state.folder.currentFolder);
                     MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {
                         type: 'dataset',
                         name: dataset.name
@@ -215,6 +227,85 @@
             }
         };
 
+
+        /**
+         * @ngdoc method
+         * @name processCertification
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description [PRIVATE] Ask certification for a dataset
+         * @param {object[]} dataset Ask certification for the dataset
+         */
+        vm.processCertification = function (dataset) {
+            vm.datasetService.processCertification(dataset).then(
+                function() {
+                    vm.goToFolder(state.folder.currentFolder);
+                }
+            );
+        };
+
+        //-------------------------------
+        // Folder
+        //-------------------------------
+
+        /**
+         * @ngdoc method
+         * @name actionsOnAddFolderClick
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description run these action when clicking on Add Folder button
+         */
+        vm.actionsOnAddFolderClick = function(){
+            vm.folderNameModal = true;
+            vm.folderName = '';
+        };
+
+        /**
+         * @ngdoc method
+         * @name addFolder
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Create a new folder
+         */
+        vm.addFolder = function(){
+
+            vm.folderNameForm.$commitViewValue();
+
+            var pathToCreate = (state.folder.currentFolder.id?state.folder.currentFolder.id:'') + '/' + vm.folderName;
+            FolderService.create( pathToCreate )
+                .then(function() {
+                    vm.goToFolder(state.folder.currentFolder);
+                    vm.folderNameModal = false;
+                });
+        };
+        /**
+         * @ngdoc method
+         * @name goToFolder
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @param {object} folder - the folder to go
+         * @description Go to the folder given as parameter
+         */
+        vm.goToFolder = function(folder){
+            FolderService.getFolderContent(folder);
+        };
+
+        /**
+         * @ngdoc method
+         * @name renameFolder
+         * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
+         * @description Rename a folder
+         * @param {string} path the path to rename
+         * @param {string} newPath the new last part of the path
+         */
+        vm.renameFolder = function(path, newPath){
+            // the service only use full path so we build the new full folder path
+            var n = path.lastIndexOf('/');
+            var str = path;
+            str = str.substring(0,n) + '/' + newPath;
+            FolderService.renameFolder(path, str)
+                .then(function() {
+                    vm.goToFolder(state.folder.currentFolder);
+                    // or to newOne?
+                });
+        };
+
         // load the datasets
         DatasetService
             .getDatasets()
@@ -234,6 +325,22 @@
             configurable: false,
             get: function () {
                 return this.datasetService.datasetsList();
+            }
+        });
+
+    /**
+     * @ngdoc property
+     * @name currentChilds
+     * @propertyOf data-prep.folder.controller:FolderCtrl
+     * @description The childs list.
+     * This list is bound to {@link data-prep.services.state.service:FolderStateService}.folderState.currentFolderChilds
+     */
+    Object.defineProperty(DatasetListCtrl.prototype,
+        'currentFolderContent', {
+            enumerable: true,
+            configurable: false,
+            get: function () {
+                return this.state.folder.currentFolderContent;
             }
         });
 

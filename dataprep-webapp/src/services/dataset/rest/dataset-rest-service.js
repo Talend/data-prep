@@ -38,11 +38,13 @@
          * @methodOf data-prep.services.dataset.service:DatasetRestService
          * @description Create the dataset
          * @param {dataset} dataset - the dataset infos to create
+         * @param {object} folder - the dataset folder
          * @returns {Promise} the $upload promise
          */
-        function create(dataset) {
+        function create(dataset, folder) {
+            var folderPath =  folder && folder.id ? folder.id : '/';
             return $upload.http({
-                url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(dataset.name),
+                url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(dataset.name) + '&folderPath=' + encodeURIComponent(folderPath),
                 headers: {'Content-Type': 'text/plain'},
                 data: dataset.file
             });
@@ -54,12 +56,14 @@
          * @methodOf data-prep.services.dataset.service:DatasetRestService
          * @description Import the remote dataset
          * @param {parameters} the import parameters
+         * @param {object} folder - the dataset folder
          * @returns {Promise} the $post promise
          */
-        function importRemoteDataset(parameters) {
+        function importRemoteDataset(parameters, folder) {
+            var folderPath =  folder && folder.id ? folder.id : '/';
             var req = {
                 method: 'POST',
-                url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name),
+                url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name) + '&folderPath=' + encodeURIComponent(folderPath),
                 headers: {
                     'Content-Type': 'application/vnd.remote-ds.' + parameters.type
                 },

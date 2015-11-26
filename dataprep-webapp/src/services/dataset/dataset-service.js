@@ -9,8 +9,9 @@
      * @requires data-prep.services.dataset.service:DatasetRestService
      * @requires data-prep.services.preparation.service:PreparationListService
      * @requires data-prep.services.utils.service:StorageService
+     *
      */
-    function DatasetService(DatasetListService, DatasetRestService, PreparationListService, StorageService) {
+    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService) {
         return {
             //lifecycle
             import: importRemoteDataset,
@@ -35,10 +36,11 @@
             getDatasetByName: getDatasetByName, //retrieve dataset by name
             getSheetPreview: getSheetPreview,
             setDatasetSheet: setDatasetSheet,
-
+            getDatasetByNameAndFolder: getDatasetByNameAndFolder,
             //utils
             getUniqueName: getUniqueName,
             createDatasetInfo: createDatasetInfo
+
         };
 
         //--------------------------------------------------------------------------------------------------------------
@@ -66,11 +68,12 @@
          * @name create
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} dataset The dataset to create
+         * @param {object} folder - the dataset folder
          * @description Create a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} create function
          * @returns {promise} The pending CREATE promise
          */
-        function create(dataset) {
-            var promise = DatasetListService.create(dataset);
+        function create(dataset, folder) {
+            var promise = DatasetListService.create(dataset, folder);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }
@@ -80,11 +83,12 @@
          * @name importRemoteDataset
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} parameters The import parameters (type, url, username...)
+         * @param {object} folder - the dataset folder
          * @description Import call the backend to import the remote. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} import function
          * @returns {promise} The pending IMPORT promise
          */
-        function importRemoteDataset(parameters) {
-            var promise = DatasetListService.importRemoteDataset(parameters);
+        function importRemoteDataset(parameters, folder) {
+            var promise = DatasetListService.importRemoteDataset(parameters, folder);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }
@@ -131,7 +135,6 @@
         function datasetsList() {
             return DatasetListService.datasets;
         }
-
 
         /**
          * @ngdoc method
@@ -203,14 +206,29 @@
          * @name getDatasetByName
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {string} name The dataset name
-         * @description Get the dataset that has the wanted name
+         * @description Get the dataset that has the wanted name in the current folder
          * @returns {object} The dataset
          */
         function getDatasetByName(name) {
-            return _.find(DatasetListService.datasets, function (dataset) {
+            return _.find(state.folder.currentFolderContent.datasets, function (dataset) {
                 return dataset.name === name;
             });
         }
+
+        /**
+         * @ngdoc method
+         * @name getDatasetByNameAndFolder
+         * @methodOf data-prep.services.dataset.service:DatasetService
+         * @param {string} name The dataset name
+         * @description Get the dataset that has the wanted name within the folder
+         * @returns {object} The dataset
+         */
+        function getDatasetByNameAndFolder(name) {
+            return _.find(state.folder.currentFolderContent.datasets, function(dataset){
+                return dataset.name === name;
+            });
+        }
+
 
         /**
          * @ngdoc method

@@ -29,6 +29,7 @@
             service.exportUrl = serverUrl + '/api/export';
             service.aggregationUrl = serverUrl + '/api/aggregate';
             service.typesUrl = serverUrl + '/api/types';
+            service.folderUrl = serverUrl + '/api/folders';
         }
     }
 

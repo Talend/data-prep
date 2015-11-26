@@ -118,4 +118,19 @@ public interface FolderRepository {
                 StringUtils.substringAfterLast(path, "/") : path;
     }
 
+    /**
+     * we remove / from start and end to use consistent paths
+     *
+     * @param path
+     * @return
+     */
+    default String cleanPath(String path) {
+        if (StringUtils.isEmpty(path)) {
+            return "/";
+        }
+        path = StringUtils.removeStart(path, "/");
+        path = StringUtils.removeEnd(path, "/");
+        return path;
+    }
+
 }

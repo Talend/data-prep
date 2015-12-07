@@ -92,6 +92,13 @@
                 <a data-icon="h" class="btn-icon btn-transparent"></a>
 
                 <div class="divider btn-transparent"></div>
+
+                <a data-icon="B"
+                   class="btn-icon btn-transparent"
+                   translate-once-title="CLONE_DATASET"
+                   translate-values="{type: 'dataset', name: dataset.name}"
+                   ng-click="datasetListCtrl.clone(dataset)"></a>
+
                 <a data-icon="e"
                    class="btn-icon btn-transparent"
                    translate-once-title="DELETE_ACTION"

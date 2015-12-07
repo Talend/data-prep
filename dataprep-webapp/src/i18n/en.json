@@ -220,6 +220,7 @@
   "CERTIFY_ACTION": "Certify {{type}} \"{{name}}\"",
   "FAVORITE_ACTION": "Add {{type}} \"{{name}}\" in your favorites",
   "DELETE_ACTION": "Delete {{type}} \"{{name}}\"",
+  "CLONE_ACTION": "Clone {{type}} \"{{name}}\"",
 
   "_comment": "Range slider",
   "INVALID_VALUE_RANGE_SLIDER": "Invalid Entered Value",

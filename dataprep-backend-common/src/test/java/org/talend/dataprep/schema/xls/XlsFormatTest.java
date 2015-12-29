@@ -11,14 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.tika.Tika;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -466,6 +468,16 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
         String fileName = "sales-force.xls";
 
         FormatGuess formatGuess;
+
+        String str = IOUtils.toString( this.getClass().getResourceAsStream( fileName), "UTF-16" );
+
+        Document document = Jsoup.parse( str );
+
+        Elements elements = document.select( "tr" );
+        elements.stream().forEach( element ->
+                                   {
+                                       logger.debug( "element: {}", element.html() );
+                                   });
 
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
             formatGuess = formatGuesser.guess(getRequest(inputStream, UUID.randomUUID().toString()), "UTF-8").getFormatGuess();

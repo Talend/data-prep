@@ -3,7 +3,20 @@
 @import "./cluster/transformation-cluster-params";
 
 .transformation-form {
-  select,
+  select {
+    background-color: $white;
+    border: 1px solid $light-gray;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    font-family: $base-font-family;
+    font-size: 1em;
+    margin-bottom: 0em;
+    padding: 0.5em;
+    transition: border-color;
+    width: 100%;
+  }
+
   input {
     margin: 0;
   }

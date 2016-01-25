@@ -2,16 +2,17 @@ package org.talend.dataprep.transformation.api.transformer.json;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.quality.AnalyzerService;
@@ -21,6 +22,7 @@ import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.ParsedActions;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
+import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
@@ -52,6 +54,12 @@ public class StackedTransformer implements Transformer {
 
     @Autowired
     private AnalyzerService analyzerService;
+
+    /**
+     * A filter to filter out non modified columns, by default include all columns.
+     */
+    private Predicate<ColumnMetadata> modifiedColumnsFilter = c -> true;
+
     private enum AnalysisStatus {
         /**
          * Status indicating transformation hasn't yet decided what is the schema of the transformed content.
@@ -74,10 +82,9 @@ public class StackedTransformer implements Transformer {
      * Configure the analyzer for quality depending on the current tAnalysisStatus.
      *
      * @param row the current row.
-     * @return the configured analyzer.
      * @see StackedTransformer#currentAnalysisStatus
      */
-    private Analyzer<Analyzers.Result> configureAnalyzer(DataSetRow row) {
+    private void configureAnalyzer(DataSetRow row) {
         switch (currentAnalysisStatus) {
             case SCHEMA_ANALYSIS:
                 if (initialAnalysisBuffer.size() < ANALYSIS_BUFFER_SIZE) {
@@ -90,7 +97,6 @@ public class StackedTransformer implements Transformer {
         default:
                 // Nothing to do
         }
-        return analyzer;
     }
 
     /**
@@ -109,7 +115,9 @@ public class StackedTransformer implements Transformer {
         for (DataSetRow dataSetRow : initialAnalysisBuffer) {
             schema.analyze(dataSetRow.order(columns).toArray(DataSetRow.SKIP_TDP_ID));
         }
-        adapter.adapt(columns, schema.getResult());
+        adapter.adapt(columns, schema.getResult(), modifiedColumnsFilter);
+        // TODO To analyze data on deleted columns, removes filter (accept all).
+        modifiedColumnsFilter = c -> true;
         // Now configure the actual (full) analysis and don't forget to process stored records
         analyzer = analyzerService.full(row.getRowMetadata().getColumns());
         for (DataSetRow dataSetRow : initialAnalysisBuffer) {
@@ -124,12 +132,41 @@ public class StackedTransformer implements Transformer {
     public void transform(DataSet input, Configuration configuration) {
         try {
             final ParsedActions parsedActions = actionParser.parse(configuration.getActions());
+            // Keeps modified columns and new columns for statistics
+            final DataSetMetadata metadata = input.getMetadata();
+            if (metadata != null) {
+                final RowMetadata inputRowMetadata = metadata.getRowMetadata();
+                final List<ColumnMetadata> inputColumns = inputRowMetadata.getColumns();
+                final Set<String> originalColumns = inputColumns.stream().map(ColumnMetadata::getId).collect(Collectors.toSet());
+                final Set<String> modifiedColumns = new HashSet<>();
+                final List<Action> actions = parsedActions.getAllActions();
+                if (actions != null) {
+                    for (Action action : actions) {
+                        final String modifiedColumnId = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
+                        modifiedColumns.add(modifiedColumnId);
+                    }
+                }
+                // Is modified by action OR not contained in original data set metadata (i.e. new column).
+                // TODO This filter does *not* take into account actions that deletes the whole line!
+                modifiedColumnsFilter = c -> modifiedColumns.contains(c.getId()) || !originalColumns.contains(c.getId());
+            } else {
+                // No metadata available, consider all columns.
+                modifiedColumnsFilter = c -> true;
+            }
+
             final List<DataSetRowAction> allActions = parsedActions.getRowTransformers();
             final TransformerWriter writer = writersService.getWriter(configuration.formatId(), configuration.output(), configuration.getArguments());
 
             TransformationContext context = new TransformationContext();
             ExtendedStream<DataSetRow> records = BaseTransformer.baseTransform(input.getRecords(), allActions, context)
-                    .map(r -> analyzeRecords(input, r));
+                    .map(r -> {
+                        try {
+                            return analyzeRecords(input, r);
+                        } catch (Exception e) {
+                            LOGGER.debug("Unable to compute statistics on '{}'", r, e);
+                            return r;
+                        }
+                    });
             // Write records
             Deque<DataSetRow> processingRows = new ArrayDeque<>();
             writer.startObject();
@@ -179,8 +216,19 @@ public class StackedTransformer implements Transformer {
     private DataSetRow analyzeRecords(DataSet input, DataSetRow r) {
         // Use analyzer (for empty values, semantic...)
         if (input.getMetadata() != null && !r.isDeleted()) {
-            final DataSetRow row = r.order(r.getRowMetadata().getColumns());
-            configureAnalyzer(row).analyze(row.toArray(DataSetRow.SKIP_TDP_ID));
+            final List<ColumnMetadata> columns = r.getRowMetadata().getColumns();
+            final DataSetRow row = r.order(columns);
+            final String[] array = row.toArray(DataSetRow.SKIP_TDP_ID);
+            // Configure analyzer (and eventually switch analyzer state)
+            configureAnalyzer(row);
+            // Now that analyzer is properly configured, analyze values
+            for (int i = 0; i < columns.size(); i++) {
+                // Removes non modified values from analysis
+                if (!modifiedColumnsFilter.test(columns.get(i))) {
+                    array[i] = null;
+                }
+            }
+            analyzer.analyze(array);
         }
         return r;
     }
@@ -205,7 +253,7 @@ public class StackedTransformer implements Transformer {
             emptyInitialAnalysisBuffer(row); // Call in case row number < ANALYSIS_BUFFER_SIZE
             // Analyzer may not be initialized when all rows were deleted.
             analyzer.end();
-            adapter.adapt(row.getRowMetadata().getColumns(), analyzer.getResult());
+            adapter.adapt(row.getRowMetadata().getColumns(), analyzer.getResult(), modifiedColumnsFilter);
             writer.fieldName("metadata");
             writer.startObject();
             {

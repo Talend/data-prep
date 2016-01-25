@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
-import org.talend.dataprep.transformation.format.ExportFormat;
 import org.talend.dataprep.transformation.format.JsonFormat;
 
 /**
@@ -26,7 +26,7 @@ public class Configuration {
     private final String actions;
 
     /** The arguments for format */
-    private final Map<String, Object> arguments;
+    private final Map<String, String> arguments;
 
     /** Where to write the transformed content. */
     private final OutputStream output;
@@ -42,7 +42,7 @@ public class Configuration {
     protected Configuration(final OutputStream output, //
             final String format, //
             final String actions, //
-            final Map<String, Object> arguments, //
+            final Map<String, String> arguments, //
             final Volume dataVolume) {
         this.output = output;
         this.format = format;
@@ -76,7 +76,7 @@ public class Configuration {
     /**
      * @return Arguments for the {@link ExportFormat format type} (parameters depend on the format type).
      */
-    public Map<String, Object> getArguments() {
+    public Map<String, String> getArguments() {
         return arguments;
     }
 
@@ -116,7 +116,7 @@ public class Configuration {
         /**
          * The actions in Map
          */
-        private Map<String, Object> arguments = Collections.emptyMap();
+        private Map<String, String> arguments = Collections.emptyMap();
 
         /** Where to write the transformed content. */
         private OutputStream output;
@@ -168,7 +168,7 @@ public class Configuration {
          * @param arguments The arguments in Map
          * @return The builder
          */
-        public Builder args(final Map<String, Object> arguments) {
+        public Builder args(final Map<String, String> arguments) {
             this.arguments = arguments;
             return this;
         }

@@ -1409,6 +1409,19 @@
               "value": "from_beginning"
             },
             {
+              "value": "from_n_before_end",
+              "parameters": [
+                {
+                  "name": "from_n_before_end",
+                  "type": "integer",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "label": "From N before end",
+                  "default": "5"
+                }
+              ]
+            },
+            {
               "value": "from_index",
               "parameters": [
                 {
@@ -1438,6 +1451,19 @@
           "values": [
             {
               "value": "to_end"
+            },
+            {
+              "value": "to_n_before_end",
+              "parameters": [
+                {
+                  "name": "to_n_before_end",
+                  "type": "integer",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "label": "To N before end",
+                  "default": "1"
+                }
+              ]
             },
             {
               "value": "to_index",
@@ -1690,7 +1716,7 @@
         "implicit": false,
         "canBeBlank": true,
         "description": "The new value to set",
-        "label": "Replace",
+        "label": "Replacement",
         "default": ""
       },
       {
@@ -1698,8 +1724,8 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
-        "description": "Defines greedy level. If checked, it will replace the entire cell, if not, it will only replace the part of the value that matches.",
-        "label": "Replace entire cell",
+        "description": "Defines greedy level. If checked, it will overwrite the entire cell, if not, it will only replace the part of the value that matches.",
+        "label": "Overwrite entire cell",
         "default": "false"
       }
     ],
@@ -1861,7 +1887,7 @@
             },
             {
               "value": "custom",
-              "label": "other (design your custom pattern)",
+              "label": "other",
               "parameters": [
                 {
                   "name": "manual_pattern",
@@ -2630,7 +2656,6 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
-                  "description": "Optional new column separator",
                   "label": "Separator",
                   "default": ""
                 }
@@ -2920,5 +2945,79 @@
         }
       }
     ]
+  },
+  {
+    "category": "split",
+    "name": "extract_string_tokens",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": ""
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": ""
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": ""
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": ""
+      },
+      {
+        "name": "regex",
+        "type": "string"
+      },
+      {
+        "name": "extract_mode",
+        "type": "select",
+        "default": "multiple_columns",
+        "configuration": {
+          "values": [
+            {
+              "value": "multiple_columns",
+              "parameters": [
+                {
+                  "name": "limit",
+                  "type": "integer"
+                }
+              ]
+            },
+            {
+              "value": "single_column",
+              "parameters": [
+                {
+                  "name": "concat_separator",
+                  "type": "string",
+                  "default": ","
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "testfailedaction"
+  },
+  {
+    "category": "math",
+    "name": "change_number_format"
   }
 ]

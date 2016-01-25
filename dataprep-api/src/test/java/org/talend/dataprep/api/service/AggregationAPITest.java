@@ -46,6 +46,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
         AggregationParameters params = getAggregationParameters("aggregation/aggregation_parameters.json");
         params.setDatasetId(dataSetId);
         params.setPreparationId(null);
+        params.setStepId(null);
 
         // when
         final String response = given().contentType(ContentType.JSON)//
@@ -54,7 +55,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
                 .post("/api/aggregate").asString();
 
         // then
-        assertThat(response, sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_exected.json")));
+        assertThat(response, sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_expected.json")));
     }
 
     @Test
@@ -75,7 +76,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
                 .post("/api/aggregate").asString();
 
         // then
-        assertThat(response, sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_exected.json")));
+        assertThat(response, sameJSONAsFile(this.getClass().getResourceAsStream("aggregation/aggregation_expected.json")));
     }
 
     @Test

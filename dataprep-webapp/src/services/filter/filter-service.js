@@ -12,8 +12,9 @@
      * @requires data-prep.services.playground.service:DatagridService
      * @requires data-prep.services.utils.service:ConverterService
      * @requires data-prep.services.utils.service:TextFormatService
+     * @requires data-prep.services.utils.service:DateService
      */
-    function FilterService($timeout, state, StateService, FilterAdapterService, DatagridService, StatisticsService, ConverterService, TextFormatService) {
+    function FilterService($timeout, state, StateService, FilterAdapterService, DatagridService, StatisticsService, ConverterService, TextFormatService, DateService) {
         var service = {
             //utils
             getColumnsContaining: getColumnsContaining,
@@ -197,6 +198,32 @@
             };
         }
 
+
+        /**
+         * @ngdoc method
+         * @name createDateRangeFilterFn
+         * @methodOf data-prep.services.filter.service:FilterService
+         * @param {string} colId The column id
+         * @param {Array} values The filter interval
+         * @description Create a 'range' filter function
+         * @returns {function} The predicate function
+         */
+        function createDateRangeFilterFn(colId, values) {
+            var minTimestamp = values[0];
+            var maxTimestamp = values[1];
+            var patterns = _.chain(state.playground.grid.selectedColumn.statistics.patternFrequencyTable)
+                .pluck('pattern')
+                .map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
+                .value();
+
+            var valueInDateLimitsFn = DateService.isInDateLimits(minTimestamp, maxTimestamp, patterns);
+            return function () {
+                return function (item) {
+                    return valueInDateLimitsFn(item[colId]);
+                };
+            };
+        }
+
         /**
          * @ngdoc method
          * @name createMatchFilterFn
@@ -232,7 +259,7 @@
         function addFilter(type, colId, colName, args, removeFilterFn) {
             var filterFn;
             var sameColAndTypeFilter = _.find(state.playground.filter.gridFilters, {colId: colId, type: type});
-            var createFilter, updateFilter, filterExists;
+            var createFilter, getFilterValue, filterExists;
 
             switch (type) {
                 case 'contains':
@@ -241,8 +268,8 @@
                         return FilterAdapterService.createFilter(type, colId, colName, true, args, filterFn, removeFilterFn);
                     };
 
-                    updateFilter = function updateFilter() {
-                        service.updateFilter(sameColAndTypeFilter, args.phrase);
+                    getFilterValue = function getFilterValue() {
+                        return args.phrase;
                     };
 
                     filterExists = function filterExists() {
@@ -255,8 +282,8 @@
                         return FilterAdapterService.createFilter(type, colId, colName, true, args, filterFn, removeFilterFn);
                     };
 
-                    updateFilter = function updateFilter() {
-                        service.updateFilter(sameColAndTypeFilter, args.phrase);
+                    getFilterValue = function getFilterValue() {
+                        return args.phrase;
                     };
 
                     filterExists = function filterExists() {
@@ -295,12 +322,14 @@
                     break;
                 case 'inside_range':
                     createFilter = function createFilter() {
-                        filterFn = createRangeFilterFn(colId, args.interval);
+                        filterFn = args.type === 'date' ?
+                            createDateRangeFilterFn(colId, args.interval) :
+                            createRangeFilterFn(colId, args.interval);
                         return FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
                     };
 
-                    updateFilter = function updateFilter() {
-                        service.updateFilter(sameColAndTypeFilter, args.interval);
+                    getFilterValue = function getFilterValue() {
+                        return args;
                     };
 
                     filterExists = function filterExists() {
@@ -313,8 +342,8 @@
                         return FilterAdapterService.createFilter(type, colId, colName, false, args, filterFn, removeFilterFn);
                     };
 
-                    updateFilter = function updateFilter() {
-                        service.updateFilter(sameColAndTypeFilter, args.pattern);
+                    getFilterValue = function getFilterValue() {
+                        return args.pattern;
                     };
 
                     filterExists = function filterExists() {
@@ -323,17 +352,17 @@
                     break;
             }
 
-            if(!sameColAndTypeFilter) {
+            if (!sameColAndTypeFilter) {
                 var filterInfo = createFilter();
-                StateService.addGridFilter(filterInfo);
+                pushFilter(filterInfo);
             }
-            else if(filterExists()) {
-                service.removeFilter(sameColAndTypeFilter);
+            else if (filterExists()) {
+                removeFilter(sameColAndTypeFilter);
             }
             else {
-                updateFilter();
+                var filterValue = getFilterValue();
+                updateFilter(sameColAndTypeFilter, filterValue);
             }
-            StatisticsService.updateStatistics();
         }
 
         /**
@@ -362,26 +391,28 @@
         function updateFilter(oldFilter, newValue) {
             var newFilterFn;
             var newFilter;
-            var newArgs = {};
+            var newArgs;
             var editableFilter;
             switch (oldFilter.type) {
                 case 'contains':
-                    newArgs.phrase = newValue;
+                    newArgs = {phrase: newValue};
                     newFilterFn = createContainFilterFn(oldFilter.colId, newValue);
                     editableFilter = true;
                     break;
                 case 'exact':
-                    newArgs.phrase = newValue;
-                    newFilterFn = createExactFilterFn(oldFilter.colId, newValue);
+                    newArgs = {phrase: newValue};
+                    newFilterFn = createExactFilterFn(oldFilter.colId, newValue, oldFilter.args.caseSensitive);
                     editableFilter = true;
                     break;
                 case 'inside_range':
-                    newArgs.interval = newValue;
-                    newFilterFn = createRangeFilterFn(oldFilter.colId, newValue);
+                    newArgs = newValue;
                     editableFilter = false;
+                    newFilterFn = newValue.type === 'date' ?
+                        createDateRangeFilterFn(oldFilter.colId, newValue.interval) :
+                        createRangeFilterFn(oldFilter.colId, newValue.interval);
                     break;
                 case 'matches':
-                    newArgs.pattern = newValue;
+                    newArgs = {pattern: newValue};
                     newFilterFn = createMatchFilterFn(oldFilter.colId, newValue);
                     editableFilter = false;
                     break;
@@ -389,7 +420,7 @@
             newFilter = FilterAdapterService.createFilter(oldFilter.type, oldFilter.colId, oldFilter.colName, editableFilter, newArgs, newFilterFn, oldFilter.removeFilterFn);
 
             StateService.updateGridFilter(oldFilter, newFilter);
-            StatisticsService.updateStatistics();
+            StatisticsService.updateFilteredStatistics();
         }
 
         /**
@@ -410,7 +441,7 @@
                     filter.removeFilterFn(filter);
                 })
                 .value();
-            StatisticsService.updateStatistics();
+            StatisticsService.updateFilteredStatistics();
         }
 
         /**
@@ -425,7 +456,19 @@
             if (filter.removeFilterFn) {
                 filter.removeFilterFn(filter);
             }
-            StatisticsService.updateStatistics();
+            StatisticsService.updateFilteredStatistics();
+        }
+
+        /**
+         * @ngdoc method
+         * @name pushFilter
+         * @methodOf data-prep.services.filter.service:FilterService
+         * @param {object} filter The filter to push
+         * @description Push a filter in the filter list
+         */
+        function pushFilter(filter) {
+            StateService.addGridFilter(filter);
+            StatisticsService.updateFilteredStatistics();
         }
     }
 

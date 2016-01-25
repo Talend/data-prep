@@ -11,12 +11,14 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.SchemaParserResult;
 
@@ -28,6 +30,9 @@ public class CSVSchemaParser implements SchemaParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSchemaParser.class);
 
     private static final String META_KEY = "key";
+
+    @Autowired
+    protected CSVFormatUtils csvFormatUtils;
 
     /**
      *
@@ -42,25 +47,29 @@ public class CSVSchemaParser implements SchemaParser {
             final DataSetMetadata metadata = request.getMetadata();
             final Map<String, String> parameters = metadata.getContent().getParameters();
             final char separator = parameters.get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
-            CSVReader reader = new CSVReader(new InputStreamReader(request.getContent(), metadata.getEncoding()), separator);
-            // First line as column names
-            String[] columns = reader.readNext();
-            if (columns == null) { // Empty content?
-                reader.close();
-                return SchemaParserResult.Builder.parserResult() //
-                        .sheetContents(sheetContents).build();
+            // Map<String, String> header = retrieveHeader(parameters);
+            List<String> header = csvFormatUtils.retrieveHeader(parameters);
+
+            if (header == null || header.isEmpty()) {
+                try (CSVReader reader = new CSVReader(new InputStreamReader(request.getContent(), metadata.getEncoding()), separator)) {
+                    String[] columns = reader.readNext();
+                    if (columns == null) { // Empty content?
+                        return SchemaParserResult.Builder.parserResult() //
+                                .sheetContents(sheetContents).build();
+                    } else {
+                        throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT);
+                    }
+                }
             }
-            LOGGER.debug("Columns found: {}", columns);
+            LOGGER.debug("Columns found: {}", header);
             // By default, consider all columns as Strings (to be refined by deeper analysis).
             LOGGER.debug("Setting default type for columns...");
-            for (int i = 0; i < columns.length; i++) {
+            int i = 0;
+            for (String column : header) {
                 sheetContents.stream().filter(sheetContent -> META_KEY.equals(sheetContent.getName())).findFirst() //
                         .get().getColumnMetadatas() //
-                        .add(column().id(i).name(columns[i]).type(Type.STRING).build());
+                        .add(column().id(i++).name(column).type(Type.STRING).build());
             }
-            // naively guess data types of columns
-            guessNaivelyColumnDataType(reader, sheetContents);
-            LOGGER.debug("Default types for columns set.");
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_CONTENT, e);
         }
@@ -70,15 +79,15 @@ public class CSVSchemaParser implements SchemaParser {
     }
 
     /**
-     * Parses the ten first lines and naively guess the data type of columns.
-     * TODO: it guesses according to the last line read instead of using all ten lines.
+     * Parses the ten first lines and naively guess the data type of columns. TODO: it guesses according to the last
+     * line read instead of using all ten lines.
      *
      * @param reader the csv reader.
      * @param sheetContents the sheet content.
      * @throws IOException if an error occurs.
      */
-    private void guessNaivelyColumnDataType(CSVReader reader, List<SchemaParserResult.SheetContent> sheetContents)
-            throws IOException {
+    private void detectHeader(CSVReader reader, List<SchemaParserResult.SheetContent> sheetContents) throws IOException {
+
         // Best guess (and naive) on data types
         String[] line;
         int lineNumber = 0;

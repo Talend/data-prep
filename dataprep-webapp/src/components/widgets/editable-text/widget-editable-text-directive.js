@@ -10,7 +10,7 @@
                 text: '=',
                 textTitle: '@',
                 textClass: '@',
-                editionMode: '=',
+                editionMode: '=?',
                 onTextClick: '&',
                 onValidate: '&',
                 onCancel: '&'

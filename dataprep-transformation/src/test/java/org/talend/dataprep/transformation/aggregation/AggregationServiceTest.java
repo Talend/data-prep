@@ -1,17 +1,10 @@
 package org.talend.dataprep.transformation.aggregation;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.transformation.Application;
+import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.aggregation.api.AggregationOperation;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 import org.talend.dataprep.transformation.aggregation.api.Operator;
@@ -21,11 +14,7 @@ import org.talend.dataprep.transformation.aggregation.api.Operator;
  * 
  * @see AggregationService
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest
-public class AggregationServiceTest extends TestCase {
+public class AggregationServiceTest extends TransformationBaseTest {
 
     /** The service to test. */
     @Autowired

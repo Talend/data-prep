@@ -184,6 +184,24 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         assertEquals(0, repository.size());
     }
 
+    @Test
+    public void shouldIgnoreHiddenFiles() throws Exception {
+
+        // given
+        assertFalse(repository.list().iterator().hasNext());
+
+        // when
+        File hidden = new File("target/test/store/metadata/.hidden_file");
+        FileOutputStream fos = new FileOutputStream(hidden);
+        fos.write("hello".getBytes());
+
+        // then
+        final DataSetMetadata dataSetMetadata = repository.get(".hidden");
+        hidden.delete();
+        assertNull(dataSetMetadata);
+
+    }
+
     /**
      * Return a dataset metadata with the given id.
      * 

@@ -407,6 +407,10 @@
           ],
           "patternFrequencyTable": [
             {
+              "pattern": "MM/dd/yyyy",
+              "occurrences": 16
+            },
+            {
               "pattern": "M/d/yyyy",
               "occurrences": 16
             },
@@ -430,408 +434,78 @@
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1890,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "WEDNESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1900,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -2524521600000,
+                  "max": -2208988800000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1900,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1910,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -2208988800000,
+                  "max": -1893456000000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1910,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1920,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "THURSDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -1893456000000,
+                  "max": -1577923200000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1920,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "THURSDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1930,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "WEDNESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -1577923200000,
+                  "max": -1262304000000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1930,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "WEDNESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1940,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -1262304000000,
+                  "max": -946771200000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1940,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1950,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SUNDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -946771200000,
+                  "max": -631152000000
                 }
               },
               {
                 "occurrences": 3,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1950,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SUNDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1960,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "FRIDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -631152000000,
+                  "max": -315619200000
                 }
               },
               {
                 "occurrences": 2,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1960,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "FRIDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1970,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "THURSDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": -315619200000,
+                  "max": 0
                 }
               },
               {
                 "occurrences": 5,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1970,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "THURSDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1980,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "TUESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 0,
+                  "max": 315532800000
                 }
               },
               {
                 "occurrences": 4,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1980,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "TUESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1990,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 315532800000,
+                  "max": 631152000000
                 }
               },
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 1990,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2000,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 631152000000,
+                  "max": 946684800000
                 }
               }
             ],
@@ -1060,408 +734,78 @@
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 305,
-                    "monthValue": 11,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2013,
-                    "month": "NOVEMBER",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "FRIDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 335,
-                    "monthValue": 12,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2013,
-                    "month": "DECEMBER",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SUNDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1383264000000,
+                  "max": 1385856000000
                 }
               },
               {
                 "occurrences": 6,
                 "range": {
-                  "min": {
-                    "dayOfYear": 335,
-                    "monthValue": 12,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2013,
-                    "month": "DECEMBER",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SUNDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "WEDNESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1385856000000,
+                  "max": 1388534400000
                 }
               },
               {
                 "occurrences": 3,
                 "range": {
-                  "min": {
-                    "dayOfYear": 1,
-                    "monthValue": 1,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "JANUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "WEDNESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 32,
-                    "monthValue": 2,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "FEBRUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1388534400000,
+                  "max": 1391212800000
                 }
               },
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 32,
-                    "monthValue": 2,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "FEBRUARY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 60,
-                    "monthValue": 3,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "MARCH",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1391212800000,
+                  "max": 1393632000000
                 }
               },
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 60,
-                    "monthValue": 3,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "MARCH",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SATURDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 91,
-                    "monthValue": 4,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "APRIL",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "TUESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1393632000000,
+                  "max": 1396310400000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 91,
-                    "monthValue": 4,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "APRIL",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "TUESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 121,
-                    "monthValue": 5,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "MAY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "THURSDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1396310400000,
+                  "max": 1398902400000
                 }
               },
               {
                 "occurrences": 2,
                 "range": {
-                  "min": {
-                    "dayOfYear": 121,
-                    "monthValue": 5,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "MAY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "THURSDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 152,
-                    "monthValue": 6,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "JUNE",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SUNDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1398902400000,
+                  "max": 1401580800000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 152,
-                    "monthValue": 6,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "JUNE",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "SUNDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 182,
-                    "monthValue": 7,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "JULY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "TUESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1401580800000,
+                  "max": 1404172800000
                 }
               },
               {
                 "occurrences": 0,
                 "range": {
-                  "min": {
-                    "dayOfYear": 182,
-                    "monthValue": 7,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "JULY",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "TUESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 213,
-                    "monthValue": 8,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "AUGUST",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "FRIDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1404172800000,
+                  "max": 1406851200000
                 }
               },
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 213,
-                    "monthValue": 8,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "AUGUST",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "FRIDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 244,
-                    "monthValue": 9,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "SEPTEMBER",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1406851200000,
+                  "max": 1409529600000
                 }
               },
               {
                 "occurrences": 1,
                 "range": {
-                  "min": {
-                    "dayOfYear": 244,
-                    "monthValue": 9,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "SEPTEMBER",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "MONDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  },
-                  "max": {
-                    "dayOfYear": 274,
-                    "monthValue": 10,
-                    "hour": 0,
-                    "minute": 0,
-                    "second": 0,
-                    "nano": 0,
-                    "year": 2014,
-                    "month": "OCTOBER",
-                    "dayOfMonth": 1,
-                    "dayOfWeek": "WEDNESDAY",
-                    "chronology": {
-                      "calendarType": "iso8601",
-                      "id": "ISO"
-                    }
-                  }
+                  "min": 1409529600000,
+                  "max": 1412121600000
                 }
               }
             ],

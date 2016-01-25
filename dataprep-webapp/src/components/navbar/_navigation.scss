@@ -44,8 +44,6 @@ header.navigation {
         color: white;
       }
     }
-
-
   }
 
   li.more.nav-link {
@@ -54,70 +52,5 @@ header.navigation {
         background-color: $navigation-submenu-background-hover;
       }
     }
-  }
-}
-
-.feedback {
-  $medium-screen: em(640) !default;
-  $large-screen: em(860) !default;
-  $x-large-screen: em(1824) !default;
-
-  .modal {
-    .modal-window {
-      @include media($medium-screen) {
-        padding-top: 0;
-      }
-
-      @include media($large-screen) {
-        padding-top: 0;
-      }
-
-      @include media($x-large-screen) {
-        padding-top: 4em;
-      }
-    }
-  }
-
-
-  .title {
-    font-weight: bold;
-    padding: 10px;
-  }
-
-  .feedback-form-line {
-    @include flex-row();
-    @include flex-wrap(none);
-    padding: 10px 0;
-
-    .feedback-form-label {
-      @include flex-basis(120px);
-      @include flex-grow(0);
-      @include flex-shrink(0);
-
-      text-align: right;
-      padding-right: 10px;
-    }
-
-    input {
-      margin: 0;
-    }
-
-    select {
-      background: white;
-      border: 1px solid rgb(221, 221, 221);
-      height: 36px;
-      line-height: 36px;
-      margin: 0 0 0 5px;
-      min-width: 130px;
-    }
-  }
-}
-
-.feedback-sending-div {
-  height: 100%;
-  min-width: 30px;
-  .feedback-sending {
-    position: absolute;
-    right: 40px;
   }
 }

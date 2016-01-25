@@ -4,21 +4,19 @@ import org.talend.dataprep.api.dataset.statistics.Histogram;
 import org.talend.dataprep.api.dataset.statistics.HistogramRange;
 import org.talend.dataprep.date.DateManipulator;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DateHistogram implements Histogram<LocalDateTime> {
+public class DateHistogram implements Histogram {
     private static final long serialVersionUID = 1L;
 
     public static final String TYPE = "date";
 
-    private final List<HistogramRange<LocalDateTime>> items = new ArrayList<>();
+    private final List<HistogramRange> items = new ArrayList<>();
     private DateManipulator.Pace pace;
 
     @Override
-    public List<HistogramRange<LocalDateTime>> getItems() {
+    public List<HistogramRange> getItems() {
         return items;
     }
 

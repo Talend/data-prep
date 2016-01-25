@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.location.HttpLocation;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
-import org.talend.dataprep.dataset.store.content.DataSetContentStoreAdapter;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 
@@ -21,7 +20,7 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
  * Remote http dataset content store implementation.
  */
 @Component("ContentStore#http")
-public class HttpContentStore extends DataSetContentStoreAdapter {
+public class HttpContentStore extends DataSetContentStore {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpContentStore.class);

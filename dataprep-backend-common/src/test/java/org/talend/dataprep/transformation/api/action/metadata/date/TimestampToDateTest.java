@@ -110,6 +110,9 @@ public class TimestampToDateTest extends BaseDateTests {
         assertEquals(expectedValues, row.values());
     }
 
+    /**
+     * Behavior of this case, originally defined TDP-925, has been changed with TDP-1108.
+     */
     @Test
     public void test_TDP_925() {
         // given
@@ -122,7 +125,6 @@ public class TimestampToDateTest extends BaseDateTests {
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "lorem bacon");
         expectedValues.put("0001", "1441815638");
-        expectedValues.put("0003", "2015-09-09T16:20:38");
         expectedValues.put("0002", "01/01/2015");
 
         parameters.put("new_pattern", "custom");

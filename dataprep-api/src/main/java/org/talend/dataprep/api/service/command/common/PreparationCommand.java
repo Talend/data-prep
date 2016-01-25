@@ -1,7 +1,6 @@
 package org.talend.dataprep.api.service.command.common;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.apache.http.entity.ContentType.TEXT_PLAIN;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,55 +10,33 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.InputStreamBody;
-import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.entity.StringEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
-import org.talend.dataprep.api.service.command.dataset.DataSetGet;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.PreparationErrorCodes;
+import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
 public abstract class PreparationCommand<T> extends GenericCommand<T> {
 
-    /**
-     * <p>
-     * A configuration to allow work from intermediate (cached) preparation content. If set to <b>true</b> and
-     * preparation has:
-     * <ul>
-     *     <li>Root</li>
-     *     <li>Step #1</li>
-     *     <li>Step #2</li>
-     * </ul>
-     * When user asks for content @ Step #2, a more efficient approach is to start from content @ Step #1 (iso. starting
-     * over from Root).
-     * </p>
-     * <p>
-     * However, content cached for Step #1 can't be used as is (columns are located after "records", causing DataSet
-     * deserialization to fail).
-     * </p>
-     */
-    private static final boolean ALLOW_WORK_FROM_CACHE = false;
-
     @Autowired
     protected Jackson2ObjectMapperBuilder builder;
 
-    @Autowired
-    protected ContentCache contentCache;
 
     protected PreparationCommand(final HystrixCommandGroupKey groupKey, final HttpClient client) {
         super(groupKey, client);
@@ -72,34 +49,31 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
      * @param actionsToAdd      The actions to add
      */
     protected StepDiff getDiffMetadata(final String preparationId, final String insertionStepId, final List<Action> actionsToAdd) throws IOException {
+
         // get preparation details
         final Preparation preparation = getPreparation(preparationId);
         final String dataSetId = preparation.getDataSetId();
 
-        // get dataset content with 1 row
-        final InputStream content = getDatasetContent(dataSetId, 1L);
-
         // extract insertion point actions
         final List<Action> actions = getPreparationActions(preparation, insertionStepId);
-        final String serializedReferenceActions = serializeActions(actions);
 
         final List<Action> diffActions = new ArrayList<>(actions);
         diffActions.addAll(actionsToAdd);
-        final String serializedActions = serializeActions(diffActions);
 
-        // get created columns ids
-        final HttpEntity reqEntity = MultipartEntityBuilder.create()
-                .addPart("diffActions", new StringBody(serializedActions, TEXT_PLAIN.withCharset("UTF-8"))) //$NON-NLS-1$ //$NON-NLS-2$
-                .addPart("referenceActions", new StringBody(serializedReferenceActions, TEXT_PLAIN.withCharset("UTF-8"))) //$NON-NLS-1$ //$NON-NLS-2$
-                .addPart("content", new InputStreamBody(content, APPLICATION_JSON)) //$NON-NLS-1$
-                .build();
+        final PreviewParameters previewParameters = new PreviewParameters( //
+                serializeActions(actions), //
+                serializeActions(diffActions), //
+                dataSetId, //
+                null);
 
         final String uri = transformationServiceUrl + "/transform/diff/metadata";
         final HttpPost transformationCall = new HttpPost(uri);
+
+        final ObjectMapper mapper = builder.build();
         try {
-            transformationCall.setEntity(reqEntity);
+            transformationCall
+                    .setEntity(new StringEntity(mapper.writer().writeValueAsString(previewParameters), APPLICATION_JSON));
             final InputStream diffInputStream = client.execute(transformationCall).getEntity().getContent();
-            final ObjectMapper mapper = builder.build();
             return mapper.readValue(diffInputStream, StepDiff.class);
         }
         finally {
@@ -112,7 +86,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
      *
      * @param preparationId - the preparation id
      * @return the resulting Json node object
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an error occurs.
      */
     protected Preparation getPreparation(final String preparationId) throws IOException {
         if (StringUtils.isEmpty(preparationId)) {
@@ -120,7 +94,16 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
         }
         final HttpGet preparationRetrieval = new HttpGet(preparationServiceUrl + "/preparations/" + preparationId);
         try {
-            InputStream content = client.execute(preparationRetrieval).getEntity().getContent();
+            // execute the request & check the response
+            final org.apache.http.HttpResponse response = client.execute(preparationRetrieval);
+            final org.springframework.http.HttpStatus status = org.springframework.http.HttpStatus
+                    .valueOf(response.getStatusLine().getStatusCode());
+            if (status.is4xxClientError() || status.is5xxServerError()) {
+                throw new TDPException(PreparationErrorCodes.UNABLE_TO_READ_PREPARATION,
+                        ExceptionContext.build().put("id", preparationId).put("version", "head"));
+            }
+            // parsre the preparation
+            InputStream content = response.getEntity().getContent();
             return builder.build().readerFor(Preparation.class).readValue(content);
         } finally {
             preparationRetrieval.releaseConnection();
@@ -128,42 +111,21 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
     }
 
     /**
-     * Call Dataset Service to get dataset metadata details
+     * Return the dataset metadata from its id.
      *
-     * @param datasetId - the preparation id
-     * @return the resulting Json node object
-     * @throws java.io.IOException
+     * @param datasetId The dataset id.
+     * @return the dataset metadata.
+     * @throws IOException S**t happens...
      */
-    protected JsonNode getDatasetDetails(final String datasetId) throws IOException {
+    protected DataSetMetadata getDatasetMetadata(final String datasetId) throws IOException {
         final HttpGet datasetRetrieval = new HttpGet(datasetServiceUrl + "/datasets/" + datasetId + "/metadata");
         try {
             InputStream content = client.execute(datasetRetrieval).getEntity().getContent();
-            return builder.build().readTree(content);
+            final DataSet dataset = builder.build().readerFor(DataSet.class).readValue(content);
+            return dataset.getMetadata();
         } finally {
             datasetRetrieval.releaseConnection();
         }
-    }
-
-    /**
-     * Get the full dataset records.
-     *
-     * @param dataSetId the dataset id.
-     * @return the resulting input stream records
-     */
-    protected InputStream getDatasetContent(final String dataSetId) {
-        return getDatasetContent(dataSetId, null);
-    }
-
-    /**
-     * Get dataset records
-     *
-     * @param dataSetId the dataset id.
-     * @param sample the wanted sample size (if null or <=0, the full dataset content is returned).
-     * @return the resulting input stream records
-     */
-    protected InputStream getDatasetContent(final String dataSetId, Long sample) {
-        final DataSetGet retrieveDataSet = context.getBean(DataSetGet.class, client, dataSetId, true, sample);
-        return retrieveDataSet.execute();
     }
 
     /**
@@ -204,130 +166,4 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
         }
     }
 
-    /**
-     * Return the preparation context from the given arguments.
-     *
-     * @param preparationId the preparation id.
-     * @param stepId the step id.
-     * @param sample the optional sample size.
-     * @return the preparation context from the given arguments.
-     * @throws IOException if an error occurs.
-     */
-    protected PreparationContext getContext(String preparationId, String stepId, Long sample) throws IOException {
-
-        PreparationContext ctx = new PreparationContext();
-        if (preparationId == null) {
-            ctx.actions = Collections.emptyList();
-            ctx.version = Step.ROOT_STEP.id();
-            return ctx;
-        }
-        // Modifies asked version with actual step id
-        final Preparation preparation = getPreparation(preparationId);
-        String version = stepId;
-        if ("head".equals(stepId)) {
-            int lastIndex = preparation.getSteps().size() - 1;
-            version = preparation.getSteps().get(lastIndex);
-        } else if ("origin".equals(version)) {
-            version = Step.ROOT_STEP.id();
-        }
-        ctx.preparation = preparation;
-        ctx.version = version;
-        // Direct try on cache at given version
-        ContentCacheKey key = new ContentCacheKey(preparation, version, sample);
-        ctx.content = contentCache.get(key);
-        if (ctx.content != null) {
-            ctx.actions = Collections.emptyList();
-            ctx.fromCache = true;
-            return ctx;
-        }
-        // At this point, content does *not* come from cache
-        ctx.fromCache = false;
-        String transformationStartStep;
-        if (ALLOW_WORK_FROM_CACHE) {
-            // Try to find intermediate cached version (starting from version)
-            transformationStartStep = version;
-            final List<String> preparationSteps = preparation.getSteps();
-            for (String step : preparationSteps) {
-                transformationStartStep = step;
-                key = new ContentCacheKey(preparation, step, sample);
-                ctx.content = contentCache.get(key);
-                if (ctx.content != null) {
-                    break;
-                }
-            }
-            // Did not find any cache for retrieve preparation details, starts over from original dataset
-            if (Step.ROOT_STEP.id().equals(transformationStartStep)) {
-                ctx.content = getDatasetContent(preparation.getDataSetId(), sample);
-            }
-        } else {
-            // Don't allow to work from intermediate cached steps, so start over from root (data set content).
-            ctx.content = getDatasetContent(preparation.getDataSetId(), sample);
-            transformationStartStep = stepId;
-        }
-        // Build the actions to execute
-        if (Step.ROOT_STEP.id().equals(transformationStartStep)) {
-            // Went down to root step and found nothing in cache -> get all preparation actions
-            ctx.actions = getPreparationActions(preparation, stepId);
-        } else {
-            // Stopped in the middle -> compute list of actions to remove
-            ctx.actions = getPreparationActions(preparation, transformationStartStep);
-        }
-        return ctx;
-    }
-
-    /**
-     * Internal class that holds the preparation context.
-     */
-    public class PreparationContext {
-
-        /** True if the preparation content comes from the cache. */
-        boolean fromCache;
-
-        /** The preparation content (may be the dataset one if no action is performed). */
-        InputStream content;
-
-        /** The list of actions performed in the preparation. */
-        List<Action> actions;
-
-        /** The actual preparation. */
-        Preparation preparation;
-
-        /** The preparation version (step). */
-        String version;
-
-        /**
-         * @return the preparation content.
-         */
-        public InputStream getContent() {
-            return content;
-        }
-
-        /**
-         * @return the preparation actions.
-         */
-        public List<Action> getActions() {
-            return actions;
-        }
-
-        /**
-         * @return the actual preparation.
-         */
-        public Preparation getPreparation() {
-            return preparation;
-        }
-
-        /**
-         * @return the preparation version.
-         */
-        public String getVersion() {
-            return version;
-        }
-
-        /**
-         * @return true if the preparation comes from the cache.
-         */
-        public boolean fromCache() {
-            return fromCache;
-        }
-    }
 }

@@ -71,4 +71,12 @@ public class AggregationResult {
     public Set<Map.Entry<String, WorkingContext>> entries() {
         return results.entrySet();
     }
+
+    /**
+     * Removes an entry in aggregation result.
+     * @param entry The entry to be removed
+     */
+    public void remove(String entry) {
+        results.remove(entry);
+    }
 }

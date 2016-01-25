@@ -1,12 +1,16 @@
 describe('Dataset xls preview controller', function () {
     'use strict';
 
-    var createController, scope, gridElement;
+    var createController, scope, gridElement, stateMock;
     var content = {column: [], records: []};
 
-    beforeEach(module('data-prep.dataset-xls-preview'));
+    beforeEach(module('data-prep.dataset-xls-preview', function ($provide) {
+        stateMock = {folder: {currentFolder: {path :'HOME'}}};
+        $provide.constant('state', stateMock);
+    }));
 
-    beforeEach(inject(function ($rootScope, $controller, $q, DatasetSheetPreviewService, DatasetService, DatasetRestService, PlaygroundService, StateService) {
+
+    beforeEach(inject(function ($rootScope, $controller, $q, DatasetSheetPreviewService, DatasetService, DatasetRestService, PlaygroundService, StateService, FolderService) {
         scope = $rootScope.$new();
 
         createController = function () {
@@ -26,6 +30,7 @@ describe('Dataset xls preview controller', function () {
         spyOn(DatasetService, 'getContent').and.returnValue($q.when(content));
         spyOn(PlaygroundService, 'initPlayground').and.returnValue($q.when());
         spyOn(StateService, 'showPlayground').and.returnValue();
+        spyOn(FolderService, 'getContent').and.returnValue();
     }));
 
     afterEach(function() {
@@ -130,7 +135,7 @@ describe('Dataset xls preview controller', function () {
         expect(DatasetSheetPreviewService.setDatasetSheet).toHaveBeenCalledWith('my sheet');
     }));
 
-    it('should refresh datasets list on selected sheet set', inject(function ($timeout, DatasetService) {
+    it('should refresh datasets list on selected sheet set', inject(function ($timeout, DatasetService, FolderService) {
         //given
         var ctrl = createController();
         $timeout.flush();
@@ -141,6 +146,7 @@ describe('Dataset xls preview controller', function () {
 
         //then
         expect(DatasetService.refreshDatasets).toHaveBeenCalled();
+        expect(FolderService.getContent).toHaveBeenCalledWith({path :'HOME'});
     }));
 
     it('should open dataset on selected sheet set', inject(function ($timeout, DatasetSheetPreviewService, PlaygroundService, StateService) {

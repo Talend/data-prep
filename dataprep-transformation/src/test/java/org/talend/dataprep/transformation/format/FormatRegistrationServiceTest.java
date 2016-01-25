@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.format.export.ExportFormat;
 
 /**
  * Unit test for the FormatRegistrationService.

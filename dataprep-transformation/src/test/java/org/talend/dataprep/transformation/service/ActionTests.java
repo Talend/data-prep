@@ -24,7 +24,7 @@ public class ActionTests extends TransformationServiceBaseTests {
                 .asString();
 
         // then
-        assertThat(response, sameJSONAsFile(ActionTests.class.getResourceAsStream("all_actions.json")));
+        assertThat(response, sameJSONAsFile(ActionTests.class.getResourceAsStream("all_actions.json")).allowingExtraUnexpectedFields());
     }
 
     @Test
@@ -41,7 +41,7 @@ public class ActionTests extends TransformationServiceBaseTests {
                 .asString();
 
         // then
-        assertThat(response, sameJSONAsFile(ActionTests.class.getResourceAsStream("all_actions_string.json")));
+        assertThat(response, sameJSONAsFile(ActionTests.class.getResourceAsStream("all_actions_string.json")).allowingExtraUnexpectedFields());
     }
 
     @Test

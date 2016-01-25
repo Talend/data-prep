@@ -16,7 +16,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.wordnik.swagger.annotations.Api;
+import io.swagger.annotations.Api;
 
 @Api(value = "api", basePath = "/api", description = "Data Preparation API")
 public class APIService {

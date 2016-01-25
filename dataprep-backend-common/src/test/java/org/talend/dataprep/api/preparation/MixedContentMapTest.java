@@ -58,7 +58,8 @@ public class MixedContentMapTest {
         map.put("empty", "");
         map.put("object", "{\"eq\": { \"field\": \"nbCommands\",\"value\": \"13\" }}");
         map.put("array", "[1, 2, 3]");
-        map.put("regexp", "[AZaz0-9]*");
+        map.put("regex1", "[AZaz0-9]*");
+        map.put("regex2", "[ ].*");
         final StringWriter writer = new StringWriter();
         mapper.writer().writeValue(writer, map);
         final InputStream expected = MixedContentMapTest.class.getResourceAsStream("mixedMapWrite_expected.json");

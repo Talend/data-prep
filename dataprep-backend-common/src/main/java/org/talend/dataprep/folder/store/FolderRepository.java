@@ -29,8 +29,9 @@ public interface FolderRepository {
      * remove folder and content recursively
      * 
      * @param path the path to remove only the last part is remove
+     * @throws NotEmptyFolderException if folder recursively contains any entries (dataset etc...)
      */
-    void removeFolder(String path);
+    void removeFolder(String path) throws NotEmptyFolderException;
 
     /**
      * remove folder and content recursively

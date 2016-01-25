@@ -1,14 +1,5 @@
 package org.talend.dataprep.user.store.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +12,14 @@ import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.user.store.UserDataRepository;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * User data repository implementation backed on the file system.
@@ -55,6 +54,10 @@ public class FileSystemUserDataRepository implements UserDataRepository {
     public UserData get(String userId) {
 
         final File inputFile = getFile(userId);
+        if (inputFile.getName().startsWith(".")) {
+            LOG.info("Ignore hidden file {}", inputFile.getName());
+            return null;
+        }
         if (!inputFile.exists()) {
             LOG.debug("user data #{} not found in file system", userId);
             return null;

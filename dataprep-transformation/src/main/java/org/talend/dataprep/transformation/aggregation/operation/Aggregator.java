@@ -8,8 +8,14 @@ import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
 /**
  * Base interface for all aggregators.
  *
- * So far, Aggregators are statefull hence not meant to be used across multiple aggregations at the same time.
+ * So far, Aggregators are stateful hence not meant to be used across multiple aggregations at the same time.
  */
 public interface Aggregator extends BiConsumer<DataSetRow, AggregationResult> {
 
+    /**
+     * Allow aggregators to perform normalization operations on result (e.g. remove invalid values that can only be
+     * detected at end of aggregation).
+     * @param result The {@link AggregationResult result} to normalize.
+     */
+    void normalize(AggregationResult result);
 }

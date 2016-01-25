@@ -1,6 +1,10 @@
 <div class="actions-suggestions">
-    <div class="suggestions-title" ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name">
-        <span class="title" title="{{actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name}}">{{actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name}}</span>
+    <div class="suggestions-title">
+        <span class="title"
+              title="{{actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name}}"
+              ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name">
+            {{actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name}}
+        </span>
     </div>
 
     <div id="actions-ghost"
@@ -14,10 +18,10 @@
 
     <talend-tabs tab="actionsSuggestionsCtrl.suggestionService.tab" ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading">
         <talend-tabs-item tab-title="Text">
-            <div class="action-suggestion-tab-items watermark" translate-once="COMING_SOON"></div>
+            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Cell">
-            <div class="action-suggestion-tab-items watermark" translate-once="COMING_SOON"></div>
+            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
         </talend-tabs-item>
         <talend-tabs-item tab-title="Line" ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedLine">
             <actions-list class="action-suggestion-tab-items"
@@ -28,7 +32,7 @@
                           ng-switch-when="true"
                           scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
 
-            <div class="Description"
+            <div class="watermark"
                  ng-switch-when="false"
                  translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
         </talend-tabs-item>
@@ -37,7 +41,7 @@
                    class="action-search"
                    id="action-suggestions-search"
                    translate-once-placeholder="FIND_FUNCTION"
-                   ng-model="actionsSuggestionsCtrl.columnSuggestionService.searchActionString"
+                   ng-model="actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString"
                    ng-model-options="{debounce: { default: 300, blur: 0 }}"
                    ng-change="actionsSuggestionsCtrl.columnSuggestionService.filterTransformations()"
                    talend-search-input
@@ -51,29 +55,13 @@
                           ng-switch-when="true"
                           scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
 
-            <div class="Description"
+            <div class="watermark"
                  ng-switch-when="false"
                  translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
         </talend-tabs-item>
 
         <talend-tabs-item tab-title="Table">
-            <div class="action-suggestion-tab-items">
-                <talend-accordions class="action">
-                    <talend-accordions-item>
-                        <a translate-once="REMOVE_EMPTY_LINES"></a>
-                    </talend-accordions-item>
-                </talend-accordions>
-                <talend-accordions class="action">
-                    <talend-accordions-item>
-                        <a translate-once="CREATE_EMAIL"></a>
-                    </talend-accordions-item>
-                </talend-accordions>
-                <talend-accordions class="action">
-                    <talend-accordions-item>
-                        <a translate-once="CORRECT_POSTAL_ADDRESS"></a>
-                    </talend-accordions-item>
-                </talend-accordions>
-            </div>
+            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
         </talend-tabs-item>
     </talend-tabs>
 

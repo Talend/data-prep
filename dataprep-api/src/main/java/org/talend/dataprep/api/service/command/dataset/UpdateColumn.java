@@ -7,7 +7,6 @@ import java.io.InputStream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,17 +14,12 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.common.Defaults;
 import org.talend.dataprep.api.service.command.common.GenericCommand;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
 @Component
 @Scope("request")
 public class UpdateColumn extends GenericCommand<Void> {
-
-    @Autowired
-    ContentCache contentCache;
 
     private UpdateColumn(final HttpClient client, final String dataSetId, final String columnId, final InputStream body) {
         super(PreparationAPI.DATASET_GROUP, client);
@@ -37,10 +31,7 @@ public class UpdateColumn extends GenericCommand<Void> {
         });
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET, e,
                 ExceptionContext.build().put("id", dataSetId)));
-        on(HttpStatus.OK).then((req, res) -> {
-            contentCache.evict(new ContentCacheKey(dataSetId));
-            return Defaults.<Void> asNull().apply(req, res);
-        });
+        on(HttpStatus.OK).then((req, res) -> Defaults.<Void> asNull().apply(req, res));
     }
 
 }

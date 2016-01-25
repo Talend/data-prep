@@ -31,7 +31,10 @@ import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.user.UserData;
-import org.talend.dataprep.dataset.service.analysis.*;
+import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
+import org.talend.dataprep.dataset.service.analysis.asynchronous.AsynchronousDataSetAnalyzer;
+import org.talend.dataprep.dataset.service.analysis.asynchronous.StatisticsAnalysis;
+import org.talend.dataprep.dataset.service.analysis.synchronous.*;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.service.locator.DataSetLocatorService;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
@@ -52,9 +55,9 @@ import org.talend.dataprep.schema.SchemaParserResult;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")
@@ -466,6 +469,64 @@ public class DataSetService {
     }
 
     /**
+     * Move a data set to an other folder
+     * 
+     * @param folderPath The original folder path of the dataset
+     * @param newFolderPath The new folder path of the dataset
+     */
+    @RequestMapping(value = "/datasets/move/{id}", method = PUT, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Clone a data set", produces = MediaType.TEXT_PLAIN_VALUE, notes = "Move a data set to an other folder.")
+    @Timed
+    public void move(
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
+            @ApiParam(value = "The original folder path of the dataset.") @RequestParam(defaultValue = "", required = false) String folderPath,
+            @ApiParam(value = "The new folder path of the dataset.") @RequestParam(defaultValue = "", required = false) String newFolderPath,
+            @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName)
+                    throws IOException {
+
+        HttpResponseContext.header("Content-Type", MediaType.TEXT_PLAIN_VALUE);
+
+        DataSet dataSet = get(true, null, dataSetId);
+
+        final String dataSetName = StringUtils.isEmpty(newName) ? dataSet.getMetadata().getName() : newName;
+
+        // if no metadata it's an empty one the get method has already set NO CONTENT http return code
+        // so simply return!!
+        if (dataSet.getMetadata() == null) {
+            return;
+        }
+        // first check if the name is already used in the target folder
+        final Iterable<FolderEntry> entries = folderRepository.entries(newFolderPath, "dataset");
+
+        entries.forEach(folderEntry -> {
+            DataSetMetadata dataSetEntry = dataSetMetadataRepository.get(folderEntry.getContentId());
+            if (dataSetEntry != null && StringUtils.equals(dataSetName, dataSetEntry.getName())) {
+                final ExceptionContext context = ExceptionContext.build() //
+                        .put("id", folderEntry.getContentId()) //
+                        .put("folder", folderPath) //
+                        .put("name", dataSetName);
+                throw new TDPException(DataSetErrorCodes.DATASET_NAME_ALREADY_USED, context, true);
+            }
+        });
+        
+        // rename the dataset only if we received a new name
+        if (StringUtils.isNotEmpty(newName) && !StringUtils.equals(newName, dataSet.getMetadata().getName())) {
+            DistributedLock datasetLock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
+            datasetLock.lock();
+            try {
+                dataSet.getMetadata().setName(newName);
+                dataSetMetadataRepository.add(dataSet.getMetadata());
+            } finally {
+                datasetLock.unlock();
+            }
+        }
+        FolderEntry folderEntry = new FolderEntry("dataset", dataSetId, folderPath);
+
+        folderRepository.moveFolderEntry(folderEntry, newFolderPath);
+    }
+
+
+    /**
      * Deletes a data set with provided id.
      *
      * @param dataSetId A data set id. If data set id is unknown, no exception nor status code to indicate this is set.
@@ -546,8 +607,7 @@ public class DataSetService {
     public void updateRawDataSet(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId, //
             @RequestParam(value = "name", required = false) @ApiParam(name = "name", value = "New value for the data set name") String name, //
-            @ApiParam(value = "content") InputStream dataSetContent,
-            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "/", required = false) String folderPath) {
+            @ApiParam(value = "content") InputStream dataSetContent) {
         final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock( dataSetId );
         try {
             lock.lock();
@@ -559,9 +619,6 @@ public class DataSetService {
             // Save data set content
             contentStore.storeAsRaw(dataSetMetadata, dataSetContent);
             dataSetMetadataRepository.add(dataSetMetadata);
-            // create the associated folder entry
-            FolderEntry folderEntry = new FolderEntry("dataset", dataSetId, folderPath);
-            folderRepository.addFolderEntry(folderEntry);
         } finally {
             lock.unlock();
         }

@@ -42,7 +42,6 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitPar
  */
 public class SubstringTest {
 
-    /** The action to test. */
     private Substring action;
 
     private Map<String, String> parameters;
@@ -65,9 +64,6 @@ public class SubstringTest {
         assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_substring() {
         //given
@@ -90,11 +86,8 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
-    public void should_substring_out_of_bound_1() {
+    public void should_substring_to_the_end_when_end_index_is_too_big_and_out_of_bound() {
         //given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
@@ -115,11 +108,8 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
-    public void should_substring_out_of_bound_2() {
+    public void should_substring_from_the_end_when_start_index_is_too_big_and_out_of_bound() {
         //given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
@@ -140,21 +130,45 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
-    public void should_substring_out_of_bound_3() {
+    public void should_substring_from_the_end_when_start_index_is_negative() {
         //given
+        parameters.put(FROM_INDEX_PARAMETER, "-1");
+        parameters.put(TO_MODE_PARAMETER, "to_end");
+
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
-        values.put("0001", "");
+        values.put("0001", "Bac");
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "");
+        expectedValues.put("0001", "Bac");
+        expectedValues.put("0003", "Bac");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_substring_to_the_beginning_when_end_index_is_negative() {
+        //given
+        parameters.put(TO_INDEX_PARAMETER, "-1");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bac");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bac");
         expectedValues.put("0003", "");
         expectedValues.put("0002", "01/01/2015");
 
@@ -165,12 +179,61 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @throws IOException
-     * @see Split#create(Map)
-     */
     @Test
-    public void should_substring_strange_bounds_1() throws IOException {
+    public void should_substring_to_the_beginning_when_n_before_end_is_too_big() throws IOException {
+        //given
+        parameters.put(FROM_INDEX_PARAMETER, "1");
+        parameters.put(TO_MODE_PARAMETER, Substring.TO_N_BEFORE_END_PARAMETER);
+        parameters.put(TO_N_BEFORE_END_PARAMETER, "15");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon");
+        expectedValues.put("0003", "");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_substring_from_the_beginning_when_n_before_end_is_too_big() throws IOException {
+        //given
+        parameters.put(FROM_MODE_PARAMETER, Substring.FROM_N_BEFORE_END_PARAMETER);
+        parameters.put(FROM_N_BEFORE_END_PARAMETER, "15");
+        parameters.put(TO_MODE_PARAMETER, Substring.TO_N_BEFORE_END_PARAMETER);
+        parameters.put(TO_N_BEFORE_END_PARAMETER, "1");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon");
+        expectedValues.put("0003", "Baco");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_substring_resulting_to_empty_on_strange_bounds_start_index_sup_to_end_index() throws IOException {
         //given
         parameters.put(FROM_INDEX_PARAMETER, "6");
         parameters.put(TO_INDEX_PARAMETER, "1");
@@ -194,102 +257,6 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-
-    /**
-     * Test when 'from' index is negative.
-     */
-    @Test
-    public void test_TDP_870_1() throws IOException {
-        //given
-        parameters.put(FROM_INDEX_PARAMETER, "-1");
-        parameters.put(TO_INDEX_PARAMETER, "5");
-
-
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "lorem bacon");
-        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        values.put("0002", "01/01/2015");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0003", "");
-        expectedValues.put("0002", "01/01/2015");
-
-        //when
-        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
-
-        //then
-        assertEquals(expectedValues, row.values());
-    }
-
-    /**
-     * Test when 'to' index is greater than string length.
-     */
-    @Test
-    public void test_TDP_870_2() throws IOException {
-        //given
-        parameters.put(FROM_INDEX_PARAMETER, "1");
-        parameters.put(TO_INDEX_PARAMETER, "50");
-
-
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "lorem bacon");
-        values.put("0001", "Bacon");
-        values.put("0002", "01/01/2015");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon");
-        expectedValues.put("0003", "acon");
-        expectedValues.put("0002", "01/01/2015");
-
-        //when
-        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
-
-        //then
-        assertEquals(expectedValues, row.values());
-    }
-
-    /**
-     * @throws IOException
-     * @see Split#create(Map)
-     */
-    @Test
-    public void should_substring_strange_bounds_2() throws IOException {
-        //given
-        parameters.put(FROM_INDEX_PARAMETER, "7");
-        parameters.put(TO_MODE_PARAMETER, Substring.TO_END);
-        parameters.put(TO_INDEX_PARAMETER, "");
-
-
-
-
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "lorem bacon");
-        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        values.put("0002", "01/01/2015");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "lorem bacon");
-        expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        expectedValues.put("0003", "psum dolor amet swine leberkas pork belly");
-        expectedValues.put("0002", "01/01/2015");
-
-        //when
-        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
-
-        //then
-        assertEquals(expectedValues, row.values());
-    }
-
-    /**
-     * @throws IOException
-     * @see Split#create(Map)
-     */
     @Test
     public void should_substring_twice() throws IOException {
         //given
@@ -317,10 +284,6 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @throws IOException
-     * @see Split#create(Map)
-     */
     @Test
     public void should_substring_begining() throws IOException {
         //given
@@ -345,10 +308,6 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @throws IOException
-     * @see Split#create(Map)
-     */
     @Test
     public void should_substring_end() throws IOException {
         //given
@@ -373,10 +332,113 @@ public class SubstringTest {
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @throws IOException
-     * @see Split#create(Map)
-     */
+    @Test
+    public void should_substring_n_before_end_1() throws IOException {
+        //given
+        parameters.put(FROM_MODE_PARAMETER, Substring.FROM_N_BEFORE_END_PARAMETER);
+        parameters.put(FROM_N_BEFORE_END_PARAMETER, "5");
+        parameters.put(TO_MODE_PARAMETER, Substring.TO_END);
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
+        expectedValues.put("0003", "belly");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_substring_n_before_end_2() throws IOException {
+        //given
+        parameters.put(FROM_MODE_PARAMETER, Substring.FROM_N_BEFORE_END_PARAMETER);
+        parameters.put(FROM_N_BEFORE_END_PARAMETER, "5");
+        parameters.put(TO_MODE_PARAMETER, TO_INDEX_PARAMETER);
+        parameters.put(TO_INDEX_PARAMETER, "9");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon ipsum");
+        expectedValues.put("0003", "ips");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_substring_n_before_end_3() throws IOException {
+        //given
+        parameters.put(FROM_MODE_PARAMETER, Substring.FROM_INDEX_PARAMETER);
+        parameters.put(FROM_INDEX_PARAMETER, "6");
+        parameters.put(TO_MODE_PARAMETER, Substring.TO_N_BEFORE_END_PARAMETER);
+        parameters.put(TO_N_BEFORE_END_PARAMETER, "1");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon ipsum");
+        expectedValues.put("0003", "ipsu");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_substring_n_before_end_4() throws IOException {
+        //given
+        parameters.put(FROM_MODE_PARAMETER, Substring.FROM_N_BEFORE_END_PARAMETER);
+        parameters.put(FROM_N_BEFORE_END_PARAMETER, "5");
+        parameters.put(TO_MODE_PARAMETER, Substring.TO_N_BEFORE_END_PARAMETER);
+        parameters.put(TO_N_BEFORE_END_PARAMETER, "1");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon ipsum");
+        expectedValues.put("0003", "ipsu");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        //then
+        assertEquals(expectedValues, row.values());
+    }
+
     @Test
     public void should_substring_the_new_substring() throws IOException {
         //given
@@ -464,7 +526,6 @@ public class SubstringTest {
         assertFalse(action.acceptColumn(getColumn(Type.DATE)));
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
     }
-
 
     /**
      * @param name name of the column metadata to create.

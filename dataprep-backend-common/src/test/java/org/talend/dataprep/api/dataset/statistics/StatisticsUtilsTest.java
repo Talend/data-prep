@@ -129,7 +129,7 @@ public class StatisticsUtilsTest {
         adaptColumn(integerColumn, DataTypeEnum.INTEGER);
 
         //then
-        final List<HistogramRange<Double>> histogramRanges = ((Histogram<Double>)integerColumn.getStatistics().getHistogram()).getItems();
+        final List<HistogramRange> histogramRanges = integerColumn.getStatistics().getHistogram().getItems();
         assertEquals(2, histogramRanges .size());
         assertEquals(1, histogramRanges.get(0).getOccurrences());
         assertEquals(1, histogramRanges.get(0).getRange().getMin(), 0);

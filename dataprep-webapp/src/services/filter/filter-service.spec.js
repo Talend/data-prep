@@ -19,7 +19,7 @@ describe('Filter service', function () {
 
     beforeEach(inject(function(DatagridService, StateService, StatisticsService) {
         spyOn(StateService, 'addGridFilter').and.returnValue();
-        spyOn(StatisticsService, 'updateStatistics').and.returnValue();
+        spyOn(StatisticsService, 'updateFilteredStatistics').and.returnValue();
     }));
 
     describe('add filter', function () {
@@ -290,40 +290,77 @@ describe('Filter service', function () {
         });
 
         describe('with "inside range" type', function() {
-            it('should create filter', inject(function (FilterService, StateService) {
+            it('should create number filter', inject(function (FilterService, StateService) {
                 //given
                 expect(StateService.addGridFilter).not.toHaveBeenCalled();
 
                 //when
-                FilterService.addFilter('inside_range', 'col1', 'column name', {interval: [0, 22]});
-                FilterService.addFilter('inside_range', 'col2', 'column name2', {interval: [0, 1000000]});
+                FilterService.addFilter('inside_range', 'col1', 'column name', {interval: [0, 22], label: '[0 .. 22[', type: 'integer'});
+                FilterService.addFilter('inside_range', 'col2', 'column name2', {interval: [0, 1000000], label: '[0 .. 1,000,000[', type: 'integer'});
 
                 //then
                 expect(StateService.addGridFilter).toHaveBeenCalled();
                 expect(StateService.addGridFilter.calls.count()).toBe(2);
 
-            var filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-            expect(filterInfo.type).toBe('inside_range');
-            expect(filterInfo.colId).toBe('col1');
-            expect(filterInfo.colName).toBe('column name');
-            expect(filterInfo.value).toBe('[0 .. 22[');
-            expect(filterInfo.editable).toBe(false);
-            expect(filterInfo.args).toEqual({interval: [0, 22]});
-            expect(filterInfo.filterFn()({col1:'5'})).toBeTruthy();
-            expect(filterInfo.filterFn()({col1:'-5'})).toBeFalsy();
-            expect(filterInfo.filterFn()({col1: ''})).toBeFalsy();
+                var filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
+                expect(filterInfo.type).toBe('inside_range');
+                expect(filterInfo.colId).toBe('col1');
+                expect(filterInfo.colName).toBe('column name');
+                expect(filterInfo.value).toBe('[0 .. 22[');
+                expect(filterInfo.editable).toBe(false);
+                expect(filterInfo.args).toEqual({interval: [0, 22], label: '[0 .. 22[', type: 'integer'});
+                expect(filterInfo.filterFn()({col1:'5'})).toBeTruthy();
+                expect(filterInfo.filterFn()({col1:'-5'})).toBeFalsy();
+                expect(filterInfo.filterFn()({col1: ''})).toBeFalsy();
 
-            var filterInfo2 = StateService.addGridFilter.calls.argsFor(1)[0];
-            expect(filterInfo2.type).toBe('inside_range');
-            expect(filterInfo2.colId).toBe('col2');
-            expect(filterInfo2.colName).toBe('column name2');
-            expect(filterInfo2.value).toBe('[0 .. 1,000,000[');
-            expect(filterInfo2.editable).toBe(false);
-            expect(filterInfo2.args).toEqual({interval:  [0, 1000000]});
-            expect(filterInfo2.filterFn()({col2: '1000'})).toBeTruthy();
-            expect(filterInfo2.filterFn()({col2: '-5'})).toBeFalsy();
-            expect(filterInfo2.filterFn()({col2: ''})).toBeFalsy();
-        }));
+                var filterInfo2 = StateService.addGridFilter.calls.argsFor(1)[0];
+                expect(filterInfo2.type).toBe('inside_range');
+                expect(filterInfo2.colId).toBe('col2');
+                expect(filterInfo2.colName).toBe('column name2');
+                expect(filterInfo2.value).toBe('[0 .. 1,000,000[');
+                expect(filterInfo2.editable).toBe(false);
+                expect(filterInfo2.args).toEqual({interval: [0, 1000000], label: '[0 .. 1,000,000[', type: 'integer'});
+                expect(filterInfo2.filterFn()({col2: '1000'})).toBeTruthy();
+                expect(filterInfo2.filterFn()({col2: '-5'})).toBeFalsy();
+                expect(filterInfo2.filterFn()({col2: ''})).toBeFalsy();
+            }));
+
+            it('should create date filter', inject(function (FilterService, StateService) {
+                //given
+                stateMock.playground.grid = {
+                    selectedColumn: {
+                        id: 'col1',
+                        statistics: {
+                            patternFrequencyTable: [{pattern: 'yyyy-MM-dd'}]
+                        }
+                    }
+                };
+
+                expect(StateService.addGridFilter).not.toHaveBeenCalled();
+
+                //when
+                FilterService.addFilter(
+                    'inside_range',
+                    'col1',
+                    'column name',
+                    {interval: [new Date(2014, 0, 1).getTime(), new Date(2014, 1, 1).getTime()], label: 'Jan 2014', type: 'date'},
+                    null
+                );
+
+                //then
+                expect(StateService.addGridFilter).toHaveBeenCalled();
+
+                var filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
+                expect(filterInfo.type).toBe('inside_range');
+                expect(filterInfo.colId).toBe('col1');
+                expect(filterInfo.colName).toBe('column name');
+                expect(filterInfo.value).toBe('Jan 2014');
+                expect(filterInfo.editable).toBe(false);
+                expect(filterInfo.args).toEqual({interval: [new Date(2014, 0, 1).getTime(), new Date(2014, 1, 1).getTime()], label: 'Jan 2014', type: 'date'});
+                expect(filterInfo.filterFn()({col1:'2014-01-10'})).toBe(true);
+                expect(filterInfo.filterFn()({col1:'2015-12-10'})).toBe(false);
+                expect(filterInfo.filterFn()({col1:'NA'})).toBe(false);
+            }));
 
             it('should remove filter', inject(function (FilterService, StateService) {
                 //given
@@ -475,13 +512,13 @@ describe('Filter service', function () {
         it('should trigger statistics update', inject(function(FilterService, StatisticsService) {
             //given
             var removeFnCallback = function() {};
-            expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
 
             //when
             FilterService.addFilter('contains', 'col1', 'column name', {phrase: 'toto'}, removeFnCallback);
 
             //then
-            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
         }));
     });
 
@@ -570,24 +607,24 @@ describe('Filter service', function () {
         it('should trigger statistics update on remove single', inject(function(FilterService, StatisticsService) {
             //given
             var filter = {};
-            expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
 
             //when
             FilterService.removeFilter(filter);
 
             //then
-            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
         }));
 
         it('should trigger statistics update on remove all', inject(function(FilterService, StatisticsService) {
             //given
-            expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
 
             //when
             FilterService.removeAllFilters();
 
             //then
-            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
         }));
     });
 
@@ -663,7 +700,9 @@ describe('Filter service', function () {
                 colId: 'col1',
                 colName: 'column 1',
                 args: {
-                    interval: [5, 10]
+                    interval: [5, 10],
+                    label: '[5 .. 10[',
+                    type: 'integer'
                 },
                 filterFn: function () {
                 }
@@ -672,7 +711,7 @@ describe('Filter service', function () {
             expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
             //when
-            FilterService.updateFilter(oldFilter, [0, 22]);
+            FilterService.updateFilter(oldFilter, {interval: [0, 22], label: '[0 .. 22[', type: 'integer'});
 
             //then
             var argsOldFilter = StateService.updateGridFilter.calls.argsFor(0)[0];
@@ -683,15 +722,58 @@ describe('Filter service', function () {
             expect(newFilter.type).toBe('inside_range');
             expect(newFilter.colId).toBe('col1');
             expect(newFilter.colName).toBe('column 1');
-            expect(newFilter.args.interval).toEqual([0,22]);
+            expect(newFilter.args).toEqual({interval: [0, 22], label: '[0 .. 22[', type: 'integer'});
             expect(newFilter.value).toBe('[0 .. 22[');
+        }));
+
+        it('should update "inside_range" filter for date column', inject(function (FilterService, StateService) {
+            //given
+            var oldFilter = {
+                type: 'inside_range',
+                colId: 'col1',
+                colName: 'column 1',
+                args: {
+                    interval: [new Date(2014, 0, 1).getTime(), new Date(2014, 1, 1).getTime()],
+                    label: 'Jan 2014',
+                    type: 'date'
+                },
+                filterFn: function () {
+                }
+            };
+
+            stateMock.playground.grid = {
+                selectedColumn: {
+                    id: '0000',
+                    statistics: {
+                        patternFrequencyTable: [{pattern: 'yyyy-MM-dd'}]
+                    }
+                }
+            };
+
+
+            expect(StateService.updateGridFilter).not.toHaveBeenCalled();
+
+            //when
+            FilterService.updateFilter(oldFilter, {interval: [new Date(2015, 2, 1).getTime(), new Date(2015, 3, 1).getTime()], label: 'Mar 2015', type: 'date'});
+
+            //then
+            var argsOldFilter = StateService.updateGridFilter.calls.argsFor(0)[0];
+            expect(argsOldFilter).toBe(oldFilter);
+
+            var newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
+            expect(newFilter).not.toBe(oldFilter);
+            expect(newFilter.type).toBe('inside_range');
+            expect(newFilter.colId).toBe('col1');
+            expect(newFilter.colName).toBe('column 1');
+            expect(newFilter.args).toEqual({interval: [new Date(2015, 2, 1).getTime(), new Date(2015, 3, 1).getTime()], label: 'Mar 2015', type: 'date'});
+            expect(newFilter.value).toBe('Mar 2015');
         }));
 
         it('should update "inside range" filter when adding an existing range filter', inject(function (FilterService, StateService) {
             //given
             var removeCallback = function () {
             };
-            FilterService.addFilter('inside_range', 'col1', 'column name', {interval: [0, 22]}, removeCallback);
+            FilterService.addFilter('inside_range', 'col1', 'column name', {interval: [0, 22], label: '[0 .. 22[', type: 'integer'}, removeCallback);
 
             expect(StateService.updateGridFilter).not.toHaveBeenCalled();
             expect(StateService.addGridFilter.calls.count()).toBe(1);
@@ -701,7 +783,7 @@ describe('Filter service', function () {
             stateMock.playground.filter.gridFilters = [filterInfo];
 
             //when
-            FilterService.addFilter('inside_range', 'col1', 'column name', {interval: [5, 10]});
+            FilterService.addFilter('inside_range', 'col1', 'column name', {interval: [5, 10], label: '[5 .. 10[', type: 'integer'});
 
             //then
             expect(StateService.updateGridFilter).toHaveBeenCalled();
@@ -716,7 +798,7 @@ describe('Filter service', function () {
             expect(newFilterInfos.colName).toBe('column name');
             expect(newFilterInfos.value).toBe('[5 .. 10[');
             expect(newFilterInfos.editable).toBe(false);
-            expect(newFilterInfos.args).toEqual({interval: [5, 10]});
+            expect(newFilterInfos.args).toEqual({interval: [5, 10], label: '[5 .. 10[', type: 'integer'});
             expect(newFilterInfos.filterFn()({col1: '8'})).toBeTruthy();
             //the 4 is no more inside the brush range
             expect(newFilterInfos.filterFn()({col1: '4'})).toBeFalsy();
@@ -734,13 +816,13 @@ describe('Filter service', function () {
                 },
                 filterFn: function() {}
             };
-            expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
 
             //when
             FilterService.updateFilter(oldFilter, 'Tata');
 
             //then
-            expect(StatisticsService.updateStatistics).toHaveBeenCalled();
+            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
         }));
     });
 });

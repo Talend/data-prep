@@ -1,5 +1,5 @@
 {
   "serverUrl": "http://10.42.10.99:8888",
   "enableDebug": false,
-  "version": "1.0.RC2-SNAPSHOT"
+  "version": "1.0.0-SNAPSHOT"
 }

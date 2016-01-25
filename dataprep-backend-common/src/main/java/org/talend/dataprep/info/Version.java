@@ -48,6 +48,15 @@ public class Version {
     }
 
     @Override
+    public String toString() {
+        return "{" +
+                "versionId='" + versionId + '\'' +
+                ", buildId='" + buildId + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;

@@ -98,6 +98,7 @@
      * @param {boolean} disable-enter Flag that disable the validation on ENTER press. The validation is a click on the button with `modal-primary-button` class
      * @param {function} before-close Optional callback that is called before user close event. If the callback return true, the modal is closed.
      * @param {function} on-close Optional close callback which is called at each modal close
+     * @param {boolean} disableCloseOnBackgroundClick enables/disables the user to hide the modal on background click/Escape hit
      * @param {class} no-focus Prevent the targeted input to be focused on modal show
      * @param {class} talend-modal-close Hide the modal on click
      * @param {class} modal-header FULLSCREEN mode only.<br/>The modal header
@@ -114,7 +115,8 @@
                 fullscreen: '=',
                 disableEnter: '=',
                 beforeClose: '&',
-                onClose: '&'
+                onClose: '&',
+                disableCloseOnBackgroundClick: '='
             },
             bindToController: true,
             controllerAs: 'talendModalCtrl',
@@ -166,13 +168,16 @@
                      * and stop click propagation in inner modal to avoid a click on the dismiss screen
                      */
                     var attachListeners = function () {
-                        // Close action on all 'talend-modal-close' elements
                         iElement.find('.talend-modal-close').on('click', hideModal);
+                        // Close action on modal background click
+                        if(!ctrl.disableCloseOnBackgroundClick){
+                            iElement.find('.modal-window').on('click', hideModal);
 
-                        // stop propagation on click on inner modal to prevent modal close
-                        innerElement.on('click', function (e) {
-                            e.stopPropagation();
-                        });
+                            // stop propagation on click on inner modal to prevent modal close
+                            innerElement.on('click', function (e) {
+                                e.stopPropagation();
+                            });
+                        }
                     };
 
                     /**
@@ -189,7 +194,7 @@
                         innerElement.bind('keydown', function (e) {
 
                             // hide modal on 'ESC' keydown
-                            if (e.keyCode === 27) {
+                            if (e.keyCode === 27 && !ctrl.disableCloseOnBackgroundClick) {
                                 hideModal();
                             }
 

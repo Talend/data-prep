@@ -7,6 +7,6 @@ public class NoOpSecurity implements Security {
 
     @Override
     public String getUserId() {
-        return "anonymousUser";
+        return System.getProperty("user.name");
     }
 }

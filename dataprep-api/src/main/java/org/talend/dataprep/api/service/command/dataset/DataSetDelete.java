@@ -1,5 +1,6 @@
 package org.talend.dataprep.api.service.command.dataset;
 
+import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
 import static org.talend.dataprep.exception.error.APIErrorCodes.DATASET_STILL_IN_USE;
 
 import java.io.IOException;
@@ -11,7 +12,6 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -20,8 +20,6 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.common.GenericCommand;
 import org.talend.dataprep.api.service.command.preparation.PreparationListForDataSet;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -42,10 +40,6 @@ public class DataSetDelete extends GenericCommand<Void> {
     /** Dataset id. */
     private final String dataSetId;
 
-    /** Content cache. */
-    @Autowired
-    private ContentCache contentCache;
-
     /**
      * Default constructor.
      *
@@ -58,10 +52,7 @@ public class DataSetDelete extends GenericCommand<Void> {
         execute(() -> onExecute(dataSetId));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_DELETE_DATASET, e,
                 ExceptionContext.build().put("dataSetId", dataSetId)));
-        on(HttpStatus.OK).then((req, res) -> {
-            contentCache.evict(new ContentCacheKey(dataSetId)); // clear the cache (dataset and all its preparations)
-            return null;
-        });
+        on(HttpStatus.OK).then(asNull());
     }
 
     private HttpRequestBase onExecute(String dataSetId) {

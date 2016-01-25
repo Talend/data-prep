@@ -30,9 +30,9 @@
             bindToController: true,
             controllerAs: 'datagridCtrl',
             controller: 'DatagridCtrl',
-            link: function (scope, iElement, iAttrs, ctrl) {
+            link: function (scope, iElement) {
                 var grid;
-                var columnTimeout, externalTimeout, focusTimeout;
+                var columnTimeout, columnStyleTimeout, cellHighlightTimeout, externalTimeout, focusTimeout;
 
                 //------------------------------------------------------------------------------------------------------
                 //--------------------------------------------------GETTERS---------------------------------------------
@@ -45,6 +45,26 @@
                  */
                 function getMetadata() {
                     return state.playground.dataset;
+                }
+
+                /**
+                 * @ngdoc method
+                 * @name getSelectedColumn
+                 * @methodOf data-prep.datagrid.directive:Datagrid
+                 * @description Get the selected column
+                 */
+                function getSelectedColumn() {
+                    return state.playground.grid.selectedColumn;
+                }
+
+                /**
+                 * @ngdoc method
+                 * @name getSelectedColumn
+                 * @methodOf data-prep.datagrid.directive:Datagrid
+                 * @description Get the selected column
+                 */
+                function getSelectedLine() {
+                    return state.playground.grid.selectedLine;
                 }
 
                 /**
@@ -88,7 +108,6 @@
                  */
                 var onMetadataChange = function onMetadataChange() {
                     if (grid) {
-                        DatagridStyleService.resetCellStyles();
                         grid.scrollRowToTop(0);
                         DatagridColumnService.renewAllColumns(true);
                     }
@@ -103,34 +122,18 @@
                 var onDataChange = function onDataChange(data) {
                     if (data) {
                         initGridIfNeeded();
-                        var columns;
-                        var selectedColumn;
-                        var stateSelectedColumn = ctrl.state.playground.grid.selectedColumn; //column metadata
-                        var stateSelectedLine = ctrl.state.playground.grid.selectedLine; //column metadata
 
-                        //create columns, manage style and size, set columns in grid
+                        //create columns
                         clearTimeout(columnTimeout);
                         columnTimeout = setTimeout(function () {
-                            columns = DatagridColumnService.createColumns(data.metadata.columns, data.preview);
-
-                            if (!data.preview) {
-                                selectedColumn = stateSelectedColumn ? _.find(columns, {id: stateSelectedColumn.id}) : null;
-                                if (stateSelectedLine) {
-                                    var stateSelectedColumnIndex = columns.indexOf(selectedColumn);
-                                    DatagridStyleService.scheduleHighlightCellsContaining(stateSelectedLine, stateSelectedColumnIndex);
-                                }
-                            }
-
-                            DatagridStyleService.updateColumnClass(columns, selectedColumn);
+                            var columns = DatagridColumnService.createColumns(data.metadata.columns, data.preview);
                             DatagridSizeService.autosizeColumns(columns); // IMPORTANT : this set columns in the grid
                             DatagridColumnService.renewAllColumns(false);
-                        }, 0);
 
-                        //manage column selection (external)
-                        clearTimeout(externalTimeout);
-                        if (!data.preview) {
-                            externalTimeout = setTimeout(DatagridExternalService.updateSuggestionPanel.bind(null, null, true), 0);
-                        }
+                            var selectedColumnId = getSelectedColumn() && getSelectedColumn().id;
+                            DatagridStyleService.updateColumnClass(selectedColumnId);
+                            grid.invalidate();
+                        }, 0);
 
                         //focus specific column
                         clearTimeout(focusTimeout);
@@ -148,6 +151,55 @@
                     if (grid) {
                         DatagridStyleService.resetCellStyles();
                         grid.scrollRowToTop(0);
+                    }
+                };
+
+                /**
+                 * @ngdoc method
+                 * @name onColumnSelectionChange
+                 * @methodOf data-prep.datagrid.directive:Datagrid
+                 * @description Refresh selected column grid styles
+                 */
+                var onColumnSelectionChange = function onColumnSelectionChange() {
+                    if (grid) {
+                        //Update column style
+                        clearTimeout(columnStyleTimeout);
+                        columnStyleTimeout = setTimeout(function() {
+                            var selectedColumnId = getSelectedColumn() && getSelectedColumn().id;
+
+                            if(getSelectedLine()) {
+                                DatagridStyleService.updateColumnClass(selectedColumnId);
+                            }
+                            else {
+                                DatagridStyleService.resetStyles(selectedColumnId);
+                            }
+                            grid.invalidate();
+                        }, 0);
+
+                        //manage column selection (external)
+                        clearTimeout(externalTimeout);
+                        if (!getData().preview) {
+                            externalTimeout = setTimeout(DatagridExternalService.updateSuggestionPanel.bind(null, true), 300);
+                        }
+                    }
+                };
+
+                /**
+                 * @ngdoc method
+                 * @name onSelectionChange
+                 * @methodOf data-prep.datagrid.directive:Datagrid
+                 * @description Refresh the cell highlight
+                 */
+                var onSelectionChange = function onSelectionChange() {
+                    if (grid) {
+                        clearTimeout(cellHighlightTimeout);
+                        var stateSelectedLine = getSelectedLine();
+                        if (!getData().preview && stateSelectedLine) {
+                            cellHighlightTimeout = setTimeout(function() {
+                                var colId = getSelectedColumn() && getSelectedColumn().id;
+                                DatagridStyleService.highlightCellsContaining(colId, stateSelectedLine[colId]);
+                            }, 500);
+                        }
                     }
                 };
 
@@ -207,6 +259,17 @@
                  * When lookup is displayed/hidden changes, the grid should be resized fit available space
                  */
                 scope.$watch(getResizeCondition, resize);
+
+                /**
+                 * when a new column is selected
+                 */
+                scope.$watch(getSelectedColumn, onColumnSelectionChange);
+
+                /**
+                 * when the active cell change
+                 */
+                scope.$watchGroup([getSelectedLine, getSelectedColumn], onSelectionChange);
+
             }
         };
     }

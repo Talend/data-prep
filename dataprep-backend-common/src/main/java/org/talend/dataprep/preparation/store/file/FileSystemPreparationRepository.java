@@ -1,21 +1,5 @@
 package org.talend.dataprep.preparation.store.file;
 
-import static org.talend.dataprep.api.preparation.PreparationActions.ROOT_CONTENT;
-import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +14,21 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import static org.talend.dataprep.api.preparation.PreparationActions.ROOT_CONTENT;
+import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
 
 /**
  * File system implementation of preparation repository.
@@ -90,6 +89,10 @@ public class FileSystemPreparationRepository implements PreparationRepository {
     public <T extends Identifiable> T get(String id, Class<T> clazz) {
 
         final File from = getIdentifiableFile(clazz, id);
+        if (from.getName().startsWith(".")) {
+            LOG.info("Ignore hidden file {}", from.getName());
+            return null;
+        }
         if (!from.exists()) {
             LOG.debug("preparation #{} not found in file system", id);
             return null;

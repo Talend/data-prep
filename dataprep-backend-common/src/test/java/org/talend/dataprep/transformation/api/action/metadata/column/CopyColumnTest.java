@@ -114,6 +114,33 @@ public class CopyColumnTest {
         assertEquals(expected, rowMetadata.getColumns());
     }
 
+
+    /**
+     * Test with non-consecutive columns ids. This can occurs after some column deletion.
+     */
+    @Test
+    public void test_TDP_1184() {
+        // given
+        final List<ColumnMetadata> input = new ArrayList<>();
+        input.add(createMetadata("0000", "recipe"));
+        input.add(createMetadata("0001", "steps"));
+        input.add(createMetadata("0003", "last update"));
+        final RowMetadata rowMetadata = new RowMetadata(input);
+
+        final List<ColumnMetadata> expected = new ArrayList<>();
+        expected.add(createMetadata("0000", "recipe"));
+        expected.add(createMetadata("0001", "steps"));
+        expected.add(createMetadata("0004", "steps_copy"));
+        expected.add(createMetadata("0003", "last update"));
+
+        // when
+        ActionTestWorkbench.test(rowMetadata, action.create(parameters).getRowAction());
+
+        // then
+        final List<ColumnMetadata> columns = rowMetadata.getColumns();
+        assertEquals(expected, columns);
+    }
+
     @Test
     public void should_copy_statistics() throws Exception {
         // given

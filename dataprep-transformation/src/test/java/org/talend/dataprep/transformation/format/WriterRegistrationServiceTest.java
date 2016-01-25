@@ -33,7 +33,7 @@ public class WriterRegistrationServiceTest extends BaseFormatTest {
 
     @Test
     public void shouldReturnWriterWithParameter() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(CSVWriter.SEPARATOR_PARAM_NAME, "|");
         final TransformerWriter csvWriter = service.getWriter(CSVFormat.CSV, output, parameters);
         Assert.assertTrue(csvWriter instanceof CSVWriter);

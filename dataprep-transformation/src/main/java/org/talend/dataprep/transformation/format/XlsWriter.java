@@ -36,7 +36,7 @@ public class XlsWriter implements TransformerWriter {
 
     private List<ColumnMetadata> columnsMetadata;
 
-    public XlsWriter(final OutputStream output, Map<String, Object> parameters) {
+    public XlsWriter(final OutputStream output, Map<String, String> parameters) {
         this(output);
     }
 

@@ -18,6 +18,10 @@ node_modules
 # Dependency directory
 bower_components/
 
+### npm
+# log file
+npm-debug.log
+
 ### Project
 .DS_Store
 .sass-cache/

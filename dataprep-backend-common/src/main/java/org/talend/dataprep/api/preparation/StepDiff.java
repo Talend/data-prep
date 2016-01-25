@@ -18,4 +18,9 @@ public class StepDiff implements Serializable {
     public void setCreatedColumns(List<String> createdColumns) {
         this.createdColumns = createdColumns;
     }
+
+    @Override
+    public String toString() {
+        return "StepDiff{" + "createdColumns=" + createdColumns + '}';
+    }
 }

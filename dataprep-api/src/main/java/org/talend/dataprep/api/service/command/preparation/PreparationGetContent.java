@@ -1,20 +1,22 @@
 package org.talend.dataprep.api.service.command.preparation;
 
+import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Action;
+import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.APIService;
-import org.talend.dataprep.api.service.command.CloneInputStream;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
-import org.talend.dataprep.api.service.command.dataset.DataSetGetMetadata;
-import org.talend.dataprep.api.service.command.transformation.Transform;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.PreparationErrorCodes;
 
 /**
  * Command used to retrieve the preparation content.
@@ -33,7 +35,7 @@ public class PreparationGetContent extends PreparationCommand<InputStream> {
     private Long sample;
 
     /**
-     * Constructor.
+     * Private constructor to ensure the IoC.
      *
      * @param client the http client to use.
      * @param id the preparation id.
@@ -55,46 +57,29 @@ public class PreparationGetContent extends PreparationCommand<InputStream> {
         this.id = id;
         this.version = version;
         this.sample = sample;
+        execute(this::onExecute);
+        on(HttpStatus.OK).then(pipeStream());
     }
 
-    /**
-     * @see com.netflix.hystrix.HystrixCommand#run()
-     */
-    @Override
-    protected InputStream run() throws Exception {
+    private HttpRequestBase onExecute() {
 
-        PreparationContext preparationContext = getContext(id, version, sample);
-        InputStream content = preparationContext.getContent();
-        List<Action> actions = preparationContext.getActions();
-
-        // preparation in cache
-        if (preparationContext.fromCache()) {
-            return content;
+        // get the preparation to extract the dataset id (DataSetId should be sent from the frontend instead)
+        final Preparation preparation;
+        try {
+            preparation = getPreparation(id);
+        } catch (IOException e) {
+            throw new TDPException( //
+                    PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST, //
+                    ExceptionContext.build().put("id", id));
         }
+        String datasetId = preparation.getDataSetId();
 
-        // Run transformation (if any action to perform)
-        if (!actions.isEmpty()) {
-            final String encodedActions = serializeActions(actions);
-            // pass content to the transformation service as input as well as actions to perform on input...
-            final Transform transformCommand = context.getBean(Transform.class, client, content, encodedActions);
-            content = transformCommand.execute();
+        String uri = transformationServiceUrl + "/apply/preparation/" + id + "/dataset/" + datasetId + "/JSON";
+        uri += "?stepId=" + version;
+        if (sample != null) {
+            uri += "&sample=" + sample;
         }
-
-        //@formatter:off
-        ContentCacheKey key = new ContentCacheKey(preparationContext.getPreparation(),
-                                                  preparationContext.getVersion(),
-                                                  sample);
-        //@formatter:on
-        DataSetGetMetadata getMetadata = context.getBean(DataSetGetMetadata.class, client,
-                preparationContext.getPreparation().getDataSetId());
-        final boolean inProgress = getMetadata.execute().getLifecycle().inProgress();
-        if (!inProgress) {
-            // Statistics are done, can safely save to cache
-            final OutputStream newCacheEntry = contentCache.put(key, ContentCache.TimeToLive.DEFAULT);
-            return new CloneInputStream(content, newCacheEntry);
-        } else {
-            return content;
-        }
+        return new HttpGet(uri);
     }
 
 }

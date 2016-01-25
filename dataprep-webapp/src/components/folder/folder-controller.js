@@ -19,7 +19,7 @@
 		 * @param {object} folder - the folder to go
 		 */
 		vm.goToFolder = function goToFolder (folder) {
-			FolderService.getFolderContent(folder);
+			FolderService.getContent(folder);
 		};
 
 		/**
@@ -37,7 +37,7 @@
 		/**
 		 * Load folders on start
 		 */
-		FolderService.getFolderContent();
+		FolderService.getContent();
 	}
 
 	angular.module('data-prep.folder')

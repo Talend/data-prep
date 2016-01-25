@@ -57,22 +57,6 @@ var fetchConfiguration, bootstrapDataPrepApplication;
                             template: '<preparation-list></preparation-list>'
                         }
                     }
-                })
-                .state('nav.home.recentfiles', {
-                    url: '/recentfiles',
-                    views: {
-                        'home-content': {
-                            template: '<div style="padding-top:100px; text-align: center;font-size: xx-large;" translate-once="COMING_SOON"></div>'
-                        }
-                    }
-                })
-                .state('nav.home.favorites', {
-                    url: '/favorites',
-                    views: {
-                        'home-content': {
-                            template: '<div style="padding-top:100px; text-align: center;font-size: xx-large;" translate-once="COMING_SOON"></div>'
-                        }
-                    }
                 });
 
             $urlRouterProvider.otherwise('/home/datasets');

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 
 /**
@@ -27,7 +28,7 @@ public class CSVWriter implements TransformerWriter {
     private static final Character DEFAULT_SEPARATOR = ',';
 
     /** Separator argument name. */
-    public static final String SEPARATOR_PARAM_NAME = "exportParameters.csvSeparator";
+    public static final String SEPARATOR_PARAM_NAME = ExportFormat.PREFIX + "csvSeparator";
 
     /** The CSV writer. */
     private final au.com.bytecode.opencsv.CSVWriter writer;
@@ -51,8 +52,8 @@ public class CSVWriter implements TransformerWriter {
      * @param output where to write the dataset.
      * @param parameters parameters to get the separator from.
      */
-    public CSVWriter(final OutputStream output, Map<String, Object> parameters) {
-        String actualSeparator = (String) parameters.get(SEPARATOR_PARAM_NAME);
+    public CSVWriter(final OutputStream output, Map<String, String> parameters) {
+        String actualSeparator = parameters.get(SEPARATOR_PARAM_NAME);
         if (actualSeparator == null || StringUtils.isEmpty(actualSeparator) || actualSeparator.length() > 1) {
             actualSeparator = String.valueOf(DEFAULT_SEPARATOR);
         }

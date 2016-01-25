@@ -33,6 +33,7 @@ describe('Dataset Service', function () {
         spyOn(DatasetListService, 'update').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'clone').and.returnValue($q.when(true));
         spyOn(DatasetListService, 'processCertification').and.returnValue($q.when(true));
+        spyOn(DatasetListService, 'move').and.returnValue($q.when(true));
 
         spyOn(DatasetRestService, 'getContent').and.returnValue($q.when({}));
         spyOn(DatasetRestService, 'getSheetPreview').and.returnValue($q.when({}));
@@ -106,15 +107,15 @@ describe('Dataset Service', function () {
 
                 //when
                 var result = DatasetService.update(dataset);
-                $rootScope.$digest();
 
                 //then
                 expect(result).toBe(promiseWithProgress);
                 expect(DatasetListService.update).toHaveBeenCalledWith(dataset);
             }));
 
-            it('should consolidate preparations and datasets', inject(function ($rootScope, DatasetService, DatasetListService, PreparationListService) {
+            it('should consolidate preparations and datasets', inject(function ($rootScope, $q, DatasetService, DatasetListService, PreparationListService) {
                 //given
+                spyOn(DatasetListService, 'getDatasetsPromise').and.returnValue($q.when(datasets));
                 var dataset = DatasetListService.datasets[0];
 
                 //when
@@ -174,12 +175,13 @@ describe('Dataset Service', function () {
                 var dataset = DatasetListService.datasets[0];
                 var newFolder = {id:'/wine/beer'};
                 var name = 'my clone';
+                var mockPromise = {};
 
                 //when
-                DatasetService.clone(dataset, newFolder, name);
+                DatasetService.clone(dataset, newFolder, name, mockPromise);
 
                 //then
-                expect(DatasetListService.clone).toHaveBeenCalledWith(dataset, newFolder, name);
+                expect(DatasetListService.clone).toHaveBeenCalledWith(dataset, newFolder, name, mockPromise);
             }));
 
             it('should consolidate preparations and datasets', inject(function ($rootScope, DatasetService, DatasetListService, PreparationListService) {
@@ -196,6 +198,38 @@ describe('Dataset Service', function () {
                 expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
             }));
         });
+
+        describe('move', function() {
+            it('should love a dataset and return the http promise (with progress function)', inject(function ($rootScope, DatasetService, DatasetListService) {
+                //given
+                var dataset = DatasetListService.datasets[0];
+                var folder = {id:'/wine/foo'};
+                var newFolder = {id:'/wine/beer'};
+                var name = 'my clone';
+                var mockPromise = {};
+
+                //when
+                DatasetService.move(dataset, folder, newFolder, name, mockPromise);
+
+                //then
+                expect(DatasetListService.move).toHaveBeenCalledWith(dataset, folder, newFolder, name, mockPromise);
+            }));
+
+            it('should consolidate preparations and datasets', inject(function ($rootScope, DatasetService, DatasetListService, PreparationListService) {
+                //given
+                var dataset = DatasetListService.datasets[0];
+                var name = 'my clone';
+
+                //when
+                DatasetService.move(dataset, name);
+                $rootScope.$digest();
+
+                //then
+                expect(PreparationListService.refreshMetadataInfos).toHaveBeenCalledWith(datasets);
+                expect(DatasetListService.refreshDefaultPreparation).toHaveBeenCalledWith(preparations);
+            }));
+        });
+
     });
 
     describe('metadata actions', function () {
@@ -392,7 +426,15 @@ describe('Dataset Service', function () {
             expect(actual).toBe(datasets[1]);
         }));
 
-        it('should not find dataset by name', inject(function (DatasetService) {
+        it('should find dataset by name with case insensitive', inject(function (DatasetService) {
+            //when
+            var actual = DatasetService.getDatasetByName(datasets[1].name.toUpperCase());
+
+            //then
+            expect(actual).toBe(datasets[1]);
+        }));
+
+        it('should NOT find dataset by name', inject(function (DatasetService) {
             //when
             var actual = DatasetService.getDatasetByName('unknown');
 
@@ -418,7 +460,7 @@ describe('Dataset Service', function () {
             expect(actual).toBe(datasets[2]);
         }));
 
-        it('should not find dataset by id', inject(function ($q, $rootScope, DatasetService, DatasetListService) {
+        it('should NOT find dataset by id', inject(function ($q, $rootScope, DatasetService, DatasetListService) {
             //given
             spyOn(DatasetListService, 'getDatasetsPromise').and.returnValue($q.when(datasets));
 
@@ -435,7 +477,6 @@ describe('Dataset Service', function () {
             //then
             expect(actual).toBeUndefined();
         }));
-
     });
 
     describe('utils', function () {

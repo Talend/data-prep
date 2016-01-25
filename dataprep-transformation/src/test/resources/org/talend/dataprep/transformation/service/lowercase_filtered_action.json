@@ -1,0 +1,19 @@
+{
+  "actions": [
+    {
+      "action": "lowercase",
+      "parameters": {
+        "scope": "column",
+        "column_id": "0002",
+        "column_name": "lastname",
+        "row_id": 6,
+        "filter": {
+          "contains": {
+            "field": "0007",
+            "value": "13"
+          }
+        }
+      }
+    }
+  ]
+}

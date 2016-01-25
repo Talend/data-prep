@@ -108,7 +108,7 @@ public abstract class ActionMetadata {
     public abstract boolean acceptColumn(final ColumnMetadata column);
 
     /**
-     * @return The label of the parameter, translated in the user locale.
+     * @return The label of the action, translated in the user locale.
      * @see MessagesBundle
      */
     public String getLabel() {
@@ -116,11 +116,19 @@ public abstract class ActionMetadata {
     }
 
     /**
-     * @return The description of the parameter, translated in the user locale.
+     * @return The description of the action, translated in the user locale.
      * @see MessagesBundle
      */
     public String getDescription() {
         return MessagesBundle.getString("action." + getName() + ".desc");
+    }
+
+    /**
+     * @return The url of the optionnal help page.
+     * @see MessagesBundle
+     */
+    public String getDocUrl() {
+        return MessagesBundle.getString("action." + getName() + ".url", StringUtils.EMPTY);
     }
 
     /**
@@ -251,34 +259,45 @@ public abstract class ActionMetadata {
         final Predicate<DataSetRow> filter = getFilter(parametersCopy);
 
         return builder().withCompile((actionContext) -> {
-            actionContext.setParameters(parametersCopy);
-            compile(actionContext);
+            try {
+                actionContext.setParameters(parametersCopy);
+                compile(actionContext);
+            } catch (Exception e) {
+                LOGGER.error("Unable to use action '{}' due to unexpected error.", this.getName(), e);
+                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            }
         })
         .withRow((row, context) -> {
-            if (implicitFilter() && !filter.test(row)) {
-                // Return non-modifiable row since it didn't pass the filter (but metadata might be modified).
-                row = row.unmodifiable();
+            try {
+                if (implicitFilter() && !filter.test(row)) {
+                    // Return non-modifiable row since it didn't pass the filter (but metadata might be modified).
+                    row = row.unmodifiable();
+                }
+                // Select the correct method to call depending on scope.
+                switch (scope) {
+                case CELL:
+                    ((CellAction) this).applyOnCell(row, context);
+                    break;
+                case LINE:
+                    ((RowAction) this).applyOnLine(row, context);
+                    break;
+                case COLUMN:
+                    ((ColumnAction) this).applyOnColumn(row, context);
+                    break;
+                case DATASET:
+                    ((DataSetAction) this).applyOnDataSet(row, context);
+                    break;
+                default:
+                    LOGGER.warn("Is there a new action scope ??? {}", scope);
+                    break;
+                }
+                // For following actions, returns the row as modifiable to allow further modifications.
+                return row.modifiable();
+            } catch (Exception e) {
+                LOGGER.error("Unable to use action '{}' due to unexpected error.", this.getName(), e);
+                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+                return row.modifiable();
             }
-            // Select the correct method to call depending on scope.
-            switch (scope) {
-            case CELL:
-                ((CellAction) this).applyOnCell(row, context);
-                break;
-            case LINE:
-                ((RowAction) this).applyOnLine(row, context);
-                break;
-            case COLUMN:
-                ((ColumnAction) this).applyOnColumn(row, context);
-                break;
-            case DATASET:
-                ((DataSetAction) this).applyOnDataSet(row, context);
-                break;
-            default:
-                LOGGER.warn("Is there a new action scope ??? {}", scope);
-                break;
-            }
-            // For following actions, returns the row as modifiable to allow further modifications.
-            return row.modifiable();
         }).build();
     }
 

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
@@ -135,7 +134,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_do_nothing_without_any_parameters() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -146,7 +145,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_do_nothing_with_wrong_parameters_1() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -157,7 +156,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_do_nothing_with_wrong_parameters_2() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -166,10 +165,15 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
     }
 
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_do_nothing_with_wrong_parameters_3() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -178,9 +182,14 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_do_nothing_with_wrong_parameters_4() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -190,6 +199,11 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
     }
 
     @Test

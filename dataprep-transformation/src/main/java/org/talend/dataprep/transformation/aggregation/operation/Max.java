@@ -51,4 +51,9 @@ public class Max extends AbstractAggregator implements Aggregator {
             context.setValue(value);
         }
     }
+
+    @Override
+    public void normalize(AggregationResult result) {
+        // Nothing to do
+    }
 }

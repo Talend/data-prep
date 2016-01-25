@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.service.analysis.SynchronousDataSetAnalyzer;
+import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 
 /**
  * This test ensures the data set service behaves as stated in <a

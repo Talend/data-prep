@@ -1,0 +1,32 @@
+{
+  "actions": [
+    {
+      "action": "uppercase",
+      "parameters": {
+        "column_id": "0002",
+        "column_name": "lastname",
+        "scope": "column"
+      }
+    },
+    {
+      "action": "uppercase",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "firstname",
+        "scope": "column"
+      }
+    },
+    {
+      "action": "delete_on_value",
+      "parameters": {
+        "column_id": "0004",
+        "column_name": "city",
+        "value": {
+          "token": "Columbia",
+          "operator": "equals"
+        },
+        "scope": "column"
+      }
+    }
+  ]
+}

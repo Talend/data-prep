@@ -22,7 +22,7 @@ public class PreparationGet extends GenericCommand<InputStream> {
     private PreparationGet(HttpClient client, String id) {
         super(APIService.PREPARATION_GROUP, client);
         execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + id));
-        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_LIST, e));
+        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_CONTENT, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
     }

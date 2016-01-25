@@ -3,9 +3,20 @@ package org.talend.dataprep.folder.store.file;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -24,6 +35,9 @@ import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
 
 import com.google.common.collect.Lists;
+import org.talend.dataprep.folder.store.NotEmptyFolderException;
+
+import static java.util.Collections.emptyList;
 
 @Component("folderRepository#file")
 @ConditionalOnProperty(name = "folder.store", havingValue = "file", matchIfMissing = false)
@@ -61,7 +75,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     }
 
     @Override
-    public Iterable<Folder> children( String parentPath) {
+    public Iterable<Folder> children(String parentPath) {
         try {
             Path folderPath;
             if (StringUtils.isNotEmpty(parentPath)) {
@@ -70,7 +84,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
                 folderPath = getRootFolder();
             }
             if (Files.notExists(folderPath)) {
-                return Collections.emptyList();
+                return emptyList();
             }
             Stream<Path> childrenStream = Files.list(folderPath);
             List<Folder> children = new ArrayList<>();
@@ -96,7 +110,6 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     }
 
     /**
-     *
      * @param path
      * @return a path using {@link FolderRepository#PATH_SEPARATOR}
      */
@@ -229,9 +242,51 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
     }
 
     @Override
-    public void removeFolder(String folder) {
+    public void removeFolder(String folder) throws NotEmptyFolderException {
 
-        Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
+        final Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
+        final List<FolderEntry> folderEntries = new ArrayList<>();
+
+        final FoldersConsumer foldersConsumer = new FoldersConsumer() {
+            @Override
+            public Collection<Folder> getFolders() {
+                return emptyList();
+            }
+
+            @Override
+            public Collection<FolderEntry> getFolderEntries() {
+                return folderEntries;
+            }
+
+            @Override
+            public void accept(Path path) {
+                if (!Files.isDirectory(path)) {
+                    // so we have a folderEntry here
+                    // try to read it
+                    try {
+                        try (InputStream inputStream = Files.newInputStream(path)) {
+                            Properties properties = new Properties();
+                            properties.load(inputStream);
+
+                            FolderEntry folderEntry = new FolderEntry();
+                            folderEntry.setId(properties.getProperty("id"));
+                            folderEntry.setPath(path.getParent().toString());
+                            folderEntry.setContentType("contentType");
+                            folderEntry.setContentId(properties.getProperty("contentId"));
+                            folderEntries.add(folderEntry);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e.getMessage(), e);
+                    }
+                }
+            }
+        };
+
+        visitFolders(foldersConsumer, path);
+
+        if (!foldersConsumer.getFolderEntries().isEmpty()) {
+            throw new NotEmptyFolderException("The folder or a child contains data");
+        }
 
         try {
             FileUtils.deleteDirectory(path.toFile());
@@ -246,7 +301,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
         Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
 
         if (Files.notExists(path)) {
-            return Collections.emptyList();
+            return emptyList();
         }
 
         try {
@@ -344,83 +399,84 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
 
         Set<Folder> folders = new HashSet<>();
 
-        FoldersConsumer foldersConsumer = new FoldersConsumer()
-        {
+        FoldersConsumer foldersConsumer = new FoldersConsumer() {
             @Override
-            public Collection<Folder> getFolders()
-            {
+            public Collection<Folder> getFolders() {
                 return folders;
             }
 
             @Override
-            public void accept( Path path )
-            {
+            public Collection<FolderEntry> getFolderEntries() {
+                return emptyList();
+            }
+
+            @Override
+            public void accept(Path path) {
                 if (Files.isDirectory(path)) {
                     String pathStr = pathAsString(path);
                     folders.add(Folder.Builder.folder() //
-                                    .path(pathStr) //
-                                    .name(extractName(pathStr)) //
-                                    .build());
+                            .path(pathStr) //
+                            .name(extractName(pathStr)) //
+                            .build());
                 }
             }
         };
 
-        visitAllFolders( foldersConsumer );
+        visitFolders(foldersConsumer, getRootFolder());
 
         return folders;
     }
 
     @Override
-    public Iterable<Folder> searchFolders( String queryString )
-    {
+    public Iterable<Folder> searchFolders(String queryString) {
         Set<Folder> folders = new HashSet<>();
 
-        FoldersConsumer foldersConsumer = new FoldersConsumer()
-        {
+        FoldersConsumer foldersConsumer = new FoldersConsumer() {
+
             @Override
-            public Collection<Folder> getFolders()
-            {
+            public Collection<Folder> getFolders() {
                 return folders;
             }
 
             @Override
-            public void accept( Path path )
-            {
+            public Collection<FolderEntry> getFolderEntries() {
+                return emptyList();
+            }
+
+            @Override
+            public void accept(Path path) {
                 if (Files.isDirectory(path)) {
                     String pathStr = pathAsString(path);
                     String pathName = extractName(pathStr);
-                    if (StringUtils.containsIgnoreCase( pathName, queryString )) {
-                        folders.add( Folder.Builder.folder() //
-                                         .path( pathStr ) //
-                                         .name( pathName ) //
-                                         .build() );
+                    if (StringUtils.containsIgnoreCase(pathName, queryString)) {
+                        folders.add(Folder.Builder.folder() //
+                                .path(pathStr) //
+                                .name(pathName) //
+                                .build());
                     }
                 }
             }
         };
 
-        visitAllFolders( foldersConsumer );
+        visitFolders(foldersConsumer, getRootFolder());
 
         return folders;
     }
 
 
-    protected void visitAllFolders( final FoldersConsumer foldersConsumer ){
+    protected void visitFolders(final FoldersConsumer foldersConsumer, final Path startFolder) {
 
         try {
-            Files.walkFileTree(getRootFolder(), new FileVisitor<Path>() {
+            Files.walkFileTree(startFolder, new FileVisitor<Path>() {
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-
                     Files.list(dir).forEach(foldersConsumer);
-
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -441,16 +497,18 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
 
     private interface FoldersConsumer extends Consumer<Path> {
         Collection<Folder> getFolders();
+
+        Collection<FolderEntry> getFolderEntries();
     }
 
-    protected String buildFileName( FolderEntry folderEntry){
+    protected String buildFileName(FolderEntry folderEntry) {
         return folderEntry.getContentType() + '@' + folderEntry.getContentId();
     }
 
     @Override
     public void copyFolderEntry(FolderEntry folderEntry, String destinationPath) {
-        FolderEntry cloned = new FolderEntry( folderEntry.getContentType(), folderEntry.getContentId(), destinationPath);
-        addFolderEntry( cloned );
+        FolderEntry cloned = new FolderEntry(folderEntry.getContentType(), folderEntry.getContentId(), destinationPath);
+        addFolderEntry(cloned);
     }
 
     @Override
@@ -470,7 +528,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter implemen
 
         try {
 
-            Path destinationFile = Paths.get(path.toString(), folderEntry.id());
+            Path destinationFile = Paths.get(path.toString(), buildFileName( folderEntry ));
             Files.move(originFile, destinationFile);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);

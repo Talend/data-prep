@@ -30,7 +30,7 @@ describe('folder directive', function() {
 
 	beforeEach(inject(function($rootScope, $compile, FolderService) {
 		scope = $rootScope.$new();
-		spyOn(FolderService, 'getFolderContent').and.returnValue();
+		spyOn(FolderService, 'getContent').and.returnValue();
 
 		createElement = function() {
 			element = angular.element('<folder></folder>');
@@ -62,20 +62,20 @@ describe('folder directive', function() {
 		createElement();
 
 		//then
-		expect(FolderService.getFolderContent).toHaveBeenCalled();
+		expect(FolderService.getContent).toHaveBeenCalled();
 	}));
 
 	it('should change current folder on different folder click', inject(function(FolderService) {
 		//given
 		createElement();
-		expect(FolderService.getFolderContent.calls.count()).toBe(1);
+		expect(FolderService.getContent.calls.count()).toBe(1);
 
 		//when
 		element.find('#folder_1 .dropdown-container > a').eq(0).click();
 		scope.$digest();
 
 		//then
-		expect(FolderService.getFolderContent.calls.count()).toBe(2);
+		expect(FolderService.getContent.calls.count()).toBe(2);
 	}));
 
 	describe('folder children', function(){
@@ -121,7 +121,7 @@ describe('folder directive', function() {
 			scope.$digest();
 
 			//then
-			expect(FolderService.getFolderContent).toHaveBeenCalledWith(stateMock.folder.menuChildren[0]);
+			expect(FolderService.getContent).toHaveBeenCalledWith(stateMock.folder.menuChildren[0]);
 		}));
 	});
 });

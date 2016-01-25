@@ -10,12 +10,30 @@
      * <horizontal-barchart id="hBarChart"
      *    width="320"
      *    height="400"
-     *    on-click="columnProfileCtrl.barchartClickFn"
-     *    visu-data="columnProfileCtrl.histogram.data"
-     *    value-field="formattedValue"
-     *    key-field="{{columnProfileCtrl.histogram.key}}"
-     *    key-label="{{columnProfileCtrl.histogram.label}}">
+     *    on-click="columnProfileCtrl.barchartClickFn(item)"
+     *
+     *    key-field="country"
+     *    key-label="Country of the world"
+     *
+     *    primary-data="primaryData"
+     *    primary-value-field="occurrences"
+     *    primary-bar-class="blueBar"
+     *
+     *    secondary-data="secondaryData"
+     *    secondary-value-field="filteredOccurrences"
+     *    secondary-bar-class="greenBar">
      * </horizontal-barchart>
+     * @param {number}      width The chart width
+     * @param {number}      height The chart height
+     * @param {function}    onClick The callback on chart bar click. The item in argument is the element in primaryData that is selected.
+     * @param {string}      keyField The key property name in primaryData elements
+     * @param {string}      keyLabel The label property name in primaryData elements used in tooltip
+     * @param {array}       primaryData The primary value array to render
+     * @param {string}      primaryValueField The primary value property name in primaryData
+     * @param {string}      primaryBarClass The primary chart bar class name. Default: none
+     * @param {array}       secondaryData The secondary value array to render
+     * @param {string}      secondaryValueField The secondary value property name in secondaryData
+     * @param {string}      secondaryBarClass The secondary chart bar class name. Default: 'blueBar'
      * */
 
     function HorizontalBarchart() {
@@ -23,202 +41,299 @@
             restrict: 'E',
             scope: {
                 onClick: '&',
-                visuData: '=',
                 keyField: '@',
-                valueField: '@',
-                valueField2: '@',
                 keyLabel: '@',
-                frontBarClass: '@'
+                primaryData: '=',
+                primaryValueField: '@',
+                primaryBarClass: '@',
+                secondaryData: '=',
+                secondaryValueField: '@',
+                secondaryBarClass: '@'
             },
             link: function (scope, element, attrs) {
-                var xField = scope.keyField;
-                var yField = scope.valueField;
-                var yField2 = scope.valueField2;
-                var renderTimeout;
-                var tip;
+                var BAR_MIN_WIDTH = 3;
+                var containerId = '#' + attrs.id;
+                var renderPrimaryTimeout, renderSecondaryTimeout;
 
-                function renderHBarchart(statData) {
-                    var container = attrs.id;
-                    var width = +attrs.width;
-                    var height = Math.ceil(((+attrs.height) / 15) * (statData.length + 1));
+                // Define chart sizes and margin
+                var margin = {top: 15, right: 20, bottom: 10, left: 10};
+                var containerWidth = +attrs.width;
 
-                    var m = [15, 10, 10, 10],
-                        w = width - m[1] - m[3],
-                        h = height - m[0] - m[2];
+                //------------------------------------------------------------------------------------------------------
+                //----------------------------------------------- Tooltip ----------------------------------------------
+                //------------------------------------------------------------------------------------------------------
+                var tooltip = d3.tip()
+                    .attr('class', 'horizontal-barchart-cls d3-tip')
+                    .offset([-10, 0])
+                    .html(function (d) {
+                        var key = getKey(d);
+                        var primaryValue = getPrimaryValue(d);
+                        var secondaryValue = getSecondaryValueFromKey(key);
 
-                    var x = d3.scale.linear().range([0, w]),
-                        y = d3.scale.ordinal().rangeRoundBands([0, h], 0.18);
-
-                    var xAxis = d3.svg.axis().scale(x).tickFormat(d3.format('d')).orient('top').tickSize(-h).ticks(Math.abs(x.range()[1] - x.range()[0]) / 50),
-                        yAxis = d3.svg.axis().scale(y).orient('left').tickSize(0);
-
-                    if (!scope.keyField) {
-                        scope.keyField = 'occurrences'; //Value by default
-                    }
-
-                    if (!scope.keyLabel) {
-                        scope.keyLabel = 'Occurrences'; //Value by default
-                    }
-
-                    xField = scope.keyField;
-
-                    tip = d3.tip()
-                        .attr('class', 'horizontal-barchart-cls d3-tip')
-                        .offset([-10, 0])
-                        .html(function (d) {
-
-                            if (typeof d[yField2] !== 'undefined') {
-                                return '<strong>' + scope.keyLabel + ':</strong> <span style="color:yellow">' + d[yField2] + ' / ' + d[xField] + '</span>' +
-                                    '<br/>' +
-                                    '<br/>' +
-                                    '<strong>Record:</strong> <span style="color:yellow">' + d[yField] + '</span>';
-                            }
-                            return '<strong>' + scope.keyLabel + ':</strong> <span style="color:yellow">' + d[xField] + '</span>' +
-                                '<br/>' +
-                                '<br/>' +
-                                '<strong>Record:</strong> <span style="color:yellow">' + d[yField] + '</span>';
-
-                        });
-
-                    var svg = d3.select('#' + container).append('svg')
-                        .attr('class', 'horizontal-barchart-cls')
-                        .attr('width', w + m[1] + m[3])
-                        .attr('height', h + m[0] + m[2])
-                        .append('g')
-                        .attr('transform', 'translate(' + m[3] + ',' + m[0] + ')');
-
-                    svg.call(tip);
-
-                    // Parse numbers, and sort by value.
-                    statData.forEach(function (d) {
-                        d[xField] = +d[xField];
+                        return '<strong>' + scope.keyLabel + ':</strong> <span style="color:yellow">' + (secondaryValue ? secondaryValue + ' / ' : '') + primaryValue + '</span>' +
+                            '<br/><br/>' +
+                            '<strong>Record:</strong> <span style="color:yellow">' + key + '</span>';
                     });
 
-                    // Set the scale domain.
-                    x.domain([0, d3.max(statData, function (d) {
-                        return d[xField];
-                    })]);
-                    y.domain(statData.map(function (d) {
-                        return d[yField];
-                    }));
+                //------------------------------------------------------------------------------------------------------
+                //---------------------------------------- Data manipulation -------------------------------------------
+                //------------------------------------------------------------------------------------------------------
+                function getKey(data) {
+                    return data[scope.keyField];
+                }
 
-                    var bar;
-                    var frontBar;
-                    //If multi columns
-                    if (statData.length > 0 && typeof statData[0][yField2] !== 'undefined') {
+                function getPrimaryValue(data) {
+                    return data[scope.primaryValueField];
+                }
 
-                        bar = svg.selectAll('g.bar')
-                            .data(statData)
-                            .enter().append('g')
-                            .attr('class', 'bar')
-                            .attr('transform', function (d) {
-                                return 'translate(0,' + y(d[yField]) + ')';
-                            });
+                function getSecondaryValue(data) {
+                    return data[scope.secondaryValueField];
+                }
 
-                        bar.append('rect')
-                            .attr('height', y.rangeBand())
-                            .attr('width', x(0))
-                            .transition().delay(function (d, i) {
-                                return i * 30;
-                            })
-                            .attr('width', function (d) {
-                                return x(d[xField]);
-                            });
-
-                        frontBar = svg.selectAll('g.' + scope.frontBarClass ? scope.frontBarClass : 'frontBar')
-                            .data(statData)
-                            .enter().append('g')
-                            .attr('class', scope.frontBarClass ? scope.frontBarClass : 'frontBar')
-                            .attr('transform', function (d) {
-                                return 'translate(0,' + y(d[yField]) + ')';
-                            });
-
-                        frontBar.append('rect')
-                            .attr('height', y.rangeBand())
-                            .attr('width', x(0))
-                            .transition().delay(function (d, i) {
-                                return i * 30;
-                            })
-                            .attr('width', function (d) {
-                                return x(d[yField2]);
-                            });
-                    } else {
-
-                        frontBar = svg.selectAll('g.' + scope.frontBarClass ? scope.frontBarClass : 'frontBar')
-                            .data(statData)
-                            .enter().append('g')
-                            .attr('class', scope.frontBarClass ? scope.frontBarClass : 'frontBar')
-                            .attr('transform', function (d) {
-                                return 'translate(0,' + y(d[yField]) + ')';
-                            });
-
-                        frontBar.append('rect')
-                            .attr('height', y.rangeBand())
-                            .attr('width', x(0))
-                            .transition().delay(function (d, i) {
-                                return i * 30;
-                            })
-                            .attr('width', function (d) {
-                                return x(d[xField]);
-                            });
+                function getSecondaryValueFromKey(key) {
+                    var secondaryData = scope.secondaryData;
+                    if (!secondaryData) {
+                        return 0;
                     }
 
+                    var secondaryDataItem = _.find(secondaryData, function (dataItem) {
+                        return getKey(dataItem) === key;
+                    });
+                    return secondaryDataItem ? getSecondaryValue(secondaryDataItem) : 0;
+                }
+
+                //------------------------------------------------------------------------------------------------------
+                //--------------------------------------------- Bar class ----------------------------------------------
+                //------------------------------------------------------------------------------------------------------
+                function getPrimaryClassName() {
+                    return scope.primaryBarClass ? scope.primaryBarClass : 'transparentBar';
+                }
+
+                function getSecondaryClassName() {
+                    return scope.secondaryBarClass ? scope.secondaryBarClass : 'blueBar';
+                }
+
+                //------------------------------------------------------------------------------------------------------
+                //------------------------------------------- Chart utils ----------------------------------------------
+                //------------------------------------------------------------------------------------------------------
+                var xScale, yScale;
+                var xAxis, yAxis;
+                var svg;
+
+                function initScales(width, height) {
+                    xScale = d3.scale.linear().range([0, width]);
+                    yScale = d3.scale.ordinal().rangeBands([0, height], 0.18);
+                }
+
+                function configureScales(statData) {
+                    xScale.domain([0, d3.max(statData, getPrimaryValue)]);
+                    yScale.domain(statData.map(getKey));
+                }
+
+                function initAxes(height) {
+
+                    var ticksThreshold;
+                    if(xScale.domain()[1] >= 1e9){
+                        ticksThreshold = 2;
+                    }
+                    else if(xScale.domain()[1] < 1e9 && xScale.domain()[1] >= 1e6){
+                        ticksThreshold = 3;
+                    }
+                    else if(xScale.domain()[1] < 1e6 && xScale.domain()[1] >= 1e3){
+                        ticksThreshold =  5;
+                    }
+                    else {
+                        ticksThreshold = 7;
+                    }
+                    var ticksNbre = xScale.domain()[1] > ticksThreshold ? ticksThreshold : xScale.domain()[1];
+
+                    xAxis = d3.svg.axis()
+                        .scale(xScale)
+                        .tickFormat(d3.format(',d'))
+                        .orient('top')
+                        .tickSize(-height)
+                        .ticks(ticksNbre);
+                    yAxis = d3.svg.axis()
+                        .scale(yScale)
+                        .orient('left')
+                        .tickSize(0);
+                }
+
+                function createContainer(width, height) {
+                    svg = d3.select(containerId)
+                        .append('svg')
+                        .attr('class', 'horizontal-barchart-cls')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .append('g')
+                        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                    svg.call(tooltip);
+                }
+
+                function drawGrid() {
                     svg.append('g')
-                        .attr('class', 'x axis')
-                        .call(xAxis);
+                        .attr('class', 'grid')
+                        .call(xAxis)
+                        .selectAll('.tick text')
+                        .style('text-anchor', 'middle');
+                }
 
-                    svg.selectAll('.tick text').style('text-anchor', 'end');
+                function createBarsContainers() {
+                    svg.append('g')
+                        .attr('class', 'primaryBar');
 
                     svg.append('g')
-                        .attr('class', 'y axis')
-                        .call(yAxis);
+                        .attr('class', 'secondaryBar');
+                }
 
-                    frontBar.append('foreignObject')
-                        .attr('width', w)
-                        .attr('height', y.rangeBand())
-                        .append('xhtml:div')
-                        .attr('class', 'foreign-object-body')
-                        .html(function (d) {
-                            return d[yField] ? d[yField] : '(EMPTY)';
-                        });
+                function adaptToMinHeight(realWidth) {
+                    return realWidth > 0 && realWidth < BAR_MIN_WIDTH ? BAR_MIN_WIDTH : realWidth;
+                }
 
-                    /************btgrect*********/
-                    var bgBar = svg.selectAll('g.bg-rect')
-                        .data(statData)
-                        .enter().append('g')
+                function drawBars(containerClassName, statData, getValue, barClassName) {
+                    var bars = svg.select('.' + containerClassName)
+                        .selectAll('.' + barClassName)
+                        .data(statData, getKey);
+
+                    //enter
+                    bars.enter()
+                        .append('rect')
+                        .attr('class', barClassName)
                         .attr('transform', function (d) {
-                            return 'translate(0,' + (y(d[yField]) - 2) + ')';
+                            return 'translate(0,' + yScale(getKey(d)) + ')';
+                        })
+                        .attr('height', yScale.rangeBand())
+                        .attr('width', xScale(0))
+                        .transition().delay(function (d, i) {
+                            return i * 30;
+                        })
+                        .attr('width', function (d) {
+                            var realWidth = xScale(getValue(d));
+                            return adaptToMinHeight(realWidth);
                         });
 
-                    bgBar.append('rect')
-                        .attr('width', w)
-                        .attr('height', y.rangeBand() + 4)
-                        .attr('class', 'bg-rect')
-                        .style('opacity', 0)
-                        .attr('z-index', 100)
-                        .on('mouseenter', function (d) {
-                            d3.select(this).style('opacity', 0.4);
-                            tip.show(d);
+                    //update
+                    bars.transition()
+                        .ease('exp')
+                        .delay(function (d, i) {
+                            return i * 30;
                         })
-                        .on('mouseleave', function (d) {
-                            d3.select(this).style('opacity', 0);
-                            tip.hide(d);
-                        })
-                        .on('click', function (d) {
-                            scope.onClick()(d);
+                        .attr('width', function (d) {
+                            var realWidth = xScale(getValue(d));
+                            return adaptToMinHeight(realWidth);
                         });
                 }
 
-                scope.$watch('visuData',
-                    function (statData) {
-                        element.empty();
-                        //because the tooltip is not a child of the horizontal barchart element
-                        d3.selectAll('.horizontal-barchart-cls.d3-tip').remove();
-                        if (statData) {
-                            clearTimeout(renderTimeout);
-                            renderTimeout = setTimeout(renderHBarchart.bind(this, statData), 100);
+                function drawKeysLabels(statData, width) {
+                    svg.append('g')
+                        .attr('class', 'labels')
+                        .selectAll('label')
+                        .data(statData)
+                        .enter()
+
+                        //label container
+                        .append('foreignObject')
+                        .attr('width', width)
+                        .attr('height', yScale.rangeBand())
+                        .attr('transform', function (d) {
+                            return 'translate(0,' + yScale(getKey(d)) + ')';
+                        })
+
+                        //label
+                        .append('xhtml:div')
+                        .attr('class', 'label ' + getSecondaryClassName())
+                        .html(function (d) {
+                            return getKey(d) || '(EMPTY)';
+                        });
+                }
+
+                function drawHoverBars(statData, width) {
+                    svg.selectAll('g.bg-rect')
+                        .data(statData)
+                        .enter()
+                        .append('g')
+                        .attr('class', 'hover')
+                        .attr('transform', function (d) {
+                            return 'translate(0, ' + (yScale(getKey(d)) - 2) + ')';
+                        })
+                        .append('rect')
+                        .attr('width', width)
+                        .attr('height', yScale.rangeBand() + 4)
+                        .attr('class', 'bg-rect')
+                        .style('opacity', 0)
+                        .on('mouseenter', function (d) {
+                            d3.select(this).style('opacity', 0.4);
+                            tooltip.show(d);
+                        })
+                        .on('mouseleave', function (d) {
+                            d3.select(this).style('opacity', 0);
+                            tooltip.hide(d);
+                        })
+                        .on('click', function (d) {
+                            scope.onClick({item: d});
+                        });
+                }
+
+                //------------------------------------------------------------------------------------------------------
+                //------------------------------------------- Chart render ---------------------------------------------
+                //------------------------------------------------------------------------------------------------------
+                function renderWholeHBarchart(firstVisuData, secondVisuData) {
+                    // Chart sizes dynamically computed (it depends on the bars number)
+                    var containerHeight = Math.ceil(((+attrs.height) / 15) * (firstVisuData.length + 1));
+                    var width = containerWidth - margin.left - margin.right;
+                    var height = containerHeight - margin.top - margin.bottom;
+
+                    initScales(width, height);
+                    configureScales(firstVisuData);
+                    initAxes(height);
+                    createContainer(containerWidth, containerHeight);
+                    drawGrid();
+                    createBarsContainers();
+
+                    drawBars('primaryBar', firstVisuData, getPrimaryValue, getPrimaryClassName());
+                    renderSecondaryBars(secondVisuData);
+
+                    drawKeysLabels(firstVisuData, width);
+                    drawHoverBars(firstVisuData, width);
+                }
+
+                function renderSecondaryBars(secondVisuData) {
+                    if (secondVisuData) {
+                        drawBars('secondaryBar', secondVisuData, getSecondaryValue, getSecondaryClassName());
+                    }
+                }
+
+                //------------------------------------------------------------------------------------------------------
+                //---------------------------------------------- Watchers ----------------------------------------------
+                //------------------------------------------------------------------------------------------------------
+                var oldVisuData;
+                scope.$watchGroup(['primaryData', 'secondaryData'],
+                    function (newValues) {
+                        var firstVisuData = newValues[0];
+                        var secondVisuData = newValues[1];
+                        var firstDataHasChanged = firstVisuData !== oldVisuData;
+
+                        if (firstDataHasChanged) {
+                            oldVisuData = firstVisuData;
+                            element.empty();
+                            //because the tooltip is not a child of the horizontal barchart element
+                            d3.selectAll('.horizontal-barchart-cls.d3-tip').remove();
+                            if (firstVisuData) {
+                                clearTimeout(renderPrimaryTimeout);
+                                renderPrimaryTimeout = setTimeout(renderWholeHBarchart.bind(this, firstVisuData, secondVisuData), 100);
+                            }
                         }
-                    });
+                        else {
+                            clearTimeout(renderSecondaryTimeout);
+                            renderSecondaryTimeout = setTimeout(renderSecondaryBars.bind(this, secondVisuData), 100);
+                        }
+                    }
+                );
+
+                scope.$on('$destroy', function () {
+                    d3.selectAll('.horizontal-barchart-cls.d3-tip').remove();
+                });
             }
         };
     }

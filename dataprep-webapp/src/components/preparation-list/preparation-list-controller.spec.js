@@ -78,10 +78,9 @@ describe('Preparation list controller', function () {
         scope = $rootScope.$new();
 
         createController = function () {
-            var ctrl = $controller('PreparationListCtrl', {
+            return $controller('PreparationListCtrl', {
                 $scope: scope
             });
-            return ctrl;
         };
 
         spyOn($rootScope, '$emit').and.returnValue();
@@ -91,12 +90,12 @@ describe('Preparation list controller', function () {
         spyOn(PreparationService, 'getPreparations').and.callFake(function () {
             return $q.when(allPreparations);
         });
-        spyOn(PreparationService, 'preparationsList').and.returnValue(allPreparations);
         spyOn(PreparationService, 'setName').and.returnValue($q.when(true));
         spyOn(PlaygroundService, 'load').and.returnValue($q.when(true));
         spyOn(StateService, 'showPlayground').and.returnValue();
         spyOn(MessageService, 'success').and.returnValue(null);
         spyOn(MessageService, 'error').and.returnValue(null);
+
     }));
 
     afterEach(inject(function ($stateParams) {
@@ -166,7 +165,7 @@ describe('Preparation list controller', function () {
         expect(StateService.showPlayground).toHaveBeenCalled();
     }));
 
-    it('should delete preparation, show success message on confirm', inject(function ($q, TalendConfirmService, PreparationService, MessageService) {
+    it('should remove preparation, show success message on confirm', inject(function ($q, TalendConfirmService, PreparationService, MessageService) {
         //given
         spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when(true));
 
@@ -177,7 +176,7 @@ describe('Preparation list controller', function () {
         };
 
         //when
-        ctrl.delete(preparation);
+        ctrl.remove(preparation);
         scope.$digest();
 
         //then
@@ -203,7 +202,7 @@ describe('Preparation list controller', function () {
         };
 
         //when
-        ctrl.delete(preparation);
+        ctrl.remove(preparation);
         scope.$digest();
 
         //then
@@ -321,7 +320,7 @@ describe('Preparation list controller', function () {
             scope.$digest();
 
             //then
-            expect(MessageService.success).toHaveBeenCalledWith('PREPARATION_CLONING_SUCCESS_TITLE', 'PREPARATION_CLONING_SUCCESS');
+            expect(MessageService.success).toHaveBeenCalledWith('PREPARATION_COPYING_SUCCESS_TITLE', 'PREPARATION_COPYING_SUCCESS');
         }));
 
         it('should manage loader screen', inject(function ($rootScope) {

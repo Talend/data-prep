@@ -266,14 +266,14 @@ header.navigation {
     clear: both;
     display: block;
     height: $navigation-height;
-    padding-left: $navigation-padding / 2;
+    padding-left: 8em;
     padding-right: $navigation-padding;
 
     @include media($large-screen) {
       background: transparent;
       clear: none;
-      float: right;
-      width: 45%;
+      float: left;
+      width: 70%;
     }
   }
 

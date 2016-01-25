@@ -163,7 +163,7 @@
             DatasetService.import(importParameters, state.folder.currentFolder)
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                    FolderService.getFolderContent(state.folder.currentFolder);
+                    FolderService.getContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;
@@ -192,7 +192,7 @@
             DatasetService.import(importParameters, state.folder.currentFolder)
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                    FolderService.getFolderContent(state.folder.currentFolder);
+                    FolderService.getContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;
@@ -218,7 +218,7 @@
             vm.datasetName = name;
 
             // show dataset name popup when name already exists
-            if(DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder)) {
+            if(DatasetService.getDatasetByName(name)) {
                 vm.datasetNameModal = true;
             }
             // create dataset with calculated name if it is unique
@@ -239,19 +239,15 @@
             var name = vm.datasetName;
 
             // if the name exists, ask for update or creation
-            vm.existingDatasetFromName = DatasetService.getDatasetByNameAndFolder(name, state.folder.currentFolder);
+            vm.existingDatasetFromName = DatasetService.getDatasetByName(name);
             if (vm.existingDatasetFromName) {
                 TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], {dataset: vm.datasetName})
-                    .then(
-                    function () {
-                        vm.updateExistingDataset();
-                    },
-                    function (cause) {
+                    .then(vm.updateExistingDataset)
+                    .catch(function (cause) {
                         if (cause !== 'dismiss') {
                             vm.createDatasetFromExistingName();
                         }
-                    }
-                );
+                    });
             }
             // create with requested name
             else {
@@ -303,7 +299,7 @@
                 })
                 .then(function (event) {
                     DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                    FolderService.getFolderContent(state.folder.currentFolder);
+                    FolderService.getContent(state.folder.currentFolder);
                 })
                 .catch(function () {
                     dataset.error = true;

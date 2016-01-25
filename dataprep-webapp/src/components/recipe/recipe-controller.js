@@ -10,10 +10,14 @@
      * @requires data-prep.services.playground.service:PreviewService
      * @requires data-prep.services.preparation.service:PreparationService
      * @requires data-prep.services.filters.service:FilterAdapterService
+     * @requires data-prep.services.state.service:StateService
+     * @requires data-prep.services.lookup.service:LookupService
      */
-    function RecipeCtrl(state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterAdapterService) {
+    function RecipeCtrl(state, RecipeService, PlaygroundService, PreparationService, PreviewService, MessageService, FilterAdapterService, StateService, LookupService) {
         var vm = this;
         vm.recipeService = RecipeService;
+        vm.showModal = {};
+
 
         /**
          * @ngdoc method
@@ -51,13 +55,6 @@
          * @description Update a step parameters in the loaded preparation
          */
         vm.updateStep = function updateStep(step, newParams) {
-            PreviewService.cancelPreview();
-            PreparationService.copyImplicitParameters(newParams, step.actionParameters.parameters);
-
-            if(! PreparationService.paramsHasChanged(step, newParams)) {
-                return;
-            }
-
             return PlaygroundService.updateStep(step, newParams)
                 .then(function() {
                     vm.showModal = {};
@@ -90,6 +87,33 @@
             }
         };
 
+        /**
+         * @ngdoc method
+         * @name toogleStep
+         * @methodOf data-prep.recipe.controller:RecipeCtrl
+         * @param {object} step The selected step
+         * @description Action on step selection.
+         * It display dynamic parameters modal and treat specific params (ex: lookup)
+         */
+        vm.select = function select(step) {
+            toggleDynamicParams(step);
+            toggleSpecificParams(step);
+        };
+
+        function toggleDynamicParams(step) {
+            vm.showModal[step.transformation.stepId] = !!vm.hasDynamicParams(step);
+        }
+
+        function toggleSpecificParams(step) {
+            if (state.playground.lookup.visibility && state.playground.lookup.step === step) {
+                StateService.setLookupVisibility(false);
+            }
+            else if (step.transformation.name === 'lookup') {
+                LookupService.loadFromStep(step)
+                    .then(StateService.setLookupVisibility.bind(null, true));
+            }
+        }
+
         //---------------------------------------------------------------------------------------------
         //------------------------------------------DELETE STEP----------------------------------------
         //---------------------------------------------------------------------------------------------
@@ -98,9 +122,18 @@
          * @name remove
          * @methodOf data-prep.recipe.controller:RecipeCtrl
          * @param {object} step The step to remove
+         * @param {object} $event The click event
          * @description Show a popup to confirm the removal and remove it when user confirm
          */
-        vm.remove = PlaygroundService.removeStep;
+        vm.remove = function remove(step, $event) {
+            $event.stopPropagation();
+            PlaygroundService.removeStep(step)
+                .then(function () {
+                    if (state.playground.lookup.visibility && state.playground.lookup.step) {
+                        StateService.setLookupVisibility(false);
+                    }
+                });
+        };
 
         //---------------------------------------------------------------------------------------------
         //------------------------------------------PARAMETERS-----------------------------------------
@@ -133,7 +166,7 @@
          * @description Return if the step has parameters
          */
         vm.hasParameters = function hasParameters(step) {
-            return vm.hasStaticParams(step) || vm.hasDynamicParams(step);
+            return !isSpecificParams(step) && (vm.hasStaticParams(step) || vm.hasDynamicParams(step));
         };
 
         /**
@@ -159,31 +192,20 @@
             return step.transformation.cluster;
         };
 
+        /**
+         * @ngdoc method
+         * @name isSpecificParams
+         * @methodOf data-prep.recipe.controller:RecipeCtrl
+         * @param {object} step The step to test
+         * @description Return if the step has parameters that will be treated specifically
+         */
+        function isSpecificParams(step) {
+            return step.transformation.name === 'lookup';
+        }
+
         //---------------------------------------------------------------------------------------------
         //---------------------------------------------Preview-----------------------------------------
         //---------------------------------------------------------------------------------------------
-
-        /**
-         * @ngdoc method
-         * @name updatePreview
-         * @methodOf data-prep.recipe.controller:RecipeCtrl
-         * @param {string} updateStep The step position index to update for the preview
-         * @param {object} params The new step params
-         * @description [PRIVATE] Call the preview service to display the diff between the original steps and the updated steps
-         */
-        var updatePreview = function updatePreview(updateStep, params) {
-            var originalParameters = updateStep.actionParameters.parameters;
-            PreparationService.copyImplicitParameters(params, originalParameters);
-
-            //Parameters has not changed
-            if(updateStep.inactive || ! PreparationService.paramsHasChanged(updateStep, params)) {
-                return;
-            }
-
-            var currentStep = RecipeService.getLastActiveStep();
-            var preparationId = state.playground.preparation.id;
-            PreviewService.getPreviewUpdateRecords(preparationId, currentStep, updateStep, params);
-        };
 
         /**
          * @ngdoc method
@@ -194,7 +216,7 @@
          */
         vm.previewUpdateClosure = function previewUpdateClosure(step) {
             return function(params) {
-                updatePreview(step, params);
+                PlaygroundService.updatePreview(step, params);
             };
         };
 

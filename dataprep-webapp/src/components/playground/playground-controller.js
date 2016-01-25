@@ -98,15 +98,12 @@
          * @description show hides lookup panel and populates its grid
          */
         vm.toggleLookup = function toggleLookup() {
-            StateService.setLookupVisibility(!state.playground.lookup.visibility);
-
-            if (!state.playground.lookup.actions.length) {
-                LookupService.getActions(state.playground.dataset.id)
-                    .then(function (lookupActions) {
-                        if (lookupActions.length) {
-                            LookupService.loadContent(lookupActions[0]);
-                        }
-                    });
+            if(state.playground.lookup.visibility) {
+                StateService.setLookupVisibility(false);
+            }
+            else {
+                LookupService.initLookups()
+                    .then(StateService.setLookupVisibility.bind(null, true));
             }
         };
 
@@ -164,7 +161,7 @@
                 .then(hideAll)
                 .finally(function () {
                     vm.saveInProgress = false;
-                    FolderService.getFolderContent(state.folder.currentFolder);
+                    FolderService.getContent(state.folder.currentFolder);
                 });
         };
 
@@ -183,6 +180,11 @@
                 $state.go('nav.home.datasets', {datasetid: null});
             }
         };
+
+        //--------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------FEEDBACK---------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
+        vm.openFeedbackForm = StateService.showFeedback;
     }
 
     /**

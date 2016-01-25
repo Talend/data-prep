@@ -11,23 +11,17 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.transformation.Application;
+import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-public class TransformerFactoryTest {
+public class TransformerFactoryTest extends TransformationBaseTest {
 
     @Autowired
     Jackson2ObjectMapperBuilder builder;
@@ -38,8 +32,8 @@ public class TransformerFactoryTest {
     @Test
     public void getExporter_csv_exporter_should_write_csv_format() throws Exception {
         // given
-        Map<String, Object> arguments = new HashMap<>();
-        arguments.put("exportParameters.csvSeparator", ";");
+        Map<String, String> arguments = new HashMap<>();
+        arguments.put(ExportFormat.PREFIX + "csvSeparator", ";");
         final OutputStream outputStream = new ByteArrayOutputStream();
         final Configuration configuration = Configuration.builder() //
                 .args(arguments) //

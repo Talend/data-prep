@@ -15,6 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -42,13 +43,18 @@ public class Lookup extends ActionMetadata implements DataSetAction {
 
     /** The action name. */
     public static final String LOOKUP_ACTION_NAME = "lookup"; //$NON-NLS-1$
+
+    /** This class' logger. */
     public static final Logger LOGGER = LoggerFactory.getLogger(Lookup.class);
+
+    /** DataSet service url. */
+    @Value("${dataset.service.url}")
+    private String datasetServiceUrl;
 
     /** Lookup parameters */
     protected enum Parameters {
                                LOOKUP_DS_NAME,
                                LOOKUP_DS_ID,
-                               LOOKUP_DS_URL,
                                LOOKUP_JOIN_ON,
                                LOOKUP_JOIN_ON_NAME, // needed to display human friendly parameters
                                LOOKUP_SELECTED_COLS;
@@ -72,11 +78,7 @@ public class Lookup extends ActionMetadata implements DataSetAction {
     private String adaptedNameValue = EMPTY;
 
     /** Adapted value of the dataset_id parameter. */
-
     private String adaptedDatasetIdValue = EMPTY;
-
-    /** Adapted value of the url parameter. */
-    private String adaptedUrlValue = EMPTY;
 
 
     /**
@@ -105,7 +107,6 @@ public class Lookup extends ActionMetadata implements DataSetAction {
         parameters.add(ImplicitParameters.FILTER.getParameter());
         parameters.add(new Parameter(LOOKUP_DS_NAME.getKey(), STRING, adaptedNameValue, false, false));
         parameters.add(new Parameter(LOOKUP_DS_ID.getKey(), STRING, adaptedDatasetIdValue, false, false));
-        parameters.add(new Parameter(LOOKUP_DS_URL.getKey(), STRING, adaptedUrlValue, false, false));
         parameters.add(new Parameter(LOOKUP_JOIN_ON.getKey(), STRING, EMPTY, false, false));
         parameters.add(new Parameter(LOOKUP_JOIN_ON_NAME.getKey(), STRING, EMPTY, false, false));
         parameters.add(new Parameter(LOOKUP_SELECTED_COLS.getKey(), LIST, EMPTY, false, false));
@@ -125,13 +126,11 @@ public class Lookup extends ActionMetadata implements DataSetAction {
      * Adapt the parameters default values according to the given dataset.
      *
      * @param dataset the dataset to adapt the parameters value from.
-     * @param datasetUrl the dataset url to use in parameters.
      * @return the adapted lookup
      */
-    public Lookup adapt(DataSetMetadata dataset, String datasetUrl) {
+    public Lookup adapt(DataSetMetadata dataset) {
         adaptedNameValue = dataset.getName();
         adaptedDatasetIdValue = dataset.getId();
-        adaptedUrlValue = datasetUrl;
         return this;
     }
 
@@ -160,7 +159,10 @@ public class Lookup extends ActionMetadata implements DataSetAction {
 
         // get the rowMatcher from context
         LookupRowMatcher rowMatcher = context.get("rowMatcher",
-                (p) -> applicationContext.getBean(LookupRowMatcher.class, p.get(LOOKUP_DS_URL.getKey())));
+ (p) -> {
+            String dsUrl = getDataSetUrl(p.get(LOOKUP_DS_ID.getKey()));
+            return applicationContext.getBean(LookupRowMatcher.class, dsUrl);
+        });
 
         // get the matching lookup row
         DataSetRow matchingRow = rowMatcher.getMatchingRow(joinOn, joinValue);
@@ -190,11 +192,18 @@ public class Lookup extends ActionMetadata implements DataSetAction {
     }
 
     /**
+     * @param datasetId the wanted dataset id.
+     * @return the url to get the dataset.
+     */
+    private String getDataSetUrl(String datasetId) {
+        return datasetServiceUrl + "/datasets/" + datasetId + "/content";
+    }
+
+    /**
      * Return the list of columns to merge in the result from the parameters.
      *
      * @param parameters the action parameters.
      * @return the list of columns to merge.
-     * @throws IOException if an error occurs while parsing the json array.
      */
     private List<LookupSelectedColumnParameter> getColsToAdd(Map<String, String> parameters) {
         try {

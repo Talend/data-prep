@@ -9,8 +9,8 @@ import org.talend.dataprep.info.ManifestInfo;
 import org.talend.dataprep.info.Version;
 import org.talend.dataprep.metrics.Timed;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "version", basePath = "/version", description = "versions of running application")

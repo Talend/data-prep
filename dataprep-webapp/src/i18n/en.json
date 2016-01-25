@@ -8,7 +8,7 @@
   "LOGOUT": "Logout",
   "MENU": "MENU",
   "FEEDBACK_FORM": "Send Feedback",
-  "FEEDBACK_MAIL": "Enter you email",
+  "FEEDBACK_MAIL": "Enter your email",
   "FEEDBACK_SUMMARY": "Summary (required)",
   "FEEDBACK_DESCRIPTION": "Description",
   "FEEDBACK_TOOLTIP": "Send feedback to Talend",
@@ -61,8 +61,8 @@
   "STEPS": "step(s)",
   "PREPARATION_RENAME_SUCCESS_TITLE": "Preparation renaming",
   "PREPARATION_RENAME_SUCCESS": "The preparation has been renamed.",
-  "PREPARATION_CLONING_SUCCESS_TITLE": "Preparation cloning",
-  "PREPARATION_CLONING_SUCCESS": "The preparation has been cloned.",
+  "PREPARATION_COPYING_SUCCESS_TITLE": "Preparation copying",
+  "PREPARATION_COPYING_SUCCESS": "The preparation has been copied.",
 
   "_comment": "Datagrid transformations",
   "RECIPE_ITEM_ON_COL": "on column <b>{{columnName}}</b>",
@@ -72,7 +72,9 @@
 
   "_comment": "Datagrid",
   "ENTER_PREPARATION_NAME": "Enter a name for your preparation",
-  "FILE_DETAILS": "File: {{name}} ({{records}} lines)",
+  "FILE_DETAILS_NAME": "File: {{name}} ",
+  "FILE_DETAILS_LINES": "{{records}} lines",
+  "FILE_DETAILS_LIMIT": "cut at {{records}} lines",
   "FILTER": "Search and Filter",
   "NB_LINES_MATCHING_FILTERS": "{{percentage}}% of lines are matching your filter(s)",
   "NEW_FILTER": "New filter...",
@@ -99,6 +101,7 @@
   "PROCESSING": "Processing",
   "COMING_SOON": "Coming soon...",
   "PROCESSING_REMOTE_DATASET": "Processing remote dataset...",
+  "NO_FUNCTION": "No function for the current selection",
 
   "_comment": "Confirm",
   "DELETE_PERMANENTLY": "You are going to permanently delete the {{type}} \"{{name}}\".",
@@ -140,8 +143,10 @@
   "DATASET_UPDATE_SUCCESS": "The dataset \"{{dataset}}\" has been updated.",
   "REMOVE_SUCCESS_TITLE": "{{type}} removed",
   "REMOVE_SUCCESS": "The {{type}} \"{{name}}\" has been removed.",
-  "CLONE_SUCCESS_TITLE": "Dataset clone",
-  "CLONE_SUCCESS": "The dataset has been cloned.",
+  "COPY_SUCCESS_TITLE": "Dataset copy",
+  "COPY_SUCCESS": "The dataset has been copied.",
+  "MOVE_SUCCESS_TITLE": "Dataset move",
+  "MOVE_SUCCESS": "The dataset has been moved.",
   "DATASET_RENAME_SUCCESS_TITLE": "Dataset rename",
   "DATASET_RENAME_SUCCESS": "The dataset has been renamed.",
 
@@ -152,6 +157,7 @@
   "PLAYGROUND_FILE_NOT_FOUND": "The {{type}} with this id does not exist or is not accessible.",
   "PREPARATION_STEP_DELETE_MODE_NOT_AUTHORIZED_TITLE": "Delete action not authorized",
   "PREPARATION_STEP_DELETE_MODE_NOT_AUTHORIZED": "This action cannot be deleted because some following actions depends on it.",
+  "GENERIC_ERROR": "An error occurred.",
   "SERVER_ERROR_TITLE": "Server error",
   "SERVICE_UNAVAILABLE": "Service unavailable",
   "UNSUPPORTED_CONTENT_TITLE": "Unsupported content",
@@ -225,10 +231,11 @@
   "CERTIFY_ACTION": "Certify {{type}} \"{{name}}\"",
   "FAVORITE_ACTION": "Add {{type}} \"{{name}}\" in your favorites",
   "DELETE_ACTION": "Delete {{type}} \"{{name}}\"",
-  "CLONE_ACTION": "Clone {{type}} \"{{name}}\"",
+  "COPY_TO_ACTION": "Copy {{type}} \"{{name}}\"",
   "COPY_ACTION": "Copy",
+  "MOVE_HERE_ACTION": "Move",
   "COPY_HERE_ACTION": "Copy",
-  "CHOOSE_FOLDER_DESTINATION": "Copy {{type}} - Select Folder destination",
+  "CHOOSE_FOLDER_DESTINATION": "Copy/Move {{type}} - Select Folder destination",
 
   "_comment": "Range slider",
   "INVALID_VALUE_RANGE_SLIDER": "Invalid Entered Value",
@@ -259,6 +266,7 @@
   "LOOKUP_STEPS_2": "2. In the lookup, check 'Add to Lookup' for the columns you want to add into the main dataset.",
   "LOOKUP_STEPS_3": "3. Mouse over Confirm button to preview.",
   "LOOKUP_DESC_TITLE": "ADD DATA FROM LOOKUP",
+  "LOOKUP_UPDATE_DESC_TITLE": "UPDATE LOOKUP",
   "RECIPE_LOOKUP_MADE_ON_COL":"made on the column",
   "RECIPE_LOOKUP_OF_DS":"done with dataset ",
   "RECIPE_LOOKUP_JOIN_COLS": "Join has been set between",
@@ -266,8 +274,10 @@
   "OTHER": "other",
   "RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_PLURAL":"column(s) have been added.",
   "RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_SINGULAR":"column has been added.",
-  "ADD_TO_LOOKUP":"Add to Lookup",
+  "ADD_TO_LOOKUP":"Add to Dataset",
 
   "_comment": "Folders",
-  "FIND_FOLDER": "Find a Folder"
+  "FIND_FOLDER": "Find a Folder",
+
+  "ACTION_HELP": "More details"
 }

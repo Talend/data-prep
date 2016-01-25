@@ -47,15 +47,6 @@
             }
         });
 
-    Object.defineProperty(StatsDetailsCtrl.prototype,
-        'patternFrequencyTable', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.statisticsService.patterns;
-            }
-        });
-
     angular.module('data-prep.stats-details')
         .controller('StatsDetailsCtrl', StatsDetailsCtrl);
 })();

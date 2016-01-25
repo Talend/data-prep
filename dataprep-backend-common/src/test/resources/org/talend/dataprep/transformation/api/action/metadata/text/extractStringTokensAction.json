@@ -1,0 +1,15 @@
+{
+  "actions": [
+    {
+      "action": "extract_string_tokens",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "steps",
+        "regex": "#(\\w+)",
+        "extract_mode": "multiple_columns",
+        "limit":"2",
+        "scope": "column"
+      }
+    }
+  ]
+}

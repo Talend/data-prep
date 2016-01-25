@@ -74,9 +74,7 @@
                 case VALID_RECORDS:
                     return 'valid records';
                 case INSIDE_RANGE:
-                    var min = d3.format(',')(this.args.interval[0]);
-                    var max = d3.format(',')(this.args.interval[1]);
-                    return min === max ? '[' + min + ']' : '[' + min + ' .. ' + max + '[';
+                    return this.args.label;
                 case MATCHES:
                     return this.args.pattern;
             }
@@ -124,12 +122,19 @@
                         }
                     };
                 case INSIDE_RANGE:
-                    //TODO JSO ask FHU/AMA why start and end are strings ?
+                    //on date we shift timestamp to fit UTC timezone
+                    var offset = 0;
+                    if(this.args.type === 'date') {
+                        var minDate = new Date(this.args.interval[0]);
+                        offset = minDate.getTimezoneOffset() * 60 * 1000;
+                    }
                     return {
                         range: {
                             field: this.colId,
-                            start: '' + this.args.interval[0],
-                            end: '' + this.args.interval[1]
+                            start: this.args.interval[0] - offset,
+                            end: this.args.interval[1] - offset,
+                            type: this.args.type,
+                            label: this.args.label
                         }
                     };
                 case MATCHES:
@@ -235,7 +240,19 @@
             else if('range' in leaf) {
                 type = INSIDE_RANGE;
                 condition = leaf.range;
-                args = {interval: [condition.start, condition.end]};
+
+                //on date we shift timestamp to fit UTC timezone
+                var offset = 0;
+                if(condition.type === 'date') {
+                    var minDate = new Date(condition.start);
+                    offset = minDate.getTimezoneOffset() * 60 * 1000;
+                }
+
+                args = {
+                    interval: [condition.start + offset, condition.end + offset],
+                    label: condition.label,
+                    type: condition.type
+                };
             }
             else if('invalid' in leaf) {
                 type = INVALID_RECORDS;

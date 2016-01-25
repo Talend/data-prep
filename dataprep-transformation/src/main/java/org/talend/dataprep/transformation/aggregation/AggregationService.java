@@ -52,6 +52,9 @@ public class AggregationService {
         // process the dataset
         dataset.getRecords().filter(filter).forEach(row -> aggregator.accept(row, result));
 
+        // Normalize result (perform clean / optimization now that all input was processed).
+        aggregator.normalize(result);
+
         return result;
     }
 }

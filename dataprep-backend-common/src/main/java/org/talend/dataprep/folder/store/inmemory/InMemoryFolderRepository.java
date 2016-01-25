@@ -15,6 +15,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
+import org.talend.dataprep.folder.store.NotEmptyFolderException;
 
 @Component("folderRepository#in-memory")
 @ConditionalOnProperty(name = "folder.store", havingValue = "in-memory", matchIfMissing = false)
@@ -128,6 +129,7 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
                 entries.forEach(folderEntry -> {
                     String newFolderPath = StringUtils.replace(folderEntry.getPath(), cleanPath, cleanNewPath, 1);
                     folderEntry.setPath(newFolderPath);
+                    folderEntry.buildId();
                 });
             }
         });
@@ -191,9 +193,23 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     }
 
     @Override
-    public void removeFolder(String path) {
+    public void removeFolder(String path) throws NotEmptyFolderException {
         path = cleanPath(path);
-        Iterator<String> paths = this.foldersMap.keySet().iterator();
+
+        // check if any content in the tree
+        // remove folder entries as well
+        Iterator<String>  paths = this.folderEntriesMap.keySet().iterator();
+        while (paths.hasNext()) {
+            String currentPath = paths.next();
+            if (StringUtils.startsWith(currentPath, path)) {
+                if (!this.folderEntriesMap.get( currentPath ).isEmpty()) {
+                    throw new NotEmptyFolderException( "The folder or a child contains data" );
+                }
+            }
+        }
+
+
+        paths = this.foldersMap.keySet().iterator();
         while (paths.hasNext()) {
             String currentPath = paths.next();
             if (StringUtils.startsWith(currentPath, path)) {

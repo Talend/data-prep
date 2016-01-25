@@ -9,6 +9,11 @@ import java.io.IOException;
 import java.util.*;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -22,6 +27,10 @@ import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
  *
  * @see DeleteInvalid
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = DeleteLinesTest.class)
+@Configuration
+@ComponentScan(basePackages = "org.talend.dataprep")
 public class DeleteInvalidTest {
 
     /** The action to test. */

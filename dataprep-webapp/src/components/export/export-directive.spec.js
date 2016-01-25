@@ -27,7 +27,9 @@ describe('Export directive', function () {
             'extension': '.tde',
             'id': 'TABLEAU',
             'needParameters': 'false',
-            'defaultExport': 'false'
+            'defaultExport': 'false',
+            'enabled': false,
+            'disableReason': 'Reason only valid in unit test'
         },
         {
             'mimeType': 'application/vnd.ms-excel',
@@ -132,5 +134,27 @@ describe('Export directive', function () {
     it('should set form in controller', inject(function () {
         //then
         expect(ctrl.form).toBeDefined();
+    }));
+
+    it('should have disabled style for disabled export', inject(function (ExportService) {
+        //given
+        ExportService.exportTypes = exportTypes;
+
+        //when
+        scope.$digest();
+
+        //then
+        expect(element.find('.dropdown-menu').find('li').eq(1).hasClass('disabled')).toBe(true);
+    }));
+
+    it('should have disabled message for disabled export', inject(function (ExportService) {
+         //given
+        ExportService.exportTypes = exportTypes;
+
+        //when
+        scope.$digest();
+
+        //then
+        expect(element.find('.dropdown-menu').find('li').eq(1).text().trim()).toBe('TABLEAU - Reason only valid in unit test');
     }));
 });

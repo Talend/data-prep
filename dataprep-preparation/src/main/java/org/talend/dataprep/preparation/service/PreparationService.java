@@ -35,9 +35,9 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")

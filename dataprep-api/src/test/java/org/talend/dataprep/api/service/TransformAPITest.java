@@ -13,8 +13,9 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
@@ -23,52 +24,40 @@ import com.jayway.restassured.response.Response;
  */
 public class TransformAPITest extends ApiServiceTestBase {
 
-    @Test
-    public void testTransformNoOp() throws Exception {
-        // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "testDataset", "text/csv");
-        final String expectedContent = IOUtils
-                .toString(this.getClass().getResourceAsStream("dataset/expected_dataset_with_columns.json"));
-
-        // when
-        final String transformed = given().contentType(ContentType.JSON).body("").when().post("/api/transform/" + dataSetId)
-                .asString();
-
-        // then
-        assertThat(transformed, sameJSONAs(expectedContent).allowingExtraUnexpectedFields());
-    }
 
     @Test
     public void testTransformOneAction() throws Exception {
         // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "testDataset", "text/csv");
-
-        final InputStream expectedContent = this.getClass()
-                .getResourceAsStream("dataset/expected_dataset_firstname_uppercase.json");
-        final String actions = IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_firstname.json"));
+        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testDataset", "text/csv");
+        applyAction(preparationId,
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_firstname.json")));
 
         // when
-        final String transformed = given().contentType(ContentType.JSON).body(actions).when().log().ifValidationFails()
-                .post("/api/transform/" + dataSetId).asString();
+        final String transformed = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/content?version=head", preparationId).asString();
 
         // then
+        final InputStream expectedContent = this.getClass()
+                .getResourceAsStream("dataset/expected_dataset_firstname_uppercase.json");
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
 
     @Test
     public void testTransformTwoActions() throws Exception {
         // given
-        final String dataSetId = createDataset("dataset/dataset.csv", "testDataset", "text/csv");
-        final String actions = IOUtils
-                .toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json"));
-        final InputStream expectedContent = this.getClass()
-                .getResourceAsStream("dataset/expected_dataset_lastname_firstname_uppercase.json");
+        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testDataset", "text/csv");
+        applyAction(preparationId,
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json")));
 
         // when
-        final String transformed = given().contentType(ContentType.JSON).body(actions).when().post("/api/transform/" + dataSetId)
-                .asString();
+        final String transformed = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/content?version=head", preparationId).asString();
 
         // then
+        final InputStream expectedContent = this.getClass()
+                .getResourceAsStream("dataset/expected_dataset_lastname_firstname_uppercase.json");
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
 
@@ -169,32 +158,33 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void should_use_all_date_patterns() throws Exception {
         // given
-        final String dataSetId = createDataset("dataset/dataset_TDP-402.csv", "testDataset", "text/csv");
-        final String actions = IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-402.json"));
-        final InputStream expectedContent = this.getClass()
-                .getResourceAsStream("dataset/dataset_TDP-402_expected.json");
+        final String preparationId = createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset", "text/csv");
+        applyAction(preparationId, IOUtils.toString(this.getClass().getResourceAsStream("transformation/TDP-402.json")));
 
         // when
-        final String transformed = given().contentType(ContentType.JSON).body(actions).when().post("/api/transform/" + dataSetId)
-                .asString();
+        final String transformed = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/content?version=head", preparationId).asString();
 
         // then
+        final InputStream expectedContent = this.getClass().getResourceAsStream("dataset/dataset_TDP-402_expected.json");
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
 
     @Test
     public void testMultipleParams() throws Exception {
         // given
-        final String dataSetId = createDataset("dataset/dataset_TDP-402.csv", "testDataset", "text/csv");
-        final String actions = IOUtils.toString(this.getClass().getResourceAsStream("transformation/multiple_filters.json"));
-        final InputStream expectedContent = this.getClass()
-                .getResourceAsStream("transformation/multiple_filters_expected.json");
+        final String preparationId = createPreparationFromFile("dataset/dataset_TDP-402.csv", "testDataset", "text/csv");
+        applyAction(preparationId, IOUtils.toString(this.getClass().getResourceAsStream("transformation/multiple_filters.json")));
 
         // when
-        final String transformed = given().contentType(ContentType.JSON).body(actions).when().post("/api/transform/" + dataSetId)
-                .asString();
+        final String transformed = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/content?version=head", preparationId).asString();
 
         // then
+        final InputStream expectedContent = this.getClass().getResourceAsStream("transformation/multiple_filters_expected.json");
+
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
 
@@ -205,24 +195,26 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testCustomDateFormatTransformation() throws Exception {
 
         // given (a dataset with single date column)
-
-        final String dataSetId = createDataset("dataset/TDP-714.csv", "dates", "text/csv");
-        final String preparationId = createPreparationFromDataset(dataSetId, "tdp-714");
+        final String preparationId = createPreparationFromFile("dataset/TDP-714.csv", "dates", "text/csv");
 
         // when (change the date format to an unknown DQ pattern)
-        final String actions = IOUtils.toString(this.getClass().getResourceAsStream("transformation/change_date_format.json"));
-        final Response response = given().contentType(ContentType.JSON).body(actions).when().post("/api/transform/" + dataSetId);
-        assertThat(response.getStatusCode(), is(200));
+        applyAction(preparationId,
+                IOUtils.toString(this.getClass().getResourceAsStream("transformation/change_date_format.json")));
 
         // then (the column is still a date without any invalid)
-        final String preparationContent = given().when().get("/api/preparations/{id}/content?version=head", preparationId)
+        final String datasetContent = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/preparations/{id}/content?version=head", preparationId)
                 .asString();
 
-        final DataSet content = builder.build().readerFor(DataSet.class).readValue(preparationContent);
-        assertThat(content.getMetadata().getRowMetadata().getColumns().isEmpty(), is(false));
-        final ColumnMetadata column = content.getMetadata().getRowMetadata().getColumns().get(0);
+        final JsonNode rootNode = builder.build().readTree(datasetContent);
+        final DataSetMetadata metadata = builder.build().readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
+
+        assertThat(metadata.getRowMetadata().getColumns().isEmpty(), is(false));
+        final ColumnMetadata column = metadata.getRowMetadata().getColumns().get(0);
         assertThat(column.getName(), is("date"));
         assertThat(column.getType(), is("date"));
         assertThat(column.getQuality().getInvalid(), is(0));
     }
+
 }

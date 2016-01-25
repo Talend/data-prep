@@ -5,7 +5,6 @@ import org.talend.dataprep.api.dataset.statistics.HistogramRange;
 import org.talend.dataprep.api.dataset.statistics.Range;
 import org.talend.dataprep.date.DateManipulator;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,9 +17,9 @@ import java.util.Map;
  */
 public class StreamDateHistogramStatistics {
     /**
-     * The default bin number which is 32.
+     * The default bin number which is 16.
      */
-    private static final int DEFAULT_BIN_NUMBER = 32;
+    private static final int DEFAULT_BIN_NUMBER = 16;
 
     /**
      * The maximum number of buckets.
@@ -30,7 +29,7 @@ public class StreamDateHistogramStatistics {
     /**
      * The bins per pace. For each pace, a bins that match the date is created.
      */
-    private Map<DateManipulator.Pace, Map<Range<LocalDateTime>, Long>> bins = new HashMap<>();
+    private Map<DateManipulator.Pace, Map<Range, Long>> bins = new HashMap<>();
 
     /**
      * The minimum limit value.
@@ -76,7 +75,7 @@ public class StreamDateHistogramStatistics {
      * @param date The date to add.
      */
     private void add(final DateManipulator.Pace pace, final LocalDateTime date) {
-        final Map<Range<LocalDateTime>, Long> paceBins = bins.get(pace);
+        final Map<Range, Long> paceBins = bins.get(pace);
 
         //pace has been removed, we skip the add on this pace
         if (paceBins == null) {
@@ -85,7 +84,11 @@ public class StreamDateHistogramStatistics {
 
         final LocalDateTime startDate = dateManipulator.getSuitableStartingDate(date, pace);
         final LocalDateTime endDate = dateManipulator.getNext(startDate, pace);
-        final Range<LocalDateTime> range = new Range<>(startDate, endDate);
+
+        final long startTimestamp = dateManipulator.getUTCEpochMilliseconds(startDate);
+        final long endTimestamp = dateManipulator.getUTCEpochMilliseconds(endDate);
+
+        final Range range = new Range(startTimestamp, endTimestamp);
         final Long nbInBin = paceBins.get(range);
         paceBins.put(range, (nbInBin != null ? nbInBin : 0L) + 1);
 
@@ -115,15 +118,15 @@ public class StreamDateHistogramStatistics {
      * @return the histogram
      * Note that the returned ranges are in pattern of [Min, Min+Pace[ - [Min+Pace, Min+Pace*2[ - ...[Max-binSize,Max[.
      */
-    public Histogram<LocalDateTime> getHistogram() {
+    public Histogram getHistogram() {
         final DateHistogram histogram = new DateHistogram();
-        if(min == null) {
+        if (min == null) {
             return histogram;
         }
 
         final DateManipulator.Pace pace = dateManipulator.getSuitablePace(min, max, numberOfBins);
-        final Map<Range<LocalDateTime>, Long> paceBin = bins.get(pace);
-        if(paceBin == null) {
+        final Map<Range, Long> paceBin = bins.get(pace);
+        if (paceBin == null) {
             return histogram;
         }
 
@@ -133,10 +136,14 @@ public class StreamDateHistogramStatistics {
         while (max.isAfter(nextRangeStart) || max.equals(nextRangeStart)) {
             final LocalDateTime rangeStart = nextRangeStart;
             final LocalDateTime rangeEnd = dateManipulator.getNext(nextRangeStart, pace);
-            final Range<LocalDateTime> range = new Range<>(rangeStart, rangeEnd);
+
+            final long rangeStartTimestamp = dateManipulator.getUTCEpochMilliseconds(rangeStart);
+            final long rangeEndTimestamp = dateManipulator.getUTCEpochMilliseconds(rangeEnd);
+
+            final Range range = new Range(rangeStartTimestamp, rangeEndTimestamp);
             final Long rangeValue = paceBin.get(range);
 
-            final HistogramRange<LocalDateTime> dateRange = new HistogramRange<>();
+            final HistogramRange dateRange = new HistogramRange();
             dateRange.setRange(range);
             dateRange.setOccurrences(rangeValue != null ? rangeValue : 0L);
             histogram.getItems().add(dateRange);

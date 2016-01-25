@@ -21,20 +21,25 @@
 //-----------------------------------------------------------------------------------------------------------
 .left-header {
   float: left;
+
+  .file-lines-count {
+    color: $dark-green;
+  }
 }
 
 .right-header {
   float: right;
   margin-right: 51px;
 
-  .onboarding-prep-icon {
-    color: $medium-gray;
+  #playground-onboarding-icon,
+  #playground-feedback-icon {
+    color: darken($white, 10%);
     padding-left: 10px;
     padding-right: 10px;
     @include filter(drop-shadow(0px 1px 1px #1f2024));
 
     &:hover {
-      color: lighten($medium-gray, 10%);
+      color: $white;
     }
   }
 

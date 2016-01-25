@@ -12,7 +12,7 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import com.netflix.hystrix.exception.HystrixRuntimeException;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiOperation;
 
 @Configuration
 @Aspect

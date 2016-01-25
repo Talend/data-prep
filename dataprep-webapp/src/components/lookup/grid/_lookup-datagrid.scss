@@ -20,10 +20,6 @@ $datagrid-cell-font-size: .80em;
   color: $white !important;
 }
 
-.slick-header-columns {
-  height: 59px !important;
-}
-
 .lookup-slick-header-column-index {
   height: 80px;
   font-weight: bold;
@@ -122,8 +118,8 @@ $datagrid-cell-font-size: .80em;
   .slick-header-columns {
     border-bottom: 1px solid silver;
     box-sizing: content-box;
-    min-height: 80px;
     background-color: $white;
+    height:80px;
 
     .slick-header-column.ui-state-default {
       line-height: inherit;

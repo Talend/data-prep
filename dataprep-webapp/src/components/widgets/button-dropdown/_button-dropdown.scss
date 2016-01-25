@@ -85,20 +85,12 @@
   }
 
   .dropdown-menu {
-    @include transition (all 0.2s ease-in-out);
     color: $dropdown-menu-color;
     box-shadow: 3px 3px 18px 3px transparentize(black, 0.8);
     width: 140px;
     position: absolute;
     outline: none;
     padding: 0;
-
-    &:before {
-
-      left: 1em;
-      right: 0;
-      text-align: right;
-    }
 
     li {
       width: 100%;
@@ -121,6 +113,11 @@
 
       &:hover {
         background: $dropdown-menu-background-hover;
+      }
+
+      &.disabled {
+        color: $medium-gray;
+        cursor: default;
       }
     }
   }

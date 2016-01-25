@@ -214,87 +214,65 @@ describe('Playground controller', function () {
     });
 
     describe('lookup', function () {
-        var ctrl;
-
         beforeEach(inject(function ($q, LookupService, StateService) {
+            spyOn(LookupService, 'initLookups').and.returnValue($q.when());
             spyOn(StateService, 'setLookupVisibility').and.returnValue();
-            spyOn(LookupService, 'loadContent').and.returnValue();
-            spyOn(StateService, 'setLookupDataset').and.returnValue();
-
-            ctrl = createController();
         }));
 
-        it('should toggle lookup visibility', inject(function (StateService) {
+        it('should load lookup panel when it is hidden', inject(function (LookupService) {
             //given
-            stateMock.playground.actionsVisibility = false;
+            stateMock.playground.lookup.visibility = false;
+            var ctrl = createController();
 
             //when
             ctrl.toggleLookup();
 
             //then
-            expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true);
+            expect(LookupService.initLookups).toHaveBeenCalled();
         }));
 
-        it('should fetch lookup datasets when it is not already initialized', inject(function ($q, LookupService) {
+        it('should display lookup panel when it is hidden', inject(function (StateService) {
             //given
-            stateMock.playground.dataset = {id: 'ds54sd-ds5d4s-4dssd8'};
-            stateMock.playground.lookup.actions = [];
-            spyOn(LookupService, 'getActions').and.returnValue($q.when(true));
-
-            //when
-            ctrl.toggleLookup();
-
-            //then
-            expect(LookupService.getActions).toHaveBeenCalledWith(stateMock.playground.dataset.id);
-        }));
-
-        it('should NOT fetch lookup datasets when it is already initialized', inject(function ($q, LookupService) {
-            //given
-            stateMock.playground.dataset = {id: 'ds54sd-ds5d4s-4dssd8'};
-            stateMock.playground.lookup.actions = [{}];
-            spyOn(LookupService, 'getActions').and.returnValue($q.when(true));
-
-            //when
-            ctrl.toggleLookup();
-
-            //then
-            expect(LookupService.getActions).not.toHaveBeenCalled();
-        }));
-
-        it('should load lookup dataset content when there are potential lookup datasets', inject(function ($q, LookupService) {
-            //given
-            var lookupDataset = {
-                name: 'lookup',
-                parameters: []
-            };
-            var lookupDataset2 = {
-                name: 'lookup2',
-                parameters: []
-            };
-            stateMock.playground.dataset = {id: 'ds54sd-ds5d4s-4dssd8'};
-            stateMock.playground.lookup.actions = [];
-            spyOn(LookupService, 'getActions').and.returnValue($q.when([lookupDataset, lookupDataset2]));
+            stateMock.playground.lookup.visibility = false;
+            var ctrl = createController();
 
             //when
             ctrl.toggleLookup();
             scope.$digest();
 
             //then
-            expect(LookupService.loadContent).toHaveBeenCalledWith(lookupDataset);
+            expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true, undefined);
         }));
 
-        it('should NOT load lookup dataset content when the potential lookup datasets are empty', inject(function ($q, LookupService) {
+        it('should hide lookup panel when it is visible', inject(function (LookupService, StateService) {
             //given
-            stateMock.playground.dataset = {id: 'ds54sd-ds5d4s-4dssd8'};
-            stateMock.playground.lookup.actions = [];
-            spyOn(LookupService, 'getActions').and.returnValue($q.when(true));
+            stateMock.playground.lookup.visibility = true;
+            var ctrl = createController();
 
             //when
             ctrl.toggleLookup();
-            scope.$digest();
 
             //then
-            expect(LookupService.loadContent).not.toHaveBeenCalled();
+            expect(LookupService.initLookups).not.toHaveBeenCalled();
+            expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
         }));
+    });
+
+    describe('feedback ', function() {
+        beforeEach(inject(function (StateService) {
+            spyOn(StateService, 'showFeedback').and.returnValue();
+        }));
+
+        it('should open feedback modal', inject(function (StateService) {
+            //given
+            var ctrl = createController();
+
+            //when
+            ctrl.openFeedbackForm();
+
+            //then
+            expect(StateService.showFeedback).toHaveBeenCalled();
+        }));
+
     });
 });

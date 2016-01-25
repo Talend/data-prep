@@ -7,6 +7,7 @@ import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -91,8 +92,8 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
             String rawParam = parameters.get(CELL_VALUE_PARAMETER);
 
             try {
-                actionContext.get(REGEX_HELPER_KEY,(p) -> regexParametersHelper.build(rawParam));
-            } catch (InvalidParameterException e) {
+                actionContext.get(REGEX_HELPER_KEY,(p) -> regexParametersHelper.build(rawParam, false));
+            } catch (IllegalArgumentException e) {
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
         }
@@ -156,18 +157,21 @@ public class ReplaceOnValue extends ActionMetadata implements ColumnAction, Cell
 
         try {
             final ReplaceOnValueHelper replaceOnValueParameter = context.get(REGEX_HELPER_KEY);
-            replaceOnValueParameter.setStrict(false);
 
             boolean matches = replaceOnValueParameter.matches(originalValue);
 
             if (matches) {
-                if (replaceEntireCell && replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
-                    Matcher matcher = replaceOnValueParameter.getPattern().matcher(originalValue);
-                    return matcher.replaceAll(replacement);
+                if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
+                    final Pattern pattern = (replaceEntireCell ? replaceOnValueParameter.getPattern() : Pattern
+                            .compile(replaceOnValueParameter.getToken()));
+                    try {
+                        return pattern.matcher(originalValue).replaceAll(replacement);
+                    }catch (IndexOutOfBoundsException e){
+                        // catch to fix TDP_1227 PB#1
+                        return originalValue;
+                    }
                 } else if (replaceEntireCell) {
                     return replacement;
-                } else if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {
-                    return originalValue.replaceAll(replaceOnValueParameter.getToken(), replacement);
                 } else {
                     return originalValue.replace(replaceOnValueParameter.getToken(), replacement);
                 }

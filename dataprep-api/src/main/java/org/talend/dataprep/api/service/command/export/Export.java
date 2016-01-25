@@ -1,37 +1,28 @@
 package org.talend.dataprep.api.service.command.export;
 
 import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
+import static org.talend.dataprep.format.export.ExportFormat.Parameter.FILENAME_PARAMETER;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.InputStreamBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.api.ExportParameters;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import org.talend.dataprep.exception.error.APIErrorCodes;
 
 @Component
 @Scope("request")
@@ -49,73 +40,79 @@ public class Export extends PreparationCommand<InputStream> {
      */
     private HttpRequestBase onExecute(ExportParameters input) {
         try {
-            String name;
-            List<Action> actions;
-            InputStream content;
-            if (StringUtils.isNotBlank(input.getPreparationId())) {
+
+            // export file name comes from :
+            // 1. the form parameter
+            // 2. the preparation name
+            // 3. the dataset name
+
+            String exportName;
+            if (input.getArguments().containsKey(PREFIX + FILENAME_PARAMETER)) {
+                exportName = input.getArguments().get(PREFIX + FILENAME_PARAMETER);
+            } else if (StringUtils.isNotBlank(input.getPreparationId())) {
                 final Preparation preparation = getPreparation(input.getPreparationId());
-                name = preparation.getName();
-                actions = getPreparationActions(preparation, input.getStepId());
-                content = getDatasetContent(preparation.getDataSetId());
-            } else {
-                // Get name from data set
-                String dataSetId = input.getDatasetId();
-                final JsonNode datasetDetails = getDatasetDetails(dataSetId);
-                //
-                name = datasetDetails.get("metadata").get("name").textValue();
-                actions = Collections.emptyList();
-                content = getDatasetContent(dataSetId);
+                exportName = preparation.getName();
+            }
+ else {
+                exportName = getDatasetMetadata(input.getDatasetId()).getName();
             }
 
-            // fileName can come from parameters otherwise we use default preparation or dataset name
-            String fileName = input.getArguments().get("exportParameters.fileName");
-            if (!StringUtils.isEmpty(fileName)) {
-                name = fileName;
-            }
-
-            final Map<String, String> inputArguments = input.getArguments();
-            inputArguments.put("exportParameters.fileName", name);
-
-            // Get dataset content and execute export service
-            final String encodedActions = serializeActions(actions);
-
-            final URI uri = getTransformationUri(input.getExportType(), input.getArguments());
-            final HttpPost transformationCall = new HttpPost(uri);
-
-            HttpEntity reqEntity = MultipartEntityBuilder.create()
-                    .addPart("actions", new StringBody(encodedActions, ContentType.TEXT_PLAIN.withCharset("UTF-8"))) //$NON-NLS-1$
-                    .addPart("content", new InputStreamBody(content, ContentType.APPLICATION_JSON)) //$NON-NLS-1$
-                    .build();
-
-            transformationCall.setEntity(reqEntity);
-            return transformationCall;
+            return getExportRequest(input, exportName);
 
         } catch (IOException | URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TDPException(APIErrorCodes.UNABLE_TO_EXPORT_CONTENT, e);
         }
     }
 
     /**
-     * Create the transformation format uri
-     * 
-     * @param exportFormat The format type.
-     * @param params optional params
-     * @return The built URI
+     * @param input the export parameters.
+     * @return the http request to perform for the export.
+     * @throws URISyntaxException if the transformation url to call is not valid.
      */
-    private URI getTransformationUri(final String exportFormat, final Map<String, String> params)
-        throws URISyntaxException {
+    private HttpRequestBase getExportRequest(ExportParameters input, String exportName) throws URISyntaxException, IOException {
+        URIBuilder builder;
 
-        URIBuilder uriBuilder = new URIBuilder(this.transformationServiceUrl + "/transform/" + exportFormat);
+        // if there's a preparation
+        if (StringUtils.isNotBlank(input.getPreparationId())) {
 
-        if (params != null){
-            for (Map.Entry<String,String> entry:params.entrySet()){
-                uriBuilder.addParameter( entry.getKey(), entry.getValue() );
+            // dataset id may be null...
+            String datasetId;
+            if (StringUtils.isBlank(input.getDatasetId())) {
+                final Preparation preparation = getPreparation(input.getPreparationId());
+                datasetId = preparation.getDataSetId();
             }
+ else {
+                datasetId = input.getDatasetId();
+            }
+
+            String baseUri = transformationServiceUrl //
+                    + "/apply/preparation/" + input.getPreparationId() + "/dataset/" + datasetId + '/' + input.getExportType();
+
+            builder = new URIBuilder(baseUri) //
+                    .addParameter("stepId", input.getStepId()) //
+                    .addParameter("name", exportName);
+        }
+        // dataset only
+        else {
+            String baseUri = transformationServiceUrl //
+                    + "/export/dataset/" + input.getDatasetId() + '/' + input.getExportType();
+            builder = new URIBuilder(baseUri) //
+                    .addParameter("name", exportName);
         }
 
-        return uriBuilder.build();
-
+        // add optional/additional parameters
+        if (input.getArguments() != null) {
+            for (Map.Entry<String, String> entry : input.getArguments().entrySet()) {
+                // skip the mandatory export name that's already taken cared of
+                if (StringUtils.equals(PREFIX + FILENAME_PARAMETER, entry.getKey())) {
+                    continue;
+                }
+                builder.addParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return new HttpGet(builder.build());
     }
+
 
 
 }

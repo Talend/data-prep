@@ -79,7 +79,8 @@ public class XlsSerializer implements Serializer {
                             }
 
                             int colId = Integer.valueOf(columnMetadata.getId());
-                            String cellValue = XlsUtils.getCellValueAsString(row.getCell(colId));
+                            String cellValue = XlsUtils.getCellValueAsString(row.getCell(colId), //
+                                                                             workbook.getCreationHelper().createFormulaEvaluator());
                             LOGGER.trace("cellValue for {}/{}: {}", i, colId, cellValue);
                             generator.writeFieldName(columnMetadata.getId());
                             if (cellValue != null) {

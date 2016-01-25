@@ -9,20 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 
+import static org.springframework.http.HttpStatus.*;
+
 
 /**
  * Dataset error codes.
  */
 public enum DataSetErrorCodes implements ErrorCode {
-    UNEXPECTED_IO_EXCEPTION(500),
-    UNABLE_TO_READ_DATASET_CONTENT(500),
-    UNABLE_TO_READ_REMOTE_DATASET_CONTENT(404),
-    UNEXPECTED_JMS_EXCEPTION(500),
-    UNABLE_TO_CLEAR_DATASETS(500),
-    UNABLE_TO_DELETE_DATASET(400, "dataSetId"),
-    UNABLE_TO_STORE_DATASET_CONTENT(500, "id"),
-    UNABLE_TO_ANALYZE_COLUMN_TYPES(500),
-    UNABLE_TO_ANALYZE_DATASET_QUALITY(500),
+    UNEXPECTED_IO_EXCEPTION(INTERNAL_SERVER_ERROR.value()),
+    UNABLE_TO_READ_DATASET_CONTENT(INTERNAL_SERVER_ERROR.value()),
+    UNABLE_TO_READ_REMOTE_DATASET_CONTENT(NOT_FOUND.value()),
+    UNEXPECTED_JMS_EXCEPTION(INTERNAL_SERVER_ERROR.value()),
+    UNABLE_TO_CLEAR_DATASETS(INTERNAL_SERVER_ERROR.value()),
+    UNABLE_TO_DELETE_DATASET(BAD_REQUEST.value(), "dataSetId"),
+    UNABLE_TO_STORE_DATASET_CONTENT(INTERNAL_SERVER_ERROR.value(), "id"),
+    UNABLE_TO_ANALYZE_COLUMN_TYPES(INTERNAL_SERVER_ERROR.value()),
+    UNABLE_TO_ANALYZE_DATASET_QUALITY(INTERNAL_SERVER_ERROR.value()),
     /**
      * Error returned in case the data set is in "importing" state,
      * meaning all mandatory analysis prevents service to correctly
@@ -30,61 +32,62 @@ public enum DataSetErrorCodes implements ErrorCode {
      *
      * @see DataSetLifecycle#importing()
      */
-    UNABLE_TO_SERVE_DATASET_CONTENT(400, "id"),
+    UNABLE_TO_SERVE_DATASET_CONTENT(BAD_REQUEST.value(), "id"),
     /**
      * this one will happen when user do something on data whereas the
      * data has been updated async in the backend and this action is not
      * possible anymore (i.e preview whereas this dataset do not need
      * any preview)
      */
-    REDIRECT_CONTENT(301),
+    REDIRECT_CONTENT(MOVED_PERMANENTLY.value()),
     /**
      * Error returned in case user tries to access to a data set that
      * does not exist (or no longer exists).
      */
-    DATASET_DOES_NOT_EXIST(400, "id"),
+    DATASET_DOES_NOT_EXIST(BAD_REQUEST.value(), "id"),
     /**
      * Error returned when the json that contains the dataset location
      * cannot be parsed.
      */
-    UNABLE_TO_READ_DATASET_LOCATION(400),
+    UNABLE_TO_READ_DATASET_LOCATION(BAD_REQUEST.value()),
     /**
      * Error returned in case user tries to access to a column that does
      * not exist (or no longer exists) for a data set.
      */
-    COLUMN_DOES_NOT_EXIST(400, "id"),
+    COLUMN_DOES_NOT_EXIST(BAD_REQUEST.value(), "id"),
     /**
      * Error returned when the order is not supported.
      */
-    ILLEGAL_ORDER_FOR_LIST(400, "order"),
+    ILLEGAL_ORDER_FOR_LIST(BAD_REQUEST.value(), "order"),
     /**
      * Error returned when the sort is not supported.
      */
-    ILLEGAL_SORT_FOR_LIST(400, "sort"),
+    ILLEGAL_SORT_FOR_LIST(BAD_REQUEST.value(), "sort"),
     /**
     * Error returned when the dataset metadata could not be saved.
     */
-    UNABLE_TO_STORE_DATASET_METADATA(500, "id"),
+    UNABLE_TO_STORE_DATASET_METADATA(INTERNAL_SERVER_ERROR.value(), "id"),
     /**
      * Error returned when the dataset metadata could not be read.
      */
-    UNABLE_TO_READ_DATASET_METADATA(500, "id"),
+    UNABLE_TO_READ_DATASET_METADATA(INTERNAL_SERVER_ERROR.value(), "id"),
     /**
      * This dataset name is already used
      */
-    DATASET_NAME_ALREADY_USED( HttpStatus.BAD_REQUEST.value(), "id", "name", "folder"),
+    DATASET_NAME_ALREADY_USED(BAD_REQUEST.value(), "id", "name", "folder"),
+    /**
+     * Error when a folder is not empty
+     */
+    FOLDER_NOT_EMPTY(CONFLICT.value()),
     /**
      * Error return when the uploaded content is not supported by any
      * {@link org.talend.dataprep.schema.FormatGuesser guesser}.
-     *
      */
-    UNSUPPORTED_CONTENT(400),
+    UNSUPPORTED_CONTENT(BAD_REQUEST.value()),
     /**
      * Error return when the uploaded content is mal formatted .
-     *
      */
-    MALFORMATTED_CONTENT(400);
-
+    MALFORMATTED_CONTENT(BAD_REQUEST.value());
 
     /** The http status to use. */
     private int httpStatus;

@@ -46,12 +46,18 @@ public class ReplaceOnValueHelper {
      * @param jsonString the json string.
      * @return a ReplaceOnValueHelper out of the given json string.
      */
-    public ReplaceOnValueHelper build(String jsonString) {
+    public ReplaceOnValueHelper build(String jsonString, boolean strict) {
         if (StringUtils.isEmpty(jsonString)) {
             throw new InvalidParameterException(jsonString + " is not a valid json");
         }
         try {
-            return builder.build().readValue(jsonString, ReplaceOnValueHelper.class);
+            final ReplaceOnValueHelper replaceOnValueHelper = builder.build().readValue(jsonString, ReplaceOnValueHelper.class);
+            replaceOnValueHelper.setStrict(strict);
+            if (replaceOnValueHelper.isValid()) {
+                return replaceOnValueHelper;
+            } else {
+                throw new IllegalArgumentException();
+            }
         } catch (IOException e) {
             // TODO replace this security exception by IllegalArgumentException
             throw new InvalidParameterException(e.getMessage());
@@ -117,7 +123,7 @@ public class ReplaceOnValueHelper {
      * 
      * @param strict the strict mode to set.
      */
-    public void setStrict(boolean strict) {
+    private void setStrict(boolean strict) {
         this.strict = strict;
     }
 
@@ -160,7 +166,7 @@ public class ReplaceOnValueHelper {
         if (value == null) {
             return false;
         }
-        if (StringUtils.isEmpty(this.token)) {
+        if (StringUtils.isEmpty(this.token) && !this.getOperator().equals(EQUALS_MODE)) {
             return false;
         }
 

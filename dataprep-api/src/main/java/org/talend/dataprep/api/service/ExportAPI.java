@@ -23,13 +23,15 @@ import org.talend.dataprep.api.service.command.export.Export;
 import org.talend.dataprep.api.service.command.export.ExportTypes;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.http.HttpRequestContext;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class ExportAPI extends APIService {
@@ -43,7 +45,7 @@ public class ExportAPI extends APIService {
             final Enumeration<String> names = HttpRequestContext.parameters();
             while (names.hasMoreElements()) {
                 final String paramName = names.nextElement();
-                if (StringUtils.contains(paramName, "exportParameters.")) {
+                if (StringUtils.contains(paramName, ExportFormat.PREFIX)) {
                     final String paramValue = HttpRequestContext.parameter(paramName);
                     arguments.put(paramName, StringUtils.isNotEmpty(paramValue)? paramValue : StringUtils.EMPTY);
                 }

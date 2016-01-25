@@ -6,7 +6,8 @@
         <div class="param-input">
             <select ng-model="choiceParamCtrl.parameter.value"
                     ng-options="option.value as option.label for option in choiceParamCtrl.parameter.configuration.values"
-                    required></select>
+                    can-be-blank="{{::choiceParamCtrl.parameter.canBeBlank}}"
+                    ></select>
         </div>
     </div>
 </div>

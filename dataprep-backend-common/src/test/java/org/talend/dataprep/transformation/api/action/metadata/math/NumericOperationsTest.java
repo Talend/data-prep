@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
@@ -234,7 +233,7 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_not_apply_on_wrong_column() {
         // given
         DataSetRow row = getRow("5");
@@ -242,9 +241,12 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "5");
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_fail_wrong_column() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
@@ -256,9 +258,14 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "5");
+        assertEquals(row.get("0001"), "3");
+        assertEquals(row.get("0002"), "Done !");
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_fail_constant_missing_operand() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
@@ -269,6 +276,11 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "5");
+        assertEquals(row.get("0001"), "3");
+        assertEquals(row.get("0002"), "Done !");
     }
 
     @Test

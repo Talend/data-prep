@@ -51,4 +51,9 @@ public class Min extends AbstractAggregator implements Aggregator {
             context.setValue(currentValue);
         }
     }
+
+    @Override
+    public void normalize(AggregationResult result) {
+        // Nothing to do
+    }
 }

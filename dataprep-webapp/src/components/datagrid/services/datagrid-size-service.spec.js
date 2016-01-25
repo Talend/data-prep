@@ -98,27 +98,6 @@ describe('Datagrid size service', function () {
     });
 
     describe('auto size columns', function() {
-        it('should auto resize columns and save width in localStorage when no size have been saved yet', inject(function ($window, DatagridSizeService) {
-            //given
-            //gridMock.initColumnsMock(gridColumns);
-            DatagridSizeService.init(gridMock);
-
-            expect($window.localStorage.getItem(storageKey)).toBeFalsy();
-
-            //when
-            DatagridSizeService.autosizeColumns(gridColumns);
-
-            //then
-            expect(gridMock.getColumns()).toBe(gridColumns);
-            expect(gridMock.autosizeColumns).toHaveBeenCalled();
-            expect($window.localStorage.getItem(storageKey)).toBe(JSON.stringify({
-                '0000': 10,
-                '0001': 20,
-                '0002': 30,
-                '0003': 40,
-                '0004': 50
-            }));
-        }));
 
         it('should set column sizes from localStorage', inject(function ($window, DatagridSizeService) {
             //given
@@ -143,7 +122,6 @@ describe('Datagrid size service', function () {
 
             //then
             expect(gridMock.getColumns()).toBe(gridColumns);
-            expect(gridMock.autosizeColumns).not.toHaveBeenCalled();
             expect($window.localStorage.getItem(storageKey)).toBe(JSON.stringify({
                 '0000': 60,
                 '0001': 70,
@@ -156,6 +134,22 @@ describe('Datagrid size service', function () {
             expect(gridMock.getColumns()[2].width).toBe(80);
             expect(gridMock.getColumns()[3].width).toBe(90);
             expect(gridMock.getColumns()[4].width).toBe(100);
+        }));
+
+        it('should set column min width when there is no saved sizes', inject(function ($window, DatagridSizeService) {
+            //given
+            DatagridSizeService.init(gridMock);
+
+            //when
+            DatagridSizeService.autosizeColumns(gridColumns);
+
+            //then
+            expect(gridMock.getColumns()).toBe(gridColumns);
+            expect(gridMock.getColumns()[0].width).toBe(120);
+            expect(gridMock.getColumns()[1].width).toBe(120);
+            expect(gridMock.getColumns()[2].width).toBe(120);
+            expect(gridMock.getColumns()[3].width).toBe(120);
+            expect(gridMock.getColumns()[4].width).toBe(120);
         }));
 
         it('should set column min width when this column is not in the localStorage entries', inject(function ($window, DatagridSizeService) {
@@ -177,7 +171,7 @@ describe('Datagrid size service', function () {
 
             //then
             expect(gridMock.getColumns()).toBe(gridColumns);
-            expect(gridMock.getColumns()[4].width).toBe(80);
+            expect(gridMock.getColumns()[4].width).toBe(120);
         }));
     });
 });

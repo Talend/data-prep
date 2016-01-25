@@ -21,6 +21,9 @@ describe('Feedback Rest Service', function () {
         //when
         FeedbackRestService.sendFeedback(feedback);
         $httpBackend.flush();
+
+        //then
+        //Expect http call to be performed. If not an error is thrown by $httpBackend
     }));
 
 });

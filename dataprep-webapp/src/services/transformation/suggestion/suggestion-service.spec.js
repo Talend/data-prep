@@ -6,7 +6,6 @@ describe('Suggestion Service', function() {
     beforeEach(inject(function(ColumnSuggestionService, LineSuggestionService) {
         spyOn(LineSuggestionService, 'initTransformations').and.returnValue();
         spyOn(ColumnSuggestionService, 'initTransformations').and.returnValue();
-        spyOn(ColumnSuggestionService, 'reset').and.returnValue();
     }));
 
     describe('transformations/suggestions', function() {
@@ -43,17 +42,6 @@ describe('Suggestion Service', function() {
 
             //then
             expect(LineSuggestionService.initTransformations).not.toHaveBeenCalled();
-        }));
-
-        it('should reset column suggestions', inject(function(SuggestionService, ColumnSuggestionService) {
-            //given
-            expect(ColumnSuggestionService.reset).not.toHaveBeenCalled();
-
-            //when
-            SuggestionService.reset();
-
-            //then
-            expect(ColumnSuggestionService.reset).toHaveBeenCalled();
         }));
     });
 

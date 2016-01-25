@@ -28,9 +28,7 @@
 
             setColumn: setColumn,
             setLine: setLine,
-            selectTab: selectTab,
-
-            reset: reset
+            selectTab: selectTab
         };
 
         return service;
@@ -68,16 +66,6 @@
          */
         function selectTab(tab) {
             service.tab = tabIndex[tab];
-        }
-
-        /**
-         * @ngdoc method
-         * @name reset
-         * @methodOf data-prep.services.transformation.service:SuggestionService
-         * @description Reset the suggestions
-         */
-        function reset() {
-            ColumnSuggestionService.reset();
         }
     }
 

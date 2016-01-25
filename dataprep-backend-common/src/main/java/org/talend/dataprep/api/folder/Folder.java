@@ -2,11 +2,13 @@ package org.talend.dataprep.api.folder;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.concurrent.SynchronousQueue;
 
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
-import org.talend.dataprep.api.preparation.Identifiable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.talend.dataprep.api.preparation.Identifiable;
 
 public class Folder implements Serializable {
 
@@ -14,12 +16,14 @@ public class Folder implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("id")
+    @AccessType(AccessType.Type.PROPERTY)
     protected String id;
 
     /**
      * repository path as /foo/bar/beer
      */
     @Id
+    @AccessType(AccessType.Type.PROPERTY)
     @JsonProperty("path")
     private String path;
 
@@ -29,11 +33,13 @@ public class Folder implements Serializable {
     @JsonProperty("creationDate")
     private long creationDate;
 
-    @JsonProperty("modificationDate")
-    private long modificationDate;
+    @JsonProperty("lastModificationDate")
+    private long lastModificationDate;
 
     public Folder() {
         // no op
+        this.creationDate = System.currentTimeMillis();
+        this.lastModificationDate = this.creationDate;
     }
 
     public Folder(String path) {
@@ -81,14 +87,14 @@ public class Folder implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public long getModificationDate()
+    public long getLastModificationDate()
     {
-        return modificationDate;
+        return lastModificationDate;
     }
 
-    public void setModificationDate( long modificationDate )
+    public void setLastModificationDate( long lastModificationDate )
     {
-        this.modificationDate = modificationDate;
+        this.lastModificationDate = lastModificationDate;
     }
 
     @Override
@@ -116,7 +122,7 @@ public class Folder implements Serializable {
             ", id='" + id + '\'' +
             ", path='" + path + '\'' +
             ", creationDate='" + creationDate + '\'' +
-            ", modificationDate='" + modificationDate + '\'' +
+            ", lastModificationDate='" + lastModificationDate + '\'' +
             '}';
     }
 
@@ -126,9 +132,9 @@ public class Folder implements Serializable {
 
         private String name;
 
-        private long creationDate;
+        private long creationDate = -1;
 
-        private long modificationDate;
+        private long modificationDate = -1;
 
         public static Builder folder() {
             return new Folder.Builder();
@@ -159,8 +165,10 @@ public class Folder implements Serializable {
             Folder folder = new Folder();
             folder.setPath(path);
             folder.setName( name );
-            folder.setCreationDate( creationDate );
-            folder.setModificationDate( modificationDate );
+            long currentDateTime = System.currentTimeMillis();
+            folder.setLastModificationDate( modificationDate == -1 ? currentDateTime : modificationDate);
+            folder.setCreationDate( creationDate == -1 ? currentDateTime : creationDate );
+
             return folder;
         }
 

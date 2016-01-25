@@ -81,8 +81,15 @@ class DiffTransformer implements Transformer {
                     .filter(isWithinWantedIndexes(minIndex, maxIndex)) //
                     .map(createClone()) //
                     .map(rows -> { // Apply actions and generate diff
-                        reference.apply(rows[0]);
-                        preview.apply(rows[1]);
+                        try {
+                            reference.apply(rows[0]);
+                            preview.apply(rows[1]);
+                        } finally {
+                            // apply(...) calls reuse same context in multiple transformations, freeze actions to ensure
+                            // no unwanted modifications.
+                            reference.getContext().freezeActionContexts();
+                            preview.getContext().freezeActionContexts();
+                        }
                         return rows;
                     }) //
                     .filter(shouldWriteDiff(indexes)) //

@@ -185,10 +185,9 @@ describe('Quality bar directive', function() {
             //when
             $rootScope.$digest();
             $timeout.flush(300);
-
             //then
             expect(element.find('.valid-partition').eq(0)[0].hasAttribute('talend-dropdown')).toBe(true);
-            expect(element.find('.column-action').text()).toBe('IDCol');
+            expect(element.find('.valid-partition .dropdown-container .dropdown-menu .valid-menu-item .column-action').text()).toBe('IDCol');
         }));
     });
 });

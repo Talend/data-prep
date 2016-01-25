@@ -1,0 +1,29 @@
+{
+  "actions": [
+    {
+      "action": "delete_column",
+      "parameters": {
+        "column_id": "0002",
+        "column_name": "lastname",
+        "scope": "column"
+      }
+    },
+    {
+      "action": "split",
+      "parameters": {
+        "column_id": "0004",
+        "column_name": "city",
+        "scope": "column",
+        "separator": " ",
+        "limit": "2"
+      }
+    },
+    {
+      "action": "uppercase",
+      "parameters": {
+        "column_id": "0009",
+        "scope": "column"
+      }
+    }
+  ]
+}

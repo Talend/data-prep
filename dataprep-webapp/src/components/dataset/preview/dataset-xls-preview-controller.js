@@ -9,8 +9,9 @@
      * @requires data-prep.services.dataset.service:DatasetService
      * @requires data-prep.services.playground.service:PlaygroundService
      * @requires data-prep.services.state.service:StateService
+     * @requires data-prep.services.folder.service:FolderService
      */
-    function DatasetXlsPreviewCtrl($timeout, DatasetSheetPreviewService, DatasetService, PlaygroundService, StateService) {
+    function DatasetXlsPreviewCtrl(state, $timeout, DatasetSheetPreviewService, DatasetService, PlaygroundService, StateService, FolderService) {
         var vm = this;
         vm.datasetSheetPreviewService = DatasetSheetPreviewService;
 
@@ -52,7 +53,10 @@
          */
         vm.setDatasetSheet = function() {
             DatasetSheetPreviewService.setDatasetSheet(vm.selectedSheetName)
-                .then(DatasetService.refreshDatasets)
+                .then(function(){
+                    DatasetService.refreshDatasets();
+                    FolderService.getContent(state.folder.currentFolder);
+                })
                 .then(function(){
                     vm.state = false;
                 })

@@ -2,8 +2,18 @@ describe('Worker service', function () {
     'use strict';
 
     var $rootScope, createWorker, createWorkerFromFunction, createWorkerWithNamedHelpers;
+    var jasmineOriginalTimeout;
 
     beforeEach(module('data-prep.services.utils'));
+
+    beforeEach(inject(function() {
+        jasmineOriginalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;//default value === 5000 ms
+    }));
+
+    afterEach(function() {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = jasmineOriginalTimeout;
+    });
 
     beforeEach(inject(function(_$rootScope_, WorkerService) {
         $rootScope = _$rootScope_;

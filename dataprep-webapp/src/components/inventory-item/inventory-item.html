@@ -1,0 +1,88 @@
+<div class="inventory-item">
+    <div class="inventory-icon"
+         translate-once-title="OPEN_ACTION"
+         translate-values="{type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name}"
+         ng-switch="inventoryItemCtrl.item.type"
+         ng-click="inventoryItemCtrl.openOnClick(inventoryItemCtrl.item)">
+        <img src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
+        <img src="/assets/images/inventory/xls_file.png" ng-switch-when="application/vnd.ms-excel"/>
+        <img src="/assets/images/inventory/generic_file.png" ng-switch-default/>
+        <img ng-src="/assets/images/certification-{{inventoryItemCtrl.item.certificationStep | lowercase}}.png"
+             class="pin"
+             ng-if="inventoryItemCtrl.item.certificationStep!='NONE'"/>
+    </div>
+
+    <div class="inventory-text">
+        <talend-editable-text ng-if="inventoryItemCtrl.actionsEnabled"
+                              text="inventoryItemCtrl.item.name"
+                              text-class="inventory-title"
+                              text-title="{{ 'OPEN_ACTION' | translate: {type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name} }}"
+                              on-text-click="inventoryItemCtrl.open(inventoryItemCtrl.item)"
+                              on-validate="inventoryItemCtrl.rename(inventoryItemCtrl.item, text)">
+        </talend-editable-text>
+        <span ng-if="!inventoryItemCtrl.actionsEnabled"
+              class="inventory-title"
+              ng-bind="inventoryItemCtrl.item.name"></span>
+        <div class="inventory-description" translate-once="{{inventoryItemCtrl.details}}" translate-values="inventoryItemCtrl.item"></div>
+    </div>
+
+    <!-- Draft actions icons -->
+    <div ng-if="inventoryItemCtrl.actionsEnabled && inventoryItemCtrl.item.draft"
+         class="inventory-actions">
+        <a  ng-if="inventoryItemCtrl.remove"
+            data-icon="e"
+            class="btn-icon btn-transparent"
+            translate-once-title="DELETE_ACTION"
+            translate-values="{type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name}"
+            ng-click="inventoryItemCtrl.remove(inventoryItemCtrl.item)"></a>
+    </div>
+
+    <!-- Not draft actions icons -->
+    <div ng-if="inventoryItemCtrl.actionsEnabled && !inventoryItemCtrl.item.draft" class="inventory-actions">
+        <a data-icon="c"
+           class="btn-icon btn-transparent"
+           ng-if="!!inventoryItemCtrl.item.defaultPreparation"
+           translate-once-title="OPEN_ACTION"
+           translate-values="{type: 'preparation', name: inventoryItemCtrl.item.defaultPreparation.name}"
+           ui-sref="nav.home.preparations({prepid: inventoryItemCtrl.item.defaultPreparation.id})"></a>
+
+        <talend-file-selector
+                ng-if="inventoryItemCtrl.update"
+                button-data-icon="E"
+                button-title="REPLACE_FILE_CONTENT"
+                file-model="inventoryItemCtrl.fileModel"
+                on-file-change="inventoryItemCtrl.update(inventoryItemCtrl.item)">
+        </talend-file-selector>
+
+        <div class="divider btn-transparent"></div>
+
+        <a ng-if="inventoryItemCtrl.copy"
+           data-icon="B"
+           class="btn-icon btn-transparent"
+           translate-once-title="CLONE_ACTION"
+           translate-values="{type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name}"
+           ng-click="inventoryItemCtrl.copy(inventoryItemCtrl.item)"></a>
+
+        <a ng-if="inventoryItemCtrl.remove"
+           data-icon="e"
+           class="btn-icon btn-transparent"
+           translate-once-title="DELETE_ACTION"
+           translate-values="{type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name}"
+           ng-click="inventoryItemCtrl.remove(inventoryItemCtrl.item)"></a>
+
+        <div class="divider btn-transparent"></div>
+        <a ng-if="inventoryItemCtrl.processCertification"
+           data-icon="s"
+           class="btn-icon btn-transparent"
+           translate-once-title="CERTIFY_ACTION"
+           translate-values="{type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name}"
+           ng-click="inventoryItemCtrl.processCertification(inventoryItemCtrl.item)"></a>
+        <a ng-if="inventoryItemCtrl.toggleFavorite"
+           data-icon="f"
+           class="btn-icon btn-transparent favorite"
+           translate-once-title="FAVORITE_ACTION"
+           translate-values="{type: inventoryItemCtrl.type, name: inventoryItemCtrl.item.name}"
+           ng-class="{'favorite-true':inventoryItemCtrl.item.favorite}"
+           ng-click="inventoryItemCtrl.toggleFavorite(inventoryItemCtrl.item)"></a>
+    </div>
+</div>

@@ -41,7 +41,10 @@ public class CSVSerializer implements Serializer {
                 final String separator = parameters.get(CSVFormatGuess.SEPARATOR_PARAMETER);
                 try (CSVReader reader = new CSVReader(new InputStreamReader(rawContent), separator.charAt(0))) {
                     JsonGenerator generator = new JsonFactory().createGenerator(jsonOutput);
-                    reader.readNext(); // Skip column names
+                    int i = 0;
+                    while (i++ < metadata.getContent().getNbLinesInHeader() ) {
+                        reader.readNext(); // Skip all header lines
+                    }
                     generator.writeStartArray();
                     writeLineContent(reader, metadata, generator, separator);
                     generator.writeEndArray();
@@ -50,7 +53,7 @@ public class CSVSerializer implements Serializer {
                     // Consumer may very well interrupt consumption of stream (in case of limit(n) use for sampling).
                     // This is not an issue as consumer is allowed to partially consumes results, it's up to the
                     // consumer to ensure data it consumed is consistent.
-                    LOGGER.debug("Unable to continue serialization. Skipping remaining content.", e);
+                    LOGGER.debug("Unable to continue serialization for {}. Skipping remaining content.", metadata.getId(), e);
                 } finally {
                     try {
                         jsonOutput.close();

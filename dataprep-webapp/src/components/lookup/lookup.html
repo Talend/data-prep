@@ -15,7 +15,8 @@
        <div id="lookup-right">
            <div class="lookup-description">
                <br>
-               <strong><span translate-once="LOOKUP_DESC_TITLE"></span></strong>
+               <strong ng-if="!lookupCtrl.state.playground.lookup.step"><span translate-once="LOOKUP_DESC_TITLE"></span></strong>
+               <strong ng-if="lookupCtrl.state.playground.lookup.step"><span translate-once="LOOKUP_UPDATE_DESC_TITLE"></span></strong>
                <br>
                <p>
                    <p translate-once="LOOKUP_STEPS_1"></p>
@@ -28,7 +29,7 @@
                                 !lookupCtrl.state.playground.lookup.selectedColumn ||
                                 !lookupCtrl.state.playground.grid.selectedColumn"
                    class="param-primary-button btn-primary"
-                   ng-click="lookupCtrl.submitLookup()"
+                   ng-click="lookupCtrl.submit()"
                    ng-mouseenter="lookupCtrl.hoverSubmitBtn()"
                    ng-mouseleave="lookupCtrl.cancelEarlyPreview()"
                    translate-once="CONFIRM_LOOKUP"
@@ -38,7 +39,7 @@
    </div>
 
     <navigation-list list="lookupCtrl.state.playground.lookup.actions"
-                   on-click="lookupCtrl.loadLookupDsContent(item)"
+                   on-click="lookupCtrl.loadFromAction(item)"
                    selected-item="lookupCtrl.state.playground.lookup.dataset"
                    get-label="lookupCtrl.getDsName(item)"
                    nbre-labels-to-show="4">

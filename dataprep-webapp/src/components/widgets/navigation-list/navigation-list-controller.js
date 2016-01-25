@@ -44,7 +44,7 @@
          * @methodOf talend.widget.controller:NavigationListCtrl
          * @description navigate in the list to the right
          */
-        vm.showForth = function showforth(){
+        vm.showForth = function showForth(){
             vm.firstLabelIndex++;
             vm.lastLabelIndex++;
         };
@@ -52,11 +52,46 @@
         /**************************************************************************************************************/
         /******************************** Watcher to reset the navigation list  limits ********************************/
         /**************************************************************************************************************/
-        $scope.$watch(function(){
+        /**
+         * @ngdoc method
+         * @name getSelectedItem
+         * @methodOf talend.widget.controller:NavigationListCtrl
+         * @description Get the selected Item
+         */
+        function getSelectedItem() {
+            return vm.selectedItem;
+        }
+
+        /**
+         * @ngdoc method
+         * @name getList
+         * @methodOf talend.widget.controller:NavigationListCtrl
+         * @description Get the items list
+         */
+        function getList() {
             return vm.list;
-        }, function() {
-            vm.firstLabelIndex = 0;
-            vm.lastLabelIndex = +vm.nbreLabelsToShow;
+        }
+
+        $scope.$watchGroup([getList, getSelectedItem], function() {
+            if(vm.list && vm.list.length > vm.nbreLabelsToShow && vm.selectedItem){
+                for(var i= 0; i< vm.list.length; i++) {
+                    if(vm.list[i] === vm.selectedItem){
+                        if(i >= vm.lastLabelIndex)  {
+                            vm.lastLabelIndex = i+1;
+                            vm.firstLabelIndex = vm.lastLabelIndex - vm.nbreLabelsToShow;
+                        }
+
+                        if(i < vm.firstLabelIndex)  {
+                            vm.firstLabelIndex = i;
+                            vm.lastLabelIndex = vm.firstLabelIndex + vm.nbreLabelsToShow;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                vm.firstLabelIndex = 0;
+                vm.lastLabelIndex = +vm.nbreLabelsToShow;
+            }
         });
     }
 

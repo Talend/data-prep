@@ -1,0 +1,20 @@
+{
+  "actions": [
+    {
+      "action": "uppercase",
+      "parameters": {
+        "column_id": "0002",
+        "column_name": "lastname",
+        "scope": "column"
+      }
+    },
+    {
+      "action": "copy",
+      "parameters": {
+        "column_id": "0002",
+        "column_name": "lastname",
+        "scope": "column"
+      }
+    }
+  ]
+}

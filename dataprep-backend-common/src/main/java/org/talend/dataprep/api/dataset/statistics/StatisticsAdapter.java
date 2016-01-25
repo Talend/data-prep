@@ -5,11 +5,11 @@ import static org.talend.dataprep.api.type.Type.*;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
@@ -57,10 +57,25 @@ public class StatisticsAdapter {
      * Extract analysis result and inject them in columns metadata
      * @param columns The columns metadata
      * @param results The analysis results
+     * @see #adapt(List, List, Predicate) to filter out columns during extraction of results.
      */
     public void adapt(List<ColumnMetadata> columns, List<Analyzers.Result> results) {
+        adapt(columns, results, c -> true);
+    }
+
+    /**
+     * Extract analysis result and inject them in columns metadata
+     * @param columns The columns metadata
+     * @param results The analysis results
+     * @param filter A {@link Predicate predicate} to filter columns to adapt.
+     */
+    public void adapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<ColumnMetadata> filter) {
         for (int i = 0; i < results.size(); ++i) {
             final ColumnMetadata currentColumn = columns.get(i);
+            if(!filter.test(currentColumn)) {
+                // Column needs to be filtered out
+                continue;
+            }
             final Analyzers.Result result = results.get(i);
 
             injectDataType(currentColumn, result);
@@ -230,9 +245,9 @@ public class StatisticsAdapter {
             final NumberFormat format = DecimalFormat.getInstance(ENGLISH);
 
             // Set histogram ranges
-            final Histogram<Double> histogram = new NumberHistogram();
+            final Histogram histogram = new NumberHistogram();
             histogramStatistics.forEach((rangeValues, occurrence) -> {
-                final HistogramRange<Double> range = new HistogramRange<>();
+                final HistogramRange range = new HistogramRange();
                 try {
                     range.getRange().setMax(new Double(format.format(rangeValues.getUpper())));
                     range.getRange().setMin(new Double(format.format(rangeValues.getLower())));
@@ -250,7 +265,7 @@ public class StatisticsAdapter {
 
     private void injectDateHistogram(final ColumnMetadata column, final Analyzers.Result result) {
         if (DATE.isAssignableFrom(column.getType()) && result.exist(StreamDateHistogramStatistics.class)) {
-            final Histogram<LocalDateTime> histogram = result.get(StreamDateHistogramStatistics.class).getHistogram();
+            final Histogram histogram = result.get(StreamDateHistogramStatistics.class).getHistogram();
             column.getStatistics().setHistogram(histogram);
         }
     }

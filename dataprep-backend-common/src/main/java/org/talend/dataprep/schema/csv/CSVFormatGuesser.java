@@ -38,11 +38,21 @@ public class CSVFormatGuesser implements FormatGuesser {
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVFormatGuesser.class);
 
-    /** Detectors used to check the encoding. */
-    private List<WrongEncodingDetector> detectors = Arrays.asList( //
-            new WrongEncodingDetector(65533), //
-            new WrongEncodingDetector(0) //
-    );
+    /**
+     * The maximum size used to guess the format of a CSV input stream.
+     *
+     */
+    private long SIZE_LIMIT = 64 * 1024;
+
+    /**
+     * The maximum number of lines to read to guess the format of a CSV stream.
+     */
+    private int LINE_LIMIT = 100;
+
+    /**
+     * The maximum number of lines stored from the CSV stream.
+     */
+    private int SMALL_SAMPLE_LIMIT = 10;
 
     /** The csv format guesser. */
     @Autowired
@@ -52,8 +62,12 @@ public class CSVFormatGuesser implements FormatGuesser {
     @Autowired
     private UnsupportedFormatGuess fallbackGuess;
 
+    @Autowired
+    private CSVFormatUtils csvFormatUtils;
+
     /** A list of supported separators for a CSV content */
     private Set<Character> validSeparators = new HashSet<Character>() {
+
         {
             add(' ');
             add('\t');
@@ -78,9 +92,7 @@ public class CSVFormatGuesser implements FormatGuesser {
             return new FormatGuesser.Result(fallbackGuess, "UTF-8", Collections.emptyMap());
         }
 
-        final char separator = sep.getSeparator();
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(CSVFormatGuess.SEPARATOR_PARAMETER, String.valueOf(separator));
+        Map<String, String> parameters = csvFormatUtils.compileSeparatorProperties(sep);
         return new FormatGuesser.Result(csvFormatGuess, encoding, parameters);
     }
 
@@ -100,13 +112,24 @@ public class CSVFormatGuesser implements FormatGuesser {
                 int lineCount = 0;
                 boolean inQuote = false;
                 String s;
-                while (totalChars < 64 * 1024 && lineCount < 100 && (s = lineNumberReader.readLine()) != null) {
+                List<String> sampleLines = new ArrayList<>();
+
+                // Detectors used to check the encoding.
+                List<WrongEncodingDetector> detectors = Arrays.asList( //
+                        new WrongEncodingDetector(65533), //
+                        new WrongEncodingDetector(0) //
+                );
+
+                while (totalChars < SIZE_LIMIT && lineCount < LINE_LIMIT && (s = lineNumberReader.readLine()) != null) {
                     totalChars += s.length() + 1; // count the new line character
                     if (s.isEmpty()) {
                         continue;
                     }
                     if (!inQuote) {
                         lineCount++;
+                        if (lineCount < SMALL_SAMPLE_LIMIT) {
+                            sampleLines.add(s);
+                        }
                     }
                     for (int i = 0; i < s.length(); i++) {
 
@@ -114,7 +137,7 @@ public class CSVFormatGuesser implements FormatGuesser {
 
                         // check the encoding
                         try {
-                            checkEncoding(c, totalChars);
+                            checkEncoding(c, totalChars, detectors);
                         } catch (IOException e) {
                             LOGGER.debug(encoding + " is assumed wrong" + e);
                             return null;
@@ -130,7 +153,7 @@ public class CSVFormatGuesser implements FormatGuesser {
 
                     }
                 }
-                return chooseSeparator(new ArrayList<>(separatorMap.values()), lineCount);
+                return chooseSeparator(new ArrayList<>(separatorMap.values()), lineCount, sampleLines);
             }
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_CONTENT, e);
@@ -147,7 +170,7 @@ public class CSVFormatGuesser implements FormatGuesser {
      * @param totalChars the total number of chars so far.
      * @throws IOException if the encoding is assumed wrong.
      */
-    private void checkEncoding(char c, long totalChars) throws IOException {
+    private void checkEncoding(char c, long totalChars, List<WrongEncodingDetector> detectors) throws IOException {
         for (WrongEncodingDetector detector : detectors) {
             detector.checkChar(c, totalChars);
         }
@@ -178,38 +201,35 @@ public class CSVFormatGuesser implements FormatGuesser {
      * @param lineCount number of lines in the CSV.
      * @return the separator to use to read the CSV or null if none found.
      */
-    private Separator chooseSeparator(List<Separator> separators, int lineCount) {
-
-        // easy case where there's no choice
-        if (separators.isEmpty()) {
-            if (lineCount > 0) {
-                // There are some lines processed, but no separator (a one-column content?), so pick a default
-                // separator.
-                return new Separator(',');
-            }
-            return null;
-        }
-
-        // if there's only one separator, let's use it
-        if (separators.size() == 1) {
-            return separators.get(0);
-        }
-
+    private Separator chooseSeparator(List<Separator> separators, int lineCount, List<String> sampleLines) {
 
         // filter separators
         final List<Separator> filteredSeparators = separators.stream() //
                 .filter(sep -> validSeparators.contains(sep.getSeparator())) // filter out invalid separators
                 .collect(Collectors.toList());
 
+        // easy case where there's no choice
+        if (filteredSeparators.isEmpty()) {
+            if (lineCount > 0) {
+                // There are some lines processed, but no separator (a one-column content?), so pick a default
+                // separator.
+                Separator result = new Separator(',');
+                filteredSeparators.add(result);
+            } else {
+                return null;
+            }
+        }
+
         // compute each separator score
-        Entropy entropy = new Entropy(lineCount);
-        filteredSeparators.forEach(entropy::accept); // compute each separator score
+        SeparatorAnalyzer separatorAnalyzer = new SeparatorAnalyzer(lineCount, sampleLines);
+        filteredSeparators.forEach(separatorAnalyzer::accept); // analyse separators and set header info and score
 
         // sort separator and return the first
-        return filteredSeparators.stream() //
-                .sorted((s0, s1) -> Double.compare(s0.score, s1.score)) // sort by entropy (the lowest the better)
-                .findFirst() //
+        Separator result = filteredSeparators.stream() //
+                .sorted((s0, s1) -> separatorAnalyzer.compare(s0, s1)).findFirst() //
                 .get();
+
+        return result;
     }
 
     /**
@@ -220,6 +240,8 @@ public class CSVFormatGuesser implements FormatGuesser {
 
         /** Threshold to detect binary stream in percentage. */
         private static final int WRONG_ENCODING_THRESHOLD = 10;
+
+        private static final int WARM_UP_SAMPLE_SIZE = 50;
 
         /** Char informing that the encoding is supposed to be wrong. */
         private int informantChar;
@@ -251,10 +273,10 @@ public class CSVFormatGuesser implements FormatGuesser {
 
             count++;
             long percentage = count * 100 / totalChars;
-            if (percentage > WRONG_ENCODING_THRESHOLD) {
+            if (totalChars > WARM_UP_SAMPLE_SIZE && percentage > WRONG_ENCODING_THRESHOLD) {
                 LOGGER.debug("wrong encoding detected, hence cannot be a CSV");
-                throw new IOException(
-                        "'" + (char) informantChar + "' is found more than " + WRONG_ENCODING_THRESHOLD + " % in file.");
+                throw new IOException("'" + (char) informantChar + "' is found more than " + WRONG_ENCODING_THRESHOLD
+                        + " % in file after reading a reading " + WARM_UP_SAMPLE_SIZE + " characters.");
             }
         }
 

@@ -1,7 +1,10 @@
 package org.talend.dataprep.api.service.command.preparation;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.client.HttpClient;
 import org.springframework.context.annotation.Scope;
@@ -42,17 +45,8 @@ public class PreviewDiff extends PreviewAbstract {
         final Iterator<Action> previewActionsIterator = getPreparationActions(preparation, input.getPreviewStepId()).iterator();
         steps.stream().filter(step -> previewActionsIterator.hasNext()).forEach(step -> previewActions.put(step, previewActionsIterator.next()));
 
-        // serialize the 2 actions list
-        final String oldEncodedActions = serializeActions(new ArrayList<>(originalActions.values()));
-        final String newEncodedActions = serializeActions(new ArrayList<>(previewActions.values()));
-
-        // get dataset content
-        final InputStream content = getDatasetContent(dataSetId, input.getSample());
-        // get usable tdpIds
-        final String encodedTdpIds = serializeIds(input.getTdpIds());
-
         // execute transformation preview with content and the 2 transformations
-        setContext(oldEncodedActions, newEncodedActions, content, encodedTdpIds);
+        setContext(originalActions.values(), previewActions.values(), dataSetId, input.getTdpIds());
         return super.run();
     }
 

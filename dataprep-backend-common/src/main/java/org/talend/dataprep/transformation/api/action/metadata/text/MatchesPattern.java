@@ -107,7 +107,7 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
     private ReplaceOnValueHelper getPattern(Map<String, String> parameters) {
         if (CUSTOM.equals(parameters.get(PATTERN_PARAMETER))) {
             final String jsonString = parameters.get(MANUAL_PATTERN_PARAMETER);
-            return regexParametersHelper.build(jsonString);
+            return regexParametersHelper.build(jsonString, true);
         } else {
             return new ReplaceOnValueHelper(parameters.get(PATTERN_PARAMETER), ReplaceOnValueHelper.REGEX_MODE);
         }
@@ -119,7 +119,7 @@ public class MatchesPattern extends ActionMetadata implements ColumnAction {
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
                 actionContext.get(REGEX_HELPER_KEY,(p) -> getPattern(actionContext.getParameters()));
-            } catch (InvalidParameterException e) {
+            } catch (IllegalArgumentException e) {
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
         }

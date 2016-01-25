@@ -8,7 +8,8 @@ describe('Suggestions Profile directive', function () {
             playground: {
                 suggestions: {
                     isLoading: false
-                }
+                },
+                statistics: {}
             }
         };
         $provide.constant('state', stateMock);
@@ -31,10 +32,10 @@ describe('Suggestions Profile directive', function () {
         element.remove();
     });
 
-    it('should render chart ghost when fetching statistics', inject(function ($q, PlaygroundService, StatisticsService) {
+    it('should render chart ghost when fetching statistics', inject(function ($q, PlaygroundService) {
             //given
             spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
-            StatisticsService.histogram = null;
+            stateMock.playground.statistics.histogram = null;
 
             //when
             createElement();

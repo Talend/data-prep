@@ -1,35 +1,23 @@
 package org.talend.dataprep.transformation.api.action.metadata;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.talend.dataprep.i18n.MessagesBundle;
-import org.talend.dataprep.transformation.Application;
+import org.talend.dataprep.transformation.FailedAction;
+import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 /**
  * Test that a translation exists for i18n keys label/desc for each action and each params/item.
- *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@IntegrationTest
-@WebAppConfiguration
-public class TestI18nKeysForActionsTest {
+public class TestI18nKeysForActionsTest extends TransformationBaseTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestI18nKeysForActionsTest.class);
 
@@ -37,7 +25,7 @@ public class TestI18nKeysForActionsTest {
     private ActionMetadata[] allActions;
 
     private void assertI18nKeyExists(final String label) {
-        if(label.startsWith("action.")) {
+        if(label.startsWith("action.") && !label.contains(FailedAction.FAILED_ACTION)) {
             fail("missing key <" + label + ">");
         }
     }

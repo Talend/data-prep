@@ -51,3 +51,9 @@ The following projects don't build any back-end artifacts but provide build util
 
 ## IDE setup
 See the [tooling](/tooling/) folder.
+
+## License
+
+Copyright (c) 2006-2015 Talend
+
+Licensed under the [Apache Licence v2](https://www.apache.org/licenses/LICENSE-2.0.txt)

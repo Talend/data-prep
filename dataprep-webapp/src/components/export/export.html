@@ -1,6 +1,10 @@
 <talend-button-dropdown button-text="{{'EXPORT' | translate }}" button-action="exportCtrl.export()">
     <ul>
-        <li ng-repeat="exportType in exportCtrl.exportService.exportTypes" ng-click="exportCtrl.changeTypeAndExport(exportType)">{{exportType.id}}</li>
+        <li ng-repeat="exportType in exportCtrl.exportService.exportTypes track by exportType.id"
+            ng-class="{'disabled' : !exportType.enabled}"
+            ng-click="exportCtrl.changeTypeAndExport(exportType)">
+            {{exportType.id}}<span ng-if="!exportType.enabled"> - {{exportType.disableReason}}</span>
+        </li>
     </ul>
 </talend-button-dropdown>
 

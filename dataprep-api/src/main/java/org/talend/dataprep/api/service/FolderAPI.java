@@ -4,16 +4,20 @@ import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.FolderContent;
 import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.service.command.common.HttpResponse;
+import org.talend.dataprep.api.service.command.dataset.CloneDataSet;
 import org.talend.dataprep.api.service.command.folder.*;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -23,8 +27,9 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class FolderAPI extends APIService {
@@ -101,10 +106,19 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = DELETE)
     @ApiOperation(value = "Remove a Folder")
     @Timed
-    public void removeFolder(@RequestParam(required = true) String path) {
+    public void removeFolder(@RequestParam(required = true) String path, final OutputStream output) {
         try {
-            final HystrixCommand<Void> removeFolder = getCommand(RemoveFolder.class, getClient(), path);
-            removeFolder.execute();
+            final HystrixCommand<HttpResponse> removeFolder = getCommand(RemoveFolder.class, getClient(), path);
+            HttpResponse result = removeFolder.execute();
+            try {
+                HttpResponseContext.status( HttpStatus.valueOf( result.getStatusCode()));
+                HttpResponseContext.header("Content-Type", result.getContentType());
+                IOUtils.write(result.getHttpContent(), output);
+                output.flush();
+            } catch (IOException e) {
+                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            }
+
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER, e);
         }
@@ -170,9 +184,9 @@ public class FolderAPI extends APIService {
             @PathVariable(value = "contentType") String contentType, //
             @RequestParam String path) {
         try {
-            final HystrixCommand<Void> createFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), path, contentType,
+            final HystrixCommand<Void> removeFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), path, contentType,
                     contentId);
-            createFolderEntry.execute();
+            removeFolderEntry.execute();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER_ENTRY, e);
         }

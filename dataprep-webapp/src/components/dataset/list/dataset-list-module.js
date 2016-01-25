@@ -13,6 +13,7 @@
      * @requires data-prep.services.utils
      * @requires data-prep.services.state
      * @requires data-prep.services.folder
+     * @requires data-prep.inventory-item
      */
     angular.module('data-prep.dataset-list', [
         'ui.router',
@@ -24,6 +25,7 @@
         'data-prep.services.datasetWorkflowService',
         'data-prep.services.utils',
         'data-prep.services.state',
-        'data-prep.services.folder'
+        'data-prep.services.folder',
+        'data-prep.inventory-item'
     ]);
 })();

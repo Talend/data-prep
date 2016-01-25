@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
@@ -24,6 +25,11 @@ public interface DatePatternParamModel {
      * The parameter object for the custom new pattern.
      */
     String CUSTOM_PATTERN = "custom_date_pattern"; //$NON-NLS-1$
+
+    /**
+     * Key to store compiled pattern in action context.
+     */
+    String COMPILED_DATE_PATTERN = "compiled_datePattern";
 
     /**
      * The parameter object for the custom new pattern.
@@ -69,12 +75,21 @@ public interface DatePatternParamModel {
             if (StringUtils.isEmpty(pattern)) {
                 throw new IllegalArgumentException();
             }
-            final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
-            return new DatePattern(pattern, dateTimeFormatter);
+            return new DatePattern(pattern);
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException("pattern '" + pattern + "' is not a valid date pattern", iae);
         }
+    }
 
+    default void compileDatePattern(ActionContext actionContext) {
+        if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
+            try {
+                actionContext.get(COMPILED_DATE_PATTERN, (p) -> getDateFormat(actionContext.getParameters()));
+            } catch (IllegalArgumentException e) {
+                // Nothing to do, when pattern is invalid, cancel action.
+                actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            }
+        }
     }
 
 }

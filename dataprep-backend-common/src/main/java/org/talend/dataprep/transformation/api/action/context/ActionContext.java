@@ -18,8 +18,6 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitPar
  */
 public class ActionContext {
 
-
-
     public enum ActionStatus {
         /**
          * Indicate action is good for usage and transformation process should continue using this action.
@@ -35,11 +33,12 @@ public class ActionContext {
          */
         CANCELED
     }
+
     /** Link to the transformation context. */
     private final TransformationContext parent;
 
     /** A map of object (used to reuse objects across row process). */
-    private Map<String, Object> context = new HashMap<>();
+    protected Map<String, Object> context = new HashMap<>();
 
     private RowMetadata outputRowMetadata;
 
@@ -105,7 +104,7 @@ public class ActionContext {
      * @param name the column original name.
      * @return the context key for the column.
      */
-    private String getColumnKey(String name) {
+    protected String getColumnKey(String name) {
         return "col#" + name;
     }
 
@@ -151,11 +150,7 @@ public class ActionContext {
      * let action add a new column, but allows to get previously created ones.
      */
     public ActionContext asImmutable() {
-        final ActionContext actionContext = new ActionContext(parent);
-        actionContext.setInputRowMetadata(inputRowMetadata);
-        actionContext.setOutputRowMetadata(outputRowMetadata);
-        actionContext.context = Collections.unmodifiableMap(this.context);
-        return actionContext;
+        return new ImmutableActionContext(this);
     }
 
     public RowMetadata getInputRowMetadata() {
@@ -216,6 +211,113 @@ public class ActionContext {
      * @param actionStatus The new action status, one of {@link ActionStatus}.
      */
     public void setActionStatus(ActionStatus actionStatus) {
+        if (this.actionStatus == ActionStatus.CANCELED && actionStatus == ActionStatus.OK) {
+            // Don't allow transition from CANCELLED to OK.
+            return;
+        }
         this.actionStatus = actionStatus;
+    }
+
+    private static class ImmutableActionContext extends ActionContext {
+
+        private final ActionContext delegate;
+
+        private ImmutableActionContext(ActionContext delegate) {
+            super(delegate.parent);
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void setOutputRowMetadata(RowMetadata outputRowMetadata) {
+            // No op: unable to modify metadata once immutable.
+        }
+
+        @Override
+        public RowMetadata getOutputRowMetadata() {
+            return delegate.getOutputRowMetadata();
+        }
+
+        @Override
+        public void setInputRowMetadata(RowMetadata inputRowMetadata) {
+            // No op: unable to modify metadata once immutable.
+        }
+
+        @Override
+        public void setParameters(Map<String, String> parameters) {
+             // No op: unable to modify once immutable.
+        }
+
+        @Override
+        public String getColumnId() {
+            return delegate.getColumnId();
+        }
+
+        @Override
+        public Map<String, String> getParameters() {
+            return Collections.unmodifiableMap(delegate.getParameters());
+        }
+
+        @Override
+        public Long getRowId() {
+            return delegate.getRowId();
+        }
+
+        @Override
+        public DataSetRow getPreviousRow() {
+            return delegate.getPreviousRow();
+        }
+
+        @Override
+        public ScopeCategory getScope() {
+            return delegate.getScope();
+        }
+
+        @Override
+        public ActionStatus getActionStatus() {
+            return delegate.getActionStatus();
+        }
+
+        @Override
+        public void setActionStatus(ActionStatus actionStatus) {
+            delegate.setActionStatus(actionStatus);
+        }
+
+        @Override
+        public TransformationContext getParent() {
+            return delegate.getParent();
+        }
+
+        @Override
+        public String column(String name, Function<RowMetadata, ColumnMetadata> create) {
+            if (!delegate.context.containsKey(getColumnKey(name))) {
+                throw new UnsupportedOperationException();
+            }
+            return delegate.column(name, create);
+        }
+
+        @Override
+        public <T> T get(String key) {
+            return delegate.get(key);
+        }
+
+        @Override
+        public <T> T get(String key, Function<Map<String, String>, T> supplier) {
+            return delegate.get(key, supplier);
+        }
+
+        @Override
+        public Collection<Object> getContextEntries() {
+            return Collections.unmodifiableCollection(delegate.getContextEntries());
+        }
+
+        @Override
+        public ActionContext asImmutable() {
+            return this;
+        }
+
+        @Override
+        public RowMetadata getInputRowMetadata() {
+            return delegate.getInputRowMetadata();
+        }
     }
 }

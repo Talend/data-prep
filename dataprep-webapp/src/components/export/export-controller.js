@@ -38,6 +38,10 @@
          * If the export type has parameters, we init the form and display a modal
          */
         vm.changeTypeAndExport = function (exportType) {
+            if(!exportType.enabled) {
+                // Export type is not available, no need to go further.
+                return;
+            }
             vm.exportService.currentExportType = exportType;
             if (vm.exportService.currentExportType.parameters) {
 
@@ -48,6 +52,8 @@
                     updateExportParameters();
                 }
                 vm.showModal = true;
+            } else {
+                vm.export();
             }
         };
 

@@ -110,7 +110,7 @@ public class StatisticsTest {
 
     @Test
     public void testGetHistogram() throws Exception {
-        final List<HistogramRange<Double>> histogramRanges = ((Histogram<Double>)statistics.getHistogram()).getItems();
+        final List<HistogramRange> histogramRanges = statistics.getHistogram().getItems();
         assertEquals(2, histogramRanges.size());
         assertEquals(1.0, histogramRanges.get(0).getRange().getMin(), 0);
         assertEquals(1.5, histogramRanges.get(0).getRange().getMax(), 0);

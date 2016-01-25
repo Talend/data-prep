@@ -42,5 +42,24 @@ public class AverageTest extends OperationBaseTest {
 
     }
 
+    @Test
+    public void shouldRemoveEmptyDuringAverageNormalization() {
+
+        AggregationResult result = new AggregationResult(Operator.AVERAGE);
+        aggregator.accept(getRow("toto", "10"), result);
+        aggregator.accept(getRow("toto", "0"), result);
+        aggregator.accept(getRow("empty", ""), result);
+        aggregator.accept(getRow("empty", ""), result);
+
+        final Average.AverageContext toto = (Average.AverageContext) result.get("toto");
+        assertEquals(5d, toto.getValue(), 0d);
+
+        final Average.AverageContext empty = (Average.AverageContext) result.get("empty");
+        assertEquals(Double.NaN, empty.getValue(), 0d);
+
+        // Empty results should be removed when normalize() is called on result
+        aggregator.normalize(result);
+        assertEquals(null, result.get("empty"));
+    }
 
 }

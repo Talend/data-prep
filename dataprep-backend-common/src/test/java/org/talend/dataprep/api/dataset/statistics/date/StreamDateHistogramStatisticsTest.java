@@ -3,13 +3,10 @@ package org.talend.dataprep.api.dataset.statistics.date;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.statistics.Histogram;
 import org.talend.dataprep.api.dataset.statistics.HistogramRange;
-import org.talend.dataprep.api.dataset.statistics.Range;
 import org.talend.dataprep.date.DateManipulator;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import static java.time.Month.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,25 +27,25 @@ public class StreamDateHistogramStatisticsTest {
         stats.add(LocalDateTime.of(2015, JANUARY, 5, 9, 8, 3));
 
         //when
-        final Histogram<LocalDateTime> histogram = stats.getHistogram();
+        final Histogram histogram = stats.getHistogram();
 
         //then
-        assertThat(((DateHistogram)histogram).getPace(), is(DateManipulator.Pace.DAY));
+        assertThat(((DateHistogram) histogram).getPace(), is(DateManipulator.Pace.DAY));
         assertThat(histogram.getItems().size(), is(3));
 
-        HistogramRange<LocalDateTime> histoRange = histogram.getItems().get(0);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, JANUARY, 5, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, JANUARY, 6, 0, 0)));
+        HistogramRange histoRange = histogram.getItems().get(0);
+        assertThat((long) histoRange.getRange().getMin(), is(1420416000000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1420502400000L));
         assertThat(histoRange.getOccurrences(), is(3L));
 
         histoRange = histogram.getItems().get(1);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, JANUARY, 6, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, JANUARY, 7, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1420502400000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1420588800000L));
         assertThat(histoRange.getOccurrences(), is(2L));
 
         histoRange = histogram.getItems().get(2);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, JANUARY, 7, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, JANUARY, 8, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1420588800000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1420675200000L));
         assertThat(histoRange.getOccurrences(), is(1L));
     }
 
@@ -67,30 +64,30 @@ public class StreamDateHistogramStatisticsTest {
         stats.add(LocalDateTime.of(2015, JANUARY, 18, 4, 4));
 
         //when
-        final Histogram<LocalDateTime> histogram = stats.getHistogram();
+        final Histogram histogram = stats.getHistogram();
 
         //then
-        assertThat(((DateHistogram)histogram).getPace(), is(DateManipulator.Pace.MONTH));
+        assertThat(((DateHistogram) histogram).getPace(), is(DateManipulator.Pace.MONTH));
         assertThat(histogram.getItems().size(), is(4));
 
-        HistogramRange<LocalDateTime> histoRange = histogram.getItems().get(0);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, JANUARY, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, FEBRUARY, 1, 0, 0)));
+        HistogramRange histoRange = histogram.getItems().get(0);
+        assertThat((long) histoRange.getRange().getMin(), is(1420070400000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1422748800000L));
         assertThat(histoRange.getOccurrences(), is(4L));
 
         histoRange = histogram.getItems().get(1);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, FEBRUARY, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, MARCH, 1, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1422748800000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1425168000000L));
         assertThat(histoRange.getOccurrences(), is(0L));
 
         histoRange = histogram.getItems().get(2);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, MARCH, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, APRIL, 1, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1425168000000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1427846400000L));
         assertThat(histoRange.getOccurrences(), is(2L));
 
         histoRange = histogram.getItems().get(3);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, APRIL, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, MAY, 1, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1427846400000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1430438400000L));
         assertThat(histoRange.getOccurrences(), is(1L));
     }
 
@@ -108,28 +105,27 @@ public class StreamDateHistogramStatisticsTest {
         stats.add(LocalDateTime.of(2015, JANUARY, 5, 7, 9));
 
         //when
-        final Histogram<LocalDateTime> histogram = stats.getHistogram();
+        final Histogram histogram = stats.getHistogram();
 
         //then
-        assertThat(((DateHistogram)histogram).getPace(), is(DateManipulator.Pace.YEAR));
+        assertThat(((DateHistogram) histogram).getPace(), is(DateManipulator.Pace.YEAR));
         assertThat(histogram.getItems().size(), is(3));
 
-        HistogramRange<LocalDateTime> histoRange = histogram.getItems().get(0);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2013, JANUARY, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2014, JANUARY, 1, 0, 0)));
+        HistogramRange histoRange = histogram.getItems().get(0);
+        assertThat((long) histoRange.getRange().getMin(), is(1356998400000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1388534400000L));
         assertThat(histoRange.getOccurrences(), is(2L));
 
         histoRange = histogram.getItems().get(1);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2014, JANUARY, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2015, JANUARY, 1, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1388534400000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1420070400000L));
         assertThat(histoRange.getOccurrences(), is(0L));
 
         histoRange = histogram.getItems().get(2);
-        assertThat(histoRange.getRange().getMin(), is(LocalDateTime.of(2015, JANUARY, 1, 0, 0)));
-        assertThat(histoRange.getRange().getMax(), is(LocalDateTime.of(2016, JANUARY, 1, 0, 0)));
+        assertThat((long) histoRange.getRange().getMin(), is(1420070400000L));
+        assertThat((long) histoRange.getRange().getMax(), is(1451606400000L));
         assertThat(histoRange.getOccurrences(), is(4L));
     }
-
 
     @Test
     public void should_scale_to_geologic_time() {
@@ -145,7 +141,7 @@ public class StreamDateHistogramStatisticsTest {
         stats.add(LocalDateTime.of(1_000_000, JANUARY, 5, 7, 9));
 
         //when
-        final Histogram<LocalDateTime> histogram = stats.getHistogram();
+        final Histogram histogram = stats.getHistogram();
 
         //then
         // Assert that it scales, e.g. the pace should be for this example 10 thousands years

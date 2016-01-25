@@ -7,7 +7,9 @@ import java.time.temporal.WeekFields;
 import java.util.Arrays;
 import java.util.Locale;
 
+import static java.time.Instant.ofEpochMilli;
 import static java.time.Month.*;
+import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.IsoFields.QUARTER_OF_YEAR;
 import static org.talend.dataprep.date.DateManipulator.Pace.CENTURY;
 
@@ -253,5 +255,31 @@ public class DateManipulator {
      */
     private LocalDateTime getStartOfDay(final LocalDateTime localDate) {
         return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay());
+    }
+
+    /**
+     * Compute the number of milliseconds for UTC timestamp
+     *
+     * @param localDate The date to convert
+     * @return The UTC epoch milliseconds
+     */
+    public long getUTCEpochMilliseconds(final LocalDateTime localDate) {
+        return localDate.toEpochSecond(ZoneOffset.UTC) * 1000;
+    }
+
+    /**
+     * Create a LocalDateTime from epochMillis by adding system offset.
+     * 0L will be converted to 1970-01-01 in the system timezone.
+     *
+     * @param epochMillis The epoch time in milliseconds
+     * @return The local date that correspond to the epoch milliseconds minus the system offset
+     */
+    public LocalDateTime fromEpochMillisecondsWithSystemOffset(final long epochMillis) {
+        //get the offset at the time
+        final ZonedDateTime referenceUTC = ZonedDateTime.ofInstant(ofEpochMilli(epochMillis), systemDefault());
+        final long offsetMillis = referenceUTC.getOffset().getTotalSeconds() * 1000;
+
+        //create LocalDateTime from epochMillis with the offset
+        return LocalDateTime.ofInstant(ofEpochMilli(epochMillis - offsetMillis), systemDefault());
     }
 }

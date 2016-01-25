@@ -408,7 +408,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
             start = temp.atStartOfDay();
         }
 
-        Temporal result = (unit == ChronoUnit.HOURS ? LocalDateTime.from(start) : LocalDate.from(start));
+        Temporal result = LocalDateTime.from(start);
         return String.valueOf(unit.between(result, now));
     }
 

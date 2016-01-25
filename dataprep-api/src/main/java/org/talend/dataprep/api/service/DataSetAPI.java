@@ -10,10 +10,29 @@ import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.DataSetMoveRequest;
 import org.talend.dataprep.api.service.command.common.HttpResponse;
-import org.talend.dataprep.api.service.command.dataset.*;
+import org.talend.dataprep.api.service.command.dataset.CloneDataSet;
+import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
+import org.talend.dataprep.api.service.command.dataset.CreateOrUpdateDataSet;
+import org.talend.dataprep.api.service.command.dataset.DataSetDelete;
+import org.talend.dataprep.api.service.command.dataset.DataSetGet;
+import org.talend.dataprep.api.service.command.dataset.DataSetGetMetadata;
+import org.talend.dataprep.api.service.command.dataset.DataSetList;
+import org.talend.dataprep.api.service.command.dataset.DataSetPreview;
+import org.talend.dataprep.api.service.command.dataset.DatasetCertification;
+import org.talend.dataprep.api.service.command.dataset.MoveDataSet;
+import org.talend.dataprep.api.service.command.dataset.SetFavorite;
+import org.talend.dataprep.api.service.command.dataset.UpdateColumn;
+import org.talend.dataprep.api.service.command.dataset.UpdateDataSet;
 import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.exception.TDPException;
@@ -22,8 +41,9 @@ import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -40,7 +60,7 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
-            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "", required = false) String folderPath,
+            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "/", required = false) String folderPath,
             @RequestHeader("Content-Type") String contentType,
             @ApiParam(value = "content") InputStream dataSetContent) {
         if (LOG.isDebugEnabled()) {
@@ -59,13 +79,12 @@ public class DataSetAPI extends APIService {
     public String createOrUpdateById(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
-            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "", required = false) String folderPath,
             @ApiParam(value = "content") InputStream dataSetContent) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
         }
         HttpClient client = getClient();
-        HystrixCommand<String> creation = getCommand(CreateOrUpdateDataSet.class, client, id, name, dataSetContent, folderPath);
+        HystrixCommand<String> creation = getCommand(CreateOrUpdateDataSet.class, client, id, name, dataSetContent);
         String result = creation.execute();
         LOG.debug("Dataset creation or update for #{} done.", id);
         return result;
@@ -194,10 +213,46 @@ public class DataSetAPI extends APIService {
         }
     }
 
+    /**
+     * Move a data set to an other folder
+     *
+     * @param dataSetId
+     * @param dataSetMoveRequest
+     */
+    @RequestMapping(value = "/api/datasets/move/{id}", method = PUT, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Clone a data set", produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.ALL_VALUE, notes = "Move a data set to an other folder.")
+    @Timed
+    public void move(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
+            @ApiParam(value = "the parameters to move the dataset.") @RequestBody(required = true) DataSetMoveRequest dataSetMoveRequest,
+            final OutputStream output) throws IOException {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Moving dataset (pool: {} )...", getConnectionStats());
+        }
+        HttpClient client = getClient();
+        HystrixCommand<HttpResponse> creation = getCommand(MoveDataSet.class, client, //
+                dataSetId, //
+                dataSetMoveRequest.getFolderPath(), //
+                dataSetMoveRequest.getNewFolderPath(), //
+                dataSetMoveRequest.getNewName());
+        HttpResponse result = creation.execute();
+        LOG.debug("Dataset move done.");
+
+        HttpResponseContext.header("Content-Type", result.getContentType());
+        HttpResponseContext.status(HttpStatus.valueOf(result.getStatusCode()));
+        if (result.getStatusCode() != HttpStatus.OK.value()) {
+            try {
+                IOUtils.write(result.getHttpContent(), output);
+                output.flush();
+            } catch (IOException e) {
+                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            }
+        }
+    }
+
     @RequestMapping(value = "/api/datasets/preview/{id}", method = GET, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a data set by id.", produces = APPLICATION_JSON_VALUE, notes = "Get a data set based on given id.")
-    public void preview(
-            @ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
+    public void preview(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
             @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata,
             @RequestParam(defaultValue = "") @ApiParam(name = "sheetName", value = "Sheet name to preview") String sheetName,
             final OutputStream output) {

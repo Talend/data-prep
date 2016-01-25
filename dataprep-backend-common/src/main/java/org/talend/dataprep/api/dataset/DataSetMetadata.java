@@ -343,30 +343,28 @@ public class DataSetMetadata implements Serializable {
 
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#id */
         private String id;
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#author */
         private String author = "anonymous";
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#name */
         private String name = "";
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#creationDate */
         private long createdDate = System.currentTimeMillis();
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#sheetName */
         private String sheetName;
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#draft */
         private boolean draft = true;
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#favorite */
         private boolean isFavorite;
-
         /** @see org.talend.dataprep.api.dataset.DataSetMetadata#location */
         private DataSetLocation location = new LocalStoreLocation();
 
         /** @see org.talend.dataprep.api.dataset.DataSetContent#nbRecords */
-        private int size;
+        private long size;
+
+        /**
+         * @see org.talend.dataprep.api.dataset.DataSetContent#limit
+         */
+        private Long limit = null;
         /** @see org.talend.dataprep.api.dataset.DataSetContent#nbLinesInHeader */
         private int headerSize;
         /** @see org.talend.dataprep.api.dataset.DataSetContent#nbLinesInFooter */
@@ -383,7 +381,6 @@ public class DataSetMetadata implements Serializable {
 
         /** @see org.talend.dataprep.api.dataset.DataSetLifecycle#contentAnalyzed */
         private boolean contentAnalyzed;
-
         /** @see org.talend.dataprep.api.dataset.DataSetLifecycle#schemaAnalyzed */
         private boolean schemaAnalyzed;
 
@@ -396,7 +393,6 @@ public class DataSetMetadata implements Serializable {
          * @see org.talend.dataprep.api.dataset.DataSetLifecycle#inProgress
          */
         private boolean inProgress = true;
-
         /** @see org.talend.dataprep.api.dataset.DataSetLifecycle#qualityAnalyzed */
         private boolean qualityAnalyzed;
 
@@ -445,8 +441,18 @@ public class DataSetMetadata implements Serializable {
             return this;
         }
 
-        public DataSetMetadata.Builder size(int size) {
+        public DataSetMetadata.Builder size(long size) {
             this.size = size;
+            return this;
+        }
+
+        public DataSetMetadata.Builder limit(Long limit) {
+            this.limit = limit;
+            return this;
+        }
+
+        public DataSetMetadata.Builder parameter(String name, String value) {
+            this.parameters.put(name, value);
             return this;
         }
 
@@ -540,6 +546,9 @@ public class DataSetMetadata implements Serializable {
             this.isFavorite = original.isFavorite();
             this.location = original.getLocation();
             this.size = original.getContent().getNbRecords();
+            if (original.getContent().getLimit().isPresent()) {
+                this.limit = original.getContent().getLimit().get();
+            }
             this.headerSize = original.getContent().getNbLinesInHeader();
             this.footerSize = original.getContent().getNbLinesInFooter();
             this.formatGuessId = original.getContent().getFormatGuessId();
@@ -591,6 +600,7 @@ public class DataSetMetadata implements Serializable {
             metadata.setEncoding(encoding);
             DataSetContent currentContent = metadata.getContent();
             currentContent.setNbRecords(size);
+            currentContent.setLimit(limit);
             currentContent.setNbLinesInHeader(headerSize);
             currentContent.setNbLinesInFooter(footerSize);
             currentContent.setParameters(parameters);

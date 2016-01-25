@@ -254,4 +254,36 @@ describe('Transformation params directive', function () {
         //then
         expect(element.find('.cluster').length).toBe(1);
     });
+
+    it('should render doc link when there is a docUrl parameter', function () {
+        //given
+        scope.transformation = {
+            name: 'menuWithParam',
+            label: 'menu with param',
+            parameters: [
+                {
+                    'name': 'param1',
+                    'label': 'Param 1',
+                    'type': 'string',
+                    'inputType': 'text',
+                    'default': '.'
+                },
+                {
+                    'name': 'param2',
+                    'label': 'Param 2',
+                    'type': 'integer',
+                    'inputType': 'number',
+                    'default': '5'
+                }
+            ],
+            docUrl: 'http://www.google.com'
+        };
+
+        //when
+        var element = createElement();
+
+        //then
+        var docLink = element.find('.param-buttons > a').eq(0);
+        expect(docLink.attr('href')).toBe('http://www.google.com');
+    });
 });

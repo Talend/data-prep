@@ -1,0 +1,11 @@
+id,firstname,lastname,birth,city,state,registration,nbCommands,avgAmount
+1,Philip,Romero,11/22/1981,Saint Augustine,FL,3/17/2015,98,60.54
+2,Christopher,Marshall,1/17/1990,New York City,NY,4/27/2011,73,93.22
+3,Steven,Murray,12/26/1964,Washington,DC,2/18/2002,94,35.92
+4,Phyllis,Clark,9/10/1967,Cincinnati,OH,7/28/2002,28,20.95
+5,Lillian,Gonzalez,8/10/1964,Aurora,CO,11/30/2011,46,84.31
+6,Carl,Harrison,2/8/1983,Pittsburgh,PA,7/24/2001,13,65.42
+7,Amy,Foster,8/10/1996,Corpus Christi,TX,4/15/2013,2,91.04
+8,Chris,Hughes,6/16/1983,Durham,NC,10/19/2006,39,61.02
+9,Patrick,Gordon,1/28/1983,Sioux City,IA,10/8/2013,13,31.26
+10,Thomas,Cunningham,2/26/1978,Seattle,WA,1/8/2001,70,3.11

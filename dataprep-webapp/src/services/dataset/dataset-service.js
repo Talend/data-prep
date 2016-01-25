@@ -11,7 +11,7 @@
      * @requires data-prep.services.utils.service:StorageService
      *
      */
-    function DatasetService(state, DatasetListService, DatasetRestService, PreparationListService, StorageService) {
+    function DatasetService (state, DatasetListService, DatasetRestService, PreparationListService, StorageService) {
         return {
             //lifecycle
             import: importRemoteDataset,
@@ -19,8 +19,9 @@
             update: update,
             delete: deleteDataset,
             clone: cloneDataset,
+            move: moveDataset,
 
-            //metadata actions
+            //dataset actions
             updateColumn: DatasetRestService.updateColumn,
             processCertification: processCertification,
             toggleFavorite: toggleFavorite,
@@ -29,7 +30,7 @@
             getMetadata: DatasetRestService.getMetadata,
             getContent: DatasetRestService.getContent,
 
-            //metadata getters
+            //dataset getters
             datasetsList: datasetsList,         //cached datasets list
             getDatasets: getDatasets,           //promise that resolves datasets list
             refreshDatasets: refreshDatasets,   //force refresh datasets list
@@ -37,7 +38,7 @@
             getDatasetByName: getDatasetByName, //retrieve dataset by name
             getSheetPreview: getSheetPreview,
             setDatasetSheet: setDatasetSheet,
-            getDatasetByNameAndFolder: getDatasetByNameAndFolder,
+
             //utils
             getUniqueName: getUniqueName,
             createDatasetInfo: createDatasetInfo
@@ -52,10 +53,11 @@
          * @name deleteDataset
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} dataset The dataset to delete
-         * @description Delete a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} delete function
+         * @description Delete a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService
+         *     DatasetListService} delete function
          * @returns {promise} The pending DELETE promise
          */
-        function deleteDataset(dataset) {
+        function deleteDataset (dataset) {
             return DatasetListService.delete(dataset)
                 .then(consolidatePreparationsAndDatasets)
                 .then(function (response) {
@@ -70,10 +72,11 @@
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} dataset The dataset to create
          * @param {object} folder - the dataset folder
-         * @description Create a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} create function
+         * @description Create a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService
+         *     DatasetListService} create function
          * @returns {promise} The pending CREATE promise
          */
-        function create(dataset, folder) {
+        function create (dataset, folder) {
             var promise = DatasetListService.create(dataset, folder);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
@@ -85,10 +88,11 @@
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} parameters The import parameters (type, url, username...)
          * @param {object} folder - the dataset folder
-         * @description Import call the backend to import the remote. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} import function
+         * @description Import call the backend to import the remote. It just call {@link
+         *     data-prep.services.dataset.service:DatasetListService DatasetListService} import function
          * @returns {promise} The pending IMPORT promise
          */
-        function importRemoteDataset(parameters, folder) {
+        function importRemoteDataset (parameters, folder) {
             var promise = DatasetListService.importRemoteDataset(parameters, folder);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
@@ -99,27 +103,47 @@
          * @name update
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {object} dataset The dataset to update
-         * @description Update a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService DatasetListService} update function
+         * @description Update a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService
+         *     DatasetListService} update function
          * @returns {promise} The pending PUT promise
          */
-        function update(dataset) {
+        function update (dataset) {
             var promise = DatasetListService.update(dataset);
+            promise
+                .then(DatasetListService.getDatasetsPromise)
+                .then(consolidatePreparationsAndDatasets);
+            return promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @name cloneDataset
+         * @methodOf data-prep.services.dataset.service:DatasetService
+         * @param {object} dataset The dataset to clone
+         * @param {object} folder the folder to clone the dataset
+         * @param {string} cloneName the name for the cloned dataset
+         * @description Clone a dataset
+         * @returns {promise} The pending CREATE promise
+         */
+        function cloneDataset (dataset, folder, cloneName, abortPromise) {
+            var promise = DatasetListService.clone(dataset, folder, cloneName, abortPromise);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }
 
         /**
          * @ngdoc method
-         * @name clone
+         * @name moveDataset
          * @methodOf data-prep.services.dataset.service:DatasetService
-         * @param {object} dataset The dataset to clone
-         * @param {object) the folder to clone the dataset
-         * @param {string) cloneName the name for the cloned dataset
-         * @description Clone a dataset
-         * @returns {promise} The pending CREATE promise
+         * @param {dataset} dataset the dataset infos to move
+         * @param {folder) folder the original folder of the dataset
+         * @param {folder) newFolder the folder to move the dataset
+         * @param {string) newName the name for the moved dataset (optional)
+         * @description Move a dataset
+         * @returns {promise} The pending PUT promise
          */
-        function cloneDataset(dataset, folder, cloneName) {
-            var promise = DatasetListService.clone(dataset, folder, cloneName);
+        function moveDataset (dataset, folder, newFolder, newName, abortPromise) {
+            var promise = DatasetListService.move(dataset, folder, newFolder, newName, abortPromise);
             promise.then(consolidatePreparationsAndDatasets);
             return promise;
         }
@@ -131,10 +155,11 @@
          * @ngdoc method
          * @name datasetsList
          * @methodOf data-prep.services.dataset.service:DatasetService
-         * @description Return the datasets list. See {@link data-prep.services.dataset.service:DatasetListService DatasetListService}.datasets
+         * @description Return the datasets list. See {@link data-prep.services.dataset.service:DatasetListService
+         *     DatasetListService}.datasets
          * @returns {object[]} The datasets list
          */
-        function datasetsList() {
+        function datasetsList () {
             return DatasetListService.datasets;
         }
 
@@ -144,9 +169,10 @@
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @description [PRIVATE] Refresh the metadata within the preparations
          */
-        function consolidatePreparationsAndDatasets(response) {
+        function consolidatePreparationsAndDatasets (response) {
             PreparationListService.refreshMetadataInfos(DatasetListService.datasets)
                 .then(DatasetListService.refreshDefaultPreparation);
+
             return response;
         }
 
@@ -157,7 +183,7 @@
          * @description Return a promise that resolves the datasets list.
          * @returns {promise} The pending GET or resolved promise
          */
-        function getDatasets() {
+        function getDatasets () {
             return DatasetListService.hasDatasetsPromise() ?
                 DatasetListService.getDatasetsPromise() :
                 refreshDatasets();
@@ -170,7 +196,7 @@
          * @description Refresh the dataset list with sorting parameters
          * @returns {promise} The process promise
          */
-        function refreshDatasets() {
+        function refreshDatasets () {
             return DatasetListService.refreshDatasets()
                 .then(consolidatePreparationsAndDatasets);
         }
@@ -183,7 +209,7 @@
          * @description Ask certification for a dataset
          * @returns {promise} The pending PUT promise
          */
-        function processCertification(dataset) {
+        function processCertification (dataset) {
             return DatasetListService.processCertification(dataset)
                 .then(consolidatePreparationsAndDatasets);
         }
@@ -196,41 +222,26 @@
          * @description Set or Unset the dataset as favorite
          * @returns {promise} The pending POST promise
          */
-        function toggleFavorite(dataset) {
+        function toggleFavorite (dataset) {
             return DatasetRestService.toggleFavorite(dataset).then(function () {
                 dataset.favorite = !dataset.favorite;
             });
         }
-
-
+        
         /**
          * @ngdoc method
          * @name getDatasetByName
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {string} name The dataset name
-         * @description Get the dataset that has the wanted name in the current folder
-         * @returns {object} The dataset
+         * @description Get the dataset that has the wanted name in the current folder. The case is not important here.
+         * @returns {object} The dataset that has the same name (case insensitive)
          */
         function getDatasetByName(name) {
+            var lowerCaseName = name.toLowerCase();
             return _.find(state.folder.currentFolderContent.datasets, function (dataset) {
-                return dataset.name === name;
+                return dataset.name.toLowerCase() === lowerCaseName;
             });
         }
-
-        /**
-         * @ngdoc method
-         * @name getDatasetByNameAndFolder
-         * @methodOf data-prep.services.dataset.service:DatasetService
-         * @param {string} name The dataset name
-         * @description Get the dataset that has the wanted name within the folder
-         * @returns {object} The dataset
-         */
-        function getDatasetByNameAndFolder(name) {
-            return _.find(state.folder.currentFolderContent.datasets, function(dataset){
-                return dataset.name === name;
-            });
-        }
-
 
         /**
          * @ngdoc method
@@ -240,7 +251,7 @@
          * @description Get the dataset that has the wanted id
          * @returns {promise} The dataset
          */
-        function getDatasetById(datasetId) {
+        function getDatasetById (datasetId) {
             return DatasetListService.getDatasetsPromise().then(function (datasetList) {
                 return _.find(datasetList, function (dataset) {
                     return dataset.id === datasetId;
@@ -261,7 +272,7 @@
          * @param {string} id - the dataset id (used to update existing dataset)
          * @returns {Object} - the adapted dataset infos {name: string, progress: number, file: *, error: boolean}
          */
-        function createDatasetInfo(file, name, id) {
+        function createDatasetInfo (file, name, id) {
             return {
                 name: name,
                 progress: 0,
@@ -277,10 +288,11 @@
          * @name getUniqueName
          * @methodOf data-prep.services.dataset.service:DatasetService
          * @param {string} name - the base name
-         * @description Get a unique name from a base name. The existence check is done on the local dataset list. It transform the base name, adding "(number)"
+         * @description Get a unique name from a base name. The existence check is done on the local dataset list. It
+         *     transform the base name, adding "(number)"
          * @returns {string} - the unique name
          */
-        function getUniqueName(name) {
+        function getUniqueName (name) {
             var cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
             var result = cleanedName;
 
@@ -305,7 +317,7 @@
          * @description Get a dataset sheet preview
          * @returns {object} The preview data
          */
-        function getSheetPreview(metadata, sheetName) {
+        function getSheetPreview (metadata, sheetName) {
             return DatasetRestService.getSheetPreview(metadata.id, sheetName);
         }
 
@@ -318,7 +330,7 @@
          * @description Set the selected sheet to the dataset
          * @returns {Promise} The process Promise
          */
-        function setDatasetSheet(metadata, sheetName) {
+        function setDatasetSheet (metadata, sheetName) {
             metadata.sheetName = sheetName;
             return DatasetRestService.updateMetadata(metadata);
         }

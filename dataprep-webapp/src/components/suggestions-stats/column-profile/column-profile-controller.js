@@ -13,6 +13,7 @@
     function ColumnProfileCtrl($scope, $timeout, state, StatisticsService, FilterService, PlaygroundService) {
         var vm = this;
         vm.statisticsService = StatisticsService;
+        vm.state = state;
         vm.chartConfig = {};
 
         //------------------------------------------------------------------------------------------------------
@@ -44,16 +45,26 @@
          * @name addRangeFilter
          * @methodOf data-prep.actions-suggestions-stats.controller:ColumnProfileCtrl
          * @description Add an "range" filter
-         * @param {array} interval The interval [min, max] to filter
+         * @param {object} interval The interval [min, max] to filter
          */
         vm.addRangeFilter = function addRangeFilter(interval) {
             var selectedColumn = state.playground.grid.selectedColumn;
-            if(selectedColumn.type === 'date') {
-                return;
-            }
 
+            if(!interval.label) {
+                var min = d3.format(',')(interval.min);
+                var max = d3.format(',')(interval.max);
+                interval.label = min === max ? '[' + min + ']' : '[' + min + ' .. ' + max + '[';
+            }
             var removeFilterFn = StatisticsService.getRangeFilterRemoveFn();
-            FilterService.addFilterAndDigest('inside_range', selectedColumn.id, selectedColumn.name, {interval: [interval.min, interval.max]}, removeFilterFn);
+            FilterService.addFilterAndDigest('inside_range',
+                selectedColumn.id,
+                selectedColumn.name,
+                {
+                    interval: [interval.min, interval.max],
+                    label: interval.label,
+                    type: selectedColumn.type
+                },
+                removeFilterFn);
         };
 
         //------------------------------------------------------------------------------------------------------
@@ -76,8 +87,8 @@
          * @return {string} The current aggregation name
          */
         vm.getCurrentAggregation = function getCurrentAggregation() {
-            return StatisticsService.histogram && StatisticsService.histogram.aggregation ?
-                StatisticsService.histogram.aggregation :
+            return state.playground.statistics.histogram && state.playground.statistics.histogram.aggregation ?
+                state.playground.statistics.histogram.aggregation :
                 'LINE_COUNT';
         };
 
@@ -90,9 +101,9 @@
          * @description Trigger a new aggregation graph
          */
         vm.changeAggregation = function changeAggregation(column, aggregation) {
-            if (StatisticsService.histogram &&
-                StatisticsService.histogram.aggregationColumn === column &&
-                StatisticsService.histogram.aggregation === aggregation) {
+            if (state.playground.statistics.histogram &&
+                state.playground.statistics.histogram.aggregationColumn === column &&
+                state.playground.statistics.histogram.aggregation === aggregation) {
                 return;
             }
 
@@ -210,7 +221,7 @@
          * @description Check if we have the statistics or we have to fetch them
          */
         function shouldFetchStatistics() {
-            return !StatisticsService.histogram &&// no histogram means no statistics yet whereas empty histogram means no data to display
+            return !state.playground.statistics.histogram &&// no histogram means no statistics yet whereas empty histogram means no data to display
                 !vm.stateDistribution; // and not a state distribution chart
         }
 
@@ -222,12 +233,12 @@
          */
         function fetchStatistics() {
             PlaygroundService.updateStatistics()
-                .catch(function() {
+                .catch(function () {
                     $timeout(fetchStatistics, 1500, false);
                 });
         }
 
-        if(shouldFetchStatistics()) {
+        if (shouldFetchStatistics()) {
             fetchStatistics();
         }
         //------------------------------------------------------------------------------------------------------
@@ -249,31 +260,6 @@
         );
 
     }
-
-    /**
-     * @ngdoc property
-     * @name processedData
-     * @propertyOf data-prep.actions-suggestions-stats.controller:ColumnProfileCtrl
-     * @description The data to display
-     * This is bound to {@link data-prep.statistics:StatisticsService StatisticsService}.histogram
-     */
-    Object.defineProperty(ColumnProfileCtrl.prototype,
-        'histogram', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.statisticsService.histogram;
-            }
-        });
-
-    Object.defineProperty(ColumnProfileCtrl.prototype,
-        'filteredHistogram', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.statisticsService.filteredHistogram;
-            }
-        });
 
     /**
      * @ngdoc property

@@ -4,12 +4,14 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.talend.dataprep.format.export.ExportFormat;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
@@ -85,16 +87,22 @@ public class ExportAPITest extends ApiServiceTestBase {
     @Test
     public void testExportCsvWithDefaultSeparator() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("export/export_dataset.csv", "testExport", "text/csv");
-
-        final String expectedExport = IOUtils
-                .toString(this.getClass().getResourceAsStream("export/expected_export_default_separator.csv"));
+        final String datasetId = createDataset("export/export_dataset.csv", "testExport", "text/csv");
+        final String preparationId = createPreparationFromDataset(datasetId, "preparation");
 
         // when
-        final String export = given().formParam("exportType", "CSV").formParam("preparationId", preparationId)
-                .formParam("stepId", "head").when().get("/api/export").asString();
+        final String export = given() //
+                .formParam("exportType", "CSV") //
+                .formParam("preparationId", preparationId) //
+                .formParam("stepId", "head") //
+                .when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/export") //
+                .asString();
 
         // then
+        final InputStream expectedInput = this.getClass().getResourceAsStream("export/expected_export_default_separator.csv");
+        final String expectedExport = IOUtils.toString(expectedInput);
         assertEquals(expectedExport, export);
     }
 
@@ -107,7 +115,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .toString(this.getClass().getResourceAsStream("export/expected_export_semicolon_separator.csv"));
 
         // when
-        final String export = given().formParam("exportType", "CSV").formParam("exportParameters.csvSeparator", ";")
+        final String export = given().formParam("exportType", "CSV").formParam(ExportFormat.PREFIX + "csvSeparator", ";")
                 .formParam("preparationId", preparationId).formParam("stepId", "head").when().get("/api/export").asString();
 
         // then
@@ -148,10 +156,10 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final Response export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam("exportParameters.csvSeparator", ";") //
+                .formParam(ExportFormat.PREFIX + "csvSeparator", ";") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
-                .formParam("exportParameters.fileName", fileName) //
+                .formParam(ExportFormat.PREFIX + ExportFormat.Parameter.FILENAME_PARAMETER, fileName) //
                 .when() //
                 .get("/api/export");
 
@@ -171,7 +179,7 @@ public class ExportAPITest extends ApiServiceTestBase {
         // when
         final Response export = given() //
                 .formParam("exportType", "CSV") //
-                .formParam("exportParameters.csvSeparator", ";") //
+                .formParam(ExportFormat.PREFIX + "csvSeparator", ";") //
             .formParam("preparationId", preparationId) //
             .formParam("stepId", "head") //
             .when() //

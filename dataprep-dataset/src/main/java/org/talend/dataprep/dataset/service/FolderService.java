@@ -5,14 +5,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import javax.inject.Inject;
 
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
+import org.talend.dataprep.folder.store.NotEmptyFolderException;
 import org.talend.dataprep.metrics.Timed;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "folders", basePath = "/folders", description = "Operations on folders")
@@ -70,7 +77,6 @@ public class FolderService {
     @ApiOperation(value = "Create a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Create a folder")
     @Timed
     public Folder addFolder(@RequestParam String path){
-
         Folder folder = folderRepository.addFolder(path);
         return folder;
     }
@@ -83,8 +89,12 @@ public class FolderService {
     @RequestMapping(value = "/folders", method = DELETE)
     @ApiOperation(value = "Remove a Folder", produces = MediaType.APPLICATION_JSON_VALUE, notes = "Remove the folder")
     @Timed
-    public void removeFolder(@RequestParam String path){
-        folderRepository.removeFolder(path);
+    public void removeFolder(@RequestParam String path) {
+        try {
+            folderRepository.removeFolder(path);
+        } catch (NotEmptyFolderException e) {
+            throw new TDPException(DataSetErrorCodes.FOLDER_NOT_EMPTY);
+        }
     }
 
 

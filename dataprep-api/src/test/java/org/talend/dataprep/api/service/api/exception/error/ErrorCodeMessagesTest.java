@@ -16,7 +16,7 @@ import org.talend.dataprep.i18n.MessagesBundle;
 
 /**
  * Test that each error code has a message and a message title in the (default language) error message properties file.
- *
+ * see org.talend.dataprep/error_messages.properties
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)

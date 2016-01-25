@@ -36,73 +36,66 @@ public class DateParserTest extends BaseDateTests {
     }
 
     @Test
-    public void shouldSortPatterns() throws IOException {
-
+    public void getPatterns_should_remove_invalid_or_empty_then_sort_patterns() throws IOException {
         // given
-        DataSetRow row = getRow("toto", "04/25/1999", "tata");
-        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_with_different_test_cases.json"));
+        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
+        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_with_different_test_cases.json")); //contains valid, invalid, empty patterns
+        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
 
         // when
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
-        List<DatePattern> actual = action.getPatterns(patternFrequencies);
+        final List<DatePattern> actual = action.getPatterns(patternFrequencies);
 
         // then
-        List<DatePattern> expected = new ArrayList<>();
-        expected.add(new DatePattern(47, "MM/dd/yyyy"));
-        expected.add(new DatePattern(27, "MM-dd-yy"));
-        expected.add(new DatePattern(0, "yyyy"));
+        final List<DatePattern> expected = new ArrayList<>();
+        expected.add(new DatePattern("MM/dd/yyyy", 47));
+        expected.add(new DatePattern("MM-dd-yy", 27));
+        expected.add(new DatePattern("yyyy", 0));
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testParseDate() throws ParseException {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        TemporalAccessor date = LocalDate.of(2015, 8, 17);
-        String expected = dtf.format(date);
+    public void parseDateFromPatterns_should_parse_from_multiple_patterns() throws ParseException {
+        //given
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        final TemporalAccessor date = LocalDate.of(2015, 8, 17);
+        final String expected = dtf.format(date);
 
-        List<DatePattern> patterns = new ArrayList<>();
-        patterns.add(new DatePattern(1, "yyyy/MM/dd"));
-        patterns.add(new DatePattern(1, "MM-dd-yy"));
-        patterns.add(new DatePattern(1, "yy/dd/MM"));
+        final List<DatePattern> patterns = new ArrayList<>();
+        patterns.add(new DatePattern("yyyy/MM/dd", 1));
+        patterns.add(new DatePattern("MM-dd-yy", 1));
+        patterns.add(new DatePattern("yy/dd/MM", 1));
 
-        assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", action.computeDateTimeFormatter(patterns))));
-        assertEquals(expected, dtf.format(action.parseDateFromPatterns("08-17-15", action.computeDateTimeFormatter(patterns))));
-        assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", action.computeDateTimeFormatter(patterns))));
+        //when/then
+        assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", patterns)));
+        assertEquals(expected, dtf.format(action.parseDateFromPatterns("08-17-15", patterns)));
+        assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", patterns)));
     }
 
     @Test
-    public void testParseDateWithWeirdPattern() throws ParseException {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        TemporalAccessor date = LocalDate.of(2015, 8, 17);
-        String expected = dtf.format(date);
+    public void parseDateFromPatterns_should_parse_independently_of_empty_patterns() throws ParseException {
+        //given
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        final TemporalAccessor date = LocalDate.of(2015, 8, 17);
+        final String expected = dtf.format(date);
 
-        List<DatePattern> patterns = new ArrayList<>();
-        patterns.add(new DatePattern(10, "aaaaaaa"));
-        patterns.add(new DatePattern(2, "yyyy/MM/dd"));
+        final List<DatePattern> patterns = new ArrayList<>();
+        patterns.add(new DatePattern("", 1));
+        patterns.add(new DatePattern("yyyy/MM/dd", 2));
 
-        assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", action.computeDateTimeFormatter(patterns))));
-    }
+        //when
+        final String actual = dtf.format(action.parseDateFromPatterns("2015/08/17", patterns));
 
-    @Test
-    public void testParseDateWithEmptyPattern() throws ParseException {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        TemporalAccessor date = LocalDate.of(2015, 8, 17);
-        String expected = dtf.format(date);
-
-        List<DatePattern> patterns = new ArrayList<>();
-        patterns.add(new DatePattern(1, ""));
-        patterns.add(new DatePattern(2, "yyyy/MM/dd"));
-
-        assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", action.computeDateTimeFormatter(patterns))));
+        //then
+        assertEquals(expected, actual);
     }
 
     @Test
     public void shouldComputePatternFromDQ() {
         final ColumnMetadata column = getColumn(Type.DATE);
-        assertEquals(new DatePattern(1, "d/M/yyyy"), action.guessPattern("01/02/2015", column));
-        assertEquals(new DatePattern(1, "yyyy-MM-dd"), action.guessPattern("2015-01-02", column));
-        assertEquals(new DatePattern(1, "9999"), action.guessPattern("2015", column));
-        assertEquals(new DatePattern(1, "MMMM d yyyy"), action.guessPattern("July 14 2015", column));
+        assertEquals(new DatePattern("d/M/yyyy", 1), action.guessPattern("01/02/2015", column));
+        assertEquals(new DatePattern("yyyy-MM-dd", 1), action.guessPattern("2015-01-02", column));
+        assertEquals(new DatePattern("9999", 1), action.guessPattern("2015", column));
+        assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("July 14 2015", column));
     }
 
     @Test(expected = DateTimeException.class)
@@ -123,7 +116,6 @@ public class DateParserTest extends BaseDateTests {
         action.guessPattern("not a date", column);
     }
 
-
     @Test
     public void shouldUpdateColumnStatisticsWithNewDatePattern() {
         // given
@@ -138,22 +130,4 @@ public class DateParserTest extends BaseDateTests {
         assertEquals(2, actual.size());
         assertEquals(new PatternFrequency("d/M/yyyy", 1), actual.get(1));
     }
-
-    @Test
-    public void testComputePatterns() {
-        // given
-        List<DatePattern> patterns = new ArrayList<>();
-        patterns.add(new DatePattern(1, "yy/dd/MM"));
-        patterns.add(new DatePattern(1, null)); // null
-        patterns.add(new DatePattern(1, "yyyy/MM/dd"));
-        patterns.add(new DatePattern(1, "")); // empty
-        patterns.add(new DatePattern(1, "MM-dd-yy"));
-
-        // when
-        List<DatePattern> actual = action.computeDateTimeFormatter(patterns);
-
-        // then
-        assertEquals(3, actual.size());
-    }
-
 }

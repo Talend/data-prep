@@ -2,9 +2,9 @@ package org.talend.dataprep.date;
 
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static java.time.Month.JANUARY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.talend.dataprep.date.DateManipulator.Pace.*;
@@ -80,5 +80,33 @@ public class DateManipulatorTest {
 
         //then
         assertThat(computedDate, is(expectedDate));
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------UTC-----------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    @Test
+    public void should_return_epoch_millis_in_UTC_timezone() {
+        //given
+        final LocalDateTime date = LocalDateTime.of(1970, JANUARY, 1, 0, 0);
+
+        //when
+        final long epochMillis = dateManipulator.getUTCEpochMilliseconds(date);
+
+        //then
+        assertThat(epochMillis, is(0L));
+    }
+
+    @Test
+    public void should_create_local_date_by_adding_current_offset_to_UTC_timestamp() {
+        //given
+        final long utcEpochMillis = 0L;
+
+        //when
+        final LocalDateTime date = dateManipulator.fromEpochMillisecondsWithSystemOffset(utcEpochMillis);
+
+        //then
+        final LocalDateTime expectedDate = LocalDateTime.of(1970, JANUARY, 1, 0, 0); //local timezone
+        assertThat(date, is(expectedDate));
     }
 }

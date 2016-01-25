@@ -108,6 +108,38 @@ public class ChangeDatePatternTest extends BaseDateTests {
     }
 
     @Test
+    public void test_TDP_1108_invalid_pattern() throws Exception {
+        // given
+        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
+        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
+        parameters.put(ChangeDatePattern.NEW_PATTERN, "custom");
+        parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "ff");
+
+        // when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
+    public void test_TDP_1108_empty_pattern() throws Exception {
+        // given
+        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
+        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
+        parameters.put(ChangeDatePattern.NEW_PATTERN, "custom");
+        parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "");
+
+        // when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
     public void should_set_new_pattern_as_most_used_one() throws Exception {
         // given
         final DataSetRow row = getRow("toto", "04/25/1999", "tata");

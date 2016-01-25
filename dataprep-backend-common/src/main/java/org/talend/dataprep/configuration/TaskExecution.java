@@ -15,7 +15,19 @@ public class TaskExecution {
      * @see CSVSerializer
      */
     @Bean(name = "serializer#csv#executor")
-    TaskExecutor getTaskExecutor() {
+    TaskExecutor getCsvTaskExecutor() {
+        final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(4);
+        executor.setMaxPoolSize(10);
+        executor.setWaitForTasksToCompleteOnShutdown(false);
+        return executor;
+    }
+
+    /**
+     * @return A {@link TaskExecutor} for non-blocking JSON serialization.
+     */
+    @Bean(name = "serializer#json#executor")
+    TaskExecutor getJsonTaskExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(4);
         executor.setMaxPoolSize(10);

@@ -3,6 +3,7 @@ package org.talend.dataprep.transformation.format;
 import java.util.Collections;
 
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.export.ExportFormat;
 
 /**
  * Json format type.
@@ -20,4 +21,8 @@ public class JsonFormat extends ExportFormat {
         super(JSON, "application/json", ".json", false, false, Collections.<Parameter> emptyList());
     }
 
+    @Override
+    public int getOrder() {
+        return -1;
+    }
 }

@@ -1,7 +1,7 @@
 describe('Editable regex widget directive', function() {
     'use strict';
 
-    var scope, createElement;
+    var scope, element, createElement;
 
     beforeEach(module('talend.widget'));
     beforeEach(module('htmlTemplates'));
@@ -20,17 +20,23 @@ describe('Editable regex widget directive', function() {
     beforeEach(inject(function($rootScope, $compile) {
         scope = $rootScope.$new();
         createElement = function() {
-            var element = angular.element('<talend-editable-regex ng-model="value"></talend-editable-regex>');
+            element = angular.element('<form name="myTestForm">' +
+                '   <talend-editable-regex ng-model="value"></talend-editable-regex>' +
+                '</form>');
             $compile(element)(scope);
             scope.$digest();
-            return element;
         };
     }));
+
+    afterEach(function() {
+        scope.$destroy();
+        element.remove();
+    });
 
     describe('init', function() {
         it('should render regex types', function() {
             //when
-            var element = createElement();
+            createElement();
 
             //then
             expect(element.find('.dropdown-menu > li').length).toBe(5);
@@ -48,10 +54,17 @@ describe('Editable regex widget directive', function() {
 
         it('should render regex input', function() {
             //when
-            var element = createElement();
+            createElement();
 
             //then
             expect(element.find('input').length).toBe(1);
+        });
+    });
+
+    describe('trim', function() {
+        it('should not trim input content', function() {
+            //then
+            expect(element.find('input').attr('ng-trim')).toBe('false');
         });
     });
 });

@@ -6,12 +6,12 @@
                             class="recipe-step"
                             ng-class="::{'preview': step.preview}">
         <div class="trigger step-description"
-             ng-click="recipeCtrl.showModal[$index] = !!recipeCtrl.hasDynamicParams(step)"
+             ng-click="recipeCtrl.select(step)"
              ng-switch="step.actionParameters.parameters.scope">
 
             <i data-icon="e"
                id="step-remove-{{step.transformation.stepId}}"
-               ng-click="recipeCtrl.remove(step)"
+               ng-click="recipeCtrl.remove(step, $event)"
                class="remove-icon animated"></i>
             {{$index + 1}}. {{::step.transformation.label}}
 
@@ -80,7 +80,7 @@
 
                 <talend-modal ng-if="recipeCtrl.hasDynamicParams(step)"
                               fullscreen="false"
-                              state="recipeCtrl.showModal[$index]"
+                              state="recipeCtrl.showModal[step.transformation.stepId]"
                               close-button="true">
                     <div class="modal-title">{{ ::step.transformation.label }}</div>
                     <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
@@ -88,7 +88,6 @@
                     <transform-form transformation="step.transformation"
                                     on-submit="recipeCtrl.stepUpdateClosure(step)(params)"></transform-form>
                 </talend-modal>
-
             </div>
         </div>
     </talend-accordions-item>

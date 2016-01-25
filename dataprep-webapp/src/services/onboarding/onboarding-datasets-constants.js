@@ -27,6 +27,12 @@
             position: 'right'
         },
         {
+            element: '#message-icon',
+            title: '',
+            content: 'Click here to send feedback to Talend.',
+            position: 'bottom'
+        },
+        {
             element: '#onboarding-icon',
             title: '',
             content: 'Click here to get help.',

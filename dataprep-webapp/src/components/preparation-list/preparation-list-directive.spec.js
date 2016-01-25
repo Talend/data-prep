@@ -1,7 +1,7 @@
-describe('Preparation list directive', function() {
+describe('Preparation list directive', function () {
     'use strict';
 
-    var scope, createElement, element;
+    var scope, createElement, element, stateMock;
     var allDatasets = [
         {
             'id': 'de3cc32a-b624-484e-b8e7-dab9061a009c',
@@ -40,7 +40,6 @@ describe('Preparation list directive', function() {
             'created': '03-30-2015 08:06'
         }
     ];
-
     var allPreparations = [
         {
             'id': 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
@@ -115,29 +114,34 @@ describe('Preparation list directive', function() {
         }
     ];
 
-    beforeEach(module('data-prep.preparation-list'));
+    beforeEach(module('data-prep.preparation-list', function ($provide) {
+        stateMock = {
+            inventory: {
+                preparations: allPreparations
+            }
+        };
+        $provide.constant('state', stateMock);
+    }));
+
     beforeEach(module('htmlTemplates'));
 
-    beforeEach(inject(function($rootScope, $compile, $q, PreparationService) {
+    beforeEach(inject(function ($rootScope, $compile, $q, PreparationService) {
         scope = $rootScope.$new();
-        createElement = function() {
+        createElement = function () {
             element = angular.element('<preparation-list></preparation-list>');
             $compile(element)(scope);
             scope.$digest();
         };
 
-        spyOn(PreparationService, 'getPreparations').and.callFake(function() {
-            return $q.when(allPreparations);
-        });
-        spyOn(PreparationService, 'preparationsList').and.returnValue(allPreparations);
+        spyOn(PreparationService, 'getPreparations').and.returnValue($q.when(allPreparations));
     }));
 
-    afterEach(function() {
+    afterEach(inject(function () {
         scope.$destroy();
         element.remove();
-    });
+    }));
 
-    it('should render preparations tiles', inject(function($filter) {
+    it('should render preparations tiles', inject(function ($filter) {
         //given
         var momentize = $filter('TDPMoment');
 

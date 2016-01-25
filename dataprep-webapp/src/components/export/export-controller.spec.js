@@ -10,6 +10,7 @@ describe('Export controller', function() {
             'id': 'CSV',
             'needParameters': 'true',
             'defaultExport': 'false',
+            'enabled': 'true',
             'parameters': [{
                 'name': 'csvSeparator',
                 'labelKey': 'CHOOSE_SEPARATOR',
@@ -32,14 +33,16 @@ describe('Export controller', function() {
             'extension': '.tde',
             'id': 'TABLEAU',
             'needParameters': 'false',
-            'defaultExport': 'false'
+            'defaultExport': 'false',
+            'enabled': 'true'
         },
         {
             'mimeType': 'application/vnd.ms-excel',
             'extension': '.xlsx',
             'id': 'XLSX',
             'needParameters': 'false',
-            'defaultExport': 'true'
+            'defaultExport': 'true',
+            'enabled': 'true'
         }
     ];
     var currentParameters = {exportType: 'XLSX'};

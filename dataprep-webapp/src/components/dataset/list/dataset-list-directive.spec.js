@@ -1,4 +1,4 @@
-describe('Dataset list directive', function () {
+describe('DatasetList directive', function () {
     'use strict';
 
     function strEndsWith(str, suffix) {
@@ -104,5 +104,20 @@ describe('Dataset list directive', function () {
         expect(strEndsWith(certificationIcon, '/assets/images/certification-certified.png')).toBe(true);
         expect(element.find('.inventory-title').eq(2).text().indexOf('Customers 2')).toBe(0);
         expect(element.find('.inventory-description').eq(2).text()).toBe('owned by anonymousUser, created ' + momentize('14370202197') + ', contains  lines');
+    }));
+
+    it('should focus on the name input field', inject(function($rootScope){
+        //given
+        createElement();
+        var ctrl = element.controller('datasetList');
+        ctrl.folderDestinationModal = true;
+        $rootScope.$digest();
+
+        //when
+        ctrl.focusOnNameInput();
+
+        //then
+        var activeEl = document.activeElement;
+        expect(angular.element(activeEl).attr('id')).toBe('new-name-input-id');
     }));
 });

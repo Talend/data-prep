@@ -13,6 +13,6 @@ import java.util.List;
         @JsonSubTypes.Type(value = NumberHistogram.class, name = NumberHistogram.TYPE),
         @JsonSubTypes.Type(value = DateHistogram.class, name = DateHistogram.TYPE)
 })
-public interface Histogram<T> extends Serializable {
-    List<HistogramRange<T>> getItems();
+public interface Histogram extends Serializable {
+    List<HistogramRange> getItems();
 }

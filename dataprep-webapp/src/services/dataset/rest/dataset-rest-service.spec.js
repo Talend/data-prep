@@ -323,26 +323,6 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(data);
         }));
 
-        it('should call dataset get content from complete URL', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var result = null;
-            var url = RestURLs.datasetUrl + '/e85afAa78556d5425bc2';
-            var data = [{column: [], records: []}];
-
-            $httpBackend
-                .expectGET(url)
-                .respond(200, data);
-
-            //when
-            DatasetRestService.getContentFromUrl(url).then(function (data) {
-                result = data;
-            });
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            expect(result).toEqual(data);
-        }));
     });
 
     describe('certification', function() {
@@ -541,7 +521,7 @@ describe('Dataset Rest Service', function () {
             $rootScope.$digest();
 
             //then
-            //expect GET not to throw any exception;
+            //expect PUT not to throw any exception;
         }));
 
         it('should call clone w/o folder path and clone name', inject(function ($rootScope, DatasetRestService, RestURLs) {
@@ -559,7 +539,54 @@ describe('Dataset Rest Service', function () {
             $rootScope.$digest();
 
             //then
-            //expect GET not to throw any exception;
+            //expect PUT not to throw any exception;
+        }));
+
+    });
+
+
+    describe('move', function() {
+        it('should call move w/o new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
+            //given
+            var dataset = {id: 'foobar'};
+            var folder = {id:'/'};
+            var newFolder = {id:'/wine/beer'};
+
+            var moveRequest = {folderPath: folder.id, newFolderPath: newFolder.id};
+
+            $httpBackend
+                .expectPUT(RestURLs.datasetUrl + '/move/foobar', moveRequest)
+                .respond(200);
+
+            //when
+            DatasetRestService.move(dataset,folder,newFolder);
+            $httpBackend.flush();
+            $rootScope.$digest();
+
+            //then
+            //expect PUT not to throw any exception;
+        }));
+
+        it('should call move w a new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
+            //given
+            var dataset = {id: 'foobar'};
+            var folder = {id:'/'};
+            var newFolder = {id:'/wine/beer'};
+            var newName = 'good one';
+
+            var moveRequest = {folderPath: folder.id, newFolderPath: newFolder.id, newName: newName};
+
+            $httpBackend
+                .expectPUT(RestURLs.datasetUrl + '/move/foobar', moveRequest)
+                .respond(200);
+
+            //when
+            DatasetRestService.move(dataset,folder,newFolder,newName);
+            $httpBackend.flush();
+            $rootScope.$digest();
+
+            //then
+            //expect PUT not to throw any exception;
         }));
 
     });

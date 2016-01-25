@@ -6,15 +6,15 @@ import org.talend.dataprep.api.dataset.statistics.HistogramRange;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NumberHistogram implements Histogram<Double> {
+public class NumberHistogram implements Histogram {
     private static final long serialVersionUID = 1L;
 
     public static final String TYPE = "number";
 
-    private final List<HistogramRange<Double>> items = new ArrayList<>();
+    private final List<HistogramRange> items = new ArrayList<>();
 
     @Override
-    public List<HistogramRange<Double>> getItems() {
+    public List<HistogramRange> getItems() {
         return items;
     }
 

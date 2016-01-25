@@ -5,74 +5,55 @@
     cursor: pointer;
   }
 
-  .bar rect {
-    fill: $light-blue;
-  }
-
-  .frontBar {
+  .primaryBar,
+  .secondaryBar {
     rect {
-      fill: $dark-blue;
-    }
-    .foreign-object-body {
-      background-color: rgba(255, 255, 255, 0);
-      font-size: .8em;
-      color: $dark-green;
-      padding-top: 3px;
-      padding-left: 10px;
-      font-family: $inconsolota;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+      &.transparentBar {
+        fill: $light-blue;
+      }
+      &.blueBar {
+        fill: $dark-blue;
+      }
+      &.brownBar {
+        fill: $brown;
+      }
     }
   }
 
-  .frontBarGreen {
-    rect {
-      fill: #B3AF76;
-    }
-    .foreign-object-body {
-      background-color: rgba(255, 255, 255, 0);
-      font-size: .8em;
-      color: #55580D;
-      padding-top: 3px;
-      padding-left: 10px;
-      font-family: $inconsolota;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-  }
-
-  //.frontBarGreen text.value {
-  //  font-size: .8em;
-  //  fill: ;
-  //}
-
-  .axis {
-    shape-rendering: crispEdges;
-  }
-
-  .axis path {
-    fill: none;
-  }
-
-  .x.axis line {
-    stroke: #fff;
-    //stroke-opacity: .2;
-    stroke-opacity: .0;
-  }
-
-  .x.axis text {
+  .label {
+    background-color: rgba(255, 255, 255, 0);
     font-size: .8em;
-    fill: $medium-gray;
+    padding-top: 3px;
+    padding-left: 10px;
+    font-family: $inconsolota;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    &.blueBar {
+      color: $dark-green;
+    }
+    &.brownBar {
+      color: $dark-brown;
+    }
   }
 
-  .y.axis path {
-    stroke: $shadow-gray;
-  }
+  .grid {
+    shape-rendering: crispEdges;
 
-  .y.axis text {
-    display: none;
+    path {
+      fill: none;
+    }
+
+    line {
+      stroke: #6c6769;
+      stroke-opacity: .1;
+    }
+
+    text {
+      font-size: .8em;
+      fill: $medium-gray;
+    }
   }
 
   .hiddenChars {
@@ -83,7 +64,6 @@
 
   &.d3-tip {
     line-height: 1;
-    font-family: $inconsolota;
     font-size: .8em;
     font-weight: 400;
     padding: 12px;
@@ -92,18 +72,18 @@
     border-radius: 2px;
     z-index: 100000;
     right: 15px;
-  }
 
-  /* Creates a small triangle extender for the tooltip */
-  &.d3-tip:after {
-    box-sizing: border-box;
-    display: inline;
-    width: 100%;
-    line-height: 1;
-    color: rgba(0, 0, 0, 0.8);
-    content: "\25BC";
-    position: absolute;
-    text-align: center;
+    &:after {
+      /* Creates a small triangle extender for the tooltip */
+      box-sizing: border-box;
+      display: inline;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
   }
 
   /* Style northward tooltips differently */

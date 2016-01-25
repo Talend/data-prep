@@ -6,23 +6,16 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.TransformationBaseTest;
 
 /**
  * Base class for all format tests.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BaseFormatTest.class)
-@ComponentScan(basePackages = "org.talend.dataprep")
-@Configuration
-public abstract class BaseFormatTest {
+public abstract class BaseFormatTest extends TransformationBaseTest {
 
     /** Dataprep ready json builder. */
     @Autowired

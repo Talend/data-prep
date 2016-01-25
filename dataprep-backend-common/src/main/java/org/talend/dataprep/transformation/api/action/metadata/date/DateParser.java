@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.statistics.frequency.AbstractFrequencyAnalyzer;
 import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * Component in charge of parsing dates.
@@ -27,7 +31,7 @@ public class DateParser {
 
     /**
      * Returns the most frequent pattern. If few patterns are equally frequent, no guaranty of which one is returned.
-     * 
+     *
      * @param column the column to analyse.
      * @return the most frequent pattern or null if no pattern at all.
      */
@@ -42,11 +46,11 @@ public class DateParser {
 
     /**
      * Parse the date time out of the given value based on the column date pattern.
-     *
+     * <p>
      * At first uses the known date patterns from the column statistics. If it fails, the DQ library is called to try to
      * get the pattern.
      *
-     * @param value the value to get the date time from.
+     * @param value  the value to get the date time from.
      * @param column the column to get the date patterns from.
      * @return the parsed date time. For date only value, time is set to 00:00:00.
      * @throws DateTimeException if the date cannot be parsed.
@@ -63,7 +67,7 @@ public class DateParser {
      * Try to guess the pattern from the value. If the date is successfully parsed, the column statistics is updated
      * with the new pattern.
      *
-     * @param value the date to parse.
+     * @param value  the date to parse.
      * @param column the column.
      * @return the parsed date.
      * @throws DateTimeException if the date cannot be parsed.
@@ -82,7 +86,7 @@ public class DateParser {
     /**
      * Guess the pattern from the given value.
      *
-     * @param value the value to get the date time from.
+     * @param value  the value to get the date time from.
      * @param column the column metadata
      * @return the wanted parsed date time. For date only value, time is set to 00:00:00.
      */
@@ -116,7 +120,7 @@ public class DateParser {
     /**
      * Parse the date from the given patterns.
      *
-     * @param value the text to parse.
+     * @param value    the text to parse.
      * @param patterns the patterns to use.
      * @return the parsed date-time
      */
@@ -147,65 +151,27 @@ public class DateParser {
     }
 
     /**
-     * Utility method to read and sort the given patterns.
+     * Utility method to read/parse/create DateFormatter and sort the given patterns.
      *
      * @param patternsFrequency the column to get the patterns from.
      */
     protected List<DatePattern> getPatterns(List<PatternFrequency> patternsFrequency) {
-        // parse and checks the new date pattern
-        // store the current pattern in the context
-        final List<DatePattern> patterns = new ArrayList<>();
-        for (PatternFrequency patternFrequency : patternsFrequency) {
-            final String pattern = patternFrequency.getPattern();
-            // skip empty patterns or existing ones
-            if (StringUtils.isEmpty(pattern) || contains(pattern, patterns)) {
-                continue;
-            }
-            patterns.add(new DatePattern(patternFrequency.getOccurrences(), pattern));
-        }
-        Collections.sort(patterns);
-        return computeDateTimeFormatter(patterns);
-    }
+        final Set<String> distinctPatterns = new HashSet<>(patternsFrequency.size());
 
-    /**
-     * Return true if the given pattern is already held in the list of patterns.
-     *
-     * @param pattern the pattern to check.
-     * @param patterns the list of patterns.
-     * @return true if the given pattern is already held in the list of patterns.
-     */
-    private boolean contains(String pattern, List<DatePattern> patterns) {
-        return patterns.stream().anyMatch(p -> StringUtils.equals(pattern, p.getPattern()));
-    }
-
-    /**
-     * Giving a list of potential pattern as strings, validate them, and compute a list of DateTimeFormatter.
-     *
-     * @param patterns the list of potential patterns
-     * @return a list that contains only valid and non null, non empty DateTimeFormatter
-     */
-    protected List<DatePattern> computeDateTimeFormatter(List<DatePattern> patterns) {
-
-        DateTimeFormatterBuilder dtfb = new DateTimeFormatterBuilder();
-
-        final Iterator<DatePattern> iterator = patterns.iterator();
-        while (iterator.hasNext()) {
-            final DatePattern nextPattern = iterator.next();
-            String pattern = nextPattern.getPattern();
-            // remove empty patterns
-            if (StringUtils.isEmpty(pattern)) {
-                iterator.remove();
-                continue;
-            }
-            try {
-                dtfb.appendPattern(pattern);
-                nextPattern.setFormatter(DateTimeFormatter.ofPattern(pattern));
-            } catch (IllegalArgumentException e) {
-                // remove invalid patterns
-                iterator.remove();
-            }
-        }
-
-        return patterns;
+        return patternsFrequency.stream()
+                .filter(patternFreqItem -> isNotEmpty(patternFreqItem.getPattern()))
+                .filter(patternFreqItem -> distinctPatterns.add(patternFreqItem.getPattern())) // use Set<> to detect if pattern is a duplicate
+                .map(patternFreqItem -> {
+                    try{
+                        return new DatePattern(patternFreqItem.getPattern(), patternFreqItem.getOccurrences());
+                    }
+                    //thrown when pattern is not a valid date pattern
+                    catch(final IllegalArgumentException e) {
+                        return null;
+                    }
+                })
+                .filter(datePattern -> datePattern != null) // remove non valid date patterns
+                .sorted()
+                .collect(toList());
     }
 }

@@ -4,28 +4,17 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.talend.dataprep.transformation.Application;
+import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.aggregation.operation.NumberContext;
 
 /**
  * Unit test for the aggregation result json serialization.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest
-public class AggregationResultTest extends TestCase {
+public class AggregationResultTest extends TransformationBaseTest {
 
     /** The data-prep ready jackson module. */
     @Autowired

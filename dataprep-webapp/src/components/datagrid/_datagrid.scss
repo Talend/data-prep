@@ -21,7 +21,7 @@ $datagrid-cell-font-size: .80em;
 }
 
 .slick-header-columns {
-  height: 59px !important;
+  height: 59px;
 }
 
 .slick-header-column-index {
@@ -127,7 +127,6 @@ $datagrid-cell-font-size: .80em;
   .slick-header-columns {
     border-bottom: 1px solid silver;
     box-sizing: content-box;
-    min-height: 55px;
     background-color: $white;
 
     .slick-header-column.ui-state-default {

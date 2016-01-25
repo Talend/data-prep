@@ -66,7 +66,6 @@
                 field: col.id,
                 name: template,
                 formatter: DatagridStyleService.columnFormatter(col),
-                minWidth: 120,
                 tdpColMetadata: col,
                 editor: preview ? null : Slick.Editors.TalendEditor(PlaygroundService.editCell, translatedMsg),
                 preview: preview

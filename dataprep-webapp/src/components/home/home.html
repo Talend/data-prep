@@ -29,7 +29,7 @@
                 <folder></folder>
             </li>
         </ul>
-        <div class="subheader-right">
+        <div class="subheader-right" ng-if="false"> <!-- Hide button since data inventory is not implemented-->
             <a data-icon="{{homeCtrl.showRightPanelIcon}}" class="expand-panel" ng-click="homeCtrl.toggleRightPanel()"></a>
             <span data-icon="o" class="view-mode" title="{{'COMING_SOON' | translate}}"></span>
         </div>
@@ -111,8 +111,6 @@
         <ul>
             <li id="nav_home_datasets"><a ui-sref="nav.home.datasets" ui-sref-active="selected" translate-once="ALL_FOLDERS"></a></li>
             <li id="nav_home_preparations"><a ui-sref="nav.home.preparations" ui-sref-active="selected" translate-once="ALL_PREPARATIONS"></a></li>
-            <li><a ui-sref="nav.home.recentfiles" translate-once="MOST_RECENT_FILES"></a></li>
-            <li><a ui-sref="nav.home.favorites" translate-once="FAVORITE_FILES"></a></li>
         </ul>
     </div>
 

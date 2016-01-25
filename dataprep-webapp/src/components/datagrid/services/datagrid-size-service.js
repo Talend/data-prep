@@ -8,7 +8,9 @@
      */
     function DatagridSizeService($window, state) {
         var grid;
-        
+        var MIN_COLUMN_WIDTH = 40;
+        var INITIAL_COLUMN_WIDTH = 120;
+
         return {
             init: init,
             autosizeColumns: autosizeColumns
@@ -37,19 +39,13 @@
         function autosizeColumns(gridColumns) {
             var localKey = getLocalStorageKey();
             var sizesStr = $window.localStorage.getItem(localKey);
-
-            if(sizesStr) {
-                var sizes = JSON.parse(sizesStr);
-                _.forEach(gridColumns, function(col) {
-                    col.width = sizes[col.id] || col.minWidth;
-                });
-                grid.setColumns(gridColumns);
-            }
-            else {
-                grid.setColumns(gridColumns);
-                grid.autosizeColumns();
-                saveColumnSizes();
-            }
+            var sizes = (sizesStr && JSON.parse(sizesStr)) || {};
+            _.forEach(gridColumns, function(col) {
+                col.minWidth = MIN_COLUMN_WIDTH;
+                col.width = sizes[col.id] || INITIAL_COLUMN_WIDTH;
+            });
+            grid.setColumns(gridColumns);
+            saveColumnSizes();
         }
 
         /**

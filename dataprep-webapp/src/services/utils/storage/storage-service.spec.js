@@ -7,6 +7,36 @@ describe('Storage service', function() {
         $window.localStorage.clear();
     }));
 
+    describe('feedback', function() {
+
+        it('should return feedback user mail in local storage', inject(function($window, StorageService) {
+            //given
+           var mail = 'abc@d.fr';
+            var FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
+
+            expect(StorageService.getFeedbackUserMail()).toEqual('');
+
+            $window.localStorage.setItem(FEEDBACK_USER_MAIL_KEY, JSON.stringify(mail));
+
+            //when
+            StorageService.getFeedbackUserMail(FEEDBACK_USER_MAIL_KEY);
+
+            //then
+            expect(StorageService.getFeedbackUserMail()).toEqual(mail);
+        }));
+
+        it('should save feedback user mail in local storage', inject(function($window, StorageService) {
+            //given
+            var mail = 'abc@d.fr';
+            var FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
+
+            //when
+            StorageService.saveFeedbackUserMail(mail);
+
+            //then
+            expect(JSON.parse($window.localStorage.getItem(FEEDBACK_USER_MAIL_KEY))).toEqual(mail);
+        }));
+    });
     describe('aggregation', function() {
         it('should add aggregation in local storage', inject(function($window, StorageService) {
             //given

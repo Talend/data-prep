@@ -3,6 +3,7 @@ package org.talend.dataprep.api.service.mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
@@ -17,6 +18,9 @@ public class MailToCommand extends HystrixCommand<Void> {
 
     @Autowired
     private FeedbackSender feedbackSender;
+    
+    @Autowired
+    private VersionService versionService;
 
     private final MailDetails mailDetails;
 
@@ -27,13 +31,13 @@ public class MailToCommand extends HystrixCommand<Void> {
 
     @Override
     protected Void run() throws Exception {
-        // TODO: Retrieve and send version with the feedback info object
         try {
-            String body = "Version=0.10 BETA<br/>";
+            String body ="";
             body += "Sender=" + mailDetails.getMail() + "<br/>";
             body += "Type=" + mailDetails.getType() + "<br/>";
             body += "Severity=" + mailDetails.getSeverity() + "<br/>";
             body += "Description=" + mailDetails.getDescription() + "<br/>";
+            body += "Version=" + versionService.version() + "<br/>";
             feedbackSender.send(mailDetails.getTitle(), body);
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_SEND_MAIL, e);

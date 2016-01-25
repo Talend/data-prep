@@ -89,7 +89,7 @@ describe('Home controller', function () {
             spyOn(StateService, 'startUploadingDataset').and.returnValue();
             spyOn(StateService, 'finishUploadingDataset').and.returnValue();
 
-            spyOn(FolderService, 'getFolderContent').and.returnValue();
+            spyOn(FolderService, 'getContent').and.returnValue();
         }));
 
         describe('right panel management', function() {
@@ -173,7 +173,7 @@ describe('Home controller', function () {
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
                 expect(StateService.finishUploadingDataset).toHaveBeenCalled();
-                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
+                expect(FolderService.getContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
             }));
 
             it('should display hdfs import form', function () {
@@ -204,7 +204,7 @@ describe('Home controller', function () {
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
                 expect(StateService.finishUploadingDataset).toHaveBeenCalled();
-                expect(FolderService.getFolderContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
+                expect(FolderService.getContent).toHaveBeenCalledWith({id : '', path: '', name: 'Home'});
             }));
         });
 
@@ -223,7 +223,7 @@ describe('Home controller', function () {
             it('should display name modal on step 1 when name already exists', inject(function ($q, DatasetService) {
                 //given
                 expect(ctrl.datasetNameModal).toBeFalsy();
-                spyOn(DatasetService, 'getDatasetByNameAndFolder').and.returnValue($q.when(dataset));
+                spyOn(DatasetService, 'getDatasetByName').and.returnValue(dataset);
 
                 //when
                 ctrl.uploadDatasetFile();
@@ -266,7 +266,7 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.create).toHaveBeenCalled();
-                    expect(FolderService.getFolderContent).toHaveBeenCalled();
+                    expect(FolderService.getContent).toHaveBeenCalled();
                     expect(ctrl.uploadingDatasets.length).toBe(0);
                     expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                     expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
@@ -324,7 +324,6 @@ describe('Home controller', function () {
                     spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
                     spyOn($rootScope, '$emit').and.returnValue();
                     spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue();
-                    spyOn(DatasetService, 'getDatasetByNameAndFolder').and.returnValue(dataset);
 
                 }));
 
@@ -337,7 +336,7 @@ describe('Home controller', function () {
                     scope.$digest();
 
                     //then
-                    expect(DatasetService.getDatasetByNameAndFolder).toHaveBeenCalledWith(ctrl.datasetName, { id: '', path: '', name: 'Home' });
+                    expect(DatasetService.getDatasetByName).toHaveBeenCalledWith(ctrl.datasetName);
                     expect(TalendConfirmService.confirm).toHaveBeenCalledWith(null, ['UPDATE_EXISTING_DATASET'], {dataset: 'my cool dataset'});
                     expect(DatasetService.create).not.toHaveBeenCalled();
                     expect(DatasetService.update).not.toHaveBeenCalled();
@@ -355,7 +354,7 @@ describe('Home controller', function () {
 
                     //then
                     expect(DatasetService.createDatasetInfo).toHaveBeenCalledWith(ctrl.datasetFile[0], 'my cool dataset (1)');
-                    expect(FolderService.getFolderContent).toHaveBeenCalled();
+                    expect(FolderService.getContent).toHaveBeenCalled();
                 }));
 
                 it('should update existing dataset', inject(function (UpdateWorkflowService) {

@@ -1,5 +1,5 @@
 id;firstname;lastname;age;date-of-birth;alive
-1;John;Lennon;40;10/09/1940;false
-2;David;Bowie;67;01/08/1947;true
+1;John;Lennon;40;27/09/1940;false
+2;David;Bowie;67;14/08/1947;true
 3;Dylan;Bob;74;empty;
 4;Hendrix;Jimi;;1942-11-27;false

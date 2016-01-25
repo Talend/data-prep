@@ -15,7 +15,7 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
  * All DataSetContentStore implementation must have a @Component("ContentStore#{locationType}") annotation.
  */
 @Service
-public class ContentStoreRouter implements DataSetContentStore {
+public class ContentStoreRouter extends DataSetContentStore {
 
     /** Content store name prefix. */
     private static final String STORE_PREFIX = "ContentStore#";

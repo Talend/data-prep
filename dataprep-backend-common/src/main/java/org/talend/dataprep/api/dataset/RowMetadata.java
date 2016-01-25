@@ -2,9 +2,7 @@ package org.talend.dataprep.api.dataset;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 
@@ -84,7 +82,22 @@ public class RowMetadata implements Serializable {
     private ColumnMetadata addColumn(ColumnMetadata columnMetadata, int index) {
         DecimalFormat format = new DecimalFormat("0000"); //$NON-NLS-1$
         if (StringUtils.isEmpty(columnMetadata.getId())) {
-            columnMetadata.setId(format.format(this.columns.size()));
+            int nextId = 0;
+            if (!this.columns.isEmpty()) {
+
+                // Retrieve the current max column id:
+                //@formatter:off
+                int max = this.columns.stream()
+                        .filter(column -> StringUtils.isNumeric(column.getId()))
+                        .map(column -> new Integer(column.getId()))
+                        .max((x, y) -> x.compareTo(y))
+                        .orElse(-1);
+                //@formatter:on
+
+                // Id of the new column, is (previous max) + 1:
+                nextId = max + 1;
+            }
+            columnMetadata.setId(format.format(nextId));
         }
         columns.add(index, columnMetadata);
         return columnMetadata;

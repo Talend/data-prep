@@ -1,71 +1,56 @@
 .vertical-barchart-cls{
-  .grid .tick {
-    stroke: lightgrey;
-    opacity: 0.7;
-    text{
-      opacity: 0.7;
-      font-size: .8em;
-      stroke: black;
-    }
-  }
-  .grid path {
-    stroke-width: 0;
-  }
-
   .bg-rect{
     fill: $medium-gray;
     cursor: pointer;
   }
 
-  .bar {
-    fill: $blue;
-  }
-
+  .primaryBar,
   .secondaryBar {
-    fill: $dark-blue ;
+    rect {
+      &.bar {
+        fill: $blue;
+      }
+      &.blueBar {
+        fill: $dark-blue;
+      }
+    }
   }
 
-  .bar:hover {
-    fill: brown;
+  .grid {
+    .tick {
+      stroke: lightgrey;
+      opacity: 0.7;
+      text{
+        opacity: 0.7;
+        font-size: .8em;
+        stroke: black;
+      }
+    }
+
+    path {
+      stroke-width: 0;
+    }
+
+    .line {
+      fill: none;
+      stroke: darkorange;
+      stroke-width: 1.5px;
+    }
   }
 
   .axis {
     font: 10px sans-serif;
-  }
 
-  .axis path,
-  .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-  }
+    path,
+    line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
 
-  .x.axis path {
-    display: block;
-  }
-
-  .line {
-    fill: none;
-    stroke: darkorange;
-    stroke-width: 1.5px;
-  }
-
-  .dot {
-    fill: white;
-    stroke: steelblue;
-    stroke-width: 1.5px;
-  }
-
-  .foreign-object-body{
-    background-color: rgba(255, 255, 255, 0);
-    font-size: .8em;
-    color: $dark-green;
-    padding-top:3px;
-    padding-left:10px;
-    font-family: $inconsolota;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    &.x path {
+      display: block;
+    }
   }
 
   /**************** d3 tooltip *********************************/
@@ -80,19 +65,19 @@
     color: #fff;
     border-radius: 2px;
     z-index: 100000;
-  }
 
-  &.d3-tip:after {
-    box-sizing: border-box;
-    display: inline;
-    width: 100%;
-    line-height: 1;
-    color: rgba(0, 0, 0, 0.8);
-    content: "\25BA";
-    position: relative;
-    text-align: end;
-    float: right;
-    margin-right: -22px;
+    &:after {
+      box-sizing: border-box;
+      display: inline;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BA";
+      position: relative;
+      text-align: end;
+      float: right;
+      margin-right: -22px;
+    }
   }
 
   &.d3-tip.n:after {

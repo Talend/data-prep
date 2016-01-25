@@ -32,12 +32,17 @@ describe('Dataset column header directive', function () {
 
 			ctrl = element.controller('lookupDatagridHeader');
 			spyOn(ctrl, 'showCheckbox').and.returnValue(true);
+			spyOn(ctrl, 'updateColsToAdd').and.returnValue();
 			scope.$digest();
 		};
 	}));
 
+	beforeEach(function() {
+		jasmine.clock().install();
+	});
 
 	afterEach(function () {
+		jasmine.clock().uninstall();
 		scope.$destroy();
 		element.remove();
 	});
@@ -71,6 +76,37 @@ describe('Dataset column header directive', function () {
 		//then
 		expect(element.find('.grid-header-title').text()).toBe('MostPopulousCity');
 		expect(element.find('.grid-header-type').text()).toBe('text');
+	});
+
+	it('should select checkbox when clicking on add-to-lookup div', function () {
+		//given
+		createElement();
+		jasmine.clock().tick(250);
+		var event = angular.element.Event('click');
+
+		//when
+		element.find('.add-to-lookup').eq(0).trigger(event);
+
+		//then
+		expect(ctrl.updateColsToAdd).toHaveBeenCalled();
+		expect(element.find('input[type=checkbox]').is(':checked')).toBeTruthy();
+	});
+
+
+	it('should uncheck checkbox when clicking on add-to-lookup div and the column is already selected', function () {
+		//given
+		createElement();
+		jasmine.clock().tick(250);
+		var event = angular.element.Event('click');
+		element.find('.add-to-lookup').eq(0).trigger(event);
+
+
+		//when
+		element.find('.add-to-lookup').eq(0).trigger(event);
+
+		//then
+		expect(ctrl.updateColsToAdd).toHaveBeenCalled();
+		expect(element.find('input[type=checkbox]').is(':checked')).toBeFalsy();
 	});
 
 });

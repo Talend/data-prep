@@ -397,6 +397,7 @@ describe('Dataset List Service', function () {
 
     it('should call rest service clone', inject(function (DatasetRestService, DatasetListService) {
         var folder = {id: 'foo'};
+
         //when
         DatasetListService.clone(datasets[0], folder, 'beer');
 

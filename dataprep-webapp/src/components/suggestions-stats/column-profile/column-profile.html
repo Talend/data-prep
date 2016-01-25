@@ -1,4 +1,4 @@
-<div class="column-profile" ng-switch="!!(columnProfileCtrl.histogram || columnProfileCtrl.stateDistribution)">
+<div class="column-profile" ng-switch="!!(columnProfileCtrl.state.playground.statistics.histogram || columnProfileCtrl.stateDistribution)">
 
     <div id="chart-ghost" class="loading-container" ng-switch-when="false">
         <img id="chart-ghost-img" src="/assets/images/refreshing-ghost-chart.png">
@@ -10,7 +10,7 @@
 
     <div id="column-profile-chart" ng-switch-when="true">
         <div class="column-profile-aggregation">
-            <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.histogram.aggregationColumn.name}}">
+            <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}">
                 <ul class="column-profile-aggregation-list">
                     <li ng-click="columnProfileCtrl.changeAggregation()">
                         <div translate-once="LINE_COUNT"></div>
@@ -26,38 +26,50 @@
                 </ul>
             </talend-button-dropdown>
 
-            <div ng-if="columnProfileCtrl.histogram.aggregation" class="column-profile-aggregation-description">
-                <span>{{columnProfileCtrl.histogram.aggregation | translate}}</span>
-                <span class="highlight">{{columnProfileCtrl.histogram.aggregationColumn.name}}</span>
+            <div ng-if="columnProfileCtrl.state.playground.statistics.histogram.aggregation" class="column-profile-aggregation-description">
+                <span>{{columnProfileCtrl.state.playground.statistics.histogram.aggregation | translate}}</span>
+                <span class="highlight">{{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}</span>
                 <span translate-once="GROUP_BY"></span>
-                <span class="highlight">{{columnProfileCtrl.histogram.column.name}}</span>
+                <span class="highlight">{{columnProfileCtrl.state.playground.statistics.histogram.column.name}}</span>
             </div>
         </div>
 
         <div style="min-height: 160px;">
             <horizontal-barchart id="hBarChart"
-                                 ng-if="!columnProfileCtrl.histogram.vertical"
+                                 ng-if="!columnProfileCtrl.state.playground.statistics.histogram.vertical"
                                  width="300"
                                  height="400"
-                                 on-click="columnProfileCtrl.addBarchartFilter"
-                                 visu-data="columnProfileCtrl.histogram.data"
-                                 value-field="formattedValue"
-                                 value-field-2="filteredOccurrences"
-                                 key-field="{{columnProfileCtrl.histogram.key}}"
-                                 key-label="{{columnProfileCtrl.histogram.label}}"></horizontal-barchart>
+                                 on-click="columnProfileCtrl.addBarchartFilter(item)"
+
+                                 key-field="{{columnProfileCtrl.state.playground.statistics.histogram.keyField}}"
+                                 key-label="{{columnProfileCtrl.state.playground.statistics.histogram.label}}"
+
+                                 primary-data="columnProfileCtrl.state.playground.statistics.histogram.data"
+                                 primary-value-field="{{columnProfileCtrl.state.playground.statistics.histogram.valueField}}"
+                                 primary-bar-class="{{columnProfileCtrl.state.playground.statistics.histogram.className}}"
+
+                                 secondary-data="columnProfileCtrl.state.playground.statistics.filteredHistogram.data"
+                                 secondary-value-field="{{columnProfileCtrl.state.playground.statistics.filteredHistogram.valueField}}"
+                                 secondary-bar-class="{{columnProfileCtrl.state.playground.statistics.filteredHistogram.className}}"
+            ></horizontal-barchart>
 
             <vertical-barchart id="vBarChart"
-                               ng-if="columnProfileCtrl.histogram.vertical"
+                               ng-if="columnProfileCtrl.state.playground.statistics.histogram.vertical"
                                width="300"
                                height="150"
+                               show-x-axis="columnProfileCtrl.state.playground.statistics.histogram.column.type === 'date'"
                                on-click="columnProfileCtrl.addRangeFilter(interval)"
-                               visu-data="columnProfileCtrl.histogram.data"
-                               visu-data-2="columnProfileCtrl.filteredHistogram.data"
-                               value-field="{{columnProfileCtrl.histogram.key}}"
-                               value-field-2="{{columnProfileCtrl.filteredHistogram.key}}"
-                               key-field="data"
-                               active-limits="columnProfileCtrl.histogram.activeLimits"
-                               key-label="{{columnProfileCtrl.histogram.label}}"></vertical-barchart>
+
+                               key-field="{{columnProfileCtrl.state.playground.statistics.histogram.keyField}}"
+                               key-label="{{columnProfileCtrl.state.playground.statistics.histogram.label}}"
+
+                               primary-data="columnProfileCtrl.state.playground.statistics.histogram.data"
+                               primary-value-field="{{columnProfileCtrl.state.playground.statistics.histogram.valueField}}"
+
+                               secondary-data="columnProfileCtrl.state.playground.statistics.filteredHistogram.data"
+                               secondary-value-field="{{columnProfileCtrl.state.playground.statistics.filteredHistogram.valueField}}"
+
+                               active-limits="columnProfileCtrl.state.playground.statistics.activeLimits"></vertical-barchart>
 
             <highchart id="geochart"
                        ng-if="columnProfileCtrl.stateDistribution"

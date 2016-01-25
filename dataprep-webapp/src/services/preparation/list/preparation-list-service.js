@@ -8,19 +8,12 @@
      * <b style="color: red;">WARNING : do NOT use this service directly.
      * {@link data-prep.services.preparation.service:PreparationService PreparationService} must be the only entry point for preparations</b>
      * @requires data-prep.services.preparation.service:PreparationRestService
+     * @requires data-prep.services.state.service:StateService
      */
-    function PreparationListService($q, PreparationRestService) {
+    function PreparationListService($q, state, PreparationRestService, StateService) {
         var preparationsPromise;
 
-        var service = {
-            /**
-             * @ngdoc property
-             * @name preparations
-             * @propertyOf data-prep.services.preparation.service:PreparationListService
-             * @description the preparations list
-             */
-            preparations: null,
-
+        return {
             refreshPreparations: refreshPreparations,
             getPreparationsPromise: getPreparationsPromise,
             refreshMetadataInfos: refreshMetadataInfos,
@@ -30,7 +23,6 @@
             update: update,
             delete: deletePreparation
         };
-        return service;
 
 
         /**
@@ -45,9 +37,8 @@
                 preparationsPromise = PreparationRestService.getPreparations()
                     .then(function (response) {
                         preparationsPromise = null;
-                        service.preparations = response.data;
-
-                        return service.preparations;
+                        StateService.setPreparations(response.data);
+                        return response.data;
                     });
             }
             return preparationsPromise;
@@ -61,7 +52,7 @@
          * @returns {promise} The process promise
          */
         function getPreparationsPromise() {
-            return service.preparations === null ? refreshPreparations() : $q.when(service.preparations);
+            return state.inventory.preparations === null ? refreshPreparations() : $q.when(state.inventory.preparations);
         }
 
         /**
@@ -132,8 +123,7 @@
         function deletePreparation(preparation) {
             return PreparationRestService.delete(preparation.id)
                 .then(function() {
-                    var index = service.preparations.indexOf(preparation);
-                    service.preparations.splice(index, 1);
+                    StateService.removePreparation(preparation);
                 });
         }
 
@@ -141,7 +131,7 @@
          * @ngdoc method
          * @name refreshMetadataInfos
          * @methodOf data-prep.services.preparation.service:PreparationListService
-         * @param {object[]} datasets The datasets to inject
+         * @param {array} datasets The datasets to inject
          * @description [PRIVATE] Inject the corresponding dataset to every preparation
          * @returns {promise} The process promise
          */

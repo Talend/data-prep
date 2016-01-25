@@ -1,0 +1,346 @@
+[
+  {
+    "data": "PARIS",
+    "SUM": 2240621.0
+  },
+  {
+    "data": "BOUCHES-DU-RHONE",
+    "SUM": 1328996.0
+  },
+  {
+    "data": "HAUTS-DE-SEINE",
+    "SUM": 1273424.0
+  },
+  {
+    "data": "SEINE-SAINT-DENIS",
+    "SUM": 1269460.0
+  },
+  {
+    "data": "METROPOLE DE LYON",
+    "SUM": 932593.0
+  },
+  {
+    "data": "VAL-DE-MARNE",
+    "SUM": 844436.0
+  },
+  {
+    "data": "NORD",
+    "SUM": 798993.0
+  },
+  {
+    "data": "LA REUNION",
+    "SUM": 718939.0
+  },
+  {
+    "data": "ALPES-MARITIMES",
+    "SUM": 633622.0
+  },
+  {
+    "data": "HAUTE-GARONNE",
+    "SUM": 490016.0
+  },
+  {
+    "data": "YVELINES",
+    "SUM": 451403.0
+  },
+  {
+    "data": "VAR",
+    "SUM": 442383.0
+  },
+  {
+    "data": "LOIRE-ATLANTIQUE",
+    "SUM": 442208.0
+  },
+  {
+    "data": "GIRONDE",
+    "SUM": 408528.0
+  },
+  {
+    "data": "HERAULT",
+    "SUM": 385984.0
+  },
+  {
+    "data": "VAL-D'OISE",
+    "SUM": 358605.0
+  },
+  {
+    "data": "BAS-RHIN",
+    "SUM": 340491.0
+  },
+  {
+    "data": "SEINE-MARITIME",
+    "SUM": 315331.0
+  },
+  {
+    "data": "ESSONNE",
+    "SUM": 275549.0
+  },
+  {
+    "data": "ILLE-ET-VILAINE",
+    "SUM": 254480.0
+  },
+  {
+    "data": "LOIRE",
+    "SUM": 242846.0
+  },
+  {
+    "data": "ISERE",
+    "SUM": 232277.0
+  },
+  {
+    "data": "MARNE",
+    "SUM": 227118.0
+  },
+  {
+    "data": "PAS-DE-CALAIS",
+    "SUM": 220856.0
+  },
+  {
+    "data": "MAINE-ET-LOIRE",
+    "SUM": 203198.0
+  },
+  {
+    "data": "FINISTERE",
+    "SUM": 203036.0
+  },
+  {
+    "data": "GARD",
+    "SUM": 187740.0
+  },
+  {
+    "data": "SEINE-ET-MARNE",
+    "SUM": 185004.0
+  },
+  {
+    "data": "HAUT-RHIN",
+    "SUM": 178012.0
+  },
+  {
+    "data": "INDRE-ET-LOIRE",
+    "SUM": 172174.0
+  },
+  {
+    "data": "PYRENEES-ATLANTIQUES",
+    "SUM": 163584.0
+  },
+  {
+    "data": "MOSELLE",
+    "SUM": 160876.0
+  },
+  {
+    "data": "COTE-D'OR",
+    "SUM": 152071.0
+  },
+  {
+    "data": "SARTHE",
+    "SUM": 143599.0
+  },
+  {
+    "data": "PUY-DE-DOME",
+    "SUM": 141569.0
+  },
+  {
+    "data": "HAUTE-VIENNE",
+    "SUM": 136221.0
+  },
+  {
+    "data": "MEURTHE-ET-MOSELLE",
+    "SUM": 135636.0
+  },
+  {
+    "data": "SOMME",
+    "SUM": 132727.0
+  },
+  {
+    "data": "DROME",
+    "SUM": 131886.0
+  },
+  {
+    "data": "OISE",
+    "SUM": 128253.0
+  },
+  {
+    "data": "MARTINIQUE",
+    "SUM": 125367.0
+  },
+  {
+    "data": "PYRENEES-ORIENTALES",
+    "SUM": 120489.0
+  },
+  {
+    "data": "VIENNE",
+    "SUM": 119183.0
+  },
+  {
+    "data": "HAUTE-SAVOIE",
+    "SUM": 118770.0
+  },
+  {
+    "data": "DOUBS",
+    "SUM": 116353.0
+  },
+  {
+    "data": "LOIRET",
+    "SUM": 114286.0
+  },
+  {
+    "data": "MORBIHAN",
+    "SUM": 110354.0
+  },
+  {
+    "data": "CALVADOS",
+    "SUM": 108365.0
+  },
+  {
+    "data": "AUDE",
+    "SUM": 98937.0
+  },
+  {
+    "data": "GUYANE",
+    "SUM": 95795.0
+  },
+  {
+    "data": "TARN",
+    "SUM": 90760.0
+  },
+  {
+    "data": "VAUCLUSE",
+    "SUM": 89380.0
+  },
+  {
+    "data": "SAONE-ET-LOIRE",
+    "SUM": 77481.0
+  },
+  {
+    "data": "CHARENTE-MARITIME",
+    "SUM": 74123.0
+  },
+  {
+    "data": "EURE-ET-LOIR",
+    "SUM": 70084.0
+  },
+  {
+    "data": "CHER",
+    "SUM": 66666.0
+  },
+  {
+    "data": "CORSE-DU-SUD",
+    "SUM": 66245.0
+  },
+  {
+    "data": "AUBE",
+    "SUM": 60009.0
+  },
+  {
+    "data": "GUADELOUPE",
+    "SUM": 58606.0
+  },
+  {
+    "data": "SAVOIE",
+    "SUM": 58039.0
+  },
+  {
+    "data": "DEUX-SEVRES",
+    "SUM": 57607.0
+  },
+  {
+    "data": "TARN-ET-GARONNE",
+    "SUM": 56887.0
+  },
+  {
+    "data": "AISNE",
+    "SUM": 56217.0
+  },
+  {
+    "data": "VENDEE",
+    "SUM": 52808.0
+  },
+  {
+    "data": "MAYENNE",
+    "SUM": 50658.0
+  },
+  {
+    "data": "TERRITOIRE DE BELFORT",
+    "SUM": 50102.0
+  },
+  {
+    "data": "ARDENNES",
+    "SUM": 49759.0
+  },
+  {
+    "data": "EURE",
+    "SUM": 49634.0
+  },
+  {
+    "data": "CORREZE",
+    "SUM": 47411.0
+  },
+  {
+    "data": "COTES-D'ARMOR",
+    "SUM": 45936.0
+  },
+  {
+    "data": "LOIR-ET-CHER",
+    "SUM": 45903.0
+  },
+  {
+    "data": "INDRE",
+    "SUM": 44960.0
+  },
+  {
+    "data": "HAUTE-CORSE",
+    "SUM": 43479.0
+  },
+  {
+    "data": "CHARENTE",
+    "SUM": 42014.0
+  },
+  {
+    "data": "HAUTES-PYRENEES",
+    "SUM": 41664.0
+  },
+  {
+    "data": "HAUTES-ALPES",
+    "SUM": 40761.0
+  },
+  {
+    "data": "AIN",
+    "SUM": 40171.0
+  },
+  {
+    "data": "ALLIER",
+    "SUM": 38072.0
+  },
+  {
+    "data": "MANCHE",
+    "SUM": 37121.0
+  },
+  {
+    "data": "SAINT-MARTIN COM AUTONOME",
+    "SUM": 36622.0
+  },
+  {
+    "data": "RHONE",
+    "SUM": 36241.0
+  },
+  {
+    "data": "NIEVRE",
+    "SUM": 35327.0
+  },
+  {
+    "data": "YONNE",
+    "SUM": 35096.0
+  },
+  {
+    "data": "LOT-ET-GARONNE",
+    "SUM": 33730.0
+  },
+  {
+    "data": "VOSGES",
+    "SUM": 32387.0
+  },
+  {
+    "data": "LANDES",
+    "SUM": 31018.0
+  }
+]

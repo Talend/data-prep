@@ -43,15 +43,6 @@
         vm.isEditMode = false;
 
         /**
-         * @ngdoc property
-         * @name rawTransformations
-         * @propertyOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
-         * @description a copy of the initial transformations without changed parameters
-         * @type {Array}
-         */
-        vm.rawTransformations = [];
-
-        /**
          * @ngdoc method
          * @name initTransformations
          * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
@@ -135,8 +126,6 @@
         vm.resetColumnName = function resetColumnName() {
             vm.newName = originalName;
         };
-
-
     }
 
     angular.module('data-prep.datagrid-header')

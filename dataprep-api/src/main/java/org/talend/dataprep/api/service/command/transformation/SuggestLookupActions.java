@@ -87,7 +87,7 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
                         continue;
                     }
                     final Lookup lookup = new Lookup();
-                    lookup.adapt(dataset, getDatasetUrl(dataset));
+                    lookup.adapt(dataset);
                     final JsonNode jsonNode = builder.build().valueToTree(lookup);
                     suggestedActions.add(jsonNode);
                 }
@@ -102,14 +102,6 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
 
         };
 
-    }
-
-    /**
-     * @param dataset the dataset to get from the returned url.
-     * @return the url to load the dataset.
-     */
-    private String getDatasetUrl(DataSetMetadata dataset) {
-        return apiServiceUrl + "/api/datasets/" + dataset.getId();
     }
 
 }

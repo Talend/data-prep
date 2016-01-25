@@ -4,6 +4,7 @@ import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -32,6 +33,16 @@ public class JsonWriter implements TransformerWriter {
 
     /** Jackson generator. */
     private JsonGenerator generator;
+
+    /**
+     * <b>Needed</b> private constructor for the WriterRegistrationService.
+     *
+     * @param output where to write the transformation.
+     * @param params ignored parameters.
+     */
+    private JsonWriter(final OutputStream output, final Map<String, String> params) {
+        this(output);
+    }
 
     /**
      * Default constructor.

@@ -142,6 +142,29 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         assertThat(row.get(columnId), is("Jimmy"));
     }
 
+    @Test
+    public void test_TDP_1204() {
+        // given
+        final String columnId = "firstname";
+
+        final Map<String, String> values = new HashMap<>();
+        values.put(columnId, "");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(CELL_VALUE_PARAMETER, generateJson("", ReplaceOnValueHelper.EQUALS_MODE));
+        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
+        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "true");
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
+
+        // when
+        ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertThat(row.get(columnId), is("Jimmy"));
+    }
+
     /**
      * Test with an invalid regex pattern as token and mode is not REGEX.
      */
@@ -248,6 +271,16 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         assertEquals("123", action.computeNewValue(
                         buildPatternActionContext(generateJson("_(\\d{3,})_", ReplaceOnValueHelper.REGEX_MODE), "$1", true),
                         "XXX_123_YYY"));
+    }
+
+    @Test
+    public void test_TDP_1227(){
+        assertEquals("India", action.computeNewValue(
+                buildPatternActionContext(generateJson("I(.*)", ReplaceOnValueHelper.REGEX_MODE), "J$2", true),
+                "India"));
+        assertEquals("India", action.computeNewValue(
+                buildPatternActionContext(generateJson("I(.*)", ReplaceOnValueHelper.REGEX_MODE), "J$2", false),
+                "India"));
     }
 
     @Test

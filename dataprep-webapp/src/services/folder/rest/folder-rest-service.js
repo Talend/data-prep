@@ -1,114 +1,116 @@
 (function () {
-	'use strict';
+    'use strict';
 
-	/**
-	 * @ngdoc service
-	 * @name data-prep.services.folder.service:FolderRestService
-	 * @description Folder service. This service provide the entry point to the backend folder REST api.<br/>
-	 * <b style="color: red;">WARNING : do NOT use this service directly.
-	 * {@link data-prep.services.folder.service:FolderService FolderService} must be the only entry point for folder</b>
-	 */
-	function FolderRestService ($http, RestURLs) {
-		return {
-			// folder operations
-			create: createFolder,
-			getFolderContent: getFolderContent,
-			renameFolder: renameFolder,
-			children: children,
-			searchFolders: searchFolders
-		};
+    /**
+     * @ngdoc service
+     * @name data-prep.services.folder.service:FolderRestService
+     * @description Folder service. This service provide the entry point to the backend folder REST api.<br/>
+     * <b style="color: red;">WARNING : do NOT use this service directly.
+     * {@link data-prep.services.folder.service:FolderService FolderService} must be the only entry point for folder</b>
+     */
+    function FolderRestService($http, RestURLs) {
+        return {
+            children: children,
+            create: create,
+            getContent: getContent,
+            rename: rename,
+            remove: remove,
+            search: search
+        };
 
-		//----------------------------------------------
-		//   folders
-		//----------------------------------------------
+        /**
+         * @ngdoc method
+         * @name children
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Get a folder's children
+         * @param {string} folderPath The folder path
+         * @returns {Promise} The GET promise
+         */
+        function children(folderPath) {
+            var url = RestURLs.folderUrl;
+            if (folderPath) {
+                url += '?path=' + encodeURIComponent(folderPath);
+            }
+            return $http.get(url);
+        }
 
-		/**
-		 * @ngdoc method
-		 * @name children
-		 * @methodOf data-prep.services.folder.service:FolderRestService
-		 * @description Get children of a folder
-		 * @param {string} path the path to get children
-		 * @returns {Promise} The GET promise
-		 */
-		function children(path){
-			var url = RestURLs.folderUrl;
-			if (path){
-				url += '?path=' + encodeURIComponent(path);
-			}
-			return $http.get(url);
-		}
+        /**
+         * @ngdoc method
+         * @name create
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Create a folder
+         * @param {string} folderPath The folder path to create
+         * @returns {Promise} The PUT promise
+         */
+        function create(folderPath) {
+            return $http.put(RestURLs.folderUrl + '?path=' + encodeURIComponent(folderPath));
+        }
 
+        /**
+         * @ngdoc method
+         * @name getContent
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description List the children (folders and datasets) of a folder
+         * @param {string} folderPath The folder path to list
+         * @param {string} sortType Sort by specified type
+         * @param {string} sortOrder Sort in specified order
+         * @returns {Promise} The GET promise
+         */
+        function getContent(folderPath, sortType, sortOrder) {
+            var url = RestURLs.folderUrl + '/datasets?folder=' + encodeURIComponent(folderPath || '/');
 
-		/**
-		 * @ngdoc method
-		 * @name searchFolders
-		 * @methodOf data-prep.services.folder.service:FolderRestService
-		 * @description Search folders with a part of the name
-		 * @param {string} query the part of the name to search
-		 * @returns {Promise} The GET promise
-		 */
-		function searchFolders(query){
-			var url = RestURLs.folderUrl + '/search';
-			if (query){
-				url += '?pathName=' + encodeURIComponent(query);
-			}
-			return $http.get(url);
-		}
+            if (sortType) {
+                url += '&sort=' + sortType;
+            }
+            if (sortOrder) {
+                url += '&order=' + sortOrder;
+            }
 
-		/**
-		 * @ngdoc method
-		 * @name createFolder
-		 * @methodOf data-prep.services.folder.service:FolderRestService
-		 * @description Create a folder
-		 * @param {string} path the path to create
-		 * @returns {Promise} The PUT promise
-		 */
-		function createFolder (path) {
-			return $http.put(RestURLs.folderUrl + '?path=' + encodeURIComponent(path));
-		}
+            return $http.get(url);
+        }
 
-		/**
-		 * @ngdoc method
-		 * @name getFolderContent
-		 * @methodOf data-prep.services.folder.service:FolderRestService
-		 * @description List the children (folders or datasets) of a folder (or children of root folder)
-		 * @param {object} folder - the current folder
-		 * @param {string} sortType Sort by specified type
-		 * @param {string} sortOrder Sort in specified order
-		 * @returns {Promise} The GET promise
-		 */
-		function getFolderContent (folder, sortType, sortOrder) {
-			var url = RestURLs.folderUrl + '/datasets';
-			if (folder && folder.id) {
-				url += '?folder=' + encodeURIComponent(folder.id);
-			} else {
-				url += '?folder=' + encodeURIComponent('/');
-			}
+        /**
+         * @ngdoc method
+         * @name remove
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Remove a folder
+         * @param {string} folderPath the path to remove
+         * @returns {Promise} The DELETE promise
+         */
+        function remove(folderPath) {
+            return $http.delete(RestURLs.folderUrl + '?path=' + encodeURIComponent(folderPath));
+        }
 
-			if (sortType) {
-				url += '&sort=' + sortType;
-			}
-			if (sortOrder) {
-				url += '&order=' + sortOrder;
-			}
+        /**
+         * @ngdoc method
+         * @name rename
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Rename a folder
+         * @param {string} folderPath The folder path to rename
+         * @param {string} newPath The new path
+         * @returns {Promise} The PUT promise
+         */
+        function rename(folderPath, newPath) {
+            return $http.put(RestURLs.folderUrl + '/rename?path=' + encodeURIComponent(folderPath) + '&newPath=' + encodeURIComponent(newPath));
+        }
 
-			return $http.get(url);
-		}
+        /**
+         * @ngdoc method
+         * @name search
+         * @methodOf data-prep.services.folder.service:FolderRestService
+         * @description Search folders with a part of the name
+         * @param {string} query The part of the name to search
+         * @returns {Promise} The GET promise
+         */
+        function search(query) {
+            var url = RestURLs.folderUrl + '/search';
+            if (query) {
+                url += '?pathName=' + encodeURIComponent(query);
+            }
+            return $http.get(url);
+        }
+    }
 
-		/**
-		 * @ngdoc method
-		 * @name renameFolder
-		 * @methodOf data-prep.services.folder.service:FolderRestService
-		 * @description Rename a folder
-		 * @param {string} path the path to rename
-		 * @param {string} newPath the new path
-		 * @returns {Promise} The PUT promise
-		 */
-		function renameFolder (path, newPath) {
-			return $http.put(RestURLs.folderUrl + '/rename?path=' + encodeURIComponent(path) + '&newPath=' + encodeURIComponent(newPath));
-		}
-	}
-
-	angular.module('data-prep.services.folder')
-			.service('FolderRestService', FolderRestService);
+    angular.module('data-prep.services.folder')
+        .service('FolderRestService', FolderRestService);
 })();

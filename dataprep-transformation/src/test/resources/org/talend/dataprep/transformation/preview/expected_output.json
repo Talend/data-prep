@@ -2,43 +2,45 @@
   "records":[
     {
       "__tdpRowDiff":"delete",
-      "__tdpDiff": {"firstname": "update"},
-      "firstname": "CALVIN",
-      "avgAmount":"200.56",
-      "city":"Columbia",
-      "birth":"01-02-1986",
-      "registration":"25-08-2008",
-      "id":"2",
-      "state":"TN",
-      "nbCommands":"13",
-      "lastname":"JEFFERSON"
+      "__tdpDiff": {
+        "0001": "update"
+      },
+      "0001": "CALVIN",
+      "0007": "200.56",
+      "0004": "Columbia",
+      "0003": "01-02-1986",
+      "0006": "25-08-2008",
+      "0000": "2",
+      "0005": "TN",
+      "0008": "13",
+      "0002": "JEFFERSON"
     },
     {
-      "firstname":"ANDREW",
-      "avgAmount":"387.21",
-      "city":"Salem",
-      "birth":"18-09-1948",
-      "registration":"15-03-2008",
-      "id":"4",
-      "state":"NV",
-      "nbCommands":"54",
-      "lastname":"TAFT",
+      "0001": "ANDREW",
+      "0007": "387.21",
+      "0004": "Salem",
+      "0003": "18-09-1948",
+      "0006": "15-03-2008",
+      "0000": "4",
+      "0005": "NV",
+      "0008": "54",
+      "0002": "TAFT",
       "__tdpDiff":{
-        "firstname":"update"
+        "0001": "update"
       }
     },
     {
-      "firstname":"FRANKLIN",
-      "avgAmount":"537.4",
-      "city":"Salem",
-      "birth":"25-07-1980",
-      "registration":"31-03-2007",
-      "id":"6",
-      "state":"IN",
-      "nbCommands":"85",
-      "lastname":"TAYLOR",
+      "0001": "FRANKLIN",
+      "0007": "537.4",
+      "0004": "Salem",
+      "0003": "25-07-1980",
+      "0006": "31-03-2007",
+      "0000": "6",
+      "0005": "IN",
+      "0008": "85",
+      "0002": "TAYLOR",
       "__tdpDiff":{
-        "firstname":"update"
+        "0001": "update"
       }
     }
   ]

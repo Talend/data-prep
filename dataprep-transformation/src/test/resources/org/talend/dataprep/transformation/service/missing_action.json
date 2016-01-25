@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "testmissingaction",
+      "parameters": {
+        "column_id": "0002",
+        "column_name": "avgAmount",
+        "scope": "column"
+      }
+    }
+  ]
+}

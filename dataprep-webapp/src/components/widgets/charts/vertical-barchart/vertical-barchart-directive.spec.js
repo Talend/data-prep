@@ -12,6 +12,7 @@ describe('verticalBarchart directive', function () {
     };
 
     beforeEach(module('talend.widget'));
+
     beforeEach(inject(function ($rootScope, $compile) {
         statsData = [
             {'data': {min: 0, max: 5}, 'occurrences': 9},
@@ -29,18 +30,18 @@ describe('verticalBarchart directive', function () {
         createElement = function () {
 
             scope = $rootScope.$new();
-            scope.visData = null;
-            scope.existingFilter = null;
             scope.onClick = jasmine.createSpy('onClick');
 
             element = angular.element('<vertical-barchart id="barChart" width="250" height="400"' +
+                'show-x-axis="showXAxis"'+
                 'on-click="onClick(interval)"' +
-                'visu-data="visData"' +
-                'visu-data-2="visData2"' +
                 'key-field="data"' +
-                'active-limits="existingFilter"' +
-                'value-field="occurrences"' +
-                'value-field-2="filteredOccurrences"' +
+                'key-label="Occurrences"' +
+                'primary-data="primaryData"' +
+                'primary-value-field="occurrences"' +
+                'secondary-data="secondaryData"' +
+                'secondary-value-field="filteredOccurrences"' +
+                'active-limits="activeLimits"' +
                 '></vertical-barchart>');
 
             angular.element('body').append(element);
@@ -54,6 +55,7 @@ describe('verticalBarchart directive', function () {
     beforeEach(function () {
         jasmine.clock().install();
     });
+
     afterEach(function () {
         jasmine.clock().uninstall();
 
@@ -61,161 +63,247 @@ describe('verticalBarchart directive', function () {
         element.remove();
     });
 
-    it('should render all bars after a 100ms delay', function () {
-        //given
-        createElement();
+    describe('render', function() {
+        it('should render y axis after a 100ms delay', function () {
+            //given
+            createElement();
 
-        //when
-        scope.visData = statsData;
-        scope.visData2 = secondaryStatsData;
-        scope.$digest();
-        jasmine.clock().tick(100);
+            //when
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-        //then
-        expect(element.find('.grid').length).toBe(1);
-        expect(element.find('rect').length).toBe(statsData.length * 3); // 3 chart columns * (main + secondary + hover)
+            //then
+            expect(element.find('.yAxis > text').length).toBe(1);
+            expect(element.find('.yAxis > text').text()).toBe('Occurrences');
+        });
 
-        expect(element.find('g.bar').length).toBe(1);
-        expect(element.find('rect.bar').length).toBe(statsData.length);
+        it('should render grid after a 100ms delay', function () {
+            //given
+            createElement();
 
-        expect(element.find('g.secondaryBar').length).toBe(1);
-        expect(element.find('rect.secondaryBar').length).toBe(secondaryStatsData.length);
+            //when
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-        expect(element.find('.bg-rect').length).toBe(statsData.length);
-    });
+            //then
+            expect(element.find('.grid > .tick').length).toBe(10);
+            expect(element.find('.grid > .tick').eq(0).text()).toBe('0');
+            expect(element.find('.grid > .tick').eq(1).text()).toBe('1');
+            expect(element.find('.grid > .tick').eq(2).text()).toBe('2');
+            expect(element.find('.grid > .tick').eq(3).text()).toBe('3');
+            expect(element.find('.grid > .tick').eq(4).text()).toBe('4');
+            expect(element.find('.grid > .tick').eq(5).text()).toBe('5');
+            expect(element.find('.grid > .tick').eq(6).text()).toBe('6');
+            expect(element.find('.grid > .tick').eq(7).text()).toBe('7');
+            expect(element.find('.grid > .tick').eq(8).text()).toBe('8');
+            expect(element.find('.grid > .tick').eq(9).text()).toBe('9');
+        });
 
-    it('should render main bars after a 100ms delay', function () {
-        //given
-        createElement();
+        it('should render hover bars after a 100ms delay', function () {
+            //given
+            createElement();
 
-        //when
-        scope.visData = statsData;
-        scope.visData2 = null;
-        scope.$digest();
-        jasmine.clock().tick(100);
+            //when
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-        //then
-        expect(element.find('.grid').length).toBe(1);
-        expect(element.find('rect').length).toBe(statsData.length * 2); // 3 chart columns * (main + hover)
+            //then
+            expect(element.find('.bg-rect').length).toBe(statsData.length);
+        });
 
-        expect(element.find('g.bar').length).toBe(1);
-        expect(element.find('rect.bar').length).toBe(statsData.length);
+        it('should render primary bars after a 100ms delay', function () {
+            //given
+            createElement();
 
-        expect(element.find('g.secondaryBar').length).toBe(0);
-        expect(element.find('rect.secondaryBar').length).toBe(0);
+            //when
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-        expect(element.find('.bg-rect').length).toBe(statsData.length);
-    });
+            //then
+            expect(element.find('.primaryBar > rect').length).toBe(statsData.length);
+            expect(element.find('.secondaryBar > rect').length).toBe(0);
+            expect(element.find('.grid').length).toBe(1);
+            expect(element.find('.bg-rect').length).toBe(statsData.length);
+        });
 
-    it('should render secondary bars after a 100ms delay', function () {
-        //given
-        createElement();
+        it('should render x-axis', function () {
+            //given
+            createElement();
 
-        scope.visData = statsData;
-        scope.visData2 = null;
-        scope.$digest();
-        jasmine.clock().tick(100);
+            //when
+            scope.primaryData = statsData;
+            scope.secondaryData = secondaryStatsData;
+            scope.showXAxis = true;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-        expect(element.find('g.secondaryBar').length).toBe(0);
-        expect(element.find('rect.secondaryBar').length).toBe(0);
+            //then
+            expect(element.find('.x.axis').length).toBe(1);
+        });
 
-        //when
-        scope.visData2 = secondaryStatsData;
-        scope.$digest();
-        jasmine.clock().tick(100);
+        it('should NOT render x-axis', function () {
+            //given
+            createElement();
 
-        //then
-        expect(element.find('g.secondaryBar').length).toBe(1);
-        expect(element.find('rect.secondaryBar').length).toBe(secondaryStatsData.length);
-    });
+            //when
+            scope.primaryData = statsData;
+            scope.secondaryData = secondaryStatsData;
+            scope.dataType = false;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-    it('should check the initial bars opacity', function () {
-        //given
-        createElement();
+            //then
+            expect(element.find('.x.axis').length).toBe(0);
+        });
 
-        //when
-        scope.visData = statsData;
-        scope.$digest();
-        jasmine.clock().tick(100);
+        it('should render primary and secondary bars after a 100ms delay', function () {
+            //given
+            createElement();
 
-        //then
-        _.each(isolateScope.buckets[0], function (bucket) {
-            expect(d3.select(bucket).style('opacity')).toBe('1');
+            //when
+            scope.primaryData = statsData;
+            scope.secondaryData = secondaryStatsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
+
+            //then
+            expect(element.find('.primaryBar > rect').length).toBe(statsData.length);
+            expect(element.find('.secondaryBar > rect').length).toBe(statsData.length);
+        });
+
+        it('should render secondary bars after a 100ms delay', function () {
+            //given
+            createElement();
+
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
+
+            expect(element.find('.secondaryBar > rect').length).toBe(0);
+
+            //when
+            scope.secondaryData = secondaryStatsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
+
+            //then
+            expect(element.find('.secondaryBar > rect').length).toBe(statsData.length);
+        });
+
+        it('should render tiny bars with a 3px height bar', function () {
+            //given
+            createElement();
+
+            //when
+            scope.primaryData = [
+                {'data': {min: 0, max: 5}, 'occurrences': 9000000},
+                {'data': {min: 5, max: 10}, 'occurrences': 0},
+                {'data': {min: 10, max: 15}, 'occurrences': 1}
+            ];
+            scope.$digest();
+            jasmine.clock().tick(100);
+            flushAllD3Transitions();
+
+            //then
+            //400: passed chart height, 20: top margin to which the svg was translated, 3: the default tiny bar value
+            expect(element.find('.primaryBar > rect').eq(0).attr('height')).toBe('380'); // 400 - 20px margin
+            expect(element.find('.primaryBar > rect').eq(1).attr('height')).toBe('0');
+            expect(element.find('.primaryBar > rect').eq(2).attr('height')).toBe('3');
+            expect(element.find('.primaryBar > rect').eq(0).attr('y')).toBe('0');
+            expect(element.find('.primaryBar > rect').eq(1).attr('y')).toBe('380'); // 400 - 20px margin
+            expect(element.find('.primaryBar > rect').eq(2).attr('y')).toBe('377'); // 400 - 20px margin - 3px bar height
         });
     });
 
-    it('should update the bars opacity after applying a filter outside the bars ranges', function () {
-        //given
-        createElement();
+    describe('active bars', function() {
+        it('should set the initial bars to full opacity', function () {
+            //given
+            createElement();
 
-        scope.visData = statsData;
-        scope.$digest();
-        jasmine.clock().tick(100);
-        flushAllD3Transitions();
+            //when
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
 
-        //when
-        scope.existingFilter = [105, 200];
-        scope.$digest();
-        jasmine.clock().tick(600);
-
-        flushAllD3Transitions();
-
-        //then
-        _.each(isolateScope.buckets[0], function (bucket) {
-            var opac = +(d3.select(bucket).style('opacity'));
-            expect(opac.toFixed(1)).toBe('0.4');
+            //then
+            _.each(isolateScope.buckets[0], function (bucket) {
+                expect(d3.select(bucket).style('opacity')).toBe('1');
+            });
         });
-    });
 
-    it('should update the bars opacity after applying a filter intersecting with 1 bar range', function () {
-        //given
-        createElement();
+        it('should set the bars to inactive opacity = 0.4', function () {
+            //given
+            createElement();
 
-        scope.visData = statsData;
-        scope.$digest();
-        jasmine.clock().tick(100);
-        flushAllD3Transitions();
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
+            flushAllD3Transitions();
 
-        //when
-        scope.existingFilter = [15, 20];
-        scope.$digest();
-        jasmine.clock().tick(600);
+            //when
+            scope.activeLimits = [105, 200];
+            scope.$digest();
+            jasmine.clock().tick(500);
+            flushAllD3Transitions();
 
-        flushAllD3Transitions();
-
-        //then
-        var opacities = [0.4, 0.4, 0.4, 1];
-
-        _.each(isolateScope.buckets[0], function (bucket, index) {
-            var opac = +(d3.select(bucket).style('opacity'));
-            opac = +opac.toFixed(1);
-            expect(opac).toBe(opacities[index]);
+            //then
+            _.each(isolateScope.buckets[0], function (bucket) {
+                var opacity = Number(d3.select(bucket).style('opacity')).toFixed(1);
+                expect(opacity).toBe('0.4');
+            });
         });
-    });
 
-    it('should update the bars opacity after applying a filter intersecting with to 2 bar range', function () {
-        //given
-        createElement();
+        it('should update the bars opacity depending on the active limits', function () {
+            //given
+            createElement();
 
-        scope.visData = statsData;
-        scope.$digest();
-        jasmine.clock().tick(100);
-        flushAllD3Transitions();
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
+            flushAllD3Transitions();
 
-        //when
-        scope.existingFilter = [13, 20];
-        scope.$digest();
-        jasmine.clock().tick(600);
+            //when
+            scope.activeLimits = [15, 20];
+            scope.$digest();
+            jasmine.clock().tick(600);
+            flushAllD3Transitions();
 
-        flushAllD3Transitions();
+            //then
+            var expectedOpacities = ['0.4', '0.4', '0.4', '1.0'];
 
-        //then
-        var opacities = [0.4, 0.4, 1, 1];
+            _.each(isolateScope.buckets[0], function (bucket, index) {
+                var opacity = Number(d3.select(bucket).style('opacity')).toFixed(1);
+                expect(opacity).toBe(expectedOpacities[index]);
+            });
+        });
 
-        _.each(isolateScope.buckets[0], function (bucket, index) {
-            var opac = +(d3.select(bucket).style('opacity'));
-            opac = +opac.toFixed(1);
-            expect(opac).toBe(opacities[index]);
+        it('should set bars opacity to full opacity when it is in the intersection or a limit', function () {
+            //given
+            createElement();
+
+            scope.primaryData = statsData;
+            scope.$digest();
+            jasmine.clock().tick(100);
+            flushAllD3Transitions();
+
+            //when
+            scope.activeLimits = [13, 20];
+            scope.$digest();
+            jasmine.clock().tick(600);
+
+            flushAllD3Transitions();
+
+            //then
+            var expectedOpacities = ['0.4', '0.4', '1.0', '1.0'];
+
+            _.each(isolateScope.buckets[0], function (bucket, index) {
+                var opacity = Number(d3.select(bucket).style('opacity')).toFixed(1);
+                expect(opacity).toBe(expectedOpacities[index]);
+            });
         });
     });
 });

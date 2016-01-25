@@ -69,7 +69,12 @@ public class DeleteOnValue extends AbstractDelete {
      */
     @Override
     public boolean toDelete(ColumnMetadata colMetadata, Map<String, String> parsedParameters, String value) {
-        final ReplaceOnValueHelper replaceOnValueParameter = regexParametersHelper.build(parsedParameters.get(VALUE_PARAMETER));
-        return replaceOnValueParameter.matches(value);
+        try {
+            final ReplaceOnValueHelper replaceOnValueParameter = regexParametersHelper.build(
+                    parsedParameters.get(VALUE_PARAMETER), true);
+            return replaceOnValueParameter.matches(value);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

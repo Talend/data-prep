@@ -20,6 +20,32 @@ describe('Rest message interceptor factory', function () {
         expect(httpProvider.interceptors).toContain('RestErrorMessageHandler');
     });
 
+    it('should show alert when service is unavailable', inject(function ($rootScope, $http, MessageService) {
+        //given
+        $httpBackend.expectGET('testService').respond(0);
+
+        //when
+        $http.get('testService');
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+        //then
+        expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'SERVICE_UNAVAILABLE');
+    }));
+
+    it('should show toast on status 500', inject(function ($rootScope, $http, MessageService) {
+        //given
+        $httpBackend.expectGET('testService').respond(500);
+
+        //when
+        $http.get('testService');
+        $httpBackend.flush();
+        $rootScope.$digest();
+
+        //then
+        expect(MessageService.error).toHaveBeenCalledWith('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+    }));
+
     it('should not show message on user cancel', inject(function ($rootScope, $q, $http, MessageService) {
         //given
         var canceler = $q.defer();
@@ -38,7 +64,6 @@ describe('Rest message interceptor factory', function () {
         //then
         expect(MessageService.error).not.toHaveBeenCalled();
     }));
-
 
     it('should show expected error message if exist', inject(function ($rootScope, $http, MessageService) {
         //given

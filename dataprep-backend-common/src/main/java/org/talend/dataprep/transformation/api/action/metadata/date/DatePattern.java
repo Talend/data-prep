@@ -1,6 +1,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -8,42 +9,40 @@ import java.util.Objects;
  */
 public class DatePattern implements Comparable {
 
-    public static final DatePattern ISO_LOCAL_DATE_TIME = new DatePattern(DateTimeFormatter.ISO_DATE_TIME);
-
-    /** Number of occurrences of this date pattern within a dataset. */
+    /**
+     * Number of occurrences of this date pattern within a dataset.
+     */
     private long occurrences;
 
-    /** The date pattern as String. */
-    private String pattern;
+    /**
+     * The date pattern as String.
+     */
+    private final String pattern;
 
-    /** The date pattern formatter. */
+    /**
+     * The date pattern formatter.
+     */
     private DateTimeFormatter formatter;
 
     /**
-     * Constructor from the pattern.
+     * Constructor with the pattern.
      *
-     * @param occurrences the number of occurrences.
-     * @param pattern the date pattern.
+     * @param pattern the pattern.
      */
-    public DatePattern(long occurrences, String pattern) {
-        this.occurrences = occurrences;
+    public DatePattern(final String pattern) {
         this.pattern = pattern;
+        this.formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
     }
 
     /**
-     * Constructor with the pattern and formattter.
+     * Constructor from the pattern and occurrence.
      *
-     * @param pattern the pattern.
-     * @param formatter the formatter.
+     * @param pattern     the date pattern.
+     * @param occurrences the number of occurrences.
      */
-    public DatePattern(String pattern, DateTimeFormatter formatter) {
-        this.pattern = pattern;
-        this.formatter = formatter;
-    }
-
-    public DatePattern(DateTimeFormatter formatter) {
-        this.pattern = formatter.toString();
-        this.formatter = formatter;
+    public DatePattern(final String pattern, final long occurrences) {
+        this(pattern);
+        this.occurrences = occurrences;
     }
 
     /**
@@ -68,19 +67,11 @@ public class DatePattern implements Comparable {
     }
 
     /**
-     * @param formatter the formatter to set.
-     */
-    public void setFormatter(DateTimeFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    /**
      * @see Comparable#compareTo(Object)
      */
     @Override
-    public int compareTo(Object o) {
-
-        DatePattern other = (DatePattern) o;
+    public int compareTo(final Object o) {
+        final DatePattern other = (DatePattern) o;
 
         // needs to call equals in order not to add the same object
         if (this.equals(other)) {
@@ -88,9 +79,9 @@ public class DatePattern implements Comparable {
         }
 
         // 0 must not be returned if patterns have the same occurrences value, otherwise the new one won't be added,
-        // by default, return -1
+        // by default, return 1. This will keep the current order on the same occurrences.
         if (other.getOccurrences() == this.getOccurrences()) {
-            return -1;
+            return 1;
         }
 
         return Long.compare(other.getOccurrences(), this.getOccurrences());
@@ -107,7 +98,7 @@ public class DatePattern implements Comparable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DatePattern that = (DatePattern) o;
+        final DatePattern that = (DatePattern) o;
         // this.formatter is not used for comparison since it does not implements properly Object.equals()
         return Objects.equals(occurrences, that.occurrences) && Objects.equals(pattern, that.pattern);
     }

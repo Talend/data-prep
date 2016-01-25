@@ -40,7 +40,7 @@
                  * @description [PRIVATE] Get the lookup loaded data
                  */
                 var getData = function getData() {
-                    return state.playground.lookupData;
+                    return state.playground.lookup.data;
                 };
 
                 //------------------------------------------------------------------------------------------------------

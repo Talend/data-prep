@@ -49,4 +49,9 @@ public class Sum extends AbstractAggregator implements Aggregator {
         context.setValue(context.getValue() + toAdd);
 
     }
+
+    @Override
+    public void normalize(AggregationResult result) {
+        // Nothing to do
+    }
 }

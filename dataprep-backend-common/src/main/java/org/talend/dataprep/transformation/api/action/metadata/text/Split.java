@@ -31,6 +31,7 @@ public class Split extends ActionMetadata implements ColumnAction {
 
     /** The action name. */
     public static final String SPLIT_ACTION_NAME = "split"; //$NON-NLS-1$
+
     /** The split column appendix. */
     public static final String SPLIT_APPENDIX = "_split"; //$NON-NLS-1$
 
@@ -48,7 +49,6 @@ public class Split extends ActionMetadata implements ColumnAction {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(Split.class);
-
 
     /**
      * @see org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata#getName()

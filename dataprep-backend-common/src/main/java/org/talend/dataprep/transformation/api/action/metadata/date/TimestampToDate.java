@@ -31,7 +31,7 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
      * The column appendix.
      */
     public static final String APPENDIX = "_as_date"; //$NON-NLS-1$
-    public static final String COMPILED_DATE_PATTERN = "compiled_datePattern";
+
 
     /**
      * @see ActionMetadata#getName()
@@ -70,13 +70,7 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        try {
-            final DatePattern dateFormat = getDateFormat(actionContext.getParameters());
-            actionContext.get(COMPILED_DATE_PATTERN, (p) -> dateFormat);
-        } catch (IllegalArgumentException e) {
-            // Nothing to do, when pattern is invalid, use the default pattern.
-            actionContext.get(COMPILED_DATE_PATTERN, (p) -> DatePattern.ISO_LOCAL_DATE_TIME);
-        }
+        compileDatePattern(actionContext);
     }
 
     /**

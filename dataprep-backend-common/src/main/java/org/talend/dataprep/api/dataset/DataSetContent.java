@@ -1,23 +1,26 @@
 package org.talend.dataprep.api.dataset;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_ABSENT;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Dataset content summary.
  */
-
 public class DataSetContent implements Serializable {
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("records")
-    private int nbRecords = 0;
+    private long nbRecords = 0;
 
     @JsonProperty("nbLinesHeader")
     private int nbLinesInHeader;
@@ -33,6 +36,11 @@ public class DataSetContent implements Serializable {
 
     @JsonProperty("formatGuess")
     private String formatGuessId;
+
+    /** If the dataset is too big, */
+    @JsonProperty("limit")
+    @JsonInclude(value = NON_ABSENT, content = NON_ABSENT)
+    private Optional<Long> limit = Optional.empty();
 
     /**
      * @return A map that contains additional information about the format (e.g. a separator for a CSV format).
@@ -65,11 +73,11 @@ public class DataSetContent implements Serializable {
         this.formatGuessId = formatGuessId;
     }
 
-    public int getNbRecords() {
+    public long getNbRecords() {
         return this.nbRecords;
     }
 
-    public void setNbRecords(int lines) {
+    public void setNbRecords(long lines) {
         this.nbRecords = lines;
     }
 
@@ -89,6 +97,22 @@ public class DataSetContent implements Serializable {
         this.nbLinesInFooter = nbLinesInFooter;
     }
 
+    /**
+     * @return the Limit
+     */
+    public Optional<Long> getLimit() {
+        return limit;
+    }
+
+    /**
+     * @param limit the limit to set.
+     */
+    public void setLimit(Long limit) {
+        if (limit != null) {
+            this.limit = Optional.of(limit);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -101,6 +125,7 @@ public class DataSetContent implements Serializable {
         return Objects.equals(nbRecords, that.nbRecords) && //
                 Objects.equals(nbLinesInHeader, that.nbLinesInHeader) && //
                 Objects.equals(nbLinesInFooter, that.nbLinesInFooter) && //
+                Objects.equals(limit, that.limit) && //
                 Objects.equals(mediaType, that.mediaType) && //
                 Objects.equals(parameters, that.parameters) && //
                 Objects.equals(formatGuessId, that.formatGuessId);
@@ -108,6 +133,6 @@ public class DataSetContent implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(nbRecords, nbLinesInHeader, nbLinesInFooter, mediaType, parameters, formatGuessId);
+        return Objects.hash(nbRecords, nbLinesInHeader, nbLinesInFooter, limit, mediaType, parameters, formatGuessId);
     }
 }

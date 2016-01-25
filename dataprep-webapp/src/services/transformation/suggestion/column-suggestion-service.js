@@ -15,15 +15,10 @@
         var EMPTY_CELLS = 'empty';
         var INVALID_CELLS = 'invalid';
 
-        var allCategories = null;
-        var service = {
-            searchActionString: '',                 // current user input to filter transformations
-
+        return {
             initTransformations: initTransformations,
-            filterTransformations: filterTransformations,
-            reset: reset
+            filterTransformations: filterTransformations
         };
-        return service;
 
         //--------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------INIT------------------------------------------------------
@@ -51,7 +46,7 @@
          * @returns {object} The transformations grouped by category without the 'filtering' category
          */
         function prepareTransformations(suggestions, transformationsCategories) {
-            var groupedTransfoWithoutFilterCat = _.filter(transformationsCategories, function(item) {
+            var groupedTransfoWithoutFilterCat = _.filter(transformationsCategories, function (item) {
                 return item.category !== FILTERED_CATEGORY;
             });
 
@@ -86,7 +81,7 @@
          */
         function initTransformations(column) {
             StateService.setSuggestionsLoading(true);
-            reset();
+            StateService.setColumnTransformations(); //clear current transformations
 
             $q
                 .all([
@@ -95,22 +90,26 @@
                 ])
                 .then(function (values) {
                     var suggestions = prepareSuggestions(values[0], values[1].allCategories);
-                    allCategories = prepareTransformations(suggestions, values[1].allCategories);
+                    var allCategories = prepareTransformations(suggestions, values[1].allCategories);
 
                     var colTransformations = {
                         allSuggestions: values[0],
                         allTransformations: values[1].allTransformations,
-                        filteredTransformations: allCategories
+                        filteredTransformations: allCategories,
+                        allCategories: allCategories,
+                        searchActionString: ''
                     };
-                    colTransformations.transformationsForEmptyCells = !state.playground.suggestions.column.transformationsForEmptyCells.length ?
-                                                                        _.filter(values[1].allTransformations, isAppliedToCells(EMPTY_CELLS)):
-                                                                        state.playground.suggestions.column.transformationsForEmptyCells;
-
-                    colTransformations.transformationsForInvalidCells = !state.playground.suggestions.column.transformationsForInvalidCells.length ?
-                                                                        _.filter(values[1].allTransformations, isAppliedToCells(INVALID_CELLS)):
-                                                                        state.playground.suggestions.column.transformationsForInvalidCells;
-
                     StateService.setColumnTransformations(colTransformations);
+
+                    if(!state.playground.suggestions.transformationsForEmptyCells.length) {
+                        var transfosForEmptyCells = _.filter(values[1].allTransformations, isAppliedToCells(EMPTY_CELLS));
+                        StateService.setTransformationsForEmptyCells(transfosForEmptyCells);
+                    }
+
+                    if(!state.playground.suggestions.transformationsForInvalidCells.length) {
+                        var transfosForInvalidCells = _.filter(values[1].allTransformations, isAppliedToCells(INVALID_CELLS));
+                        StateService.setTransformationsForInvalidCells(transfosForInvalidCells);
+                    }
                 })
                 .finally(function () {
                     StateService.setSuggestionsLoading(false);
@@ -184,33 +183,15 @@
             resetDisplayLabels(state.playground.suggestions.column.allSuggestions);
             resetDisplayLabels(state.playground.suggestions.column.allTransformations);
 
-            var searchValue = service.searchActionString.toLowerCase();
 
-            state.playground.suggestions.column.filteredTransformations = !searchValue ?
-                allCategories :
-                _.chain(allCategories)
+            var searchValue = state.playground.suggestions.column.searchActionString.toLowerCase();
+            StateService.updateFilteredTransformations(!searchValue ?
+                state.playground.suggestions.column.allCategories :
+                _.chain(state.playground.suggestions.column.allCategories)
                     .map(extractTransfosThatMatch(searchValue))
                     .filter(hasTransformations)
                     .map(highlightDisplayedLabels(searchValue))
-                    .value();
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-        //----------------------------------------------------RESET-----------------------------------------------------
-        //--------------------------------------------------------------------------------------------------------------
-        /**
-         * @ngdoc method
-         * @name reset
-         * @methodOf data-prep.services.transformation.service:ColumnSuggestionService
-         * @description Reset the current column and the transformations
-         */
-        function reset() {
-            //TODO move reset to the suggestionsState
-            state.playground.suggestions.column.allTransformations = [];
-            state.playground.suggestions.column.allSuggestions = [];
-            service.searchActionString = '';
-            state.playground.suggestions.column.filteredTransformations = [];
-            allCategories = null;
+                    .value());
         }
     }
 

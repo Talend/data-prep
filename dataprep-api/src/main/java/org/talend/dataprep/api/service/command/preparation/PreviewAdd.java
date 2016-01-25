@@ -55,17 +55,8 @@ public class PreviewAdd extends PreviewAbstract {
         final Map<String, Action> modifiedActions = new LinkedHashMap<>(originalActions);
         modifiedActions.put("preview", input.getAction());
 
-        // serialize and base 64 encode the 2 actions list
-        final String oldEncodedActions = serializeActions(originalActions.values());
-        final String newEncodedActions = serializeActions(modifiedActions.values());
-
-        // get dataset content
-        final InputStream content = getDatasetContent(dataSetId, input.getSample());
-        // get usable tdpIds
-        final String encodedTdpIds = serializeIds(input.getTdpIds());
-
         // execute transformation preview with content and the 2 transformations
-        setContext(oldEncodedActions, newEncodedActions, content, encodedTdpIds);
+        setContext(originalActions.values(), modifiedActions.values(), dataSetId, input.getTdpIds());
         return super.run();
     }
 

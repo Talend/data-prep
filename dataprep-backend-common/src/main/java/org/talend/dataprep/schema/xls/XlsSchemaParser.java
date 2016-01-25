@@ -3,12 +3,20 @@ package org.talend.dataprep.schema.xls;
 import static org.talend.dataprep.api.type.Type.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalLong;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -52,10 +60,10 @@ public class XlsSchemaParser implements SchemaParser {
 
         if (!sheetContents.isEmpty()) {
             return sheetContents.size() == 1 ? //
-            SchemaParserResult.Builder.parserResult() //
-                    .sheetContents(sheetContents) //
-                    .draft(false) //
-                    .build() //
+                    SchemaParserResult.Builder.parserResult() //
+                            .sheetContents(sheetContents) //
+                            .draft(false) //
+                            .build() //
                     : //
                     SchemaParserResult.Builder.parserResult() //
                             .sheetContents(sheetContents) //
@@ -102,7 +110,8 @@ public class XlsSchemaParser implements SchemaParser {
                     continue;
                 }
 
-                List<ColumnMetadata> columnMetadatas = parsePerSheet(sheet, request.getMetadata().getId());
+                List<ColumnMetadata> columnMetadatas = parsePerSheet(sheet, request.getMetadata().getId(), //
+                                                                     hssfWorkbook.getCreationHelper().createFormulaEvaluator());
 
                 String sheetName = sheet.getSheetName();
 
@@ -126,12 +135,12 @@ public class XlsSchemaParser implements SchemaParser {
      * @param datasetId the dataset id.
      * @return the columns metadata for the given sheet.
      */
-    protected List<ColumnMetadata> parsePerSheet(Sheet sheet, String datasetId) {
+    protected List<ColumnMetadata> parsePerSheet(Sheet sheet, String datasetId, FormulaEvaluator formulaEvaluator) {
 
         LOGGER.debug(Markers.dataset(datasetId), "parsing sheet '{}'", sheet.getSheetName());
 
         // Map<ColId, Map<RowId, type>>
-        SortedMap<Integer, SortedMap<Integer, String>> cellsTypeMatrix = collectSheetTypeMatrix(sheet);
+        SortedMap<Integer, SortedMap<Integer, String>> cellsTypeMatrix = collectSheetTypeMatrix(sheet, formulaEvaluator);
         int averageHeaderSize = guessHeaderSize(cellsTypeMatrix);
 
         // here we have information regarding types for each rows/col (yup a Matrix!! :-) )
@@ -146,7 +155,7 @@ public class XlsSchemaParser implements SchemaParser {
             if (averageHeaderSize == 1 && sheet.getRow(0) != null) {
                 // so header value is the first row of the column
                 Cell headerCell = sheet.getRow(0).getCell(colId);
-                headerText = XlsUtils.getCellValueAsString(headerCell);
+                headerText = XlsUtils.getCellValueAsString(headerCell, formulaEvaluator);
             }
 
             // header text cannot be null so use a default one
@@ -200,8 +209,7 @@ public class XlsSchemaParser implements SchemaParser {
         String guessedType;
         if (duplicatedMax.size() == 1) {
             guessedType = duplicatedMax.get(0);
-        }
- else {
+        } else {
             // as we have more than one type we guess ANY
             guessedType = ANY.getName();
         }
@@ -216,7 +224,7 @@ public class XlsSchemaParser implements SchemaParser {
      * @param sheet key is the column number, value is a Map with key row number and value Type
      * @return A Map&lt;colId, Map&lt;rowId, type&gt;&gt;
      */
-    protected SortedMap<Integer, SortedMap<Integer, String>> collectSheetTypeMatrix(Sheet sheet) {
+    protected SortedMap<Integer, SortedMap<Integer, String>> collectSheetTypeMatrix(Sheet sheet, FormulaEvaluator formulaEvaluator) {
 
         int firstRowNum = sheet.getFirstRowNum();
         int lastRowNum = sheet.getLastRowNum();
@@ -242,12 +250,15 @@ public class XlsSchemaParser implements SchemaParser {
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
 
-                switch (cell.getCellType()) {
+                int xlsType = cell.getCellType() == Cell.CELL_TYPE_FORMULA? //
+                    formulaEvaluator.evaluate( cell ).getCellType() : cell.getCellType();
+
+                switch (xlsType) {
                 case Cell.CELL_TYPE_BOOLEAN:
                     currentType = BOOLEAN.getName();
                     break;
                 case Cell.CELL_TYPE_NUMERIC:
-                    currentType = HSSFDateUtil.isCellDateFormatted(cell) ? DATE.getName() : NUMERIC.getName();
+                    currentType = getTypeFromNumericCell( cell );
                     break;
                 case Cell.CELL_TYPE_BLANK:
                     currentType = BLANK;
@@ -255,8 +266,10 @@ public class XlsSchemaParser implements SchemaParser {
                 case Cell.CELL_TYPE_STRING:
                     currentType = STRING.getName();
                     break;
-                case Cell.CELL_TYPE_ERROR | Cell.CELL_TYPE_FORMULA:
-                    // we cannot really do anything with a formula
+                case Cell.CELL_TYPE_FORMULA:
+                    // should not happen!!!
+                case Cell.CELL_TYPE_ERROR:
+                    // we cannot really do anything with an error
                 default:
                     currentType = ANY.getName();
                 }
@@ -275,6 +288,14 @@ public class XlsSchemaParser implements SchemaParser {
 
         LOGGER.trace("cellsTypeMatrix: {}", cellsTypeMatrix);
         return cellsTypeMatrix;
+    }
+
+    protected String getTypeFromNumericCell(Cell cell) {
+        try {
+            return HSSFDateUtil.isCellDateFormatted(cell) ? DATE.getName() : NUMERIC.getName();
+        } catch (IllegalStateException e) {
+            return ANY.getName();
+        }
     }
 
     /**

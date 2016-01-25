@@ -80,8 +80,8 @@ public class Cut extends ActionMetadata implements ColumnAction {
             String rawParam = parameters.get(PATTERN_PARAMETER);
 
             try {
-                actionContext.get(REGEX_HELPER_KEY,(p) -> regexParametersHelper.build(rawParam));
-            } catch (InvalidParameterException e) {
+                actionContext.get(REGEX_HELPER_KEY,(p) -> regexParametersHelper.build(rawParam, false));
+            } catch (IllegalArgumentException e) {
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
         }
@@ -96,7 +96,6 @@ public class Cut extends ActionMetadata implements ColumnAction {
         final String toCut = row.get(columnId);
         if (toCut != null) {
             final ReplaceOnValueHelper replaceOnValueParameter = context.get(REGEX_HELPER_KEY);
-            replaceOnValueParameter.setStrict(false);
 
             if (replaceOnValueParameter.matches(toCut)) {
                 if (replaceOnValueParameter.getOperator().equals(ReplaceOnValueHelper.REGEX_MODE)) {

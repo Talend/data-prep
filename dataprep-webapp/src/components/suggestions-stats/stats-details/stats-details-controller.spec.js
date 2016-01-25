@@ -51,20 +51,6 @@ describe('Stats-details controller', function () {
         expect(ctrl.boxPlot).toBe(data);
     }));
 
-    it('should bind patternFrequencyTable getter to state selected column patternFrequencyTable', function () {
-        //given
-        var ctrl = createController();
-        expect(ctrl.patternFrequencyTable).toBeFalsy();
-
-        var patternFrequencyTable = null;
-
-        //when
-        stateMock.playground.grid.selectedColumn = {statistics: {patternFrequencyTable: patternFrequencyTable}};
-
-        //then
-        expect(ctrl.patternFrequencyTable).toBe(patternFrequencyTable);
-    });
-
     it('should add a new "pattern" filter', inject(function (FilterService) {
         //given
         var ctrl = createController();

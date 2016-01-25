@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
@@ -178,7 +177,7 @@ public class ConcatTest {
         assertEquals(expected, row);
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_not_apply_because_missing_selected_parameter() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -186,9 +185,14 @@ public class ConcatTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
     }
 
-    @Test(expected = TDPException.class)
+    @Test
     public void should_not_apply_because_selected_column_not_found() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -196,6 +200,11 @@ public class ConcatTest {
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
     }
 
     @Test

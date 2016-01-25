@@ -11,6 +11,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 public class HttpResponseContext {
 
+    /**
+     * Set the http status to set to the request (if available).
+     * 
+     * @param status the http status to set.
+     */
     public static void status(HttpStatus status) {
         final RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (attributes != null && attributes instanceof ServletRequestAttributes) {
@@ -18,6 +23,12 @@ public class HttpResponseContext {
         }
     }
 
+    /**
+     * Set the header to the request (if available).
+     * 
+     * @param header The header name.
+     * @param value The header value.
+     */
     public static void header(String header, String value) {
         final RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (attributes != null && attributes instanceof ServletRequestAttributes) {
@@ -25,4 +36,13 @@ public class HttpResponseContext {
         }
     }
 
+    /**
+     * @param contentType the content type to set.
+     */
+    public static void contentType(String contentType) {
+        final RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        if (attributes != null && attributes instanceof ServletRequestAttributes) {
+            ((ServletRequestAttributes) attributes).getResponse().setContentType(contentType);
+        }
+    }
 }

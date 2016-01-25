@@ -1,7 +1,7 @@
 describe('Dropdown directive', function () {
     'use strict';
 
-    var scope, element, createElement, createFormElement, createNestedElement, createButtonElement, createBeforeCloseElement;
+    var scope, element, createElement, disableElementHide, createFormElement, createNestedElement, createButtonElement, createBeforeCloseElement;
 
     beforeEach(module('talend.widget'));
     beforeEach(module('htmlTemplates'));
@@ -19,6 +19,13 @@ describe('Dropdown directive', function () {
             scope.onClose = function() {
                 scope.closeCallbackCalled = true;
             };
+            element = $compile(html)(scope);
+            scope.$digest();
+            $timeout.flush();
+        };
+
+        disableElementHide = function () {
+            var html = '<talend-modal close-button="false" state="state" forbid-close-on-background-click="disableCloseOnBackgroundClick">';
             element = $compile(html)(scope);
             scope.$digest();
             $timeout.flush();
@@ -457,5 +464,35 @@ describe('Dropdown directive', function () {
             //then
             expect(document.activeElement).toBe(outerModal);
         });
+    });
+
+    describe('forbid modal hide', function(){
+        it('should NOT hide the modal on background click', inject(function(){
+            //given
+            scope.state = true;
+            scope.disableCloseOnBackgroundClick = true;
+            disableElementHide();
+
+            //when
+            element.find('.modal-window').click();
+
+            //then
+            expect(scope.state).toBe(true);
+        }));
+
+        it('should NOT hide the modal on ESCAPE button hit', inject(function(){
+            //given
+            scope.state = true;
+            scope.disableCloseOnBackgroundClick = true;
+            disableElementHide();
+            var event = angular.element.Event('keydown');
+            event.keyCode = 27;
+
+            //when
+            element.find('.modal-inner').trigger(event);
+
+            //then
+            expect(scope.state).toBe(true);
+        }));
     });
 });

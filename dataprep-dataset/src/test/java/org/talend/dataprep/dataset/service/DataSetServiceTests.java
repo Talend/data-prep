@@ -4,9 +4,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
@@ -40,6 +37,7 @@ import org.talend.dataprep.dataset.DataSetBaseTest;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.schema.csv.CSVFormatGuess;
 import org.talend.dataprep.schema.csv.CSVFormatGuesser;
+import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
@@ -67,6 +65,9 @@ public class DataSetServiceTests extends DataSetBaseTest {
     /** DataPrep jackson ready to use builder. */
     @Autowired
     Jackson2ObjectMapperBuilder builder;
+
+    @Autowired
+    private Security security;
 
     @Test
     public void CORSHeaders() throws Exception {
@@ -112,7 +113,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
         assertFalse(favoritesResp.get(1));
 
         // add favorite
-        UserData userData = new UserData("anonymousUser");
+        UserData userData = new UserData(security.getUserId());
         HashSet<String> favorites = new HashSet<>();
         favorites.add(id1);
         favorites.add(id2);
@@ -340,7 +341,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
         dataSetMetadataRepository.add(dataSetMetadata);
         contentStore.storeAsRaw(dataSetMetadata, new ByteArrayInputStream(new byte[0]));
 
-        final UserData userData = new UserData("anonymousUser");
+        final UserData userData = new UserData(security.getUserId());
         userDataRepository.save(userData);
         final Set<String> favorites = new HashSet<>();
         favorites.add(datasetId);
@@ -751,7 +752,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
         assertFalse(isFavorites);
 
         // add favorite
-        UserData userData = new UserData("anonymousUser");
+        UserData userData = new UserData(security.getUserId());
         HashSet<String> favorites = new HashSet<>();
         favorites.add("1234");
         userData.setFavoritesDatasets(favorites);
@@ -823,7 +824,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
 
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
         assertThat(dataSetMetadata, notNullValue());
-        int originalNbLines = dataSetMetadata.getContent().getNbRecords(); // to check later if no modified
+        long originalNbLines = dataSetMetadata.getContent().getNbRecords(); // to check later if no modified
         assertEquals(Certification.NONE, dataSetMetadata.getGovernance().getCertificationStep());
 
         // NONE -> PENDING
@@ -841,8 +842,7 @@ public class DataSetServiceTests extends DataSetBaseTest {
         when().get("/datasets/favorites").then().statusCode(HttpStatus.OK.value()).body(equalTo("[]"));
         String dsId1 = UUID.randomUUID().toString();
         String dsId2 = UUID.randomUUID().toString();
-        // this test assumes that the default user id is "anonymousUser"
-        UserData userData = new UserData("anonymousUser");
+        UserData userData = new UserData(security.getUserId());
         HashSet<String> favorites = new HashSet<>();
         favorites.add(dsId1);
         favorites.add(dsId2);

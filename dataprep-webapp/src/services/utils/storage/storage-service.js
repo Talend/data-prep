@@ -8,6 +8,7 @@
      */
     function StorageService($window) {
         var PREFIX = 'org.talend.dataprep.';
+        var FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
 
         return {
             setAggregation: setAggregation,
@@ -15,7 +16,9 @@
             removeAggregation: removeAggregation,
             removeAllAggregations: removeAllAggregations,
             savePreparationAggregationsFromDataset: savePreparationAggregationsFromDataset,
-            moveAggregations: moveAggregations
+            moveAggregations: moveAggregations,
+            getFeedbackUserMail: getFeedbackUserMail,
+            saveFeedbackUserMail: saveFeedbackUserMail
         };
 
         //--------------------------------------------------------------------------------------------------------------
@@ -54,6 +57,31 @@
          */
         function removeItem(key) {
             $window.localStorage.removeItem(key);
+        }
+
+
+        /**
+         * @ngdoc method
+         * @name saveFeedbackUserMail
+         * @methodOf data-prep.services.utils.service:StorageService
+         * @param {any} value The value to save
+         * @description Save the value with the provided key in localStorage. The value us stringified to get back the same type.
+         */
+        function saveFeedbackUserMail(value) {
+            $window.localStorage.setItem(FEEDBACK_USER_MAIL_KEY, JSON.stringify(value));
+        }
+
+        /**
+         * @ngdoc method
+         * @name getFeedbackUserMail
+         * @methodOf data-prep.services.utils.service:StorageService
+         * @param {string} key The localStorage key
+         * @description Get the value associated to the provided key. The result have the same type as the saved value.
+         * @returns The value associated to the provided key.
+         */
+        function getFeedbackUserMail() {
+            var mail = $window.localStorage.getItem(FEEDBACK_USER_MAIL_KEY);
+            return mail ? JSON.parse(mail) : '';
         }
 
         //--------------------------------------------------------------------------------------------------------------

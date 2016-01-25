@@ -24,7 +24,20 @@
             },
             bindToController: true,
             controllerAs: 'lookupDatagridHeaderCtrl',
-            controller: 'LookupDatagridHeaderCtrl'
+            controller: 'LookupDatagridHeaderCtrl',
+            link: function (scope, iElement) {
+                var addToLookupDiv, addToLookupCheckbox;
+                setTimeout(function () {
+                    addToLookupDiv = iElement.find('.add-to-lookup');
+                    addToLookupDiv.on('click', function(e){
+                        e.stopPropagation();
+                        addToLookupCheckbox = addToLookupDiv.find('input[type=checkbox]');
+                        if(addToLookupCheckbox){
+                            addToLookupCheckbox.click();
+                        }
+                    });
+                }, 250);
+            }
         };
     }
 

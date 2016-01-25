@@ -1,7 +1,7 @@
 package org.talend.dataprep.transformation.aggregation.operation;
 
 /**
- * Base abstract class for aggregator used to factorize code accross aggregators.
+ * Base abstract class for aggregator used to factorize code across aggregators.
  */
 public abstract class AbstractAggregator {
 

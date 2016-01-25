@@ -3,31 +3,32 @@ package org.talend.dataprep.api.service.command.preparation;
 import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.InputStreamBody;
-import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.entity.StringEntity;
 import org.springframework.http.HttpStatus;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.TransformationErrorCodes;
+import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Base class for preview commands.
  */
 public abstract class PreviewAbstract extends PreparationCommand<InputStream> {
 
-    private String oldEncodedActions;
-
-    private String newEncodedActions;
-
-    private InputStream content;
-
-    private String encodedTdpIds;
+    /** The preview parameters. */
+    private PreviewParameters parameters;
 
     /**
      * Default constructor.
@@ -40,8 +41,8 @@ public abstract class PreviewAbstract extends PreparationCommand<InputStream> {
 
     @Override
     protected InputStream run() throws Exception {
-        if (oldEncodedActions == null || newEncodedActions == null || content == null || encodedTdpIds == null) {
-            throw new IllegalStateException("Missing context.");
+        if (parameters == null) {
+            throw new IllegalStateException("Missing preview context.");
         }
         execute(this::onExecute);
         on(HttpStatus.OK).then(pipeStream());
@@ -52,20 +53,32 @@ public abstract class PreviewAbstract extends PreparationCommand<InputStream> {
         final String uri = this.transformationServiceUrl + "/transform/preview";
         HttpPost transformationCall = new HttpPost(uri);
 
-        HttpEntity reqEntity = MultipartEntityBuilder.create()
-                .addPart("oldActions", new StringBody(oldEncodedActions, ContentType.TEXT_PLAIN.withCharset("UTF-8"))) //$NON-NLS-1$ //$NON-NLS-2$
-                .addPart("newActions", new StringBody(newEncodedActions, ContentType.TEXT_PLAIN.withCharset("UTF-8"))) //$NON-NLS-1$ //$NON-NLS-2$
-                .addPart("indexes", new StringBody(encodedTdpIds, ContentType.TEXT_PLAIN.withCharset("UTF-8"))) //$NON-NLS-1$ //$NON-NLS-2$
-                .addPart("content", new InputStreamBody(content, ContentType.APPLICATION_JSON)) //$NON-NLS-1$
-                .build();
+        final String paramsAsJson;
+        try {
+            paramsAsJson = builder.build().writer().writeValueAsString(parameters);
+        } catch (JsonProcessingException e) {
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_PERFORM_PREVIEW, e);
+        }
+        HttpEntity reqEntity = new StringEntity(paramsAsJson, ContentType.APPLICATION_JSON);
         transformationCall.setEntity(reqEntity);
         return transformationCall;
     }
 
-    protected void setContext(String oldEncodedActions, String newEncodedActions, InputStream content, String encodedTdpIds) {
-        this.oldEncodedActions = oldEncodedActions;
-        this.newEncodedActions = newEncodedActions;
-        this.content = content;
-        this.encodedTdpIds = encodedTdpIds;
+    /**
+     * Set the preview context.
+     *
+     * @param baseActions the list of actions to use as the starting state for the preview.
+     * @param newActions the list of action to add to the starting ones.
+     * @param datasetId the datasret id.
+     * @param tdpIds the list of rows to apply.
+     * @throws JsonProcessingException if an error occurs.
+     */
+    protected void setContext(Collection<Action> baseActions, Collection<Action> newActions, String datasetId,
+            List<Integer> tdpIds) throws JsonProcessingException {
+        this.parameters = new PreviewParameters( //
+                serializeActions(baseActions), //
+                serializeActions(newActions), //
+                datasetId, //
+                serializeIds(tdpIds));
     }
 }

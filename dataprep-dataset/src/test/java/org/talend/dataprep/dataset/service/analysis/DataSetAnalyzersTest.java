@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.dataset.DataSetBaseTest;
+import org.talend.dataprep.dataset.service.analysis.asynchronous.AsynchronousDataSetAnalyzer;
+import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 
 public class DataSetAnalyzersTest extends DataSetBaseTest {
 

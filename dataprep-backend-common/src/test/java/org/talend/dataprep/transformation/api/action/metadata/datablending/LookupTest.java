@@ -11,13 +11,17 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -41,13 +45,29 @@ public class LookupTest {
     @Value("${local.server.port}")
     public int port;
 
-    /** The action to test. */
+    /** Spring application context. */
     @Autowired
-    private Lookup action;
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    protected ConfigurableEnvironment environment;
 
     /** DataPrep ready jackson builder. */
     @Autowired
     private Jackson2ObjectMapperBuilder builder;
+
+    /** The action to test. */
+    private Lookup action;
+
+    @Before
+    public void setUp() {
+        // Overrides connection information with random port value
+        MockPropertySource connectionInformation = new MockPropertySource().withProperty("dataset.service.url",
+                "http://localhost:" + port);
+        environment.getPropertySources().addFirst(connectionInformation);
+
+        action = applicationContext.getBean(Lookup.class);
+    }
 
     @Test
     public void testAccept() throws Exception {
@@ -73,7 +93,6 @@ public class LookupTest {
                 "filter", //
                 "lookup_ds_name", //
                 "lookup_ds_id", //
-                "lookup_ds_url", //
                 "lookup_join_on", //
                 "lookup_join_on_name", //
                 "lookup_selected_cols");
@@ -91,16 +110,14 @@ public class LookupTest {
     public void shouldAdapt() {
         // given
         final DataSetMetadata ds = DataSetMetadata.Builder.metadata().name("great dataset").id("ds#123").build();
-        String dsUrl = "http://estcequecestbientotleweekend.fr";
 
         // when
-        final Lookup actual = action.adapt(ds, dsUrl);
+        final Lookup actual = action.adapt(ds);
 
         // when
         final List<Parameter> parameters = actual.getParameters();
         assertEquals("great dataset", getParamValue(parameters, "lookup_ds_name"));
         assertEquals("ds#123", getParamValue(parameters, "lookup_ds_id"));
-        assertEquals(dsUrl, getParamValue(parameters, "lookup_ds_url"));
     }
 
     @Test
@@ -237,7 +254,7 @@ public class LookupTest {
     private Map<String, String> getUsStatesLookupParameters(String lookup) throws IOException {
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("lookupAction.json"));
-        parameters.put(LOOKUP_DS_URL.getKey(), "http://localhost:" + port + "/test/lookup/" + lookup);
+        parameters.put(LOOKUP_DS_ID.getKey(), lookup);
         parameters.put(LOOKUP_JOIN_ON.getKey(), "0000");
         parameters.put(COLUMN_ID.getKey(), "0001");
         return parameters;

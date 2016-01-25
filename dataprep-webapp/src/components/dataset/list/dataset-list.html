@@ -27,97 +27,41 @@
     </div>
 
     <div class="inventory-list" id="datasets-list">
-        <div class="inventory-entry" ng-repeat="child in datasetListCtrl.currentFolderContent.folders">
-          <div class="inventory-icon inventory-folder" ng-click="datasetListCtrl.goToFolder(child)">
-              <img src="assets/images/folder/folder-icon.png"/>
-          </div>
-          <div class="inventory-text inventory-folder">
-              <talend-editable-text text="child.name"
-                                    text-class="inventory-title"
-                                    on-text-click="datasetListCtrl.goToFolder(child)"
-                                    on-validate="datasetListCtrl.renameFolder(child.id, text)"></talend-editable-text>
-          </div>
+        <div class="inventory-entry" ng-repeat="folder in datasetListCtrl.currentFolderContent.folders track by folder.id">
+            <div class="inventory-icon inventory-folder" ng-click="datasetListCtrl.goToFolder(folder)">
+                <img src="assets/images/folder/folder-icon.png"/>
+            </div>
+            <div class="inventory-text inventory-folder">
+                <talend-editable-text text="folder.name"
+                                      text-class="inventory-title"
+                                      on-text-click="datasetListCtrl.goToFolder(folder)"
+                                      on-validate="datasetListCtrl.renameFolder(folder, text)"></talend-editable-text>
+            </div>
+            <div class="inventory-actions">
+                <a data-icon="e"
+                   class="btn-icon btn-transparent"
+                   translate-once-title="DELETE_ACTION"
+                   translate-values="{type: 'folder', name: folder.name}"
+                   ng-click="datasetListCtrl.removeFolder(folder)"></a>
+            </div>
         </div>
 
-        <div class="inventory-entry" ng-repeat="dataset in datasetListCtrl.currentFolderContent.datasets track by $index" ng-switch="dataset.draft" id="dataset_{{$index}}">
-
-            <div class="inventory-icon"
-                 translate-once-title="OPEN_ACTION"
-                 translate-values="{type: 'dataset', name: dataset.name}"
-                 ng-switch="dataset.type"
-                 ng-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)">
-                <img src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
-                <img src="/assets/images/inventory/xls_file.png" ng-switch-when="application/vnd.ms-excel"/>
-                <img src="/assets/images/inventory/generic_file.png" ng-switch-default/>
-                <img ng-src="/assets/images/certification-{{dataset.certificationStep | lowercase}}.png"
-                     class="pin"
-                     ng-if="dataset.certificationStep!='NONE'"/>
-            </div>
-
-            <div class="inventory-text">
-                <talend-editable-text text="dataset.name"
-                                      text-class="inventory-title"
-                                      text-title="{{ 'OPEN_ACTION' | translate: {type: 'dataset', name: dataset.name} }}"
-                                      on-text-click="datasetListCtrl.uploadWorkflowService.openDataset(dataset)"
-                                      on-validate="datasetListCtrl.rename(dataset, text)"></talend-editable-text>
-                <div class="inventory-description" translate-once="INVENTORY_DETAILS" translate-values="dataset"></div>
-            </div>
-
-            <!-- Draft actions icons -->
-            <div ng-switch-when="true"
-                 class="inventory-actions">
-                <a data-icon="e"
-                   class="btn-icon btn-transparent"
-                   translate-once-title="DELETE_ACTION"
-                   translate-values="{type: 'dataset', name: dataset.name}"
-                   ng-click="datasetListCtrl.delete(dataset)"></a>
-            </div>
-
-            <!-- Not draft actions icons -->
-            <div ng-switch-when="false" class="inventory-actions">
-                <a data-icon="c"
-                   class="btn-icon btn-transparent"
-                   ng-if="!!dataset.defaultPreparation"
-                   translate-once-title="OPEN_ACTION"
-                   translate-values="{type: 'preparation', name: dataset.defaultPreparation.name}"
-                   ui-sref="nav.home.preparations({prepid: dataset.defaultPreparation.id})"></a>
-
-                <talend-file-selector
-                        button-data-icon="E"
-                        button-title="REPLACE_FILE_CONTENT"
-                        file-model="datasetListCtrl.updateDatasetFile"
-                        on-file-change="datasetListCtrl.uploadUpdatedDatasetFile(dataset)">
-                </talend-file-selector>
-
-                <a data-icon="h" class="btn-icon btn-transparent"></a>
-
-                <div class="divider btn-transparent"></div>
-
-                <a data-icon="B"
-                   class="btn-icon btn-transparent"
-                   translate-once-title="CLONE_ACTION"
-                   translate-values="{type: 'dataset', name: dataset.name}"
-                   ng-click="datasetListCtrl.openFolderChoice(dataset)"></a>
-
-                <a data-icon="e"
-                   class="btn-icon btn-transparent"
-                   translate-once-title="DELETE_ACTION"
-                   translate-values="{type: 'dataset', name: dataset.name}"
-                   ng-click="datasetListCtrl.delete(dataset)"></a>
-
-                <div class="divider btn-transparent"></div>
-                <a data-icon="s"
-                   class="btn-icon btn-transparent"
-                   translate-once-title="CERTIFY_ACTION"
-                   translate-values="{type: 'dataset', name: dataset.name}"
-                   ng-click="datasetListCtrl.processCertification(dataset)"></a>
-                <a data-icon="f"
-                   class="btn-icon btn-transparent favorite"
-                   translate-once-title="FAVORITE_ACTION"
-                   translate-values="{type: 'dataset', name: dataset.name}"
-                   ng-class="{'favorite-true':dataset.favorite}"
-                   ng-click="datasetListCtrl.datasetService.toggleFavorite(dataset)"></a>
-            </div>
+        <div ng-repeat="dataset in datasetListCtrl.currentFolderContent.datasets track by dataset.id" id="dataset_{{$index}}">
+            <inventory-item
+                    class="inventory-entry"
+                    type="dataset"
+                    item="dataset"
+                    actions-enabled="true"
+                    open="datasetListCtrl.uploadWorkflowService.openDataset"
+                    rename="datasetListCtrl.rename"
+                    copy="datasetListCtrl.openFolderChoice"
+                    details="INVENTORY_DETAILS"
+                    file-model="datasetListCtrl.updateDatasetFile"
+                    process-certification="datasetListCtrl.processCertification"
+                    remove="datasetListCtrl.remove"
+                    toggle-favorite="datasetListCtrl.datasetService.toggleFavorite"
+                    update="datasetListCtrl.uploadUpdatedDatasetFile">
+            </inventory-item>
         </div>
     </div>
 
@@ -144,9 +88,10 @@
     </talend-modal>
 
     <talend-modal fullscreen="false"
-                  close-button="true"
+                  close-button="false"
                   state="datasetListCtrl.folderDestinationModal"
                   ng-if="datasetListCtrl.folderDestinationModal"
+                  disable-close-on-background-click="true"
                   disable-enter="true">
 
         <div class="folders-modal-content">
@@ -178,11 +123,11 @@
                     </div>
 
                     <script type="text/ng-template" id="folder_node_render.html">
-                        <div class="folder-node" ng-class="{folderselected: node.selected}">
+                        <div class="folder-node" ng-class="{'folder-selected': node.selected}">
                             <a class="inventory-icon inventory-folder">
-                                <i data-icon="I" ng-if="!node.collapsed" class="dropdown-button-right" ng-click="datasetListCtrl.toggle(node)"></i>
+                                <i data-icon="J" ng-if="!node.collapsed" class="dropdown-button-right" ng-click="datasetListCtrl.toggle(node)"></i>
                                 <img class="icon-img" ng-click="datasetListCtrl.chooseFolder(node)" ng-if="!node.collapsed" src="assets/images/folder/folder_open_small-icon.png"/>
-                                <i data-icon="J" ng-if="node.collapsed" class="dropdown-button-down" ng-click="datasetListCtrl.toggle(node)"></i>
+                                <i data-icon="I" ng-if="node.collapsed" class="dropdown-button-down" ng-click="datasetListCtrl.toggle(node)"></i>
                                 <img class="icon-img" ng-click="datasetListCtrl.chooseFolder(node)" ng-if="node.collapsed" src="assets/images/folder/folder_close_small-icon.png"/>
                             </a>
                             <span ng-click="datasetListCtrl.chooseFolder(node)" class="folder-name">{{node.name}}</span>
@@ -199,24 +144,39 @@
                     </div>
                 </div>
             </div>
-            <form name="datasetListCtrl.cloneNameForm" ng-submit="datasetListCtrl.cloneNameForm.$valid && datasetListCtrl.clone()">
+            <form name="datasetListCtrl.cloneNameForm" ng-submit="datasetListCtrl.cloneNameForm.$valid">
                 <div class="clone-name">
                     <span translate-once="DATASET_NAME"></span>
                     <input type="text"
                            ng-model="datasetListCtrl.cloneName"
+                           id="new-name-input-id"
                            can-be-blank="false"/>
                 </div>
                 <div class="modal-buttons">
-                    <button type="button" class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL">
+                    <button type="button"
+                            class="talend-modal-close btn-secondary modal-secondary-button"
+                            ng-disabled="datasetListCtrl.isMovingDs || datasetListCtrl.isCloningDs"
+                            translate-once="CANCEL">
+                    </button>
+
+                    <button class="btn-primary modal-primary-button"
+                            ng-disabled="datasetListCtrl.cloneNameForm.$invalid  || datasetListCtrl.isMovingDs || datasetListCtrl.isCloningDs"
+                            ng-switch="datasetListCtrl.isMovingDs" ng-click="datasetListCtrl.move()">
+                            <span ng-switch-when="false" translate-once="MOVE_HERE_ACTION"></span>
+
+                            <div class="feedback-sending-div" ng-switch-when="true" >
+                                <span class="feedback-sending continuous-rotate"><i data-icon="c" class="icon"></i></span>
+                            </div>
                     </button>
                     <button class="btn-primary modal-primary-button"
-                            ng-disabled="datasetListCtrl.cloneNameForm.$invalid || datasetListCtrl.isSendingRequest"
-                            ng-switch="datasetListCtrl.isSendingRequest">
+                            ng-disabled="datasetListCtrl.cloneNameForm.$invalid || datasetListCtrl.isMovingDs || datasetListCtrl.isCloningDs"
+                            ng-switch="datasetListCtrl.isCloningDs" ng-click="datasetListCtrl.clone()">
                             <span ng-switch-when="false" translate-once="COPY_HERE_ACTION"></span>
 
                             <div class="feedback-sending-div" ng-switch-when="true" >
                                 <span class="feedback-sending continuous-rotate"><i data-icon="c" class="icon"></i></span>
                             </div>
+
                     </button>
                 </div>
             </form>

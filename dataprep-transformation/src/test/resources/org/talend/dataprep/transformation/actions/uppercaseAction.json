@@ -4,6 +4,7 @@
       "action": "uppercase",
       "parameters": {
         "column_id": "lastname",
+        "column_name": "lastname",
         "scope": "column"
       }
     }

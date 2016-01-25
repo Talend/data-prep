@@ -11,11 +11,15 @@
     function StateService(PlaygroundStateService, playgroundState, //
                           DatasetStateService, datasetState, //
                           FolderStateService, folderState,  //
-                          EasterEggsStateService, easterEggsState) {
+                          EasterEggsStateService, easterEggsState, //
+                          InventoryStateService, inventoryState,
+                          FeedbackStateService, feedbackState) {
         state.playground = playgroundState;
         state.dataset = datasetState;
         state.folder = folderState;
         state.easterEggsState = easterEggsState;
+        state.inventory = inventoryState;
+        state.feedback = feedbackState;
 
         return {
             //playground
@@ -24,10 +28,9 @@
             resetPlayground: PlaygroundStateService.reset,
             setCurrentDataset: PlaygroundStateService.setDataset,
             setCurrentData: PlaygroundStateService.setData,
-            setCurrentLookupData: PlaygroundStateService.setLookupData,
             setCurrentPreparation: PlaygroundStateService.setPreparation,
             setNameEditionMode: PlaygroundStateService.setNameEditionMode,
-            updateColumnsStatistics: PlaygroundStateService.updateColumnsStatistics,
+            updateDatasetStatistics: PlaygroundStateService.updateDatasetStatistics,
 
             //playground - recipe
             hideRecipe: PlaygroundStateService.hideRecipe,
@@ -39,8 +42,9 @@
 
             //playground - lookup
             setLookupActions: PlaygroundStateService.setLookupActions,
-            setLookupDataset: PlaygroundStateService.setLookupDataset,
+            setLookupAddMode: PlaygroundStateService.setLookupAddMode,
             setLookupSelectedColumn: PlaygroundStateService.setLookupSelectedColumn,
+            setLookupUpdateMode: PlaygroundStateService.setLookupUpdateMode,
             setLookupVisibility: PlaygroundStateService.setLookupVisibility,
             updateLookupColumnsToAdd: PlaygroundStateService.updateLookupColumnsToAdd,
 
@@ -54,6 +58,16 @@
             setColumnTransformations: PlaygroundStateService.setColumnTransformations,
             setLineTransformations: PlaygroundStateService.setLineTransformations,
             setSuggestionsLoading: PlaygroundStateService.setSuggestionsLoading,
+            setTransformationsForEmptyCells: PlaygroundStateService.setTransformationsForEmptyCells,
+            setTransformationsForInvalidCells: PlaygroundStateService.setTransformationsForInvalidCells,
+            updateFilteredTransformations: PlaygroundStateService.updateFilteredTransformations,
+
+            //playground - Statistics
+            setStatisticsHistogram: PlaygroundStateService.setStatisticsHistogram,
+            setStatisticsFilteredHistogram: PlaygroundStateService.setStatisticsFilteredHistogram,
+            setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
+            setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
+            setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
 
             //dataset
             startUploadingDataset: DatasetStateService.startUploadingDataset,
@@ -67,7 +81,15 @@
 
             //easter eggs
             enableEasterEgg: EasterEggsStateService.enableEasterEgg,
-            disableEasterEgg: EasterEggsStateService.disableEasterEgg
+            disableEasterEgg: EasterEggsStateService.disableEasterEgg,
+
+            //inventory
+            setPreparations: InventoryStateService.setPreparations,
+            removePreparation: InventoryStateService.removePreparation,
+
+            //feedback
+            showFeedback: FeedbackStateService.show,
+            hideFeedback: FeedbackStateService.hide
         };
     }
 

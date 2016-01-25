@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
 import org.talend.dataprep.api.service.command.dataset.DataSetGet;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
-import org.talend.dataprep.api.service.command.transformation.*;
+import org.talend.dataprep.api.service.command.transformation.ColumnActions;
+import org.talend.dataprep.api.service.command.transformation.LineActions;
+import org.talend.dataprep.api.service.command.transformation.SuggestActionParams;
+import org.talend.dataprep.api.service.command.transformation.SuggestColumnActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -28,42 +30,13 @@ import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class TransformAPI extends APIService {
 
-    @RequestMapping(value = "/api/transform/{id}", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Transforms a data set given data set id. This operation retrieves data set content and pass it to the transformation service.", notes = "Returns the data set modified with the provided actions in request body.")
-    public void transform(@PathVariable(value = "id") @ApiParam(value = "Data set id.") String dataSetId,
-            @ApiParam(value = "Actions to perform on data set (as JSON format).") InputStream body, final OutputStream output) {
-        if (dataSetId == null) {
-            throw new IllegalArgumentException("Data set id cannot be null.");
-        }
-        LOG.debug("Transforming dataset id #{} (pool: {})...", dataSetId, getConnectionStats());
-        try {
-            // Configure transformation flow
-            HttpResponseContext.header( "Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-            HttpClient client = getClient();
-
-            InputStream contentRetrieval = getCommand(DataSetGet.class, client, dataSetId, true, null).execute();
-            HystrixCommand<InputStream> transformation = getCommand(Transform.class, client, contentRetrieval,
-                    IOUtils.toString(body));
-
-            // Perform transformation
-            InputStream input = transformation.execute();
-
-            IOUtils.copyLarge(input, output);
-            output.flush();
-        } catch (IOException e) {
-            LOG.error("error while applying transform " + e.getMessage(), e);
-            throw new TDPException(APIErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e, ExceptionContext.build().put("dataSetId",
-                    dataSetId));
-        }
-
-        LOG.debug("Transformation of dataset id #{} done.", dataSetId);
-    }
 
     /**
      * Get all the possible actions for a given column.

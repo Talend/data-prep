@@ -17,7 +17,7 @@ public enum Type implements Serializable {
     ANY("any", "ANY"), //$NON-NLS-1$
     STRING("string", ANY, "STRING"), //$NON-NLS-1$
     NUMERIC("numeric", ANY, "NUMERIC"), //$NON-NLS-1$
-    INTEGER("integer", NUMERIC,"INTEGER"), //$NON-NLS-1$
+    INTEGER("integer", NUMERIC, "INTEGER"), //$NON-NLS-1$
     DOUBLE("double", NUMERIC, "DOUBLE"), //$NON-NLS-1$
     FLOAT("float", NUMERIC, "FLOAT"), //$NON-NLS-1$
     BOOLEAN("boolean", ANY, "BOOLEAN"), //$NON-NLS-1$

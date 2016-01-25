@@ -8,8 +8,11 @@
     margin: 0;
   }
 
-  .param-buttons{
-    text-align: right;
-    padding: 0 10px 10px 0;
+  .param-buttons {
+    @include display(flex);
+    @include align-items(center);
+    @include flex-direction(row-reverse);
+    @include justify-content(space-between);
+    padding: 0 10px 10px 10px;
   }
 }

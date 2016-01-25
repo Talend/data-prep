@@ -12,11 +12,11 @@
 	 * @requires data-prep.services.transformation.service:TransformationApplicationService
 	 */
 	function LookupCtrl(state, StateService, LookupService, EarlyPreviewService,
-						TransformationApplicationService) {
+						TransformationApplicationService, PlaygroundService) {
 		var vm = this;
 		vm.state = state;
 		vm.cancelEarlyPreview = EarlyPreviewService.cancelEarlyPreview;
-		vm.loadLookupDsContent = LookupService.loadContent;
+		vm.loadFromAction= LookupService.loadFromAction;
 
 		/**
 		 * @ngdoc method
@@ -25,8 +25,12 @@
 		 * @description trigger a preview mode on the main dataset to show the lookup action effet
 		 */
 		vm.hoverSubmitBtn = function hoverSubmitBtn(){
-			var previewClosure = EarlyPreviewService.earlyPreview(vm.state.playground.lookup.dataset, 'dataset');
-			previewClosure(getParams());
+			if (state.playground.lookup.step) {
+				PlaygroundService.updatePreview(state.playground.lookup.step, getParams());
+			} else {
+				var previewClosure = EarlyPreviewService.earlyPreview(state.playground.lookup.dataset, 'dataset');
+				previewClosure(getParams());
+			}
 		};
 
 		/**
@@ -63,30 +67,38 @@
 		 * @description returns the params of the lookup action
 		 */
 		function getParams () {
-			var params = extractLookupParams(vm.state.playground.lookup.dataset);
+			var params = extractLookupParams(state.playground.lookup.dataset);
 			/*jshint camelcase: false */
-			params.column_id = vm.state.playground.grid.selectedColumn.id;
-			params.column_name = vm.state.playground.grid.selectedColumn.name;
-			params.lookup_join_on = vm.state.playground.lookup.selectedColumn.id;
-			params.lookup_join_on_name = vm.state.playground.lookup.selectedColumn.name;
-			params.lookup_selected_cols = vm.state.playground.lookup.columnsToAdd;
+			params.column_id = state.playground.grid.selectedColumn.id;
+			params.column_name = state.playground.grid.selectedColumn.name;
+			params.lookup_join_on = state.playground.lookup.selectedColumn.id;
+			params.lookup_join_on_name = state.playground.lookup.selectedColumn.name;
+			params.lookup_selected_cols = state.playground.lookup.columnsToAdd;
 			return params;
 		}
 
 		/**
 		 * @ngdoc method
-		 * @name submitLookup
+		 * @name submit
 		 * @methodOf data-prep.lookup.controller:LookupCtrl
 		 * @description submits the lookup action
 		 */
-		vm.submitLookup = function submitLookup() {
+		vm.submit = function submit() {
 			EarlyPreviewService.deactivatePreview();
 			EarlyPreviewService.cancelPendingPreview();
+			var promise;
+			var lookupStep = vm.state.playground.lookup.step;
 
-			TransformationApplicationService.append(vm.state.playground.lookup.dataset, 'dataset', getParams())
-				.finally(function() {
+			if (lookupStep) {
+				promise = PlaygroundService.updateStep(lookupStep, getParams());
+			}
+			else {
+				promise = TransformationApplicationService.append(state.playground.lookup.dataset, 'dataset', getParams());
+			}
+
+			promise.then(StateService.setLookupVisibility.bind(null, false))
+				.finally(function () {
 					setTimeout(EarlyPreviewService.activatePreview, 500);
-					StateService.setLookupVisibility(false);
 				});
 		};
 	}

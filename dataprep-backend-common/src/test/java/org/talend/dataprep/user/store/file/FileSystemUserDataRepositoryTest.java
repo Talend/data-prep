@@ -3,6 +3,8 @@ package org.talend.dataprep.user.store.file;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Set;
 
 import org.junit.After;
@@ -119,4 +121,20 @@ public class FileSystemUserDataRepositoryTest {
 
     }
 
+    @Test
+    public void shouldIgnoreHiddenFiles() throws Exception {
+        // given
+        repository.clear();
+
+        // when
+        File hidden = new File("target/test/store/userdata/.hidden_file");
+        FileOutputStream fos = new FileOutputStream(hidden);
+        fos.write("hello".getBytes());
+
+        // then
+        final UserData userData = repository.get(".hidden");
+        hidden.delete();
+        assertNull(userData);
+
+    }
 }

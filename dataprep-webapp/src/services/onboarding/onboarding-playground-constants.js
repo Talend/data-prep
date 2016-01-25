@@ -33,6 +33,12 @@
             position: 'left'
         },
         {
+            element: '#playground-feedback-icon',
+            title: '',
+            content: 'Click here to send feedback to Talend.',
+            position: 'bottom'
+        },
+        {
             element: 'talend-modal[state="playgroundCtrl.state.playground.visible"] .modal-header-close',
             title: '',
             content: 'Click here to close your dataset.',

@@ -1,0 +1,7 @@
+id,firstname,lastname,birth,city,state,registration,avgAmount,nbCommands
+1,Benjamin,Quincy,02-07-1964,Santa Fe,NC,30-11-2007,668.61,72
+2,Calvin,Jefferson,01-02-1986,Columbia,TN,25-08-2008,200.56,13
+3,Ulysses,Johnson,05-05-1982,Montpelier,AL,26-07-2008,645.39,68
+4,Andrew,Taft,18-09-1948,Salem,NV,15-03-2008,387.21,54
+5,Richard,Eisenhower,27-08-1969,Little Rock,HI,10-09-2008,324.46,13
+6,Franklin,Taylor,25-07-1980,Salem,IN,31-03-2007,537.4,85

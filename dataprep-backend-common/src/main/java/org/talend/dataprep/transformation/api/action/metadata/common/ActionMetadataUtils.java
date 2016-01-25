@@ -4,6 +4,10 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.TypeUtils;
@@ -16,14 +20,15 @@ import org.talend.datascience.common.inference.ValueQualityStatistics;
 /**
  * Utility class for the ActionsMetadata
  */
-public class ActionMetadataUtils {
+@Component
+public class ActionMetadataUtils implements ApplicationContextAware {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionMetadataUtils.class);
 
-    private static final AnalyzerService service = new AnalyzerService();
-
     private static final Map<String, Analyzer<ValueQualityStatistics>> analyzerCache = new HashMap<>();
+
+    private static ApplicationContext applicationContext;
 
     /**
      * Default empty constructor.
@@ -55,7 +60,7 @@ public class ActionMetadataUtils {
             synchronized (analyzerCache) {
                 analyzer = analyzerCache.get(domain);
                 if (analyzer == null) {
-                    analyzer = service.getQualityAnalyzer(Collections.singletonList(colMetadata));
+                    analyzer = applicationContext.getBean(AnalyzerService.class).getQualityAnalyzer(Collections.singletonList(colMetadata));
                     analyzer.init();
                     analyzerCache.put(domain, analyzer);
                 }
@@ -83,5 +88,10 @@ public class ActionMetadataUtils {
 
     public static Map<String, Analyzer<ValueQualityStatistics>> getAnalyzerCache() {
         return analyzerCache;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ActionMetadataUtils.applicationContext = applicationContext;
     }
 }

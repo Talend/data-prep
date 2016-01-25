@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.store.content.DataSetContentStoreAdapter;
+import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.log.Markers;
@@ -26,7 +26,7 @@ import org.talend.dataprep.log.Markers;
  */
 @Component("ContentStore#local")
 @ConditionalOnProperty(name = "dataset.content.store", havingValue = "file", matchIfMissing = false)
-public class LocalFileContentStore extends DataSetContentStoreAdapter {
+public class LocalFileContentStore extends DataSetContentStore {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalFileContentStore.class);

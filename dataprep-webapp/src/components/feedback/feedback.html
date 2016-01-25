@@ -1,0 +1,69 @@
+<talend-modal class="feedback"
+              fullscreen="false"
+              close-button="true"
+              disable-enter="true"
+              state="feedbackCtrl.state.feedback.visible"
+              ng-if="feedbackCtrl.state.feedback.visible">
+    <div class="title"
+         translate-once="FEEDBACK_FORM"></div>
+
+    <form name="feedbackCtrl.feedbackForm"
+          class="feedback-form"
+          ng-submit="feedbackCtrl.feedbackForm.$valid && feedbackCtrl.sendFeedback()">
+        <div class="feedback-form-line">
+            <span class="feedback-form-label" translate-once="FEEDBACK_MAIL"></span>
+            <input type="text"
+                   ng-model="feedbackCtrl.feedback.mail"
+                   ng-model-options="{debounce: { default: 300, blur: 0 }}"/>
+        </div>
+
+        <div class="feedback-form-line">
+            <span class="feedback-form-label" translate-once="FEEDBACK_SUMMARY"></span>
+            <input type="text"
+                   ng-model="feedbackCtrl.feedback.title"
+                   ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                   can-be-blank="false"/>
+            <select ng-options="type.value as type.name for type in feedbackCtrl.feedbackTypes"
+                    ng-model="feedbackCtrl.feedback.type"></select>
+            <select ng-options="severity.value as severity.name for severity in feedbackCtrl.feedbackSeverities"
+                    ng-model="feedbackCtrl.feedback.severity"></select>
+        </div>
+
+        <div class="feedback-form-line">
+            <span class="feedback-form-label" translate-once="FEEDBACK_DESCRIPTION"></span>
+            <textarea rows="5"
+                      ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                      ng-model="feedbackCtrl.feedback.description"></textarea>
+        </div>
+
+        <div class="feedback-form-line">
+            <span class="feedback-form-label"></span>
+            <span translate-once="FEEDBACK_FORUM_LINK_1"></span>
+            <span>
+                <a href="https://talendforge.org/forum/viewforum.php?id=47"
+                   translate-once="FEEDBACK_FORUM_LINK_2" target="_blank"></a>
+            </span>
+        </div>
+        <div class="feedback-form-line">
+            <span class="feedback-form-label"></span>
+            <span translate-once="FEEDBACK_KNOWN_ISSUES_1"></span>
+            <span>
+                <a href="https://help.talend.com/display/WIKI/Talend+Data+Preparation+v1.0+Beta+Program"
+                   translate-once="FEEDBACK_KNOWN_ISSUES_2" target="_blank"></a>
+            </span>
+        </div>
+
+        <div class="modal-buttons">
+            <button type="button" class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL"></button>
+            <button class="btn-primary modal-primary-button"
+                    ng-switch="feedbackCtrl.isSendingFeedback"
+                    ng-disabled="feedbackCtrl.feedbackForm.$invalid || feedbackCtrl.isSendingFeedback">
+                <span ng-switch-when="false" translate-once="OK"></span>
+
+                <div class="feedback-sending-div" ng-switch-when="true" >
+                    <span class="feedback-sending continuous-rotate"><i data-icon="c" class="icon"></i></span>
+                </div>
+            </button>
+        </div>
+    </form>
+</talend-modal>

@@ -52,8 +52,25 @@ public class MixedContentMapModule extends SimpleModule {
                 } else if (value.charAt(0) == '{' || value.charAt(0) == '[') {
                     // check that it's a real json array or object
                     try {
-                        new ObjectMapper().reader().readTree(value);
-                        jsonGenerator.writeRawValue(value);
+                        JsonNode node = new ObjectMapper().reader().readTree(value);
+
+                        // Must add endsWith tests, because jackson parser stops parsing at first ']' when json starts
+                        // with a '[' (means values such as '[]anything' are consider as valid array by jackson parser)
+                        boolean realJson = false;
+                        if (value.charAt(0) == '{') {
+                            // case json object:
+                            realJson = node.isContainerNode() && value.endsWith("}");
+                        } else {
+                            // case json array:
+                            realJson = node.isArray() && value.endsWith("]");
+                        }
+
+                        if (realJson) {
+                            jsonGenerator.writeRawValue(value);
+                        } else {
+                            // otherwise, it is written as a string (may be a regular expression, e.g. [A-Za-z0-9]*)
+                            jsonGenerator.writeString(value);
+                        }
                     }
                     // otherwise, it is written as a string (may be a regular expression, e.g. [A-Za-z0-9]*)
                     catch (IOException ioe) {

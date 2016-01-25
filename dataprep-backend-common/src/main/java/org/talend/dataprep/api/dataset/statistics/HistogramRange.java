@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Histogram item. It represents the range and its occurrences
  */
-public class HistogramRange<T> implements Serializable {
+public class HistogramRange implements Serializable {
     /**
      * The number of element in the curent range
      */
@@ -18,7 +18,7 @@ public class HistogramRange<T> implements Serializable {
      * The range of this part of the histogram
      */
     @JsonProperty("range")
-    Range<T> range = new Range<>();
+    Range range = new Range();
 
     /**
      * Number of element getter
@@ -43,7 +43,7 @@ public class HistogramRange<T> implements Serializable {
      *
      * @return The range
      */
-    public Range<T> getRange() {
+    public Range getRange() {
         return range;
     }
 
@@ -52,7 +52,7 @@ public class HistogramRange<T> implements Serializable {
      *
      * @param range The new range
      */
-    public void setRange(Range<T> range) {
+    public void setRange(Range range) {
         this.range = range;
     }
 

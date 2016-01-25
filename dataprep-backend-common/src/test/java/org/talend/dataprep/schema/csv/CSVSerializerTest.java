@@ -47,6 +47,7 @@ public class CSVSerializerTest {
     public void should_serialize_standard_csv() throws IOException {
         InputStream inputStream = this.getClass().getResourceAsStream("simple.csv");
         DataSetMetadata datasetMetadata = IoTestUtils.getSimpleDataSetMetadata("first name", "last name");
+        datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata);
         String actual = IOUtils.toString(input);
@@ -59,6 +60,7 @@ public class CSVSerializerTest {
     public void should_serialize_csv_with_missing_values() throws IOException {
         InputStream inputStream = this.getClass().getResourceAsStream("missing_values.csv");
         DataSetMetadata datasetMetadata = IoTestUtils.getSimpleDataSetMetadata("character", "actor", "active");
+        datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata);
         String actual = IOUtils.toString(input);
@@ -71,11 +73,25 @@ public class CSVSerializerTest {
     public void should_serialize_csv_with_additional_values() throws IOException {
         InputStream inputStream = this.getClass().getResourceAsStream("additional_values.csv");
         DataSetMetadata datasetMetadata = IoTestUtils.getSimpleDataSetMetadata("name", "email");
+        datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata);
         String actual = IOUtils.toString(input);
 
         InputStream expected = this.getClass().getResourceAsStream("additional_values.csv_expected.json");
+        Assert.assertThat(actual, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void should_serialize_csv_with_two_lines_header() throws IOException {
+        InputStream inputStream = this.getClass().getResourceAsStream("two_lines_header.csv");
+        DataSetMetadata datasetMetadata = IoTestUtils.getSimpleDataSetMetadata("first name", "last name");
+        datasetMetadata.getContent().setNbLinesInHeader(2);
+
+        InputStream input = serializer.serialize(inputStream, datasetMetadata);
+        String actual = IOUtils.toString(input);
+
+        InputStream expected = this.getClass().getResourceAsStream("simple.csv_expected.json");
         Assert.assertThat(actual, sameJSONAsFile(expected));
     }
 }

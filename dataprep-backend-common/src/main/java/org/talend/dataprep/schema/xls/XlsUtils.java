@@ -11,11 +11,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +136,17 @@ public class XlsUtils {
             throw new IOException("cannot read null stream");
         }
 
+        try
+        {
+            return WorkbookFactory.create( request.getContent() );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.debug(marker, "does not seem to be a HSSFWorkbook (.xls) neither : {}", e.getMessage());
+            return null;
+        }
+
+        /*
         byte[] bytes = IOUtils.toByteArray(request.getContent());
         try {
             final XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(bytes));
@@ -150,6 +163,7 @@ public class XlsUtils {
                 return null;
             }
         }
+        */
 
     }
 

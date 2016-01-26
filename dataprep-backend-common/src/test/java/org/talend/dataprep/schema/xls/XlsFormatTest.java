@@ -375,7 +375,6 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
      * data format as defined and don't directly use {@link Cell#getNumericCellValue()}.
      * </p>
      * 
-     * @see XlsUtils#getCellValueAsString(Cell)
      */
     @Test
     public void testGeneralNumberFormat_TDP_222() throws Exception {
@@ -466,7 +465,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
             List<SchemaParserResult.SheetContent> sheetContents = xlsSchemaParser.parseAllSheets(getRequest(inputStream, "#8"));
 
             List<ColumnMetadata> columnMetadatas = sheetContents.stream()
-                    .filter(sheetContent -> sheetName.equals(sheetContent.getName())).findFirst().get().getColumnMetadatas();
+                .filter(sheetContent -> sheetName.equals(sheetContent.getName())).findFirst().get().getColumnMetadatas();
 
             logger.debug("columnMetadatas: {}", columnMetadatas);
 

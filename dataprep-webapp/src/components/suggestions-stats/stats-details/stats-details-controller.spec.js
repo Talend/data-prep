@@ -23,34 +23,6 @@ describe('Stats-details controller', function () {
         spyOn(FilterService, 'addFilterAndDigest').and.returnValue();
     }));
 
-    it('should bind statistics getter to StatisticsService.statistics', inject(function (StatisticsService) {
-        //given
-        var ctrl = createController();
-        expect(ctrl.statistics).toBeFalsy();
-
-        var stats = {};
-
-        //when
-        StatisticsService.statistics = stats;
-
-        //then
-        expect(ctrl.statistics).toBe(stats);
-    }));
-
-    it('should bind boxplotData getter to StatisticsService.boxplotData', inject(function (StatisticsService) {
-        //given
-        var ctrl = createController();
-        expect(ctrl.statistics).toBeFalsy();
-
-        var data = {};
-
-        //when
-        StatisticsService.boxPlot = data;
-
-        //then
-        expect(ctrl.boxPlot).toBe(data);
-    }));
-
     it('should add a new "pattern" filter', inject(function (FilterService) {
         //given
         var ctrl = createController();

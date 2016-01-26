@@ -33,16 +33,41 @@ describe('Suggestions Profile directive', function () {
     });
 
     it('should render chart ghost when fetching statistics', inject(function ($q, PlaygroundService) {
-            //given
-            spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
-            stateMock.playground.statistics.histogram = null;
+        //given
+        spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+        stateMock.playground.statistics.histogram = null;
 
-            //when
-            createElement();
+        //when
+        createElement();
 
-            //then
-            expect(element.find('#chart-ghost').length).toBe(1);
-            expect(element.find('#column-profile-chart').length).toBe(0);
-        })
-    );
+        //then
+        expect(element.find('#chart-ghost').length).toBe(1);
+        expect(element.find('#column-profile-chart').length).toBe(0);
+    }));
+
+    it('should render a control div with "insertion-charts-control" attribute', function () {
+        //given
+        stateMock.playground.statistics.histogram = {};
+
+        //when
+        createElement();
+
+        //then
+        var control = element.find('#column-profile-chart > .column-profile-options > .column-profile-chart-control');
+        expect(control.length).toBe(1);
+        expect(control.eq(0)[0].hasAttribute('insertion-charts-control')).toBe(true);
+    });
+
+    it('should render a chart div with "insertion-charts" attribute', function () {
+        //given
+        stateMock.playground.statistics.histogram = {};
+
+        //when
+        createElement();
+
+        //then
+        var control = element.find('#column-profile-chart > #column-profile-chart-container');
+        expect(control.length).toBe(1);
+        expect(control.eq(0)[0].hasAttribute('insertion-charts')).toBe(true);
+    });
 });

@@ -1,4 +1,4 @@
-<div class="column-profile" ng-switch="!!(columnProfileCtrl.state.playground.statistics.histogram || columnProfileCtrl.stateDistribution)">
+<div class="column-profile" ng-switch="!!(columnProfileCtrl.state.playground.statistics.histogram)">
 
     <div id="chart-ghost" class="loading-container" ng-switch-when="false">
         <img id="chart-ghost-img" src="/assets/images/refreshing-ghost-chart.png">
@@ -9,22 +9,24 @@
     </div>
 
     <div id="column-profile-chart" ng-switch-when="true">
-        <div class="column-profile-aggregation">
-            <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}">
-                <ul class="column-profile-aggregation-list">
-                    <li ng-click="columnProfileCtrl.changeAggregation()">
-                        <div translate-once="LINE_COUNT"></div>
-                    </li>
-                    <li ng-repeat="column in columnProfileCtrl.aggregationColumns track by column.id" class="more">
-                        <div class="moreText" title="{{column.name}}">{{column.name}}</div>
-                        <ul class="submenu">
-                            <li ng-repeat="aggregation in columnProfileCtrl.aggregations track by $index" ng-click="columnProfileCtrl.changeAggregation(column, aggregation)" title="{{ ::aggregation | translate }}">
-                                <div class="moreText" translate-once="{{aggregation}}"></div>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </talend-button-dropdown>
+        <div class="column-profile-options">
+            <div class="column-profile-chart-control" insertion-charts-control>
+                <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}">
+                    <ul class="column-profile-aggregation-list">
+                        <li ng-click="columnProfileCtrl.changeAggregation()">
+                            <div translate-once="LINE_COUNT"></div>
+                        </li>
+                        <li ng-repeat="column in columnProfileCtrl.aggregationColumns track by column.id" class="more">
+                            <div class="moreText" title="{{column.name}}">{{column.name}}</div>
+                            <ul class="submenu">
+                                <li ng-repeat="aggregation in columnProfileCtrl.aggregations track by $index" ng-click="columnProfileCtrl.changeAggregation(column, aggregation)" title="{{ ::aggregation | translate }}">
+                                    <div class="moreText" translate-once="{{aggregation}}"></div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </talend-button-dropdown>
+            </div>
 
             <div ng-if="columnProfileCtrl.state.playground.statistics.histogram.aggregation" class="column-profile-aggregation-description">
                 <span>{{columnProfileCtrl.state.playground.statistics.histogram.aggregation | translate}}</span>
@@ -34,7 +36,7 @@
             </div>
         </div>
 
-        <div style="min-height: 160px;">
+        <div id="column-profile-chart-container" style="min-height: 160px;" insertion-charts>
             <horizontal-barchart id="hBarChart"
                                  ng-if="!columnProfileCtrl.state.playground.statistics.histogram.vertical"
                                  width="300"
@@ -51,6 +53,8 @@
                                  secondary-data="columnProfileCtrl.state.playground.statistics.filteredHistogram.data"
                                  secondary-value-field="{{columnProfileCtrl.state.playground.statistics.filteredHistogram.valueField}}"
                                  secondary-bar-class="{{columnProfileCtrl.state.playground.statistics.filteredHistogram.className}}"
+
+                                 tooltip-content="columnProfileCtrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)"
             ></horizontal-barchart>
 
             <vertical-barchart id="vBarChart"
@@ -69,17 +73,16 @@
                                secondary-data="columnProfileCtrl.state.playground.statistics.filteredHistogram.data"
                                secondary-value-field="{{columnProfileCtrl.state.playground.statistics.filteredHistogram.valueField}}"
 
-                               active-limits="columnProfileCtrl.state.playground.statistics.activeLimits"></vertical-barchart>
+                               tooltip-content="columnProfileCtrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)"
 
-            <highchart id="geochart"
-                       ng-if="columnProfileCtrl.stateDistribution"
-                       config="columnProfileCtrl.chartConfig"></highchart>
+                               active-limits="columnProfileCtrl.state.playground.statistics.activeLimits"
+            ></vertical-barchart>
         </div>
 
         <range-slider id="rangeSliderId"
                       width="300"
                       height="65"
-                      range-limits="columnProfileCtrl.statisticsService.rangeLimits"
+                      range-limits="columnProfileCtrl.state.playground.statistics.rangeLimits"
                       on-brush-end="columnProfileCtrl.addRangeFilter(interval)">
         </range-slider>
     </div>

@@ -11,19 +11,19 @@
         {
             element: '#nav_home_datasets',
             title: '',
-            content: 'Here you can browse through and manage the datasets you created.<br/>A dataset corresponds to a sample you can play with, without modifying your original file.',
+            content: 'Here you can browse through and manage the datasets you created.<br/>A dataset holds the raw data that can be used as raw material without affecting your original data.',
             position: 'right'
         },
         {
             element: '#dataset_0',
             title: '',
-            content: 'Here you can find some ready-to-use datasets to get familiar with Data Prep.',
+            content: 'Here you can find some ready-to-use datasets to get familiar with Talend Data Preparation.',
             position: 'bottom'
         },
         {
             element: '#help-import-local',
             title: '',
-            content: 'Here you can create your own datasets from your files.',
+            content: 'Here you can create your own datasets from your own data.',
             position: 'right'
         },
         {

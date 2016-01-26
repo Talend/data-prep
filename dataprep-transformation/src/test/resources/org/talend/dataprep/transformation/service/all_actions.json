@@ -1399,92 +1399,183 @@
         "default": ""
       },
       {
-        "name": "from_mode",
-        "type": "select",
-        "implicit": false,
-        "canBeBlank": false,
-        "configuration": {
-          "values": [
+        "name":"from_mode",
+        "type":"select",
+        "implicit":false,
+        "canBeBlank":false,
+        "configuration":{
+          "values":[
             {
-              "value": "from_beginning"
-            },
-            {
-              "value": "from_n_before_end",
-              "parameters": [
+              "value":"from_beginning",
+              "label":"From beginning",
+              "parameters":[
                 {
-                  "name": "from_n_before_end",
-                  "type": "integer",
-                  "implicit": false,
-                  "canBeBlank": true,
-                  "label": "From N before end",
-                  "default": "5"
+                  "name":"to_mode",
+                  "type":"select",
+                  "implicit":false,
+                  "canBeBlank":false,
+                  "configuration":{
+                    "values":[
+                      {
+                        "value":"to_end",
+                        "label":"To end"
+                      },
+                      {
+                        "value":"to_index",
+                        "label":"To index",
+                        "parameters":[
+                          {
+                            "name":"to_index",
+                            "type":"integer",
+                            "implicit":false,
+                            "canBeBlank":true,
+                            "description":"Index of the original value that ends the new one",
+                            "label":"End index",
+                            "default":"5"
+                          }
+                        ]
+                      },
+                      {
+                        "value":"to_n_before_end",
+                        "label":"To N before end",
+                        "parameters":[
+                          {
+                            "name":"to_n_before_end",
+                            "type":"integer",
+                            "implicit":false,
+                            "canBeBlank":true,
+                            "description":"Enter '2' if you want to end 2 characters before end",
+                            "label":"To N before end",
+                            "default":"1"
+                          }
+                        ]
+                      }
+                    ],
+                    "multiple":false
+                  },
+                  "description":"Select end mode of the substring",
+                  "label":"To",
+                  "default":"to_index"
                 }
               ]
             },
             {
-              "value": "from_index",
-              "parameters": [
+              "value":"from_index",
+              "label":"From index",
+              "parameters":[
                 {
-                  "name": "from_index",
-                  "type": "integer",
-                  "implicit": false,
-                  "canBeBlank": true,
-                  "description": "Index of the original value that starts the new one",
-                  "label": "Beginning index",
-                  "default": "0"
+                  "name":"from_index",
+                  "type":"integer",
+                  "implicit":false,
+                  "canBeBlank":true,
+                  "description":"Index of the original value that starts the new one",
+                  "label":"Beginning index",
+                  "default":"0"
+                },
+                {
+                  "name":"to_mode",
+                  "type":"select",
+                  "implicit":false,
+                  "canBeBlank":false,
+                  "configuration":{
+                    "values":[
+                      {
+                        "value":"to_end",
+                        "label":"To end"
+                      },
+                      {
+                        "value":"to_index",
+                        "label":"To index",
+                        "parameters":[
+                          {
+                            "name":"to_index",
+                            "type":"integer",
+                            "implicit":false,
+                            "canBeBlank":true,
+                            "description":"Index of the original value that ends the new one",
+                            "label":"End index",
+                            "default":"5"
+                          }
+                        ]
+                      },
+                      {
+                        "value":"to_n_before_end",
+                        "label":"To N before end",
+                        "parameters":[
+                          {
+                            "name":"to_n_before_end",
+                            "type":"integer",
+                            "implicit":false,
+                            "canBeBlank":true,
+                            "description":"Enter '2' if you want to end 2 characters before end",
+                            "label":"To N before end",
+                            "default":"1"
+                          }
+                        ]
+                      }
+                    ],
+                    "multiple":false
+                  },
+                  "description":"Select end mode of the substring",
+                  "label":"To",
+                  "default":"to_index"
+                }
+              ]
+            },
+            {
+              "value":"from_n_before_end",
+              "label":"From N before end",
+              "parameters":[
+                {
+                  "name":"from_n_before_end",
+                  "type":"integer",
+                  "implicit":false,
+                  "canBeBlank":true,
+                  "description":"Enter '5' if you want to start 5 characters before end (usefull to keep only last N characters)",
+                  "label":"From N before end",
+                  "default":"5"
+                },
+                {
+                  "name":"to_mode",
+                  "type":"select",
+                  "implicit":false,
+                  "canBeBlank":false,
+                  "configuration":{
+                    "values":[
+                      {
+                        "value":"to_end",
+                        "label":"To end"
+                      },
+                      {
+                        "value":"to_n_before_end",
+                        "label":"To N before end",
+                        "parameters":[
+                          {
+                            "name":"to_n_before_end",
+                            "type":"integer",
+                            "implicit":false,
+                            "canBeBlank":true,
+                            "description":"Enter '2' if you want to end 2 characters before end",
+                            "label":"To N before end",
+                            "default":"1"
+                          }
+                        ]
+                      }
+                    ],
+                    "multiple":false
+                  },
+                  "description":"Select end mode of the substring",
+                  "label":"To",
+                  "default":"to_end"
                 }
               ]
             }
           ],
-          "multiple": false
+          "multiple":false
         },
-        "description": "Select beginning mode of the substring",
-        "label": "From",
-        "default": "from_beginning"
-      },
-      {
-        "name": "to_mode",
-        "type": "select",
-        "implicit": false,
-        "canBeBlank": false,
-        "configuration": {
-          "values": [
-            {
-              "value": "to_end"
-            },
-            {
-              "value": "to_n_before_end",
-              "parameters": [
-                {
-                  "name": "to_n_before_end",
-                  "type": "integer",
-                  "implicit": false,
-                  "canBeBlank": true,
-                  "label": "To N before end",
-                  "default": "1"
-                }
-              ]
-            },
-            {
-              "value": "to_index",
-              "parameters": [
-                {
-                  "name": "to_index",
-                  "type": "integer",
-                  "implicit": false,
-                  "canBeBlank": true,
-                  "description": "Index of the original value that ends the new one",
-                  "label": "End index",
-                  "default": "5"
-                }
-              ]
-            }
-          ],
-          "multiple": false
-        },
-        "description": "Select end mode of the substring",
-        "label": "To",
-        "default": "to_index"
+        "description":"Select beginning mode of the substring",
+        "label":"From",
+        "default":"from_beginning"
       }
     ],
     "dynamic": false,

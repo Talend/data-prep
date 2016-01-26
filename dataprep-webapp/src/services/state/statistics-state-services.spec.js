@@ -70,6 +70,9 @@ describe('Statistics state service', function () {
         statisticsState.patterns = {};
         statisticsState.filteredPatterns = {};
         statisticsState.activeLimits = {};
+        statisticsState.boxPlot = {};
+        statisticsState.rangeLimits = {};
+        statisticsState.details = {};
 
         //when
         StatisticsStateService.reset();
@@ -80,5 +83,8 @@ describe('Statistics state service', function () {
         expect(statisticsState.patterns).toBe(null);
         expect(statisticsState.filteredPatterns).toBe(null);
         expect(statisticsState.activeLimits).toBe(null);
+        expect(statisticsState.boxPlot).toBe(null);
+        expect(statisticsState.rangeLimits).toBe(null);
+        expect(statisticsState.details).toBe(null);
     }));
 });

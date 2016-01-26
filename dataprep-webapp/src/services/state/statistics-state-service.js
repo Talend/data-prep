@@ -6,6 +6,9 @@
     function StatisticsStateService() {
 
         return {
+            setBoxPlot: setBoxPlot,
+            setDetails: setDetails,
+            setRangeLimits: setRangeLimits,
             setHistogram: setHistogram,
             setFilteredHistogram: setFilteredHistogram,
             setHistogramActiveLimits: setHistogramActiveLimits,
@@ -14,6 +17,18 @@
 
             reset: reset
         };
+
+        function setBoxPlot(boxPlot) {
+            statisticsState.boxPlot = boxPlot;
+        }
+
+        function setDetails(details) {
+            statisticsState.details = details;
+        }
+
+        function setRangeLimits(rangeLimits) {
+            statisticsState.rangeLimits = rangeLimits;
+        }
 
         function setHistogram(histogram) {
             statisticsState.histogram = histogram;
@@ -38,6 +53,9 @@
         }
 
         function reset() {
+            statisticsState.boxPlot = null;
+            statisticsState.rangeLimits = null;
+            statisticsState.details = null;
             statisticsState.histogram = null;
             statisticsState.filteredHistogram = null;
             statisticsState.activeLimits = null;

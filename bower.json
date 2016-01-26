@@ -26,9 +26,6 @@
     "jquery-ui": "~1.11.4",
     "threedubmedia.jquery.event": "*",
     "angular-mass-autocomplete": "~0.2.2",
-    "highcharts-ng": "~0.0.8",
-    "highcharts-release": "~4.1.4",
-    "highmaps-release": "~1.1.4",
     "d3": "~3.5.5",
     "d3-tip": "~0.6.7",
     "intro.js": "~1.1.1",
@@ -72,11 +69,6 @@
       "main": [
         "massautocomplete.min.js",
         "massautocomplete.theme.css"
-      ]
-    },
-    "highmaps-release": {
-      "main": [
-        "modules/map.js"
       ]
     },
     "intro.js": {

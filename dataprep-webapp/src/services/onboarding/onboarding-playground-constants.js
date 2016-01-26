@@ -5,25 +5,25 @@
         {
             element: '.no-js',
             title: '<center>Welcome to the dataset view</center>',
-            content: 'This grid corresponds to a sample extracted from your data.</br>From this view you can prepare the transformations to apply to your data.',
+            content: 'This table represents the raw data contained in your dataset.</br>From this view, you can prepare the modifications to apply on your dataset.',
             position: 'right'
         },
         {
             element: '#datagrid .slick-header-columns-right > .slick-header-column',
             title: '',
-            content: 'Select a column to discover the transformation actions you can apply to the data.',
+            content: 'Select a column to discover the transformation functions you can apply to your data.',
             position: 'right'
         },
         {
             element: '#datagrid .quality-bar',
             title: '',
-            content: 'Use the bar below to identify:<ul><li> - valid records (in green),</li><li> - empty records (in white)</li><li> - invalid records (in orange).</li></ul>Click one of the record types to perform actions on it.',
+            content: 'Use this quality bar to identify:<ul><li> - valid records (in green),</li><li> - empty records (in white)</li><li> - invalid records (in orange).</li></ul>Click one of the record types to apply functions on it.',
             position: 'right'
         },
         {
             element: '#help-suggestions > .actions-suggestions',
             title: '',
-            content: 'Click one of the available actions to perform it on the column you selected.</br>Do not worry, you will be able to undo or change it whenever you want.',
+            content: 'Click one of the available functions to perform it on the column you selected.</br>Don\'t worry, you will be able to undo or change it whenever you want.',
             position: 'left'
         },
         {
@@ -33,16 +33,10 @@
             position: 'left'
         },
         {
-            element: '#playground-feedback-icon',
+            element: '#playground-lookup-icon',
             title: '',
-            content: 'Click here to send feedback to Talend.',
+            content: 'Click here to link two datasets. It will help you to dynamically use the data from the second dataset to complement the main one.</br>For example, you can use it to add all US State abbreviations alongside the full name of the State.',
             position: 'bottom'
-        },
-        {
-            element: 'talend-modal[state="playgroundCtrl.state.playground.visible"] .modal-header-close',
-            title: '',
-            content: 'Click here to close your dataset.',
-            position: 'left'
         }
     ];
 

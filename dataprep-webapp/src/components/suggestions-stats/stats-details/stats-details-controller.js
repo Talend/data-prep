@@ -5,13 +5,16 @@
      * @ngdoc controller
      * @name data-prep.stats-details.controller:StatsDetailsCtrl
      * @description Statistics details
+     * @requires data-prep.services.filter.service:FilterService
      * @requires data-prep.services.statisticsService.service:StatisticsService
+     * @requires data-prep.services.statisticsService.service:StatisticsTooltipService
      */
-    function StatsDetailsCtrl(StatisticsService, state, FilterService) {
+    function StatsDetailsCtrl(state, FilterService, StatisticsService, StatisticsTooltipService) {
         var vm = this;
         vm.state = state;
         vm.statisticsService = StatisticsService;
-        
+        vm.statisticsTooltipService = StatisticsTooltipService;
+
         /**
          * @ngdoc method
          * @name addPatternFilter
@@ -28,24 +31,6 @@
                 FilterService.addFilterAndDigest('empty_records', column.id, column.name);
         };
     }
-
-    Object.defineProperty(StatsDetailsCtrl.prototype,
-        'statistics', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.statisticsService.statistics;
-            }
-        });
-
-    Object.defineProperty(StatsDetailsCtrl.prototype,
-        'boxPlot', {
-            enumerable: true,
-            configurable: false,
-            get: function () {
-                return this.statisticsService.boxPlot;
-            }
-        });
 
     angular.module('data-prep.stats-details')
         .controller('StatsDetailsCtrl', StatsDetailsCtrl);

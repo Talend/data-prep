@@ -21,7 +21,9 @@
      *
      *    secondary-data="secondaryData"
      *    secondary-value-field="filteredOccurrences"
-     *    secondary-bar-class="greenBar">
+     *    secondary-bar-class="greenBar"
+     *
+     *    tooltip-content="getTooltipContent(keyLabel, key, primaryValue, secondaryValue)">
      * </horizontal-barchart>
      * @param {number}      width The chart width
      * @param {number}      height The chart height
@@ -34,6 +36,7 @@
      * @param {array}       secondaryData The secondary value array to render
      * @param {string}      secondaryValueField The secondary value property name in secondaryData
      * @param {string}      secondaryBarClass The secondary chart bar class name. Default: 'blueBar'
+     * @param {function}    tooltipContent The tooltip content generator. It can take 4 infos : keyLabel (the label), key (the key), primaryValue (the selected primary value), secondaryValue (the selected secondary value)
      * */
 
     function HorizontalBarchart() {
@@ -48,7 +51,8 @@
                 primaryBarClass: '@',
                 secondaryData: '=',
                 secondaryValueField: '@',
-                secondaryBarClass: '@'
+                secondaryBarClass: '@',
+                tooltipContent: '&'
             },
             link: function (scope, element, attrs) {
                 var BAR_MIN_WIDTH = 3;
@@ -65,14 +69,14 @@
                 var tooltip = d3.tip()
                     .attr('class', 'horizontal-barchart-cls d3-tip')
                     .offset([-10, 0])
-                    .html(function (d) {
-                        var key = getKey(d);
-                        var primaryValue = getPrimaryValue(d);
-                        var secondaryValue = getSecondaryValueFromKey(key);
-
-                        return '<strong>' + scope.keyLabel + ':</strong> <span style="color:yellow">' + (secondaryValue ? secondaryValue + ' / ' : '') + primaryValue + '</span>' +
-                            '<br/><br/>' +
-                            '<strong>Record:</strong> <span style="color:yellow">' + key + '</span>';
+                    .html(function (primaryDatum, index) {
+                        var secondaryDatum = scope.secondaryData ? scope.secondaryData[index] : undefined;
+                        return scope.tooltipContent({
+                            keyLabel: scope.keyLabel,
+                            key: getKey(primaryDatum),
+                            primaryValue: getPrimaryValue(primaryDatum),
+                            secondaryValue: secondaryDatum && getSecondaryValue(secondaryDatum)
+                        });
                     });
 
                 //------------------------------------------------------------------------------------------------------
@@ -88,18 +92,6 @@
 
                 function getSecondaryValue(data) {
                     return data[scope.secondaryValueField];
-                }
-
-                function getSecondaryValueFromKey(key) {
-                    var secondaryData = scope.secondaryData;
-                    if (!secondaryData) {
-                        return 0;
-                    }
-
-                    var secondaryDataItem = _.find(secondaryData, function (dataItem) {
-                        return getKey(dataItem) === key;
-                    });
-                    return secondaryDataItem ? getSecondaryValue(secondaryDataItem) : 0;
                 }
 
                 //------------------------------------------------------------------------------------------------------
@@ -262,16 +254,17 @@
                         .attr('height', yScale.rangeBand() + 4)
                         .attr('class', 'bg-rect')
                         .style('opacity', 0)
-                        .on('mouseenter', function (d) {
+                        .on('mouseenter', function (d, i) {
                             d3.select(this).style('opacity', 0.4);
-                            tooltip.show(d);
+                            tooltip.show(d, i);
                         })
                         .on('mouseleave', function (d) {
                             d3.select(this).style('opacity', 0);
                             tooltip.hide(d);
                         })
                         .on('click', function (d) {
-                            scope.onClick({item: d});
+                            //create a new reference as the data object could be modified outside the component
+                            scope.onClick({item: _.extend({}, d)});
                         });
                 }
 

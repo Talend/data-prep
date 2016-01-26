@@ -161,10 +161,9 @@ describe('Playground directive', function () {
             expect(playgroundModal.find('.modal-header').eq(0).find('li').eq(0).find('span').eq(1).text().trim()).toBe('- cut at 50 lines');
         });
 
-        it('should render enterprise playground header', function () {
+        it('should render insertion playground left header', function () {
             //given
             stateMock.playground.dataset = metadata;
-            stateMock.enterprise = true;
 
             //when
             createElement();
@@ -172,10 +171,7 @@ describe('Playground directive', function () {
             //then
             var playground = angular.element('body').find('.playground').eq(0);
             var playgroundModal = playground.parent();
-
-            //check header is present and contains description and insertion point
-            expect(playgroundModal.find('.modal-header').eq(0).find('.left-header > li').length).toBe(2);
-            expect(playgroundModal.find('.modal-header').eq(0).find('.left-header > li').eq(1)[0].hasAttribute('insertion-playground-header-1')).toBe(true);
+            expect(playgroundModal.find('.modal-header').eq(0).find('.left-header').eq(0)[0].hasAttribute('insertion-playground-left-header')).toBe(true);
         });
     });
 

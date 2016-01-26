@@ -64,26 +64,40 @@ public class Substring extends ActionMetadata implements ColumnAction {
      */
     @Override
     public List<Parameter> getParameters() {
-        List<Parameter> parameters = ImplicitParameters.getParameters();
+        final Parameter fromIndexParameters = new Parameter(FROM_INDEX_PARAMETER, ParameterType.INTEGER, "0");
+        final Parameter fromNBeforeEndParameters = new Parameter(FROM_N_BEFORE_END_PARAMETER, ParameterType.INTEGER, "5");
+        final Parameter toIndexParameters = new Parameter(TO_INDEX_PARAMETER, ParameterType.INTEGER, "5");
+        final Parameter toNBeforeEndParameters = new Parameter(TO_N_BEFORE_END_PARAMETER, ParameterType.INTEGER, "1");
 
-        // from parameter
-        parameters.add(SelectParameter.Builder.builder() //
-                .name(FROM_MODE_PARAMETER) //
-                .item(FROM_BEGINNING) //
-                .item(FROM_INDEX_PARAMETER, new Parameter(FROM_INDEX_PARAMETER, ParameterType.INTEGER, "0")) //
-                .item(FROM_N_BEFORE_END_PARAMETER, new Parameter(FROM_N_BEFORE_END_PARAMETER, ParameterType.INTEGER, "5")) //
-                .defaultValue(FROM_BEGINNING) //
-                .build());
-
-        // to parameter
-        parameters.add(SelectParameter.Builder.builder() //
+        // "to" parameter with all possible values
+        final Parameter toCompleteParameters = SelectParameter.Builder.builder() //
                 .name(TO_MODE_PARAMETER) //
                 .item(TO_END) //
-                .item(TO_INDEX_PARAMETER, new Parameter(TO_INDEX_PARAMETER, ParameterType.INTEGER, "5")) //
-                .item(TO_N_BEFORE_END_PARAMETER, new Parameter(TO_N_BEFORE_END_PARAMETER, ParameterType.INTEGER, "1")) //
+                .item(TO_INDEX_PARAMETER, toIndexParameters) //
+                .item(TO_N_BEFORE_END_PARAMETER, toNBeforeEndParameters) //
                 .defaultValue(TO_INDEX_PARAMETER) //
-                .build());
+                .build();
 
+        // "to" parameter with possible values for "From N Before End" selection
+        // the "to index" option should not be available
+        final Parameter toParametersWithoutIndexSelection = SelectParameter.Builder.builder() //
+                .name(TO_MODE_PARAMETER) //
+                .item(TO_END) //
+                .item(TO_N_BEFORE_END_PARAMETER, toNBeforeEndParameters) //
+                .defaultValue(TO_END) //
+                .build();
+
+        // "from" parameter
+        final Parameter fromParameters = SelectParameter.Builder.builder() //
+                .name(FROM_MODE_PARAMETER) //
+                .item(FROM_BEGINNING, toCompleteParameters) // has all the "To" choices
+                .item(FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all the "To" choices
+                .item(FROM_N_BEFORE_END_PARAMETER, fromNBeforeEndParameters, toParametersWithoutIndexSelection) // cannot choose "To index"
+                .defaultValue(FROM_BEGINNING) //
+                .build();
+
+        final List<Parameter> parameters = ImplicitParameters.getParameters();
+        parameters.add(fromParameters);
         return parameters;
     }
 

@@ -224,6 +224,8 @@
   "SELECT_PATTERN_IS": "The selected pattern is: ",
   "FILTERING_COMING_SOON": "Filtering is coming soon.",
   "REFRESHING_WAIT": "refreshing, please wait...",
+  "TOOLTIP_MATCHING_FILTER" : "matching your filter",
+  "TOOLTIP_MATCHING_FULL" : "in entire dataset",
 
   "_comment": "Dataset actions",
   "REPLACE_FILE_CONTENT": "Update dataset with another file",

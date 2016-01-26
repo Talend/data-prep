@@ -5,14 +5,14 @@
         {
             element: '#help-preparation-name',
             title: '',
-            content: 'You can give a name to your brand new preparation.</br>It will be listed in the <b>All preparations</b> view.',
+            content: 'You can give a name to your brand new preparation.</br>It will be listed in the <b>All Preparations</b> view.',
             position: 'right',
             tooltipPosition: 'right'
         },
         {
             element: '#help-recipe > ul',
             title: '',
-            content: 'Here is your recipe, it represents the steps of your preparation.</br> This is the place where you can:<ul><li> - delete a step,</li><li> - preview changes performed by each step,</li><li> - change an existing step,</li><li> - activate or deactivate steps.</li></ul>',
+            content: 'Here is your recipe. A recipe is literally defined as "a set of directions with a list of ingredients for making or preparing something".</br>In Talend Data Preparation, the ingredients are the raw data, called datasets, and the directions are the set of functions applied to the dataset.</br>Here you can preview, edit, delete, activate or deactivate every function included in the recipe you created.',
             position: 'right'
         },
         {
@@ -20,6 +20,12 @@
             title: '',
             content: 'And don\'t worry, at any time, you can undo or redo your last changes.',
             position: 'left'
+        },
+	{
+            element: '.no-js',
+            title: '',
+            content: 'Don\'t look for a save button: every change you make is automatically saved.',
+            position: 'right'
         }
     ];
 

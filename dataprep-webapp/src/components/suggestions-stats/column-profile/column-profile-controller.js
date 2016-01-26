@@ -7,14 +7,17 @@
      * @description Column profile controller.
      * @requires data-prep.services.state.constant:state
      * @requires data-prep.statistics.service:StatisticsService
+     * @requires data-prep.statistics.service:StatisticsTooltipService
      * @requires data-prep.services.filter.service:FilterService
      * @requires data-prep.services.playground.service:PlaygroundService
      */
-    function ColumnProfileCtrl($scope, $timeout, state, StatisticsService, FilterService, PlaygroundService) {
+    function ColumnProfileCtrl($timeout, state, StatisticsService, StatisticsTooltipService, FilterService, PlaygroundService) {
         var vm = this;
         vm.statisticsService = StatisticsService;
         vm.state = state;
         vm.chartConfig = {};
+        vm.statisticsTooltipService = StatisticsTooltipService;
+
 
         //------------------------------------------------------------------------------------------------------
         //------------------------------------------------FILTER------------------------------------------------
@@ -107,108 +110,12 @@
                 return;
             }
 
-            StatisticsService.processAggregation(column, aggregation);
-        };
-
-        //------------------------------------------------------------------------------------------------------
-        //----------------------------------------------GEO CHARTS ---------------------------------------------
-        //------------------------------------------------------------------------------------------------------
-        /**
-         * Common highcharts options
-         * @param clickFn - the click callback
-         * @returns {{exporting: {enabled: boolean}, legend: {enabled: boolean}}}
-         */
-        var initCommonChartOptions = function (clickFn) {
-            return {
-                credits: {
-                    enabled: false
-                },
-                exporting: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                plotOptions: {
-                    series: {
-                        cursor: 'pointer',
-                        point: {
-                            events: {
-                                click: clickFn
-                            }
-                        }
-                    }
-                }
-            };
-        };
-
-        /**
-         * Geo specific highcharts options
-         * @param clickFn - the click callback
-         * @param min - min value (defined for color)
-         * @param max - max value (defined for color)
-         * @returns {{exporting, legend}|{exporting: {enabled: boolean}, legend: {enabled: boolean}}}
-         */
-        var initGeoChartOptions = function (clickFn, min, max) {
-            var options = initCommonChartOptions(clickFn);
-
-            options.tooltip = {
-                enabled: true,
-                headerFormat: '',
-                pointFormat: '{point.name}: <b>{point.value}</b>'
-            };
-            options.colorAxis = {
-                min: min,
-                max: max
-            };
-            options.mapNavigation = {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
-                }
-            };
-
-            return options;
-        };
-
-        /**
-         * Init a geo distribution chart
-         * @param column
-         */
-        var buildGeoDistribution = function (column) {
-            var geoChartAction = function () {
-                console.log('State: ' + this['hc-key'] + ', value: ' + this.value);
-                return addExactFilter(this['hc-key'].substring(3));
-            };
-
-            vm.stateDistribution = StatisticsService.getGeoDistribution(column);
-
-            var data = vm.stateDistribution.data;
-            var min = data[data.length - 1].value;
-            var max = data[0].value;
-
-            vm.chartConfig = {
-                options: initGeoChartOptions(geoChartAction, min, max),
-                chartType: 'map',
-                title: {text: column.name + ' distribution'},
-                series: [
-                    {
-                        id: column.id,
-                        data: data,
-                        mapData: Highcharts.maps[vm.stateDistribution.map],
-                        joinBy: 'hc-key',
-                        states: {
-                            hover: {
-                                color: '#BADA55'
-                            }
-                        }
-                    }
-                ],
-                size: {
-                    width: 300,
-                    height: 400
-                }
-            };
+            if(aggregation) {
+                StatisticsService.processAggregation(column, aggregation);
+            }
+            else {
+                StatisticsService.processClassicChart();
+            }
         };
 
         //------------------------------------------------------------------------------------------------------
@@ -241,24 +148,6 @@
         if (shouldFetchStatistics()) {
             fetchStatistics();
         }
-        //------------------------------------------------------------------------------------------------------
-        //-------------------------------------------------WATCHERS---------------------------------------------
-        //------------------------------------------------------------------------------------------------------
-        /**
-         * Init chart on column selection change
-         */
-        $scope.$watch(
-            function () {
-                return StatisticsService.stateDistribution;
-            },
-            function (column) {
-                vm.stateDistribution = null;
-                if (column) {
-                    buildGeoDistribution(column);
-                }
-            }
-        );
-
     }
 
     /**

@@ -6,6 +6,7 @@ module.exports = function(config){
 
     // Override base config
     config.set({
+        browserNoActivityTimeout: 60000,
         reporters: ['progress', 'coverage', 'junit'],
         coverageReporter : {
  			type : 'cobertura',

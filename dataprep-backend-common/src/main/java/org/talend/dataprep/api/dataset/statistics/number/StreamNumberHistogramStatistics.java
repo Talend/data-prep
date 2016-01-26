@@ -164,14 +164,31 @@ public class StreamNumberHistogramStatistics {
      */
     private void turnSingularsToRegulars() {
         regulars = new long[numberOfBins];
-        binSize = (max - min) * 2 / numberOfBins;
-        lowerBound = min;
+        double histogramSize = (max - min) * 2;
+        binSize = histogramSize / numberOfBins;
+
+        if (binSize > 1) {
+            binSize = Math.ceil(binSize);
+            lowerBound = Math.floor(min);
+        } else {
+            double accurateDouble = 1.0;
+            while (binSize < (accurateDouble / 2)) {
+                accurateDouble /= 2;
+            }
+            binSize = accurateDouble;
+            // if we can use a integer as lower bound then use it
+            lowerBound = Math.floor(min);
+            if ( lowerBound + (numberOfBins * binSize) <= max){
+                lowerBound = min;
+            }
+        }
+
         for (int i = 0; i < numberOfBins; i++) {
             regulars[i] = 0L;
         }
 
         for (Map.Entry<Double, Long> entry : singulars.entrySet()) {
-            int bin = (int) ((entry.getKey() - min) / binSize);
+            int bin = (int) ((entry.getKey() - lowerBound) / binSize);
             regulars[bin] += entry.getValue();
         }
     }

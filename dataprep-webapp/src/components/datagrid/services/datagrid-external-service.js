@@ -56,7 +56,7 @@
 
                 //reset charts if we have no selected column
                 if(!lastSelectedColumn) {
-                    StatisticsService.reset(true, true, true);
+                    StatisticsService.reset();
                 }
 
                 //update line scope transformations if line has changed

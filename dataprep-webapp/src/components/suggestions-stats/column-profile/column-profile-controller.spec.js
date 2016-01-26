@@ -202,6 +202,21 @@ describe('ColumnProfile controller', function () {
             expect(StatisticsService.processAggregation).toHaveBeenCalledWith(column, aggregation);
         }));
 
+        it('should switch to classical chart', inject(function (StatisticsService) {
+            //given
+            spyOn(StatisticsService, 'processAggregation').and.returnValue();
+            spyOn(StatisticsService, 'processClassicChart').and.returnValue();
+            var ctrl = createController();
+            var column = {id: '0001'};
+
+            //when
+            ctrl.changeAggregation(column);
+
+            //then
+            expect(StatisticsService.processAggregation).not.toHaveBeenCalled();
+            expect(StatisticsService.processClassicChart).toHaveBeenCalled();
+        }));
+
         it('should do nothing if the current histogram is already the wanted aggregation', inject(function (StatisticsService) {
             //given
             var column = {id: '0001'};

@@ -60,6 +60,9 @@
             updateFilteredTransformations: SuggestionsStateService.updateFilteredTransformations,
 
             //statistics
+            setStatisticsBoxPlot: StatisticsStateService.setBoxPlot,
+            setStatisticsDetails: StatisticsStateService.setDetails,
+            setStatisticsRangeLimits: StatisticsStateService.setRangeLimits,
             setStatisticsHistogram: StatisticsStateService.setHistogram,
             setStatisticsFilteredHistogram: StatisticsStateService.setFilteredHistogram,
             setStatisticsHistogramActiveLimits: StatisticsStateService.setHistogramActiveLimits,

@@ -88,7 +88,7 @@ describe('Onboarding service', function() {
         expect(options.steps[0]).toEqual({
             element: '.no-js',
             position: 'right',
-            intro: '<div class="introjs-tooltiptitle"><center>Welcome to the dataset view</center></div><div class="introjs-tooltipcontent">This grid corresponds to a sample extracted from your data.</br>From this view you can prepare the transformations to apply to your data.</div>'
+            intro: '<div class="introjs-tooltiptitle"><center>Welcome to the dataset view</center></div><div class="introjs-tooltipcontent">This table represents the raw data contained in your dataset.</br>From this view, you can prepare the modifications to apply on your dataset.</div>'
         });
     }));
 
@@ -102,7 +102,7 @@ describe('Onboarding service', function() {
         expect(options.steps[1]).toEqual({
             element: '#datagrid .slick-header-columns-right > .slick-header-column',
             position: 'right',
-            intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">Select a column to discover the transformation actions you can apply to the data.</div>'
+            intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">Select a column to discover the transformation functions you can apply to your data.</div>'
         });
     }));
 
@@ -116,7 +116,7 @@ describe('Onboarding service', function() {
         expect(options.steps[0]).toEqual({
             element: '#help-preparation-name',
             position: 'right',
-            intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">You can give a name to your brand new preparation.</br>It will be listed in the <b>All preparations</b> view.</div>'
+            intro: '<div class="introjs-tooltiptitle"></div><div class="introjs-tooltipcontent">You can give a name to your brand new preparation.</br>It will be listed in the <b>All Preparations</b> view.</div>'
         });
     }));
 

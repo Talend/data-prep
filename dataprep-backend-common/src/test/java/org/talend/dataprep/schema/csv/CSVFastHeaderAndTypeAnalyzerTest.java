@@ -26,6 +26,16 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         Locale.setDefault(previousLocale);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void should_not_construct_object_with_null_sample(){
+        new CSVFastHeaderAndTypeAnalyzer(null, new Separator(';'));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void should_not_construct_object_with_null_separator(){
+        new CSVFastHeaderAndTypeAnalyzer(null, new Separator(';'));
+    }
+
     @Test
     public void should_neither_detect_type_nor_first_line_header_when_sample_is_empty() {
         // given
@@ -45,7 +55,7 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
     @Test
     public void should_detect_type_without_first_line_header_when_sample_has_one_line() {
         // given
-        String firstRecord = "0001;Toto; Hello;1,000.02";
+        String firstRecord = "0001;Toto; Hello;1,000.02;false;;";
         List<String> list = Collections.singletonList(firstRecord);
         Separator separator = new Separator(';');
 
@@ -53,9 +63,10 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         CSVFastHeaderAndTypeAnalyzer analysis = new CSVFastHeaderAndTypeAnalyzer(list, separator);
 
         // then
-        List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE);
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().values().toArray());
+        List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE, Type.BOOLEAN, Type.STRING);
         Assert.assertFalse(analysis.isFirstLineAHeader());
+        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().values().toArray());
+
     }
 
     @Test
@@ -71,8 +82,10 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
 
         // then
         List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE);
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().values().toArray());
         Assert.assertFalse(analysis.isFirstLineAHeader());
+        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().values().toArray());
+        Assert.assertTrue(analysis.isHeaderInfoReliable());
+
     }
 
     @Test
@@ -149,7 +162,7 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
     @Test
     public void should_strip_quotes_in_header() {
         // given
-        List<String> list = Arrays.asList("\"user_id\";birth\";\"country;page_visited;first_item",
+        List<String> list = Arrays.asList("\"user_id\";\"birth\";\"country\";page_visited;first_item",
                 "4dc1548af;11/9/1970;France;6.0;22.0");
         Separator separator = new Separator(';');
         separator.incrementCount(1);
@@ -159,6 +172,24 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
 
         // then
         List<String> expectedHeaders = Arrays.asList("user_id", "birth", "country", "page_visited", "first_item");
+        Assert.assertArrayEquals(expectedHeaders.toArray(), analysis.getHeaders().keySet().toArray());
+    }
+
+    @Test
+    public void should_not_detect_first_line_as_column() {
+        // given
+        List<String> list = Arrays.asList("\"1000800\",\"2.0 PET X8 LIFT SOUR CHERRY\"",
+                "\"1001000\",\"1.0 RGB X12 COCA COLA\"", "\"1001300\",\"2.0 PET X6 LILIA\"");
+        Separator separator = new Separator(',');
+        separator.incrementCount(1);
+        separator.incrementCount(2);
+        separator.incrementCount(3);
+
+        // when
+        CSVFastHeaderAndTypeAnalyzer analysis = new CSVFastHeaderAndTypeAnalyzer(list, separator);
+
+        // then
+        List<String> expectedHeaders = Arrays.asList("COL1", "COL2");
         Assert.assertArrayEquals(expectedHeaders.toArray(), analysis.getHeaders().keySet().toArray());
     }
 }

@@ -147,7 +147,7 @@ describe('Datagrid external service', function () {
                 $timeout.flush(300);
 
                 //then
-                expect(StatisticsService.reset).toHaveBeenCalledWith(true, true, true);
+                expect(StatisticsService.reset).toHaveBeenCalled();
             }));
 
             it('should update charts when there is a selected column', inject(function($timeout, DatagridExternalService, StatisticsService) {

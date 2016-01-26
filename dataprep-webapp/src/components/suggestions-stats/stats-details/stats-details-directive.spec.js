@@ -1,9 +1,16 @@
 describe('stats details directive', function () {
     'use strict';
 
-    var scope, element, createElement;
+    var stateMock, scope, element, createElement;
 
-    beforeEach(module('data-prep.stats-details'));
+    beforeEach(module('data-prep.stats-details', function ($provide) {
+        stateMock = {
+            playground: {
+                statistics: {}
+            }
+        };
+        $provide.constant('state', stateMock);
+    }));
     beforeEach(module('htmlTemplates'));
 
     beforeEach(inject(function ($rootScope, $compile) {
@@ -22,11 +29,11 @@ describe('stats details directive', function () {
         element.remove();
     });
 
-    it('should render stats', inject(function (StatisticsService) {
+    it('should render stats', function () {
         //given
         createElement();
 
-        StatisticsService.statistics = {
+        stateMock.playground.statistics.details = {
             common: {
                 COUNT: 4,
                 DISTINCT_COUNT: 5,
@@ -62,5 +69,5 @@ describe('stats details directive', function () {
         expect(element.find('.stat-table').eq(1).find('tr').eq(1).text().trim().replace(/ /g,'')).toBe('MAX:\n11');
         expect(element.find('.stat-table').eq(1).find('tr').eq(2).text().trim().replace(/ /g,'')).toBe('MEAN:\n12');
         expect(element.find('.stat-table').eq(1).find('tr').eq(3).text().trim().replace(/ /g,'')).toBe('VARIANCE:\n13');
-    }));
+    });
 });

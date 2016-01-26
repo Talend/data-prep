@@ -216,4 +216,43 @@ public class StreamNumberHistogramStatisticsTest {
         assertTrue(max.compareTo(new Range(4, 8)) == 0);
     }
 
+    @Test
+    public void shouldHaveAccurateBinSizeWhenUsingValuesWithinSuccessiveIntegers() {
+        // given
+        final StreamNumberHistogramStatistics histogram = new StreamNumberHistogramStatistics();
+        histogram.setNumberOfBins(2);
+        histogram.add(0.03);
+        histogram.add(0.035);
+        histogram.add(0.045);
+        histogram.add(0.04);
+        histogram.add(0.05);
+
+        // expected
+        ArrayList<Range> ranges = new ArrayList<>(histogram.getHistogram().keySet());
+        Range min = ranges.get(0);
+        Range max = ranges.get(ranges.size() - 1);
+
+        assertTrue(min.compareTo(new Range(0.03, 0.045625)) == 0);
+        assertTrue(max.compareTo(new Range(0.045625, 0.06125)) == 0);
+    }
+
+    @Test
+    public void shouldHaveIntegerBinSizeWhenBinSizeExceedOne() {
+        // given
+        final StreamNumberHistogramStatistics histogram = new StreamNumberHistogramStatistics();
+        histogram.setNumberOfBins(2);
+        histogram.add(0);
+        histogram.add(1);
+        histogram.add(2);
+        histogram.add(3);
+        histogram.add(4);
+
+        // expected
+        ArrayList<Range> ranges = new ArrayList<>(histogram.getHistogram().keySet());
+        Range min = ranges.get(0);
+        Range max = ranges.get(ranges.size() - 1);
+
+        assertTrue(min.compareTo(new Range(0, 4)) == 0);
+        assertTrue(max.compareTo(new Range(4, 8)) == 0);
+    }
 }

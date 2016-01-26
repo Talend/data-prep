@@ -273,7 +273,7 @@
         color: $navigation-color;
 
         >ul {
-          >li {
+          >* {
             display: table-cell;
             line-height: $navigation-height - $navigation-border-height;
             padding-left: $navigation-item-space;

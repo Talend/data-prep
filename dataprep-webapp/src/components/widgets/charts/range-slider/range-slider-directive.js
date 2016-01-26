@@ -11,8 +11,8 @@
      *             id="domId"
      *             width="300"
      *             height="100"
-     *             range-limits="statsDetailsCtrl.rangeLimits"
-     *             on-brush-end="statsDetailsCtrl.onBrushEndFn"
+     *             range-limits="rangeLimits"
+     *             on-brush-end="onBrushEndFn(interval)"
      *         ></range-slider>
      * @param {string} id The element id
      * @param {number} width The width of the slider

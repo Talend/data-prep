@@ -1,8 +1,15 @@
 package org.talend.dataprep.schema.csv;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import au.com.bytecode.opencsv.CSVReader;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.type.Type;
 
 /**
@@ -12,6 +19,8 @@ import org.talend.dataprep.api.type.Type;
  * performs baseline (very simple) type detection based upon the sample of records.
  */
 public class CSVFastHeaderAndTypeAnalyzer {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CSVFastHeaderAndTypeAnalyzer.class);
 
     /**
      * Used to mark a field as absent in a record (line).
@@ -88,8 +97,12 @@ public class CSVFastHeaderAndTypeAnalyzer {
      */
     public CSVFastHeaderAndTypeAnalyzer(List<String> sampleLines, Separator separator) {
         if (sampleLines == null || sampleLines.isEmpty()){
-            throw  new IllegalArgumentException("The sample used for analysis should neither be null nor empty!");
+            throw  new IllegalArgumentException("The sample used for analysis must neither be null nor empty!");
         }
+        if ( separator == null){
+            throw  new IllegalArgumentException("The separator used for analysis must not be null!");
+        }
+
         this.sampleLines = sampleLines;
         this.separator = separator;
         sampleTypes = setFieldTypes();
@@ -103,6 +116,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
     private List<Integer>[] setFieldTypes() {
         List<Integer>[] result = new ArrayList[sampleLines.size()];
         for (int i = 0; i < sampleLines.size(); i++) {
+
             result[i] = setFieldType(i);
             if (result[i].size() > maxFields) {
                 maxFields = result[i].size();
@@ -124,14 +138,15 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * @return the list of types of the record
      */
     private List<Integer> setFieldType(int i) {
-        ArrayList<Integer> result = new ArrayList<>();
-        String s = (i < sampleLines.size()) ? sampleLines.get(i) : null;
-        if (s == null) {
-            return null;
+        List<Integer> result = new ArrayList<>();
+        String line = (i < sampleLines.size() ? sampleLines.get(i) : null);
+        if (StringUtils.isEmpty(line)) {
+            return result;
         }
-        Scanner scanner = new Scanner(s);
-        scanner.useDelimiter(separator.getSeparator() + "");
-        while (scanner.hasNext()) {
+        List<String> fields = readLine(line);
+        for (String field: fields) {
+            Scanner scanner = new Scanner(field);
+            scanner.useDelimiter(separator.getSeparator() + "");
             // called integer but we are looking for long in Java parlance
             if (scanner.hasNextLong()) {
                 result.add(INTEGER);
@@ -143,14 +158,41 @@ public class CSVFastHeaderAndTypeAnalyzer {
                 result.add(BOOLEAN);
                 scanner.next();
             } else {
-                String field = scanner.next();
-                switch (field) {
+                String text = scanner.hasNext() ? scanner.next() : StringUtils.EMPTY;
+                switch (text) {
                 case "":
                     result.add(EMPTY);
                     break;
                 default: // used to detect a stable length of a field (may be it is a date or a pattern)
-                    result.add(field.length());
+                    result.add(text.length());
                 }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Extracts fields from a line, using CSVReader.
+     *
+     * @param line line as it's in the CSV raw file
+     * @return a list of ordered fields
+     */
+    private List<String> readLine(String line){
+        List<String> result = Collections.emptyList();
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(IOUtils.toInputStream(line)), separator.getSeparator())) {
+            String[] fields = csvReader.readNext();
+            csvReader.close();
+            if (fields != null && fields.length != 0) {
+                result = Arrays.asList(fields).stream().collect(Collectors.toList());
+            }
+        } catch (IOException e) {
+            LOGGER.info("Unable to read line {i} of sample", line);
+        }
+        // remove last fields if it is empty
+        int size = result.size();
+        if (size > 0) {
+            if (StringUtils.isEmpty(result.get(size - 1))) {
+                result.remove(size - 1);
             }
         }
         return result;
@@ -294,12 +336,11 @@ public class CSVFastHeaderAndTypeAnalyzer {
             headers = new LinkedHashMap<>();
             if (firstLineAHeader) {
                 List<Type> columnTypes = columnTypingWithoutFirstRecord();
-                Scanner scanner = new Scanner(sampleLines.get(0));
-                scanner.useDelimiter(separator.getSeparator() + "");
+
+                List<String> firstLine = readLine(sampleLines.get(0));
                 int i = 0;
-                while (scanner.hasNext()) {
-                    String col = stripQuotes(scanner.next());
-                    headers.put(col, columnTypes.get(i++));
+                for(String field: firstLine) {
+                    headers.put(field, columnTypes.get(i++));
                 }
             } else {
                 List<Type> columnTypes = allRecordsColumnTyping();
@@ -311,16 +352,6 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
         }
         analysisPerformed = true;
-    }
-
-    /**
-     * Remove the "quotes" around the given string if any.
-     * 
-     * @param input the string to strip.
-     * @return the stripped input string.
-     */
-    private String stripQuotes(String input) {
-        return StringUtils.strip(input, "\"");
     }
 
     /**

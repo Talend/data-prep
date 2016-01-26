@@ -9,14 +9,10 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -379,7 +375,6 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
      * data format as defined and don't directly use {@link Cell#getNumericCellValue()}.
      * </p>
      * 
-     * @see XlsUtils#getCellValueAsString(Cell)
      */
     @Test
     public void testGeneralNumberFormat_TDP_222() throws Exception {
@@ -492,27 +487,6 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
         Assertions.assertThat(values.get(30).get("0003")).isNotEmpty().isEqualTo("6.0");
 
         Assertions.assertThat(values.get(31).get("0003")).isNotEmpty().isEqualTo("18.5");
-
-    }
-
-
-
-    @Test
-    public void read_xls_TDP_1136() throws Exception {
-
-        String fileName = "sales-force.xls";
-
-        FormatGuess formatGuess;
-
-        String str = IOUtils.toString( this.getClass().getResourceAsStream( fileName), "UTF-16" );
-
-        Document document = Jsoup.parse( str );
-
-        Elements elements = document.select( "tr" );
-        elements.stream().forEach( element ->
-                                   {
-                                       logger.debug( "element: {}", element.html() );
-                                   });
 
     }
 

@@ -59,7 +59,7 @@ public class HtmlSchemaParser implements SchemaParser {
             for (Element header : headers) {
                 LOGGER.debug("header: {}", header);
                 columnMetadatas.add(ColumnMetadata.Builder.column() //
-                        .type(Type.STRING) // TODO ATM not doing any complicated type calculation
+                        .type(Type.STRING) // TODO ? ATM not doing any complicated type calculation
                         .name(header.text()) //
                         .id(id) //
                         .build());

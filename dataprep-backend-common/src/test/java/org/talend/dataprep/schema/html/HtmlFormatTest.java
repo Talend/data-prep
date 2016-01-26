@@ -11,10 +11,13 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.data.MapEntry;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.IoTestUtils;
 import org.talend.dataprep.schema.SchemaParser;
@@ -53,8 +56,26 @@ public class HtmlFormatTest extends AbstractSchemaTestUtils {
 
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(result.getSheetContents()).isNotNull().isNotEmpty().hasSize(1);
-        Assertions.assertThat(result.getSheetContents().get(0).getColumnMetadatas()).isNotNull().isNotEmpty().hasSize(7);
+        List<ColumnMetadata> columnMetadatas = result.getSheetContents().get(0).getColumnMetadatas();
+        Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(7);
 
+        Assertions.assertThat(columnMetadatas.get(0)) //
+                .isEqualToComparingOnlyGivenFields(
+                        ColumnMetadata.Builder.column() //
+                                .type(Type.STRING).id(0).name("UID").build(), //
+                        "id", "name", "type");
+
+        Assertions.assertThat(columnMetadatas.get(1)) //
+                .isEqualToComparingOnlyGivenFields(
+                        ColumnMetadata.Builder.column() //
+                                .type(Type.STRING).id(1).name("Team Member: Name").build(), //
+                        "id", "name", "type");
+
+        Assertions.assertThat(columnMetadatas.get(2)) //
+                .isEqualToComparingOnlyGivenFields(
+                        ColumnMetadata.Builder.column() //
+                                .type(Type.STRING).id(2).name("Country").build(), //
+                        "id", "name", "type");
     }
 
     @Test
@@ -73,9 +94,9 @@ public class HtmlFormatTest extends AbstractSchemaTestUtils {
         datasetMetadata.getContent().setParameters(parameters);
 
         SchemaParserResult result = parser
-            .parse(new SchemaParser.Request(this.getClass().getResourceAsStream(fileName), datasetMetadata));
+                .parse(new SchemaParser.Request(this.getClass().getResourceAsStream(fileName), datasetMetadata));
 
-        datasetMetadata.getRowMetadata().setColumns( result.getSheetContents().get( 0 ).getColumnMetadatas() );
+        datasetMetadata.getRowMetadata().setColumns(result.getSheetContents().get(0).getColumnMetadatas());
 
         InputStream jsonStream = serializer.serialize(this.getClass().getResourceAsStream(fileName), datasetMetadata);
 
@@ -91,6 +112,12 @@ public class HtmlFormatTest extends AbstractSchemaTestUtils {
 
         logger.debug("values: {}", values);
 
+        Map<String, String> row0 = values.get(0);
+
+        Assertions.assertThat(row0).contains(MapEntry.entry("0000", "000001"), //
+                MapEntry.entry("0001", "Jennifer BOS"), //
+                MapEntry.entry("0002", "France"), //
+                MapEntry.entry("0003", "jbos@talend.com"));
     }
 
 }

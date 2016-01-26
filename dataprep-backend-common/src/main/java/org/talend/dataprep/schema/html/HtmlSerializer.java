@@ -57,7 +57,9 @@ public class HtmlSerializer implements Serializer {
 
             for (Element value : values) {
 
-                generator.writeStartObject();
+                if (idx == 0) {
+                    generator.writeStartObject();
+                }
                 ColumnMetadata columnMetadata = columns.get(idx);
                 generator.writeFieldName(columnMetadata.getId());
                 String cellValue = value.text();
@@ -66,14 +68,11 @@ public class HtmlSerializer implements Serializer {
                 } else {
                     generator.writeNull();
                 }
-                generator.writeEndObject();
-
                 idx++;
-
                 if (idx >= columns.size()) {
                     idx = 0;
+                    generator.writeEndObject();
                 }
-
             }
 
             generator.writeEndArray();

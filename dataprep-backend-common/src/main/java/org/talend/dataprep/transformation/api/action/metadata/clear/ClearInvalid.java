@@ -18,7 +18,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
  * Delete row when value is invalid.
  */
 @Component(ClearInvalid.ACTION_BEAN_PREFIX + ClearInvalid.ACTION_NAME)
-public class ClearInvalid extends ActionMetadata implements ColumnAction {
+public class ClearInvalid extends AbstractClear implements ColumnAction {
 
     /** the action name. */
     public static final String ACTION_NAME = "clear_invalid"; //$NON-NLS-1$
@@ -57,23 +57,13 @@ public class ClearInvalid extends ActionMetadata implements ColumnAction {
         return ACTION_SCOPE;
     }
 
-    @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
-        final String value = row.get(columnId);
-        final ColumnMetadata colMetadata = row.getRowMetadata().getById(columnId);
-        if (!isValid(colMetadata, value)) {
-            row.set(columnId, "");
-        }
-    }
-
-    public boolean isValid(ColumnMetadata colMetadata, String value) {
+    public boolean toClear(ColumnMetadata colMetadata, String value) {
         // update invalid values of column metadata to prevent unnecessary future analysis
         if (ActionMetadataUtils.checkInvalidValue(colMetadata, value)) {
-            return false;
+            return true;
         }
         // valid value
-        return true;
+        return false;
     }
 
 }

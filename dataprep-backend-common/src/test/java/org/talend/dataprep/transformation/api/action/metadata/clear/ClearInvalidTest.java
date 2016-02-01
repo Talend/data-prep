@@ -23,9 +23,9 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.delete.DeleteInvalid;
 
 /**
- * Test class for DeleteInvalid action. Creates one consumer, and test it.
+ * Test class for ClearInvalid action. Creates one consumer, and test it.
  *
- * @see DeleteInvalid
+ * @see ClearInvalid
  */
 public class ClearInvalidTest {
 

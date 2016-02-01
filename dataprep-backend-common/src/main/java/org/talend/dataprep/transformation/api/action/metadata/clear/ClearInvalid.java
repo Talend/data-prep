@@ -3,7 +3,7 @@ package org.talend.dataprep.transformation.api.action.metadata.clear;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.INVALID;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -22,6 +22,8 @@ public class ClearInvalid extends ActionMetadata implements ColumnAction {
 
     /** the action name. */
     public static final String ACTION_NAME = "clear_invalid"; //$NON-NLS-1$
+
+    private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
 
     /**
      * @see ActionMetadata#getName()
@@ -52,7 +54,7 @@ public class ClearInvalid extends ActionMetadata implements ColumnAction {
      */
     @Override
     public List<String> getActionScope() {
-        return Arrays.asList(new String[] { INVALID.getDisplayName() });
+        return ACTION_SCOPE;
     }
 
     @Override

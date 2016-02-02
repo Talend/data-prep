@@ -1,11 +1,5 @@
 package org.talend.dataprep.transformation.api.action.metadata.clear;
 
-import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.INVALID;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -22,11 +16,18 @@ public abstract class AbstractClear extends ActionMetadata implements ColumnActi
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
         final ColumnMetadata colMetadata = row.getRowMetadata().getById(columnId);
-        if (toClear(colMetadata, value)) {
+        if (toClear(colMetadata, value, context)) {
             row.set(columnId, "");
         }
     }
 
-    protected abstract boolean toClear( ColumnMetadata colMetadata, String value  );
+    /**
+     *
+     * @param colMetadata
+     * @param value
+     * @param context
+     * @return return <code>true</code> if the column must be cleared
+     */
+    protected abstract boolean toClear(ColumnMetadata colMetadata, String value, ActionContext context);
 
 }

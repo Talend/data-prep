@@ -1,29 +1,31 @@
 package org.talend.dataprep.transformation.api.action.metadata.clear;
 
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.INVALID;
+import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.EQUALS;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
-import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadataUtils;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 /**
- * Clear cell when value is invalid.
+ * Clear cell when value is equals.
  */
-@Component(ClearInvalid.ACTION_BEAN_PREFIX + ClearInvalid.ACTION_NAME)
-public class ClearInvalid extends AbstractClear implements ColumnAction {
+@Component(ClearEquals.ACTION_BEAN_PREFIX + ClearEquals.ACTION_NAME)
+public class ClearEquals extends AbstractClear implements ColumnAction {
 
     /** the action name. */
-    public static final String ACTION_NAME = "clear_invalid"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "clear_equals"; //$NON-NLS-1$
 
-    private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
+    public static final String VALUE_PARAMETER = "equals_value"; //$NON-NLS-1$
+
+    private static final List<String> ACTION_SCOPE = Collections.singletonList(EQUALS.getDisplayName());
 
     /**
      * @see ActionMetadata#getName()
@@ -58,11 +60,12 @@ public class ClearInvalid extends AbstractClear implements ColumnAction {
     }
 
     public boolean toClear(ColumnMetadata colMetadata, String value, ActionContext context) {
-        // update invalid values of column metadata to prevent unnecessary future analysis
-        if (ActionMetadataUtils.checkInvalidValue(colMetadata, value)) {
+        Map<String, String> parameters = context.getParameters();
+        String equalsValue = parameters.get(VALUE_PARAMETER);
+
+        if (StringUtils.equals(value, equalsValue)) {
             return true;
         }
-        // valid value
         return false;
     }
 

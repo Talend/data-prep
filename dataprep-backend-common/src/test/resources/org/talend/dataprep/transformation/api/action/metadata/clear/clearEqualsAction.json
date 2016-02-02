@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "clear_equals",
+      "parameters": {
+        "column_id": "0003",
+        "column_name": "description",
+        "scope": "column"
+      }
+    }
+  ]
+}

@@ -1,15 +1,15 @@
-// ============================================================================
+//  ============================================================================
 //
-// Copyright (C) 2006-2014 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// This source code is available under agreement available at
-// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
 //
-// ============================================================================
+//  ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -305,11 +305,13 @@ public class SplitTest extends AbstractMetadataBaseTest {
 
         assertTrue(originalStats != row.getRowMetadata().getById("0003").getStatistics());
         assertTrue(originalQuality != row.getRowMetadata().getById("0003").getQuality());
-        assertTrue(originalDomains == Collections.<SemanticDomain>emptyList() || originalDomains != row.getRowMetadata().getById("0003").getSemanticDomains());
+        assertTrue(originalDomains == Collections.<SemanticDomain> emptyList()
+                || originalDomains != row.getRowMetadata().getById("0003").getSemanticDomains());
 
         assertTrue(originalStats != row.getRowMetadata().getById("0004").getStatistics());
         assertTrue(originalQuality != row.getRowMetadata().getById("0004").getQuality());
-        assertTrue(originalDomains == Collections.<SemanticDomain>emptyList() || originalDomains != row.getRowMetadata().getById("0004").getSemanticDomains());
+        assertTrue(originalDomains == Collections.<SemanticDomain> emptyList()
+                || originalDomains != row.getRowMetadata().getById("0004").getSemanticDomains());
     }
 
     /**
@@ -503,6 +505,17 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
         assertFalse(action.acceptColumn(getColumn(Type.DATE)));
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+    }
+
+    @Test
+    public void should_have_separator_that_could_be_blank() {
+        Optional<Parameter> parameter = new Split().getParameters().stream()
+                .filter(p -> StringUtils.equals(p.getName(), Split.SEPARATOR_PARAMETER)).findFirst();
+        if (parameter.isPresent()) {
+            assertTrue(parameter.get().isCanBeBlank());
+        } else {
+            fail();
+        }
     }
 
     /**

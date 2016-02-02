@@ -15,7 +15,12 @@ describe('Statistics Tooltip service', function () {
     beforeEach(module('data-prep.services.statistics', function ($provide) {
         stateMock = {
             playground: {
-                filter: {gridFilters: []}
+                filter: {gridFilters: []},
+                statistics:{
+                    histogram:{
+                        aggregation:null
+                    }
+                }
             }
         };
         $provide.constant('state', stateMock);
@@ -93,6 +98,26 @@ describe('Statistics Tooltip service', function () {
                 '<strong>Occurrences matching your filter: </strong><span style="color:yellow">1 (20.0%)</span>' +
                 '<br/><br/>' +
                 '<strong>Occurrences in entire dataset: </strong><span style="color:yellow">5</span>' +
+                '<br/><br/>' +
+                '<strong>Record: </strong><span style="color:yellow">96ebf96df2</span>');
+        }));
+
+        it('should create tooltip for aggregation chart', inject(function ($rootScope, StatisticsTooltipService) {
+            //given
+            stateMock.playground.filter.gridFilters = [{}];
+            stateMock.playground.statistics.histogram.aggregation = {};
+            var keyLabel = 'Average';
+            var key = '96ebf96df2';
+            var primaryValue = 5;
+            var secondaryValue = 1;
+
+            //when
+            $rootScope.$digest();
+            var tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue);
+
+            //then
+            expect(tooltip).toBe(
+                '<strong>Average matching your filter: </strong><span style="color:yellow">5</span>' +
                 '<br/><br/>' +
                 '<strong>Record: </strong><span style="color:yellow">96ebf96df2</span>');
         }));

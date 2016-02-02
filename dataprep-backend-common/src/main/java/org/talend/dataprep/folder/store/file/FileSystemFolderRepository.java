@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.folder.store.file;
 
 import static java.util.Collections.emptyList;
@@ -5,19 +18,9 @@ import static java.util.Collections.emptyList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;

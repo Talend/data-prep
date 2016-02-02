@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.dataset.service;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -5,11 +18,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import javax.inject.Inject;
 
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.exception.TDPException;

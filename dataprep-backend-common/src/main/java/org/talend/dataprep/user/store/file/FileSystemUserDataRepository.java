@@ -1,4 +1,26 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.user.store.file;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +34,6 @@ import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.user.store.UserDataRepository;
-
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * User data repository implementation backed on the file system.

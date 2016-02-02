@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.schema.csv;
 
 import java.io.IOException;
@@ -5,12 +18,13 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.type.Type;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * This class performs header and type analysis on a sample of records (lines).
@@ -46,6 +60,8 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * Used to mark a field as being empty in a record (line).
      */
     private static final int EMPTY = 0;
+
+    private static final String DEFAULT_HEADER_PREFIX = "COL";
 
     /**
      * The sample of csv lines used to perform the analysis.
@@ -86,8 +102,6 @@ public class CSVFastHeaderAndTypeAnalyzer {
 
     /** The CSV header &lt;ColName, Type&gt;. */
     private Map<String, Type> headers = Collections.emptyMap();
-
-    private final String DEFAULT_HEADER_PREFIX = "COL";
 
     /**
      * Constructor
@@ -146,7 +160,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
         List<String> fields = readLine(line);
         for (String field: fields) {
             Scanner scanner = new Scanner(field);
-            scanner.useDelimiter(separator.getSeparator() + "");
+            scanner.useDelimiter(Character.toString(separator.getSeparator()));
             // called integer but we are looking for long in Java parlance
             if (scanner.hasNextLong()) {
                 result.add(INTEGER);
@@ -167,6 +181,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
                     result.add(text.length());
                 }
             }
+            scanner.close();
         }
         return result;
     }
@@ -300,57 +315,62 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * Performs header and typing analysis.
      */
     public void analyze() {
-        if (!analysisPerformed) {
-            // Perform Header analysis if the sample has at least two lines
-            if (sampleLines.size() > 1) {
-                // if the separator is absent from the first line and is present elsewhere then according to this separator
-                // first line is not a header
-                if (!separator.getCountPerLine().containsKey(1) && !separator.getCountPerLine().isEmpty()) {
-                    headerInfoReliable = true;
-                    firstLineAHeader = false;
-                } else {
-                    final List<Type> firstRecordTypes = firstRecordTyping();
-                    final List<Type> columnTypingWithoutFirstRecord = columnTypingWithoutFirstRecord();
-                    // if the first line is all text and all fields are present and following lines have some columns
-                    // which are at least 50% not text
-                    // mark the separator as having a header
-                    if ((firstRecordTypes.contains(Type.INTEGER) || firstRecordTypes.contains(Type.DOUBLE) || firstRecordTypes.contains(Type.BOOLEAN))
-                            ){
-                        firstLineAHeader = false;
-                        headerInfoReliable = true;
-                    }
-                    else if (allStringTypes(firstRecordTypes) && !sampleTypes[0].contains(ABSENT) &&
-                            (columnTypingWithoutFirstRecord.contains(Type.INTEGER) ||
-                                    columnTypingWithoutFirstRecord.contains(Type.DOUBLE) || columnTypingWithoutFirstRecord.contains(Type.BOOLEAN))){
-                        firstLineAHeader = true;
-                        headerInfoReliable = true;
 
-                    }
-                }
-            }
-            else{
-                firstLineAHeader = false;
-            }
-            // type analysis: if there is a header the first line is excluded from type analysis, otherwise it is
-            // included
-            headers = new LinkedHashMap<>();
-            if (firstLineAHeader) {
-                List<Type> columnTypes = columnTypingWithoutFirstRecord();
-
-                List<String> firstLine = readLine(sampleLines.get(0));
-                int i = 0;
-                for(String field: firstLine) {
-                    headers.put(field, columnTypes.get(i++));
-                }
-            } else {
-                List<Type> columnTypes = allRecordsColumnTyping();
-                int i = 1;
-                for (Type type : columnTypes) {
-                    headers.put(DEFAULT_HEADER_PREFIX + (i++), type);
-                }
-            }
-
+        // no need to do the job twice
+        if (analysisPerformed) {
+            return;
         }
+
+        // Perform Header analysis if the sample has at least two lines
+        if (sampleLines.size() > 1) {
+            // if the separator is absent from the first line and is present elsewhere then according to this separator
+            // first line is not a header
+            if (!separator.getCountPerLine().containsKey(1) && !separator.getCountPerLine().isEmpty()) {
+                headerInfoReliable = true;
+                firstLineAHeader = false;
+            } else {
+                final List<Type> firstRecordTypes = firstRecordTyping();
+                final List<Type> columnTypingWithoutFirstRecord = columnTypingWithoutFirstRecord();
+                // if the first line is all text and all fields are present and following lines have some columns
+                // which are at least 50% not text
+                // mark the separator as having a header
+                if ((firstRecordTypes.contains(Type.INTEGER) || firstRecordTypes.contains(Type.DOUBLE) || firstRecordTypes.contains(Type.BOOLEAN))
+                        ){
+                    firstLineAHeader = false;
+                    headerInfoReliable = true;
+                }
+                else if (allStringTypes(firstRecordTypes) && !sampleTypes[0].contains(ABSENT) &&
+                        (columnTypingWithoutFirstRecord.contains(Type.INTEGER) ||
+                                columnTypingWithoutFirstRecord.contains(Type.DOUBLE) || columnTypingWithoutFirstRecord.contains(Type.BOOLEAN))){
+                    firstLineAHeader = true;
+                    headerInfoReliable = true;
+
+                }
+            }
+        }
+        else{
+            firstLineAHeader = false;
+        }
+
+        // type analysis: if there is a header the first line is excluded from type analysis, otherwise it is
+        // included
+        headers = new LinkedHashMap<>();
+        if (firstLineAHeader) {
+            List<Type> columnTypes = columnTypingWithoutFirstRecord();
+
+            List<String> firstLine = readLine(sampleLines.get(0));
+            int i = 0;
+            for(String field: firstLine) {
+                headers.put(field, columnTypes.get(i++));
+            }
+        } else {
+            List<Type> columnTypes = allRecordsColumnTyping();
+            int i = 1;
+            for (Type type : columnTypes) {
+                headers.put(DEFAULT_HEADER_PREFIX + (i++), type);
+            }
+        }
+
         analysisPerformed = true;
     }
 

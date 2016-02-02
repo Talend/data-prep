@@ -1,17 +1,27 @@
-package org.talend.dataprep.date;
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
 
-import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.WeekFields;
-import java.util.Arrays;
-import java.util.Locale;
+package org.talend.dataprep.date;
 
 import static java.time.Instant.ofEpochMilli;
 import static java.time.Month.*;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.IsoFields.QUARTER_OF_YEAR;
-import static org.talend.dataprep.date.DateManipulator.Pace.CENTURY;
+
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
 
 public class DateManipulator {
     /**

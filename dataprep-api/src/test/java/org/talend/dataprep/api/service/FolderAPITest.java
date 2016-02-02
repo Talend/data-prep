@@ -1,11 +1,26 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -15,13 +30,12 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderContent;
 import org.talend.dataprep.api.folder.FolderEntry;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static com.jayway.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Response;
 
 public class FolderAPITest extends ApiServiceTestBase {
 

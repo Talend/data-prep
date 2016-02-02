@@ -1,9 +1,17 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.service;
-
-import com.jayway.restassured.http.ContentType;
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.not;
@@ -11,6 +19,12 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
+
+import com.jayway.restassured.http.ContentType;
 
 public class DataPrepTest {
 

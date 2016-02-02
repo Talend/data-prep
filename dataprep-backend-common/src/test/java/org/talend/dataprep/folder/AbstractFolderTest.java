@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.folder;
 
 import java.util.ArrayList;
@@ -10,9 +23,9 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.folder.store.FolderRepository;
+import org.talend.dataprep.folder.store.NotEmptyFolderException;
 
 import com.google.common.collect.Lists;
-import org.talend.dataprep.folder.store.NotEmptyFolderException;
 
 public abstract class AbstractFolderTest {
 

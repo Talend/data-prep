@@ -8,6 +8,9 @@
   $button-background-color: $dark-green;
   $button-color: $white;
 
+  @include flex-row();
+  position: relative;
+
   @mixin button-dropdown-style() {
     background: $button-background-color;
     color: $button-color;
@@ -20,10 +23,6 @@
     }
   }
 
-  .dropdown-container {
-    display: table;
-  }
-
   .button-dropdown-main {
     @include button-dropdown-style();
 
@@ -34,30 +33,36 @@
     padding: 0 7px 0 10px;
     text-transform: uppercase;
 
-    .button-dropdown-main-text {
-      float: left;
-      @include ellipsis();
-    }
     .button-dropdown-main-icon {
-      float: left;
+      @include filter(drop-shadow(0px 1px 1px $dark-gray));
       background: transparent;
-      -webkit-filter: drop-shadow(0px 1px 1px $dark-gray);
       padding-right: 10px;
       font-size: 0.7em;
+      float: left;
+
+      @include flex-row-center();
+      height: 36px;
+      line-height: 36px;
+    }
+
+    .button-dropdown-main-text {
+      @include ellipsis();
     }
   }
 
   .line-separator{
-    position: absolute;
-    top: 8px;
-    right: 25px;
     width: 1px;
     height: 20px;
     background: transparentize($white, .7);
+
+    position: absolute;
+    top: 8px;
+    right: 30px;
   }
 
-  .button-dropdown-side {
+  .dropdown .button-dropdown-side {
     @include button-dropdown-style();
+    @include flex-row-center();
 
     border-radius: 0 3px 3px 0;
     border-right: 1px solid $white;
@@ -65,13 +70,6 @@
     border-bottom: 1px solid $white;
     font-weight: 800;
     padding: 0 10px;
-    margin-left: -5px;
-
-    width: auto;
-
-    &:hover {
-      background-color: darken($dark-green, 10%);
-    }
 
     &:after {
       content: "\25BE";
@@ -80,10 +78,11 @@
   }
 
   .dropdown-menu {
+    @include flex-row-center();
+
     color: $dropdown-menu-color;
     box-shadow: 3px 3px 18px 3px transparentize(black, 0.8);
     width: 140px;
-    position: absolute;
     outline: none;
     padding: 0;
 

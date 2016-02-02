@@ -1682,7 +1682,7 @@
         "name": "separator",
         "type": "select",
         "implicit": false,
-        "canBeBlank": false,
+        "canBeBlank": true,
         "configuration": {
           "values": [
             {

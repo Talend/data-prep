@@ -1,12 +1,26 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.transformation.api.action.metadata.date;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +30,6 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.statistics.frequency.AbstractFrequencyAnalyzer;
 import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
-
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * Component in charge of parsing dates.

@@ -1,14 +1,27 @@
-package org.talend.dataprep.api.dataset.statistics.date;
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
 
-import org.talend.dataprep.api.dataset.statistics.Histogram;
-import org.talend.dataprep.api.dataset.statistics.HistogramRange;
-import org.talend.dataprep.api.dataset.statistics.Range;
-import org.talend.dataprep.date.DateManipulator;
+package org.talend.dataprep.api.dataset.statistics.date;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.talend.dataprep.api.dataset.statistics.Histogram;
+import org.talend.dataprep.api.dataset.statistics.HistogramRange;
+import org.talend.dataprep.api.dataset.statistics.Range;
+import org.talend.dataprep.date.DateManipulator;
 
 /**
  * Date statistics. It calculates the occurrences for each {@link DateManipulator.Pace}.

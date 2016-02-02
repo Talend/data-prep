@@ -31,6 +31,7 @@ $border-color: #CECECE;
     @include align-items(center);
 
     @include flex-row();
+    @include align-items(center);
 
     border-bottom: 1px solid $border-color;
     padding: 10px;
@@ -124,11 +125,10 @@ $border-color: #CECECE;
 
     .inventory-actions {
       @include flex-row();
+      @include align-items(center);
 
-      position: absolute;
       right: 0;
-      top: 15px;
-      height: 40px;
+      height: 45px;
     }
   }
 }
@@ -148,17 +148,21 @@ $border-color: #CECECE;
 
 .divider {
   width: 1px;
+  height: 100%;
   margin: 0 5px;
   background: $white;
 }
 
 .btn-icon {
+  @include flex-row();
+  @include align-items(center);
+
   padding: 0 10px 0 10px;
   margin: 0 5px 0 5px;
   color: white;
   font-family: $iconsfont;
   font-size: 1.2em;
-  line-height: 40px;
+  height: 45px;
   &:hover {
     border-radius: 5px;
     color: white;

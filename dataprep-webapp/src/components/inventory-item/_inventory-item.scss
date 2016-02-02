@@ -10,6 +10,7 @@
 
   .inventory-actions-related-item {
     padding-right: 0;
+    height: 45px;
 
     button.button-dropdown-main,
     button.button-dropdown-side {
@@ -28,6 +29,7 @@
     }
 
     .button-dropdown-main-icon {
+      @include flex-row-center();
       @include filter(none);
       font-size: 1em;
       padding: 0;

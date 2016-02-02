@@ -1,10 +1,22 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.service.command.folder;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE_FOLDER;
 
 import java.io.IOException;
@@ -16,7 +28,6 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.service.APIService;

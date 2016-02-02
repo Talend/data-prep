@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.transformation.api.transformer.json;
 
 import java.io.IOException;
@@ -5,6 +18,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.quality.AnalyzerService;
@@ -59,6 +74,8 @@ public class StackedTransformer implements Transformer {
      * A filter to filter out non modified columns, by default include all columns.
      */
     private Predicate<ColumnMetadata> modifiedColumnsFilter = c -> true;
+    
+    private final Map<String, String> bufferAnalysisSemanticResults = new HashMap<>();
 
     private enum AnalysisStatus {
         /**
@@ -116,6 +133,9 @@ public class StackedTransformer implements Transformer {
             schema.analyze(dataSetRow.order(columns).toArray(DataSetRow.SKIP_TDP_ID));
         }
         adapter.adapt(columns, schema.getResult(), modifiedColumnsFilter);
+        // Remember what buffer analysis results were to detect false positive afterwards
+        columns.stream().filter(column -> modifiedColumnsFilter.test(column))
+                .forEach(column -> bufferAnalysisSemanticResults.put(column.getId(), column.getDomain()));
         // TODO To analyze data on deleted columns, removes filter (accept all).
         modifiedColumnsFilter = c -> true;
         // Now configure the actual (full) analysis and don't forget to process stored records
@@ -158,20 +178,19 @@ public class StackedTransformer implements Transformer {
             final TransformerWriter writer = writersService.getWriter(configuration.formatId(), configuration.output(), configuration.getArguments());
 
             TransformationContext context = new TransformationContext();
-            ExtendedStream<DataSetRow> records = BaseTransformer.baseTransform(input.getRecords(), allActions, context)
-                    .map(r -> {
-                        try {
-                            return analyzeRecords(input, r);
-                        } catch (Exception e) {
-                            LOGGER.debug("Unable to compute statistics on '{}'", r, e);
-                            return r;
-                        }
-                    });
+            ExtendedStream<DataSetRow> records = BaseTransformer.baseTransform(input.getRecords(), allActions, context);
             // Write records
             Deque<DataSetRow> processingRows = new ArrayDeque<>();
             writer.startObject();
             records.mapOnce(r -> startRecords(writer, r), r -> r) //
-                .forEach(r -> writeRecords(writer, processingRows, r));
+                .forEach(r -> {
+                    try {
+                        analyzeRecords(input, r);
+                    } catch (Exception e) {
+                        LOGGER.debug("Unable to compute statistics on '{}'", r, e);
+                    }
+                    writeRecords(writer, processingRows, r);
+                });
             writer.endArray();
             //
             writeMetadata(writer, processingRows.pop());
@@ -248,6 +267,21 @@ public class StackedTransformer implements Transformer {
             // Analyzer may not be initialized when all rows were deleted.
             analyzer.end();
             adapter.adapt(row.getRowMetadata().getColumns(), analyzer.getResult(), modifiedColumnsFilter);
+            // Check for false positive
+            row.getRowMetadata().getColumns().stream()
+                    .filter(column -> bufferAnalysisSemanticResults.containsKey(column.getId())
+                            && !StringUtils.equals(column.getDomain(), bufferAnalysisSemanticResults.get(column.getId())))
+                    .forEach(column -> {
+                        // Type changed from buffer analysis and end of transformation, falls back to string and empty
+                        // invalid values.
+                        column.setType(Type.STRING.getName());
+                        column.setDomain(StringUtils.EMPTY);
+                        final Quality quality = column.getQuality();
+                        quality.getInvalidValues().clear();
+                        quality.setValid(quality.getValid() + quality.getInvalid());
+                        quality.setInvalid(0);
+                    });
+            // Write metadata information
             writer.fieldName("metadata");
             writer.startObject();
             {

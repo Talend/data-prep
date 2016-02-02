@@ -939,6 +939,12 @@
                         break;
                 }
             }
+            else{
+                var aggregatedColumn = columnAggregation && _.findWhere(getAggregationColumns(), {id: columnAggregation.aggregationColumnId});
+                if(aggregatedColumn){
+                    processAggregation(aggregatedColumn, aggregationName);
+                }
+            }
 
             //should be outside the IF(!aggregationName) statement because it does not depend on the aggregation
             createFilteredPatternsFrequency()

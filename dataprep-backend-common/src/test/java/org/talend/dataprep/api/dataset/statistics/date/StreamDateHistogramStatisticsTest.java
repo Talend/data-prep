@@ -1,16 +1,28 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.dataset.statistics.date;
+
+import static java.time.Month.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import java.time.LocalDateTime;
 
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.statistics.Histogram;
 import org.talend.dataprep.api.dataset.statistics.HistogramRange;
 import org.talend.dataprep.date.DateManipulator;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
-import static java.time.Month.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 public class StreamDateHistogramStatisticsTest {
     @Test

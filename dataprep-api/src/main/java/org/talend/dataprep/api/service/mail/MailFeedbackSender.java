@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.service.mail;
 
 import java.util.Arrays;
@@ -40,6 +53,9 @@ public class MailFeedbackSender implements FeedbackSender {
     @Value("${mail.smtp.body.prefix}")
     private String bodyPrefix;
 
+    @Value("${mail.smtp.body.suffix}")
+    private String bodySuffix;
+
     @Value("${mail.smtp.username}")
     private String userName;
 
@@ -48,12 +64,6 @@ public class MailFeedbackSender implements FeedbackSender {
 
     @Value("${mail.smtp.from}")
     private String fromAddress;
-
-    @Value("${mail.smtp.reply}")
-    private String replyAddress;
-
-    @Value("${mail.smtp.copy}")
-    private String copyAddress;
 
     @Value("${mail.smtp.host}")
     private String smtpHost;
@@ -65,15 +75,14 @@ public class MailFeedbackSender implements FeedbackSender {
     }
 
     @Override
-    public void send(String subject, String body) {
+    public void send(String subject, String body, String sender) {
         try {
             final String recipientList = StringUtils.join((new HashSet<>(Arrays.asList(recipients))).toArray(), ',');
             subject = subjectPrefix + subject;
-            body = bodyPrefix + "<br/><br/>" + body + "<br/><br/>" + bodyPrefix;
+            body = bodyPrefix + "<br/>" + body + "<br/>" + bodySuffix;
 
             InternetAddress from = new InternetAddress(fromAddress);
-            InternetAddress replyTo = new InternetAddress(replyAddress);
-            InternetAddress copy = new InternetAddress(copyAddress);
+            InternetAddress replyTo = new InternetAddress(sender);
 
             Properties p = new Properties();
             p.put("mail.smtp.host", smtpHost);
@@ -88,7 +97,6 @@ public class MailFeedbackSender implements FeedbackSender {
             msg.setFrom(from);
             msg.setReplyTo(new Address[] { replyTo });
             msg.addRecipients(Message.RecipientType.TO, recipientList);
-            msg.addRecipient(Message.RecipientType.BCC, copy);
 
             msg.setSubject(subject, "UTF-8");
             msg.setSentDate(new Date());

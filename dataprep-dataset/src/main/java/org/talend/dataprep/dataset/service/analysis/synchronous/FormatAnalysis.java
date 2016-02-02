@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
 import java.io.IOException;
@@ -97,16 +110,8 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                 FormatGuesser.Result bestGuessResult = orderedGuess.get(0);
                 LOG.debug(marker, "using {} to parse the dataset", bestGuessResult);
 
-                FormatGuess bestGuess = bestGuessResult.getFormatGuess();
-                DataSetContent dataSetContent = metadata.getContent();
-                dataSetContent.setParameters(bestGuessResult.getParameters());
-                dataSetContent.setFormatGuessId(bestGuess.getBeanId());
-                dataSetContent.setMediaType(bestGuess.getMediaType());
-                metadata.setEncoding(bestGuessResult.getEncoding());
+                internalUpdateMetadata(metadata, bestGuessResult);
 
-                parseColumnNameInformation(dataSetId, metadata, bestGuess);
-
-                repository.add(metadata);
                 LOG.debug(marker, "format analysed for dataset");
             } else {
                 LOG.info(marker, "Data set no longer exists.");
@@ -114,6 +119,25 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
         } finally {
             datasetLock.unlock();
         }
+    }
+
+    /**
+     * Update the given dataset metadata with the format guesser result.
+     *
+     * @param metadata the dataset metadata to update.
+     * @param result the format guesser result.
+     */
+    private void internalUpdateMetadata(DataSetMetadata metadata, FormatGuesser.Result result) {
+        FormatGuess bestGuess = result.getFormatGuess();
+        DataSetContent dataSetContent = metadata.getContent();
+        dataSetContent.setParameters(result.getParameters());
+        dataSetContent.setFormatGuessId(bestGuess.getBeanId());
+        dataSetContent.setMediaType(bestGuess.getMediaType());
+        metadata.setEncoding(result.getEncoding());
+
+        parseColumnNameInformation(metadata.getId(), metadata, bestGuess);
+
+        repository.add(metadata);
     }
 
     /**
@@ -135,10 +159,12 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
         // update the schema
         final SchemaUpdater updater = optionalUpdater.get();
-        updater.updateSchema(original, updated);
-
-        // update the columns information
-        parseColumnNameInformation(updated.getId(), updated, updater.getFormatGuess());
+        try (InputStream content = store.getAsRaw(original)) {
+            final FormatGuesser.Result result = updater.updateSchema(new SchemaParser.Request(content, updated));
+            internalUpdateMetadata(updated, result);
+        } catch (IOException e) {
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT, e);
+        }
 
         LOG.debug(marker, "format updated for dataset");
     }

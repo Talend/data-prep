@@ -1,9 +1,22 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.exception.error;
 
 import static org.junit.Assert.assertThat;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
 import static org.talend.dataprep.exception.error.APIErrorCodes.*;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNSUPPORTED_CONTENT;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_CANNOT_BE_DELETED_IN_SINGLE_MODE;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.StringWriter;

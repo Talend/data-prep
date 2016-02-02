@@ -2734,7 +2734,7 @@ describe('Statistics service', function () {
             }]);
         }));
 
-        it('should NOT update filtered data when there is an aggregation', inject(function(StorageService, StatisticsService, StateService){
+        it('should NOT update filtered data when there is an aggregation', inject(function(StorageService, StatisticsService, StateService, DatagridService){
             //given
             stateMock.playground.grid.selectedColumn = barChartStrCol;
             var savedAggregation = {
@@ -2742,6 +2742,7 @@ describe('Statistics service', function () {
                 aggregation: 'MAX'
             };
             spyOn(StorageService, 'getAggregation').and.returnValue(savedAggregation);
+            spyOn(DatagridService, 'getNumericColumns').and.returnValue([{id:'0003'}]);
 
             //when
             StatisticsService.updateFilteredStatistics();
@@ -2750,6 +2751,33 @@ describe('Statistics service', function () {
             expect(StateService.setStatisticsFilteredHistogram).not.toHaveBeenCalled();
             expect(StateService.setStatisticsHistogramActiveLimits).not.toHaveBeenCalled();
             expect(StateService.setStatisticsFilteredPatterns).not.toHaveBeenCalled();
+        }));
+
+        it('should update aggregation chart when at least 1 filter exists', inject(function($q, StorageService, StatisticsService, StateService, DatagridService, StatisticsRestService){
+            //given
+            stateMock.playground.grid.selectedColumn = barChartStrCol;
+            var savedAggregation = {
+                aggregationColumnId: '0002',
+                aggregation: 'MAX'
+            };
+            spyOn(StorageService, 'getAggregation').and.returnValue(savedAggregation);
+            spyOn(DatagridService, 'getNumericColumns').and.returnValue([{id:'0002'}]);
+            spyOn(StatisticsRestService, 'getAggregations').and.returnValue($q.reject());
+
+            //when
+            StatisticsService.updateFilteredStatistics();
+
+            //then
+            expect(StatisticsRestService.getAggregations).toHaveBeenCalledWith({
+                datasetId: null,
+                preparationId: '2132548345365',
+                stepId: '9878645468',
+                operations: [{
+                    operator:  'MAX',
+                    columnId: '0002'
+                }],
+                groupBy: ['0010']
+            });
         }));
     });
 

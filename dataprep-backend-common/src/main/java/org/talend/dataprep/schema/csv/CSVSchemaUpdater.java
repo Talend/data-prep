@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.schema.csv;
 
 import org.apache.commons.lang.StringUtils;
@@ -5,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.FormatGuess;
+import org.talend.dataprep.schema.FormatGuesser;
+import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.SchemaUpdater;
 
 /**
@@ -17,9 +32,13 @@ public class CSVSchemaUpdater implements SchemaUpdater {
     @Autowired
     CSVFormatUtils formatUtils;
 
-    /** the format guess. */
+    /** The csv format guesser. */
     @Autowired
-    private CSVFormatGuess formatGuess;
+    private CSVFormatGuess csvFormatGuess;
+
+    /** The CSV format guesser. */
+    @Autowired
+    private CSVFormatGuesser csvFormatGuesser;
 
     /**
      * @see SchemaUpdater#accept(DataSetMetadata)
@@ -30,11 +49,13 @@ public class CSVSchemaUpdater implements SchemaUpdater {
     }
 
     /**
-     * @see SchemaUpdater#updateSchema(DataSetMetadata, DataSetMetadata)
+     * @see SchemaUpdater#updateSchema(SchemaParser.Request)
      */
     @Override
-    public void updateSchema(DataSetMetadata original, DataSetMetadata updated) {
-        formatUtils.useNewSeparator(original, updated);
+    public FormatGuesser.Result updateSchema(SchemaParser.Request request) {
+        final DataSetMetadata metadata = request.getMetadata();
+        formatUtils.useNewSeparator(metadata);
+        return csvFormatGuesser.guess(request, metadata.getEncoding());
     }
 
     /**
@@ -42,7 +63,7 @@ public class CSVSchemaUpdater implements SchemaUpdater {
      */
     @Override
     public FormatGuess getFormatGuess() {
-        return formatGuess;
+        return csvFormatGuess;
     }
 
 }

@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.api.service.mail;
 
 import java.util.Arrays;
@@ -32,11 +45,11 @@ public class NoOpFeedbackSender implements FeedbackSender {
     private String fromAddress;
 
     @Override
-    public void send(String subject, String body) {
+    public void send(String subject, String body, String sender) {
         if (LOGGER.isDebugEnabled()) {
             try {
                 String recipientList = StringUtils.join((new HashSet<>(Arrays.asList(recipients))).toArray(), ',');
-                InternetAddress from = new InternetAddress(fromAddress);
+                InternetAddress from = new InternetAddress(sender);
                 String builder = "***** Sending mail" + //
                         "from: " + from.toString() + //
                         "username: " + userName + //

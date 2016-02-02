@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.schema.csv;
 
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -45,7 +58,6 @@ public class CSVSchemaParser implements SchemaParser {
             final DataSetMetadata metadata = request.getMetadata();
             final Map<String, String> parameters = metadata.getContent().getParameters();
             final char separator = parameters.get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
-            // Map<String, String> header = retrieveHeader(parameters);
             List<String> header = csvFormatUtils.retrieveHeader(parameters);
 
             if (header == null || header.isEmpty()) {

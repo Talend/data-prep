@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.schema;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -17,11 +30,11 @@ public interface SchemaUpdater {
 
     /**
      * Update the schema of the given metadata.
-     * 
-     * @param original the original dataset metadata.
-     * @param updated the metadata to update.
+     *
+     * @param request the schema parser request.
+     * @return the format guesser result.
      */
-    void updateSchema(DataSetMetadata original, DataSetMetadata updated);
+    FormatGuesser.Result updateSchema(SchemaParser.Request request);
 
     /**
      * @return the format guess.

@@ -17,7 +17,7 @@
 <configuration> <!-- status="debug"> -->
     <appenders>
         <Console name="console" target="SYSTEM_OUT" ignoreExceptions="false">
-            <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} [%t] [%marker] %-5level %logger{36} - %msg%n}"/>
+            <PatternLayout pattern="%highlight{%d{DEFAULT} [%t] [%marker] %-5level %logger{36} - %msg%n}"/>
         </Console>
 
 

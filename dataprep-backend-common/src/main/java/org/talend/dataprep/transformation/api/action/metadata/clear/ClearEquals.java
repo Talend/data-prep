@@ -1,3 +1,16 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.api.action.metadata.clear;
 
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
@@ -7,18 +20,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
+import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
+import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 /**
  * Clear cell when value is equals.
  */
 @Component(ClearEquals.ACTION_BEAN_PREFIX + ClearEquals.ACTION_NAME)
-public class ClearEquals extends AbstractClear implements ColumnAction {
+public class ClearEquals extends AbstractClear implements ColumnAction, OtherColumnParameters {
 
     /** the action name. */
     public static final String ACTION_NAME = "clear_equals"; //$NON-NLS-1$
@@ -59,14 +77,43 @@ public class ClearEquals extends AbstractClear implements ColumnAction {
         return ACTION_SCOPE;
     }
 
+    @Override
+    public List<Parameter> getParameters() {
+        final List<Parameter> parameters = super.getParameters();
+
+        Parameter constantParameter = new Parameter(VALUE_PARAMETER, //
+                ParameterType.STRING, //
+                StringUtils.EMPTY);
+
+        //@formatter:off
+        parameters.add(SelectParameter.Builder.builder()
+                           .name(MODE_PARAMETER)
+                           .item(CONSTANT_MODE, constantParameter)
+                           .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
+                           .defaultValue(CONSTANT_MODE)
+                           .build()
+        );
+        //@formatter:on
+
+        return parameters;
+    }
+
     public boolean toClear(ColumnMetadata colMetadata, String value, ActionContext context) {
         Map<String, String> parameters = context.getParameters();
         String equalsValue = parameters.get(VALUE_PARAMETER);
 
-        if (StringUtils.equals(value, equalsValue)) {
-            return true;
+        boolean toClear = false;
+
+        switch (Type.get(colMetadata.getType())) {
+        case BOOLEAN:
+            // for boolean we can accept True equals true
+            toClear = StringUtils.equalsIgnoreCase(value, equalsValue);
+            break;
+        default:
+            toClear = StringUtils.equals(value, equalsValue);
         }
-        return false;
+
+        return toClear;
     }
 
 }

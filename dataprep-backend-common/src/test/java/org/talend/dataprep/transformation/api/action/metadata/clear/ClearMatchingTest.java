@@ -31,8 +31,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnVa
  *
  * @see ClearMatching
  */
-public class ClearMatchingTest
-    extends AbstractMetadataBaseTest {
+public class ClearMatchingTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -50,7 +49,7 @@ public class ClearMatchingTest
 
     @Test
     public void testName() throws Exception {
-        assertThat(action.getName(), is( ClearMatching.ACTION_NAME));
+        assertThat(action.getName(), is(ClearMatching.ACTION_NAME));
     }
 
     @Test
@@ -79,6 +78,8 @@ public class ClearMatchingTest
 
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
                 new DataSetRow(rowMetadata, secondRowValues));
+
+        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("Something", ReplaceOnValueHelper.EQUALS_MODE));
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
@@ -127,9 +128,7 @@ public class ClearMatchingTest
                 new DataSetRow(rowMetadata, secondRowValues), //
                 new DataSetRow(rowMetadata, thirdRowValues));
 
-
-        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( ".*Something", ReplaceOnValueHelper.REGEX_MODE));
-
+        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson(".*Something", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
@@ -174,7 +173,7 @@ public class ClearMatchingTest
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( "Badibada", ReplaceOnValueHelper.REGEX_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("Badibada", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -204,7 +203,7 @@ public class ClearMatchingTest
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( "true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -234,9 +233,8 @@ public class ClearMatchingTest
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-
-        parameters.put( ClearMatching.VALUE_PARAMETER,
-                        generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER,
+                generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -266,7 +264,7 @@ public class ClearMatchingTest
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( "tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -279,7 +277,6 @@ public class ClearMatchingTest
                         MapEntry.entry("0002", "True"), //
                         MapEntry.entry("0003", "Something"));
     }
-
 
     @Test
     public void should_clear_because_pattern_match_integer() throws Exception {
@@ -301,40 +298,40 @@ public class ClearMatchingTest
 
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
-                                                             .type(Type.INTEGER) //
-                                                             .computedId("0003") //
-                                                             .build()));
+                .type(Type.INTEGER) //
+                .computedId("0003") //
+                .build()));
 
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
-                                              new DataSetRow(rowMetadata, secondRowValues), //
-                                              new DataSetRow(rowMetadata, thirdRowValues));
+                new DataSetRow(rowMetadata, secondRowValues), //
+                new DataSetRow(rowMetadata, thirdRowValues));
 
-        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( ".*1234", ReplaceOnValueHelper.REGEX_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson(".*1234", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
 
         // then
         Assertions.assertThat(rows.get(0).values()) //
-            .isNotEmpty() //
-            .hasSize(3) //
-            .containsExactly(MapEntry.entry("0001", "David Bowie"), //
-                             MapEntry.entry("0002", "N"), //
-                             MapEntry.entry("0003", "123"));
+                .isNotEmpty() //
+                .hasSize(3) //
+                .containsExactly(MapEntry.entry("0001", "David Bowie"), //
+                        MapEntry.entry("0002", "N"), //
+                        MapEntry.entry("0003", "123"));
 
         Assertions.assertThat(rows.get(1).values()) //
-            .isNotEmpty() //
-            .hasSize(3) //
-            .containsExactly(MapEntry.entry("0001", "Beer"), //
-                             MapEntry.entry("0002", "T"), //
-                             MapEntry.entry("0003", ""));
+                .isNotEmpty() //
+                .hasSize(3) //
+                .containsExactly(MapEntry.entry("0001", "Beer"), //
+                        MapEntry.entry("0002", "T"), //
+                        MapEntry.entry("0003", ""));
 
         Assertions.assertThat(rows.get(2).values()) //
-            .isNotEmpty() //
-            .hasSize(3) //
-            .containsExactly(MapEntry.entry("0001", "Wine"), //
-                             MapEntry.entry("0002", "True"), //
-                             MapEntry.entry("0003", ""));
+                .isNotEmpty() //
+                .hasSize(3) //
+                .containsExactly(MapEntry.entry("0001", "Wine"), //
+                        MapEntry.entry("0002", "True"), //
+                        MapEntry.entry("0003", ""));
 
     }
 

@@ -5,7 +5,11 @@
       "parameters": {
         "column_id": "0003",
         "column_name": "description",
-        "scope": "column"
+        "scope": "column",
+        "equals_value": {
+          "token": "Something",
+          "operator": "equals"
+        }
       }
     }
   ]

@@ -141,8 +141,7 @@
   },
   {
     "name": "clear_equals",
-    "description": "Clear cells that equals the value",
-    "label": "Clear the Cells equals with value",
+    "label": "Clear on value",
     "docUrl": "",
     "dynamic": false,
     "parameters": [
@@ -183,54 +182,13 @@
         "label": "Filter"
       },
       {
-        "name": "mode",
-        "type": "select",
+        "name": "equals_value",
+        "type": "regex",
         "implicit": false,
-        "canBeBlank": false,
-        "configuration": {
-          "values": [
-            {
-              "value": "constant_mode",
-              "label": "No other column",
-              "parameters": [
-                {
-                  "name": "equals_value",
-                  "type": "string",
-                  "implicit": false,
-                  "canBeBlank": true,
-                  "default": "",
-                  "description": "The value to compare with",
-                  "label": "Value"
-                }
-              ]
-            },
-            {
-              "value": "other_column_mode",
-              "label": "Another column",
-              "parameters": [
-                {
-                  "name": "selected_column",
-                  "type": "column",
-                  "implicit": false,
-                  "canBeBlank": false,
-                  "default": "",
-                  "description": "Combine the current column with this one",
-                  "label": "Column"
-                }
-              ]
-            }
-          ],
-          "multiple": false
-        },
-        "default": "constant_mode",
-        "description": "Select if you want to use a constant value or another column",
-        "label": "Use with"
+        "canBeBlank": false
       }
     ],
-    "category": "data cleansing",
-    "actionScope": [
-      "equals"
-    ]
+    "category": "data cleansing"
   },
 
   {

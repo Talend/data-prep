@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.action.metadata.clear;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -20,7 +21,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 /**
- * Delete row
+ * Abstract class used as base class for clear cells actions.
  */
 public abstract class AbstractClear extends ActionMetadata implements ColumnAction {
 
@@ -30,7 +31,7 @@ public abstract class AbstractClear extends ActionMetadata implements ColumnActi
         final String value = row.get(columnId);
         final ColumnMetadata colMetadata = row.getRowMetadata().getById(columnId);
         if (toClear(colMetadata, value, context)) {
-            row.set(columnId, "");
+            row.set(columnId, StringUtils.EMPTY);
         }
     }
 

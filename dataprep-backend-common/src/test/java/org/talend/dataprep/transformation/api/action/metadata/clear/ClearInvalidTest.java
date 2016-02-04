@@ -25,9 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -42,10 +41,10 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
  *
  * @see ClearInvalid
  */
-public class ClearInvalidTest extends AbstractMetadataBaseTest {
+public class ClearInvalidTest  extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Inject
+    @Autowired
     private ClearInvalid action;
 
     private Map<String, String> parameters;

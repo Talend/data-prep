@@ -1,22 +1,21 @@
 package org.talend.dataprep.transformation.api.action.metadata.clear;
 
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -35,10 +34,18 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnVa
 public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Inject
+    @Autowired
     private ClearEquals action;
 
     private Map<String, String> parameters;
+
+    /**
+     * Default constructor.
+     */
+    public ClearEqualsTest() throws IOException {
+        parameters = ActionMetadataTestUtils
+                .parseParameters(ClearInvalidTest.class.getResourceAsStream("clearEqualsAction.json"));
+    }
 
     @Test
     public void testName() throws Exception {
@@ -48,11 +55,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(), is(ActionCategory.DATA_CLEANSING.getDisplayName()));
-    }
-
-    @Test
-    public void testActionScope() throws Exception {
-        assertThat(action.getActionScope(), hasItem("equals"));
     }
 
     @Test
@@ -77,10 +79,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
                 new DataSetRow(rowMetadata, secondRowValues));
 
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
-
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("Something", ReplaceOnValueHelper.REGEX_MODE));
-
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
 
@@ -98,7 +96,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
                 .containsExactly(MapEntry.entry("0001", "Beer"), //
                         MapEntry.entry("0002", "T"), //
                         MapEntry.entry("0003", "NotSomething"));
-
     }
 
     @Test
@@ -128,8 +125,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
                 new DataSetRow(rowMetadata, secondRowValues), //
                 new DataSetRow(rowMetadata, thirdRowValues));
-
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
         parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*Something", ReplaceOnValueHelper.REGEX_MODE));
 
@@ -176,8 +171,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
-
         parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("Badibada", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
@@ -207,8 +200,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
                 .build()));
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
-
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
         parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
@@ -240,8 +231,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
-
         parameters.put(ClearEquals.VALUE_PARAMETER,
                 generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
@@ -272,8 +261,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
                 .build()));
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
-
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
         parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
@@ -317,8 +304,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
                                               new DataSetRow(rowMetadata, secondRowValues), //
                                               new DataSetRow(rowMetadata, thirdRowValues));
-
-        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
         parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*1234", ReplaceOnValueHelper.REGEX_MODE));
 

@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "clear_equals",
+      "action": "clear_matching",
       "parameters": {
         "column_id": "0003",
         "column_name": "description",

@@ -32,15 +32,15 @@ import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 /**
- * Clear cell when value is equals.
+ * Clear cell when value is matching.
  */
-@Component(ClearEquals.ACTION_BEAN_PREFIX + ClearEquals.ACTION_NAME)
-public class ClearEquals extends AbstractClear implements ColumnAction {
 
+@Component(ClearMatching.ACTION_BEAN_PREFIX + ClearMatching.ACTION_NAME)
+public class ClearMatching extends AbstractClear implements ColumnAction {
     /** the action name. */
-    public static final String ACTION_NAME = "clear_equals"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "clear_matching"; //$NON-NLS-1$
 
-    public static final String VALUE_PARAMETER = "equals_value"; //$NON-NLS-1$
+    public static final String VALUE_PARAMETER = "matching_value"; //$NON-NLS-1$
 
     @Autowired
     private ReplaceOnValueHelper regexParametersHelper;

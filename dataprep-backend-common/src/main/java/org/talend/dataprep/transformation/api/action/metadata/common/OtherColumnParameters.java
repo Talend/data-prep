@@ -21,17 +21,17 @@ public interface OtherColumnParameters {
     /**
      * The selected column id.
      */
-    public static final String SELECTED_COLUMN_PARAMETER = "selected_column"; //$NON-NLS-1$
+    String SELECTED_COLUMN_PARAMETER = "selected_column"; //$NON-NLS-1$
 
     /**
      * Mode: tells if fill value is taken from another column or is a constant
      */
-    public static final String MODE_PARAMETER = "mode"; //$NON-NLS-1$
+    String MODE_PARAMETER = "mode"; //$NON-NLS-1$
 
     /**
      * Constant to represents mode where we fill with a constant.
      */
-    public static final String OTHER_COLUMN_MODE = "other_column_mode"; //$NON-NLS-1$
-    public static final String CONSTANT_MODE = "constant_mode"; //$NON-NLS-1$
+    String OTHER_COLUMN_MODE = "other_column_mode"; //$NON-NLS-1$
+    String CONSTANT_MODE = "constant_mode"; //$NON-NLS-1$
 
 }

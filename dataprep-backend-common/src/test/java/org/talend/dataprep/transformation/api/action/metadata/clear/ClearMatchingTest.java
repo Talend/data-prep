@@ -27,29 +27,30 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
 
 /**
- * Test class for ClearEquals action. Creates one consumer, and test it.
+ * Test class for ClearMatching action. Creates one consumer, and test it.
  *
- * @see ClearEquals
+ * @see ClearMatching
  */
-public class ClearEqualsTest extends AbstractMetadataBaseTest {
+public class ClearMatchingTest
+    extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
-    private ClearEquals action;
+    private ClearMatching action;
 
     private Map<String, String> parameters;
 
     /**
      * Default constructor.
      */
-    public ClearEqualsTest() throws IOException {
+    public ClearMatchingTest() throws IOException {
         parameters = ActionMetadataTestUtils
                 .parseParameters(ClearInvalidTest.class.getResourceAsStream("clearEqualsAction.json"));
     }
 
     @Test
     public void testName() throws Exception {
-        assertThat(action.getName(), is(ClearEquals.ACTION_NAME));
+        assertThat(action.getName(), is( ClearMatching.ACTION_NAME));
     }
 
     @Test
@@ -126,7 +127,9 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
                 new DataSetRow(rowMetadata, secondRowValues), //
                 new DataSetRow(rowMetadata, thirdRowValues));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*Something", ReplaceOnValueHelper.REGEX_MODE));
+
+        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( ".*Something", ReplaceOnValueHelper.REGEX_MODE));
+
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
@@ -171,7 +174,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("Badibada", ReplaceOnValueHelper.REGEX_MODE));
+        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( "Badibada", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -201,7 +204,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( "true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -231,8 +234,9 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearEquals.VALUE_PARAMETER,
-                generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+
+        parameters.put( ClearMatching.VALUE_PARAMETER,
+                        generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -262,7 +266,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( "tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -305,7 +309,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
                                               new DataSetRow(rowMetadata, secondRowValues), //
                                               new DataSetRow(rowMetadata, thirdRowValues));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*1234", ReplaceOnValueHelper.REGEX_MODE));
+        parameters.put( ClearMatching.VALUE_PARAMETER, generateJson( ".*1234", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());

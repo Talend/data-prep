@@ -140,8 +140,9 @@
     ]
   },
   {
-    "name": "clear_equals",
-    "label": "Clear on value",
+    "name": "clear_matching",
+    "label": "Clear on matching value",
+    "description": "Clear cells that match the value",
     "docUrl": "",
     "dynamic": false,
     "parameters": [
@@ -182,10 +183,13 @@
         "label": "Filter"
       },
       {
-        "name": "equals_value",
+        "name": "matching_value",
         "type": "regex",
         "implicit": false,
-        "canBeBlank": false
+        "canBeBlank": false,
+        "default": "",
+        "description": "The value to compare with",
+        "label": "Value"
       }
     ],
     "category": "data cleansing"

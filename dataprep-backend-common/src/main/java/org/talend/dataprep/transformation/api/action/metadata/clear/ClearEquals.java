@@ -112,10 +112,11 @@ public class ClearEquals extends AbstractClear implements ColumnAction, OtherCol
         switch (Type.get(colMetadata.getType())) {
         case BOOLEAN:
             // for boolean we can accept True equals true
-            toClear = StringUtils.equalsIgnoreCase(value, equalsValue);
+            ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, false);
+            toClear = StringUtils.equalsIgnoreCase(value, replaceOnValueHelper.getToken());
             break;
         default:
-            ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
+            replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
             toClear = replaceOnValueHelper.matches(value);
             // toClear = StringUtils.equals(value, equalsValue);
         }

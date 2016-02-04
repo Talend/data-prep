@@ -44,6 +44,9 @@ public class ReplaceOnValueHelper {
     /** The value of the 'equals' operator. */
     public static final String EQUALS_MODE = "equals";
 
+    /** The value of the 'equals ignore case' operator. */
+    public static final String EQUALS_IGNORE_CASE_MODE = "equals_ignore_case";
+
     /** The value of the 'contains' operator. */
     public static final String CONTAINS_MODE = "contains";
 
@@ -133,7 +136,7 @@ public class ReplaceOnValueHelper {
 
     /**
      * Set the strict mode.
-     * 
+     *
      * @param strict the strict mode to set.
      */
     private void setStrict(boolean strict) {
@@ -190,7 +193,10 @@ public class ReplaceOnValueHelper {
         boolean matches = false;
         switch (this.getOperator()) {
             case EQUALS_MODE:
-                matches = value.equals(this.getToken());
+                matches = StringUtils.equals( value, this.getToken());
+                break;
+            case EQUALS_IGNORE_CASE_MODE:
+                matches = StringUtils.equalsIgnoreCase(value, this.getToken());
                 break;
             case CONTAINS_MODE:
                 matches = value.contains(this.getToken());

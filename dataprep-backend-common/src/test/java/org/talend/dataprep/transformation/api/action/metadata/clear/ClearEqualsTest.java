@@ -25,6 +25,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
 
 /**
  * Test class for ClearEquals action. Creates one consumer, and test it.
@@ -78,7 +79,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("Something", "regex"));
+        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("Something", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
@@ -100,7 +101,6 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
     }
 
-
     @Test
     public void should_clear_because_pattern_match() throws Exception {
         // given
@@ -121,45 +121,44 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         final RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
-                                                             .type(Type.STRING) //
-                                                             .computedId("0003") //
-                                                             .build()));
+                .type(Type.STRING) //
+                .computedId("0003") //
+                .build()));
 
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
-                                              new DataSetRow(rowMetadata, secondRowValues), //
-                                              new DataSetRow(rowMetadata, thirdRowValues));
+                new DataSetRow(rowMetadata, secondRowValues), //
+                new DataSetRow(rowMetadata, thirdRowValues));
 
         parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*Something", "regex"));
+        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*Something", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
 
         // then
         Assertions.assertThat(rows.get(0).values()) //
-            .isNotEmpty() //
-            .hasSize(3) //
-            .containsExactly(MapEntry.entry("0001", "David Bowie"), //
-                             MapEntry.entry("0002", "N"), //
-                             MapEntry.entry("0003", ""));
+                .isNotEmpty() //
+                .hasSize(3) //
+                .containsExactly(MapEntry.entry("0001", "David Bowie"), //
+                        MapEntry.entry("0002", "N"), //
+                        MapEntry.entry("0003", ""));
 
         Assertions.assertThat(rows.get(1).values()) //
-            .isNotEmpty() //
-            .hasSize(3) //
-            .containsExactly(MapEntry.entry("0001", "Beer"), //
-                             MapEntry.entry("0002", "T"), //
-                             MapEntry.entry("0003", ""));
+                .isNotEmpty() //
+                .hasSize(3) //
+                .containsExactly(MapEntry.entry("0001", "Beer"), //
+                        MapEntry.entry("0002", "T"), //
+                        MapEntry.entry("0003", ""));
 
         Assertions.assertThat(rows.get(2).values()) //
-            .isNotEmpty() //
-            .hasSize(3) //
-            .containsExactly(MapEntry.entry("0001", "Wine"), //
-                             MapEntry.entry("0002", "True"), //
-                             MapEntry.entry("0003", "Somethin"));
+                .isNotEmpty() //
+                .hasSize(3) //
+                .containsExactly(MapEntry.entry("0001", "Wine"), //
+                        MapEntry.entry("0002", "True"), //
+                        MapEntry.entry("0003", "Somethin"));
 
     }
-
 
     @Test
     public void should_not_clear_because_not_equals() throws Exception {
@@ -179,7 +178,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("regex", "Badibada"));
+        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("Badibada", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -211,7 +210,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, Boolean.TRUE.toString());
+        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -243,7 +242,8 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, Boolean.FALSE.toString());
+        parameters.put(ClearEquals.VALUE_PARAMETER,
+                generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -275,7 +275,7 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
 
         parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
 
-        parameters.put(ClearEquals.VALUE_PARAMETER, "tchoubidoo");
+        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson("tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -287,6 +287,66 @@ public class ClearEqualsTest extends AbstractMetadataBaseTest {
                 .containsExactly(MapEntry.entry("0001", "David Bowie"), //
                         MapEntry.entry("0002", "True"), //
                         MapEntry.entry("0003", "Something"));
+    }
+
+
+    @Test
+    public void should_clear_because_pattern_match_integer() throws Exception {
+        // given
+        final Map<String, String> firstRowValues = new HashMap<>();
+        firstRowValues.put("0001", "David Bowie");
+        firstRowValues.put("0002", "N");
+        firstRowValues.put("0003", "123");
+
+        final Map<String, String> secondRowValues = new HashMap<>();
+        secondRowValues.put("0001", "Beer");
+        secondRowValues.put("0002", "T");
+        secondRowValues.put("0003", "1234");
+
+        final Map<String, String> thirdRowValues = new HashMap<>();
+        thirdRowValues.put("0001", "Wine");
+        thirdRowValues.put("0002", "True");
+        thirdRowValues.put("0003", "01234");
+
+        final RowMetadata rowMetadata = new RowMetadata();
+        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
+                                                             .type(Type.INTEGER) //
+                                                             .computedId("0003") //
+                                                             .build()));
+
+        List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
+                                              new DataSetRow(rowMetadata, secondRowValues), //
+                                              new DataSetRow(rowMetadata, thirdRowValues));
+
+        parameters = ActionMetadataTestUtils.parseParameters(ClearEqualsTest.class.getResourceAsStream("clearEqualsAction.json"));
+
+        parameters.put(ClearEquals.VALUE_PARAMETER, generateJson(".*1234", ReplaceOnValueHelper.REGEX_MODE));
+
+        // when
+        ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
+
+        // then
+        Assertions.assertThat(rows.get(0).values()) //
+            .isNotEmpty() //
+            .hasSize(3) //
+            .containsExactly(MapEntry.entry("0001", "David Bowie"), //
+                             MapEntry.entry("0002", "N"), //
+                             MapEntry.entry("0003", "123"));
+
+        Assertions.assertThat(rows.get(1).values()) //
+            .isNotEmpty() //
+            .hasSize(3) //
+            .containsExactly(MapEntry.entry("0001", "Beer"), //
+                             MapEntry.entry("0002", "T"), //
+                             MapEntry.entry("0003", ""));
+
+        Assertions.assertThat(rows.get(2).values()) //
+            .isNotEmpty() //
+            .hasSize(3) //
+            .containsExactly(MapEntry.entry("0001", "Wine"), //
+                             MapEntry.entry("0002", "True"), //
+                             MapEntry.entry("0003", ""));
+
     }
 
     @Test

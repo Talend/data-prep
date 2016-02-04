@@ -432,14 +432,4 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         }
     }
 
-
-    private String generateJson(String token, String operator) {
-        ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);
-        try {
-            return builder.build().writeValueAsString(r);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
-    }
-
 }

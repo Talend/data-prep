@@ -51,11 +51,6 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
     @Autowired
     private MatchesPattern action;
 
-
-    /** The dataprep ready jackson builder. */
-    @Autowired
-    public Jackson2ObjectMapperBuilder builder;
-
     private Map<String, String> parameters;
 
     @Before
@@ -311,13 +306,6 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
                 .build();
     }
 
-    private String generateJson(String token, String operator) {
-        ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);
-        try {
-            return builder.build().writeValueAsString(r);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
-    }
+
 
 }

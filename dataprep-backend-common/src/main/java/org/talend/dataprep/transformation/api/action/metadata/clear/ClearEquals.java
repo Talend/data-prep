@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -28,6 +30,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
@@ -44,6 +47,9 @@ public class ClearEquals extends AbstractClear implements ColumnAction, OtherCol
     public static final String VALUE_PARAMETER = "equals_value"; //$NON-NLS-1$
 
     private static final List<String> ACTION_SCOPE = Collections.singletonList(EQUALS.getDisplayName());
+
+    @Inject
+    private ReplaceOnValueHelper regexParametersHelper;
 
     /**
      * @see ActionMetadata#getName()
@@ -82,14 +88,13 @@ public class ClearEquals extends AbstractClear implements ColumnAction, OtherCol
         final List<Parameter> parameters = super.getParameters();
 
         Parameter constantParameter = new Parameter(VALUE_PARAMETER, //
-                ParameterType.STRING, //
+                ParameterType.REGEX, //
                 StringUtils.EMPTY);
 
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                            .name(MODE_PARAMETER)
                            .item(CONSTANT_MODE, constantParameter)
-                           .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
                            .defaultValue(CONSTANT_MODE)
                            .build()
         );
@@ -102,7 +107,7 @@ public class ClearEquals extends AbstractClear implements ColumnAction, OtherCol
         Map<String, String> parameters = context.getParameters();
         String equalsValue = parameters.get(VALUE_PARAMETER);
 
-        boolean toClear = false;
+        boolean toClear;
 
         switch (Type.get(colMetadata.getType())) {
         case BOOLEAN:
@@ -110,7 +115,9 @@ public class ClearEquals extends AbstractClear implements ColumnAction, OtherCol
             toClear = StringUtils.equalsIgnoreCase(value, equalsValue);
             break;
         default:
-            toClear = StringUtils.equals(value, equalsValue);
+            ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
+            toClear = replaceOnValueHelper.matches(value);
+            // toClear = StringUtils.equals(value, equalsValue);
         }
 
         return toClear;

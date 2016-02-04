@@ -56,6 +56,14 @@ public class Preparation extends Identifiable implements Serializable {
     /** List of the steps id for this preparation. */
     private List<String> steps;
 
+
+    /**
+     * Default empty constructor.
+     */
+    public Preparation() {
+        // needed for mongodb integration
+    }
+
     /**
      * Default constructor.
      * 

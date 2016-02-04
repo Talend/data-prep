@@ -15,7 +15,7 @@ package org.talend.dataprep.api.dataset.statistics.number;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.talend.dataprep.number.BigDecimalParser;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataquality.statistics.numeric.NumericalStatisticsAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.TypeInferenceUtils;

@@ -48,11 +48,11 @@ public class Step extends Identifiable implements Serializable {
     //@formatter:on
 
     @PersistenceConstructor
-    public Step(final String parentId, final String contentId, final String version, final StepDiff diff) {
+    public Step(final String parentId, final String contentId, final String appVersion, final StepDiff diff) {
         setParent(parentId);
         setContent(contentId);
         setDiff(diff);
-        this.appVersion = version;
+        this.appVersion = appVersion;
     }
 
     public String getContent() {

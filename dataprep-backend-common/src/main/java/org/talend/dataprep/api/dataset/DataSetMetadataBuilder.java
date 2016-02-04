@@ -91,7 +91,7 @@ public class DataSetMetadataBuilder {
     /**
      * @see org.talend.dataprep.api.dataset.DataSetContent#limit
      */
-    private Long limit = null;
+    private Long limit;
 
     /**
      * @see org.talend.dataprep.api.dataset.DataSetContent#nbLinesInHeader

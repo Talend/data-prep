@@ -46,6 +46,14 @@ public class PreparationActions extends Identifiable implements Serializable {
     private String appVersion;
 
     /**
+     * Default empty constructor.
+     */
+    public PreparationActions() {
+        // needed for mongodb integration
+        this.actions = Collections.emptyList();
+    }
+
+    /**
      * Default constructor.
      * 
      * @param appVersion the current application version for this PreparationActions.
@@ -61,8 +69,8 @@ public class PreparationActions extends Identifiable implements Serializable {
      * @param appVersion the current application version for this PreparationActions.
      */
     @JsonCreator
-    public PreparationActions(@JsonProperty("actions")
-    final List<Action> actions, @JsonProperty("app-version") String appVersion) {
+    public PreparationActions(@JsonProperty("actions") final List<Action> actions, //
+                              @JsonProperty("app-version") String appVersion) {
         this.actions = unmodifiableList(actions);
         this.appVersion = appVersion;
     }

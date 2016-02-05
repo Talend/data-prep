@@ -79,8 +79,6 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
                 new DataSetRow(rowMetadata, secondRowValues));
 
-        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("Something", ReplaceOnValueHelper.EQUALS_MODE));
-
         // when
         ActionTestWorkbench.test(rows, action.create(parameters).getRowAction());
 

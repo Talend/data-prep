@@ -6,7 +6,7 @@
         "column_id": "0003",
         "column_name": "description",
         "scope": "column",
-        "equals_value": {
+        "matching_value": {
           "token": "Something",
           "operator": "equals"
         }

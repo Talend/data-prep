@@ -43,11 +43,11 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
     /**
      * The action name.
      */
-    public static final String ACTION_NAME = "levenstein_distance";
+    public static final String ACTION_NAME = "levenshtein_distance";
 
-    public static final String VALUE_PARAMETER = "levenstein_compare_value";
+    public static final String VALUE_PARAMETER = "levenshtein_compare_value";
 
-    public static final String DISTANCE_PARAMETER = "levenstein_distance_value";
+    public static final String DISTANCE_PARAMETER = "levenshtein_distance_value";
 
     /**
      * The column appendix.

@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "levenstein_distance",
+      "action": "levenshtein_distance",
       "parameters": {
         "column_id": "0000",
         "column_name": "name",

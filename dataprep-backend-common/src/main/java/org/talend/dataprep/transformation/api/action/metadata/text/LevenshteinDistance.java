@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
@@ -56,7 +57,7 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
 
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return false;
+        return Type.STRING.equals( Type.get( column.getType()));
     }
 
     @Override

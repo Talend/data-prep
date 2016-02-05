@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "levenstein_distance",
+      "parameters": {
+        "column_id": "0000",
+        "column_name": "name",
+        "scope": "column"
+      }
+    }
+  ]
+}

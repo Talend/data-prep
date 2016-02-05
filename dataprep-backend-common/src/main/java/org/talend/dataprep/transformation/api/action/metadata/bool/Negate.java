@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.action.metadata.bool;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.WordUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;

@@ -20,6 +20,9 @@ import java.util.Map;
 
 import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
@@ -36,14 +39,29 @@ import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
  */
 
 @Component(ClearMatching.ACTION_BEAN_PREFIX + ClearMatching.ACTION_NAME)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ClearMatching extends AbstractClear implements ColumnAction {
+
     /** the action name. */
     public static final String ACTION_NAME = "clear_matching"; //$NON-NLS-1$
 
     public static final String VALUE_PARAMETER = "matching_value"; //$NON-NLS-1$
 
+    private final Type type;
+
     @Autowired
     private ReplaceOnValueHelper regexParametersHelper;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    public ClearMatching() {
+        this(Type.STRING);
+    }
+
+    public ClearMatching(Type type) {
+        this.type = type;
+    }
 
     /**
      * @see ActionMetadata#getName()
@@ -73,12 +91,31 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
 
-        Parameter constantParameter = new Parameter(VALUE_PARAMETER, ParameterType.REGEX, //
-                StringUtils.EMPTY, false, false);
+        if (this.type == Type.BOOLEAN) {
 
-        parameters.add(constantParameter);
+            parameters.add(SelectParameter.Builder.builder() //
+                    .name(VALUE_PARAMETER) //
+                    .item(Boolean.TRUE.toString()) //
+                    .item(Boolean.FALSE.toString()) //
+                    .build());
+
+            /*
+             * parameters.add(new Parameter(VALUE_PARAMETER, ParameterType.BOOLEAN, // Boolean.TRUE.toString()));
+             */
+        } else {
+            parameters.add(new Parameter(VALUE_PARAMETER, ParameterType.REGEX, //
+                    StringUtils.EMPTY, false, false));
+        }
 
         return parameters;
+    }
+
+    @Override
+    public ActionMetadata adapt(ColumnMetadata column) {
+        if (column == null || !acceptColumn(column)) {
+            return this;
+        }
+        return applicationContext.getBean(ClearMatching.class, Type.valueOf(column.getType().toUpperCase()));
     }
 
     public boolean toClear(ColumnMetadata colMetadata, String value, ActionContext context) {
@@ -87,11 +124,10 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
 
         switch (Type.get(colMetadata.getType())) {
         case BOOLEAN:
-            // for boolean we can accept True equals true
-            ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, false);
-            return StringUtils.equalsIgnoreCase(value, replaceOnValueHelper.getToken());
+            // for boolean we can accept True equalsIgnoreCase true
+            return StringUtils.equalsIgnoreCase(value, equalsValue);
         default:
-            replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
+            ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
             return replaceOnValueHelper.matches(value);
         }
     }

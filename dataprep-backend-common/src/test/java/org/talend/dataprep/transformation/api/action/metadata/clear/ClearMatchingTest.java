@@ -203,7 +203,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("true", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, Boolean.TRUE.toString());
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -233,8 +233,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearMatching.VALUE_PARAMETER,
-                generateJson(Boolean.FALSE.toString(), ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, Boolean.FALSE.toString());
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
@@ -264,7 +263,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
-        parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("tchoubidoo", ReplaceOnValueHelper.EQUALS_IGNORE_CASE_MODE));
+        parameters.put(ClearMatching.VALUE_PARAMETER, "tchoubidoo");
 
         // when
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());

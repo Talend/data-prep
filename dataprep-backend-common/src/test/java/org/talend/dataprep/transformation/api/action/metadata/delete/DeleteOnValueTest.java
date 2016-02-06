@@ -266,13 +266,5 @@ public class DeleteOnValueTest extends AbstractMetadataBaseTest {
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));
     }
 
-    private String generateJson(String token, String operator) {
-        ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);
-        try {
-            return builder.build().writeValueAsString(r);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
-    }
     
 }

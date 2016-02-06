@@ -16,7 +16,7 @@ package org.talend.dataprep.transformation.api.action.metadata.clear;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.INVALID;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -28,13 +28,15 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 
 /**
- * Delete row when value is invalid.
+ * Clear cell when value is invalid.
  */
 @Component(ClearInvalid.ACTION_BEAN_PREFIX + ClearInvalid.ACTION_NAME)
-public class ClearInvalid extends ActionMetadata implements ColumnAction {
+public class ClearInvalid extends AbstractClear implements ColumnAction {
 
     /** the action name. */
     public static final String ACTION_NAME = "clear_invalid"; //$NON-NLS-1$
+
+    private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
 
     /**
      * @see ActionMetadata#getName()
@@ -65,26 +67,16 @@ public class ClearInvalid extends ActionMetadata implements ColumnAction {
      */
     @Override
     public List<String> getActionScope() {
-        return Arrays.asList(new String[] { INVALID.getDisplayName() });
+        return ACTION_SCOPE;
     }
 
-    @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
-        final String value = row.get(columnId);
-        final ColumnMetadata colMetadata = row.getRowMetadata().getById(columnId);
-        if (!isValid(colMetadata, value)) {
-            row.set(columnId, "");
-        }
-    }
-
-    public boolean isValid(ColumnMetadata colMetadata, String value) {
+    public boolean toClear(ColumnMetadata colMetadata, String value, ActionContext context) {
         // update invalid values of column metadata to prevent unnecessary future analysis
         if (ActionMetadataUtils.checkInvalidValue(colMetadata, value)) {
-            return false;
+            return true;
         }
         // valid value
-        return true;
+        return false;
     }
 
 }

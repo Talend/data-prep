@@ -133,7 +133,7 @@ public class ReplaceOnValueHelper {
 
     /**
      * Set the strict mode.
-     * 
+     *
      * @param strict the strict mode to set.
      */
     private void setStrict(boolean strict) {
@@ -190,7 +190,7 @@ public class ReplaceOnValueHelper {
         boolean matches = false;
         switch (this.getOperator()) {
             case EQUALS_MODE:
-                matches = value.equals(this.getToken());
+                matches = StringUtils.equals( value, this.getToken());
                 break;
             case CONTAINS_MODE:
                 matches = value.contains(this.getToken());

@@ -225,13 +225,4 @@ public class CutTest extends AbstractMetadataBaseTest {
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
     }
 
-    private String generateJson(String token, String operator) {
-        ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);
-        try {
-            return builder.build().writeValueAsString(r);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
-    }
-
 }

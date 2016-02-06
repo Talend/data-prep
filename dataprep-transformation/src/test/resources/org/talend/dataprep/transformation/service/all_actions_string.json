@@ -140,6 +140,60 @@
     ]
   },
   {
+    "name": "clear_matching",
+    "label": "Clear on matching value",
+    "description": "Clear cells that match the value",
+    "docUrl": "",
+    "dynamic": false,
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "description": "The column to which you want to apply this action",
+        "label": "Column"
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "description": "The row to which you want to apply this action",
+        "label": "Row"
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "label": "Scope"
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Filter"
+      },
+      {
+        "name": "matching_value",
+        "type": "regex",
+        "implicit": false,
+        "canBeBlank": false,
+        "default": "",
+        "description": "The value to compare with",
+        "label": "Value"
+      }
+    ],
+    "category": "data cleansing"
+  },
+  {
     "category": "filtered",
     "name": "delete_lines",
     "dynamic": false,

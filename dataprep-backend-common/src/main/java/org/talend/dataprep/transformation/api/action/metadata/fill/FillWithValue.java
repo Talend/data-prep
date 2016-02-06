@@ -59,13 +59,6 @@ public class FillWithValue extends AbstractFillWith implements ColumnAction {
                 || Type.STRING.equals(Type.get(column.getType()));
     }
 
-    @Override
-    public ActionMetadata adapt(ColumnMetadata column) {
-        if (column == null || !acceptColumn(column)) {
-            return this;
-        }
-        final FillWithValue fillWithValue = new FillWithValue(Type.valueOf(column.getType().toUpperCase()));
-        fillWithValue.dateParser = this.dateParser; // autowired fields should not be forgotten...
-        return fillWithValue;
-    }
+
+
 }

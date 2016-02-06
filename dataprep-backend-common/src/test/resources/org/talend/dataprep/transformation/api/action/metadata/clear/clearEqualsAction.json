@@ -1,0 +1,16 @@
+{
+  "actions": [
+    {
+      "action": "clear_matching",
+      "parameters": {
+        "column_id": "0003",
+        "column_name": "description",
+        "scope": "column",
+        "matching_value": {
+          "token": "Something",
+          "operator": "equals"
+        }
+      }
+    }
+  ]
+}

@@ -3180,8 +3180,8 @@
         "implicit": true,
         "canBeBlank": true,
         "default": "",
-        "description": "The column to which you want to apply this action",
-        "label": "Column"
+        "label": "Column",
+        "description": "The column to which you want to apply this action"
       },
       {
         "name": "row_id",
@@ -3189,8 +3189,8 @@
         "implicit": true,
         "canBeBlank": true,
         "default": "",
-        "description": "The row to which you want to apply this action",
-        "label": "Row"
+        "label": "Row",
+        "description": "The row to which you want to apply this action"
       },
       {
         "name": "scope",
@@ -3198,8 +3198,8 @@
         "implicit": true,
         "canBeBlank": true,
         "default": "",
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
-        "label": "Scope"
+        "label": "Scope",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)"
       },
       {
         "name": "filter",
@@ -3207,17 +3207,52 @@
         "implicit": true,
         "canBeBlank": true,
         "default": "",
-        "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter"
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only."
       },
       {
-        "name": "levenshtein_compare_value",
-        "type": "string",
+        "name": "mode",
+        "type": "select",
         "implicit": false,
-        "canBeBlank": true,
-        "default": "",
-        "description": "The value to calculate Levenshtein distance with",
-        "label": "The value"
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "constant_mode",
+              "label": "No other column",
+              "parameters": [
+                {
+                  "name": "levenshtein_compare_value",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "default": "",
+                  "label": "The value",
+                  "description": "The value to calculate Levenshtein distance with"
+                }
+              ]
+            },
+            {
+              "value": "other_column_mode",
+              "label": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "default": "",
+                  "label": "Column",
+                  "description": "Combine the current column with this one"
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "default": "constant_mode",
+        "label": "Use with",
+        "description": "Select if you want to use a constant value or another column"
       },
       {
         "name": "levenshtein_distance_value",
@@ -3225,15 +3260,15 @@
         "implicit": false,
         "canBeBlank": true,
         "default": "0",
-        "description": "The maximum Levenshtein distance",
-        "label": "The Levenshtein distance"
+        "label": "The Levenshtein distance",
+        "description": "The maximum Levenshtein distance"
       }
     ],
     "category": "strings",
-    "dynamic": false,
-    "description": "Create a new column with <i>true</i> or <i>false</i> regarding if the value is less or equals the Levenshtein distance of a given pattern",
     "docUrl": "",
+    "actionScope": [],
     "label": "Levenshtein Distance",
-    "actionScope": []
+    "description": "Create a new column with <i>true</i> or <i>false</i> regarding if the value is less or equals the Levenshtein distance of a given pattern",
+    "dynamic": false
   }
 ]

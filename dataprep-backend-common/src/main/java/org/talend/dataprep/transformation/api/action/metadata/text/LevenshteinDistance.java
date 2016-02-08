@@ -86,7 +86,7 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
                                 StringUtils.EMPTY, false, false)) //
                 .defaultValue(OtherColumnParameters.CONSTANT_MODE).build());
 
-        parameters.add(new Parameter(DISTANCE_PARAMETER, INTEGER, "0"));
+        parameters.add(new Parameter(DISTANCE_PARAMETER, INTEGER, "1", false, false));
         return parameters;
     }
 
@@ -106,6 +106,7 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
                     .column() //
                     .name(column.getName() + APPENDIX) //
                     .type(BOOLEAN) //
+                    .typeForce(true) //
                     .empty(column.getQuality().getEmpty()) //
                     .invalid(column.getQuality().getInvalid()) //
                     .valid(column.getQuality().getValid()) //
@@ -129,6 +130,6 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
 
         final String columnValue = toStringTrueFalse(levenshteinDistance <= NumberUtils.toInt(maxDistance));
         row.set(levenshteinDistanceColumn, columnValue);
-
     }
+
 }

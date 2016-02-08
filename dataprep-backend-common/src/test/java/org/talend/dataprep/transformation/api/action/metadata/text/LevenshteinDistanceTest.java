@@ -13,23 +13,29 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
 /**
  * Test class for LevenshteinDistance action. Creates one consumer, and test it.
@@ -50,6 +56,11 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils
                 .parseParameters(LevenshteinDistanceTest.class.getResourceAsStream("levenshteinDistance.json"));
+    }
+
+    @Test
+    public void test_action_name() throws Exception {
+        assertEquals("levenshtein_distance", action.getName());
     }
 
     @Test
@@ -76,7 +87,6 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "true"));
-
     }
 
     @Test
@@ -98,7 +108,6 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "true"));
-
     }
 
     @Test
@@ -120,7 +129,6 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "false"));
-
     }
 
     @Test
@@ -144,7 +152,6 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "pale zle"), //
                         MapEntry.entry("0002", "true"));
-
     }
 
     @Test
@@ -168,7 +175,6 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "zale zne"), //
                         MapEntry.entry("0002", "true"));
-
     }
 
     @Test
@@ -192,7 +198,29 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "zale zSQ"), //
                         MapEntry.entry("0002", "false"));
-
     }
 
+    @Test
+    public void testActionParameters() throws Exception {
+        final List<Parameter> parameters = action.getParameters();
+        assertEquals(6, parameters.size());
+        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "levenshtein_distance_value")).findFirst().isPresent());
+        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
+    }
+
+    @Test
+    public void should_accept_column() {
+        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
+    }
+
+    @Test
+    public void should_not_accept_column() {
+        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptColumn(getColumn(Type.INTEGER)));
+        assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
+        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
+        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+    }
+    
 }

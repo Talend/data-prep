@@ -3251,24 +3251,20 @@
           "multiple": false
         },
         "default": "constant_mode",
-        "label": "Use with",
-        "description": "Select if you want to use a constant value or another column"
+        "label": "Use with"
       },
       {
         "name": "levenshtein_distance_value",
         "type": "integer",
         "implicit": false,
-        "canBeBlank": true,
-        "default": "0",
-        "label": "The Levenshtein distance",
-        "description": "The maximum Levenshtein distance"
+        "canBeBlank": false,
+        "default": "1",
+        "label": "The Levenshtein distance"
       }
     ],
     "category": "strings",
     "docUrl": "",
-    "actionScope": [],
     "label": "Levenshtein Distance",
-    "description": "Create a new column with <i>true</i> or <i>false</i> regarding if the value is less or equals the Levenshtein distance of a given pattern",
     "dynamic": false
   }
 ]

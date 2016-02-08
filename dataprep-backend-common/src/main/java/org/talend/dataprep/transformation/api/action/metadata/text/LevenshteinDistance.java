@@ -17,7 +17,6 @@ import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.BOOLEAN;
 import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.INTEGER;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,10 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
+import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
+import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 /**
  * Create a new column with Boolean result <code>true</code> if the Levenstein distance is less or equals the parameter
@@ -57,7 +59,7 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
 
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return Type.STRING.equals( Type.get( column.getType()));
+        return Type.STRING.equals(Type.get(column.getType()));
     }
 
     @Override
@@ -73,7 +75,17 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters.add(new Parameter(VALUE_PARAMETER, STRING, EMPTY));
+
+        parameters.add(SelectParameter.Builder.builder() //
+                .name(OtherColumnParameters.MODE_PARAMETER) //
+                .item(OtherColumnParameters.CONSTANT_MODE, //
+                        new Parameter(VALUE_PARAMETER, ParameterType.STRING, EMPTY)) //
+                .item(OtherColumnParameters.OTHER_COLUMN_MODE, //
+                        new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
+                                ParameterType.COLUMN, //
+                                StringUtils.EMPTY, false, false)) //
+                .defaultValue(OtherColumnParameters.CONSTANT_MODE).build());
+
         parameters.add(new Parameter(DISTANCE_PARAMETER, INTEGER, "0"));
         return parameters;
     }
@@ -82,10 +94,8 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         Map<String, String> parameters = context.getParameters();
-        String paramValue = parameters.get(VALUE_PARAMETER);
-        String maxDistance = parameters.get(DISTANCE_PARAMETER);
 
-        String value = row.get(context.getColumnId());
+        String maxDistance = parameters.get(DISTANCE_PARAMETER);
 
         // create new column and append it after current column
         RowMetadata rowMetadata = row.getRowMetadata();
@@ -105,7 +115,17 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
             return c;
         });
 
-        int levenshteinDistance = StringUtils.getLevenshteinDistance(value, paramValue);
+        String value = row.get(context.getColumnId());
+        int levenshteinDistance = 0;
+        if (parameters.get(OtherColumnParameters.MODE_PARAMETER).equals(OtherColumnParameters.CONSTANT_MODE)) {
+            String paramValue = parameters.get(VALUE_PARAMETER);
+            levenshteinDistance = StringUtils.getLevenshteinDistance(value, paramValue);
+        } else {
+            final ColumnMetadata selectedColumn = rowMetadata
+                    .getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
+            String paramValue = row.get(selectedColumn.getId());
+            levenshteinDistance = StringUtils.getLevenshteinDistance(value, paramValue);
+        }
 
         final String columnValue = toStringTrueFalse(levenshteinDistance <= NumberUtils.toInt(maxDistance));
         row.set(levenshteinDistanceColumn, columnValue);

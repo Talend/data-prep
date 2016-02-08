@@ -35,12 +35,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.metadata.common.CompareAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
 /**
  * Unit test for the CompareNumbers action.
- * 
+ *
  * @see CompareNumbers
  */
 public class CompareNumbersTest extends AbstractMetadataBaseTest {
@@ -52,12 +53,6 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     /** The action parameters. */
     private Map<String, String> parameters;
 
-    /**
-     * Constructor.
-     */
-    public CompareNumbersTest() throws IOException {
-        action = new CompareNumbers();
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -74,7 +69,7 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters();
         assertEquals(6, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.COMPARE_MODE)).findFirst().isPresent());
+        assertTrue(parameters.stream().filter(p -> StringUtils.equals( p.getName(), CompareAction.COMPARE_MODE)).findFirst().isPresent());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.MODE_PARAMETER)).findFirst().isPresent());
     }
 

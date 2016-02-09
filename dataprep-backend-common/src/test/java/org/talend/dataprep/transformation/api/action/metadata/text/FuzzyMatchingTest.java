@@ -38,29 +38,29 @@ import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumn
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
 /**
- * Test class for LevenshteinDistance action. Creates one consumer, and test it.
+ * Test class for FuzzyMatching action. Creates one consumer, and test it.
  *
- * @see LevenshteinDistance
+ * @see FuzzyMatching
  */
-public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
+public class FuzzyMatchingTest extends AbstractMetadataBaseTest {
 
     /**
      * The action to test.
      */
     @Autowired
-    private LevenshteinDistance action;
+    private FuzzyMatching action;
 
     private Map<String, String> parameters;
 
     @Before
     public void init() throws IOException {
         parameters = ActionMetadataTestUtils
-                .parseParameters(LevenshteinDistanceTest.class.getResourceAsStream("levenshteinDistance.json"));
+                .parseParameters(FuzzyMatchingTest.class.getResourceAsStream("levenshteinDistance.json"));
     }
 
     @Test
     public void test_action_name() throws Exception {
-        assertEquals("levenshtein_distance", action.getName());
+        assertEquals("fuzzy_matching", action.getName());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
         values.put("0000", "pale ale");
         final DataSetRow row = new DataSetRow(values);
 
-        parameters.put(LevenshteinDistance.VALUE_PARAMETER, "pale zle");
-        parameters.put(LevenshteinDistance.DISTANCE_PARAMETER, "5");
+        parameters.put(FuzzyMatching.VALUE_PARAMETER, "pale zle");
+        parameters.put(FuzzyMatching.SENSITIVITY, "5");
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
 
         // when
@@ -96,8 +96,8 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
         values.put("0000", "pale ale");
         final DataSetRow row = new DataSetRow(values);
 
-        parameters.put(LevenshteinDistance.VALUE_PARAMETER, "zale zne");
-        parameters.put(LevenshteinDistance.DISTANCE_PARAMETER, "3");
+        parameters.put(FuzzyMatching.VALUE_PARAMETER, "zale zne");
+        parameters.put(FuzzyMatching.SENSITIVITY, "3");
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
 
         // when
@@ -117,8 +117,8 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
         values.put("0000", "pale ale");
         final DataSetRow row = new DataSetRow(values);
 
-        parameters.put(LevenshteinDistance.VALUE_PARAMETER, "zale zSQ");
-        parameters.put(LevenshteinDistance.DISTANCE_PARAMETER, "3");
+        parameters.put(FuzzyMatching.VALUE_PARAMETER, "zale zSQ");
+        parameters.put(FuzzyMatching.SENSITIVITY, "3");
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
 
         // when
@@ -139,7 +139,7 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
         values.put("0001", "pale zle");
         final DataSetRow row = new DataSetRow(values);
 
-        parameters.put(LevenshteinDistance.DISTANCE_PARAMETER, "5");
+        parameters.put(FuzzyMatching.SENSITIVITY, "5");
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
 
@@ -162,7 +162,7 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
         values.put("0001", "zale zne");
         final DataSetRow row = new DataSetRow(values);
 
-        parameters.put(LevenshteinDistance.DISTANCE_PARAMETER, "3");
+        parameters.put(FuzzyMatching.SENSITIVITY, "3");
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
 
@@ -185,7 +185,7 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
         values.put("0001", "zale zSQ");
         final DataSetRow row = new DataSetRow(values);
 
-        parameters.put(LevenshteinDistance.DISTANCE_PARAMETER, "3");
+        parameters.put(FuzzyMatching.SENSITIVITY, "3");
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
 
@@ -204,7 +204,7 @@ public class LevenshteinDistanceTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters();
         assertEquals(6, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "levenshtein_distance_value")).findFirst().isPresent());
+        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "sensitivity")).findFirst().isPresent());
         assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), "mode")).findFirst().isPresent());
     }
 

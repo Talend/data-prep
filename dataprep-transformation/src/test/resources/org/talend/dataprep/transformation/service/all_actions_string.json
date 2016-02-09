@@ -3170,7 +3170,7 @@
     "name": "compare_numbers"
   },
   {
-    "name": "levenshtein_distance",
+    "name": "fuzzy_matching",
     "parameters": [
       {
         "name": "column_id",
@@ -3220,12 +3220,12 @@
               "label": "No other column",
               "parameters": [
                 {
-                  "name": "levenshtein_compare_value",
+                  "name": "reference_value",
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": true,
                   "default": "",
-                  "label": "The value"
+                  "label": "Reference"
                 }
               ]
             },
@@ -3252,17 +3252,17 @@
         "description": "Select if you want to use a constant value or another column"
       },
       {
-        "name": "levenshtein_distance_value",
+        "name": "sensitivity",
         "type": "integer",
         "implicit": false,
         "canBeBlank": false,
         "default": "1",
-        "label": "The Levenshtein distance"
+        "label": "Sensitivity"
       }
     ],
     "category": "strings",
     "docUrl": "",
-    "label": "Levenshtein Distance",
+    "label": "Fuzzy matching",
     "dynamic": false
   }
 ]

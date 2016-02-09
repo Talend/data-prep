@@ -40,22 +40,22 @@ import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 /**
  * Create a new column with Boolean result <code>true</code> if the Levenstein distance is less or equals the parameter
  */
-@Component(LevenshteinDistance.ACTION_BEAN_PREFIX + LevenshteinDistance.ACTION_NAME)
-public class LevenshteinDistance extends ActionMetadata implements ColumnAction {
+@Component(FuzzyMatching.ACTION_BEAN_PREFIX + FuzzyMatching.ACTION_NAME)
+public class FuzzyMatching extends ActionMetadata implements ColumnAction {
 
     /**
      * The action name.
      */
-    public static final String ACTION_NAME = "levenshtein_distance";
+    public static final String ACTION_NAME = "fuzzy_matching";
 
-    public static final String VALUE_PARAMETER = "levenshtein_compare_value";
+    public static final String VALUE_PARAMETER = "reference_value";
 
-    public static final String DISTANCE_PARAMETER = "levenshtein_distance_value";
+    public static final String SENSITIVITY = "sensitivity";
 
     /**
      * The column appendix.
      */
-    public static final String APPENDIX = "_ld_distance";
+    public static final String APPENDIX = "_matches";
 
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
@@ -86,7 +86,7 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
                                 StringUtils.EMPTY, false, false)) //
                 .defaultValue(OtherColumnParameters.CONSTANT_MODE).build());
 
-        parameters.add(new Parameter(DISTANCE_PARAMETER, INTEGER, "1", false, false));
+        parameters.add(new Parameter(SENSITIVITY, INTEGER, "1", false, false));
         return parameters;
     }
 
@@ -95,13 +95,13 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
         final String columnId = context.getColumnId();
         Map<String, String> parameters = context.getParameters();
 
-        String maxDistance = parameters.get(DISTANCE_PARAMETER);
+        int sensitivity = NumberUtils.toInt(parameters.get(SENSITIVITY));
 
         // create new column and append it after current column
         RowMetadata rowMetadata = row.getRowMetadata();
         ColumnMetadata column = rowMetadata.getById(columnId);
 
-        final String levenshteinDistanceColumn = context.column(column.getName() + APPENDIX, (r) -> {
+        final String fuzzyMatches = context.column(column.getName() + APPENDIX, (r) -> {
             final ColumnMetadata c = ColumnMetadata.Builder //
                     .column() //
                     .name(column.getName() + APPENDIX) //
@@ -117,19 +117,22 @@ public class LevenshteinDistance extends ActionMetadata implements ColumnAction 
         });
 
         String value = row.get(context.getColumnId());
-        int levenshteinDistance = 0;
+        String referenceValue = "";
         if (parameters.get(OtherColumnParameters.MODE_PARAMETER).equals(OtherColumnParameters.CONSTANT_MODE)) {
-            String paramValue = parameters.get(VALUE_PARAMETER);
-            levenshteinDistance = StringUtils.getLevenshteinDistance(value, paramValue);
+            referenceValue = parameters.get(VALUE_PARAMETER);
         } else {
             final ColumnMetadata selectedColumn = rowMetadata
                     .getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
-            String paramValue = row.get(selectedColumn.getId());
-            levenshteinDistance = StringUtils.getLevenshteinDistance(value, paramValue);
+            referenceValue = row.get(selectedColumn.getId());
         }
 
-        final String columnValue = toStringTrueFalse(levenshteinDistance <= NumberUtils.toInt(maxDistance));
-        row.set(levenshteinDistanceColumn, columnValue);
+        final String columnValue = toStringTrueFalse(fuzzyMatches(value, referenceValue, sensitivity));
+        row.set(fuzzyMatches, columnValue);
     }
 
+    private boolean fuzzyMatches(String value, String reference, int sensitivity) {
+        int levenshteinDistance = StringUtils.getLevenshteinDistance(value, reference);
+        return levenshteinDistance <= sensitivity;
+    }
+    
 }

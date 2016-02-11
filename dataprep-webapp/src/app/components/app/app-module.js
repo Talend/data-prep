@@ -21,7 +21,8 @@ import DataPrepApp from './app-directive';
             'data-prep.navbar',
             'data-prep.home',
             'data-prep.easter-eggs',
-            'data-prep.feedback'
+            'data-prep.feedback',
+            'data-prep.upgrade-version'
         ])
         .directive('dataprepApp', DataPrepApp);
 })();

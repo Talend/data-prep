@@ -37,6 +37,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.zafarkhaja</groupId>
+            <artifactId>java-semver</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
         </dependency>

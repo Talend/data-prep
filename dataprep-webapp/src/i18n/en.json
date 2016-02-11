@@ -304,5 +304,11 @@
   "DATASET_PARAMETERS_ENCODING": "Encoding",
   "DATASET_PARAMETERS_SEPARATOR": "Separator",
 
-  "ACTION_HELP": "Learn more..."
+  "ACTION_HELP": "Learn more...",
+
+  "_comment": "Upgrade version parameters",
+  "UPGRADE_VERSION_NEW_VERSION_AVAILABLE": "New Version Available",
+  "UPGRADE_VERSION_NEW_VERSION": "There is a new version of Talend Data Preparation Free Desktop available: {{version}}.",
+  "UPGRADE_VERSION_RELEASE_NOTES": "Check out the <a href='{{release_note_url}}'>release notes</a> for improvements and changes.",
+  "UPGRADE_VERSION_DOWNLOAD": "To upgrade, go to the <a href='{{download_url}}'>download page</a> on the Talend web site and install the new version."
 }

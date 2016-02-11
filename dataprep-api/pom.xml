@@ -27,6 +27,10 @@
     <name>dataprep-api</name>
     <dependencies>
         <dependency>
+            <groupId>com.github.zafarkhaja</groupId>
+            <artifactId>java-semver</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>

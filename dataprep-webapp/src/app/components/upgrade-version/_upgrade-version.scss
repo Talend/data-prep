@@ -1,0 +1,30 @@
+.upgrade-version {
+    padding: 20px;
+    background: $peace-lighter;
+    position: fixed;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid $light-gray;
+
+    p {
+        margin: 0;
+    }
+
+    .header {
+        font-size: 1.2em;
+        font-weight: normal;
+    }
+
+    .close {
+        position: absolute;
+        top: 25px;
+        right: 20px;
+        cursor: pointer;
+        color: $black;
+        font-size: 0.5em;
+    }
+
+}

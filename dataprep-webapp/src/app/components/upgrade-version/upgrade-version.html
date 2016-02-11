@@ -1,0 +1,9 @@
+<div ng-if="$ctrl.visible" class="upgrade-version">
+    <a ng-click="$ctrl.close()" class="close"><i class="icon" data-icon="d"></i></a>
+    <h3 class="header" translate-once="UPGRADE_VERSION_NEW_VERSION_AVAILABLE"></h3>
+    <p translate-once="UPGRADE_VERSION_NEW_VERSION" translate-values="{version: $ctrl.newVersion.version}"></p>
+    <p>
+        <div ng-bind-html="'UPGRADE_VERSION_DOWNLOAD' | translate:{download_url: $ctrl.newVersion.download_url}"></div>
+        <div ng-bind-html="'UPGRADE_VERSION_RELEASE_NOTES' | translate:{release_note_url: $ctrl.newVersion.release_note_url}"></div>
+    </p>
+</div>

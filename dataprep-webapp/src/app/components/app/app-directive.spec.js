@@ -29,13 +29,15 @@ describe('App directive', function() {
         };
     }));
 
-    beforeEach(inject(function($injector, RestURLs) {
+    beforeEach(inject(function($injector, $q, RestURLs, UpgradeVersionService) {
         RestURLs.setServerUrl('');
 
         var $httpBackend = $injector.get('$httpBackend');
         $httpBackend
             .expectGET(RestURLs.exportUrl + '/formats')
             .respond(200, {});
+
+        spyOn(UpgradeVersionService, "retrieveNewVersions").and.returnValue($q.when([]));
     }));
 
     afterEach(function() {

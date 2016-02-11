@@ -99,7 +99,14 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
             return c;
         });
 
-        row.set(newColumnId, toStringTrueFalse(compare(row.get(columnId), getValueToCompareWith(parameters, row), compareMode)));
+        ComparisonRequest comparisonRequest = new ComparisonRequest() //
+                .setMode(compareMode) //
+                .setColumnMetadata1(row.getRowMetadata().getById(columnId)) //
+                .setValue1(row.get(columnId)) //
+                // this can be null when comparing with a constant
+                .setColumnMetadata2(getColumnMetadataToCompareWith(parameters, row)) //
+                .setValue2(getValueToCompareWith(parameters, row));
+        row.set(newColumnId, toStringTrueFalse(compare(comparisonRequest)));
     }
 
     private String getValueToCompareWith(Map<String, String> parameters, DataSetRow row) {
@@ -111,20 +118,74 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
         }
     }
 
+    private ColumnMetadata getColumnMetadataToCompareWith(Map<String, String> parameters, DataSetRow row) {
+        if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
+            // we return the primary columnMetadata as we do not have an other one.
+            return null;
+        }
+        final ColumnMetadata selectedColumn = row.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+        return selectedColumn;
+
+    }
+
     /**
      * do the real comparison
      * 
-     * @param value1
-     * @param value2
+     * @param comparisonRequest
      * @return same result as {@link Comparable#compareTo(Object)}
      */
-    protected abstract int doCompare(String value1, String value2);
+    protected abstract int doCompare(ComparisonRequest comparisonRequest);
 
-    public boolean compare(String value1, String value2, String mode) {
+    /**
+     * bean to ease passing values to do comparison (easier adding fields than changing method parameters)
+     */
+    public static class ComparisonRequest {
+
+        public String value1, value2;
+
+        public ColumnMetadata colMetadata1, colMetadata2;
+
+        public String mode;
+
+        public ComparisonRequest setValue1(String value1) {
+            this.value1 = value1;
+            return this;
+        }
+
+        public ComparisonRequest setValue2(String value2) {
+            this.value2 = value2;
+            return this;
+        }
+
+        public ComparisonRequest setColumnMetadata1(ColumnMetadata colMetadata1) {
+            this.colMetadata1 = colMetadata1;
+            return this;
+        }
+
+        public ComparisonRequest setColumnMetadata2(ColumnMetadata colMetadata1) {
+            this.colMetadata1 = colMetadata1;
+            return this;
+        }
+
+        public ComparisonRequest setMode(String mode) {
+            this.mode = mode;
+            return this;
+        }
+
+
+
+        @Override
+        public String toString() {
+            return "ComparisonRequest{" + "colMetadata1=" + colMetadata1 + ", value1='" + value1 + '\'' + ", value2='" + value2
+                    + '\'' + ", colMetadata2=" + colMetadata2 + ", mode='" + mode + '\'' + '}';
+        }
+    }
+
+    public boolean compare(ComparisonRequest comparisonRequest) {
         try {
-            final int result = doCompare(value1, value2);
+            final int result = doCompare(comparisonRequest);
 
-            switch (mode) {
+            switch (comparisonRequest.mode) {
             case EQ:
                 return result == 0;
             case NE:
@@ -141,7 +202,7 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
                 return false;
             }
         } catch (NumberFormatException e) {
-            LOGGER.debug("Unable to compare values '{}' and '{}'", value1, value2, e);
+            LOGGER.debug("Unable to compare values '{}' ", comparisonRequest, e);
             return false;
         }
     }

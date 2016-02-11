@@ -11,12 +11,12 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.transformation.api.action.metadata.math;
+package org.talend.dataprep.transformation.api.action.metadata.date;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
@@ -26,13 +26,13 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
 import org.talend.dataprep.transformation.api.action.metadata.common.CompareAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 
-@Component(CompareNumbers.ACTION_BEAN_PREFIX + CompareNumbers.ACTION_NAME)
-public class CompareNumbers extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {
+@Component(CompareDates.ACTION_BEAN_PREFIX + CompareDates.ACTION_NAME)
+public class CompareDates extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {
 
     /**
      * The action name.
      */
-    public static final String ACTION_NAME = "compare_numbers"; //$NON-NLS-1$
+    public static final String ACTION_NAME = "compare_dates"; //$NON-NLS-1$
 
     /**
      * @see ActionMetadata#getName()
@@ -42,32 +42,37 @@ public class CompareNumbers extends AbstractCompareAction implements ColumnActio
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
-    @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        Type columnType = Type.get(column.getType());
-        return Type.NUMERIC.isAssignableFrom(columnType);
-    }
+    @Autowired
+    protected DateParser dateParser;
 
     /**
      * @see ActionMetadata#getCategory()
      */
     @Override
     public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+        return ActionCategory.DATE.getDisplayName();
     }
 
-
+    /**
+     * @see ActionMetadata#acceptColumn(ColumnMetadata)
+     */
+    @Override
+    public boolean acceptColumn(ColumnMetadata column) {
+        Type columnType = Type.get(column.getType());
+        return Type.DATE.isAssignableFrom(columnType);
+    }
 
     @Override
     protected int doCompare(ComparisonRequest comparisonRequest) {
-        final BigDecimal value = BigDecimalParser.toBigDecimal(comparisonRequest.value1);
-        final BigDecimal toCompare = BigDecimalParser.toBigDecimal(comparisonRequest.value2);
-        final int result = value.compareTo(toCompare);
 
-        return result;
+        final LocalDateTime temporalAccessor1 = dateParser.parse(comparisonRequest.value1, comparisonRequest.colMetadata1);
+
+        // we compare with the format of the first column when the comparison is with a CONSTANT
+        final LocalDateTime temporalAccessor2 = dateParser.parse(comparisonRequest.value2,
+                comparisonRequest.mode.equals(CONSTANT_MODE) ? //
+                        comparisonRequest.colMetadata2 : comparisonRequest.colMetadata1);
+
+        return temporalAccessor1.compareTo(temporalAccessor2);
     }
 
 }

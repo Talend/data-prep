@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
@@ -19,7 +19,6 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getRow;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.metadata.common.AbstractCompareAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.CompareAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
@@ -53,7 +53,6 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     /** The action parameters. */
     private Map<String, String> parameters;
 
-
     @Before
     public void setUp() throws Exception {
         final InputStream parametersSource = CompareNumbersTest.class.getResourceAsStream("compareNumbersAction.json");
@@ -69,8 +68,10 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     public void testActionParameters() throws Exception {
         final List<Parameter> parameters = action.getParameters();
         assertEquals(6, parameters.size());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals( p.getName(), CompareAction.COMPARE_MODE)).findFirst().isPresent());
-        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.MODE_PARAMETER)).findFirst().isPresent());
+        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareAction.COMPARE_MODE)).findFirst()
+                .isPresent());
+        assertTrue(parameters.stream().filter(p -> StringUtils.equals(p.getName(), CompareNumbers.MODE_PARAMETER)).findFirst()
+                .isPresent());
     }
 
     @Test
@@ -87,22 +88,27 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testComputeIntegerOperand() {
-        assertTrue(action.compare("3", "3", "eq"));
-        assertTrue(action.compare("003", "3.0", "eq"));
-        assertFalse(action.compare("1 200", "2,300", "gt"));
+        assertTrue(action.compare(new AbstractCompareAction.ComparisonRequest().setValue1("3").setValue2("3").setMode("eq")));
+        assertTrue(action.compare(new AbstractCompareAction.ComparisonRequest().setValue1("003").setValue2("3.0").setMode("eq")));
+        assertFalse(action
+                .compare(new AbstractCompareAction.ComparisonRequest().setValue1("1 200").setValue2("2,300").setMode("gt")));
     }
 
     @Test
     public void testComputeDecimalOperand() {
-        assertTrue(action.compare("3.0", "003", "eq"));
-        assertTrue(action.compare("003.5333", "0", "gt"));
-        assertFalse(action.compare("1 200.5", "2,300.5", "gt"));
+        assertTrue(action.compare(new AbstractCompareAction.ComparisonRequest().setValue1("3.0").setValue2("003").setMode("eq")));
+        assertTrue(
+                action.compare(new AbstractCompareAction.ComparisonRequest().setValue1("003.5333").setValue2("0").setMode("gt")));
+        assertFalse(action
+                .compare(new AbstractCompareAction.ComparisonRequest().setValue1("1 200.5").setValue2("2,300.5").setMode("gt")));
     }
 
     @Test
     public void testComputeScientificOperand() {
-        assertTrue(action.compare("1.2E3", "1200", "eq"));
-        assertFalse(action.compare("1.2E3", "1200", "ne"));
+        assertTrue(
+                action.compare(new AbstractCompareAction.ComparisonRequest().setValue1("1.2E3").setValue2("1200").setMode("eq")));
+        assertFalse(
+                action.compare(new AbstractCompareAction.ComparisonRequest().setValue1("1.2E3").setValue2("1200").setMode("ne")));
     }
 
     @Test
@@ -173,7 +179,8 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, action.create(parameters).getRowAction());
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source_eq_selected?").type(Type.BOOLEAN).build();
+        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source_eq_selected?").type(Type.BOOLEAN)
+                .build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

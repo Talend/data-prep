@@ -1,0 +1,33 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="editable-text" ng-switch="editableTextCtrl.editionMode">
+    <div ng-show="!editableTextCtrl.editionMode" class="editable-text-container">
+        <span class="editable-text-text {{::editableTextCtrl.textClass}}"
+              title="{{editableTextCtrl.textTitle}}"
+              ng-click="editableTextCtrl.onTextClick()"
+              ng-bind="editableTextCtrl.text"></span>
+        <button class="edit-btn" data-icon="a" ng-click="editableTextCtrl.edit()"></button>
+    </div>
+
+    <form class="editable-text-container" ng-show="editableTextCtrl.editionMode" ng-submit="editableTextCtrl.validate()">
+        <input class="edition-text-input"
+               type="text"
+               translate-once-placeholder="{{editableTextCtrl.placeholder}}"
+               ng-model="editableTextCtrl.editionText"/>
+        <button class="valid-btn" data-icon="b"></button>
+        <button type='button' class="cancel-btn" data-icon="d" ng-click="editableTextCtrl.cancel()"></button>
+    </form>
+</div>

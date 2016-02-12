@@ -1,0 +1,144 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.lookup {
+
+  @include display(flex);
+  @include flex-direction(column);
+
+  .lookup-header {
+    @include flex-basis(20px);
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    border-top: 1px solid $medium-gray;
+  }
+
+  .lookup-container {
+    @include flex-basis(277px);
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    border-top: 1px solid $medium-gray;
+    border-bottom: 1px solid $medium-gray;
+
+    @include display(flex);
+
+    #lookup-left {
+      @include flex-basis(200px);
+      @include flex-grow(1);
+      @include flex-shrink(1);
+
+      height: 277px;
+      position: relative;
+
+      #lookup-add-instruction {
+        position: absolute;
+        top: 45%;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    #lookup-right {
+      @include flex-basis(350px);
+      @include flex-grow(0);
+      @include flex-shrink(0);
+
+      background-color: $shadow-gray;
+      position: relative;
+
+      .lookup-description {
+        margin-left: 10px;
+        padding-top: 10px;
+        width: 93%;
+
+        .lookup-step {
+          margin-left: 15px;
+          margin-bottom: 5px;
+          color: $dark-gray;
+        }
+
+        a {
+          margin-left: 15px;
+          margin-bottom: 5px;
+        }
+      }
+      button {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+  }
+
+  .lookup-footer {
+    @include flex-basis(30px);
+    @include flex-grow(0);
+    @include flex-shrink(0);
+  }
+}
+
+.add-dataset-lookup .inventory {
+
+  .inventory-sort {
+    @include display(flex);
+    @include flex-direction(row);
+    @include align-items(center);
+    @include justify-content(flex-end);
+
+    height: 30px;
+    font-weight: 300;
+    padding: 0 5px 0 0;
+
+    .button-switch {
+      color: $black;
+      padding: 0 5px 0 5px;
+      font-weight: bold;
+      cursor: pointer;
+
+      &:hover {
+        color: $dark-blue;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .inventory-list {
+    max-height: 60vh;
+
+    .inventory-item-row {
+      @include display(flex);
+      @include flex-direction(row);
+      @include align-items(center);
+
+      .add-dataset-input {
+        @include flex-basis(30px);
+        @include flex-grow(0);
+        @include flex-shrink(0);
+        outline:none;
+      }
+
+      inventory-item {
+        @include flex-basis(200px);
+        @include flex-grow(1);
+        @include flex-shrink(1);
+
+        .btn-icon:hover {
+          background-color: transparent;
+        }
+        .btn-transparent:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+}

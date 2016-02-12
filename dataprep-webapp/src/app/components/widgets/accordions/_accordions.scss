@@ -1,0 +1,24 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.accordion {
+  > .trigger-container {
+    cursor: pointer;
+  }
+
+  > .content-container > .content {
+    margin: 5px 30px 5px 10px;
+    display: none;
+    background-color: rgb(226, 226, 227);
+  }
+}

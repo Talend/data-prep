@@ -1,0 +1,131 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.button-dropdown {
+  $base-border-radius: 3px;
+  $large-screen: em(860) !default;
+  $dropdown-menu-color: $dark-gray;
+  $dropdown-menu-background: $white;
+  $dropdown-menu-background-hover: darken($dropdown-menu-background, 3%);
+
+  $button-background-color: $dark-green;
+  $button-color: $white;
+
+  @include flex-row();
+  position: relative;
+
+  @mixin button-dropdown-style() {
+    background: $button-background-color;
+    color: $button-color;
+    cursor: pointer;
+    height: 36px;
+    line-height: 36px;
+
+    @include media($large-screen) {
+      font-size: 1em;
+    }
+  }
+
+  .button-dropdown-main {
+    @include button-dropdown-style();
+
+    border-radius: 3px 0 0 3px;
+    border-left: 1px solid $white;
+    border-top:  1px solid $white;
+    border-bottom: 1px solid $white;
+    padding: 0 7px 0 10px;
+    text-transform: uppercase;
+
+    .button-dropdown-main-icon {
+      @include filter(drop-shadow(0px 1px 1px $dark-gray));
+      background: transparent;
+      padding-right: 10px;
+      font-size: 0.7em;
+      float: left;
+
+      @include flex-row-center();
+      height: 36px;
+      line-height: 36px;
+    }
+
+    .button-dropdown-main-text {
+      @include ellipsis();
+    }
+  }
+
+  .line-separator{
+    width: 1px;
+    height: 20px;
+    background: transparentize($white, .7);
+
+    position: absolute;
+    top: 8px;
+    right: 30px;
+  }
+
+  .dropdown .button-dropdown-side {
+    @include button-dropdown-style();
+    @include flex-row-center();
+
+    border-radius: 0 3px 3px 0;
+    border-right: 1px solid $white;
+    border-top:  1px solid $white;
+    border-bottom: 1px solid $white;
+    font-weight: 800;
+    padding: 0 10px;
+
+    &:after {
+      content: "\25BE";
+      margin: 0;
+    }
+  }
+
+  .dropdown-menu {
+    @include flex-row-center();
+
+    color: $dropdown-menu-color;
+    box-shadow: 3px 3px 18px 3px transparentize(black, 0.8);
+    width: 140px;
+    outline: none;
+    padding: 0;
+
+    li {
+      width: 100%;
+      border-bottom: 1px solid silver;
+      color: #333;
+      list-style: none;
+      padding: 0.5em;
+      text-align: left;
+
+      &:first-child {
+        border-top-left-radius: $base-border-radius;
+        border-top-right-radius: $base-border-radius;
+      }
+
+      &:last-child {
+        border: none;
+        border-bottom-left-radius: $base-border-radius;
+        border-bottom-right-radius: $base-border-radius;
+      }
+
+      &:hover {
+        background: $dropdown-menu-background-hover;
+      }
+
+      &.disabled {
+        color: $medium-gray;
+        cursor: default;
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<talend-modal fullscreen="false"
+              close-button="true"
+              disable-enter="::confirmCtrl.disableEnter"
+              state="confirmCtrl.modalState">
+
+    <p ng-repeat="text in ::confirmCtrl.texts track by $index">{{text}}</p>
+
+    <div class="modal-buttons">
+        <button class="talend-modal-close btn-secondary modal-secondary-button"
+                ng-click="confirmCtrl.cancel()"><span translate-once="NO"></span></button>
+        <button class="talend-modal-close btn-primary modal-primary-button"
+                ng-click="confirmCtrl.valid()"><span translate-once="YES"></span></button>
+    </div>
+</talend-modal>

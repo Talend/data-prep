@@ -1,0 +1,64 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.dataset-sheet-preview {
+  $medium-screen: em(640) !default;
+  $large-screen: em(860) !default;
+
+  padding: 10px 20px;
+
+  @include display(flex);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+  @include flex-wrap(wrap);
+  @include align-items(stretch);
+
+  .form-row {
+    @include display(flex);
+    @include flex-direction(row);
+    @include flex-wrap(wrap);
+  }
+
+  .form-title {
+    @include flex-grow(1);
+    @include flex-basis(150px);
+    padding-right: 5px;
+
+    @include media($medium-screen) {
+      text-align: right;
+    }
+  }
+
+  .form-value {
+    @include flex-grow(2);
+    @include flex-basis(300px);
+
+    input, select {
+      margin: 0;
+    }
+  }
+
+  #datasetSheetPreviewGrid {
+    width: 100%;
+    height: 36%;
+
+    margin: 0;
+
+    &.datagrid{
+      min-height: 200px;
+      .slick-header-columns {
+        height: 29px;
+      }
+    }
+  }
+}

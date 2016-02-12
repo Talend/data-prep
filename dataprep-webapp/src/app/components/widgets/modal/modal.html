@@ -1,0 +1,29 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="modal" ng-class="::{fullscreen:talendModalCtrl.fullscreen}">
+    <input class="modal-state" ng-model="talendModalCtrl.state" type="checkbox"/>
+
+    <div class="modal-window">
+
+        <div class="modal-inner" tabindex="-1">
+                <label ng-show="::(talendModalCtrl.closeButton)"
+                       class="talend-modal-close"
+                       ng-class="::{'modal-header-close':talendModalCtrl.fullscreen, 'modal-close': !talendModalCtrl.fullscreen}"></label>
+
+            <ng-transclude></ng-transclude>
+        </div>
+    </div>
+</div>

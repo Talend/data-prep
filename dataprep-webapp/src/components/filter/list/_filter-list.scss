@@ -1,9 +1,0 @@
-#filter-list {
-  padding: 0 10px;
-  @include display(flex);
-  @include flex-wrap(wrap);
-
-  >li {
-    margin: 0 3px;
-  }
-}

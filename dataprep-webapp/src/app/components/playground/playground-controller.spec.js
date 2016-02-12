@@ -1,0 +1,356 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+describe('Playground controller', function () {
+    'use strict';
+
+    var createController, scope, stateMock;
+
+    beforeEach(angular.mock.module('data-prep.playground', function ($provide) {
+        stateMock = {playground: {
+            dataset: {},
+            lookup: {
+                actions: []
+            }
+        }};
+        $provide.constant('state', stateMock);
+    }));
+
+    beforeEach(inject(function ($rootScope, $q, $controller, $state, PlaygroundService) {
+        scope = $rootScope.$new();
+
+        createController = function () {
+            return $controller('PlaygroundCtrl', {
+                $scope: scope
+            });
+        };
+
+        spyOn(PlaygroundService, 'createOrUpdatePreparation').and.returnValue($q.when(true));
+        spyOn($state, 'go').and.returnValue();
+
+    }));
+
+    describe('bindings', function () {
+        it('should bind preparationName getter with PlaygroundService', inject(function (PlaygroundService) {
+            //given
+            var ctrl = createController();
+            expect(ctrl.preparationName).toBeFalsy();
+
+            //when
+            PlaygroundService.preparationName = 'My preparation';
+
+            //then
+            expect(ctrl.preparationName).toBe('My preparation');
+        }));
+
+        it('should bind preparationName setter with PlaygroundService', inject(function (PlaygroundService) {
+            //given
+            var ctrl = createController();
+            expect(PlaygroundService.preparationName).toBeFalsy();
+
+            //when
+            ctrl.preparationName = 'My preparation';
+
+            //then
+            expect(PlaygroundService.preparationName).toBe('My preparation');
+        }));
+
+        it('should bind previewInProgress getter with PreviewService', inject(function (PreviewService) {
+            //given
+            var ctrl = createController();
+            expect(ctrl.previewInProgress).toBeFalsy();
+
+            //when
+            spyOn(PreviewService, 'previewInProgress').and.returnValue(true);
+
+            //then
+            expect(ctrl.previewInProgress).toBe(true);
+        }));
+    });
+
+    describe('recipe header', function () {
+
+        it('should create/update preparation with clean name on name edition confirmation', inject(function (PlaygroundService) {
+            //given
+            var ctrl = createController();
+            ctrl.preparationName = 'my old name';
+
+            //when
+            ctrl.confirmPrepNameEdition('  my new name  ');
+
+            //then
+            expect(PlaygroundService.createOrUpdatePreparation).toHaveBeenCalledWith('my new name');
+        }));
+
+        it('should change route to preparation route on name edition confirmation', inject(function ($rootScope, $state) {
+            //given
+            var ctrl = createController();
+            ctrl.preparationName = 'My old preparation ';
+            stateMock.playground.preparation = {id: 'fe6843da512545e'};
+
+            //when
+            ctrl.confirmPrepNameEdition('My preparation ');
+            $rootScope.$digest();
+
+            //then
+            expect($state.go).toHaveBeenCalledWith('nav.home.preparations', {prepid: 'fe6843da512545e'}, {
+                location: 'replace',
+                inherit: false
+            });
+        }));
+
+        it('should not call service create/updateName service if name is blank on name edition confirmation', inject(function (PlaygroundService) {
+            //given
+            var ctrl = createController();
+
+            //when
+            ctrl.confirmPrepNameEdition(' ');
+
+            //then
+            expect(PlaygroundService.createOrUpdatePreparation).not.toHaveBeenCalled();
+        }));
+    });
+
+    describe('implicit preparation', function () {
+        var ctrl;
+        var preparation;
+
+        beforeEach(inject(function ($q, PreparationService, StateService) {
+            preparation = {id: '9af874865e42b546', draft: true};
+            stateMock.playground.preparation = preparation;
+
+            spyOn(PreparationService, 'delete').and.returnValue($q.when(true));
+            spyOn(StateService, 'hidePlayground').and.returnValue();
+
+            ctrl = createController();
+        }));
+
+        it('should return true (allow playground close) with NOT implicit preparation', function () {
+            //given
+            preparation.draft = false;
+
+            //when
+            var result = ctrl.beforeClose();
+
+            //then
+            expect(result).toBe(true);
+        });
+
+        it('should return false (block playground close) with implicit preparation', function () {
+            //when
+            var result = ctrl.beforeClose();
+
+            //then
+            expect(result).toBe(false);
+        });
+
+        it('should show save/discard modal with implicit preparation', function () {
+            //given
+            expect(ctrl.showNameValidation).toBeFalsy();
+
+            //when
+            ctrl.beforeClose();
+
+            //then
+            expect(ctrl.showNameValidation).toBe(true);
+        });
+
+        it('should delete current preparation on save discard', inject(function (PreparationService) {
+            //when
+            ctrl.discardSaveOnClose();
+
+            //then
+            expect(PreparationService.delete).toHaveBeenCalledWith(preparation);
+        }));
+
+        it('should hide save/discard and playground modals on save discard', inject(function (StateService) {
+            //given
+            ctrl.showNameValidation = true;
+            expect(StateService.hidePlayground).not.toHaveBeenCalled();
+
+            //when
+            ctrl.discardSaveOnClose();
+            scope.$digest();
+
+            //then
+            expect(ctrl.showNameValidation).toBe(false);
+            expect(StateService.hidePlayground).toHaveBeenCalled();
+        }));
+
+        it('should change preparation name on save confirm', inject(function (PlaygroundService) {
+            //given
+            ctrl.preparationName = '  my preparation ';
+
+            //when
+            ctrl.confirmSaveOnClose();
+
+            //then
+            expect(PlaygroundService.createOrUpdatePreparation).toHaveBeenCalledWith('my preparation');
+        }));
+
+        it('should manage saving flag on save confirm', function () {
+            //given
+            expect(ctrl.saveInProgress).toBeFalsy();
+
+            //when
+            ctrl.confirmSaveOnClose();
+            expect(ctrl.saveInProgress).toBe(true);
+            scope.$digest();
+
+            //then
+            expect(ctrl.saveInProgress).toBe(false);
+        });
+
+        it('should hide save/discard and playground modals on save confirm', inject(function (StateService) {
+            //given
+            ctrl.showNameValidation = true;
+            expect(StateService.hidePlayground).not.toHaveBeenCalled();
+
+            //when
+            ctrl.confirmSaveOnClose();
+            scope.$digest();
+
+            //then
+            expect(ctrl.showNameValidation).toBe(false);
+            expect(StateService.hidePlayground).toHaveBeenCalled();
+        }));
+    });
+
+    describe('lookup', function () {
+        beforeEach(inject(function ($q, LookupService, StateService) {
+            spyOn(LookupService, 'initLookups').and.returnValue($q.when());
+            spyOn(StateService, 'setLookupVisibility').and.returnValue();
+        }));
+
+        it('should load lookup panel when it is hidden', inject(function (LookupService) {
+            //given
+            stateMock.playground.lookup.visibility = false;
+            var ctrl = createController();
+
+            //when
+            ctrl.toggleLookup();
+
+            //then
+            expect(LookupService.initLookups).toHaveBeenCalled();
+        }));
+
+        it('should display lookup panel when it is hidden', inject(function (StateService) {
+            //given
+            stateMock.playground.lookup.visibility = false;
+            var ctrl = createController();
+
+            //when
+            ctrl.toggleLookup();
+            scope.$digest();
+
+            //then
+            expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true, undefined);
+        }));
+
+        it('should hide lookup panel when it is visible', inject(function (LookupService, StateService) {
+            //given
+            stateMock.playground.lookup.visibility = true;
+            var ctrl = createController();
+
+            //when
+            ctrl.toggleLookup();
+
+            //then
+            expect(LookupService.initLookups).not.toHaveBeenCalled();
+            expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
+        }));
+    });
+
+    describe('feedback', function() {
+        beforeEach(inject(function (StateService) {
+            spyOn(StateService, 'showFeedback').and.returnValue();
+        }));
+
+        it('should open feedback modal', inject(function (StateService) {
+            //given
+            var ctrl = createController();
+
+            //when
+            ctrl.openFeedbackForm();
+
+            //then
+            expect(StateService.showFeedback).toHaveBeenCalled();
+        }));
+    });
+
+    describe('dataset parameters', function() {
+        beforeEach(inject(function ($q, StateService, PlaygroundService) {
+            spyOn(StateService, 'hideDatasetParameters').and.returnValue();
+            spyOn(StateService, 'toggleDatasetParameters').and.returnValue();
+            spyOn(StateService, 'setIsSendingDatasetParameters').and.returnValue();
+            spyOn(PlaygroundService, 'changeDatasetParameters').and.returnValue($q.when());
+        }));
+
+        it('should open dataset parameters', inject(function (StateService) {
+            //given
+            var ctrl = createController();
+            expect(StateService.toggleDatasetParameters).not.toHaveBeenCalled();
+
+            //when
+            ctrl.toggleParameters();
+
+            //then
+            expect(StateService.toggleDatasetParameters).toHaveBeenCalled();
+        }));
+
+        it('should manage progress flag', inject(function (StateService) {
+            //given
+            var ctrl = createController();
+            var parameters = {separator: ';', encoding: 'UTF-8'};
+
+            expect(StateService.setIsSendingDatasetParameters).not.toHaveBeenCalled();
+
+            //when
+            ctrl.changeDatasetParameters(parameters);
+            expect(StateService.setIsSendingDatasetParameters).toHaveBeenCalledWith(true);
+            scope.$digest();
+
+            //then
+            expect(StateService.setIsSendingDatasetParameters).toHaveBeenCalledWith(false);
+        }));
+
+        it('should call parameter change function', inject(function (PlaygroundService) {
+            //given
+            var ctrl = createController();
+            var parameters = {separator: ';', encoding: 'UTF-8'};
+
+            expect(PlaygroundService.changeDatasetParameters).not.toHaveBeenCalled();
+
+            //when
+            ctrl.changeDatasetParameters(parameters);
+
+            //then
+            expect(PlaygroundService.changeDatasetParameters).toHaveBeenCalled();
+        }));
+
+        it('should hide dataset parameters', inject(function (StateService) {
+            //given
+            var ctrl = createController();
+            var parameters = {separator: ';', encoding: 'UTF-8'};
+
+            expect(StateService.hideDatasetParameters).not.toHaveBeenCalled();
+
+            //when
+            ctrl.changeDatasetParameters(parameters);
+            scope.$digest();
+
+            //then
+            expect(StateService.hideDatasetParameters).toHaveBeenCalled();
+        }));
+    });
+});

@@ -1,0 +1,35 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="navigation-list">
+    <div class="add-item" ng-if="navigationListCtrl.showAddButton">
+        <span ng-click="navigationListCtrl.onAddItem()" class="add-button" data-icon="s"  translate-once-title="ADD_LOOKUP_DATASET_TITLE"></span>
+    </div>
+    <div class="back-forth-btn">
+        <button class="arrow-left"></button>
+        <button class="arrow-right"></button>
+    </div>
+    <div class="items-list-wrapper">
+        <ul class="items-list">
+            <li ng-repeat="item in navigationListCtrl.list track by $index"
+                ng-click="navigationListCtrl.onClick({item: item})"
+                class="item-label"
+                ng-class="{'selected-item-label': item === navigationListCtrl.selectedItem }"
+                title="{{navigationListCtrl.getLabel({item: item})}}">
+                {{navigationListCtrl.getLabel({item: item})}}
+            </li>
+        </ul>
+    </div>
+</div>

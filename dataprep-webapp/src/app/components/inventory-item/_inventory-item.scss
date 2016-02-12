@@ -1,0 +1,89 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.inventory-item {
+  .inventory-title {
+    padding: 3px 0;
+    @include ellipsis(430px);
+  }
+
+  .edition-text-input {
+    width: 220px;
+  }
+
+  .inventory-actions-related-item {
+    padding-right: 0;
+    height: 45px;
+
+    .line-separator {
+      display: none;
+    }
+
+    .button-dropdown {
+      button.button-dropdown-main,
+      button.button-dropdown-side {
+        border: none;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+      }
+
+      .button-dropdown-side {
+        width: 20px;
+      }
+
+      .button-dropdown-main-icon {
+        @include flex-row-center();
+        @include filter(none);
+        font-size: 1em;
+        padding: 0;
+      }
+
+      .dropdown-menu {
+        width: auto;
+
+        &:before {
+          top: -1.2em;
+        }
+
+        ul.inventory-actions-related-item-menu {
+          font-family: $sourcesanspro;
+          color: $black;
+
+          > li {
+            border: none;
+            font-size: 0.8em;
+
+            &:not(:first-child) {
+              padding-left: 15px;
+            }
+
+            &.divider {
+              border-bottom: 1px solid #e5e5e5;
+              padding: 0;
+              margin: 0;
+            }
+
+            .inventory-actions-related-item-name {
+              font-size: 1.15em;
+              font-weight: bold;
+              text-transform: uppercase;
+              @include ellipsis(350px);
+              vertical-align: bottom;
+            }
+          }
+        }
+      }
+    }
+  }
+}

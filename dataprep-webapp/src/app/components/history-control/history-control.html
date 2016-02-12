@@ -1,0 +1,26 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="history-control">
+    <a ng-click="historyCtrl.service.undo()"
+       ng-class="{'inactive': !historyCtrl.service.canUndo()}"
+       class="undo" data-icon="F" alt="UNDO ({{historyCtrl.service.canUndo()}})">
+    </a>
+
+    <a ng-click="historyCtrl.service.redo()"
+       ng-class="{'inactive': !historyCtrl.service.canRedo()}"
+       class="redo" data-icon="G" alt="REDO ({{historyCtrl.service.canRedo()}})">
+    </a>
+</div>

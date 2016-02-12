@@ -55,59 +55,53 @@ The source file structure is based on the [Best Practice Recommendations for Ang
 │   ├── en.json                                 - english translation files
 │   └── ...                                     - other Enterprise edition translation files
 │
-├── components                                  - components folder
-│   ├── home                                    - home page sources
-│       ├── home.html                           - home page
-│       ├── home-controller.js                  - home page controller
-│       ├── home-controller-spec.js             - home page controller unit tests
-│       └── home-subheader.html                 - home page subheader included in home.html
-│   ├── dataset                                 - dataset module folder
-│       ├── dataset-grid                        - dataset module folder
-│           ├── ...
-│           ├── dataset-grid-directive.html     - data grid directive template
-│           ├── dataset-grid-directive.js       - data grid directive
-│           └── dataset-grid-directive.spec.js  - data grid directive unit tests
-│       ├── ...
-│       ├── dataset-module.js                   - dataset angular module
-│       ├── dataset-service.js                  - dataset angular service registered in dataset module
-│       └── dataset-service.spec.js             - dataset service unit tests
+├── mocks                                       - unit tests mocks
 │
-│   ├── widgets                                 - Reusable components folder
-│   ├── ...                                     - other component folder
+├── app                                         - app sources
+│   ├── components                              - components folder
+│       ├── my-comp                             - component folder
+│           ├── my-comp.html                    - component template
+│           ├── my-comp-controller.js           - component controller
+│           ├── my-comp-controller.spec.js      - component controller unit tests
+│           ├── my-comp-directive.js            - component directive
+│           ├── my-comp-directive.spec.js       - component directive unit tests
+│           └── my-comp-module.js               - component module definition
 │
-├── services                                    - common services source folder
-│   ├── dataset                                 - dataset related services
-│       ├── dataset-module.js                   - dataset services module declaration
-│       ├── list                                - dataset list services folder
-│         ├── dataset-list-service.js           - dataset list service
-│         ├── dataset-list-service.spec.js      - dataset list service unit tests
-│         ├── ...                               - other dataset list services
-│       ├── ...                                 - other dataset services folder
-│   ├── ...                                     - other services folder
+│       ├── widgets                             - Reusable components folder
+│       ├── ...                                 - other components
 │
-├── css                                         - style folder
-│   ├── base                                    - base styles (reset, typography, ...)
-│       ├── _base.scss                          - file that only imports all base styles
-│       └── ...                                 - other base styles, imported in _base.scss
-│   ├── components                              - components styles (Buttons, Carousel, Cover, Dropdown, ...)
-│       ├── _components.scss                    - file that only imports all components styles
-│       └── ...                                 - other components styles, imported in _components.scss
-│   ├── layout                                  - layout styles (Navigation, Grid system, Header, Footer, Sidebar, Forms, ...)
-│       ├── _layout.scss                        - file that only imports all layout styles
-│       └── ...                                 - other layout styles, imported in _layout.scss
-│   ├── pages                                   - pages specific styles (home page, ...)
-│       ├── _pages.scss                         - file that only imports all pages styles
-│       └── ...                                 - other pages styles, imported in _pages.scss
-│   ├── utils                                   - utils styles (Mixins, Colors, ...)
-│       ├── _utils.scss                         - file that only imports all utils styles
-│       └── ...                                 - other utils styles, imported in _utils.scss
-│   ├── vendors                                 - vendors styles (third party frameworks)
-│       ├── _vendors.scss                       - file that only imports all vendors styles
-│       └── ...                                 - other vendors styles, imported in _vendors.scss
-│   └── main.scss                               - main scss that only imports _base.scss, _components.scss, _layout.scss, _pages.scss, _utils.scss, _vendors.scss
 │
-├── app.js                                      - main module
-├── app.spec.js                                 - main module config unit tests
+│   ├── services                                - common services source folder
+│       ├── my-feature                          - service folder
+│           ├── my-feature-module.js            - service module definition
+│           ├── my-feature-service.js           - service implementation
+│           ├── my-feature-service.spec.js      - service unit tests
+│           ├── ...                             - other my-feature services
+│
+│   ├── css                                     - style folder
+│       ├── base                                - base styles (reset, typography, ...)
+│           ├── _base.scss                      - file that only imports all base styles
+│           └── ...                             - other base styles, imported in _base.scss
+│       ├── components                          - components styles (Buttons, Carousel, Cover, Dropdown, ...)
+│           ├── _components.scss                - file that only imports all common components styles
+│           └── ...                             - other components styles, imported in _components.scss
+│       ├── layout                              - layout styles (Navigation, Grid system, Header, Footer, Sidebar, Forms, ...)
+│           ├── _layout.scss                    - file that only imports all layout styles
+│           └── ...                             - other layout styles, imported in _layout.scss
+│       ├── pages                               - pages specific styles (home page, ...)
+│           ├── _pages.scss                     - file that only imports all pages styles
+│           └── ...                             - other pages styles, imported in _pages.scss
+│       ├── utils                               - utils styles (Mixins, Colors, ...)
+│           ├── _utils.scss                     - file that only imports all utils styles
+│           └── ...                             - other utils styles, imported in _utils.scss
+│       └── vendors                             - vendors styles (third party frameworks)
+│           ├── _vendors.scss                   - file that only imports all vendors styles
+│           └── ...                             - other vendors styles, imported in _vendors.scss
+│
+│   ├── index.scss                              - main scss that only imports _base.scss, _components.scss, _layout.scss, _pages.scss, _utils.scss, _vendors.scss
+│   ├── index-module.js                         - main module
+│   └── index-module.spec.js                    - main module config unit tests
+│
 └── index.html                                  - main page
 </pre>
 

@@ -1,336 +1,65 @@
 <!doctype html>
 
-<html lang="en" class="no-js" ng-cloak>
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<html ng-strict-di>
     <head>
         <meta charset="utf-8">
         <title>Talend - DataPrep</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png">
 
-        <!-- build:css({.tmp,src}) styles/vendor.css -->
+        <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
         <!-- bower:css -->
-        <link rel="stylesheet" href="../bower_components/angularjs-toaster/toaster.css" />
-        <link rel="stylesheet" href="../bower_components/jquery-ui/themes/base/resizable.css" />
-        <link rel="stylesheet" href="../bower_components/angular-mass-autocomplete/massautocomplete.theme.css" />
-        <link rel="stylesheet" href="../bower_components/datetimepicker/jquery.datetimepicker.css" />
-        <link rel="stylesheet" href="../bower_components/x-slickgrid/slick.grid.css" />
-        <link rel="stylesheet" href="../bower_components/x-slickgrid/controls/slick.pager.css" />
-        <link rel="stylesheet" href="../bower_components/bg-splitter/css/style.css" />
+        <!-- run `gulp inject` to automatically populate bower styles dependencies -->
         <!-- endbower -->
         <!-- endbuild -->
 
-        <!-- build:css({.tmp,src}) styles/app.css -->
+        <!-- build:css({.tmp/serve,src}) styles/app.css -->
         <!-- inject:css -->
-        <link rel="stylesheet" href="main.css">
+        <!-- css files will be automatically insert here -->
         <!-- endinject -->
-        <!-- endbuild -->
-
-        <!-- build:js scripts/modernizr.js -->
-        <script src="../bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
     </head>
     <body disable-right-click>
         <!--[if lt IE 10]>
-        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-            your browser</a> to improve your experience.</p>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
         <dataprep-app></dataprep-app>
 
-        <!-- build:js scripts/vendor.js -->
+        <!-- build:js(src) scripts/vendor.js -->
         <!-- bower:js -->
-        <script src="../bower_components/jquery/dist/jquery.js"></script>
-        <script src="../bower_components/angular/angular.js"></script>
-        <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
-        <script src="../bower_components/angular-resource/angular-resource.js"></script>
-        <script src="../bower_components/angular-animate/angular-animate.js"></script>
-        <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-        <script src="../bower_components/lodash/lodash.js"></script>
-        <script src="../bower_components/ng-file-upload/angular-file-upload.js"></script>
-        <script src="../bower_components/angularjs-toaster/toaster.js"></script>
-        <script src="../bower_components/angular-translate/angular-translate.js"></script>
-        <script src="../bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
-        <script src="../bower_components/jquery-ui/jquery-ui.js"></script>
-        <script src="../bower_components/threedubmedia.jquery.event/event.drag/jquery.event.drag.js"></script>
-        <script src="../bower_components/angular-mass-autocomplete/massautocomplete.min.js"></script>
-        <script src="../bower_components/d3/d3.js"></script>
-        <script src="../bower_components/d3-tip/index.js"></script>
-        <script src="../bower_components/intro.js/intro.js"></script>
-        <script src="../bower_components/moment/moment.js"></script>
-        <script src="../bower_components/datetimepicker/jquery.datetimepicker.js"></script>
-        <script src="../bower_components/x-slickgrid/slick.core.js"></script>
-        <script src="../bower_components/x-slickgrid/slick.dataview.js"></script>
-        <script src="../bower_components/x-slickgrid/slick.editors.js"></script>
-        <script src="../bower_components/x-slickgrid/slick.grid.js"></script>
-        <script src="../bower_components/bg-splitter/js/splitter.js"></script>
-        <script src="../bower_components/angular-translate-once/src/translate-once.js"></script>
-        <script src="../bower_components/moment-jdateformatparser/moment-jdateformatparser.js"></script>
+        <!-- run `gulp inject` to automatically populate bower script dependencies -->
         <!-- endbower -->
         <!-- endbuild -->
 
-        <!-- build:js({.tmp,src}) scripts/app.js -->
+        <!-- build:js({.tmp/serve,.tmp/partials}) scripts/app.js -->
         <!-- inject:js -->
-        <script src="services/utils/utils-module.js"></script>
-        <script src="services/utils/worker/worker-service.js"></script>
-        <script src="services/utils/text-format/text-format-service.js"></script>
-        <script src="services/utils/storage/storage-service.js"></script>
-        <script src="services/utils/moment/moment-filter.js"></script>
-        <script src="services/utils/message/message-service.js"></script>
-        <script src="services/utils/date/date-service.js"></script>
-        <script src="services/utils/converter/converter-service.js"></script>
-        <script src="services/utils/config/utils-version-service.js"></script>
-        <script src="services/utils/config/utils-rest-urls-service.js"></script>
-        <script src="services/utils/config/utils-copyrights-services.js"></script>
-        <script src="services/utils/click/disable-right-click-directive.js"></script>
-        <script src="services/transformation/transformation-module.js"></script>
-        <script src="services/transformation/transformation-service.js"></script>
-        <script src="services/transformation/suggestion/suggestion-service.js"></script>
-        <script src="services/transformation/suggestion/line-suggestion-service.js"></script>
-        <script src="services/transformation/suggestion/column-suggestion-service.js"></script>
-        <script src="services/transformation/rest/transformation-rest-service.js"></script>
-        <script src="services/transformation/cache/transformation-cache-service.js"></script>
-        <script src="services/transformation/application/transformation-application-service.js"></script>
-        <script src="services/statistics/statistics-module.js"></script>
-        <script src="services/statistics/statistics-tooltip-service.js"></script>
-        <script src="services/statistics/statistics-service.js"></script>
-        <script src="services/statistics/rest/statistics-rest-service.js"></script>
-        <script src="services/state/state-module.js"></script>
-        <script src="services/state/suggestions/suggestions-state-services.js"></script>
-        <script src="services/state/statistics-state-service.js"></script>
-        <script src="services/state/state-service.js"></script>
-        <script src="services/state/recipe/recipe-state-service.js"></script>
-        <script src="services/state/playground/playground-state-service.js"></script>
-        <script src="services/state/parameters/parameters-state-service.js"></script>
-        <script src="services/state/lookup/lookup-state-service.js"></script>
-        <script src="services/state/inventory/inventory-state-service.js"></script>
-        <script src="services/state/grid/grid-state-service.js"></script>
-        <script src="services/state/folder/folder-state-service.js"></script>
-        <script src="services/state/filter/filter-state-service.js"></script>
-        <script src="services/state/feedback-state-service.js"></script>
-        <script src="services/state/easter-eggs/easter-eggs-state-service.js"></script>
-        <script src="services/state/dataset/dataset-state-service.js"></script>
-        <script src="services/rest/rest-module.js"></script>
-        <script src="services/rest/rest-error-message-interceptor-factory.js"></script>
-        <script src="services/recipe/recipe-module.js"></script>
-        <script src="services/recipe/recipe-service.js"></script>
-        <script src="services/recipe/bullet/recipe-bullet-service.js"></script>
-        <script src="services/preparation/preparation-module.js"></script>
-        <script src="services/preparation/rest/preparation-rest-service.js"></script>
-        <script src="services/preparation/preparation-service.js"></script>
-        <script src="services/preparation/list/preparation-list-service.js"></script>
-        <script src="services/playground/playground-module.js"></script>
-        <script src="services/playground/preview/preview-service.js"></script>
-        <script src="services/playground/preview/early-preview-service.js"></script>
-        <script src="services/playground/playground-service.js"></script>
-        <script src="services/playground/grid/datagrid-service.js"></script>
-        <script src="services/onboarding/onboarding-module.js"></script>
-        <script src="services/onboarding/onboarding-service.js"></script>
-        <script src="services/onboarding/onboarding-recipe-constants.js"></script>
-        <script src="services/onboarding/onboarding-playground-constants.js"></script>
-        <script src="services/onboarding/onboarding-datasets-constants.js"></script>
-        <script src="services/lookup/lookup-module.js"></script>
-        <script src="services/lookup/lookup-service.js"></script>
-        <script src="services/history/history-module.js"></script>
-        <script src="services/history/history-service.js"></script>
-        <script src="services/folder/folder-module.js"></script>
-        <script src="services/folder/rest/folder-rest-service.js"></script>
-        <script src="services/folder/folder-service.js"></script>
-        <script src="services/filter/filter-module.js"></script>
-        <script src="services/filter/filter-service.js"></script>
-        <script src="services/filter/filter-adapter-service.js"></script>
-        <script src="services/feedback/feedback-module.js"></script>
-        <script src="services/feedback/feedback-rest-service.js"></script>
-        <script src="services/export/export-module.js"></script>
-        <script src="services/export/export-service.js"></script>
-        <script src="services/export/export-rest-service.js"></script>
-        <script src="services/easter-eggs/easter-eggs-module.js"></script>
-        <script src="services/easter-eggs/easter-eggs-service.js"></script>
-        <script src="services/dataset-workflow/dataset-workflow-module.js"></script>
-        <script src="services/dataset-workflow/upload-workflow-service.js"></script>
-        <script src="services/dataset-workflow/update-workflow-service.js"></script>
-        <script src="services/dataset/dataset-module.js"></script>
-        <script src="services/dataset/rest/dataset-rest-service.js"></script>
-        <script src="services/dataset/preview/dataset-sheet-preview-service.js"></script>
-        <script src="services/dataset/list/dataset-list-service.js"></script>
-        <script src="services/dataset/dataset-service.js"></script>
-        <script src="services/dataset/column-types/column-types-service.js"></script>
-        <script src="components/widgets/widget-module.js"></script>
-        <script src="components/widgets/tooltip/widget-tooltip-directive.js"></script>
-        <script src="components/widgets/tooltip/widget-tooltip-controller.js"></script>
-        <script src="components/widgets/tabs/widget-tabs-item-directive.js"></script>
-        <script src="components/widgets/tabs/widget-tabs-directive.js"></script>
-        <script src="components/widgets/tabs/widget-tabs-controller.js"></script>
-        <script src="components/widgets/slidable/widget-slidable-directive.js"></script>
-        <script src="components/widgets/quality-bar/quality-bar-directive.js"></script>
-        <script src="components/widgets/quality-bar/quality-bar-controller.js"></script>
-        <script src="components/widgets/navigation-list/navigation-list-directive.js"></script>
-        <script src="components/widgets/navbar/widget-navbar-directive.js"></script>
-        <script src="components/widgets/modal/widget-modal-directive.js"></script>
-        <script src="components/widgets/loading/widget-loading-directive.js"></script>
-        <script src="components/widgets/input/search-input-directive.js"></script>
-        <script src="components/widgets/file-selector/file-selector-directive.js"></script>
-        <script src="components/widgets/editable-text/widget-editable-text-directive.js"></script>
-        <script src="components/widgets/editable-text/widget-editable-text-controller.js"></script>
-        <script src="components/widgets/editable-select/widget-editable-select-directive.js"></script>
-        <script src="components/widgets/editable-regex/widget-editable-regex-directive.js"></script>
-        <script src="components/widgets/editable-regex/widget-editable-regex-controller.js"></script>
-        <script src="components/widgets/dropdown/widget-dropdown-directive.js"></script>
-        <script src="components/widgets/datetimepicker/widget-datetimepicker-directive.js"></script>
-        <script src="components/widgets/confirm/widget-confirm-service.js"></script>
-        <script src="components/widgets/confirm/widget-confirm-directive.js"></script>
-        <script src="components/widgets/confirm/widget-confirm-controller.js"></script>
-        <script src="components/widgets/charts/vertical-barchart/vertical-barchart-directive.js"></script>
-        <script src="components/widgets/charts/range-slider/range-slider-directive.js"></script>
-        <script src="components/widgets/charts/range-slider/range-slider-controller.js"></script>
-        <script src="components/widgets/charts/horizontal-barchart/horizontal-barchart-directive.js"></script>
-        <script src="components/widgets/charts/boxplot-chart/boxplot-chart-directive.js"></script>
-        <script src="components/widgets/button-switch/widget-button-switch-directive.js"></script>
-        <script src="components/widgets/button-loader/widget-button-loader-directive.js"></script>
-        <script src="components/widgets/button-dropdown/widget-button-dropdown-directive.js"></script>
-        <script src="components/widgets/badge/widget-badge-directive.js"></script>
-        <script src="components/widgets/badge/widget-badge-controller.js"></script>
-        <script src="components/widgets/accordions/widget-accordions-item-directive.js"></script>
-        <script src="components/widgets/accordions/widget-accordions-directive.js"></script>
-        <script src="components/widgets/accordions/widget-accordions-controller.js"></script>
-        <script src="components/validation/validation-module.js"></script>
-        <script src="components/validation/unique-folder-validation-directive.js"></script>
-        <script src="components/validation/is-type-validation-directive.js"></script>
-        <script src="components/validation/is-datetime-validation-directive.js"></script>
-        <script src="components/validation/can-be-blank-validation-directive.js"></script>
-        <script src="components/transformation/menu/type/type-transformation-menu-module.js"></script>
-        <script src="components/transformation/menu/type/type-transformation-menu-directive.js"></script>
-        <script src="components/transformation/menu/type/type-transformation-menu-controller.js"></script>
-        <script src="components/transformation/menu/transformation-menu-module.js"></script>
-        <script src="components/transformation/menu/transformation-menu-directive.js"></script>
-        <script src="components/transformation/menu/transformation-menu-controller.js"></script>
-        <script src="components/transformation/form/transformation-form-module.js"></script>
-        <script src="components/transformation/form/transformation-form-directive.js"></script>
-        <script src="components/transformation/form/transformation-form-controller.js"></script>
-        <script src="components/transformation/form/simple/transformation-simple-param-directive.js"></script>
-        <script src="components/transformation/form/simple/transformation-simple-param-controller.js"></script>
-        <script src="components/transformation/form/regex/transformation-regex-param-directive.js"></script>
-        <script src="components/transformation/form/regex/transformation-regex-param-controller.js"></script>
-        <script src="components/transformation/form/params/transformation-params-directive.js"></script>
-        <script src="components/transformation/form/params/transformation-params-controller.js"></script>
-        <script src="components/transformation/form/date/transformation-date-param-directive.js"></script>
-        <script src="components/transformation/form/date/transformation-date-param-controller.js"></script>
-        <script src="components/transformation/form/column/transformation-column-param-directive.js"></script>
-        <script src="components/transformation/form/column/transformation-column-param-controller.js"></script>
-        <script src="components/transformation/form/cluster/transformation-cluster-params-directive.js"></script>
-        <script src="components/transformation/form/cluster/transformation-cluster-params-controller.js"></script>
-        <script src="components/transformation/form/choice/transformation-choice-param-directive.js"></script>
-        <script src="components/transformation/form/choice/transformation-choice-param-controller.js"></script>
-        <script src="components/suggestions-stats/suggestions-stats-module.js"></script>
-        <script src="components/suggestions-stats/suggestions-stats-directive.js"></script>
-        <script src="components/suggestions-stats/suggestions-stats-controller.js"></script>
-        <script src="components/suggestions-stats/stats-details/stats-details-module.js"></script>
-        <script src="components/suggestions-stats/stats-details/stats-details-directive.js"></script>
-        <script src="components/suggestions-stats/stats-details/stats-details-controller.js"></script>
-        <script src="components/suggestions-stats/column-profile/column-profile-module.js"></script>
-        <script src="components/suggestions-stats/column-profile/column-profile-directive.js"></script>
-        <script src="components/suggestions-stats/column-profile/column-profile-controller.js"></script>
-        <script src="components/suggestions-stats/actions-suggestions/actions-suggestions-module.js"></script>
-        <script src="components/suggestions-stats/actions-suggestions/actions-suggestions-directive.js"></script>
-        <script src="components/suggestions-stats/actions-suggestions/actions-suggestions-controller.js"></script>
-        <script src="components/suggestions-stats/actions-list/actions-list-module.js"></script>
-        <script src="components/suggestions-stats/actions-list/actions-list-directive.js"></script>
-        <script src="components/suggestions-stats/actions-list/actions-list-controller.js"></script>
-        <script src="components/recipe/recipe-module.js"></script>
-        <script src="components/recipe/recipe-directive.js"></script>
-        <script src="components/recipe/recipe-controller.js"></script>
-        <script src="components/recipe/bullet/recipe-bullet-module.js"></script>
-        <script src="components/recipe/bullet/recipe-bullet-directive.js"></script>
-        <script src="components/recipe/bullet/recipe-bullet-controller.js"></script>
-        <script src="components/preparation-list/preparation-list-module.js"></script>
-        <script src="components/preparation-list/preparation-list-directive.js"></script>
-        <script src="components/preparation-list/preparation-list-controller.js"></script>
-        <script src="components/playground/playground-module.js"></script>
-        <script src="components/playground/playground-directive.js"></script>
-        <script src="components/playground/playground-controller.js"></script>
-        <script src="components/navbar/navbar-module.js"></script>
-        <script src="components/navbar/navbar-directive.js"></script>
-        <script src="components/navbar/navbar-controller.js"></script>
-        <script src="components/lookup/lookup-module.js"></script>
-        <script src="components/lookup/lookup-directive.js"></script>
-        <script src="components/lookup/lookup-controller.js"></script>
-        <script src="components/lookup/grid/services/lookup-datagrid-tooltip-service.js"></script>
-        <script src="components/lookup/grid/services/lookup-datagrid-style-service.js"></script>
-        <script src="components/lookup/grid/services/lookup-datagrid-grid-service.js"></script>
-        <script src="components/lookup/grid/services/lookup-datagrid-column-service.js"></script>
-        <script src="components/lookup/grid/lookup-datagrid-directive.js"></script>
-        <script src="components/lookup/grid/lookup-datagrid-controller.js"></script>
-        <script src="components/lookup/grid/header/lookup-datagrid-header-module.js"></script>
-        <script src="components/lookup/grid/header/lookup-datagrid-header-directive.js"></script>
-        <script src="components/lookup/grid/header/lookup-datagrid-header-controller.js"></script>
-        <script src="components/inventory-item/inventory-item-module.js"></script>
-        <script src="components/inventory-item/inventory-item-directive.js"></script>
-        <script src="components/inventory-item/inventory-item-controller.js"></script>
-        <script src="components/home/home-module.js"></script>
-        <script src="components/home/home-directive.js"></script>
-        <script src="components/home/home-controller.js"></script>
-        <script src="components/history-control/history-control-module.js"></script>
-        <script src="components/history-control/history-control-directive.js"></script>
-        <script src="components/folder/folder-module.js"></script>
-        <script src="components/folder/folder-directive.js"></script>
-        <script src="components/folder/folder-controller.js"></script>
-        <script src="components/filter/search/filter-search-module.js"></script>
-        <script src="components/filter/search/filter-search-directive.js"></script>
-        <script src="components/filter/search/filter-search-controller.js"></script>
-        <script src="components/filter/monitor/filter-monitor-module.js"></script>
-        <script src="components/filter/monitor/filter-monitor-directive.js"></script>
-        <script src="components/filter/list/filter-list-module.js"></script>
-        <script src="components/filter/list/filter-list-directive.js"></script>
-        <script src="components/filter/list/filter-list-controller.js"></script>
-        <script src="components/filter/bar/filter-bar-module.js"></script>
-        <script src="components/filter/bar/filter-bar-directive.js"></script>
-        <script src="components/feedback/feedback-module.js"></script>
-        <script src="components/feedback/feedback-directive.js"></script>
-        <script src="components/feedback/feedback-controller.js"></script>
-        <script src="components/export/export-module.js"></script>
-        <script src="components/export/export-directive.js"></script>
-        <script src="components/export/export-controller.js"></script>
-        <script src="components/easter-eggs/easter-eggs-module.js"></script>
-        <script src="components/easter-eggs/star-wars/star-wars-directive.js"></script>
-        <script src="components/easter-eggs/easter-eggs-directive.js"></script>
-        <script src="components/easter-eggs/easter-eggs-controller.js"></script>
-        <script src="components/dataset/upload-list/dataset-upload-list-module.js"></script>
-        <script src="components/dataset/upload-list/dataset-upload-list-directive.js"></script>
-        <script src="components/dataset/preview/dataset-xls-preview-module.js"></script>
-        <script src="components/dataset/preview/dataset-xls-preview-directive.js"></script>
-        <script src="components/dataset/preview/dataset-xls-preview-controller.js"></script>
-        <script src="components/dataset/parameters/dataset-parameters-module.js"></script>
-        <script src="components/dataset/parameters/dataset-parameters-directive.js"></script>
-        <script src="components/dataset/parameters/dataset-parameters-controller.js"></script>
-        <script src="components/dataset/list/dataset-list-module.js"></script>
-        <script src="components/dataset/list/dataset-list-directive.js"></script>
-        <script src="components/dataset/list/dataset-list-controller.js"></script>
-        <script src="components/datagrid/datagrid-module.js"></script>
-        <script src="components/datagrid/services/datagrid-tooltip-service.js"></script>
-        <script src="components/datagrid/services/datagrid-style-service.js"></script>
-        <script src="components/datagrid/services/datagrid-size-service.js"></script>
-        <script src="components/datagrid/services/datagrid-grid-service.js"></script>
-        <script src="components/datagrid/services/datagrid-external-service.js"></script>
-        <script src="components/datagrid/services/datagrid-column-service.js"></script>
-        <script src="components/datagrid/header/datagrid-header-module.js"></script>
-        <script src="components/datagrid/header/datagrid-header-directive.js"></script>
-        <script src="components/datagrid/header/datagrid-header-controller.js"></script>
-        <script src="components/datagrid/editor/talend-editor.js"></script>
-        <script src="components/datagrid/datagrid-directive.js"></script>
-        <script src="components/datagrid/datagrid-controller.js"></script>
-        <script src="components/app/app-module.js"></script>
-        <script src="components/app/app-directive.js"></script>
-        <script src="app.js"></script>
+        <!-- js files will be automatically insert here -->
         <!-- endinject -->
 
-<!-- inject:partials -->
-<!-- angular templates will be automatically converted in js and inserted here -->
-<!-- endinject -->
-<!-- endbuild -->
+        <!-- inject:partials -->
+        <!-- angular templates will be automatically converted in js and inserted here -->
+        <!-- endinject -->
+        <!-- endbuild -->
 
         <script language="JavaScript">
             fetchConfiguration().then(bootstrapDataPrepApplication.bind(null, ['data-prep']));
         </script>
-</body>
+    </body>
 </html>

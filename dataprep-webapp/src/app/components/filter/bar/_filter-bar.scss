@@ -1,0 +1,47 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+#filter-bar {
+  background-color: $shadow-gray;
+  color: $dark-gray;
+  min-height: 45px;
+  @include display(flex);
+  @include flex-direction(row);
+  @include align-items(center);
+
+  .title {
+    font-size: .9em;
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include flex-basis(150px);
+    padding-left: 15px;
+  }
+
+  .search {
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include flex-basis(150px);
+  }
+
+  .list {
+    @include flex-grow(1);
+    @include flex-shrink(1);
+    @include flex-basis(200px);
+  }
+
+  .monitor {
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include flex-basis(100px);
+  }
+}

@@ -33,6 +33,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
+import org.talend.dataprep.util.Files;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -144,10 +145,10 @@ public class XlsWriter implements TransformerWriter {
     @Override
     public void flush() throws IOException {
         this.workbook.write(outputStream);
-        if (bufferFile.exists()) {
-            if (!bufferFile.delete()) {
-                LOGGER.warn("Unable to delete temporary file '{}'", bufferFile);
-            }
+        try {
+            Files.delete(bufferFile);
+        } catch (IOException e) {
+            LOGGER.warn("Unable to delete temporary file '{}'", bufferFile, e);
         }
     }
 

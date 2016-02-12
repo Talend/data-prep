@@ -1,0 +1,104 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.navigation-list {
+  font-size: .95em;
+  height: 30px;
+
+  @include display(flex);
+  @include align-items(center);
+
+  .add-item {
+    @include flex-basis(30px);
+    @include flex-shrink(0);
+    @include flex-grow(0);
+
+    .add-button {
+      height: 29px;
+      cursor: pointer;
+      color: $dark-gray;
+
+      &:active {
+        color : $light-gray;
+      }
+    }
+  }
+
+  .back-forth-btn {
+    @include flex-basis(50px);
+    @include flex-shrink(0);
+    @include flex-grow(0);
+
+    text-align: center;
+
+    button {
+      padding: 0;
+      margin: 0 5px;
+      background-color: transparent;
+
+      &.arrow-left {
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-right: 8px solid $medium-gray;
+
+        &:active {
+          border-right : 8px solid $light-gray;
+        }
+      }
+
+      &.arrow-right {
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 8px solid $medium-gray;
+
+        &:active {
+          border-left : 8px solid $light-gray;
+        }
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .items-list-wrapper{
+    @include flex-basis(200px);
+    @include flex-shrink(1);
+    @include flex-grow(1);
+
+    overflow: hidden;
+  }
+
+  .items-list {
+    height: 29px;
+    float: left;
+    @include display(flex);
+    transition: transform 0.25s linear;
+
+    .item-label {
+      @include ellipsis();
+      cursor: pointer;
+      text-transform: uppercase;
+      padding: 0 10px 2px 8px;
+      border: 1px solid $shadow-gray;
+      width: 200px;
+
+      &.selected-item-label {
+        background-color: $light-gray;
+        font-weight: 700;
+        border-left: 10px solid #4fc1de;
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<li class="more">
+   <span class="itemText" translate-once="COLUMN_TYPE_IS"></span><a><span class="info">{{ typeMenuCtrl.currentSimplifiedDomain }}</span></a>
+    <ul class="submenu">
+        <li ng-repeat="semanticDomain in typeMenuCtrl.domains track by semanticDomain.id"
+            ng-click="typeMenuCtrl.changeDomain(semanticDomain)">
+            <input type="radio" value="{{ ::semanticDomain.id}}" ng-model="typeMenuCtrl.currentDomain"/>
+            {{ ::semanticDomain.label | translate }} {{ semanticDomain.frequency }} %
+        </li>
+        <li class="divider"></li>
+        <li ng-repeat="type in typeMenuCtrl.types track by type.id"
+            ng-click="typeMenuCtrl.changeType(type)">
+            <input type="radio" value="{{ ::type.id}}" ng-model="typeMenuCtrl.currentDomain"
+                   ng-checked="typeMenuCtrl.shouldBeChecked(type)"/>
+            <span translate-once="COLUMN_TYPE_SET"></span><span>&nbsp;</span>{{::type.labelKey | translate }}
+        </li>
+    </ul>
+</li>

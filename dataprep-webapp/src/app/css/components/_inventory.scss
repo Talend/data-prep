@@ -1,0 +1,194 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+$hover-color: #c9d7e4;
+$border-color: #CECECE;
+
+.inventory {
+
+  @include flex-row();
+  @include flex-wrap(wrap);
+  font-size: 0.9em;
+
+  .inventory-sort {
+    @include flex-basis(100%);
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    border-bottom: 1px solid $border-color;
+  }
+
+  .inventory-list {
+    @include flex-basis(300px);
+    @include flex-grow(1);
+    @include flex-shrink(1);
+
+    @include flex-column();
+
+    overflow-y: auto;
+  }
+
+  .inventory-entry {
+    @include flex-basis(72px);
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include align-items(center);
+
+    @include flex-row();
+    @include align-items(center);
+
+    border-bottom: 1px solid $border-color;
+    padding: 10px;
+    position: relative;
+
+    &:hover {
+      background-color: $hover-color;
+
+      .inventory-actions {
+        background-color: $hover-color;
+      }
+
+      .btn-transparent {
+        opacity: 1;
+      }
+    }
+
+    .inventory-icon {
+      @include flex-basis(50px);
+      @include flex-shrink(0);
+      @include flex-grow(0);
+      height: 50px;
+      padding: 0 5px;
+      position: relative;
+      cursor: pointer;
+
+      &.inventory-folder{
+        padding-top: 12px;
+      }
+
+      &.no-link:hover {
+        padding: 0 5px;
+        cursor: inherit;
+      }
+
+      > img {
+        z-index: 0;
+        width: 100%;
+
+        &.pin {
+          position: absolute;
+          left: 0;
+          top: -5px;
+          width: 25px;
+        }
+      }
+    }
+
+    .inventory-text {
+      @include flex-basis(380px);
+      @include flex-shrink(1);
+      @include flex-grow(1);
+
+      @include flex-column();
+      @include ellipsis();
+      padding-left: 10px;
+
+      &.inventory-folder {
+        padding-top: 15px;
+      }
+
+      .inventory-title {
+        font-size: 1.1em;
+        font-weight: 700;
+        text-transform: uppercase;
+        overflow: hidden;
+        cursor: pointer;
+
+        &.no-link {
+          cursor: inherit;
+          &:hover {
+            color: inherit;
+            text-decoration: none;
+          }
+        }
+
+        &:hover {
+          color: $dark-blue;
+          text-decoration: underline;
+        }
+      }
+
+      .inventory-description {
+        font-weight: 300;
+        font-size: 0.9em;
+        color: $secondary-text;
+
+        overflow: hidden;
+      }
+    }
+
+    .inventory-actions {
+      @include flex-row();
+      @include align-items(center);
+
+      right: 0;
+      height: 45px;
+    }
+  }
+}
+
+.btn-transparent {
+  opacity: 0;
+  outline: none;
+
+  &:active,
+  &:focus {
+    background-color: transparent;
+  }
+  &:hover {
+    background-color: $action-hover-background;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 100%;
+  margin: 0 5px;
+  background: $white;
+}
+
+.btn-icon {
+  @include flex-row();
+  @include align-items(center);
+
+  padding: 0 10px 0 10px;
+  margin: 0 5px 0 5px;
+  color: white;
+  font-family: $iconsfont;
+  font-size: 1.2em;
+  height: 45px;
+  &:hover {
+    border-radius: 5px;
+    color: white;
+    background-color: $background-blue;
+    &.favorite-true {
+      opacity: 1;
+      color: orange;
+    }
+  }
+}
+
+.favorite-true {
+  opacity: 1;
+  color: orange;
+}
+

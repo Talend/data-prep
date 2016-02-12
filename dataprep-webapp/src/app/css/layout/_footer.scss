@@ -1,0 +1,37 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.footer {
+  $base-spacing: 5px !default;
+  $footer-background: $dark-gray;
+  $footer-color: white;
+
+  background: $footer-background;
+  color: $footer-color;
+  padding: $base-spacing;
+  height: 30px;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+
+    li {
+      list-style: none;
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+}

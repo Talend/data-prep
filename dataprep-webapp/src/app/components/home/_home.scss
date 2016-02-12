@@ -1,0 +1,70 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+@import "menu";
+@import "subheader";
+@import "inventory_data";
+
+$header-height: 56px;
+$footer-height: 49px;
+
+.home {
+
+  /* -------------------------------------------------------------------------------------------------------------------
+                                                        Layout
+  --------------------------------------------------------------------------------------------------------------------*/
+  @include calc(height, "100vh - 2 * " + $header-height + " - " + $footer-height);
+  width: 1140px;
+  margin: auto;
+
+  @include flex-row();
+  @include flex-grow(1);
+  @include justify-content(center);
+
+  .side-menu {
+    @extend .flex-left-panel;
+  }
+
+  .inventory-data {
+    box-shadow: $box-shadow-to-left;
+    @include slidable-right(240px, 0);
+    .content {
+      .content-container {
+        padding: 20px;
+      }
+    }
+  }
+
+  .home-main {
+    @extend .flex-center;
+    @extend .flex-column;
+
+    #upload-list-container {
+      @include flex-fixed();
+    }
+
+    #inventory-list-container {
+      @include flex-flexible();
+      position: relative;
+    }
+  }
+
+  /* -------------------------------------------------------------------------------------------------------------------
+                                                        Components
+  --------------------------------------------------------------------------------------------------------------------*/
+  .large{
+    font-size: 5em;
+    color: $light-blue;
+    -webkit-filter: none;
+  }
+}

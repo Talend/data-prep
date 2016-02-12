@@ -1,0 +1,32 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div id="filter-bar">
+    <div class="title"><span translate-once="FILTER"></span><span translate-once="COLON"></span></div>
+
+    <filter-search class="search"></filter-search>
+
+    <filter-list class="list"
+                 filters="filterBarCtrl.state.playground.filter.gridFilters"
+                 on-filter-change="filterBarCtrl.filterService.updateFilter(filter, value)"
+                 on-filter-remove="filterBarCtrl.filterService.removeFilter(filter)"></filter-list>
+
+    <filter-monitor class="monitor"
+                    filters="filterBarCtrl.state.playground.filter.gridFilters"
+                    on-reset="filterBarCtrl.filterService.removeAllFilters()"
+                    nb-lines="filterBarCtrl.state.playground.grid.nbLines"
+                    nb-total-lines="filterBarCtrl.state.playground.grid.nbTotalLines"
+                    percentage="filterBarCtrl.state.playground.grid.displayLinesPercentage"></filter-monitor>
+</div>

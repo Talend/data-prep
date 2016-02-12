@@ -1,0 +1,60 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.actions-list {
+  $action-color: tint($black, 20%);
+  $action-background: $super-light-gray;
+  $border-color: $shadow-gray;
+
+  .actions-category {
+    font-size: .95em;
+    background-color: #F1F1F1;
+    color: $black;
+    font-weight: 300;
+    padding-left: 5px;
+  }
+  .actions-group {
+    color: $action-color;
+
+    .accordion {
+      border-bottom: 1px solid $border-color;
+      font-size: .95em;
+      font-weight: 400;
+      padding: 7px 2px 7px 0;
+
+      &:hover{
+        background-color: $action-background;
+      }
+
+      a.trigger {
+        font-size: .85em;
+        cursor: pointer;
+        color: inherit;
+        padding-left: 10px;
+        text-decoration: none;
+        width:100%;
+      }
+
+      &.open {
+        background-color: $action-background;
+        #trigger::before {
+          content: "\25BE";
+        }
+      }
+    }
+  }
+
+  .highlighted{
+    background-color: yellow;
+  }
+}

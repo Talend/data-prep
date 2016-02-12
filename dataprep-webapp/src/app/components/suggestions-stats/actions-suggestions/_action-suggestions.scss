@@ -1,0 +1,82 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.suggestions-part {
+
+  .actions-suggestions{
+    @include flex-column();
+    height: 100%;
+
+    .suggestions-title {
+      padding-right: 20px;
+      background-color: #F1F1F1;
+      @include flex-basis(58px);
+      @include flex-grow(0);
+      @include flex-shrink(0);
+
+      .title{
+        @include ellipsis(320px);
+      }
+    }
+
+    >talend-tabs {
+      position: relative;
+      @include flex-grow(1);
+      @include flex-shrink(1);
+
+      .action-search {
+        width: 94%;
+        height: 25px;
+        font-size: 0.8em;
+        padding: 0 0 0 5px;
+        margin: 5px 10px 5px 10px;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-left: 1px solid transparent;
+        box-shadow: none;
+      };
+
+      .action-suggestion-tab-items {
+        height: calc(100% - 75px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: absolute;
+        width: 100%;
+      }
+    }
+
+    .filters-actions-form{
+      @include flex-basis(30px);
+      @include flex-grow(0);
+      @include flex-shrink(0);
+
+      &.ng-enter {
+        @include animation(fadeIn 0.5s);
+      }
+
+      &.ng-leave {
+        @include animation(fadeOut 0.5s);
+      }
+
+      background-color: #DDDDDD;
+      font-size: 0.8em;
+      font-weight: 600;
+      right: 10px;
+      padding: 5px;
+      input {
+        margin-left: 0.7em;
+        margin-right: 0em;
+      }
+    }
+  }
+}

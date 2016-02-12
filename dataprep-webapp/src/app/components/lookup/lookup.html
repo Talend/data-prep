@@ -1,0 +1,120 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="lookup">
+    <div class="lookup-header"></div>
+
+    <div class="lookup-container">
+        <div id="lookup-left" ng-switch="!!lookupCtrl.state.playground.lookup.addedActions.length">
+            <lookup-datagrid ng-switch-when="true"></lookup-datagrid>
+
+            <div id="lookup-add-instruction"
+                 ng-switch-when="false"
+                 class="watermark"
+                 translate-once="ADD_DATASET_TO_PERFORM_A_LOOKUP">
+            </div>
+        </div>
+
+            <div id="lookup-right">
+                <div class="lookup-description">
+                    <strong ng-if="!lookupCtrl.state.playground.lookup.step"><span translate-once="LOOKUP_DESC_TITLE"></span></strong>
+                    <strong ng-if="lookupCtrl.state.playground.lookup.step"><span translate-once="LOOKUP_UPDATE_DESC_TITLE"></span></strong>
+                    <br>
+                    <div class="lookup-step" translate-once="LOOKUP_STEPS_1"></div>
+                    <div class="lookup-step" translate-once="LOOKUP_STEPS_2"></div>
+                    <div class="lookup-step" translate-once="LOOKUP_STEPS_3"></div>
+                    <a target='_blank'
+                       href='https://help.talend.com/pages/viewpage.action?pageId=266307196&utm_medium=dpdesktop&utm_source=func'
+                       translate-once="ACTION_HELP"></a>
+                </div>
+
+                <button id="lookup-submit-btn-id"
+                        ng-disabled="!lookupCtrl.state.playground.lookup.columnsToAdd.length ||
+                                !lookupCtrl.state.playground.lookup.selectedColumn ||
+                                !lookupCtrl.state.playground.grid.selectedColumn"
+                        class="param-primary-button btn-primary"
+                        ng-click="lookupCtrl.submit()"
+                        ng-mouseenter="lookupCtrl.hoverSubmitBtn()"
+                        ng-mouseleave="lookupCtrl.cancelEarlyPreview()"
+                        translate-once="CONFIRM_LOOKUP"
+                        >
+                </button>
+            </div>
+    </div>
+
+    <navigation-list class="lookup-footer"
+                     list="lookupCtrl.state.playground.lookup.addedActions"
+                     on-click="lookupCtrl.loadFromAction(item)"
+                     selected-item="lookupCtrl.state.playground.lookup.dataset"
+                     get-label="lookupCtrl.getDsName(item)"
+                     on-add-item="lookupCtrl.openAddLookupDatasetModal()">
+    </navigation-list>
+</div>
+
+<talend-modal fullscreen="false"
+              close-button="true"
+              state="lookupCtrl.addLookupDatasetModal"
+              ng-if="lookupCtrl.addLookupDatasetModal"
+              disable-enter="true"
+              class="add-dataset-lookup">
+    <form name="lookupCtrl.addLookupDatasetForm" ng-submit="lookupCtrl.addLookupDatasetForm.$valid && lookupCtrl.addLookupDatasets()">
+        <div translate-once="ADD_LOOKUP_DATASET_MODAL_TITLE"></div>
+        <div class="inventory">
+            <div class="inventory-sort">
+                <div translate-once="SORTED_BY"></div>
+                <div class="button-switch">
+                    <talend-button-switch
+                            values="lookupCtrl.state.playground.lookup.sortList"
+                            current-value="lookupCtrl.state.playground.lookup.sort"
+                            display-key="name"
+                            change-action="lookupCtrl.updateSortBy(selected)">
+                    </talend-button-switch>
+                </div>
+                <div translate-once="SORT_IN"> </div>
+                <div class="button-switch">
+                    <talend-button-switch
+                            values="lookupCtrl.state.playground.lookup.orderList"
+                            current-value="lookupCtrl.state.playground.lookup.order"
+                            display-key="name"
+                            change-action="lookupCtrl.updateSortOrder(selected)">
+                    </talend-button-switch>
+                </div>
+                <div translate-once="SORT_ORDER"></div>
+            </div>
+
+                <div class="inventory-list">
+                    <div class="inventory-item-row" ng-repeat="dataset in lookupCtrl.state.playground.lookup.datasets track by $index">
+                        <input class="add-dataset-input" type="checkbox" ng-model="dataset.addedToLookup" ng-disabled="!dataset.enableToAddToLookup"/>
+                        <inventory-item
+                                ng-click="lookupCtrl.toogleSelect(dataset)"
+                                type="dataset"
+                                item="dataset"
+                                details="INVENTORY_DETAILS"
+                                toggle-favorite="angular.noop">
+                        </inventory-item>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL">
+                </button>
+                <button class="btn-primary modal-primary-button"
+                        ng-disabled="lookupCtrl.addLookupDatasetForm.$invalid">
+                    <span translate-once="ADD_LOOKUP_DATASET"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</talend-modal>

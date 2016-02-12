@@ -1,0 +1,109 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+/*********************************************************************************************************************/
+/**************************************************** Flexbox Mixins *************************************************/
+/*********************************************************************************************************************/
+@mixin flex-row-center() {
+  @include flex-row();
+  @include align-items(center);
+  @include justify-content(center);
+}
+
+@mixin flex-column() {
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+}
+
+@mixin flex-row() {
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(row);
+}
+
+.flex-row {
+  @include flex-row();
+}
+.flex-column {
+  @include flex-column();
+}
+
+/*********************************************************************************************************************/
+/************************************************* Center and L/R panel ***********************************************/
+/*********************************************************************************************************************/
+.flex-side {
+  box-shadow: 0 2px 8px rgba(0,0,0,.5);
+  @include flex-grow(0);
+  @include flex-shrink(0);
+  @include flex-basis(300px);
+}
+
+.flex-left-panel {
+  @extend .flex-side;
+  @include flex-basis(200px);
+  box-shadow: $box-shadow-to-right;
+}
+
+.flex-right-panel {
+  @extend .flex-side;
+  box-shadow: $box-shadow-to-left;
+}
+
+.flex-center {
+  @include flex-grow(1);
+  @include flex-basis(500px);
+
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/*********************************************************************************************************************/
+/****************************************** Fixed elements + flexible elements ***************************************/
+/*********************************************************************************************************************/
+
+@mixin flex-fixed($size: 300px) {
+  @include flex-grow(0);
+  @include flex-shrink(1);
+  max-height: $size;
+  overflow: auto;
+}
+
+@mixin flex-flexible($size: 300px) {
+  @include flex-grow(1);
+  @include flex-shrink(1);
+  @include flex-basis($size);
+  overflow: auto;
+}
+
+
+/*********************************************************************************************************************/
+/**************************************************** App Main Layout ************************************************/
+/*********************************************************************************************************************/
+.main-layout {
+  height: 100vh;
+  @include flex-column();
+
+  .header {
+    @include flex-grow(0);
+  }
+
+  .content {
+    @include flex-grow(1);
+    @include flex-column();
+  }
+
+  .footer {
+    @include flex-grow(0);
+  }
+}

@@ -1,0 +1,46 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="inventory">
+    <div class="inventory-list" id="dataset-uploading-list">
+        <div class="inventory-entry" data-ng-repeat="dataset in uploadListCtrl.datasets track by $index">
+            <div class="inventory-icon no-link">
+                <img src="/assets/images/inventory/generic_file.png"/>
+            </div>
+
+            <div class="inventory-text" ng-switch="dataset.error">
+                <div class="inventory-title no-link">{{dataset.name}}</div>
+
+                <div class="inventory-progress" ng-switch-when="false" ng-switch="dataset.type">
+
+                    <div class="progress-bar" ng-switch-when="file">
+                        <span class="meter" style="width: {{ dataset.progress }}%" ng-switch="dataset.progress">
+                            <p ng-switch-when="100"><span translate-once="PROCESSING"></span>...</p>
+                            <p ng-switch-default="">{{ dataset.progress }} %</p>
+                        </span>
+                    </div>
+                    <div class="progress-bar" ng-switch-when="remote">
+                        <span class="meter" style="width: 100%">
+                            <p translate-once="PROCESSING_REMOTE_DATASET"></p>
+                        </span>
+                    </div>
+
+                </div>
+                <div class="inventory-progress error" ng-switch-when="true" translate-once="UPLOAD_ERROR">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

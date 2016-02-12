@@ -1,0 +1,155 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<header class="subheader">
+    <div class="subheader-wrapper">
+        <ul id="help-dataset-nav">
+            <li class="primary">
+
+                <div id="help-import-local">
+                    <talend-button-dropdown button-icon="m"
+                                            button-text="{{'IMPORT_DATASET' | translate }}"
+                                            button-action="homeCtrl.startDefaultImport()">
+                        <ul>
+                            <li ng-repeat="importType in homeCtrl.importTypes" ng-click="homeCtrl.startImport(importType)">
+                                {{importType.name}}
+                            </li>
+                        </ul>
+                    </talend-button-dropdown>
+                </div>
+
+                <input type="file"
+                       id="datasetFile"
+                       name="datasetFile"
+                       class="ng-hide"
+                       ng-file-select
+                       accept="*.csv"
+                       ng-model="homeCtrl.datasetFile"
+                       ng-file-change="homeCtrl.uploadDatasetFile()"/>
+            </li>
+
+            <li ng-if="homeCtrl.$state.includes('nav.home.datasets')">
+                <folder></folder>
+            </li>
+        </ul>
+        <div class="subheader-right" ng-if="false"> <!-- Hide button since data inventory is not implemented-->
+            <a data-icon="{{homeCtrl.showRightPanelIcon}}" class="expand-panel" ng-click="homeCtrl.toggleRightPanel()"></a>
+            <span data-icon="o" class="view-mode" title="{{'COMING_SOON' | translate}}"></span>
+        </div>
+    </div>
+
+    <!-- Import dataset from local file -->
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="homeCtrl.datasetNameModal">
+        <span translate-once="ENTER_DATASET_NAME"></span>
+        <form name="homeCtrl.datasetNameForm">
+            <input type="text" ng-model="homeCtrl.datasetName" required/>
+
+            <div class="modal-buttons">
+                <button class="talend-modal-close btn-secondary modal-secondary-button">
+                    <span translate-once="CANCEL"></span>
+                </button>
+                <button class="talend-modal-close btn-primary modal-primary-button"
+                        ng-click="homeCtrl.uploadDatasetName()"
+                        ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                    <span translate-once="OK"></span>
+                </button>
+            </div>
+        </form>
+    </talend-modal>
+
+
+    <!-- Import remote HTTP dataset -->
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="homeCtrl.datasetHttpModal">
+
+        <div class="modal-title" translate-once="IMPORT_HTTP_DATASET"></div>
+        <span translate-once="ENTER_DATASET_NAME"></span>
+        <input type="text" ng-model="homeCtrl.datasetName" required/>
+        <span translate-once="ENTER_DATASET_URL"></span>
+        <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="http://" required/>
+
+        <div class="modal-buttons">
+            <button class="talend-modal-close btn-secondary modal-secondary-button">
+                <span translate-once="CANCEL"></span>
+            </button>
+            <button class="talend-modal-close btn-primary modal-primary-button"
+                    ng-click="homeCtrl.importHttpDataSet()"
+                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                <span translate-once="OK"></span>
+            </button>
+        </div>
+    </talend-modal>
+
+    <!-- Import remote HDFS dataset -->
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="homeCtrl.datasetHdfsModal">
+
+        <div class="modal-title" translate-once="IMPORT_HDFS_DATASET"></div>
+        <span translate-once="ENTER_DATASET_NAME"></span>
+        <input type="text" ng-model="homeCtrl.datasetName" required/>
+
+        <span translate-once="ENTER_DATASET_URL"></span>
+        <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="hdfs://host:port/file" required/>
+
+        <div class="modal-buttons">
+            <button class="talend-modal-close btn-secondary modal-secondary-button">
+                <span translate-once="CANCEL"></span>
+            </button>
+            <button class="talend-modal-close btn-primary modal-primary-button"
+                    ng-click="homeCtrl.importHdfsDataSet()"
+                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                <span translate-once="OK"></span>
+            </button>
+        </div>
+    </talend-modal>
+</header>
+
+<div class="home">
+    <div class="side-menu">
+        <ul>
+            <li id="nav_home_datasets"><a ui-sref="nav.home.datasets" ui-sref-active="selected" translate-once="ALL_FOLDERS"></a></li>
+            <li id="nav_home_preparations"><a ui-sref="nav.home.preparations" ui-sref-active="selected" translate-once="ALL_PREPARATIONS"></a></li>
+        </ul>
+    </div>
+
+    <div class="home-main">
+        <div id="upload-list-container">
+            <dataset-upload-list datasets="homeCtrl.uploadingDatasets"></dataset-upload-list>
+        </div>
+        <div id="inventory-list-container">
+            <ui-view name="home-content"></ui-view>
+        </div>
+    </div>
+
+    <talend-slidable class="inventory-data"
+                     visible="homeCtrl.showRightPanel"
+                     side="right"
+                     control-bar="false"
+                     resizable="inventory-data">
+        <p class="title" translate-once="INVENTORY_DATA"></p>
+        <hr/>
+        <p class="empty">
+            <i data-icon="i" class="iconfont large"></i>
+            <br/>
+            <span translate-once="SELECT_DATASET_DESCRIPTION"></span>
+        </p>
+    </talend-slidable>
+</div>
+
+<dataset-xls-preview></dataset-xls-preview>

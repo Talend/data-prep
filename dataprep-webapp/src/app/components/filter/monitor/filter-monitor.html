@@ -1,0 +1,26 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div id="filter-monitor">
+    <a id="reset-filters"
+       title="{{::'REMOVE_ALL_FILTER' | translate}}"
+       ng-if="filterMonitorCtrl.filters.length" data-icon="A"
+       ng-click="filterMonitorCtrl.onReset()"></a>
+
+    <div id="filters-monitor-stats"
+         title="{{ 'NB_LINES_MATCHING_FILTERS' | translate:{percentage: filterMonitorCtrl.percentage} }}">
+        {{filterMonitorCtrl.nbLines}}/{{filterMonitorCtrl.nbTotalLines}}
+    </div>
+</div>

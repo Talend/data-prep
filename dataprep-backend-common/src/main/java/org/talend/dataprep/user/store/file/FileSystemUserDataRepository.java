@@ -34,6 +34,7 @@ import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.user.store.UserDataRepository;
+import org.talend.dataprep.util.Files;
 
 /**
  * User data repository implementation backed on the file system.
@@ -111,9 +112,7 @@ public class FileSystemUserDataRepository implements UserDataRepository {
     @Override
     public void remove(String userId) {
         final File userDataFile = getFile(userId);
-        if (userDataFile.exists() && !isNFSFile(userDataFile)) {
-            userDataFile.delete();
-        }
+        Files.deleteQuietly(userDataFile);
         LOG.debug("user data {} successfully deleted", userId);
     }
 
@@ -124,9 +123,9 @@ public class FileSystemUserDataRepository implements UserDataRepository {
     public void clear() {
         final File rootFolder = new File(storeLocation);
         final File[] files = rootFolder.listFiles();
-        for (File file : files) {
-            if (!isNFSFile(file)) {
-                file.delete();
+        if (files != null) {
+            for (File file : files) {
+                Files.deleteQuietly(file);
             }
         }
         LOG.debug("user data repository cleared");
@@ -135,21 +134,11 @@ public class FileSystemUserDataRepository implements UserDataRepository {
     /**
      * Return the file that matches the given metadata user id.
      *
-     * @param userId the muser id.
+     * @param userId the user id.
      * @return the file where to read/write the user.
      */
     private File getFile(String userId) {
         return new File(storeLocation + '/' + userId);
-    }
-
-    /**
-     * Specific OS NFS files must be not be dealt with.
-     * 
-     * @param file the file to look at.
-     * @return True if the given file is OS NFS specific (starts with ".nfs")
-     */
-    private boolean isNFSFile(File file) {
-        return file.getName().startsWith(".nfs");
     }
 
 }

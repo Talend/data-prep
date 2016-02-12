@@ -1,0 +1,24 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<svg width="30"
+     ng-attr-height="{{recipeBulletCtrl.height}}"
+     class="all-svg-cls"
+     ng-class="{'maillon-circle-disabled': recipeBulletCtrl.step.inactive, 'maillon-circle': !recipeBulletCtrl.step.inactive}">
+
+    <path ng-show="!recipeBulletCtrl.isStartChain()"></path>
+    <circle cx="15" r=10></circle>
+    <path ng-show="!recipeBulletCtrl.isEndChain()"></path>
+</svg>

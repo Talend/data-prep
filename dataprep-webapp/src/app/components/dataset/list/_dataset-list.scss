@@ -1,0 +1,152 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.dataset {
+  $button-background-color: $white;
+  $button-color-text: $black;
+  $inventory-sort-height: 50px;
+
+  .inventory-sort {
+    @include display(flex);
+    @include flex-direction(row);
+    @include align-items(center);
+    @include justify-content(flex-end);
+
+    font-size: 1em;
+    height: $inventory-sort-height;
+    font-weight: 300;
+    padding: 15px 5px 0 0;
+
+    .button-switch {
+      background: $button-background-color;
+      color: $button-color-text;
+      padding: 0 5px 0 5px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      &:hover {
+        color: $dark-blue;
+        text-decoration: underline;
+      }
+    }
+    .add-folder-button {
+      .btn-primary {
+        color: $dark-gray !important;
+        background-color: $light-gray !important;
+        border-color: $medium-gray;
+        text-transform: none;
+        height: 30px;
+      }
+      position: absolute;
+      left: 15px;
+      top: 11px;
+    }
+  }
+
+  #datasets-list {
+    position: absolute;
+    @include calc(height, "100% - " + $inventory-sort-height);
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .inventory-title {
+      padding: 3px 0;
+      @include ellipsis(430px);
+    }
+
+    .edition-text-input {
+      width: 220px;
+    }
+
+    .inventory-entry {
+      .edit-btn {
+        visibility: hidden;
+      }
+
+      &:hover {
+        .edit-btn {
+          visibility: visible;
+        }
+      }
+    }
+  }
+}
+
+.folders-modal {
+  padding: 10px 0;
+
+  @include display(flex);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+  @include flex-wrap(wrap);
+  @include align-items(stretch);
+
+  .search-folder-box {
+    margin-bottom: 30px;
+
+    .action-search {
+      position: absolute;
+      right: 0;
+      width: 20%;
+      height: 25px;
+      font-size: 0.8em;
+      padding: 0 0 0 5px;
+      border-top: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-left: 1px solid transparent;
+      box-shadow: none;
+    }
+  }
+
+  .folders {
+    height: 200px;
+    overflow: auto;
+    border: 1px solid #CECECE;
+    padding: 2px;
+
+    .icon-img {
+      vertical-align: bottom;
+    }
+
+    .hidden {
+      display: none;
+      visibility: hidden;
+    }
+
+    .folder-nodes {
+      padding-left: 20px;
+    }
+
+    .folder-name {
+      color: $dark-gray;
+      vertical-align: bottom;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .folder-selected {
+      background-color: $light-gray;
+    }
+
+    .dropdown-button-down,
+    .dropdown-button-right {
+      cursor: pointer;
+      color: grey;
+    }
+  }
+}
+
+

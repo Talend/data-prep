@@ -1,0 +1,94 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="actions-suggestions">
+    <div class="suggestions-title">
+        <span class="title"
+              title="{{actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name}}"
+              ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name">
+            {{actionsSuggestionsCtrl.state.playground.grid.selectedColumn.name}}
+        </span>
+    </div>
+
+    <div id="actions-ghost"
+         ng-if="actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
+         class="loading-container">
+        <div class="loading-msg">
+            <span class="wait-icon continuous-rotate" ><i data-icon="c" class="icon"></i></span>
+            <span class="wait-text" translate-once="REFRESHING_WAIT"></span>
+        </div>
+    </div>
+
+    <talend-tabs tab="actionsSuggestionsCtrl.suggestionService.tab" ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading">
+        <talend-tabs-item tab-title="Text">
+            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
+        </talend-tabs-item>
+        <talend-tabs-item tab-title="Cell">
+            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
+        </talend-tabs-item>
+        <talend-tabs-item tab-title="Line">
+            <div ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedLine">
+                <actions-list class="action-suggestion-tab-items"
+                              actions="actionsSuggestionsCtrl.state.playground.suggestions.line.filteredTransformations"
+                              scope="line"
+                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
+                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
+                              ng-switch-when="true"
+                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
+
+                <div class="watermark"
+                     ng-switch-when="false"
+                     translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
+            </div>
+        </talend-tabs-item>
+        <talend-tabs-item tab-title="Column" default="true">
+            <div ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedColumn">
+                <input type="search"
+                       class="action-search"
+                       id="action-suggestions-search"
+                       translate-once-placeholder="FIND_FUNCTION"
+                       ng-model="actionsSuggestionsCtrl.state.playground.suggestions.column.searchActionString"
+                       ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                       ng-change="actionsSuggestionsCtrl.columnSuggestionService.filterTransformations()"
+                       talend-search-input
+                       ng-switch-when="true">
+
+                <actions-list class="action-suggestion-tab-items"
+                              actions="actionsSuggestionsCtrl.state.playground.suggestions.column.filteredTransformations"
+                              scope="column"
+                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
+                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
+                              ng-switch-when="true"
+                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
+
+                <div class="watermark"
+                     ng-switch-when="false"
+                     translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
+            </div>
+        </talend-tabs-item>
+
+        <talend-tabs-item tab-title="Table">
+            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
+        </talend-tabs-item>
+    </talend-tabs>
+
+    <div class="filters-actions-form" ng-if="actionsSuggestionsCtrl.state.playground.filter.gridFilters.length">
+        <span translate-once="APPLY_CHANGE_TO"></span>
+        <input type="radio" ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters" ng-value="false" />
+        <span translate-once="ALL_LINES"></span>
+        <input type="radio" ng-model="actionsSuggestionsCtrl.state.playground.filter.applyTransformationOnFilters" ng-value="true" />
+        <span translate-once="FILTERED_LINED"></span>
+    </div>
+</div>

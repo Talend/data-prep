@@ -1,80 +1,65 @@
 'use strict';
 
+var path = require('path');
 var gulp = require('gulp');
+var conf = require('./conf');
+
+var browserSync = require('browser-sync');
+var browserSyncSpa = require('browser-sync-spa');
 
 var util = require('util');
 
-var browserSync = require('browser-sync');
+var proxyMiddleware = require('http-proxy-middleware');
 
-var middleware = require('./proxy');
+var $ = require('gulp-load-plugins')({
+    pattern: ['gulp-*', 'main-bower-files']
+});
 
-function browserSyncInit(baseDir, files, browser) {
-  browser = browser === undefined ? 'default' : browser;
+function browserSyncInit(baseDir, browser) {
+    browser = browser === undefined ? 'default' : browser;
 
-  var routes = null;
-  if(baseDir === 'src' || (util.isArray(baseDir) && baseDir.indexOf('src') !== -1)) {
-    routes = {
-      '/bower_components': 'bower_components'
+    var routes = null;
+    if (baseDir === conf.paths.src || (util.isArray(baseDir) && baseDir.indexOf(conf.paths.src) !== -1)) {
+        routes = {
+            '/bower_components': 'bower_components'
+        };
+    }
+
+    var server = {
+        baseDir: baseDir,
+        routes: routes
     };
-  }
 
-  browserSync.instance = browserSync.init(files, {
-    startPath: '/',
-    server: {
-      baseDir: baseDir,
-      middleware: middleware,
-      routes: routes
-    },
-    browser: browser
-  });
+    /*
+     * You can add a proxy to your backend by uncommenting the line below.
+     * You just have to configure a context which will we redirected and the target url.
+     * Example: $http.get('/users') requests will be automatically proxified.
+     *
+     * For more details and option, https://github.com/chimurai/http-proxy-middleware/blob/v0.9.0/README.md
+     */
+    // server.middleware = proxyMiddleware('/users', {target: 'http://jsonplaceholder.typicode.com', changeOrigin: true});
 
+    browserSync.instance = browserSync.init({
+        startPath: '/',
+        server: server,
+        browser: browser
+    });
 }
 
-//serve the app for dev, it uses the assets/config/config.mine.json prioritarily.
-gulp.task('serve', ['clean:dev'], function () {
-  gulp.start('copy-personnal-files');
-  gulp.start('workerLibs:dev');
-  gulp.start('watch');
-  browserSyncInit([
-    '.tmp',
-    'src'
-  ], [
-    '.tmp/**/*.css',
-    'src/**/*.js',
-    'src/assets/config/**/*',
-    'src/assets/images/**/*',
-    '.tmp/*.html',
-    '.tmp/**/*.html',
-    'src/**/*.html'
-  ]);
+browserSync.use(browserSyncSpa({
+    selector: '[ng-app]'// Only needed for angular apps
+}));
+
+gulp.task('replace-mine', function () {
+    return gulp.src(path.join(conf.paths.src, '/assets/config/config.mine.json'))
+        .pipe($.rename('/assets/config/config.json'))
+        .pipe(gulp.dest(path.join(conf.paths.tmp, '/serve')));
 });
 
-//serve the app for dev, ignoring the file assets/config/config.mine.json
-gulp.task('serve:default', ['clean:dev'], function () {
-  gulp.start('watch');
-  browserSyncInit([
-    '.tmp',
-    'src'
-  ], [
-    '.tmp/**/*.css',
-    'src/**/*.js',
-    'src/assets/config/**/*',
-    'src/assets/images/**/*',
-    '.tmp/*.html',
-    '.tmp/**/*.html',
-    'src/**/*.html'
-  ]);
+gulp.task('serve', ['replace-mine', 'worker-libs:dev', 'watch'], function () {
+    browserSyncInit([path.join(conf.paths.tmp, '/serve'), conf.paths.src]);
 });
-
 
 gulp.task('serve:dist', ['build'], function () {
-  browserSyncInit('dist');
-});
-
-gulp.task('serve:e2e', ['wiredep', 'injector:js', 'injector:css'], function () {
-  browserSyncInit(['.tmp', 'src'], null, []);
-});
-
-gulp.task('serve:e2e-dist', ['build'], function () {
-  browserSyncInit('dist', null, []);
+    browserSyncInit(conf.paths.dist);
 });

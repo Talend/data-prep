@@ -1,0 +1,101 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.vertical-barchart-cls{
+  .bg-rect{
+    fill: $medium-gray;
+    cursor: pointer;
+  }
+
+  .primaryBar,
+  .secondaryBar {
+    rect {
+      &.bar {
+        fill: $blue;
+      }
+      &.blueBar {
+        fill: $dark-blue;
+      }
+    }
+  }
+
+  .grid {
+    .tick {
+      stroke: lightgrey;
+      opacity: 0.7;
+      text{
+        opacity: 0.7;
+        font-size: .8em;
+        stroke: black;
+      }
+    }
+
+    path {
+      stroke-width: 0;
+    }
+
+    .line {
+      fill: none;
+      stroke: darkorange;
+      stroke-width: 1.5px;
+    }
+  }
+
+  .axis {
+    font: 10px sans-serif;
+
+    path,
+    line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    &.x path {
+      display: block;
+    }
+  }
+
+  /**************** d3 tooltip *********************************/
+
+  &.d3-tip {
+    line-height: 1;
+    font-family: $inconsolota;
+    font-size: .8em;
+    font-weight: 400;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 2px;
+    z-index: 100000;
+
+    &:after {
+      box-sizing: border-box;
+      display: inline;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BA";
+      position: relative;
+      text-align: end;
+      float: right;
+      margin-right: -22px;
+    }
+  }
+
+  &.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;
+  }
+}

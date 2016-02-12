@@ -1,6 +1,0 @@
-<button class="talend-button-loader {{::buttonLoaderCtrl.buttonClass}}"
-        ng-disabled="buttonLoaderCtrl.disableCondition"
-        ng-switch="!!buttonLoaderCtrl.loading">
-    <ng-transclude ng-switch-when="false"></ng-transclude>
-    <span ng-switch-when="true"><i data-icon="c" class="talend-button-loader-icon continuous-rotate {{buttonLoaderCtrl.loadingClass}}"></i></span>
-</button>

@@ -1,0 +1,44 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<ul>
+    <type-transform-menu column="menuCtrl.column"></type-transform-menu>
+
+    <li class="divider"></li>
+
+    <li ng-repeat="menu in menuCtrl.menuItems track by menu.name"
+        ng-click="menuCtrl.select(menu, 'column')">
+
+        <a>{{ menu.label }}</a>
+    </li>
+
+</ul>
+
+<!-- Params modal -->
+<talend-modal fullscreen="false"
+              state="menuCtrl.showModal"
+              close-button="true"
+              ng-if="menuCtrl.showModal">
+
+    <div class="modal-title">{{ menuCtrl.selectedMenu.label }}</div>
+    <div class="modal-subtitle">{{ menuCtrl.selectedMenu.description }}</div>
+
+    <div ng-if="menuCtrl.selectedMenu.dynamic && menuCtrl.dynamicFetchInProgress">
+        <i data-icon="e" class="icon continuous-rotate"></i>
+    </div>
+    <transform-form transformation="menuCtrl.selectedMenu"
+                      on-submit="menuCtrl.appendClosure(menuCtrl.selectedMenu, menuCtrl.selectedScope)(params)"></transform-form>
+
+</talend-modal>

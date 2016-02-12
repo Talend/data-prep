@@ -1,0 +1,44 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.editable-select {
+  $width: 235px;
+  $height: 32px;
+  $caret-width: 20px;
+  
+  position: relative;
+  height: $height;
+
+  @mixin superpose {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  @mixin size {
+    height: $height;
+    width: $width;
+  }
+
+  select {
+    @include superpose();
+    @include size();
+    width: $width + $caret-width;
+    max-width: inherit;
+    border: 0;
+  }
+  input {
+    @include superpose();
+    @include size();
+  }
+}

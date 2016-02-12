@@ -3170,5 +3170,101 @@
   {
     "category": "math",
     "name": "compare_numbers"
+  },
+  {
+    "name": "fuzzy_matching",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action"
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action"
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)"
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only."
+      },
+      {
+        "name": "mode",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "constant_mode",
+              "label": "No other column",
+              "parameters": [
+                {
+                  "name": "reference_value",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": true,
+                  "default": "",
+                  "label": "Reference"
+                }
+              ]
+            },
+            {
+              "value": "other_column_mode",
+              "label": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "default": "",
+                  "label": "Column",
+                  "description": "Combine the current column with this one"
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "default": "constant_mode",
+        "label": "Use with",
+        "description": "Select if you want to use a constant value or another column"
+      },
+      {
+        "name": "sensitivity",
+        "type": "integer",
+        "implicit": false,
+        "canBeBlank": false,
+        "default": "1",
+        "label": "Sensitivity"
+      }
+    ],
+    "category": "strings",
+    "docUrl": "",
+    "label": "Fuzzy matching",
+    "dynamic": false
   }
 ]

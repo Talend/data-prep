@@ -32,6 +32,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
+import org.talend.dataprep.util.Files;
 
 /**
  * Write datasets in CSV.
@@ -124,10 +125,10 @@ public class CSVWriter implements TransformerWriter {
     @Override
     public void flush() throws IOException {
         output.flush();
-        if (bufferFile.exists()) {
-            if (!bufferFile.delete()) {
-                LOGGER.warn("Unable to delete temporary file '{}'", bufferFile);
-            }
+        try {
+            Files.delete(bufferFile);
+        } catch (IOException e) {
+            LOGGER.warn("Unable to delete temporary file '{}'", bufferFile, e);
         }
     }
 

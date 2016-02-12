@@ -1,0 +1,61 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.box {
+  font: 11px $sourcesanspro;
+}
+
+.box line,
+.box rect {
+  fill: $green;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.whiskerPolyg{
+  fill:none;
+  stroke:#000;
+  stroke-width:2;
+}
+
+.box .center {
+  stroke-dasharray: 3,3;
+}
+
+line .center {
+  stroke-dasharray: 3,3;
+}
+
+.mean {
+  fill: #fff;
+  opacity:.5;
+  stroke: grey;
+  shape-rendering: geometricPrecision;
+  stroke-width: .8;
+}
+
+.max-min-labels{
+  fill:blue;
+}
+
+.low-quantile-labels{
+  fill:seagreen;
+}
+
+.up-quantile-labels{
+  fill:red;
+}
+
+.mean-labels{
+  fill: #5a5557;
+}

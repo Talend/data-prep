@@ -1,0 +1,27 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="datagrid-lookup"
+     ng-class="{lookup : lookupDatagridCtrl.state.playground.lookup.visibility}">
+    <section id="lookup-datagrid" style="width: 100%; height: 100%"></section>
+</div>
+<span id="lookup-tooltip-ruler" class="tooltip-ruler"></span>
+
+<talend-tooltip
+        position="lookupDatagridCtrl.tooltip.position"
+        requested-state="lookupDatagridCtrl.showTooltip"
+        class="datagrid-tooltip-lookup">
+    <div ng-bind-html="lookupDatagridCtrl.tooltip.htmlStr" class="datagrid-tooltip-content"></div>
+</talend-tooltip>

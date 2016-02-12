@@ -1,0 +1,59 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.range-slider-cls{
+  font-size: .8em;
+
+  .resize rect {
+    fill: $dark-blue;
+    fill-opacity: 0.7;
+    stroke: #000;
+    stroke-width: 1px;
+    shape-rendering:crispEdges;
+  }
+
+  .axis path {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .3;
+    shape-rendering: crispEdges;
+  }
+
+  .x.axis line {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .3;
+  }
+
+  .brush .extent {
+    fill-opacity: .5;
+    fill: $dark-blue;
+    shape-rendering: crispEdges;
+  }
+}
+
+.range-inputs-cls{
+  font-size: .8em;
+  input[type="text"] {
+    width:85px;
+    display: inline-block;
+  }
+  .range-label-input{
+    margin-left: 25px;
+  }
+}
+
+.error-message{
+  font-size: .8em;
+  text-align: center;
+}

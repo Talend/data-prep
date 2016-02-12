@@ -1,0 +1,79 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="quality-bar" ng-if="qualityBarCtrl.hasMenu">
+    <div talend-dropdown
+         class="valid-partition"
+         ng-style="{width: qualityBarCtrl.width.valid + '%'}"
+         ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+         ng-show="qualityBarCtrl.quality.valid > 0"
+         title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)">
+            <div class="dropdown-container">
+                <div class="dropdown-action quality-bar-action"></div>
+                <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu">
+                </ul>
+            </div>
+    </div>
+
+    <div talend-dropdown
+         class="empty-partition"
+         ng-style="{width: qualityBarCtrl.width.empty + '%'}"
+         ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+         ng-show="qualityBarCtrl.quality.empty > 0"
+         title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
+            <div class="dropdown-container">
+                <div class="dropdown-action quality-bar-action"></div>
+                <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu">
+                </ul>
+            </div>
+    </div>
+
+    <div talend-dropdown
+         class="invalid-partition"
+         ng-style="{width: qualityBarCtrl.width.invalid + '%'}"
+         ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+         ng-show="qualityBarCtrl.quality.invalid > 0"
+         title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
+            <div class="dropdown-container">
+                <div class="dropdown-action quality-bar-action"></div>
+                <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" role="menu">
+                </ul>
+            </div>
+    </div>
+</div>
+
+<div class="quality-bar" ng-if="!qualityBarCtrl.hasMenu">
+    <div class="valid-partition"
+         ng-style="{width: qualityBarCtrl.width.valid + '%'}"
+         ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+         ng-show="qualityBarCtrl.quality.valid > 0"
+         title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)">
+    </div>
+
+    <div class="empty-partition"
+         ng-style="{width: qualityBarCtrl.width.empty + '%'}"
+         ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+         ng-show="qualityBarCtrl.quality.empty > 0"
+         title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
+    </div>
+
+    <div class="invalid-partition"
+         ng-style="{width: qualityBarCtrl.width.invalid + '%'}"
+         ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+         ng-show="qualityBarCtrl.quality.invalid > 0"
+         title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
+    </div>
+</div>
+<ng-transclude></ng-transclude>

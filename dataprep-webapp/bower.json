@@ -34,7 +34,10 @@
     "x-slickgrid": "3.0.0",
     "bg-splitter": "*",
     "angular-translate-once": "~1.0.2",
-    "moment-jdateformatparser": "~1.0.0"
+    "moment-jdateformatparser": "~1.0.0",
+    "bourbon": "^4.2.6",
+    "neat": "^1.7.2",
+    "animate.css": "^3.5.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.x"
@@ -44,6 +47,12 @@
     "angular-translate": "2.7.2"
   },
   "overrides": {
+    "neat": {
+      "main": [
+        "app/assets/stylesheets/_neat.scss",
+        "app/assets/stylesheets/_neat-helpers.scss"
+      ]
+    },
     "threedubmedia.jquery.event": {
       "main": [
         "event.drag/jquery.event.drag.js"

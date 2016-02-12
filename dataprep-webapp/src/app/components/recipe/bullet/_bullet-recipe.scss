@@ -1,0 +1,72 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+$stroke-width: 4;
+$stroke-width-path: 2.5;
+
+$active-color: $dark-green;
+$inactive-color: $shadow-gray;
+
+.maillon-circle {
+  circle {
+    stroke: $active-color;
+    stroke-width: $stroke-width;
+    fill: $active-color;
+    shape-rendering: geometricPrecision;
+
+    &.maillon-circle-enabled-hovered {
+      stroke: $blue;
+      stroke-width: $stroke-width;
+      fill: $white;
+    }
+  }
+
+  path {
+    stroke: $active-color;
+    stroke-width: $stroke-width-path;
+    fill: none;
+
+    &.maillon-cables-disabled {
+      stroke: $inactive-color;
+      stroke-width: $stroke-width-path;
+      fill: none;
+    }
+
+    &.single-maillon-cables-disabled {
+      stroke: $inactive-color;
+      stroke-width: $stroke-width-path;
+      fill: none;
+    }
+  }
+}
+
+.maillon-circle-disabled {
+  circle {
+    stroke: $inactive-color;
+    stroke-width: $stroke-width;
+    fill: $white;
+    shape-rendering: geometricPrecision;
+
+    &.maillon-circle-disabled-hovered {
+      stroke: $dark-blue;
+      stroke-width: $stroke-width;
+      fill: $blue;
+    }
+  }
+
+  path {
+    stroke: $inactive-color;
+    stroke-width: $stroke-width-path;
+    fill: none;
+  }
+}

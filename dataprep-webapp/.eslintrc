@@ -1,0 +1,30 @@
+{
+  "extends": "eslint:recommended",
+  "plugins": ["angular"],
+  "rules": {
+    "angular/controller-name": [2, "/[A-Z].*Ctrl/"],
+    "angular/json-functions": 0
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jasmine": true
+  },
+  "ecmaFeatures": {
+    "modules": true,
+    "restParams": true
+  },
+  "globals": {
+    "$": true,
+    "_": true,
+    "angular": true,
+    "d3": true,
+    "inject": true,
+    "introJs": true,
+    "module": true,
+    "moment": true,
+    "Slick": true,
+    "SlickGridMock": true,
+    "DataViewMock": true
+  }
+}

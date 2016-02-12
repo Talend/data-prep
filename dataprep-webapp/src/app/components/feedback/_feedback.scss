@@ -1,0 +1,74 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+.feedback {
+  $medium-screen: em(640) !default;
+  $large-screen: em(860) !default;
+  $x-large-screen: em(1824) !default;
+
+  .modal {
+    .modal-window {
+      @include media($medium-screen) {
+        padding-top: 0;
+      }
+
+      @include media($large-screen) {
+        padding-top: 0;
+      }
+
+      @include media($x-large-screen) {
+        padding-top: 4em;
+      }
+    }
+  }
+
+  .title {
+    font-weight: bold;
+    padding: 10px;
+  }
+
+  .feedback-form-line {
+    @include flex-row();
+    @include flex-wrap(none);
+    padding: 10px 0;
+
+    .feedback-form-label {
+      @include flex-basis(120px);
+      @include flex-grow(0);
+      @include flex-shrink(0);
+
+      text-align: right;
+      padding-right: 10px;
+    }
+
+    select {
+      height: 36px;
+      margin-left: 5px;
+    }
+  }
+}
+
+.feedback-sending-div {
+  height: 100%;
+  min-width: 30px;
+  position: relative;
+
+  .feedback-sending {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    font-size: 0.8em;
+  }
+}

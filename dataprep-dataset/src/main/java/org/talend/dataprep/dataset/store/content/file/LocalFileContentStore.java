@@ -93,13 +93,11 @@ public class LocalFileContentStore extends DataSetContentStore {
 
     @Override
     public void delete(DataSetMetadata dataSetMetadata) {
-        if (getFile(dataSetMetadata).exists()) {
-            if (!getFile(dataSetMetadata).delete()) {
-                throw new TDPException(DataSetErrorCodes.UNABLE_TO_DELETE_DATASET, ExceptionContext.build().put("dataSetId",
-                        dataSetMetadata.getId()));
-            }
-        } else {
-            LOGGER.warn("Data set #{} has no content.", dataSetMetadata.getId());
+        try {
+            org.talend.dataprep.util.Files.delete(getFile(dataSetMetadata));
+        } catch (IOException e) {
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_DELETE_DATASET, ExceptionContext.build().put("dataSetId",
+                    dataSetMetadata.getId()));
         }
     }
 

@@ -1,0 +1,77 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="actions-suggestions">
+    <div class="watermark"
+         ng-if="!statsDetailsCtrl.state.playground.statistics.details"
+         translate-once="SELECT_COLUMN_TO_DISPLAY_STATS"></div>
+
+    <talend-tabs ng-if="statsDetailsCtrl.state.playground.statistics.details">
+        <talend-tabs-item class="tab-container" tab-title="Chart" default="true">
+            <div class="stat-detail-tab-items">
+                <column-profile></column-profile>
+            </div>
+        </talend-tabs-item>
+        <talend-tabs-item tab-title="Value">
+            <div class="stat-detail-tab-items">
+                <div class="two-columns-values">
+                    <table class="stat-table">
+                        <tr ng-repeat="(key, val) in statsDetailsCtrl.state.playground.statistics.details.common track by $index">
+                            <td class="stat-key">{{key | translate}}: </td>
+                            <td class="stat-value">{{val}}</td>
+                        </tr>
+                    </table>
+                    <table class="stat-table">
+                        <tr ng-repeat="(key, val) in statsDetailsCtrl.state.playground.statistics.details.specific track by $index">
+                            <td class="stat-key">{{key | translate}}: </td>
+                            <td class="stat-value">{{val}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </talend-tabs-item>
+        <talend-tabs-item tab-title="Pattern">
+            <div class="stat-detail-tab-items">
+                <horizontal-barchart id="patternBarChart"
+                                     width="300"
+                                     height="400"
+                                     on-click="statsDetailsCtrl.addPatternFilter(item)"
+
+                                     key-field="pattern"
+                                     key-label="Occurrences"
+
+                                     primary-data="statsDetailsCtrl.state.playground.statistics.patterns"
+                                     primary-value-field="occurrences"
+
+                                     secondary-data="statsDetailsCtrl.state.playground.statistics.filteredPatterns"
+                                     secondary-value-field="filteredOccurrences"
+                                     secondary-bar-class="brownBar"
+
+                                     tooltip-content="statsDetailsCtrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)">
+                </horizontal-barchart>
+            </div>
+        </talend-tabs-item>
+        <talend-tabs-item tab-title="Advanced">
+            <div class="stat-detail-tab-items" ng-switch="!!statsDetailsCtrl.state.playground.statistics.boxPlot">
+                <div class="watermark" ng-switch-when="false" translate-once="NO_ADVANCED_CHART"></div>
+                <boxplot-chart ng-switch-when="true"
+                               id="boxplotId"
+                               width="300"
+                               height="400"
+                               boxplot-data="statsDetailsCtrl.state.playground.statistics.boxPlot"></boxplot-chart>
+            </div>
+        </talend-tabs-item>
+    </talend-tabs>
+</div>

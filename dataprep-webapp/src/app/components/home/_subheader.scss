@@ -1,0 +1,53 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+// Sub Header
+$subheader-height: 51px;
+$subheader-background: $light-gray;
+
+.subheader {
+  background-color: $subheader-background;
+  border-bottom: 1px solid $light-gray;
+  box-shadow: $box-shadow;
+  height: 58px;
+
+  .subheader-wrapper {
+    @include outer-container;
+
+    >ul {
+      padding-top: 10px;
+      
+      >li {
+        float: left;
+
+        &.primary {
+          padding-right: 30px;
+        }
+      }
+      
+    }
+  }
+}
+
+.view-mode{
+  float: right;
+  color: $medium-gray;
+  font-size: 0.9rem;
+  padding: 8px 15px;
+}
+
+.expand-panel{
+  float: right;
+  color: $medium-gray;
+  padding: 6px 15px;
+}

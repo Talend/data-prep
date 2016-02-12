@@ -1,0 +1,47 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="param">
+    <div class="param-row">
+
+        <div class="param-name"
+             data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
+             ng-if="::(simpleParamCtrl.label !== 'false')">
+            {{::simpleParamCtrl.parameter.label}}<span translate-once="COLON"></span>
+        </div>
+
+        <div class="param-input" ng-if="::(simpleParamCtrl.editableSelect)">
+            <editable-select
+                    list="simpleParamCtrl.parameter.list"
+                    ng-model="simpleParamCtrl.parameter.value"></editable-select>
+        </div>
+
+        <div class="param-input" ng-if="::(!simpleParamCtrl.editableSelect)">
+            <input name="{{::(simpleParamCtrl.parameter.name)}}"
+                   type="{{::simpleParamCtrl.parameter.inputType}}"
+                   ng-model="simpleParamCtrl.parameter.value"
+                   ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                   ng-trim="false"
+                   is-type="{{::simpleParamCtrl.parameter.type}}"
+                   can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
+            <span ng-if="::(simpleParamCtrl.parameter.type === 'boolean' && simpleParamCtrl.label === 'false')">{{simpleParamCtrl.parameter.name}}</span>
+        </div>
+
+        <div class="param-error error"
+             ng-if="paramCtrl.paramForm[simpleParamCtrl.parameter.name].$error.isTypeValidation || paramsCtrl.paramForm[simpleParamCtrl.parameter.name].$error.number">
+            This must be a {{::simpleParamCtrl.parameter.type}}
+        </div>
+    </div>
+</div>

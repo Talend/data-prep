@@ -61,10 +61,10 @@ public class DateParser {
      * At first uses the known date patterns from the column statistics. If it fails, the DQ library is called to try to
      * get the pattern.
      *
-     * @param value  the value to get the date time from.
+     * @param value  the value to get the date time from. Value can't be be empty or null/
      * @param column the column to get the date patterns from.
      * @return the parsed date time. For date only value, time is set to 00:00:00.
-     * @throws DateTimeException if the date cannot be parsed.
+     * @throws DateTimeException if the date cannot be parsed, or if value is empty or null.
      */
     public LocalDateTime parse(String value, ColumnMetadata column) {
         try {

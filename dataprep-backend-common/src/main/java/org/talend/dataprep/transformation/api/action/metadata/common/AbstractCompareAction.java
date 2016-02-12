@@ -56,16 +56,21 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
         //@formatter:on
 
         //@formatter:off
-        parameters.add(SelectParameter.Builder.builder()
-                        .name(MODE_PARAMETER)
-                        .item(CONSTANT_MODE, new Parameter(CONSTANT_VALUE, ParameterType.STRING, "2"))
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
+        parameters.add(SelectParameter.Builder.builder() //
+                        .name(MODE_PARAMETER) //
+                        .item(CONSTANT_MODE, getDefaultConstantValue()) //
+                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false)) //
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );
         //@formatter:on
 
         return parameters;
+    }
+
+    protected Parameter getDefaultConstantValue(){
+        // olamy no idea why this 2 but was here before so just keep backward compat :-)
+        return new Parameter(CONSTANT_VALUE, ParameterType.STRING, "2");
     }
 
     /**
@@ -162,8 +167,8 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
             return this;
         }
 
-        public ComparisonRequest setColumnMetadata2(ColumnMetadata colMetadata1) {
-            this.colMetadata1 = colMetadata1;
+        public ComparisonRequest setColumnMetadata2(ColumnMetadata colMetadata2) {
+            this.colMetadata2 = colMetadata2;
             return this;
         }
 

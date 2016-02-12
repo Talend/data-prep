@@ -26,25 +26,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
- * Test class for Split action. Creates one consumer, and test it.
+ * Test class for ComputeTimeSince action. Creates one consumer, and test it.
  *
  * @see ComputeTimeSince
  */
@@ -410,46 +410,6 @@ public class ComputeTimeSinceTest extends BaseDateTests {
 
         Temporal result = LocalDateTime.from(start);
         return String.valueOf(unit.between(result, now));
-    }
-
-    /**
-     * @param statisticsFileName the statistics file name to use.
-     * @return a row with default settings for the tests.
-     */
-    private DataSetRow getDefaultRow(String statisticsFileName) throws IOException {
-
-        List<ColumnMetadata> columns = new ArrayList<>(3);
-        columns.add(ColumnMetadata.Builder.column().name("recipe").type(Type.STRING).build());
-        ObjectMapper mapper = new ObjectMapper();
-        final Statistics statistics = mapper.readerFor(Statistics.class).readValue(ComputeTimeSinceTest.class.getResourceAsStream(statisticsFileName));
-        columns.add(ColumnMetadata.Builder.column().name("last update").type(Type.DATE).statistics(statistics).build());
-        columns.add(ColumnMetadata.Builder.column().name("steps").type(Type.STRING).build());
-
-        RowMetadata metadata = new RowMetadata();
-        metadata.setColumns(columns);
-
-        Map<String, String> values = new HashMap<>();
-        values.put("0000", "lorem bacon");
-        values.put("0001", "01/01/2010");
-        values.put("0002", "Bacon");
-
-        return new DataSetRow(metadata, values);
-    }
-
-    private ColumnMetadata createMetadata(String id, String name, Type type, String statisticsFileName) throws IOException {
-        ColumnMetadata column = createMetadata(id, name, type);
-        ObjectMapper mapper = new ObjectMapper();
-        final Statistics statistics = mapper.readerFor(Statistics.class).readValue(ComputeTimeSinceTest.class.getResourceAsStream(statisticsFileName));
-        column.setStatistics(statistics);
-        return column;
-    }
-
-    private ColumnMetadata createMetadata(String id, String name) {
-        return createMetadata(id, name, Type.STRING);
-    }
-
-    private ColumnMetadata createMetadata(String id, String name, Type type) {
-        return ColumnMetadata.Builder.column().computedId(id).name(name).type(type).build();
     }
 
 }

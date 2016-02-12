@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "compare_dates",
+      "parameters": {
+        "column_id": "0000",
+        "column_name": "last update",
+        "scope": "column"
+      }
+    }
+  ]
+}

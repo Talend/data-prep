@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -227,11 +227,7 @@ public class TimestampToDateTest extends BaseDateTests {
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
     }
 
-    private ColumnMetadata createMetadata(String id, String name) {
-        return createMetadata(id, name, Type.STRING);
-    }
-
-    private ColumnMetadata createMetadata(String id, String name, Type type) {
+    protected ColumnMetadata createMetadata(String id, String name, Type type) {
         return ColumnMetadata.Builder.column().computedId(id).name(name).type(type).headerSize(12).empty(0).invalid(2).valid(5)
                 .build();
     }

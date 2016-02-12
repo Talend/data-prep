@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.api.action.metadata.date;
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -25,6 +26,8 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.CompareAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
 @Component(CompareDates.ACTION_BEAN_PREFIX + CompareDates.ACTION_NAME)
 public class CompareDates extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {
@@ -34,6 +37,9 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
      */
     public static final String ACTION_NAME = "compare_dates"; //$NON-NLS-1$
 
+    @Autowired
+    protected DateParser dateParser;
+
     /**
      * @see ActionMetadata#getName()
      */
@@ -41,9 +47,6 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
     public String getName() {
         return ACTION_NAME;
     }
-
-    @Autowired
-    protected DateParser dateParser;
 
     /**
      * @see ActionMetadata#getCategory()
@@ -62,8 +65,28 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
         return Type.DATE.isAssignableFrom(columnType);
     }
 
+    protected Parameter getDefaultConstantValue() {
+        // olamy FIXME should be now but depends on date time pattern from which column??
+        return new Parameter(CONSTANT_VALUE, ParameterType.STRING, StringUtils.EMPTY);
+    }
+
     @Override
     protected int doCompare(ComparisonRequest comparisonRequest) {
+
+        if (StringUtils.isEmpty(comparisonRequest.value1) //
+                && StringUtils.isEmpty(comparisonRequest.value2)) {
+            return 0;
+        }
+
+        if (StringUtils.isNotEmpty(comparisonRequest.value1) //
+                && StringUtils.isEmpty(comparisonRequest.value2)) {
+            return 1;
+        }
+
+        if (StringUtils.isNotEmpty(comparisonRequest.value2) //
+                && StringUtils.isEmpty(comparisonRequest.value1)) {
+            return -1;
+        }
 
         final LocalDateTime temporalAccessor1 = dateParser.parse(comparisonRequest.value1, comparisonRequest.colMetadata1);
 

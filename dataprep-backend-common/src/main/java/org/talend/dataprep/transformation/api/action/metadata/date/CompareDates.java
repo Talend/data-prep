@@ -67,7 +67,7 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
 
     protected Parameter getDefaultConstantValue() {
         // olamy FIXME should be now but depends on date time pattern from which column??
-        return new Parameter(CONSTANT_VALUE, ParameterType.STRING, StringUtils.EMPTY);
+        return new Parameter(CONSTANT_VALUE, ParameterType.DATE, StringUtils.EMPTY);
     }
 
     @Override

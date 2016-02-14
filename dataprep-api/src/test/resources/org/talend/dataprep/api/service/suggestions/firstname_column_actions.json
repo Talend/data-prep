@@ -3358,7 +3358,7 @@
               "parameters": [
                 {
                   "name": "constant_value",
-                  "type": "string",
+                  "type": "date",
                   "implicit": false,
                   "canBeBlank": true,
                   "default": "",

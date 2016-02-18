@@ -21,7 +21,12 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -58,7 +63,12 @@ public class XlsUtils {
         case Cell.CELL_TYPE_ERROR:
             return "Cell Error type";
         case Cell.CELL_TYPE_FORMULA:
-            return getCellValueAsString(cell, formulaEvaluator.evaluate(cell) );
+            try {
+                return getCellValueAsString(cell, formulaEvaluator.evaluate(cell));
+            } catch (Exception e) {
+                // we return the error message and the formula
+                return e.getMessage() + ", formula: " + cell.getCellFormula();
+            }
         case Cell.CELL_TYPE_NUMERIC:
             return getNumericValue(cell, null, false);
         case Cell.CELL_TYPE_STRING:

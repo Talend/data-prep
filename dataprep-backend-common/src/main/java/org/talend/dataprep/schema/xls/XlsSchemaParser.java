@@ -16,12 +16,23 @@ package org.talend.dataprep.schema.xls;
 import static org.talend.dataprep.api.type.Type.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalLong;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -252,9 +263,14 @@ public class XlsSchemaParser implements SchemaParser {
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
 
-                int xlsType = cell.getCellType() == Cell.CELL_TYPE_FORMULA? //
-                    formulaEvaluator.evaluate( cell ).getCellType() : cell.getCellType();
+                int xlsType = Cell.CELL_TYPE_STRING;
 
+                try {
+                    xlsType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? //
+                            formulaEvaluator.evaluate(cell).getCellType() : cell.getCellType();
+                } catch (Exception e) {
+                    // ignore formula error evaluation get as a String with the formula
+                }
                 switch (xlsType) {
                 case Cell.CELL_TYPE_BOOLEAN:
                     currentType = BOOLEAN.getName();
@@ -265,11 +281,10 @@ public class XlsSchemaParser implements SchemaParser {
                 case Cell.CELL_TYPE_BLANK:
                     currentType = BLANK;
                     break;
+                case Cell.CELL_TYPE_FORMULA:
                 case Cell.CELL_TYPE_STRING:
                     currentType = STRING.getName();
                     break;
-                case Cell.CELL_TYPE_FORMULA:
-                    // should not happen!!!
                 case Cell.CELL_TYPE_ERROR:
                     // we cannot really do anything with an error
                 default:

@@ -39,6 +39,24 @@ import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 
 /**
  * This will extract the numeric part
+ *
+ * W use metric prefix from <a href="https://en.wikipedia.org/wiki/Metric_prefix">Wikipedia</a>
+ *
+ *  <ul>
+ *     <li>tera, T, 1000000000000</li>
+ *     <li>giga, G, 1000000000</li>
+ *     <li>mega, M, 1000000</li>
+ *     <li>kilo, k, 1000</li>
+ *     <li>hecto, h, 100</li>
+ *     <li>deca, da, 10</li>
+ *     <li>(none), (none), 1</li>
+ *     <li>deci, d, 0.1</li>
+ *     <li>centi, c, 0.01</li>
+ *     <li>milli, m, 0.001</li>
+ *     <li>micro, μ, 0.000001</li>
+ *     <li>nano, n, 0.000000001</li>
+ *     <li>pico p 0.000000000001</li>
+ * </ul>
  */
 @Component(ActionMetadata.ACTION_BEAN_PREFIX + ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
 public class ExtractNumber extends ActionMetadata implements ColumnAction {
@@ -88,15 +106,24 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
         }
     }
 
-    // we use metric prefix from https://en.wikipedia.org/wiki/Metric_prefix
-
-    /*
-     * 
-     * tera T 1000000000000 giga G 1000000000 mega M 1000000 kilo k 1000 hecto h 100 deca da 10 (none) (none) 1 deci d
-     * 0.1 centi c 0.01 milli m 0.001 micro μ 0.000001 nano n 0.000000001 pico p 0.000000000001
-     * 
+    /**
+     * Initialize the metrics
+     * <ul>
+     *     <li>tera, T, 1000000000000</li>
+     *     <li>giga, G, 1000000000</li>
+     *     <li>mega, M, 1000000</li>
+     *     <li>kilo, k, 1000</li>
+     *     <li>hecto, h, 100</li>
+     *     <li>deca, da, 10</li>
+     *     <li>(none), (none), 1</li>
+     *     <li>deci, d, 0.1</li>
+     *     <li>centi, c, 0.01</li>
+     *     <li>milli, m, 0.001</li>
+     *     <li>micro, μ, 0.000001</li>
+     *     <li>nano, n, 0.000000001</li>
+     *     <li>pico p 0.000000000001</li>
+     * </ul>
      */
-
     @PostConstruct
     public void initialize() {
         // initialize all standard Metric prefix

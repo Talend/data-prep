@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "extract_number",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "column",
+        "selected_column": "0001"
+      }
+    }
+  ]
+}

@@ -3399,5 +3399,74 @@
     "docUrl": "",
     "actionScope": [],
     "dynamic": false
+  },
+  {
+    "name": "extract_number",
+    "parameters": [
+      {
+        "name": "column_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Column",
+        "description": "The column to which you want to apply this action"
+      },
+      {
+        "name": "row_id",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Row",
+        "description": "The row to which you want to apply this action"
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Scope",
+        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)"
+      },
+      {
+        "name": "filter",
+        "type": "filter",
+        "implicit": true,
+        "canBeBlank": true,
+        "default": "",
+        "label": "Filter",
+        "description": "An optional filter to apply action on matching values only."
+      },
+      {
+        "name": "decimal_separator",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": ",",
+              "label": ","
+            },
+            {
+              "value": ".",
+              "label": "."
+            }
+          ],
+          "multiple": false
+        },
+        "default": ".",
+        "label": "Decimal Separator",
+        "description": "The decimal separator used in the input"
+      }
+    ],
+    "category": "split",
+    "label": "Extract number",
+    "docUrl": "",
+    "actionScope": [],
+    "description": "Extract number from the input",
+    "dynamic": false
   }
 ]

@@ -20,6 +20,7 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
-import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
@@ -109,7 +109,6 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
         actionContext.getModifiedColumns().add(selectedColumn);
 
     }
-
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
      */
@@ -138,7 +137,6 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
 
         row.set( columnId, selectedColumnValue );
         row.set( selectedColumn.getId(), columnValue);
-
 
     }
 

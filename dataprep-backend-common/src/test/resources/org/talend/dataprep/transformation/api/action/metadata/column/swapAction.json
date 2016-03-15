@@ -1,0 +1,13 @@
+{
+  "actions": [
+    {
+      "action": "swap_column",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "column",
+        "mode": "other_column_mode",
+        "selected_column": "0001"
+      }
+    }
+  ]
+}

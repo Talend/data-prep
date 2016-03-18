@@ -203,6 +203,7 @@ public class Pipeline implements Node {
                             // TODO Ignore column copy from analysis (metadata did not change)
                             break;
                         case METADATA_CREATE_COLUMNS:
+                        case METADATA_MODIFY_COLUMNS:
                             createOrModifyColumnActions++;
                             break;
                         case METADATA_DELETE_COLUMNS:

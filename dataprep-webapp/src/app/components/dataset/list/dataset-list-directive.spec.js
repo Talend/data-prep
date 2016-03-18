@@ -12,7 +12,6 @@
   ============================================================================*/
 
 describe('DatasetList directive', function () {
-    'use strict';
 
     function strEndsWith(str, suffix) {
         return str.match(suffix + '$')[0] === suffix;
@@ -66,6 +65,9 @@ describe('DatasetList directive', function () {
                 orderList: orderList,
                 currentFolderContent: {
                     datasets: datasets
+                },
+                currentFolder: {
+                    path:''
                 }
             }
         };
@@ -89,7 +91,6 @@ describe('DatasetList directive', function () {
             element = angular.element('<dataset-list></dataset-list>');
             $compile(element)(scope);
             scope.$digest();
-            return element;
         };
 
         spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
@@ -135,24 +136,10 @@ describe('DatasetList directive', function () {
         expect(element.find('.inventory-description').eq(2).text()).toBe('owned by anonymousUser, created ' + momentize('14370202197') + ', contains  lines');
     }));
 
-    it('should focus on the name input field', inject(function($rootScope){
-        //given
-        createElement();
-        var ctrl = element.controller('datasetList');
-        ctrl.folderDestinationModal = true;
-        $rootScope.$digest();
-
-        //when
-        ctrl.focusOnNameInput();
-
-        //then
-        var activeEl = document.activeElement; //eslint-disable-line angular/document-service
-        expect(angular.element(activeEl).attr('id')).toBe('new-name-input-id');
-    }));
-
     it('should create related preparations list', inject(function(){
         expect(element.find('.inventory-item').eq(0).find('.inventory-actions-related-item-menu > li').length).toBe(4);
         expect(element.find('.inventory-item').eq(1).find('.inventory-actions-related-item-menu > li').length).toBe(3);
         expect(element.find('.inventory-item').eq(2).find('.inventory-actions-related-item-menu > li').length).toBe(0);
     }));
+    //}));
 });

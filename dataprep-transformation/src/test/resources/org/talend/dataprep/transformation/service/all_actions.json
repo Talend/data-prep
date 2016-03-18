@@ -2542,7 +2542,7 @@
       }
     ],
     "dynamic": false,
-    "description": "Add (+), multiply (x), subtract (-), or divide(/) this column with another or with a fixed value",
+    "description": "Perform an operation/calculation on this column with another one or with a fixed value: Add/sum (+), multiply (x), subtract (-), or divide(/)",
     "label": "Add, Multiply, Subtract or Divide",
     "actionScope": []
   },

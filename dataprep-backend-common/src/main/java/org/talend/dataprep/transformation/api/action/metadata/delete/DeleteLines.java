@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ColumnActio
 @Component(DeleteLines.ACTION_BEAN_PREFIX + DeleteLines.DELETE_LINES_ACTION_NAME)
 public class DeleteLines extends ActionMetadata implements ColumnAction {
 
-    public static final String DELETE_LINES_ACTION_NAME = "delete_lines";
+    static final String DELETE_LINES_ACTION_NAME = "delete_lines";
 
     @Override
     public String getName() {
@@ -58,7 +58,7 @@ public class DeleteLines extends ActionMetadata implements ColumnAction {
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
-        if (getFilter(context.getParameters()).test(row)) {
+        if (context.getFilter().test(row)) {
             row.setDeleted(true);
         }
     }

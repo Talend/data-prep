@@ -48,7 +48,9 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
         parameters.add(SelectParameter.Builder.builder() //
                         .name(MODE_PARAMETER) //
                         .item(CONSTANT_MODE, getDefaultConstantValue()) //
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false)) //
+                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                                                               StringUtils.EMPTY, false, false, //
+                                                               getMessagesBundle())) //
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );

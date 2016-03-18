@@ -27,6 +27,8 @@ import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.daikon.number.BigDecimalParser;
@@ -72,7 +74,9 @@ public class SimpleFilterService implements FilterService {
 
     private static final String NOT = "not";
 
-    final private DateManipulator dateManipulator = new DateManipulator();
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleFilterService.class);
+
+    private final DateManipulator dateManipulator = new DateManipulator();
 
     @Autowired
     private DateParser dateParser;
@@ -153,8 +157,7 @@ public class SimpleFilterService implements FilterService {
         checkValidMultiPredicate(nodeContent);
         final Predicate<DataSetRow> leftFilter = buildFilter(nodeContent.get(0));
         final Predicate<DataSetRow> rightFilter = buildFilter(nodeContent.get(1));
-        final Predicate<DataSetRow> andFilter = leftFilter.and(rightFilter);
-        return andFilter::test;
+        return leftFilter.and(rightFilter);
     }
 
     /**
@@ -167,8 +170,7 @@ public class SimpleFilterService implements FilterService {
         checkValidMultiPredicate(nodeContent);
         final Predicate<DataSetRow> leftFilter = buildFilter(nodeContent.get(0));
         final Predicate<DataSetRow> rightFilter = buildFilter(nodeContent.get(1));
-        final Predicate<DataSetRow> orFilter = leftFilter.or(rightFilter);
-        return orFilter::test;
+        return leftFilter.or(rightFilter);
     }
 
     /**
@@ -363,7 +365,8 @@ public class SimpleFilterService implements FilterService {
                 final LocalDateTime columnValue = dateParser.parse(r.get(columnId), columnMetadata);
                 return minDate.compareTo(columnValue) == 0 || (minDate.isBefore(columnValue) && maxDate.isAfter(columnValue));
             });
-        } catch (final Exception e) {
+        } catch (Exception e) {
+            LOGGER.debug("Unable to create date range predicate.", e);
             throw new IllegalArgumentException(
                     "Unsupported query, malformed date 'range' (expected timestamps in min and max properties).");
         }
@@ -385,7 +388,8 @@ public class SimpleFilterService implements FilterService {
                 final double columnValue = toBigDecimal(r.get(columnId));
                 return NumberUtils.compare(columnValue, min) == 0 || (columnValue > min && columnValue < max);
             });
-        } catch (final Exception e) {
+        } catch (Exception e) {
+            LOGGER.debug("Unable to create number range predicate.", e);
             throw new IllegalArgumentException("Unsupported query, malformed 'range' (expected number min and max properties).");
         }
     }
@@ -402,7 +406,7 @@ public class SimpleFilterService implements FilterService {
         if (column != null) {
             return column.getQuality().getInvalidValues();
         }
-        return Collections.<String> emptySet();
+        return Collections.emptySet();
     }
 
     /**
@@ -497,6 +501,7 @@ public class SimpleFilterService implements FilterService {
             try {
                 return inner.test(r);
             } catch (DateTimeException e) { // thrown by DateParser
+                LOGGER.debug("Unable to parse date.", e);
                 return false;
             }
         };

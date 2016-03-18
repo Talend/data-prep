@@ -90,21 +90,15 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-
         if (this.type == Type.BOOLEAN) {
-
             parameters.add(SelectParameter.Builder.builder() //
                     .name(VALUE_PARAMETER) //
                     .item(Boolean.TRUE.toString()) //
                     .item(Boolean.FALSE.toString()) //
                     .build());
-
-            /*
-             * parameters.add(new Parameter(VALUE_PARAMETER, ParameterType.BOOLEAN, // Boolean.TRUE.toString()));
-             */
         } else {
             parameters.add(new Parameter(VALUE_PARAMETER, ParameterType.REGEX, //
-                    StringUtils.EMPTY, false, false));
+                    StringUtils.EMPTY, false, false, getMessagesBundle()));
         }
 
         return parameters;
@@ -118,15 +112,14 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
         return applicationContext.getBean(ClearMatching.class, Type.valueOf(column.getType().toUpperCase()));
     }
 
+    @Override
     public boolean toClear(ColumnMetadata colMetadata, String value, ActionContext context) {
         Map<String, String> parameters = context.getParameters();
         String equalsValue = parameters.get(VALUE_PARAMETER);
 
-        switch (Type.get(colMetadata.getType())) {
-        case BOOLEAN:
-            // for boolean we can accept True equalsIgnoreCase true
+        if (Type.get(colMetadata.getType()) == Type.BOOLEAN) { // for boolean we can accept True equalsIgnoreCase true
             return StringUtils.equalsIgnoreCase(value, equalsValue);
-        default:
+        } else {
             ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
             return replaceOnValueHelper.matches(value);
         }

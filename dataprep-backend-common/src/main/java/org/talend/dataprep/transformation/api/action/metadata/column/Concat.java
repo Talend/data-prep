@@ -97,7 +97,8 @@ public class Concat extends ActionMetadata implements ColumnAction, OtherColumnP
                 .builder()
                 .name(MODE_PARAMETER)
                 .item(OTHER_COLUMN_MODE,
-                        new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false),
+                        new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, //
+                                      false, false, getMessagesBundle()),
                         new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY)) //
                 .item(CONSTANT_MODE) //
                 .defaultValue(OTHER_COLUMN_MODE) //

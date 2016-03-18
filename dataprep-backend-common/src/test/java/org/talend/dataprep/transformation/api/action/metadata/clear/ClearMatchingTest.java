@@ -76,7 +76,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
                 new DataSetRow(rowMetadata, secondRowValues));
 
         // when
-        ActionTestWorkbench.test(rows, action.create(parameters));
+        ActionTestWorkbench.test(rows, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(rows.get(0).values()) //
@@ -125,7 +125,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         parameters.put(ClearMatching.VALUE_PARAMETER, generateJson(".*Something", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
-        ActionTestWorkbench.test(rows, action.create(parameters));
+        ActionTestWorkbench.test(rows, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(rows.get(0).values()) //
@@ -170,7 +170,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("Badibada", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -200,7 +200,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         parameters.put(ClearMatching.VALUE_PARAMETER, Boolean.TRUE.toString());
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -230,7 +230,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         parameters.put(ClearMatching.VALUE_PARAMETER, Boolean.FALSE.toString());
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -260,7 +260,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         parameters.put(ClearMatching.VALUE_PARAMETER, "tchoubidoo");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -302,7 +302,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
         parameters.put(ClearMatching.VALUE_PARAMETER, generateJson(".*1234", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
-        ActionTestWorkbench.test(rows, action.create(parameters));
+        ActionTestWorkbench.test(rows, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(rows.get(0).values()) //

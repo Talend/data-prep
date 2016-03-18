@@ -26,6 +26,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Actions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.transformation.api.action.metadata.common.ActionFactory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**
@@ -33,6 +34,9 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
  */
 @Component
 public class ActionParser {
+
+    @Autowired
+    ActionFactory factory;
 
     /** The dataprep ready jackson builder. */
     @Autowired
@@ -66,7 +70,7 @@ public class ActionParser {
                 if (parsedAction != null && parsedAction.getName() != null) {
                     final String name = ActionMetadata.ACTION_BEAN_PREFIX + parsedAction.getName().toLowerCase();
                     final ActionMetadata metadata = context.getBean(name, ActionMetadata.class);
-                    builtActions.add(metadata.create(parsedAction.getParameters()));
+                    builtActions.add(factory.create(metadata, parsedAction.getParameters()));
                 }
             }
             // all set: wraps everything and return to caller

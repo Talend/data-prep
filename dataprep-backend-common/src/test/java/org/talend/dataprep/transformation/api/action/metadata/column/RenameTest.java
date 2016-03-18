@@ -31,9 +31,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
 /**
@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.parameters.Parameter;
  *
  * @see Rename
  */
-public class RenameTest extends BaseDateTests {
+public class RenameTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -74,9 +74,6 @@ public class RenameTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
     }
 
-    /**
-     * @see Rename#create(Map)
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -107,7 +104,7 @@ public class RenameTest extends BaseDateTests {
         expected.add(renamedMetadata);
 
         //when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());

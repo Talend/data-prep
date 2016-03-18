@@ -36,7 +36,7 @@
     "angular-mass-autocomplete": "~0.2.2",
     "angularjs-toaster": "0.4.10",
     "ng-file-upload": "2.2.2",
-    "sunchoke": "^0.1.0-snapshot.0",
+    "sunchoke": "^0.1.0-snapshot.1",
 
     "bourbon": "^4.2.6",
     "neat": "^1.7.2",

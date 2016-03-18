@@ -14,6 +14,7 @@
 package org.talend.dataprep.transformation.api.action.dynamic.cluster;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.i18n.MessagesBundle;
@@ -34,6 +35,9 @@ import org.talend.datascience.common.recordlinkage.StringsClusterAnalyzer;
 @Component
 public class ClusterParameters implements DynamicParameters {
 
+    @Autowired
+    private MessagesBundle messagesBundle;
+
     @Override
     public GenericParameter getParameters(final String columnId, final DataSet content) {
         // Analyze clusters service
@@ -48,8 +52,8 @@ public class ClusterParameters implements DynamicParameters {
         // Build results
         final Clusters.Builder builder = Clusters
                 .builder()
-                .title(MessagesBundle.getString("parameter.textclustering.title.1"))
-                .title(MessagesBundle.getString("parameter.textclustering.title.2"));
+                .title(messagesBundle.getString("parameter.textclustering.title.1"))
+                .title(messagesBundle.getString("parameter.textclustering.title.2"));
         final StringClusters result = clusterAnalyzer.getResult().get(0);
         for (StringClusters.StringCluster cluster : result) {
             // String clustering may cluster null / empty values, however not interesting for data prep.

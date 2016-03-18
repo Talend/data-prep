@@ -92,7 +92,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -116,7 +116,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.put(CreateNewColumn.MODE_PARAMETER, CreateNewColumn.EMPTY_MODE);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -141,7 +141,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.put(CreateNewColumn.SELECTED_COLUMN_PARAMETER, "0001");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -155,7 +155,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.remove(CreateNewColumn.MODE_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.remove(CreateNewColumn.DEFAULT_VALUE_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.remove(CreateNewColumn.DEFAULT_VALUE_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(row.get("0000"), "first");
@@ -194,7 +194,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.put(CreateNewColumn.MODE_PARAMETER, CreateNewColumn.COLUMN_MODE);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(row.get("0000"), "first");
@@ -211,7 +211,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
         parameters.put(CreateNewColumn.SELECTED_COLUMN_PARAMETER, "0009");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(row.get("0000"), "first");

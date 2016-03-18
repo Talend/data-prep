@@ -32,16 +32,16 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for Split action. Creates one consumer, and test it.
  *
  * @see Split
  */
-public class ComputeLengthTest extends BaseDateTests {
+public class ComputeLengthTest extends AbstractMetadataBaseTest {
 
     /**
      * The action to test.
@@ -69,9 +69,6 @@ public class ComputeLengthTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_compute_length() {
         // given
@@ -88,15 +85,12 @@ public class ComputeLengthTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_compute_length_empty() {
         // given
@@ -113,15 +107,12 @@ public class ComputeLengthTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_compute_length_twice() {
         // given
@@ -139,15 +130,12 @@ public class ComputeLengthTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters), factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ComputeLength#create(Map)
-     */
     @Test
     public void should_update_metadata() {
         // given
@@ -164,15 +152,12 @@ public class ComputeLengthTest extends BaseDateTests {
         expected.add(createMetadata("0002", "last update"));
 
         //when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
     }
 
-    /**
-     * @see ComputeLength#create(Map)
-     */
     @Test
     public void should_update_metadata_twice() {
         // given
@@ -190,7 +175,7 @@ public class ComputeLengthTest extends BaseDateTests {
         expected.add(createMetadata("0002", "last update"));
 
         //when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters), factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -207,10 +192,6 @@ public class ComputeLengthTest extends BaseDateTests {
         assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
         assertFalse(action.acceptColumn(getColumn(Type.DATE)));
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
-    }
-
-    protected ColumnMetadata createMetadata(String id, String name) {
-        return createMetadata(id, name, Type.STRING);
     }
 
     protected ColumnMetadata createMetadata(String id, String name, Type type) {

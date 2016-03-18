@@ -29,16 +29,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for DeleteOnValue action. Creates one consumer, and test it.
  *
  * @see DeleteNegativeValues
  */
-public class DeleteNegativeValuesTest extends BaseDateTests {
+public class DeleteNegativeValuesTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -78,7 +78,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -95,7 +95,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -111,7 +111,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -127,7 +127,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -144,7 +144,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -161,7 +161,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -177,7 +177,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertFalse(row.isDeleted());
@@ -193,7 +193,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertFalse(row.isDeleted());
@@ -210,7 +210,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertFalse(row.isDeleted());
@@ -227,7 +227,7 @@ public class DeleteNegativeValuesTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(row.isDeleted());

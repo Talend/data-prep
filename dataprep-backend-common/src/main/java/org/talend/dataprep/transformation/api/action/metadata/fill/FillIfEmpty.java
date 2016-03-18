@@ -59,16 +59,16 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     public String getDescription() {
         switch (type) {
         case STRING:
-            return MessagesBundle.getString("action." + FILL_EMPTY_STRING + ".desc");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_STRING + ".desc");
         case NUMERIC:
         case DOUBLE:
         case FLOAT:
         case INTEGER:
-            return MessagesBundle.getString("action." + FILL_EMPTY_INTEGER + ".desc");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_INTEGER + ".desc");
         case BOOLEAN:
-            return MessagesBundle.getString("action." + FILL_EMPTY_BOOLEAN + ".desc");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_BOOLEAN + ".desc");
         case DATE:
-            return MessagesBundle.getString("action." + FILL_EMPTY_DATE + ".desc");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_DATE + ".desc");
         default:
             throw new UnsupportedOperationException("Type '" + type + "' is not supported.");
         }
@@ -78,16 +78,16 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     public String getLabel() {
         switch (type) {
         case STRING:
-            return MessagesBundle.getString("action." + FILL_EMPTY_STRING + ".label");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_STRING + ".label");
         case NUMERIC:
         case DOUBLE:
         case FLOAT:
         case INTEGER:
-            return MessagesBundle.getString("action." + FILL_EMPTY_INTEGER + ".label");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_INTEGER + ".label");
         case BOOLEAN:
-            return MessagesBundle.getString("action." + FILL_EMPTY_BOOLEAN + ".label");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_BOOLEAN + ".label");
         case DATE:
-            return MessagesBundle.getString("action." + FILL_EMPTY_DATE + ".label");
+            return getMessagesBundle().getString("action." + FILL_EMPTY_DATE + ".label");
         default:
             throw new UnsupportedOperationException("Type '" + type + "' is not supported.");
         }

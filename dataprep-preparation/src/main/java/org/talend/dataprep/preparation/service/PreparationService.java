@@ -48,7 +48,9 @@ import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,10 +59,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
 public class PreparationService {
-
-    /** The default root content. */
-    @Resource(name = "rootContent")
-    private PreparationActions rootContent;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationService.class);
 
@@ -83,6 +81,9 @@ public class PreparationService {
 
     @Autowired
     private VersionService versionService;
+
+    @Autowired
+    private ActionRegistry actionRegistry;
 
     @RequestMapping(value = "/preparations", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all preparations id", notes = "Returns the list of preparations ids the current user is allowed to see. Creation date is always displayed in UTC time zone. See 'preparations/all' to get all details at once.")
@@ -243,8 +244,7 @@ public class PreparationService {
                                                                             // not anymore
                 .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
         final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = (originalCreatedColumns.isEmpty()) ? MAX_VALUE
-                : originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
+        final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty() ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
 
         // Build list of actions from modified one to the head
         final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -292,7 +292,7 @@ public class PreparationService {
         final Step std = getStep(stepToDeleteId);
         final List<String> deletedColumns = std.getDiff().getCreatedColumns();
         final int columnsDiffNumber = -deletedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = (deletedColumns.isEmpty()) ? MAX_VALUE
+        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ? MAX_VALUE
                 : deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
 
         LOGGER.debug("Deleting actions in preparation #{} at step #{}", id, stepToDeleteId); //$NON-NLS-1$
@@ -422,22 +422,27 @@ public class PreparationService {
             return emptyList();
         }
 
-        final List<Step> steps = IntStream.range(stepIndex, stepsIds.size()).mapToObj(index -> getStep(stepsIds.get(index)))
-                .collect(toList());
+        final List<Step> steps;
+        try (IntStream range = IntStream.range(stepIndex, stepsIds.size())) {
+            steps = range.mapToObj(index -> getStep(stepsIds.get(index)))
+                    .collect(toList());
+        }
 
         final List<List<Action>> stepActions = steps.stream().map(this::getActions).collect(toList());
 
-        return IntStream.range(1, steps.size()).mapToObj(index -> {
-            final List<Action> previous = stepActions.get(index - 1);
-            final List<Action> current = stepActions.get(index);
-            final Step step = steps.get(index);
+        try (IntStream filteredActions = IntStream.range(1, steps.size())) {
+            return filteredActions.mapToObj(index -> {
+                final List<Action> previous = stepActions.get(index - 1);
+                final List<Action> current = stepActions.get(index);
+                final Step step = steps.get(index);
 
-            final AppendStep appendStep = new AppendStep();
-            appendStep.setDiff(step.getDiff());
-            appendStep.setActions(current.subList(previous.size(), current.size()));
+                final AppendStep appendStep = new AppendStep();
+                appendStep.setDiff(step.getDiff());
+                appendStep.setActions(current.subList(previous.size(), current.size()));
 
-            return appendStep;
-        }).collect(toList());
+                return appendStep;
+            }).collect(toList());
+        }
     }
 
     /**
@@ -481,7 +486,7 @@ public class PreparationService {
      */
     private void checkActionStepConsistency(final AppendStep step) {
         for (final Action stepAction : step.getActions()) {
-            validator.checkScopeConsistency(stepAction.getName(), stepAction.getParameters());
+            validator.checkScopeConsistency(actionRegistry.get(stepAction.getName()), stepAction.getParameters());
         }
     }
 
@@ -523,7 +528,7 @@ public class PreparationService {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns
-        if (deletedColumns.size() > 0) {
+        if (!deletedColumns.isEmpty()) {
             stream = stream.filter(stepColumnIsNotIn(deletedColumns));
         }
 
@@ -560,7 +565,7 @@ public class PreparationService {
             final List<String> shiftedStepCreatedCols = stepCreatedCols.stream().map(colIdStr -> {
                 final int columnId = Integer.parseInt(colIdStr);
                 if (columnId > shiftColumnAfterId) {
-                    return format.format(columnId + shiftNumber);
+                    return format.format(columnId + (long) shiftNumber);
                 }
                 return colIdStr;
             }).collect(toList());
@@ -580,10 +585,11 @@ public class PreparationService {
     private Function<AppendStep, AppendStep> shiftStepParameter(final int shiftColumnAfterId, final int shiftNumber) {
         final DecimalFormat format = new DecimalFormat("0000"); //$NON-NLS-1$
         return step -> {
-            final Map<String, String> parameters = step.getActions().get(0).getParameters();
-            final int columnId = Integer.parseInt(step.getActions().get(0).getParameters().get("column_id")); //$NON-NLS-1$
+            final Action firstAction = step.getActions().get(0);
+            final Map<String, String> parameters = firstAction.getParameters();
+            final int columnId = Integer.parseInt(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
             if (columnId > shiftColumnAfterId) {
-                parameters.put("column_id", format.format(columnId + shiftNumber)); //$NON-NLS-1$
+                parameters.put("column_id", format.format(columnId + (long) shiftNumber)); //$NON-NLS-1$
             }
             return step;
         };

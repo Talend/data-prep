@@ -87,11 +87,6 @@ public class DomainChange extends ActionMetadata implements ColumnAction {
     }
 
     @Override
-    public ActionMetadata adapt(ColumnMetadata column) {
-        return this;
-    }
-
-    @Override
     public Set<Behavior> getBehavior() {
         return EnumSet.of(Behavior.METADATA_CHANGE_TYPE);
     }

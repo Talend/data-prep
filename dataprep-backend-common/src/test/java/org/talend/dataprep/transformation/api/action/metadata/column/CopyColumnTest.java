@@ -1,15 +1,15 @@
-// ============================================================================
+//  ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// This source code is available under agreement available at
-// https://github.com/Talend/data-prep/blob/master/LICENSE
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
 //
-// ============================================================================
+//  ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.column;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -18,11 +18,7 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -36,16 +32,16 @@ import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for Split action. Creates one consumer, and test it.
  *
  * @see CopyColumnMetadata
  */
-public class CopyColumnTest extends BaseDateTests {
+public class CopyColumnTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -70,9 +66,6 @@ public class CopyColumnTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
     }
 
-    /**
-     * @see CopyColumnMetadata#create(Map)
-     */
     @Test
     public void should_copy_row() {
         // given
@@ -89,7 +82,7 @@ public class CopyColumnTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -114,7 +107,7 @@ public class CopyColumnTest extends BaseDateTests {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -139,7 +132,7 @@ public class CopyColumnTest extends BaseDateTests {
         expected.add(createMetadata("0003", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         final List<ColumnMetadata> columns = rowMetadata.getColumns();
@@ -162,7 +155,7 @@ public class CopyColumnTest extends BaseDateTests {
         expected.add(transformed);
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected.get(1).getStatistics(), original.getStatistics());
@@ -186,7 +179,7 @@ public class CopyColumnTest extends BaseDateTests {
 
         Assertions.assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
 
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         List<ColumnMetadata> expected = rowMetadata.getColumns();
 
@@ -221,7 +214,7 @@ public class CopyColumnTest extends BaseDateTests {
 
         Assertions.assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
 
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         List<ColumnMetadata> expected = rowMetadata.getColumns();
 
@@ -257,7 +250,7 @@ public class CopyColumnTest extends BaseDateTests {
 
         Assertions.assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
 
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         List<ColumnMetadata> expected = rowMetadata.getColumns();
 

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.talend.dataprep.i18n.MessagesBundle;
+import org.talend.dataprep.util.MessagesBundleContext;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -114,9 +115,10 @@ public class SelectParameter extends Parameter implements Serializable {
          * @see MessagesBundle#getString(String)
          * @see #setLabel(String)
          */
-        public Item(String value, List<Parameter> parameters) {
+        private Item(String value, List<Parameter> parameters) {
             this.value = value;
-            this.label = MessagesBundle.getString("choice." + value, value);
+            this.label = MessagesBundleContext.get() //
+                    .getString("choice." + value, value);
             this.inlineParameters = parameters;
         }
 
@@ -125,7 +127,7 @@ public class SelectParameter extends Parameter implements Serializable {
          *
          * @param value the item value.
          */
-        public Item(String value) {
+        private Item(String value) {
             this(value, emptyList());
         }
 
@@ -149,6 +151,30 @@ public class SelectParameter extends Parameter implements Serializable {
 
         public void setLabel(String label) {
             this.label = label;
+        }
+
+        public static class Builder {
+            private String value;
+
+            private List<Parameter> inlineParameters;
+
+            public static SelectParameter.Item.Builder builder() {
+                return new Builder();
+            }
+
+            public Builder value(String value) {
+                this.value = value;
+                return this;
+            }
+
+            public Builder inlineParameters(List<Parameter> inlineParameters) {
+                this.inlineParameters = inlineParameters;
+                return this;
+            }
+
+            public Item build() {
+                return new Item( value, inlineParameters == null ? emptyList() : inlineParameters );
+            }
         }
     }
 

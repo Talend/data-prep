@@ -64,7 +64,7 @@
 
         <div ng-repeat="dataset in datasetListCtrl.state.inventory.currentFolderContent.datasets track by dataset.id" id="dataset_{{$index}}">
             <inventory-item
-                copy="datasetListCtrl.openFolderChoice"
+                copy="datasetListCtrl.openFolderSelection"
                 details="INVENTORY_DETAILS"
                 file-model="datasetListCtrl.updateDatasetFile"
                 item="dataset"
@@ -92,7 +92,7 @@
             <input type="text"
                    ng-model="datasetListCtrl.folderName"
                    ng-model-options="{debounce: { default: 300, blur: 0 }}"
-                   unique-folder="datasetListCtrl.state.inventory.currentFolderContent.folders"/>
+                   unique-folder="datasetListCtrl.state.folder.currentFolderContent.folders"/>
 
             <div class="modal-buttons">
                 <button type="button" class="talend-modal-close btn-secondary modal-secondary-button" translate-once="CANCEL">
@@ -106,99 +106,17 @@
 
     <talend-modal fullscreen="false"
                   close-button="false"
-                  state="datasetListCtrl.folderDestinationModal"
-                  ng-if="datasetListCtrl.folderDestinationModal"
+                  ng-if="datasetListCtrl.datasetCopyVisibility"
+                  state="datasetListCtrl.datasetCopyVisibility"
                   disable-close-on-background-click="true"
                   disable-enter="true">
 
-        <div class="folders-modal-content">
-            <div class="modal-title" translate-once="CHOOSE_FOLDER_DESTINATION" translate-values="{type: 'dataset', name: dataset.name}">
-            </div>
-
-            <div class="folders-modal">
-                <div class="search-folder-box">
-                    <input type="search"
-                           class="action-search"
-                           id="action-suggestions-search"
-                           translate-once-placeholder="FIND_FOLDER"
-                           ng-model="datasetListCtrl.searchFolderQuery"
-                           ng-model-options="{debounce: { default: 300, blur: 0 }}"
-                           ng-change="datasetListCtrl.searchFolders()"
-                           talend-search-input>
-                </div>
-                <div class="folders">
-                    <div ng-if="datasetListCtrl.searchFolderQuery">
-                        <ul class="folders-list">
-                            <li ng-repeat="node in datasetListCtrl.foldersFound"
-                                ng-class="{folderselected: node.selected}"
-                                ng-click="datasetListCtrl.chooseFolder(node)">
-                                <img class="icon-img" src="assets/images/folder/folder_close_small-icon.png"/>
-                                <span class="folder-name" ng-if="!node.path" translate-once="HOME_FOLDER"></span>
-                                <span class="folder-name" ng-if="node.path"><span translate-once="HOME_FOLDER"></span>/{{node.path}}</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <script type="text/ng-template" id="folder_node_render.html">
-                        <div class="folder-node" ng-class="{'folder-selected': node.selected}">
-                            <a class="inventory-icon inventory-folder">
-                                <i data-icon="J" ng-if="!node.collapsed" class="dropdown-button-right" ng-click="datasetListCtrl.toggle(node)"></i>
-                                <img class="icon-img" ng-click="datasetListCtrl.chooseFolder(node)" ng-if="!node.collapsed" src="assets/images/folder/folder_open_small-icon.png"/>
-                                <i data-icon="I" ng-if="node.collapsed" class="dropdown-button-down" ng-click="datasetListCtrl.toggle(node)"></i>
-                                <img class="icon-img" ng-click="datasetListCtrl.chooseFolder(node)" ng-if="node.collapsed" src="assets/images/folder/folder_close_small-icon.png"/>
-                            </a>
-                            <span ng-click="datasetListCtrl.chooseFolder(node)" class="folder-name">{{node.name}}</span>
-                        </div>
-                        <ol class="folder-nodes" ng-model="node.nodes" ng-class="{hidden: node.collapsed}">
-                            <li ng-repeat="node in node.nodes" class="folder-node" ng-include="'folder_node_render.html'"></li>
-                        </ol>
-                    </script>
-
-                    <div class="folders-tree" id="folders-tree-root" ng-if="!datasetListCtrl.searchFolderQuery">
-                        <ol class="folder-nodes" ng-model="datasetListCtrl.folders">
-                            <li ng-repeat="node in datasetListCtrl.folders" class="folder-node" ng-include="'folder_node_render.html'"></li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <form name="datasetListCtrl.cloneNameForm" ng-submit="datasetListCtrl.cloneNameForm.$valid">
-                <div class="clone-name">
-                    <span translate-once="DATASET_NAME"></span>
-                    <input type="text"
-                           ng-model="datasetListCtrl.cloneName"
-                           id="new-name-input-id"
-                           can-be-blank="false"/>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button"
-                            class="talend-modal-close btn-secondary modal-secondary-button"
-                            ng-disabled="datasetListCtrl.isMovingDs || datasetListCtrl.isCloningDs"
-                            translate-once="CANCEL">
-                    </button>
-
-                    <button class="btn-primary modal-primary-button"
-                            ng-disabled="datasetListCtrl.cloneNameForm.$invalid  || datasetListCtrl.isMovingDs || datasetListCtrl.isCloningDs"
-                            ng-switch="datasetListCtrl.isMovingDs" ng-click="datasetListCtrl.move()">
-                            <span ng-switch-when="false" translate-once="MOVE_HERE_ACTION"></span>
-
-                            <div class="feedback-sending-div" ng-switch-when="true" >
-                                <span class="feedback-sending continuous-rotate"><i data-icon="c" class="icon"></i></span>
-                            </div>
-                    </button>
-                    <button class="btn-primary modal-primary-button"
-                            ng-disabled="datasetListCtrl.cloneNameForm.$invalid || datasetListCtrl.isMovingDs || datasetListCtrl.isCloningDs"
-                            ng-switch="datasetListCtrl.isCloningDs" ng-click="datasetListCtrl.clone()">
-                            <span ng-switch-when="false" translate-once="COPY_HERE_ACTION"></span>
-
-                            <div class="feedback-sending-div" ng-switch-when="true" >
-                                <span class="feedback-sending continuous-rotate"><i data-icon="c" class="icon"></i></span>
-                            </div>
-
-                    </button>
-                </div>
-            </form>
-        </div>
+        <dataset-copy-move
+                initial-folder="datasetListCtrl.state.inventory.currentFolder"
+                dataset="datasetListCtrl.datasetToCopyMove"
+                on-copy="datasetListCtrl.clone(dataset, destination, name)"
+                on-move="datasetListCtrl.move(dataset, destination, name)"
+        ></dataset-copy-move>
     </talend-modal>
+
 </div>
-
-

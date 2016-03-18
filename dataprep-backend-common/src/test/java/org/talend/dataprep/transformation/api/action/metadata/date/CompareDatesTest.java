@@ -98,7 +98,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -124,7 +124,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.EQ);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -150,7 +150,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -178,7 +178,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -207,7 +207,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.EQ);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -236,7 +236,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.GT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -273,7 +273,7 @@ public class CompareDatesTest extends BaseDateTests {
                 new DataSetRow(rowMetadata, thirdRowvalues));
 
         // when
-        ActionTestWorkbench.test( rows, action.create( parameters));
+        ActionTestWorkbench.test( rows, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(rows.get( 0 ).values()) //
@@ -310,7 +310,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.EQ);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -337,7 +337,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.EQ);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //
@@ -364,7 +364,7 @@ public class CompareDatesTest extends BaseDateTests {
         parameters.put(CompareDates.COMPARE_MODE, CompareDates.EQ);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.values()) //

@@ -18,7 +18,11 @@ import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,10 +33,10 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
-public class DeleteColumnTest extends BaseDateTests {
+public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
     @Autowired
     private DeleteColumn deleteColumn;
@@ -77,7 +81,7 @@ public class DeleteColumnTest extends BaseDateTests {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        ActionTestWorkbench.test(row, deleteColumn.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(deleteColumn, parameters));
 
         // then
         final int rowSize = row.getRowMetadata().getColumns().size();
@@ -99,7 +103,7 @@ public class DeleteColumnTest extends BaseDateTests {
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
-        final Action rowAction = deleteColumn.create(parameters);
+        final Action rowAction = factory.create(deleteColumn, parameters);
         ActionTestWorkbench.test(Arrays.asList(row, row2), rowAction);
 
         // then
@@ -124,9 +128,9 @@ public class DeleteColumnTest extends BaseDateTests {
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
-        final Action action1 = deleteColumn.create(parameters);
+        final Action action1 = factory.create(deleteColumn, parameters);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0001");
-        final Action action2 = deleteColumn.create(parameters);
+        final Action action2 = factory.create(deleteColumn, parameters);
         ActionTestWorkbench.test(row, action1, action2);
         ActionTestWorkbench.test(row2, action1, action2);
 

@@ -26,8 +26,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
-import org.assertj.core.internal.cglib.core.Local;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,8 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
     @Autowired
     private XlsSerializer xlsSerializer;
 
+    private Locale previousLocale;
+
     @Test
     public void read_bad_xls_file() throws Exception {
         try (InputStream inputStream = this.getClass().getResourceAsStream("fake.xls")) {
@@ -72,13 +75,23 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
         }
     }
 
+    @Before
+    public void setUp() throws Exception {
+        previousLocale = Locale.getDefault();
+        Locale.setDefault(ENGLISH);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Locale.setDefault(previousLocale);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void read_null_xls_file() throws Exception {
         formatGuesser.guess(null, "UTF-8").getFormatGuess();
     }
 
-    protected List<Map<String, String>> getValuesFromFile(String fileName, FormatGuess formatGuess,
-            DataSetMetadata dataSetMetadata) throws Exception {
+    private List<Map<String, String>> getValuesFromFile(String fileName, DataSetMetadata dataSetMetadata) throws Exception {
 
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
 
@@ -196,7 +209,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
 
         }
 
-        List<Map<String, String>> values = getValuesFromFile(fileName, formatGuess, dataSetMetadata);
+        List<Map<String, String>> values = getValuesFromFile(fileName, dataSetMetadata);
 
         logger.debug("values: {}", values);
 
@@ -271,7 +284,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
 
         }
 
-        List<Map<String, String>> values = getValuesFromFile(fileName, formatGuess, dataSetMetadata);
+        List<Map<String, String>> values = getValuesFromFile(fileName, dataSetMetadata);
 
         logger.debug("values: {}", values);
 
@@ -324,7 +337,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
 
         }
 
-        List<Map<String, String>> values = getValuesFromFile(fileName, formatGuess, dataSetMetadata);
+        List<Map<String, String>> values = getValuesFromFile(fileName, dataSetMetadata);
 
         logger.debug("values: {}", values);
 
@@ -374,7 +387,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
             dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
         }
 
-        List<Map<String, String>> values = getValuesFromFile(fileName, formatGuess, dataSetMetadata);
+        List<Map<String, String>> values = getValuesFromFile(fileName, dataSetMetadata);
 
         logger.trace("values: {}", values);
 
@@ -473,9 +486,6 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
 
     @Test
     public void read_evaluate_formulas() throws Exception {
-        final Locale defaultLocale = Locale.getDefault();
-        Locale.setDefault(ENGLISH);
-
         String fileName = "000_DTA_DailyTimeLog.xlsm";
         String sheetName = "WEEK SUMMARY";
         FormatGuess formatGuess;
@@ -501,7 +511,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
             dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
         }
 
-        List<Map<String, String>> values = getValuesFromFile(fileName, formatGuess, dataSetMetadata);
+        List<Map<String, String>> values = getValuesFromFile(fileName, dataSetMetadata);
         logger.debug("values: {}", values);
 
         Assertions.assertThat(values.get(4).get("0003")).isNotEmpty().isEqualTo("10/26/15");
@@ -509,8 +519,6 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
         Assertions.assertThat(values.get(7).get("0003")).isNotEmpty().isEqualTo("8.00");
         Assertions.assertThat(values.get(30).get("0003")).isNotEmpty().isEqualTo("6.00");
         Assertions.assertThat(values.get(31).get("0003")).isNotEmpty().isEqualTo("18.50");
-
-        Locale.setDefault(defaultLocale);
     }
 
     @Test
@@ -545,7 +553,7 @@ public class XlsFormatTest extends AbstractSchemaTestUtils {
             dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
         }
 
-        List<Map<String, String>> values = getValuesFromFile(fileName, formatGuess, dataSetMetadata);
+        List<Map<String, String>> values = getValuesFromFile(fileName, dataSetMetadata);
 
         logger.debug("values: {}", values);
 

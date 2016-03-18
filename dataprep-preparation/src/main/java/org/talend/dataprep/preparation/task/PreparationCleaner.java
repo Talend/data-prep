@@ -69,7 +69,7 @@ public class PreparationCleaner {
      * Get current steps that has no preparation
      * @return The orphan steps
      */
-    public List<Step> getCurrentOrphanSteps() {
+    private List<Step> getCurrentOrphanSteps() {
         final Collection<Step> steps = repository.listAll(Step.class);
         final Set<String> preparationStepIds = getPreparationStepIds();
 

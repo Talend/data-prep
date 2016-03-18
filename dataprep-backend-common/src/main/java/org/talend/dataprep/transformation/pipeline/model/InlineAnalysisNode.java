@@ -38,7 +38,7 @@ public class InlineAnalysisNode extends AnalysisNode implements Monitored {
     }
 
     @Override
-    public void receive(DataSetRow row, RowMetadata metadata) {
+    public void receive(final DataSetRow row, final RowMetadata metadata) {
         // Reuse or re-init previously created analyzer
         final List<ColumnMetadata> rowColumns = metadata.getColumns();
         if (newAnalyzerNeeded(rowColumns)) {
@@ -58,13 +58,14 @@ public class InlineAnalysisNode extends AnalysisNode implements Monitored {
         final long start = System.currentTimeMillis();
         try {
             // Some clean up before order
-            Set<String> columnsToRemove = row.values().entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toSet());
+            final DataSetRow analysisRow = row.clone();
+            Set<String> columnsToRemove = analysisRow.values().entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toSet());
             for (ColumnMetadata column : rowColumns) {
                 columnsToRemove.remove(column.getId());
             }
-            columnsToRemove.forEach(row::deleteColumnById);
+            columnsToRemove.forEach(analysisRow::deleteColumnById);
             // Analyze row
-            final DataSetRow orderedRow = row.order(rowColumns);
+            final DataSetRow orderedRow = analysisRow.order(rowColumns);
             final String[] array = orderedRow.toArray(DataSetRow.SKIP_TDP_ID);
             int filteredOutValues = 0;
             for (int i = 0; i < rowColumns.size(); i++) {
@@ -74,7 +75,7 @@ public class InlineAnalysisNode extends AnalysisNode implements Monitored {
                 }
             }
             LOGGER.trace("{}/{} value(s) filtered out during analysis (in #{})", filteredOutValues, rowColumns.size(),
-                    row.getTdpId());
+                    analysisRow.getTdpId());
             inlineAnalyzer.analyze(array);
         } catch (Exception e) {
             LOGGER.warn("Unexpected exception during on the fly analysis.", e);
@@ -123,6 +124,11 @@ public class InlineAnalysisNode extends AnalysisNode implements Monitored {
     public void signal(Signal signal) {
         if (signal == Signal.END_OF_STREAM) {
             adapter.adapt(previousColumns, inlineAnalyzer.getResult(), filter);
+        }
+        try {
+            inlineAnalyzer.close();
+        } catch (Exception e) {
+            LOGGER.debug("Unable to close inline analyzer.", e);
         }
         link.signal(signal);
     }

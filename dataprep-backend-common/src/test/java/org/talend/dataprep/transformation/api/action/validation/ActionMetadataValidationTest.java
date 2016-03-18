@@ -28,11 +28,16 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ActionMetadataValidationTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 public class ActionMetadataValidationTest {
+
+    @Autowired
+    private ActionRegistry actionRegistry;
+
     @Autowired
     private ActionMetadataValidation validator;
 
@@ -44,7 +49,7 @@ public class ActionMetadataValidationTest {
         parameters.put("column_id", "0001");
 
         //when
-        validator.checkScopeConsistency("cut", parameters);
+        validator.checkScopeConsistency(actionRegistry.get("cut"), parameters);
 
         //then : should not throw exception
     }
@@ -57,7 +62,7 @@ public class ActionMetadataValidationTest {
 
         //when
         try {
-            validator.checkScopeConsistency("cut", parameters);
+            validator.checkScopeConsistency(actionRegistry.get("cut"), parameters);
             fail("should have thrown TDP exception because param scope is missing");
         }
 
@@ -76,7 +81,7 @@ public class ActionMetadataValidationTest {
 
         //when
         try {
-            validator.checkScopeConsistency("cut", parameters);
+            validator.checkScopeConsistency(actionRegistry.get("cut"), parameters);
             fail("should have thrown TDP exception because line scope is not supported by cut (for example)");
         }
 
@@ -95,7 +100,7 @@ public class ActionMetadataValidationTest {
 
         //when
         try {
-            validator.checkScopeConsistency("replace_on_value", parameters);
+            validator.checkScopeConsistency(actionRegistry.get("replace_on_value"), parameters);
             fail("should have thrown TDP exception because cell scope requires column_id (for example)");
         }
 

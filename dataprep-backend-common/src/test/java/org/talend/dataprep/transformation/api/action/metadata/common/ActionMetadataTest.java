@@ -25,16 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
@@ -42,15 +36,11 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ActionMetadataTest.class)
-@Configuration
-@ComponentScan(basePackages = "org.talend.dataprep")
-@EnableAutoConfiguration
 @ActiveProfiles(profiles = "test")
-public class ActionMetadataTest {
+public class ActionMetadataTest extends AbstractMetadataBaseTest {
 
     @Autowired(required = false)
     private CellTransformation cellTransformation;
@@ -152,8 +142,8 @@ public class ActionMetadataTest {
 
         // when
         try {
-            columnTransformation.create(parameters);
-            fail("should have thrown TDPException because scope parameters are inconsistents (scope is missing)");
+            factory.create(columnTransformation, parameters);
+            fail("should have thrown TDPException because scope parameters are inconsistent (scope is missing)");
         }
 
         // then
@@ -175,7 +165,7 @@ public class ActionMetadataTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(58L);
 
-        final Action action = cellTransformation.create(parameters);
+        final Action action = factory.create(cellTransformation, parameters);
 
         // when
         ActionTestWorkbench.test(row, action);
@@ -197,7 +187,7 @@ public class ActionMetadataTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(60L);
 
-        final Action action = cellTransformation.create(parameters);
+        final Action action = factory.create(cellTransformation, parameters);
 
         // when
         ActionTestWorkbench.test(row, action);
@@ -220,7 +210,7 @@ public class ActionMetadataTest {
         row.setTdpId(58L);
 
         final ActionContext context = new ActionContext(new TransformationContext(), row.getRowMetadata());
-        final Action action = lineTransformation.create(parameters);
+        final Action action = factory.create(lineTransformation, parameters);
 
         // when
         action.getRowAction().apply(row, context);
@@ -244,7 +234,7 @@ public class ActionMetadataTest {
         row.setTdpId(60L);
 
         final ActionContext context = new ActionContext(new TransformationContext(), row.getRowMetadata());
-        final Action action = lineTransformation.create(parameters);
+        final Action action = factory.create(lineTransformation, parameters);
 
         // when
         action.getRowAction().apply(row, context);
@@ -267,7 +257,7 @@ public class ActionMetadataTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(58L);
 
-        final Action action = columnTransformation.create(parameters);
+        final Action action = factory.create(columnTransformation, parameters);
 
         // when
         ActionTestWorkbench.test(row, action);
@@ -288,7 +278,7 @@ public class ActionMetadataTest {
         rowValues.put("0002", "tata");
         final DataSetRow row = new DataSetRow(rowValues);
 
-        final Action action = tableTransformation.create(parameters);
+        final Action action = factory.create(tableTransformation, parameters);
 
         // when
         ActionTestWorkbench.test(row, action);

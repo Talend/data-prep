@@ -29,9 +29,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for LowerCase action. Creates one consumer, and test it.
@@ -39,7 +39,7 @@ import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests
  * @see UpperCase
  */
 
-public class UpperCaseTest extends BaseDateTests {
+public class UpperCaseTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -64,9 +64,6 @@ public class UpperCaseTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.STRINGS.getDisplayName()));
     }
 
-    /**
-     * @see UpperCase#create(Map)
-     */
     @Test
     public void should_uppercase() {
         // given
@@ -80,15 +77,12 @@ public class UpperCaseTest extends BaseDateTests {
         expectedValues.put("country", "Canada");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see UpperCase#create(Map)
-     */
     @Test()
     public void should_do_nothing_since_column_does_not_exist() {
         // given
@@ -102,7 +96,7 @@ public class UpperCaseTest extends BaseDateTests {
         expectedValues.put("capital", "Ottawa");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());

@@ -12,7 +12,7 @@
   ============================================================================*/
 
 export const folderState = {
-    currentFolder: {id: '', path: ''}, // currentFolder is initialized with root value
+    currentFolder: {path: ''}, // currentFolder is initialized with root value
     currentFolderContent: {},
     foldersStack: [],
     menuChildren: []

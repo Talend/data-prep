@@ -1,18 +1,17 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('Dataset list controller', function () {
-    'use strict';
 
     var createController, scope, stateMock;
     var datasets = [
@@ -146,7 +145,7 @@ describe('Dataset list controller', function () {
             ctrl.goToFolder({path: '1/2', name: '2'});
 
             //then
-            expect($state.go).toHaveBeenCalledWith('nav.index.datasets', {folderPath : '1/2'});
+            expect($state.go).toHaveBeenCalledWith('nav.index.datasets', {folderPath: '1/2'});
 
         }));
 
@@ -386,7 +385,6 @@ describe('Dataset list controller', function () {
 
         }));
 
-
         it('should add folder with root folder path', inject(function ($q, FolderService) {
             //given
             stateMock.inventory.currentFolder = {path: '', name: 'Home'};
@@ -426,7 +424,7 @@ describe('Dataset list controller', function () {
         }));
     });
 
-    describe('rename', function () {
+    describe('rename dataset', function () {
 
         it('should do nothing when dataset is currently being renamed', inject(function ($q, DatasetService, FolderService) {
             //given
@@ -574,381 +572,9 @@ describe('Dataset list controller', function () {
             expect(DatasetService.update).not.toHaveBeenCalled();
             expect(MessageService.error).toHaveBeenCalledWith('DATASET_NAME_ALREADY_USED_TITLE', 'DATASET_NAME_ALREADY_USED');
         }));
-
-
     });
 
-    describe('clone', function () {
-
-        beforeEach(inject(function ($q, MessageService, FolderService) {
-            spyOn(MessageService, 'success').and.returnValue();
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-        }));
-
-        describe('when success', function () {
-            beforeEach(inject(function ($q, DatasetService) {
-                spyOn(DatasetService, 'clone').and.returnValue($q.when(true));
-            }));
-
-            it('should call clone service', inject(function ($q, DatasetService, FolderService) {
-                //given
-                var folder = {path: 'foo'};
-                var cloneName = 'bar';
-                var ctrl = createController();
-                ctrl.datasetToClone = datasets[0];
-                ctrl.folderDestination = folder;
-                ctrl.cloneNameForm = {};
-                ctrl.cloneNameForm.$commitViewValue = function () {};
-                ctrl.cloneName = cloneName;
-
-                //when
-                ctrl.clone();
-                expect(ctrl.isCloningDs).toBeTruthy();
-                scope.$digest();
-
-                //then
-                expect(DatasetService.clone).toHaveBeenCalledWith(datasets[0], folder, cloneName);
-                expect(FolderService.getContent).toHaveBeenCalled();
-                expect(ctrl.isCloningDs).toBeFalsy();
-            }));
-
-            it('should display message on success', inject(function ($q, MessageService, DatasetService, FolderService) {
-                //given
-                var folder = {path: 'foo'};
-                var ctrl = createController();
-                var cloneName = 'bar';
-                ctrl.datasetToClone = datasets[0];
-                ctrl.folderDestination = folder;
-                ctrl.cloneNameForm = {};
-                ctrl.cloneNameForm.$commitViewValue = function () {};
-                ctrl.cloneName = cloneName;
-
-                //when
-                ctrl.clone();
-                scope.$digest();
-
-                //then
-                expect(DatasetService.clone).toHaveBeenCalledWith(datasets[0], folder, cloneName);
-                expect(MessageService.success).toHaveBeenCalledWith('COPY_SUCCESS_TITLE', 'COPY_SUCCESS');
-                expect(FolderService.getContent).toHaveBeenCalled();
-            }));
-        });
-
-        describe('when failure due to server error', function () {
-            beforeEach(inject(function ($q, MessageService, FolderService, DatasetService) {
-                spyOn(DatasetService, 'clone').and.returnValue($q.reject());
-            }));
-
-            it('should faill on clone service call', inject(function ($q, DatasetService) {
-                //given
-                var folder = {path: 'foo'};
-                var cloneName = 'bar';
-                var ctrl = createController();
-                ctrl.datasetToClone = datasets[0];
-                ctrl.folderDestination = folder;
-                ctrl.cloneNameForm = {};
-                ctrl.cloneNameForm.$commitViewValue = function () {};
-                ctrl.cloneName = cloneName;
-
-                //when
-                ctrl.clone();
-                expect(ctrl.isCloningDs).toBeTruthy();
-                scope.$digest();
-
-                //then
-                expect(DatasetService.clone).toHaveBeenCalledWith(datasets[0], folder, cloneName);
-                expect(ctrl.isCloningDs).toBeFalsy();
-            }));
-        });
-
-    });
-
-    describe('move', function () {
-
-        beforeEach(inject(function ($q, MessageService, FolderService) {
-            spyOn(MessageService, 'success').and.returnValue();
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-        }));
-
-        describe('when success', function () {
-            beforeEach(inject(function ($q, MessageService, FolderService, DatasetService) {
-                spyOn(DatasetService, 'move').and.returnValue($q.when(true));
-            }));
-
-            it('should call move service', inject(function ($q, DatasetService, FolderService) {
-                //given
-                var folder = {path: 'foo'};
-                var cloneName = 'bar';
-                var ctrl = createController();
-                ctrl.datasetToClone = datasets[0];
-                ctrl.folderDestination = folder;
-                ctrl.cloneNameForm = {};
-                ctrl.cloneNameForm.$commitViewValue = function () {};
-                ctrl.cloneName = cloneName;
-
-                //when
-                ctrl.move();
-                expect(ctrl.isMovingDs).toBeTruthy();
-                scope.$digest();
-
-                //then
-                expect(DatasetService.move).toHaveBeenCalledWith(datasets[0], theCurrentFolder, folder, cloneName);
-                expect(FolderService.getContent).toHaveBeenCalled();
-                expect(ctrl.isMovingDs).toBeFalsy();
-            }));
-
-            it('should display message on success', inject(function ($q, MessageService, DatasetService, FolderService) {
-                //given
-                var folder = {path: 'foo'};
-                var ctrl = createController();
-                var cloneName = 'bar';
-
-                ctrl.datasetToClone = datasets[0];
-                ctrl.folderDestination = folder;
-                ctrl.cloneNameForm = {};
-                ctrl.cloneNameForm.$commitViewValue = function () {};
-                ctrl.cloneName = cloneName;
-
-                //when
-                ctrl.move();
-                scope.$digest();
-
-                //then
-                expect(DatasetService.move).toHaveBeenCalledWith(datasets[0], theCurrentFolder, folder, cloneName);
-                expect(MessageService.success).toHaveBeenCalledWith('MOVE_SUCCESS_TITLE', 'MOVE_SUCCESS');
-                expect(FolderService.getContent).toHaveBeenCalled();
-            }));
-        });
-
-        describe('when failure due to server error', function () {
-            beforeEach(inject(function ($q, MessageService, FolderService, DatasetService) {
-                spyOn(DatasetService, 'move').and.returnValue($q.reject());
-            }));
-
-            it('should fail on move service call', inject(function ($q, DatasetService) {
-                //given
-                var folder = {path: 'foo'};
-                var cloneName = 'bar';
-                var ctrl = createController();
-                ctrl.datasetToClone = datasets[0];
-                ctrl.folderDestination = folder;
-                ctrl.cloneNameForm = {};
-                ctrl.cloneNameForm.$commitViewValue = function () {};
-                ctrl.cloneName = cloneName;
-
-                //when
-                ctrl.move();
-                expect(ctrl.isMovingDs).toBeTruthy();
-                scope.$digest();
-
-                //then
-                expect(DatasetService.move).toHaveBeenCalledWith(datasets[0], theCurrentFolder, folder, cloneName);
-                expect(ctrl.isMovingDs).toBeFalsy();
-            }));
-        });
-    });
-
-    describe('search folders', function () {
-
-        beforeEach(inject(function ($q, MessageService, FolderService) {
-            var foldersFromSearch = [
-                {path: 'folder-1', name: 'folder-1'},
-                {path: 'folder-1/sub-1', name: 'sub-1'},
-                {path: 'folder-1/sub-2/folder-1-beer', name: 'folder-1-beer'}
-            ];
-
-            var childrenFolders = [
-                {path: 'folder-1/beer', name: 'folder-1/beer'},
-                {path: 'folder-2', name: 'folder-2'},
-                {path: 'folder-3', name: 'folder-3'}
-            ];
-
-            spyOn(FolderService, 'children').and.returnValue($q.when({data: childrenFolders}));
-            spyOn(FolderService, 'search').and.returnValue($q.when({data: foldersFromSearch}));
-            spyOn(MessageService, 'success').and.returnValue();
-
-        }));
-
-        it('should call children service and open modal', inject(function ($q, FolderService) {
-            // given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-            var ctrl = createController();
-            stateMock.inventory.currentFolder = {path: 'folder-1', name: 'folder-1'};
-            scope.$digest();
-            spyOn(ctrl, 'chooseFolder').and.returnValue();
-            spyOn(ctrl, 'toggle').and.returnValue();
-
-            // when
-            ctrl.openFolderChoice(datasets[0]);
-            scope.$digest();
-
-            //then
-            expect(FolderService.children).toHaveBeenCalled();
-            expect(ctrl.folderDestinationModal).toBe(true);
-            expect(ctrl.datasetToClone).toBe(datasets[0]);
-            expect(ctrl.foldersFound).toEqual([]);
-            expect(ctrl.searchFolderQuery).toBe('');
-            expect(ctrl.folders).toEqual([{
-                path: '',
-                collapsed: false,
-                name: 'Home',
-                nodes: [
-                    {path: 'folder-1/beer', name: 'folder-1/beer', collapsed: true},
-                    {path: 'folder-2', name: 'folder-2', collapsed: true},
-                    {path: 'folder-3', name: 'folder-3', collapsed: true}
-                ]
-            }]);
-
-        }));
-
-
-        it('should call search folders service', inject(function ($q, FolderService) {
-            //given
-            var foldersFromSearch = [
-                {path: 'folder-1', name: 'folder-1'},
-                {path: 'folder-1/sub-1', name: 'sub-1'},
-                {path: 'folder-1/sub-2/folder-1-beer', name: 'folder-1-beer'}
-            ];
-
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-            var ctrl = createController();
-            ctrl.searchFolderQuery = 'beer';
-            spyOn(ctrl, 'chooseFolder').and.returnValue();
-
-            //when
-            ctrl.searchFolders();
-            scope.$digest();
-
-            //then
-            expect(FolderService.search).toHaveBeenCalledWith(ctrl.searchFolderQuery);
-            expect(ctrl.foldersFound).toEqual(foldersFromSearch);
-            expect(ctrl.chooseFolder).toHaveBeenCalledWith(foldersFromSearch[0]);
-        }));
-
-        it('should call filter root folder and search folders service', inject(function ($q, FolderService) {
-            //given
-            var foldersFromSearch = [
-                {path: '', name: 'Home'},
-                {path: 'folder-1', name: 'folder-1'},
-                {path: 'folder-1/sub-1', name: 'sub-1'},
-                {path: 'folder-1/sub-2/folder-1-beer', name: 'folder-1-beer'}
-            ];
-
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-            var ctrl = createController();
-            ctrl.searchFolderQuery = 'H';
-            spyOn(ctrl, 'chooseFolder').and.returnValue();
-            var rootFolder = {path: '', name: 'Home'};
-
-            //when
-            ctrl.searchFolders();
-            scope.$digest();
-
-            //then
-            expect(FolderService.search).toHaveBeenCalledWith(ctrl.searchFolderQuery);
-            expect(ctrl.foldersFound).toEqual(foldersFromSearch);
-            expect(ctrl.chooseFolder).toHaveBeenCalledWith(rootFolder);
-        }));
-
-        it('should not call search folders service if searchFolderQuery is empty', inject(function ($q, FolderService) {
-            //given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-            var ctrl = createController();
-            ctrl.searchFolderQuery = '';
-            spyOn(ctrl, 'chooseFolder').and.returnValue();
-            ctrl.folders = [
-                {path: 'folder-1', name: 'folder-1'},
-                {path: 'folder-1/sub-1', name: 'sub-1'},
-                {path: 'folder-1/sub-2/folder-1-beer', name: 'folder-1-beer'}
-            ];
-            //when
-            ctrl.searchFolders();
-            scope.$digest();
-
-            //then
-            expect(FolderService.search).not.toHaveBeenCalled();
-            expect(ctrl.chooseFolder).toHaveBeenCalledWith({path: 'folder-1', name: 'folder-1'});
-        }));
-
-        it('choose folder should marker folder as selected', inject(function ($q, FolderService) {
-            //given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-
-            var folder = {path: '/foo/beer'};
-            var ctrl = createController();
-
-            //when
-            ctrl.chooseFolder(folder);
-            scope.$digest();
-
-            //then
-            expect(folder.selected).toBe(true);
-            expect(ctrl.folderDestination).toBe(folder);
-        }));
-
-        it('toggle should call children service', inject(function ($q, FolderService) {
-            //given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-
-            var folder = {path: 'folder-1', collapsed: true};
-            var ctrl = createController();
-            spyOn(ctrl, 'chooseFolder').and.returnValue();
-
-            //when
-            ctrl.toggle(folder, ['beer'], 'folder-1');
-            scope.$digest();
-
-            //then
-            expect(FolderService.children).toHaveBeenCalledWith(folder.path);
-        }));
-
-        it('toggle should not call children service because already children', inject(function ($q, FolderService) {
-            //given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-
-            var folder = {path: '/foo/beer', collapsed: true, nodes: [{id: 'wine'}]};
-            var ctrl = createController();
-
-            //when
-            ctrl.toggle(folder);
-            scope.$digest();
-
-            //then
-            expect(FolderService.children).not.toHaveBeenCalled();
-        }));
-
-        it('toggle should not call children service because not collapsed', inject(function ($q, FolderService) {
-            //given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-
-            var folder = {path: '/foo/beer', collapsed: false};
-            var ctrl = createController();
-
-            //when
-            ctrl.toggle(folder);
-            scope.$digest();
-
-            //then
-            expect(FolderService.children).not.toHaveBeenCalled();
-        }));
-
-        it('collapseNodes should mark children as collapsed', inject(function ($q, FolderService) {
-            //given
-            spyOn(FolderService, 'getContent').and.returnValue($q.when(true));
-
-            var folder = {path: '/foo/beer', collapsed: true, nodes: [{id: 'wine'}, {id: 'cheese'}]};
-            var ctrl = createController();
-
-            //when
-            ctrl.collapseNodes(folder);
-            scope.$digest();
-
-            //then
-            expect(folder.nodes[0].collapsed).toBe(true);
-            expect(folder.nodes[1].collapsed).toBe(true);
-            expect(folder.collapsed).toBe(false);
-        }));
-
+    describe('rename / remove folder', function () {
         it('should rename folder', inject(function ($q, FolderService) {
             //given
             spyOn(FolderService, 'rename').and.returnValue($q.when());
@@ -1028,5 +654,128 @@ describe('Dataset list controller', function () {
             expect(StateService.setPreviousStateOptions).toHaveBeenCalledWith({folderPath: 'test/'});
             expect($state.go).toHaveBeenCalledWith('playground.preparation', {prepid: preparation.id});
         }));
+    });
+
+    describe('copy/move a dataset', () => {
+        const dataset = {name: 'my Dataset'};
+        const folderDest = {name: 'my folder destination', path: '/folder1/folder2'};
+        const name = {name: 'my new Dataset name'};
+
+        beforeEach(inject(($q, FolderService, MessageService) => {
+            spyOn(FolderService, 'getContent').and.returnValue($q.when());
+            spyOn(MessageService, 'success').and.returnValue();
+        }));
+
+        describe('copy', () => {
+            beforeEach(inject(($q, DatasetService) => {
+                spyOn(DatasetService, 'clone').and.returnValue($q.when());
+            }));
+
+            it('should call clone function', inject((DatasetService) => {
+                //given
+                const ctrl = createController();
+                expect(DatasetService.clone).not.toHaveBeenCalled();
+
+                //when
+                ctrl.clone(dataset, folderDest, name);
+
+                //then
+                expect(DatasetService.clone).toHaveBeenCalledWith(dataset, folderDest, name);
+            }));
+
+            it('should show success message on clone success', inject((MessageService) => {
+                //given
+                const ctrl = createController();
+                expect(MessageService.success).not.toHaveBeenCalled();
+
+                //when
+                ctrl.clone(dataset, folderDest, name);
+                scope.$digest();
+
+                //then
+                expect(MessageService.success).toHaveBeenCalledWith('COPY_SUCCESS_TITLE', 'COPY_SUCCESS');
+            }));
+
+            it('should show refresh current colder content', inject((FolderService) => {
+                //given
+                const ctrl = createController();
+                expect(FolderService.getContent).not.toHaveBeenCalledWith(stateMock.inventory.currentFolder);
+
+                //when
+                ctrl.clone(dataset, folderDest, name);
+                scope.$digest();
+
+                //then
+                expect(FolderService.getContent).toHaveBeenCalledWith(stateMock.inventory.currentFolder);
+            }));
+
+            it('should hide clone modal', () => {
+                //given
+                const ctrl = createController();
+
+                //when
+                ctrl.clone(dataset, folderDest, name);
+                scope.$digest();
+
+                //then
+                expect(ctrl.datasetCopyVisibility).toBe(false);
+            });
+        });
+
+        describe('move', () => {
+            beforeEach(inject(($q, DatasetService) => {
+                spyOn(DatasetService, 'move').and.returnValue($q.when());
+            }));
+
+            it('should call move function', inject((DatasetService) => {
+                //given
+                const ctrl = createController();
+                expect(DatasetService.move).not.toHaveBeenCalled();
+
+                //when
+                ctrl.move(dataset, folderDest, name);
+
+                //then
+                expect(DatasetService.move).toHaveBeenCalledWith(dataset, folderDest, name);
+            }));
+
+            it('should show success message on move success', inject((MessageService) => {
+                //given
+                const ctrl = createController();
+                expect(MessageService.success).not.toHaveBeenCalled();
+
+                //when
+                ctrl.move(dataset, folderDest, name);
+                scope.$digest();
+
+                //then
+                expect(MessageService.success).toHaveBeenCalledWith('MOVE_SUCCESS_TITLE', 'MOVE_SUCCESS');
+            }));
+
+            it('should refresh current folder content', inject((FolderService) => {
+                //given
+                const ctrl = createController();
+                expect(FolderService.getContent).not.toHaveBeenCalledWith(stateMock.inventory.currentFolder);
+
+                //when
+                ctrl.move(dataset, folderDest, name);
+                scope.$digest();
+
+                //then
+                expect(FolderService.getContent).toHaveBeenCalledWith(stateMock.inventory.currentFolder);
+            }));
+
+            it('should hide copy modal', () => {
+                //given
+                const ctrl = createController();
+
+                //when
+                ctrl.move(dataset, folderDest, name);
+                scope.$digest();
+
+                //then
+                expect(ctrl.datasetCopyVisibility).toBe(false);
+            });
+        });
     });
 });

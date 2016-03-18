@@ -1,22 +1,19 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.mail;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Properties;
+import java.util.*;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -27,10 +24,12 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.encrypt.AESEncryption;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
@@ -40,36 +39,75 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @ConditionalOnProperty("mail.smtp.host")
 @Primary
 @Component
-public class MailFeedbackSender implements FeedbackSender {
+public class MailFeedbackSender extends AbstractFeedbackSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailFeedbackSender.class);
 
-    @Value("#{'${mail.smtp.to}'.split(',')}")
-    private String[] recipients;
-
-    @Value("${mail.smtp.subject.prefix}")
     private String subjectPrefix;
 
-    @Value("${mail.smtp.body.prefix}")
     private String bodyPrefix;
 
-    @Value("${mail.smtp.body.suffix}")
     private String bodySuffix;
 
-    @Value("${mail.smtp.username}")
-    private String userName;
-
-    @Value("${mail.smtp.password}")
     private String password;
 
-    @Value("${mail.smtp.from}")
-    private String fromAddress;
-
-    @Value("${mail.smtp.host}")
     private String smtpHost;
 
-    @Value("${mail.smtp.port}")
     private String smtpPort;
+
+    @Autowired
+    public void setSubjectPrefix(@Value("${mail.smtp.subject.prefix}") String subjectPrefix) {
+        try {
+            this.subjectPrefix = AESEncryption.decrypt(subjectPrefix);
+        } catch (Exception exc) {
+            LOGGER.debug("Unable to parse given subject prefix used to send feedback mails {}", subjectPrefix, exc);
+        }
+    }
+
+    @Autowired
+    public void setBodyPrefix(@Value("${mail.smtp.body.prefix}") String bodyPrefix) {
+        try {
+            this.bodyPrefix = AESEncryption.decrypt(bodyPrefix);
+        } catch (Exception exc) {
+            LOGGER.debug("Unable to parse given body prefix used to send feedback mails {}", bodyPrefix, exc);
+        }
+    }
+
+    @Autowired
+    public void setBodySuffix(@Value("${mail.smtp.body.suffix}") String bodySuffix) {
+        try {
+            this.bodySuffix = AESEncryption.decrypt(bodySuffix);
+        } catch (Exception exc) {
+            LOGGER.debug("Unable to parse given body suffix used to send feedback mails {}", bodySuffix, exc);
+        }
+    }
+
+    @Autowired
+    public void setPassword(@Value("${mail.smtp.password}") String password) {
+        try {
+            this.password = AESEncryption.decrypt(password);
+        } catch (Exception exc) {
+            LOGGER.debug("Unable to parse given password used to send feedback mails {}", password, exc);
+        }
+    }
+
+    @Autowired
+    public void setSmtpHost(@Value("${mail.smtp.host}") String smtpHost) {
+        try {
+            this.smtpHost = AESEncryption.decrypt(smtpHost);
+        } catch (Exception exc) {
+            LOGGER.debug("Unable to parse given smtp host used to send feedback mails {}", smtpHost, exc);
+        }
+    }
+
+    @Autowired
+    public void setSmtpPort(@Value("${mail.smtp.port}") String smtpPort) {
+        try {
+            this.smtpPort = AESEncryption.decrypt(smtpPort);
+        } catch (Exception exc) {
+            LOGGER.debug("Unable to parse given smtp port used to send feedback mails {}", smtpPort, exc);
+        }
+    }
 
     private MailFeedbackSender() {
     }
@@ -81,13 +119,13 @@ public class MailFeedbackSender implements FeedbackSender {
             subject = subjectPrefix + subject;
             body = bodyPrefix + "<br/>" + body + "<br/>" + bodySuffix;
 
-            InternetAddress from = new InternetAddress(fromAddress);
+            InternetAddress from = new InternetAddress(this.sender);
             InternetAddress replyTo = new InternetAddress(sender);
 
             Properties p = new Properties();
             p.put("mail.smtp.host", smtpHost);
             p.put("mail.smtp.port", smtpPort);
-            p.put("mail.smtp.starttls.enable","true");
+            p.put("mail.smtp.starttls.enable", "true");
             p.put("mail.smtp.auth", "true");
 
             MailAuthenticator authenticator = new MailAuthenticator(userName, password);

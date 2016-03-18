@@ -26,11 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -75,9 +71,6 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
     }
 
-    /**
-     * @see ComputeTimeSince#create(Map)
-     */
     @Test
     public void should_compute_years() throws IOException {
         //given
@@ -94,7 +87,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         expectedValues.put("0002", "Bacon");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertEquals(expectedValues, row.values());
@@ -116,7 +109,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         expectedValues.put("0002", "Bacon");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -138,15 +131,12 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         expectedValues.put("0002", "Bacon");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ComputeTimeSince#create(Map)
-     */
     @Test
     public void should_compute_days() throws IOException {
         //given
@@ -165,15 +155,12 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ComputeTimeSince#create(Map)
-     */
     @Test
     public void should_compute_hours() throws IOException {
         //given
@@ -192,15 +179,12 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         parameters.put(TIME_UNIT_PARAMETER, HOURS.name());
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ComputeTimeSince#create(Map)
-     */
     @Test
     public void should_compute_hours_on_date_without_hours() throws IOException {
         // given
@@ -219,7 +203,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         parameters.put(TIME_UNIT_PARAMETER, HOURS.name());
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -244,7 +228,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         parameters.put(TIME_UNIT_PARAMETER, HOURS.name());
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters), factory.create(action, parameters));
 
         //then
         assertEquals(expectedValues, row.values());
@@ -269,18 +253,15 @@ public class ComputeTimeSinceTest extends BaseDateTests {
 
         //when
         parameters.put(TIME_UNIT_PARAMETER, YEARS.name());
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         parameters.put(TIME_UNIT_PARAMETER, MONTHS.name());
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ComputeTimeSince#create(Map)
-     */
     @Test
     public void should_deal_with_null_value() throws IOException {
         final DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy.json");
@@ -295,7 +276,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -316,7 +297,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         expected.add(createMetadata("0002", "steps"));
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertEquals(expected, row.getRowMetadata().getColumns());
@@ -338,7 +319,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         expected.add(createMetadata("0002", "steps"));
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters), factory.create(action, parameters));
 
         //then
         assertEquals(expected, row.getRowMetadata().getColumns());
@@ -361,10 +342,10 @@ public class ComputeTimeSinceTest extends BaseDateTests {
 
         //when
         parameters.put(TIME_UNIT_PARAMETER, YEARS.name());
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertEquals(expected, row.getRowMetadata().getColumns());

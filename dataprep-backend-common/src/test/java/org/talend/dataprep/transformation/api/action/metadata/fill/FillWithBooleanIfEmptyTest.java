@@ -15,15 +15,15 @@ package org.talend.dataprep.transformation.api.action.metadata.fill;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,17 +33,15 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Unit test for the FillWithBooleanIfEmpty action.
  *
  * @see FillIfEmpty
  */
-public class FillWithBooleanIfEmptyTest extends BaseDateTests {
+public class FillWithBooleanIfEmptyTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -81,7 +79,7 @@ public class FillWithBooleanIfEmptyTest extends BaseDateTests {
                 this.getClass().getResourceAsStream("fillEmptyBooleanAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("True", row.get("0002"));
@@ -108,7 +106,7 @@ public class FillWithBooleanIfEmptyTest extends BaseDateTests {
                 this.getClass().getResourceAsStream("fillEmptyBooleanAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("not empty", row.get("0002"));
@@ -135,7 +133,7 @@ public class FillWithBooleanIfEmptyTest extends BaseDateTests {
         // when
         parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.OTHER_COLUMN_MODE);
         parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0003");
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("True", row.get("0002"));

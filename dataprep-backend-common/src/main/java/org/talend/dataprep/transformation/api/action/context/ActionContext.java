@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -68,10 +69,7 @@ public class ActionContext {
 
     private ActionStatus actionStatus = ActionStatus.NOT_EXECUTED;
 
-    public ActionContext(TransformationContext parent, RowMetadata rowMetadata) {
-        this.parent = parent;
-        this.rowMetadata = rowMetadata;
-    }
+    private Predicate<DataSetRow> filter = r -> true;
 
     /**
      * Default constructor.
@@ -80,6 +78,19 @@ public class ActionContext {
      */
     public ActionContext(TransformationContext parent) {
         this.parent = parent;
+    }
+
+    public ActionContext(TransformationContext parent, RowMetadata rowMetadata) {
+        this.parent = parent;
+        this.rowMetadata = rowMetadata;
+    }
+
+    public Predicate<DataSetRow> getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Predicate<DataSetRow> filter) {
+        this.filter = filter;
     }
 
     /**

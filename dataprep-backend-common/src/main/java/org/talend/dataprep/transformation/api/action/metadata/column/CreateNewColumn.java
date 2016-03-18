@@ -116,7 +116,9 @@ public class CreateNewColumn extends ActionMetadata implements ColumnAction {
                         .name(MODE_PARAMETER)
                         .item(EMPTY_MODE)
                         .item(CONSTANT_MODE, constantParameter)
-                        .item(COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
+                        .item(COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                                                         StringUtils.EMPTY, false, false, //
+                                                         getMessagesBundle()))
                         .defaultValue(COLUMN_MODE)
                         .build()
         );

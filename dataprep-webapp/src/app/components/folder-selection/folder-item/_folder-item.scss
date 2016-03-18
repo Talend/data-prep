@@ -1,0 +1,25 @@
+.folder-item {
+  @include display(flex);
+  @include align-items(center);
+
+  &.folder-selected {
+    background-color: $light-gray;
+  }
+
+  .folder-infos {
+    @include display(flex);
+    @include align-items(center);
+    cursor: pointer;
+  }
+
+  .empty-caret {
+    width: 29px;
+    height: 29px;
+  }
+
+  .dropdown-caret-down,
+  .dropdown-caret-right {
+    cursor: pointer;
+    color: grey;
+  }
+}

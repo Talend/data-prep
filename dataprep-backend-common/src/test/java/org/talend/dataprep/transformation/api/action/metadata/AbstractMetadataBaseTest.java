@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.transformation.api.action.metadata;
 
+import java.io.IOException;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -20,9 +22,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.transformation.api.action.metadata.common.ActionFactory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
+import org.talend.dataprep.transformation.api.action.metadata.date.CompareDatesTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Base class for all related unit tests that deal with metadata
@@ -37,6 +45,9 @@ public abstract class AbstractMetadataBaseTest {
     @Autowired
     public Jackson2ObjectMapperBuilder builder;
 
+    @Autowired
+    public ActionFactory factory;
+
     protected String generateJson(String token, String operator) {
         ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);
         try {
@@ -44,5 +55,26 @@ public abstract class AbstractMetadataBaseTest {
         } catch (JsonProcessingException e) {
             return "";
         }
+    }
+
+    protected ColumnMetadata createMetadata(String id, String name, Type type, String statisticsFileName) throws IOException {
+        ColumnMetadata column = createMetadata(id, name, type);
+        ObjectMapper mapper = new ObjectMapper();
+        final Statistics statistics = mapper.readerFor(Statistics.class)
+                .readValue(CompareDatesTest.class.getResourceAsStream(statisticsFileName));
+        column.setStatistics(statistics);
+        return column;
+    }
+
+    protected ColumnMetadata createMetadata(String id, String name) {
+        return createMetadata(id, name, Type.STRING);
+    }
+
+    protected ColumnMetadata createMetadata(String id, String name, Type type) {
+        return columnBaseBuilder().computedId(id).name(name).type(type).build();
+    }
+
+    protected ColumnMetadata.Builder columnBaseBuilder() {
+        return ColumnMetadata.Builder.column();
     }
 }

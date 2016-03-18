@@ -12,9 +12,8 @@
   ============================================================================*/
 
 .stats-part {
-  font-size: 1em;
 
-  .stat-detail-tab-items{
+  .stat-detail-tab-items {
     height: calc(100% - 40px);
     overflow-y: auto;
     overflow-x: hidden;
@@ -22,18 +21,16 @@
     width: 100%;
   }
 
-  .two-columns-values{
+  .two-columns-values {
     @include display(flex);
     @include flex-wrap(wrap);
     @include justify-content(space-around);
     @include flex-direction(row);
 
-    width:305px;
     .stat-table {
       width: auto;
       @include flex-grow(0);
       @include flex-shrink(0);
-      @include flex-basis(auto);
 
       td {
         border: 0;
@@ -50,12 +47,7 @@
 
         font-size: 15px;
         font-weight: bold;
+      }
     }
-  }
-  }
-
-  .values-text{
-    color:cadetblue;
-    font-size: 15px;
   }
 }

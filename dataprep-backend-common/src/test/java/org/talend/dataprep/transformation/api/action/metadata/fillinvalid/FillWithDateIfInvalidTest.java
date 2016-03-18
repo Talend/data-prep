@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -41,8 +42,6 @@ import org.talend.dataprep.transformation.api.action.metadata.fill.FillIfEmpty;
 import org.talend.dataprep.transformation.api.action.metadata.fill.FillInvalid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Unit test for FillWithDateIfInvalid action.
@@ -86,7 +85,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("09/07/2015 13:31:36", row.get("0002"));
@@ -118,7 +117,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("09/07/2015 13:31:35", row.get("0002"));
@@ -152,7 +151,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("07/09/2015", row.get("0002"));
@@ -183,7 +182,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("2015-07-09", row.get("0002"));
@@ -211,7 +210,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
         // when
         parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.OTHER_COLUMN_MODE);
         parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0003");
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("15/10/1999", row.get("0003"));

@@ -142,7 +142,8 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
                         ParameterType.DATE, //
                         DEFAULT_DATE_VALUE, //
                         false, //
-                        false);
+                        false, //
+                        getMessagesBundle());
                 break;
             case ANY:
             default:
@@ -153,7 +154,8 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
         parameters.add(SelectParameter.Builder.builder()
                         .name(MODE_PARAMETER)
                         .item(CONSTANT_MODE, constantParameter)
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
+                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                                                               StringUtils.EMPTY, false, false, getMessagesBundle()))
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );

@@ -61,7 +61,7 @@ public interface DatePatternParamModel {
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
             String value = patterns.getString(key);
-            items.add(new SelectParameter.Item(value));
+            items.add(SelectParameter.Item.Builder.builder().value(value).build());
         }
 
         List<Parameter> parameters = new ArrayList<>();

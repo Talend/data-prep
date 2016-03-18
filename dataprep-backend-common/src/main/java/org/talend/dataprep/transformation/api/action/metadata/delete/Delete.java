@@ -63,9 +63,9 @@ public class Delete extends ActionMetadata implements RowAction {
     public String getDescription() {
         switch (scope) {
             case LINE:
-                return MessagesBundle.getString("action." + DELETE_SINGLE_LINE + ".desc");
+                return getMessagesBundle().getString("action." + DELETE_SINGLE_LINE + ".desc");
             case COLUMN:
-                return MessagesBundle.getString("action." + DELETE_COLUMN + ".desc");
+                return getMessagesBundle().getString("action." + DELETE_COLUMN + ".desc");
         default:
             return null;
         }
@@ -75,9 +75,9 @@ public class Delete extends ActionMetadata implements RowAction {
     public String getLabel() {
         switch (scope) {
             case LINE:
-                return MessagesBundle.getString("action." + DELETE_SINGLE_LINE + ".label");
+                return getMessagesBundle().getString("action." + DELETE_SINGLE_LINE + ".label");
             case COLUMN:
-                return MessagesBundle.getString("action." + DELETE_COLUMN + ".label");
+                return getMessagesBundle().getString("action." + DELETE_COLUMN + ".label");
         default:
             return null;
         }

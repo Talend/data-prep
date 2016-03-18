@@ -57,26 +57,26 @@ public class FillInvalid extends AbstractFillWith implements ColumnAction {
     @Override
     public String getDescription() {
         if (Type.BOOLEAN.isAssignableFrom(type)) {
-            return MessagesBundle.getString("action." + FILL_INVALID_BOOLEAN + ".desc");
+            return getMessagesBundle().getString("action." + FILL_INVALID_BOOLEAN + ".desc");
         } else if (Type.DATE.isAssignableFrom(type)) {
-            return MessagesBundle.getString("action." + FILL_INVALID_DATE + ".desc");
+            return getMessagesBundle().getString("action." + FILL_INVALID_DATE + ".desc");
         } else if (Type.NUMERIC.isAssignableFrom(type)) {
-            return MessagesBundle.getString("action." + FILL_INVALID_NUMERIC + ".desc");
+            return getMessagesBundle().getString("action." + FILL_INVALID_NUMERIC + ".desc");
         } else {
-            return MessagesBundle.getString("action." + FILL_INVALID_ACTION_NAME + ".desc");
+            return getMessagesBundle().getString("action." + FILL_INVALID_ACTION_NAME + ".desc");
         }
     }
 
     @Override
     public String getLabel() {
         if (Type.BOOLEAN.isAssignableFrom(type)) {
-            return MessagesBundle.getString("action." + FILL_INVALID_BOOLEAN + ".label");
+            return getMessagesBundle().getString("action." + FILL_INVALID_BOOLEAN + ".label");
         } else if (Type.DATE.isAssignableFrom(type)) {
-            return MessagesBundle.getString("action." + FILL_INVALID_DATE + ".label");
+            return getMessagesBundle().getString("action." + FILL_INVALID_DATE + ".label");
         } else if (Type.NUMERIC.isAssignableFrom(type)) {
-            return MessagesBundle.getString("action." + FILL_INVALID_NUMERIC + ".label");
+            return getMessagesBundle().getString("action." + FILL_INVALID_NUMERIC + ".label");
         } else {
-            return MessagesBundle.getString("action." + FILL_INVALID_ACTION_NAME + ".label");
+            return getMessagesBundle().getString("action." + FILL_INVALID_ACTION_NAME + ".label");
         }
     }
 

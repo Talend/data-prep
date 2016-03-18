@@ -84,7 +84,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         final DataSetRow row = getRow("toto", "0012.50", "tata");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "12.5", "tata");
@@ -98,7 +98,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(FROM_SEPARATORS, EU_SEPARATORS);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "12.5", "tata");
@@ -114,7 +114,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(FROM + GROUPING + SEPARATOR, "_");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1,012.5", "tata");
@@ -129,7 +129,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET_PATTERN, EU_PATTERN);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1 012,5", "tata");
@@ -144,7 +144,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET_PATTERN, SCIENTIFIC);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1.012E3", "tata");
@@ -159,7 +159,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET_PATTERN, EU_PATTERN);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1 012,5", "tata");
@@ -172,7 +172,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         final DataSetRow row = getRow("toto", "1.23E+3", "tata");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1,230", "tata");
@@ -185,7 +185,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         final DataSetRow row = getRow("toto", "tagada", "tata");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "tagada", "tata");
@@ -203,7 +203,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
             parameters.put(TARGET_PATTERN + "_" + CUSTOM, "#.000");
 
             // when
-            ActionTestWorkbench.test(row, action.create(parameters));
+            ActionTestWorkbench.test(row, factory.create(action, parameters));
 
             // then
             final DataSetRow expectedRow = getRow("toto", "12.000", "tata");
@@ -223,7 +223,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET + GROUPING + SEPARATOR, "_");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1_012/450", "tata");
@@ -240,7 +240,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET + GROUPING + SEPARATOR, ".");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1012.450", "tata");
@@ -257,7 +257,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET + GROUPING + SEPARATOR, "");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1012/450", "tata");
@@ -275,7 +275,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET + GROUPING + SEPARATOR + "_" + CUSTOM, "");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "1012/450", "tata");
@@ -290,7 +290,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET_PATTERN + "_" + CUSTOM, "# ##0,#");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "012.50", "tata");
@@ -308,7 +308,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
             parameters.put(TARGET_PATTERN + "_" + CUSTOM, "");
 
             // when
-            ActionTestWorkbench.test(row, action.create(parameters));
+            ActionTestWorkbench.test(row, factory.create(action, parameters));
 
             // then
             final DataSetRow expectedRow = getRow("toto", "12.5", "tata");
@@ -324,7 +324,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         DataSetRow row = getRow("toto", "", "tata");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then (values should be unchanged)
         final DataSetRow expectedRow = getRow("toto", "", "tata");
@@ -348,7 +348,7 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         parameters.put(TARGET_PATTERN, SCIENTIFIC);
 
         // when
-        ActionTestWorkbench.test(rows, action.create(parameters));
+        ActionTestWorkbench.test(rows, factory.create(action, parameters));
 
         // then (values should now be compliant with scientific notation)
         final DataSetRow expectedRow1 = getRow("toto", "1.5E-11", "tata");

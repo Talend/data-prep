@@ -63,7 +63,7 @@ public class MakeLineHeader extends ActionMetadata implements RowAction {
 
     @Override
     public void applyOnLine(DataSetRow row, ActionContext context) {
-        if (getFilter(context.getParameters()).test(row)) {
+        if (context.getFilter().test(row)) {
             LOGGER.debug("Make line header for rowId {} with parameters {} ", context.getRowId(), context.getParameters());
             for (ColumnMetadata column : context.getRowMetadata().getColumns()) {
                 String newColumnName = context.get(column.getId(), p -> row.get(column.getId()));

@@ -123,14 +123,14 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @name move
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @param {Object} dataset the dataset infos to move
-     * @param {Object} folder the original folder of the dataset
      * @param {Object} newFolder the folder to move the dataset
      * @param {String} newName the name for the moved dataset (optional)
      * @description Move a dataset from backend and refresh its internal list
      * @returns {promise} The pending PUT promise
      */
-    function move(dataset, folder, newFolder, newName) {
-        var promise = DatasetRestService.move(dataset, folder, newFolder, newName);
+    function move(dataset, newFolder, newName) {
+        var currentFolder = state.inventory.currentFolder;
+        var promise = DatasetRestService.move(dataset, currentFolder, newFolder, newName);
         promise.then(refreshDatasets);
 
         return promise;

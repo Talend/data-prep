@@ -13,32 +13,25 @@
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.api.type.Type;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Base class for all date related unit tests.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BaseDateTests.class)
-@Configuration
-@ComponentScan(basePackages = "org.talend.dataprep")
-public abstract class BaseDateTests {
+public abstract class BaseDateTests extends AbstractMetadataBaseTest {
 
     /**
      * @param statisticsFileName the statistics file name to use.
@@ -63,27 +56,6 @@ public abstract class BaseDateTests {
         values.put("0002", "Bacon");
 
         return new DataSetRow(metadata, values);
-    }
-
-    protected ColumnMetadata createMetadata(String id, String name, Type type, String statisticsFileName) throws IOException {
-        ColumnMetadata column = createMetadata(id, name, type);
-        ObjectMapper mapper = new ObjectMapper();
-        final Statistics statistics = mapper.readerFor(Statistics.class)
-                .readValue(CompareDatesTest.class.getResourceAsStream(statisticsFileName));
-        column.setStatistics(statistics);
-        return column;
-    }
-
-    protected ColumnMetadata createMetadata(String id, String name) {
-        return createMetadata(id, name, Type.STRING);
-    }
-
-    protected ColumnMetadata createMetadata(String id, String name, Type type) {
-        return columnBaseBuilder().computedId(id).name(name).type(type).build();
-    }
-
-    protected ColumnMetadata.Builder columnBaseBuilder() {
-        return ColumnMetadata.Builder.column();
     }
 
 }

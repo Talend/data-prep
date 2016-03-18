@@ -15,15 +15,15 @@ package org.talend.dataprep.transformation.api.action.metadata.fill;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,17 +33,15 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Unit test for the FillWithIntegerIfEmpty action.
  *
  * @see FillIfEmpty
  */
-public class FillWithIntegerIfEmptyTest extends BaseDateTests {
+public class FillWithIntegerIfEmptyTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -51,7 +49,7 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
 
     @PostConstruct
     public void init() {
-        action = (FillIfEmpty) action.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
+        action = (FillIfEmpty) action.adapt(columnBaseBuilder().type(Type.INTEGER).build());
     }
 
     @Test
@@ -70,7 +68,7 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
         values.put("0003", "Something");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(columnBaseBuilder() //
                 .type(Type.INTEGER) //
                 .computedId("0002") //
                 .build()));
@@ -81,7 +79,7 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
                 this.getClass().getResourceAsStream("fillEmptyIntegerAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("25", row.get("0002"));
@@ -97,7 +95,7 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
         values.put("0003", "Something");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Collections.singletonList(ColumnMetadata.Builder.column() //
+        rowMetadata.setColumns(Collections.singletonList(columnBaseBuilder() //
                 .type(Type.INTEGER) //
                 .computedId("0002") //
                 .build()));
@@ -108,7 +106,7 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
                 this.getClass().getResourceAsStream("fillEmptyIntegerAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("not empty", row.get("0002"));
@@ -124,8 +122,8 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
         values.put("0003", "10");
 
         final RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.INTEGER).computedId("0002").build());
-        rowMetadata.addColumn(ColumnMetadata.Builder.column().type(Type.INTEGER).computedId("0003").build());
+        rowMetadata.addColumn(columnBaseBuilder().type(Type.INTEGER).computedId("0002").build());
+        rowMetadata.addColumn(columnBaseBuilder().type(Type.INTEGER).computedId("0003").build());
 
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
@@ -135,7 +133,7 @@ public class FillWithIntegerIfEmptyTest extends BaseDateTests {
         // when
         parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.OTHER_COLUMN_MODE);
         parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0003");
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("10", row.get("0002"));

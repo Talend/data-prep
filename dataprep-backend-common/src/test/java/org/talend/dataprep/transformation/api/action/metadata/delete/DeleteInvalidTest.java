@@ -19,11 +19,7 @@ import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +28,8 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 /**
@@ -41,7 +37,7 @@ import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
  *
  * @see DeleteInvalid
  */
-public class DeleteInvalidTest extends BaseDateTests {
+public class DeleteInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -80,7 +76,7 @@ public class DeleteInvalidTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         //when
-        ActionTestWorkbench.test(row, deleteInvalid.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(deleteInvalid, parameters));
 
         // then
         assertTrue(row.isDeleted());
@@ -108,7 +104,7 @@ public class DeleteInvalidTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
-        ActionTestWorkbench.test(row, deleteInvalid.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(deleteInvalid, parameters));
 
         // then row is deleted...
         assertTrue(row.isDeleted());
@@ -140,7 +136,7 @@ public class DeleteInvalidTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
-        ActionTestWorkbench.test(row, deleteInvalid.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(deleteInvalid, parameters));
 
         // then row is deleted...
         assertTrue(row.isDeleted());

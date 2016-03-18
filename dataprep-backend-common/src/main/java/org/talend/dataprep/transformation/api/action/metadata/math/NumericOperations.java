@@ -110,7 +110,9 @@ public class NumericOperations extends ActionMetadata implements ColumnAction, O
         parameters.add(SelectParameter.Builder.builder()
                         .name(MODE_PARAMETER)
                         .item(CONSTANT_MODE, new Parameter(OPERAND_PARAMETER, ParameterType.STRING, "2"))
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false))
+                        .item(OTHER_COLUMN_MODE,
+                              new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                                            StringUtils.EMPTY, false, false, getMessagesBundle())) //
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );

@@ -43,7 +43,7 @@ export default function FolderRestService($http, RestURLs) {
         if (folderPath) {
             url += '?path=' + encodeURIComponent(folderPath);
         }
-        return $http.get(url);
+        return $http.get(url).then((res) => res.data);
     }
 
     /**
@@ -119,6 +119,6 @@ export default function FolderRestService($http, RestURLs) {
         if (query) {
             url += '?pathName=' + encodeURIComponent(query);
         }
-        return $http.get(url);
+        return $http.get(url).then((res) => res.data);
     }
 }

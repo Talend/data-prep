@@ -18,11 +18,7 @@ import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -31,10 +27,10 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
-public class TextClusteringTest extends BaseDateTests {
+public class TextClusteringTest extends AbstractMetadataBaseTest {
 
     @Autowired
     private TextClustering textClustering;
@@ -58,7 +54,7 @@ public class TextClusteringTest extends BaseDateTests {
         rows.add(createRow(columnId, "Tata"));
 
         // when
-        ActionTestWorkbench.test(rows, textClustering.create(parameters));
+        ActionTestWorkbench.test(rows, factory.create(textClustering, parameters));
 
         // then
         rows.stream().map(row -> row.get(columnId)).forEach(uglyState -> Assertions.assertThat(uglyState).isEqualTo("Tata"));
@@ -95,7 +91,7 @@ public class TextClusteringTest extends BaseDateTests {
         rows.add(createRow(columnId, "Tata1"));
 
         // when
-        ActionTestWorkbench.test(rows, textClustering.create(parameters));
+        ActionTestWorkbench.test(rows, factory.create(textClustering, parameters));
 
         // then
         rows.stream().map((row) -> row.get(columnId)).forEach(uglyState -> Assertions.assertThat(uglyState).isNotEqualTo("Tata"));

@@ -81,14 +81,14 @@ public class FuzzyMatching extends ActionMetadata implements ColumnAction {
         parameters.add(SelectParameter.Builder.builder() //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
                 .item(OtherColumnParameters.CONSTANT_MODE, //
-                        new Parameter(VALUE_PARAMETER, ParameterType.STRING, EMPTY)) //
+                        new Parameter(VALUE_PARAMETER, ParameterType.STRING, EMPTY, false, true, getMessagesBundle())) //
                 .item(OtherColumnParameters.OTHER_COLUMN_MODE, //
                         new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
                                 ParameterType.COLUMN, //
-                                StringUtils.EMPTY, false, false)) //
+                                StringUtils.EMPTY, false, false, getMessagesBundle())) //
                 .defaultValue(OtherColumnParameters.CONSTANT_MODE).build());
 
-        parameters.add(new Parameter(SENSITIVITY, INTEGER, "1", false, false));
+        parameters.add(new Parameter(SENSITIVITY, INTEGER, "1", false, false, getMessagesBundle()));
         return parameters;
     }
 

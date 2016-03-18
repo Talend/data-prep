@@ -18,11 +18,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,19 +30,17 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 import org.talend.dataprep.transformation.api.action.metadata.fill.FillIfEmpty;
 import org.talend.dataprep.transformation.api.action.metadata.fill.FillInvalid;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Unit test for the FillWithNumericIfInvalid action.
  * 
  * @see FillInvalid
  */
-public class FillWithNumericIfInvalidTest extends BaseDateTests {
+public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -76,7 +72,7 @@ public class FillWithNumericIfInvalidTest extends BaseDateTests {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("25", row.get("0002"));
@@ -104,7 +100,7 @@ public class FillWithNumericIfInvalidTest extends BaseDateTests {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("30", row.get("0002"));
@@ -132,7 +128,7 @@ public class FillWithNumericIfInvalidTest extends BaseDateTests {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidIntegerAction.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("25", row.get("0002"));
@@ -163,7 +159,7 @@ public class FillWithNumericIfInvalidTest extends BaseDateTests {
         // when
         parameters.put(FillIfEmpty.MODE_PARAMETER, FillIfEmpty.OTHER_COLUMN_MODE);
         parameters.put(FillIfEmpty.SELECTED_COLUMN_PARAMETER, "0003");
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("10", row.get("0002"));

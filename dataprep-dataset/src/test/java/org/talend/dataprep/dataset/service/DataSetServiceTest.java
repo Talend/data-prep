@@ -292,8 +292,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
         int after = dataSetMetadataRepository.size();
         assertThat(after - before, is(1));
-        // the next call may fail due to timing issues : TODO // make this synchronized somehow
-        assertQueueMessages(dataSetId);
 
         before = dataSetMetadataRepository.size();
 

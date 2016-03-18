@@ -88,9 +88,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertThat(action.getCategory(), is(ActionCategory.SPLIT.getDisplayName()));
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_split_row() {
         // given
@@ -104,7 +101,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -125,7 +122,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -147,7 +144,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -169,7 +166,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -188,7 +185,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         parameters.put(Split.MANUAL_SEPARATOR_PARAMETER_STRING, "");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(values, row.values());
@@ -207,7 +204,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         parameters.put(Split.MANUAL_SEPARATOR_PARAMETER_STRING, "(");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(values, row.values());
@@ -229,7 +226,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0004", "tout va bien)");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -251,7 +248,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -273,7 +270,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -296,7 +293,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         List<SemanticDomain> originalDomains = row.getRowMetadata().getById("0001").getSemanticDomains();
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertTrue(originalStats == row.getRowMetadata().getById("0001").getStatistics());
@@ -314,9 +311,6 @@ public class SplitTest extends AbstractMetadataBaseTest {
                 || originalDomains != row.getRowMetadata().getById("0004").getSemanticDomains());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void should_split_row_twice() {
         // given
@@ -332,7 +326,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters), factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -354,7 +348,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -376,7 +370,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -402,7 +396,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -430,7 +424,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters), factory.create(action, parameters));
 
         assertEquals(expected, rowMetadata.getColumns());
     }
@@ -444,7 +438,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         parameters.put(Split.LIMIT, "4");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final Map<String, String> expectedValues = new HashMap<>();
@@ -471,7 +465,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         parameters.put(Split.SEPARATOR_PARAMETER, "");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(values, row.values());
@@ -488,7 +482,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         parameters.put(Split.SEPARATOR_PARAMETER, "");
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(input, rowMetadata.getColumns());
@@ -522,7 +516,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
      * @param name name of the column metadata to create.
      * @return a new column metadata
      */
-    private ColumnMetadata createMetadata(String id, String name) {
+    protected ColumnMetadata createMetadata(String id, String name) {
         return ColumnMetadata.Builder.column().computedId(id).name(name).type(Type.STRING).headerSize(12).empty(0).invalid(2)
                 .valid(5).build();
     }

@@ -34,17 +34,16 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
-import org.talend.dataprep.transformation.api.action.metadata.text.Split;
 
 /**
  * Test class for ExtractEmailDomain action. Creates one consumer, and test it.
  *
  * @see ExtractEmailDomain
  */
-public class ExtractUrlTokensTest extends BaseDateTests {
+public class ExtractUrlTokensTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -70,9 +69,6 @@ public class ExtractUrlTokensTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.SPLIT.getDisplayName()));
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void test_values() {
         // given
@@ -96,15 +92,12 @@ public class ExtractUrlTokensTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void test_values_port_as_int() {
         // given
@@ -129,15 +122,12 @@ public class ExtractUrlTokensTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void test_invalid_values() {
         // given
@@ -161,15 +151,12 @@ public class ExtractUrlTokensTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see Split#create(Map)
-     */
     @Test
     public void test_empty_values() {
         // given
@@ -194,15 +181,12 @@ public class ExtractUrlTokensTest extends BaseDateTests {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
     }
 
-    /**
-     * @see ExtractEmailDomain#create(Map)
-     */
     @Test
     public void test_metadata() {
         // given
@@ -226,7 +210,7 @@ public class ExtractUrlTokensTest extends BaseDateTests {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expected, row.getRowMetadata().getColumns());

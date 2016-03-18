@@ -95,7 +95,7 @@ public class ClearInvalidTest  extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -124,7 +124,7 @@ public class ClearInvalidTest  extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -153,7 +153,7 @@ public class ClearInvalidTest  extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -187,7 +187,7 @@ public class ClearInvalidTest  extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -221,7 +221,7 @@ public class ClearInvalidTest  extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -254,7 +254,7 @@ public class ClearInvalidTest  extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());

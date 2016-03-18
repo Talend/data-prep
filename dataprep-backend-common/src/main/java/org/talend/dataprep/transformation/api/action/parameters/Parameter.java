@@ -18,7 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.talend.dataprep.i18n.MessagesBundle;
+import org.talend.dataprep.util.MessagesBundleContext;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -43,6 +45,9 @@ public class Parameter implements Serializable {
     /** The configuration. */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> configuration;
+
+    @JsonIgnore
+    private MessagesBundle messagesBundle;
 
     /**
      * Minimal default constructor.
@@ -88,12 +93,18 @@ public class Parameter implements Serializable {
      */
     public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
             final boolean canBeBlank) {
+        this(name, type, defaultValue, implicit, canBeBlank, null);
+    }
+
+    public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
+                     final boolean canBeBlank, MessagesBundle messagesBundle) {
         this.name = name;
         this.type = type.asString();
         this.defaultValue = defaultValue;
         this.implicit = implicit;
         this.canBeBlank = canBeBlank;
         this.configuration = new HashMap<>();
+        this.messagesBundle = messagesBundle;
     }
 
     protected void addConfiguration(String name, Object configuration) {
@@ -111,14 +122,14 @@ public class Parameter implements Serializable {
      * the label of the parameter, translated in the user locale.
      */
     public String getLabel() {
-        return MessagesBundle.getString("parameter." + getName() + ".label"); //$NON-NLS-1$ //$NON-NLS-2$
+        return getMessagesBundle().getString("parameter." + getName() + ".label"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
      * the description of the parameter, translated in the user locale.
      */
     public String getDescription() {
-        return MessagesBundle.getString("parameter." + getName() + ".desc"); //$NON-NLS-1$ //$NON-NLS-2$
+        return getMessagesBundle().getString("parameter." + getName() + ".desc"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -154,5 +165,13 @@ public class Parameter implements Serializable {
      */
     public Map<String, Object> getConfiguration() {
         return configuration;
+    }
+
+    @JsonIgnore
+    private MessagesBundle getMessagesBundle(){
+        if (this.messagesBundle == null) {
+            this.messagesBundle = MessagesBundleContext.get();
+        }
+        return this.messagesBundle;
     }
 }

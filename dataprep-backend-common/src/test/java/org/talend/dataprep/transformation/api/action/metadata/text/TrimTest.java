@@ -29,16 +29,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for Trim action. Creates one consumer, and test it.
  *
  * @see Trim
  */
-public class TrimTest extends BaseDateTests {
+public class TrimTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -71,7 +71,7 @@ public class TrimTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("the beatles", row.get("band"));
@@ -85,7 +85,7 @@ public class TrimTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("The  Beatles", row.get("band"));
@@ -99,7 +99,7 @@ public class TrimTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("the beatles", row.get("bando"));

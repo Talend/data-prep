@@ -274,6 +274,7 @@ describe('InventoryItem directive', function () {
             var icon = element.find('a').eq(3).attr('data-icon');
             expect(icon).toBe('f');
         });
+
         it('should display favorite icon tooltip', function () {
             //when
             createElement();

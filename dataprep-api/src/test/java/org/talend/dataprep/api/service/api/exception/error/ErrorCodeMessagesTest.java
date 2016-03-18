@@ -17,6 +17,7 @@ import org.elasticsearch.common.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,6 +36,9 @@ import org.talend.dataprep.i18n.MessagesBundle;
 @WebAppConfiguration
 public class ErrorCodeMessagesTest {
 
+    @Autowired
+    MessagesBundle messagesBundle;
+
     /**
      * Asserts that the specified errorCode exits in the error_message properties.
      * 
@@ -42,13 +46,13 @@ public class ErrorCodeMessagesTest {
      */
     private void assertErrorCodeMessageExists(final String code) {
         String suffixedCode = code + ErrorMessage.MESSAGE_SUFFIX;
-        String message = MessagesBundle.getString(suffixedCode);
+        String message = messagesBundle.getString(suffixedCode);
         Assert.assertFalse("The following error code: "+code+ " is not associated with a body message",StringUtils.isEmpty(message) || suffixedCode.equals(message));
     }
 
     private void assertErrorCodeMessageTitleExists(final String code) {
         String suffixedCode = code + ErrorMessage.TITLE_SUFFIX;
-        String title = MessagesBundle.getString(suffixedCode);
+        String title = messagesBundle.getString(suffixedCode);
         Assert.assertFalse("The following error code: "+code+ " is not associated with a title message", StringUtils.isEmpty(title) || suffixedCode.equals(title));
     }
 

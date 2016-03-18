@@ -11,11 +11,14 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.api.service;
+package org.talend.dataprep.api.service.mail;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
-import org.talend.dataprep.api.service.mail.MailDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.service.ApiServiceTestBase;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
@@ -23,6 +26,8 @@ import com.jayway.restassured.response.Response;
 
 public class MailServiceAPITest extends ApiServiceTestBase {
 
+    @Autowired()
+    private AbstractFeedbackSender mailFeedbackSender;
 
     @Test public void shouldReturnInternalSeverError500() throws Exception {
 
@@ -38,5 +43,23 @@ public class MailServiceAPITest extends ApiServiceTestBase {
         Assertions.assertThat(response.getStatusCode()).isEqualTo(400);
 
     }
+
+    /**
+     *
+     * @throws Exception
+     */
+    @Test public void shouldHaveValidMailProperties() throws Exception {
+
+        String[] recipients = mailFeedbackSender.getRecipients();
+        String fromAddress = mailFeedbackSender.getSender();
+        String userName = mailFeedbackSender.getUserName();
+
+        EmailValidator.getInstance().isValid(fromAddress);
+        EmailValidator.getInstance().isValid(userName);
+        for (String recipient: recipients){
+            Assert.assertTrue(EmailValidator.getInstance().isValid(recipient));
+        }
+    }
+
 
 }

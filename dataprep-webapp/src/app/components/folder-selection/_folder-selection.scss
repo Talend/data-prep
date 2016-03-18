@@ -1,0 +1,26 @@
+.folders-modal {
+  padding: 10px 0;
+
+  @include display(flex);
+  @include flex-direction(column);
+  @include align-items(stretch);
+
+  .action-search {
+    float: right;
+    width: 20%;
+    height: 25px;
+    font-size: 0.8em;
+    padding: 0 0 0 5px;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    box-shadow: none;
+  }
+
+  .folders {
+    height: 200px;
+    overflow: auto;
+    border: 1px solid #CECECE;
+    padding: 2px;
+  }
+}

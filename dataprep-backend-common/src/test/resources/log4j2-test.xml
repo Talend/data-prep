@@ -22,7 +22,6 @@
     </appenders>
     <loggers>
         <!-- interesting debug log for this unit test -->
-        <logger name="org.talend.dataprep.transformation.api.action.metadata.date.ComputeTimeSinceTest" level="info"/>
         <root level="error" includeLocation="true">
             <appender-ref ref="console"/>
         </root>

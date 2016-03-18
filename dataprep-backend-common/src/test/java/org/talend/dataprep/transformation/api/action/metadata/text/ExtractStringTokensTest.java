@@ -98,7 +98,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -120,7 +120,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -142,7 +142,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -162,7 +162,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -182,7 +182,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -205,7 +205,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -227,7 +227,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -246,7 +246,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -264,7 +264,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractStringTokens.PARAMETER_REGEX, "");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(values, row.values());
@@ -283,7 +283,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractStringTokens.PARAMETER_REGEX, null);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(values, row.values());
@@ -301,7 +301,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractStringTokens.PARAMETER_REGEX, "(");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(values, row.values());
@@ -321,7 +321,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters), factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -343,7 +343,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -362,7 +362,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -388,7 +388,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -416,7 +416,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters), factory.create(action, parameters));
 
         assertEquals(expected, rowMetadata.getColumns());
     }
@@ -432,7 +432,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractStringTokens.PARAMETER_REGEX, "");
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(input, rowMetadata.getColumns());
@@ -455,7 +455,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
      * @param name name of the column metadata to create.
      * @return a new column metadata
      */
-    private ColumnMetadata createMetadata(String id, String name) {
+    protected ColumnMetadata createMetadata(String id, String name) {
         return ColumnMetadata.Builder.column().computedId(id).name(name).type(Type.STRING).headerSize(12).empty(0).invalid(2)
                 .valid(5).build();
     }

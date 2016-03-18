@@ -31,18 +31,9 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(value = { "mail.smtp.host", "mail.smtp.to", "mail.smtp.username",
         "mail.smtp.from" }, matchIfMissing = true)
 @Component
-public class NoOpFeedbackSender implements FeedbackSender {
+public class NoOpFeedbackSender extends AbstractFeedbackSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoOpFeedbackSender.class);
-
-    @Value("#{'${mail.smtp.to}'.split(',')}")
-    private String[] recipients;
-
-    @Value("${mail.smtp.username}")
-    private String userName;
-
-    @Value("${mail.smtp.from}")
-    private String fromAddress;
 
     @Override
     public void send(String subject, String body, String sender) {

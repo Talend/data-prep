@@ -29,16 +29,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for LowerCase action. Creates one consumer, and test it.
  *
  * @see LowerCase
  */
-public class RemoveNonAlphaNumCharsTest extends BaseDateTests {
+public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -64,9 +64,6 @@ public class RemoveNonAlphaNumCharsTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.STRINGS_ADVANCED.getDisplayName()));
     }
 
-    /**
-     * @see LowerCase#create(Map)
-     */
     @Test
     public void test_basic() {
         // given
@@ -82,7 +79,7 @@ public class RemoveNonAlphaNumCharsTest extends BaseDateTests {
         expectedValues.put("joined", "May 20th 2015");
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());

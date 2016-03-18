@@ -20,16 +20,12 @@ import static org.talend.dataprep.transformation.api.action.metadata.category.Ac
 import static org.talend.dataprep.transformation.api.action.metadata.category.ScopeCategory.COLUMN;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ScopeCategory.LINE;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.powermock.api.mockito.PowerMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
@@ -45,10 +41,6 @@ public class DeleteTest extends AbstractMetadataBaseTest {
     @Autowired
     private Delete action;
 
-    @Before
-    public void init() throws IOException {
-        PowerMockito.mockStatic(MessagesBundle.class);
-    }
 
     @Test
     public void should_be_in_data_cleansing_category() {
@@ -109,7 +101,7 @@ public class DeleteTest extends AbstractMetadataBaseTest {
         assertThat(row.isDeleted(), is(false));
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertThat(row.isDeleted(), is(true));
@@ -134,7 +126,7 @@ public class DeleteTest extends AbstractMetadataBaseTest {
         assertThat(row.isDeleted(), is(false));
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         //then
         assertThat(row.isDeleted(), is(false));

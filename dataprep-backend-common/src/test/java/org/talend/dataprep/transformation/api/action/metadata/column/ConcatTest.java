@@ -19,7 +19,6 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getRow;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -30,16 +29,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Unit test for the Concat action.
  * 
  * @see Concat
  */
-public class ConcatTest extends BaseDateTests {
+public class ConcatTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -73,7 +72,7 @@ public class ConcatTest extends BaseDateTests {
         DataSetRow row = getRow("first", "second", "Done !");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "<first-second>");
@@ -88,7 +87,7 @@ public class ConcatTest extends BaseDateTests {
         row.getRowMetadata().getById("0001").setName("selected");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source_selected").type(Type.STRING).build();
@@ -107,7 +106,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.remove(Concat.SELECTED_COLUMN_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("<source>").type(Type.STRING).build();
@@ -122,7 +121,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.remove(Concat.SEPARATOR_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "<firstsecond>");
@@ -136,7 +135,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.remove(Concat.PREFIX_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "first-second>");
@@ -150,7 +149,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.put(Concat.MODE_PARAMETER, Concat.CONSTANT_MODE);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "<first>");
@@ -164,7 +163,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.remove(Concat.SUFFIX_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "<first-second");
@@ -180,7 +179,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.remove(Concat.SUFFIX_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         DataSetRow expected = getRow("first", "second", "Done !", "firstsecond");
@@ -194,7 +193,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.remove(Concat.SELECTED_COLUMN_PARAMETER);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(row.get("0000"), "first");
@@ -209,7 +208,7 @@ public class ConcatTest extends BaseDateTests {
         parameters.put(Concat.SELECTED_COLUMN_PARAMETER, "123548");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(row.get("0000"), "first");

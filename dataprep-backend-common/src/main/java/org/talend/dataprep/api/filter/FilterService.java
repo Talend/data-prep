@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
+@FunctionalInterface
 public interface FilterService {
 
     /**
@@ -27,7 +29,7 @@ public interface FilterService {
      * <a href="https://in.talend.com/9082609">MDM wiki</a>
      * @return A {@link Predicate} to be used to filter rows in actions. Empty or <code>null</code> returns a
      * "match all" predicate (i.e. no filtering).
-     * @see org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata#create(Map)
+     * @see org.talend.dataprep.transformation.api.action.metadata.common.ActionFactory#create(ActionMetadata, Map)
      */
     Predicate<DataSetRow> build(String filterAsString);
 }

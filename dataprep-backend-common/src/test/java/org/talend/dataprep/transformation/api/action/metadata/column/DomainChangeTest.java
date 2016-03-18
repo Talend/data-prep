@@ -28,10 +28,10 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
-public class DomainChangeTest extends BaseDateTests {
+public class DomainChangeTest extends AbstractMetadataBaseTest {
 
     @Autowired
     private DomainChange domainChange;
@@ -69,7 +69,7 @@ public class DomainChangeTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
-        ActionTestWorkbench.test(row, domainChange.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(domainChange, parameters));
 
         // then
         final ColumnMetadata column = row.getRowMetadata().getColumns().get(0);
@@ -90,7 +90,7 @@ public class DomainChangeTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(rowMetadata, values);
 
         // when
-        ActionTestWorkbench.test(row, domainChange.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(domainChange, parameters));
 
         // then
         assertThat(row.getRowMetadata().getById("0002").isDomainForced()).isTrue();

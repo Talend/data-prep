@@ -18,11 +18,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,20 +30,18 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 import org.talend.dataprep.transformation.api.action.metadata.fill.AbstractFillWith;
 import org.talend.dataprep.transformation.api.action.metadata.fill.FillInvalid;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Unit test for FillWithBooleanIfInvalid action.
  *
  * @see FillInvalid
  */
-public class FillWithBooleanIfInvalidTest extends BaseDateTests {
+public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
@@ -77,7 +73,7 @@ public class FillWithBooleanIfInvalidTest extends BaseDateTests {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0003");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("True", row.get("0003"));
@@ -105,7 +101,7 @@ public class FillWithBooleanIfInvalidTest extends BaseDateTests {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0003");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("False", row.get("0003"));
@@ -137,7 +133,7 @@ public class FillWithBooleanIfInvalidTest extends BaseDateTests {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0003");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals("True", row.get("0003"));
@@ -168,7 +164,7 @@ public class FillWithBooleanIfInvalidTest extends BaseDateTests {
         // when
         parameters.put(AbstractFillWith.MODE_PARAMETER, AbstractFillWith.OTHER_COLUMN_MODE);
         parameters.put(AbstractFillWith.SELECTED_COLUMN_PARAMETER, "0003");
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assert.assertEquals("False", row.get("0002"));

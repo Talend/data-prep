@@ -683,7 +683,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
         // then
         final JsonNode jsonNode = builder.build().readTree(actions);
         // response is an array
-        assertThat(jsonNode.isArray(), is(true));
+        assertTrue("json not an array:" + actions, jsonNode.isArray());
+        Assertions.assertThat(jsonNode.isArray()).isTrue();
         // an array of 2 entries
         ArrayNode lookups = (ArrayNode) jsonNode;
         assertThat(lookups.size(), is(2));

@@ -82,7 +82,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         missingParameters.put("column_id", "");
 
         //when
-        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), action.create(missingParameters));
+        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), factory.create(action, missingParameters));
     }
 
     @Test(expected = TDPException.class)
@@ -93,7 +93,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         missingParameters.put(ChangeDatePattern.NEW_PATTERN, "toto");
 
         //when
-        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), action.create(missingParameters));
+        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), factory.create(action, missingParameters));
     }
 
     @Test(expected = TDPException.class)
@@ -103,7 +103,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         insufficientParams.put("column_id", "0000");
 
         //when
-        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), action.create(insufficientParams));
+        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), factory.create(action, insufficientParams));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "25 - Apr - 1999", "tata");
@@ -129,7 +129,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "ff");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata");
@@ -145,7 +145,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "04/25/1999", "tata");
@@ -159,7 +159,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final List<PatternFrequency> patternFrequencies = row.getRowMetadata() //
@@ -184,7 +184,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "25 - Apr - 2009", "tata");
@@ -198,7 +198,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         final DataSetRow expectedRow = getRow("toto", "NA", "tata");
@@ -212,7 +212,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then (values should be unchanged)
         final DataSetRow expectedRow = getRow("toto", "", "tata");

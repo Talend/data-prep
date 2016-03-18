@@ -27,11 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 import org.talend.dataprep.transformation.api.action.metadata.text.UpperCase;
 
-public class MakeLineHeaderTest extends BaseDateTests {
+public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
 
     @Autowired
     private MakeLineHeader action;
@@ -81,7 +81,7 @@ public class MakeLineHeaderTest extends BaseDateTests {
         assertThat(row2.isDeleted(), is(false));
 
         //when
-        ActionTestWorkbench.test(row2, action.create(parameters));
+        ActionTestWorkbench.test(row2, factory.create(action, parameters));
 
         // then
         assertThat(row1.isDeleted(), is(false));
@@ -121,11 +121,11 @@ public class MakeLineHeaderTest extends BaseDateTests {
         final Map<String, String> makeHeaderParameters = new HashMap<>();
         makeHeaderParameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "line");
         makeHeaderParameters.put("row_id", row2.getTdpId().toString());
-        final Action makeHeader = this.action.create(makeHeaderParameters);
+        final Action makeHeader = factory.create(action, makeHeaderParameters);
         final Map<String, String> upperCaseParameters = new HashMap<>();
         upperCaseParameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         upperCaseParameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        final Action upperCase = new UpperCase().create(upperCaseParameters);
+        final Action upperCase = factory.create(new UpperCase(), upperCaseParameters);
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), makeHeader, upperCase);
 
         // then

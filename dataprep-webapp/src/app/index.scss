@@ -11,12 +11,14 @@
 
   ============================================================================*/
 
+@import "css/vendors/customisation/sunchoke";
+
 /* Do not remove the comments below. It's the markers used by wiredep to inject
    sass dependencies when defined in the bower.json of your dependencies */
 // bower:scss
 // endbower
 
-@import "css/vendors/vendors";
+@import "css/vendors/libs/libs";
 @import "css/utils/utils";
 
 @import "css/base/base";

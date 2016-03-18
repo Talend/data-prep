@@ -29,16 +29,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 /**
  * Test class for RoundHalfUp action. Creates one consumer, and test it.
  *
  * @see RoundHalfUp
  */
-public class RoundHalfUpTest extends BaseDateTests {
+public class RoundHalfUpTest extends AbstractMetadataBaseTest {
 
     /** The action ton test. */
     @Autowired
@@ -75,7 +75,7 @@ public class RoundHalfUpTest extends BaseDateTests {
         final DataSetRow row = new DataSetRow(values);
 
         //when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expected, row.get("aNumber"));

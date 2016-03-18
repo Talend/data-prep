@@ -21,9 +21,11 @@ import static org.talend.dataprep.transformation.api.action.metadata.ActionMetad
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +51,19 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
     /** The action parameters. */
     private Map<String, String> parameters;
+    private Locale previousLocale;
 
     @Before
     public void setUp() throws Exception {
         final InputStream parametersSource = ExtractNumberTest.class.getResourceAsStream("extractNumberAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
+        previousLocale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Locale.setDefault(previousLocale);
     }
 
     @Test
@@ -86,7 +96,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         Assertions.assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
@@ -112,7 +122,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractNumber.DECIMAL_SEPARATOR, ExtractNumber.DOT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
@@ -137,7 +147,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         Assertions.assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
@@ -163,7 +173,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractNumber.DECIMAL_SEPARATOR, ExtractNumber.DOT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
@@ -189,7 +199,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractNumber.DECIMAL_SEPARATOR, ExtractNumber.DOT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
@@ -215,7 +225,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractNumber.DECIMAL_SEPARATOR, ExtractNumber.DOT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
@@ -241,7 +251,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         parameters.put(ExtractNumber.DECIMAL_SEPARATOR, ExtractNumber.DOT);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns()) //

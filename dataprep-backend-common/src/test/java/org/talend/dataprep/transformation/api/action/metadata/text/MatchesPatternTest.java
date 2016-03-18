@@ -82,7 +82,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -107,7 +107,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         parameters.put(MatchesPattern.MANUAL_PATTERN_PARAMETER, generateJson("Bac", "starts_with"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -135,7 +135,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         parameters.put(MatchesPattern.MANUAL_PATTERN_PARAMETER, generateJson("(", "contains"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -160,7 +160,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         parameters.put(MatchesPattern.MANUAL_PATTERN_PARAMETER, generateJson("Bak", "starts_with"));
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -230,7 +230,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters), factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -252,7 +252,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -275,7 +275,7 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, action.create(parameters), action.create(parameters));
+        ActionTestWorkbench.test(rowMetadata, factory.create(action, parameters), factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());
@@ -294,11 +294,11 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
     }
 
-    private ColumnMetadata createMetadata(String id, String name) {
+    protected ColumnMetadata createMetadata(String id, String name) {
         return createMetadata(id, name, Type.BOOLEAN);
     }
 
-    private ColumnMetadata createMetadata(String id, String name, Type type) {
+    protected ColumnMetadata createMetadata(String id, String name, Type type) {
         return ColumnMetadata.Builder.column().computedId(id).name(name).type(type).headerSize(12).empty(0).invalid(2).valid(5)
                 .build();
     }

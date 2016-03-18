@@ -72,7 +72,8 @@ public class Rename extends ActionMetadata implements ColumnAction {
      */
     public Rename(final String defaultName) {
         this.parameters = super.getParameters();
-        this.parameters.add(new Parameter(NEW_COLUMN_NAME_PARAMETER_NAME, ParameterType.STRING, defaultName, false, false));
+        this.parameters.add(new Parameter(NEW_COLUMN_NAME_PARAMETER_NAME, ParameterType.STRING, defaultName, //
+                                          false, false, getMessagesBundle()));
     }
 
     /**

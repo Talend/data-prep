@@ -16,8 +16,9 @@
   color: gray;
   display: none;
   font-size: 0.5em;
-  right: 15px;
-  top: 5px;
+  right: 0;
+  top: 50%;
+  @include transform(translateY(-50%) translateX(-100%));
 
   &.clear-icon {
     cursor: pointer;

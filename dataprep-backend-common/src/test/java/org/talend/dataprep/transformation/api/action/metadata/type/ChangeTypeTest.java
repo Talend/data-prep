@@ -25,11 +25,11 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.column.TypeChange;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
-public class ChangeTypeTest extends BaseDateTests {
+public class ChangeTypeTest extends AbstractMetadataBaseTest {
 
     @Autowired
     private TypeChange typeChange;
@@ -59,7 +59,7 @@ public class ChangeTypeTest extends BaseDateTests {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        ActionTestWorkbench.test(row, typeChange.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(typeChange, parameters));
 
         // then
         Assertions.assertThat(row.getRowMetadata().getColumns().get(0).getDomain()).isEmpty();

@@ -134,7 +134,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("Jimmy"));
@@ -157,7 +157,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("Jimmy"));
@@ -183,7 +183,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("James Hetfield"));
@@ -298,7 +298,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "no column here");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("Toto"));
@@ -323,7 +323,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.ROW_ID.getKey().toLowerCase(), "85");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("Jimmy"));
@@ -411,7 +411,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.ROW_ID.getKey().toLowerCase(), "85");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("Jimmy Cleveland Jimmy"));
@@ -436,7 +436,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.ROW_ID.getKey().toLowerCase(), "85");
 
         // when
-        ActionTestWorkbench.test(row, action.create(parameters));
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
         assertThat(row.get(columnId), is("Toto"));

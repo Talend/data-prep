@@ -15,7 +15,7 @@ package org.talend.dataprep.exception.error;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.exception.error.ErrorCode;
-import org.talend.dataprep.i18n.MessagesBundle;
+import org.talend.dataprep.util.MessagesBundleContext;
 
 /**
  * Utility class used to return user-friendly (understandable) messages to the frontend.
@@ -41,7 +41,7 @@ public class ErrorMessage {
      */
     public static String getMessage(ErrorCode errorCode, String... values) {
         String title = getMessagePrefix(errorCode) + MESSAGE_SUFFIX;
-        return MessagesBundle.getString(title, values);
+        return MessagesBundleContext.get().getString( title, values);
     }
 
     /**
@@ -53,7 +53,7 @@ public class ErrorMessage {
      */
     public static String getMessageTitle(ErrorCode errorCode, String... values) {
         String title = getMessagePrefix(errorCode) + TITLE_SUFFIX;
-        return MessagesBundle.getString(title, values);
+        return MessagesBundleContext.get().getString( title, values);
     }
 
     /**

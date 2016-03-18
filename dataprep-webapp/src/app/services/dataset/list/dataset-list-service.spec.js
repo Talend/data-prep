@@ -75,7 +75,10 @@ describe('Dataset List Service', () => {
                 sortList: sortList,
                 orderList: orderList,
                 sort: sortList[1],
-                order: orderList[1]
+                order: orderList[1],
+                currentFolder: {
+                    path: ''
+                }
             }
         };
         $provide.constant('state', stateMock);
@@ -328,10 +331,10 @@ describe('Dataset List Service', () => {
             const newName = 'my dataset';
 
             //when
-            DatasetListService.move(dataset, folder, newFolder, newName);
+            DatasetListService.move(dataset, newFolder, newName);
 
             //then
-            expect(DatasetRestService.move).toHaveBeenCalledWith(dataset, folder, newFolder, newName);
+            expect(DatasetRestService.move).toHaveBeenCalledWith(dataset, stateMock.inventory.currentFolder, newFolder, newName);
         }));
 
         it('should refresh datasets list', inject(($rootScope, DatasetRestService, DatasetListService) => {

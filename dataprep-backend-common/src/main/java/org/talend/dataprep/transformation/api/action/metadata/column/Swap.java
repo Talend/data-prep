@@ -142,7 +142,7 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN);
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.METADATA_CHANGE_TYPE);
     }
 
 }

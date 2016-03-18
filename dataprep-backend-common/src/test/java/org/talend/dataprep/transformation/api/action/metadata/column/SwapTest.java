@@ -77,7 +77,7 @@ public class SwapTest extends BaseDateTests {
 
 
         // when
-        ActionTestWorkbench.test( rows, action.create( parameters));
+        ActionTestWorkbench.test( rows, factory.create(action, parameters));
 
         // then
         Assertions.assertThat( rows.get( 0 ).values() ) //
@@ -101,7 +101,7 @@ public class SwapTest extends BaseDateTests {
 
 
         // when
-        ActionTestWorkbench.test( rows, action.create( parameters));
+        ActionTestWorkbench.test( rows, factory.create(action, parameters));
 
         // then
         Assertions.assertThat( rows.get( 0 ).values() ) //

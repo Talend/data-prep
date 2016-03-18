@@ -166,8 +166,8 @@ public class Pipeline implements Node {
             final Set<String> readOnlyColumns = rowMetadata.getColumns().stream().map(ColumnMetadata::getId)
                     .collect(Collectors.toSet());
             final Set<String> modifiedColumns = new HashSet<>();
-            int createColumnActions = 0;
             final boolean needDelayedAnalysis;
+            int createOrModifyColumnActions = 0;
             if (actionRegistry != null) {
                 for (Action action : actions) {
                     final ActionMetadata actionMetadata = actionRegistry.get(action.getName());
@@ -194,7 +194,8 @@ public class Pipeline implements Node {
                             // TODO Ignore column copy from analysis (metadata did not change)
                             break;
                         case METADATA_CREATE_COLUMNS:
-                            createColumnActions++;
+                        case METADATA_MODIFY_COLUMNS:
+                            createOrModifyColumnActions++;
                             break;
                         case METADATA_DELETE_COLUMNS:
                         case METADATA_CHANGE_NAME:
@@ -206,7 +207,7 @@ public class Pipeline implements Node {
                     }
                 }
                 filter = c -> modifiedColumns.contains(c.getId()) || !readOnlyColumns.contains(c.getId());
-                needDelayedAnalysis = !modifiedColumns.isEmpty() || createColumnActions > 0;
+                needDelayedAnalysis = !modifiedColumns.isEmpty() || createOrModifyColumnActions > 0;
             } else {
                 LOGGER.warn("Unable to statically analyze actions (no action registry defined).");
                 filter = c -> true;

@@ -48,6 +48,7 @@ public abstract class ActionMetadata {
         METADATA_CHANGE_TYPE,
         METADATA_CHANGE_NAME,
         METADATA_CREATE_COLUMNS,
+        METADATA_MODIFY_COLUMNS,
         METADATA_COPY_COLUMNS,
         METADATA_DELETE_COLUMNS,
         VALUES_COLUMN,

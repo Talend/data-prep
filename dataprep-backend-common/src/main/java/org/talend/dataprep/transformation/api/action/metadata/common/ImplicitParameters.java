@@ -29,6 +29,7 @@ import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 public enum ImplicitParameters {
 
                                 COLUMN_ID(STRING, EMPTY),
+                                COLUMN_ID_LIST(ParameterType.LIST, EMPTY),
                                 ROW_ID(STRING, EMPTY),
                                 SCOPE(STRING, EMPTY),
                                 FILTER(ParameterType.FILTER, EMPTY);

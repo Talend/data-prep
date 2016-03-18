@@ -197,7 +197,7 @@ public class Pipeline implements Node {
             final Set<String> readOnlyColumns = rowMetadata.getColumns().stream().map(ColumnMetadata::getId)
                     .collect(Collectors.toSet());
             final Set<String> modifiedColumns = new HashSet<>();
-            int createColumnActions = 0;
+            int createOrModifyColumnActions = 0;
             if (actionRegistry != null) {
                 for (Action action : actions) {
                     final ActionMetadata actionMetadata = actionRegistry.get(action.getName());
@@ -224,7 +224,8 @@ public class Pipeline implements Node {
                             // TODO Ignore column copy from analysis (metadata did not change)
                             break;
                         case METADATA_CREATE_COLUMNS:
-                            createColumnActions++;
+                        case METADATA_MODIFY_COLUMNS:
+                            createOrModifyColumnActions++;
                             break;
                         case METADATA_DELETE_COLUMNS:
                         case METADATA_CHANGE_NAME:
@@ -243,7 +244,7 @@ public class Pipeline implements Node {
             Node current = buildCompileActions(sourceNode, a -> new CompileNode(a, context.create(a.getRowAction())));
             current = buildApplyActions(current, a -> new ActionNode(a, context.in(a.getRowAction())));
             // Analyze (delayed)
-            if (!modifiedColumns.isEmpty() || createColumnActions > 0) {
+            if (!modifiedColumns.isEmpty() || createOrModifyColumnActions > 0) {
                 // Inline analysis
                 Node inlineAnalysisNode = new InlineAnalysisNode(inlineAnalyzer, filter, adapter);
                 current.setLink(new BasicLink(inlineAnalysisNode));

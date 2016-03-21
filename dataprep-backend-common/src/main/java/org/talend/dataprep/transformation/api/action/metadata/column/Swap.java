@@ -30,8 +30,8 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
+import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
@@ -101,6 +101,11 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
 
         ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
 
+        if (selectedColumn == null){
+            return;
+        }
+
+        parameters.put(ImplicitParameters.OTHER_COLUMN_ID.getKey(), selectedColumn.getId());
 
         actionContext.getModifiedColumns().add(selectedColumn);
 

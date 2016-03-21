@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
@@ -37,6 +36,8 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
+
+import com.google.common.collect.Lists;
 
 /**
  * Unit test for the Swap action.
@@ -91,6 +92,11 @@ public class SwapTest extends BaseDateTests {
                        MapEntry.entry( "0001", "10" ), //
                        MapEntry.entry( "0002", "cheese" ));
 
+        // FIXME how to test that ???
+        /*
+        Assertions.assertThat(parameters.get( PostProcessParameters.OTHER_COLUMN_ID.getKey())) //
+                .isNotNull().isEqualTo("0001");
+        */
     }
 
 

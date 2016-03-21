@@ -20,7 +20,6 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -102,13 +101,11 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
 
         ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
 
-        if (selectedColumn == null){
-            return;
-        }
 
         actionContext.getModifiedColumns().add(selectedColumn);
 
     }
+
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
      */
@@ -137,6 +134,7 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
 
         row.set( columnId, selectedColumnValue );
         row.set( selectedColumn.getId(), columnValue);
+
 
     }
 

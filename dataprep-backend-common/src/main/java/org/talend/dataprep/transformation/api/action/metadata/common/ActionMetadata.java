@@ -13,7 +13,12 @@
 
 package org.talend.dataprep.transformation.api.action.metadata.common;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +53,6 @@ public abstract class ActionMetadata {
         METADATA_CHANGE_TYPE,
         METADATA_CHANGE_NAME,
         METADATA_CREATE_COLUMNS,
-        METADATA_MODIFY_COLUMNS,
         METADATA_COPY_COLUMNS,
         METADATA_DELETE_COLUMNS,
         VALUES_COLUMN,
@@ -240,4 +244,5 @@ public abstract class ActionMetadata {
         }
         return this.messagesBundle;
     }
+
 }

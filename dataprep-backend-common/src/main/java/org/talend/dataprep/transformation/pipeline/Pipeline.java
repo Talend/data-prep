@@ -18,6 +18,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
+import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataprep.transformation.pipeline.model.*;
 import org.talend.datascience.common.inference.Analyzer;
@@ -189,21 +190,11 @@ public class Pipeline implements Node {
                         case VALUES_COLUMN:
                             final String modifiedColumnId = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
                             modifiedColumns.add(modifiedColumnId);
-                            context.getAllActionsContexts().iterator().forEachRemaining(actionContext -> {
-                                if (!actionContext.getModifiedColumns().isEmpty()) {
-                                    actionContext.getModifiedColumns().iterator().forEachRemaining(columnMetadata -> {
-                                        modifiedColumns.add(columnMetadata.getId());
-                                    });
-                                }
-                            });
-                            
-
                             break;
                         case METADATA_COPY_COLUMNS:
                             // TODO Ignore column copy from analysis (metadata did not change)
                             break;
                         case METADATA_CREATE_COLUMNS:
-                        case METADATA_MODIFY_COLUMNS:
                             createOrModifyColumnActions++;
                             break;
                         case METADATA_DELETE_COLUMNS:

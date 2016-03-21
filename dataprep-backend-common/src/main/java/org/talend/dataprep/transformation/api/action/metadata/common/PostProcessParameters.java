@@ -13,25 +13,17 @@
 
 package org.talend.dataprep.transformation.api.action.metadata.common;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
 /**
- * Common implicit parameters used by nearly all actions.
+ * Post action context used for post action executions (pipeline etc...)
  */
-public enum ImplicitParameters {
+public enum PostProcessParameters
+{
 
-                                COLUMN_ID(STRING, EMPTY),
-                                ROW_ID(STRING, EMPTY),
-                                SCOPE(STRING, EMPTY),
-                                FILTER(ParameterType.FILTER, EMPTY);
+    // TODO ideally we'd like to be able to pass a collection of ids
+    OTHER_COLUMN_ID(ParameterType.STRING, "columns.modified");
 
     /** The parameter. */
     private final Parameter parameter;
@@ -42,7 +34,7 @@ public enum ImplicitParameters {
      * @param type type of parameter.
      * @param defaultValue the parameter default value.
      */
-    ImplicitParameters(final ParameterType type, final String defaultValue) {
+    PostProcessParameters(final ParameterType type, final String defaultValue) {
         this.parameter = new Parameter(this.name().toLowerCase(), type, defaultValue, true);
     }
 
@@ -60,12 +52,4 @@ public enum ImplicitParameters {
         return parameter;
     }
 
-    /**
-     * @return the full list of implicit parameters.
-     */
-    public static List<Parameter> getParameters() {
-        return Arrays.stream(values()) //
-                .map(ImplicitParameters::getParameter) //
-                .collect(Collectors.toList());
-    }
 }

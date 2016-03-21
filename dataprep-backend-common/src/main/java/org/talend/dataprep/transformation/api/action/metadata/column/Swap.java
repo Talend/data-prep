@@ -24,6 +24,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
@@ -33,6 +35,7 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
@@ -40,6 +43,7 @@ import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
  * Swap columns values
  */
 @Component(Swap.ACTION_BEAN_PREFIX + Swap.SWAP_COLUMN_ACTION_NAME)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Swap extends ActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**
@@ -90,6 +94,25 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
         return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
+    @Override
+    public void compile( ActionContext actionContext )
+    {
+        super.compile( actionContext );
+
+        Map<String,String> parameters = actionContext.getParameters();
+
+        RowMetadata rowMetadata = actionContext.getRowMetadata();
+
+        ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+
+        if (selectedColumn == null){
+            return;
+        }
+
+        parameters.put(PostProcessParameters.OTHER_COLUMN_ID.getKey(), selectedColumn.getId());
+
+    }
+
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
      */
@@ -112,14 +135,19 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
 
         String selectedColumnValue = row.get( selectedColumn.getId() );
 
+        if (selectedColumnValue == null){
+            return;
+        }
+
         row.set( columnId, selectedColumnValue );
         row.set( selectedColumn.getId(), columnValue);
+
 
     }
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.METADATA_CHANGE_TYPE, Behavior.METADATA_MODIFY_COLUMNS);
+        return EnumSet.of(Behavior.VALUES_COLUMN);
     }
 
 }

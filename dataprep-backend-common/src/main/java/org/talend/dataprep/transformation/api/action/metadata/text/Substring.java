@@ -110,7 +110,7 @@ public class Substring extends ActionMetadata implements ColumnAction {
                 .defaultValue(FROM_BEGINNING) //
                 .build();
 
-        final List<Parameter> parameters = ImplicitParameters.getParameters();
+        final List<Parameter> parameters = super.getParameters();
         parameters.add(fromParameters);
         return parameters;
     }

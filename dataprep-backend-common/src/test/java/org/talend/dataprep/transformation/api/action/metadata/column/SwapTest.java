@@ -33,8 +33,8 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.action.metadata.date.BaseDateTests;
 
 import com.google.common.collect.Lists;
@@ -94,7 +94,7 @@ public class SwapTest extends BaseDateTests {
 
         // FIXME how to test that ???
         /*
-        Assertions.assertThat(parameters.get( PostProcessParameters.OTHER_COLUMN_ID.getKey())) //
+        Assertions.assertThat(parameters.get( ImplicitParameters.OTHER_COLUMN_ID.getKey())) //
                 .isNotNull().isEqualTo("0001");
         */
     }
@@ -122,7 +122,7 @@ public class SwapTest extends BaseDateTests {
                        MapEntry.entry( "0002", "cheese" ));
 
 
-        Assertions.assertThat(parameters.get( PostProcessParameters.OTHER_COLUMN_ID.getKey())) //
+        Assertions.assertThat(parameters.get( ImplicitParameters.OTHER_COLUMN_ID.getKey())) //
                 .isNullOrEmpty();
     }
 

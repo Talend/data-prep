@@ -18,7 +18,6 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataprep.transformation.pipeline.model.*;
 import org.talend.datascience.common.inference.Analyzer;
@@ -221,7 +220,7 @@ public class Pipeline implements Node {
                             final String modifiedColumnId = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
                             modifiedColumns.add(modifiedColumnId);
                             // TODO ideally we'd like to be able to pass a collection of ids
-                            String otherColumnId = action.getParameters().get(PostProcessParameters.OTHER_COLUMN_ID.getKey());
+                            String otherColumnId = action.getParameters().get(ImplicitParameters.OTHER_COLUMN_ID.getKey());
                             if (otherColumnId != null){
                                 modifiedColumns.add( otherColumnId );
                             }

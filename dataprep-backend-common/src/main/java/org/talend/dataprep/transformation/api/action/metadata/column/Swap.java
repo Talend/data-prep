@@ -15,11 +15,7 @@ package org.talend.dataprep.transformation.api.action.metadata.column;
 
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionScope.COLUMN_METADATA;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -34,8 +30,8 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
+import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.api.action.metadata.common.PostProcessParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
 
@@ -109,7 +105,7 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
             return;
         }
 
-        parameters.put(PostProcessParameters.OTHER_COLUMN_ID.getKey(), selectedColumn.getId());
+        parameters.put(ImplicitParameters.OTHER_COLUMN_ID.getKey(), selectedColumn.getId());
 
     }
 

@@ -177,11 +177,11 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
             .isNotEmpty().hasSize(2)
             .contains(ColumnMetadata.Builder //
-                          .column() //
-                          .name("0000" + "_number") //
-                          .type(Type.NUMERIC) //
-                          .computedId("0001") //
-                          .build());
+                    .column() //
+                    .name("0000" + "_number") //
+                    .type(Type.NUMERIC) //
+                    .computedId("0001") //
+                    .build());
 
         Assertions.assertThat(row.values()).isNotEmpty().hasSize(2);
 
@@ -228,18 +228,54 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         Assertions.assertThat(row.getRowMetadata().getColumns()) //
             .isNotEmpty().hasSize(2)
             .contains(ColumnMetadata.Builder //
-                          .column() //
-                          .name("0000" + "_number") //
-                          .type(Type.NUMERIC) //
-                          .computedId("0001") //
-                          .build());
+                    .column() //
+                    .name("0000" + "_number") //
+                    .type(Type.NUMERIC) //
+                    .computedId("0001") //
+                    .build());
 
         Assertions.assertThat(row.values()).isNotEmpty().hasSize(2);
 
         Assertions.assertThat(row.get("0001")).isEqualTo("5500");
-
     }
 
+    /**
+     * Test that if we have a valid number as input, we keep as it as output.
+     */
+    @Test
+    public void test_valid_numbers() throws Exception {
+        test_valid_numbers("1.862E4", true);
+        test_valid_numbers("(12.5)", true);
+        test_valid_numbers("5.5", true);
+        test_valid_numbers("1.86k", false);
+        test_valid_numbers("1.86€", false);
+    }
+
+    public void test_valid_numbers(String input, boolean expected) throws Exception {
+        // given
+        DataSetRow row = getRow(input);
+        Assertions.assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.getRowMetadata().getColumns()) //
+                .isNotEmpty().hasSize(2).contains(ColumnMetadata.Builder //
+                .column() //
+                .name("0000" + "_number") //
+                .type(Type.NUMERIC) //
+                .computedId("0001") //
+                .build());
+
+        Assertions.assertThat(row.values()).isNotEmpty().hasSize(2);
+
+        if (expected) {
+            Assertions.assertThat(row.get("0001")).isEqualTo(input);
+        } else {
+            Assertions.assertThat(row.get("0001")).isNotEqualTo(input);
+        }
+    }
 
     @Test
     public void extract_empty() throws Exception {
@@ -263,7 +299,6 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         Assertions.assertThat(row.values()).isNotEmpty().hasSize(2);
 
         Assertions.assertThat(row.get("0001")).isEqualTo("0");
-
     }
 
     @Test

@@ -167,6 +167,15 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
             return DEFAULT_RESULT;
         }
 
+        // Test if the input value is a valid number before removing any characters:
+        try {
+            BigDecimalParser.toBigDecimal(value);
+            // If yes (no exception thrown), return the value as it, no change required:
+            return value;
+        } catch (NumberFormatException e) {
+            // If no, continue the process to remove non-numeric chars:
+        }
+
         StringCharacterIterator iter = new StringCharacterIterator(value);
 
         MetricPrefix metricPrefix = null;
@@ -207,7 +216,6 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
         DecimalFormat decimalFormat = new DecimalFormat("0.#");
         decimalFormat.setMaximumFractionDigits(MAX_FRACTION_DIGITS_DISPLAY);
         return decimalFormat.format(bigDecimal.stripTrailingZeros());
-
     }
 
     public static class MetricPrefix {

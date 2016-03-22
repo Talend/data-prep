@@ -2,5 +2,6 @@
   "serverUrl": "http://10.42.10.99:8888",
   "enableDebug": false,
   "version": "1.1-SNAPSHOT",
-  "copyRights": "2016 Talend. All Rights Reserved"
+  "copyRights": "2016 Talend. All Rights Reserved",
+  "documentationSearchURL" : "https://www.talendforge.org/find/api/index.php?source=DATA%20PREP&condition=AND&max=5"
 }

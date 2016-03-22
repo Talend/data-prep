@@ -122,4 +122,20 @@ describe('Text format service', function () {
             expect(result).toBe(expectedPattern);
         }));
     });
+
+    describe('text', function() {
+        it('should highlight text with css class', inject(function(TextFormatService) {
+            //given
+            var object = {
+                name: 'test',
+                id: '000'
+            };
+
+            //when
+            TextFormatService.highlight(object, 'name', 'e', 'highlight');
+
+            //then
+            expect(object.name).toBe('t<span class="highlight">e</span>st');
+        }));
+    });
 });

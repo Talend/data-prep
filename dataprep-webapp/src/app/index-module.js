@@ -151,7 +151,8 @@
 
                 angular.module('data-prep.services.utils')
                     .value('version', config.data.version)
-                    .value('copyRights', config.data.copyRights);
+                    .value('copyRights', config.data.copyRights)
+                    .value('documentationSearchURL', config.data.documentationSearchURL);
             });
     };
 

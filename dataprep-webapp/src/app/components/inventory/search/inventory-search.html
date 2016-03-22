@@ -14,11 +14,12 @@
   -->
 
 <typeahead search="$ctrl.search(value)"
+           placeholder="{{'SEARCH' | translate}}"
            class="inventory-search">
     <div class="inventory" id="search-inventory-list" ng-switch="$ctrl.results.length">
-        <ul ng-if="$ctrl.results.length === 0" class="no-results-div" translate-once="NO_RESULTS">
+        <ul ng-if="$ctrl.results.length === 0 && $ctrl.docResults.length === 0" class="no-results-div" translate-once="NO_RESULTS">
         </ul>
-        <ul ng-switch-default class="inventory-list" ng-if ="$ctrl.results.length">
+        <ul ng-switch-default class="inventory-list" ng-if ="$ctrl.results.length || $ctrl.docResults.length">
             <li ng-repeat="item in $ctrl.results">
                 <inventory-item ng-if="item.inventoryType==='preparation'"
                         item="item"
@@ -39,6 +40,15 @@
                         ng-click="$ctrl.uploadWorkflowService.openDataset(item.originalItem)">
                 </inventory-item>
             </li>
+
+            <li ng-repeat="doc in $ctrl.docResults">
+                <a href="{{doc.url}}" target="_blank" class="documentation">
+                    <inventory-item item="doc"
+                                    type="documentation">
+                    </inventory-item>
+                </a>
+            </li>
+
         </ul>
     </div>
 </typeahead>

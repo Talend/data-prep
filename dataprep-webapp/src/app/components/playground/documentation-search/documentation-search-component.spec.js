@@ -11,10 +11,10 @@
 
  ============================================================================*/
 
-describe('Inventory Search component', () => {
+describe('Documentation Search component', () => {
     let scope, createElement, element;
 
-    beforeEach(angular.mock.module('data-prep.inventory-search'));
+    beforeEach(angular.mock.module('data-prep.documentation-search'));
     beforeEach(angular.mock.module('htmlTemplates'));
 
     beforeEach(inject(($rootScope, $compile) => {
@@ -22,8 +22,8 @@ describe('Inventory Search component', () => {
 
         createElement = () => {
             const template =
-                `<inventory-search>
-                 </inventory-search>`;
+                `<documentation-search>
+                 </documentation-search>`;
             element = $compile(template)(scope);
             scope.$digest();
         };

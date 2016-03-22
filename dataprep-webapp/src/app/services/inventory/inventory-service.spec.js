@@ -11,10 +11,10 @@
 
  ============================================================================*/
 
-describe('Inventory Service', function () {
+describe('Inventory Service', () => {
     'use strict';
 
-    var results = {
+    let results = {
         data: {
             folders: [{name : 'folder test', lastModificationDate: 1}],
             preparations: [{name : 'prep test', lastModificationDate: 2}],
@@ -37,17 +37,17 @@ describe('Inventory Service', function () {
         spyOn(InventoryRestService, 'search').and.returnValue($q.when(results));
     }));
 
-    it('should call inventory search rest service and process data', inject(function ($rootScope, InventoryService) {
+    it('should call inventory search rest service and process data', inject(($rootScope, InventoryService) => {
         //given
-        var result= null;
-        var expectedResult = [
-            {inventoryType: 'dataset', author: 'toto', created: 1, records: 100, name: 'dataset <span class="highlighted">test</span>', path: 'home', type: 'csv', originalItem: results.data.datasets[0], lastModificationDate: 3},
-            {name : 'prep <span class="highlighted">test</span>', lastModificationDate: 2, inventoryType: 'preparation'},
-            {name : 'folder <span class="highlighted">test</span>', lastModificationDate: 1, inventoryType: 'folder'}
+        let result= null;
+        let expectedResult = [
+            {inventoryType: 'dataset', author: 'toto', created: 1, records: 100, name: 'dataset <span class="highlighted">test</span>', path: 'home', type: 'csv', originalItem: results.data.datasets[0], lastModificationDate: 3, tooltipName: 'dataset test'},
+            {name : 'prep <span class="highlighted">test</span>', lastModificationDate: 2, inventoryType: 'preparation', tooltipName: 'prep test'},
+            {name : 'folder <span class="highlighted">test</span>', lastModificationDate: 1, inventoryType: 'folder', tooltipName: 'folder test'}
         ];
 
         //when
-        InventoryService.search('test').then(function (response) {
+        InventoryService.search('test').then((response) => {
             result = response;
         });
 

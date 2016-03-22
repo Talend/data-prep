@@ -74,6 +74,7 @@ class InventoryService {
                 itemToDisplay.type = item.type;
                 itemToDisplay.originalItem = item;
                 itemToDisplay.lastModificationDate = item.lastModificationDate;
+                itemToDisplay.tooltipName = item.name;
 
                 inventory_items.push(itemToDisplay);
             });
@@ -82,41 +83,26 @@ class InventoryService {
         if (data.preparations && data.preparations.length) {
             _.each(data.preparations, function (item) {
                 item.inventoryType = 'preparation';
+                item.tooltipName = item.name;
             });
             inventory_items = inventory_items.concat(data.preparations);
         }
         if (data.folders && data.folders.length) {
             _.each(data.folders, function (item) {
                 item.inventoryType = 'folder';
+                item.tooltipName = item.name;
             });
             inventory_items = inventory_items.concat(data.folders);
         }
 
         return _.chain(inventory_items)
             .map((item) => {
-                this.highlight(item, 'name', searchValue);
+                this.TextFormatService.highlight(item, 'name', searchValue, 'highlighted');
                 return item;
             })
             .sortBy('lastModificationDate')
             .reverse()
             .value();
-    }
-
-    /**
-     * @ngdoc method
-     * @name highlight
-     * @param {Object} object
-     * @param {Integer} key
-     * @param {String} highlightText text to highlight
-     * @description highlight an item of the object
-     */
-    highlight(object, key, highlightText) {
-        let originalValue = object[key];
-        if (originalValue.toLowerCase().indexOf(highlightText.toLowerCase()) !== -1) {
-            object[key] = originalValue.replace(
-                new RegExp('(' + this.TextFormatService.escapeRegex(highlightText) + ')', 'gi'),
-                '<span class="highlighted">$1</span>');
-        }
     }
 }
 

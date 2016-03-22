@@ -24,8 +24,9 @@ describe('Inventory Search controller', function () {
     }));
 
     describe('search ', function() {
-        it('should call the easter eggs service', inject(function ($q,InventoryService) {
+        it('should call inventory search service', inject(function ($q,InventoryService, DocumentationService) {
             spyOn(InventoryService, 'search').and.returnValue($q.when({datasets : [], folders: [], preparations:[]}));
+            spyOn(DocumentationService, 'search').and.returnValue($q.when([{url: 'url', name: 'name', description: 'description'}]));
 
             //when
             component.search('barcelona');
@@ -34,6 +35,19 @@ describe('Inventory Search controller', function () {
             //then
             expect(InventoryService.search).toHaveBeenCalledWith('barcelona');
             expect(component.results).toEqual({datasets : [], folders: [], preparations:[]});
+        }));
+
+        it('should call documentation search service', inject(function ($q, InventoryService, DocumentationService) {
+            spyOn(DocumentationService, 'search').and.returnValue($q.when([{url: 'url', name: 'name', description: 'description'}]));
+            spyOn(InventoryService, 'search').and.returnValue($q.when({datasets : [], folders: [], preparations:[]}));
+
+            //when
+            component.search('barcelona');
+            scope.$digest();
+
+            //then
+            expect(DocumentationService.search).toHaveBeenCalledWith('barcelona');
+            expect(component.docResults).toEqual([{url: 'url', name: 'name', description: 'description'}]);
         }));
 
         it('should go to folder', inject(function ($state) {

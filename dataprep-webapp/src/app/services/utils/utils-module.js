@@ -22,6 +22,7 @@ import StorageService from './storage/storage-service';
 import TextFormatService from './text-format/text-format-service';
 import WorkerService from './worker/worker-service';
 import DisableRightClick from './click/disable-right-click-directive';
+import documentationSearchURL from './config/utils-documentation-search-url-service';
 
 (() => {
     'use strict';
@@ -38,6 +39,7 @@ import DisableRightClick from './click/disable-right-click-directive';
         ])
         .value('copyRights', copyright)
         .value('version', version)
+        .value('documentationSearchURL', documentationSearchURL)
         .filter('TDPMoment', TDPMoment)
         .service('RestURLs', RestURLs)
         .service('ConverterService', ConverterService)

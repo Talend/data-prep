@@ -11,24 +11,13 @@
 
  ============================================================================*/
 
+describe('Documentation search url service', () => {
+    'use strict';
 
-/**
- * @ngdoc directive
- * @name data-prep.data-prep.inventory-search
- * @description This directive display an inventory search
- * @restrict E
- *
- * @usage
- * <inventory-search
- * </inventory-search>
+    beforeEach(angular.mock.module('data-prep.services.utils'));
 
- */
-
-import InventorySearchCtrl from './inventory-search-controller';
-
-const InventorySearch = {
-    templateUrl: 'app/components/inventory/search/inventory-search.html',
-    controller: InventorySearchCtrl
-};
-
-export default InventorySearch;
+    it('should set value by default', inject((documentationSearchURL)=>{
+        //then
+        expect(documentationSearchURL).toBe('https://www.talendforge.org/find/api/index.php?source=DATA%20PREP&condition=AND&max=5');
+    }));
+});

@@ -11,24 +11,23 @@
 
  ============================================================================*/
 
-
 /**
  * @ngdoc directive
- * @name data-prep.data-prep.inventory-search
- * @description This directive display an inventory search
+ * @name data-prep.data-prep.documentation-search
+ * @description This directive display an documentation search
  * @restrict E
  *
  * @usage
- * <inventory-search
- * </inventory-search>
+ * <documentation-search
+ * </documentation-search>
 
  */
 
-import InventorySearchCtrl from './inventory-search-controller';
+import DocumentationSearchCtrl from './documentation-search-controller';
 
-const InventorySearch = {
-    templateUrl: 'app/components/inventory/search/inventory-search.html',
-    controller: InventorySearchCtrl
+const DocumentationSearch = {
+    templateUrl: 'app/components/playground/documentation-search/documentation-search.html',
+    controller: DocumentationSearchCtrl
 };
 
-export default InventorySearch;
+export default DocumentationSearch;

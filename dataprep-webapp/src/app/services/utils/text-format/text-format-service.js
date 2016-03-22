@@ -22,7 +22,8 @@ export default function TextFormatService() {
         escapeRegex: escapeRegex,
         escapeRegexpExceptStar: escapeRegexpExceptStar,
         convertPatternToRegexp: convertPatternToRegexp,
-        convertJavaDateFormatToMomentDateFormat: convertJavaDateFormatToMomentDateFormat
+        convertJavaDateFormatToMomentDateFormat: convertJavaDateFormatToMomentDateFormat,
+        highlight: highlight
     };
 
     //--------------------------------------------------------------------------------------------------------------
@@ -188,5 +189,25 @@ export default function TextFormatService() {
         });
 
         return pattern;
+    }
+
+
+    /**
+     * @ngdoc method
+     * @name highlight
+     * @methodOf data-prep.services.utils:TextFormatService
+     * @param {Object} object
+     * @param {Integer} key
+     * @param {String} highlightText text to highlight
+     * @param {String} hightlightCssClass css class to highlight
+     * @description highlight an item of the object
+     */
+    function highlight(object, key, highlightText, hightlightCssClass) {
+        let originalValue = object[key];
+        if (originalValue.toLowerCase().indexOf(highlightText.toLowerCase()) !== -1) {
+            object[key] = originalValue.replace(
+                new RegExp('(' + escapeRegex(highlightText) + ')', 'gi'),
+                '<span class="' + hightlightCssClass + '">$1</span>');
+        }
     }
 }

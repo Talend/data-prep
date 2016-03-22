@@ -14,7 +14,7 @@
   -->
 
 <input type="search"
-       translate-once-placeholder="SEARCH"
+       placeholder="{{typeaheadCtrl.placeholder}}"
        ng-model="typeaheadCtrl.searchString"
        ng-model-options="{debounce: { default: 300, blur: 0 }}"
        ng-change="typeaheadCtrl.onChange()"

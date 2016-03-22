@@ -23,13 +23,14 @@
  */
 class InventorySearchCtrl {
 
-    constructor($state, UploadWorkflowService, InventoryService, FolderService, PreparationService) {
+    constructor($state, UploadWorkflowService, InventoryService, FolderService, PreparationService, DocumentationService) {
         'ngInject';
         this.uploadWorkflowService = UploadWorkflowService;
         this.folderService = FolderService;
         this.preparationService = PreparationService;
         this.inventoryService = InventoryService;
         this.$state = $state;
+        this.documentationService = DocumentationService;
     }
 
     /**
@@ -39,10 +40,17 @@ class InventorySearchCtrl {
      * @description Search based on searchInput
      */
     search (searchInput) {
-        this.inventoryService.search(searchInput)
-            .then((response)=> {
-                this.results = response;
-            });
+        if(searchInput){
+            this.inventoryService.search(searchInput)
+                .then((response)=> {
+                    this.results = response;
+                });
+
+            this.documentationService.search(searchInput)
+                .then((response)=> {
+                    this.docResults = response;
+                });
+        }
     }
 
     /**

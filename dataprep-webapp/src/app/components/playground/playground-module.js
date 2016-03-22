@@ -54,7 +54,9 @@ import PlaygroundHeader from './header/playground-header-directive';
             'data-prep.services.preparation',
             'data-prep.services.playground',
             'data-prep.services.recipe',
-            'data-prep.services.state'
+            'data-prep.services.state',
+            'data-prep.documentation-search',
+            'data-prep.services.documentation'
         ])
         .controller('PlaygroundCtrl', PlaygroundCtrl)
         .directive('playground', Playground)

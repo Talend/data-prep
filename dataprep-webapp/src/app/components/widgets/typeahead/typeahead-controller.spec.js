@@ -18,10 +18,10 @@ describe('Typeahead widget controller', () => {
 
     beforeEach(angular.mock.module('talend.widget'));
 
-    beforeEach(inject(($rootScope, $controller) => {
+    beforeEach(inject(($rootScope, $componentController) => {
         scope = $rootScope.$new();
 
-        createController = () => $controller('TypeaheadCtrl', {$scope: scope});
+        createController = () => $componentController('typeahead', {$scope: scope});
     }));
 
     describe('on change', () => {

@@ -11,28 +11,22 @@
 
  ============================================================================*/
 
-import InventorySearch from './inventory-search-component';
+import DocumentationSearch from './documentation-search-component';
 
 (() => {
     'use strict';
 
     /**
      * @ngdoc object
-     * @name data-prep.data-prep.inventory-search
-     * @description This module contains the component to manage an inventory search
+     * @name data-prep.data-prep.documentation-search
+     * @description This module contains the component to manage an documentation search
      * @requires talend.widget
-     * @requires data-prep.services.utils
      */
-    angular.module('data-prep.inventory-search',
+    angular.module('data-prep.documentation-search',
         [
-            'data-prep.services.utils',
             'talend.widget',
-            'data-prep.services.datasetWorkflowService',
-            'data-prep.services.inventory',
-            'data-prep.services.preparation',
-            'data-prep.services.documentation',
-            'pascalprecht.translate'
+            'data-prep.services.documentation'
         ])
-        .component('inventorySearch', InventorySearch);
+        .component('documentationSearch', DocumentationSearch);
 })();
 

@@ -167,20 +167,11 @@ export default function ColumnSuggestionService($q, state, StateService, Transfo
         return catTransfo.transformations.length;
     }
 
-    function highlight(object, key, highlightText) {
-        var originalValue = object[key];
-        if (originalValue.toLowerCase().indexOf(highlightText) !== -1) {
-            object[key] = originalValue.replace(
-                new RegExp('(' + TextFormatService.escapeRegex(highlightText) + ')', 'gi'),
-                '<span class="highlighted">$1</span>');
-        }
-    }
-
     function highlightDisplayedLabels(searchValue) {
         return function (catTransfo) {
-            highlight(catTransfo, 'categoryHtml', searchValue);
+            TextFormatService.highlight(catTransfo, 'categoryHtml', searchValue, 'highlighted');
             _.forEach(catTransfo.transformations, function (transfo) {
-                highlight(transfo, 'labelHtml', searchValue);
+                TextFormatService.highlight(transfo, 'labelHtml', searchValue, 'highlighted');
             });
             return catTransfo;
         };

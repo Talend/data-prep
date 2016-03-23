@@ -122,4 +122,71 @@ public class XlsWriterTest extends BaseFormatTest {
         assertThat(row.getCell(6).getStringCellValue()).isEqualTo("Star city");
     }
 
+
+    /**
+     * Please have a look at <a href="https://jira.talendforge.org/browse/TDP-1528">TDP-1528</a>.
+     * @throws Exception
+     */
+    @Test
+    public void TDP_1528_export_of_backslash() throws Exception {
+        // given
+        Path path = Files.createTempFile("datarep-foo", "xlsx");
+        Files.deleteIfExists(path);
+        try (final OutputStream outputStream = Files.newOutputStream(path)) {
+            final Configuration configuration = Configuration.builder() //
+                    .format(XlsFormat.XLSX) //
+                    .output(outputStream) //
+                    .actions("") //
+                    .build();
+            final Transformer exporter = factory.get(configuration);
+            final InputStream inputStream = XlsWriterTest.class.getResourceAsStream("tdp_1528_backslash_not_exported.json");
+            final ObjectMapper mapper = builder.build();
+            try (JsonParser parser = mapper.getFactory().createParser(inputStream)) {
+                final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+                exporter.transform(dataSet, configuration);
+            }
+        }
+        DataSetMetadata metadata = metadataBuilder.metadata().id("1528").build();
+        SchemaParser.Request request = new SchemaParser.Request(Files.newInputStream(path), metadata);
+        Workbook workbook = WorkbookFactory.create( request.getContent() );
+        assertThat(workbook).isNotNull();
+        assertThat(workbook.getNumberOfSheets()).isEqualTo(1);
+
+        Sheet sheet = workbook.getSheetAt(0);
+        assertThat(sheet).isNotNull().isNotEmpty();
+        assertThat(sheet.getFirstRowNum()).isEqualTo(0);
+        assertThat(sheet.getLastRowNum()).isEqualTo(2);
+
+        // assert header content
+        Row row = sheet.getRow(0);
+        /*
+         * [ {"id": "0", "name": "column1", "type": "string"}, {"id": "1", "name": "column2", "type": "string"},
+         * {"id": "2", "name": "column2", "type": "string"} ]
+         */
+        assertThat(row.getCell(0).getRichStringCellValue().getString()).isEqualTo("column1");
+        assertThat(row.getCell(1).getRichStringCellValue().getString()).isEqualTo("column2");
+        assertThat(row.getCell(2).getRichStringCellValue().getString()).isEqualTo("column3");
+
+        // assert first content
+        row = sheet.getRow(1);
+        /*
+         * { "0": "BEAUTIFUL ITEM DESC W\BAG", "1": "Hello", "2": "Yo" }
+         */
+
+        assertThat(row.getCell(0).getStringCellValue()).isEqualTo("BEAUTIFUL ITEM DESC W\\BAG");
+        assertThat(row.getCell(1).getStringCellValue()).isEqualTo("Hello");
+        assertThat(row.getCell(2).getStringCellValue()).isEqualTo("Yo");
+
+        // assert last content
+        row = sheet.getRow(sheet.getLastRowNum());
+        /*
+         * { "0": "Konishiwa", "1": "Na nga def", "2": "Hola" }
+         */
+        assertThat(row.getCell(0).getStringCellValue()).isEqualTo("Konishiwa");
+        assertThat(row.getCell(1).getStringCellValue()).isEqualTo("Na nga def");
+        assertThat(row.getCell(2).getStringCellValue()).isEqualTo("Hola");
+    }
+
+
+
 }

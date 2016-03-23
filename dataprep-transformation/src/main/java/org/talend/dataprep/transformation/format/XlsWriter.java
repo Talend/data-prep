@@ -97,7 +97,7 @@ public class XlsWriter implements TransformerWriter {
         recordsWriter.flush();
         recordsWriter.close();
         try (Reader reader = new InputStreamReader(new FileInputStream(bufferFile))) {
-            try (CSVReader bufferReader = new CSVReader(reader, BUFFER_CSV_SEPARATOR)) {
+            try (CSVReader bufferReader = new CSVReader(reader, BUFFER_CSV_SEPARATOR, '\"', '\0')) {
                 String[] nextRow;
                 while ((nextRow = bufferReader.readNext()) != null) {
                     // writing data

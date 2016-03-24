@@ -92,11 +92,7 @@ public class SwapTest extends BaseDateTests {
                        MapEntry.entry( "0001", "10" ), //
                        MapEntry.entry( "0002", "cheese" ));
 
-        // FIXME how to test that ???
-        /*
-        Assertions.assertThat(parameters.get( ImplicitParameters.OTHER_COLUMN_ID.getKey())) //
-                .isNotNull().isEqualTo("0001");
-        */
+
     }
 
 

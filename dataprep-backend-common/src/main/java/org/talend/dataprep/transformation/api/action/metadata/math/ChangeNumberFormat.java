@@ -76,6 +76,8 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
 
     protected static final String EU_SEPARATORS = "eu_separators";
 
+    protected static final String CH_SEPARATORS = "ch_separators";
+
     protected static final String US_PATTERN = "us_pattern";
 
     protected static final String EU_PATTERN = "eu_pattern";
@@ -132,6 +134,7 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
                 .item(UNKNOWN_SEPARATORS)
                 .item(US_SEPARATORS)
                 .item(EU_SEPARATORS)
+                .item(CH_SEPARATORS)
                 .item(CUSTOM, buildDecimalSeparatorParameter(FROM), buildGroupingSeparatorParameter(FROM))
                 .defaultValue(UNKNOWN_SEPARATORS)
                 .build());
@@ -277,6 +280,9 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
                 break;
             case EU_SEPARATORS:
                 bd = BigDecimalParser.toBigDecimal(value, ',', '.');
+                break;
+            case CH_SEPARATORS:
+                bd = BigDecimalParser.toBigDecimal(value, '.', '\'');
                 break;
             case CUSTOM:
                 String decSep = getCustomizableParam(FROM + DECIMAL + SEPARATOR, context.getParameters());

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
@@ -20,10 +20,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -83,7 +80,12 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
 
     protected static final String EU_PATTERN = "eu_pattern";
 
+    protected static final String CH_PATTERN = "ch_pattern";
+
     protected static final String SCIENTIFIC = "scientific";
+
+    protected static final DecimalFormat CH_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
+            DecimalFormatSymbols.getInstance(new Locale("FR", "CH")));
 
     /**
      * Constants to build parameters name by concat:
@@ -140,6 +142,7 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
                 .name(TARGET_PATTERN)
                 .item(US_PATTERN)
                 .item(EU_PATTERN)
+                .item(CH_PATTERN)
                 .item(SCIENTIFIC)
                 .item(CUSTOM, new Parameter(TARGET_PATTERN + "_" + CUSTOM, STRING, US_DECIMAL_PATTERN.toPattern()),
                         buildDecimalSeparatorParameter(TARGET),
@@ -169,9 +172,10 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
         // @formatter:off
         return  SelectParameter.Builder.builder()
                 .name(name)
-                .item(",")
-                .item(" ")
-                .item(".")
+                .item(",",", (comma)")
+                .item(" "," (space)")
+                .item(".",". (dot)")
+                .item("'", "' (quote)")
                 .item("", "None")
                 .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ","))
                 .canBeBlank(true)
@@ -221,6 +225,8 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
             return US_DECIMAL_PATTERN;
         case EU_PATTERN:
             return EU_DECIMAL_PATTERN;
+        case CH_PATTERN:
+            return CH_DECIMAL_PATTERN;
         case SCIENTIFIC:
             return US_SCIENTIFIC_DECIMAL_PATTERN;
         }
@@ -290,8 +296,7 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
             String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);
 
             row.set(columnId, newValue);
-        }
-        catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             LOGGER.debug("Unable to parse {} value as Number", value);
             return;
         }

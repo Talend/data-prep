@@ -167,6 +167,21 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void should_process_row_CH() throws Exception {
+        // given
+        final DataSetRow row = getRow("toto", "1.012,50", "tata");
+        parameters.put(FROM_SEPARATORS, EU_SEPARATORS);
+        parameters.put(TARGET_PATTERN, CH_PATTERN);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "1'012.5", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
     public void should_process_row_SCIENTIFIC() throws Exception {
         // given
         final DataSetRow row = getRow("toto", "1.23E+3", "tata");

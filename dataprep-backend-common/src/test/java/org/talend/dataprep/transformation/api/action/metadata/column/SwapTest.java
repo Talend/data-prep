@@ -121,9 +121,6 @@ public class SwapTest extends BaseDateTests {
                        MapEntry.entry( "0001", "wine" ), //
                        MapEntry.entry( "0002", "cheese" ));
 
-
-        Assertions.assertThat(parameters.get( ImplicitParameters.OTHER_COLUMN_ID.getKey())) //
-                .isNullOrEmpty();
     }
 
 

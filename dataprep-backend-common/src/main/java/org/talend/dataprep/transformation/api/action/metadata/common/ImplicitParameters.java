@@ -31,8 +31,7 @@ public enum ImplicitParameters {
                                 COLUMN_ID(STRING, EMPTY),
                                 ROW_ID(STRING, EMPTY),
                                 SCOPE(STRING, EMPTY),
-                                FILTER(ParameterType.FILTER, EMPTY),
-                                OTHER_COLUMN_ID(ParameterType.STRING, EMPTY);
+                                FILTER(ParameterType.FILTER, EMPTY);
 
     /** The parameter. */
     private final Parameter parameter;

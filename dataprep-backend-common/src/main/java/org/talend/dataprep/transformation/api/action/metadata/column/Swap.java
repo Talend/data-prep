@@ -105,8 +105,6 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
             return;
         }
 
-        parameters.put(ImplicitParameters.OTHER_COLUMN_ID.getKey(), selectedColumn.getId());
-
     }
 
     /**

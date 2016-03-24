@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -16,8 +17,10 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
+import org.talend.dataprep.transformation.api.action.metadata.column.Swap;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
+import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataprep.transformation.pipeline.model.*;
 import org.talend.datascience.common.inference.Analyzer;
@@ -220,9 +223,10 @@ public class Pipeline implements Node {
                             final String modifiedColumnId = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
                             modifiedColumns.add(modifiedColumnId);
                             // TODO ideally we'd like to be able to pass a collection of ids
-                            String otherColumnId = action.getParameters().get(ImplicitParameters.OTHER_COLUMN_ID.getKey());
-                            if (otherColumnId != null){
-                                modifiedColumns.add( otherColumnId );
+                            // TODO something more generic than relying on the action name
+                            if (StringUtils.equals(action.getName(), Swap.SWAP_COLUMN_ACTION_NAME) //
+                                    && StringUtils.isNotBlank(action.getParameters().get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER))){
+                                modifiedColumns.add(action.getParameters().get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
                             }
 
                             break;

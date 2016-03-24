@@ -20,7 +20,7 @@
        ng-change="typeaheadCtrl.onChange()"
        class="input-search"/>
 <div class="typeahead-result"
-     ng-if="typeaheadCtrl.searchString && typeaheadCtrl.visible">
+     ng-show="typeaheadCtrl.searchString && typeaheadCtrl.visible">
 
     <div class="searching" ng-if="typeaheadCtrl.searching && typeaheadCtrl.searchingText">{{typeaheadCtrl.searchingText}}</div>
     <ng-transclude ng-if="typeaheadCtrl.customRender === 'true'"></ng-transclude>

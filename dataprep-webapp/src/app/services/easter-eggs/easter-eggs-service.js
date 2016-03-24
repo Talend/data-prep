@@ -27,9 +27,7 @@ export default function EasterEggsService(StateService) {
      * @description Enable easter egg depending on the given input.
      */
     this.enableEasterEgg = function enableEasterEgg(input) {
-        if (input === 'star wars') {
-            StateService.enableEasterEgg(input);
-        }
+        StateService.enableEasterEgg(input);
     };
 
 }

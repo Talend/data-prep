@@ -19,7 +19,7 @@ import TypeaheadCtrl from './typeahead-controller';
  * @description This directive create an input with a dropdown element.
  * @param {function} search function called when input changes
  */
-export default function Typeahead($timeout) {
+export default function Typeahead($timeout, $window) {
     'ngInject';
 
     return {
@@ -39,17 +39,69 @@ export default function Typeahead($timeout) {
             post: (scope, iElement, iAttrs, ctrl) => {
                 const body = angular.element('body').eq(0);
                 const input = iElement.find('.input-search');
+                const container = iElement.find('.typeahead-result');
+                const offset = 20;
 
                 function hideResults() {
                     $timeout(() => ctrl.hideResults());
                 }
 
                 input.keydown((event) => {
-                    if (event.keyCode === 27) {
-                        ctrl.hideResults();
-                        scope.$digest();
+                    let menu = iElement.find('ul');
+                    let selected = menu.find('li.selected');
+                    let current;
+                    let listItems = menu.find('li');
+
+                    listItems.removeClass('selected');
+
+                    function scrollToSelectedItem() {
+                        if (current.offset().top < current.height()) {
+                            container.animate({
+                                scrollTop: container.scrollTop() + current.offset().top - current.height() + offset
+                            });
+                        }
+                        if ((current.offset().top + current.height()) > container.height()) {
+                            container.animate({
+                                scrollTop: container.scrollTop() + current.offset().top - container.height() + offset
+                            });
+                        }
+                    }
+
+                    switch (event.keyCode) {
+                        case 27:
+                            ctrl.hideResults();
+                            scope.$digest();
+                            break;
+                        case 40:
+                            if (!selected.length || selected.is(':last-child')) {
+                                current = listItems.eq(0);
+                            } else {
+                                current = selected.next();
+                            }
+                            break;
+                        case 38:
+                            if (!selected.length || selected.is(':first-child')) {
+                                current = listItems.last();
+                            } else {
+                                current = selected.prev();
+                            }
+                            break;
+                        case 13:
+                            if (selected.length) {
+                                if (selected.children().eq(0).is('a')) {
+                                    $window.open(selected.children().eq(0).attr('href'),'_blank');
+                                } else {
+                                    selected.children().click();
+                                }
+                            }
+                            break;
+                    }
+                    if (current) {
+                        current.addClass('selected');
+                        scrollToSelectedItem();
                     }
                 });
+
                 input.click((event) => event.stopPropagation());
                 body.click(hideResults);
 

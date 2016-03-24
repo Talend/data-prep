@@ -31,7 +31,8 @@ import InventorySearch from './inventory-search-component';
             'data-prep.search-bar',
             'data-prep.services.utils',
             'data-prep.services.inventory',
-            'data-prep.services.documentation'
+            'data-prep.services.documentation',
+            'data-prep.services.easter-eggs'
         ])
         .component('inventorySearch', InventorySearch);
 })();

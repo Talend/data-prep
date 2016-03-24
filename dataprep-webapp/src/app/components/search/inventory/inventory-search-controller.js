@@ -21,11 +21,12 @@
  */
 class InventorySearchCtrl {
 
-    constructor($q, InventoryService, DocumentationService) {
+    constructor($q, InventoryService, DocumentationService, EasterEggsService) {
         'ngInject';
         this.$q = $q;
         this.inventoryService = InventoryService;
         this.documentationService = DocumentationService;
+        this.easterEggsService = EasterEggsService;
     }
 
     /**
@@ -37,6 +38,11 @@ class InventorySearchCtrl {
     search(searchInput) {
         this.results = null;
         this.currentInput = searchInput;
+
+        if(searchInput === 'star wars') {
+            this.easterEggsService.enableEasterEgg(searchInput);
+            return;
+        }
 
         const inventoryPromise = this._searchDoc(searchInput);
         const docPromise = this._searchInventory(searchInput);

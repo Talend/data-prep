@@ -288,7 +288,8 @@ export default function FilterAdapterService(state) {
         }
 
         var colId = condition.field;
-        var colName = _.find(state.playground.data.metadata.columns, {id: colId}).name;
+        var filteredColumn = _.find(state.playground.data.metadata.columns, {id: colId});
+        var colName = (filteredColumn && filteredColumn.name) || colId;
         return createFilter(type, colId, colName, editable, args, null, null);
     }
 }

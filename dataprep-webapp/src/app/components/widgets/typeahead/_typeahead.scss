@@ -27,6 +27,19 @@ typeahead {
     position: absolute;
     top: 35px;
     left: 0;
-    right:0;
+    right: 0;
+
+    .highlighted {
+      font-weight: 900;
+    }
+
+    .no-results,
+    .searching {
+      @include display(flex);
+      @include justify-content(center);
+      color: $black;
+      font-weight: 900;
+      padding: 10px;
+    }
   }
 }

@@ -10,6 +10,8 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+const properties = ['url', 'name', 'description'];
+
 class DocumentationService {
 
     constructor(DocumentationRestService, TextFormatService) {
@@ -27,7 +29,7 @@ class DocumentationService {
     search(keyword) {
         return this.documentationRestService.search(keyword)
             .then((response) => {
-                return _.chain(this.thcParser(response.data))
+                return _.chain(this._thcParser(response.data))
                     .map((item) => {
                         this.textFormatService.highlight(item, 'name', keyword, 'highlighted');
                         this.textFormatService.highlight(item, 'description', keyword, 'highlighted');
@@ -39,58 +41,41 @@ class DocumentationService {
 
     /**
      * @ngdoc method
-     * @name thcParser
+     * @name _thcParser
      * @methodOf data-prep.services.documentation.service:DocumentationService
-     * @description convert Talend help center csv to docuumentation object
+     * @description Convert Talend help center csv to documentation elements
+     * @param {string} thcCsv The THC search result to adapt
+     * @returns {Array} The array of documentation elements
      */
-    thcParser(csv) {
-        let lines=csv.split("\n");
-        let result = [];
-        let properties = ['url', 'name', 'description'];
+    _thcParser(thcCsv) {
+        return thcCsv
+            .replace(/[^\x00-\x7F]/g, " ")                  // remove non ascii du to THC encoding
+            .split('\n')
+            .map((line) => line.trim())
+            .filter((line) => line)                         // remove empty lines
+            .map((line) => line.replace(/^"(.*)"$/, '$1'))  // strip leading/trailing quotes
+            .map((line) => line.split('","'))
+            .filter((lineParts) => lineParts.length === properties.length)
+            .map((lineParts) => this._createDocElement(lineParts));
+    }
 
-        for(let i=0; i<lines.length; i++) {
-            let obj = {};
-
-            let row = lines[i],
-                propertyIndex = 0,
-                startValueIndex = 0,
-                index = 0;
-
-            //Skip empty lines
-            if (row.trim() === '') { continue; }
-
-            while (index < row.length) {
-                /* if we meet a double quote we skip until the next one */
-                let character = row[index];
-
-                if (character === '"') {
-                    do { character = row[++index]; } while (character !== '"' && index < row.length - 1);
-                }
-
-                if (character === ',' || /* handle end of line with no comma */ index === row.length - 1) {
-                    /* we've got a value */
-                    let value = row.substr(startValueIndex, index - startValueIndex).trim();
-
-                    /* skip first double quote */
-                    if (value[0] === '"') { value = value.substr(1); }
-                    /* skip last comma */
-                    if (value[value.length - 1] === ',') { value = value.substr(0, value.length - 1); }
-                    /* skip last double quote */
-                    if (value[value.length - 1] === '"') { value = value.substr(0, value.length - 1); }
-
-                    var key = properties[propertyIndex++];
-                    obj[key] = value;
-                    startValueIndex = index + 1;
-                }
-                ++index;
-            }
-
-            //Add tooltipName for tooltip
-            obj.tooltipName = obj.name;
-
-            result.push(obj);
+    /**
+     * @ngdoc method
+     * @name _createDocElement
+     * @methodOf data-prep.services.documentation.service:DocumentationService
+     * @description Create a document element from array ['url', 'name', 'description']
+     * @param {Array} parts The documentation parts ['url', 'name', 'description']
+     * @returns {object} The documentation elements
+     */
+    _createDocElement(parts) {
+        const doc = {};
+        for(let i = 0; i < properties.length; ++i) {
+            const name = properties[i];
+            const value = parts[i];
+            doc[name] = value;
         }
-        return result;
+        doc.tooltipName = doc.name;
+        return doc;
     }
 }
 

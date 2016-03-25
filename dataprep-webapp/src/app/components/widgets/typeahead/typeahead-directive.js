@@ -28,7 +28,9 @@ export default function Typeahead($timeout) {
         templateUrl: 'app/components/widgets/typeahead/typeahead.html',
         scope: {
             search: '&',
-            placeholder: '@'
+            placeholder: '@',
+            searchingText: '@',
+            customRender: '@'
         },
         bindToController: true,
         controller: TypeaheadCtrl,

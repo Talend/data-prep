@@ -26,6 +26,7 @@ import InventoryItem from './inventory-item-directive';
      */
     angular.module('data-prep.inventory-item',
         [
+            'ngSanitize',
             'pascalprecht.translate',
             'talend.widget',
             'data-prep.services.utils'

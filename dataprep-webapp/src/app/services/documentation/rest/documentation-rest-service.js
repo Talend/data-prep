@@ -27,9 +27,7 @@ class DocumentationRestService {
     search(keyword) {
         return this.$http({
             method: 'GET',
-            url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword),
-            headers: {'Content-Type': 'text/plain'},
-            data: 'text/csv'
+            url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword)
         });
     }
 }

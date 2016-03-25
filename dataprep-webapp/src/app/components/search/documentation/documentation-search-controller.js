@@ -32,11 +32,12 @@ class DocumentationSearchCtrl {
      * @description Search based on searchInput
      */
     search (searchInput) {
+        this.results = null;
+        this.currentInput = searchInput;
+
         if(searchInput){
-            this.documentationService.search(searchInput)
-                .then((response)=> {
-                    this.results = response;
-                });
+            return this.documentationService.search(searchInput)
+                .then((response)=> (this.currentInput === searchInput) && (this.results = response));
         }
     }
 }

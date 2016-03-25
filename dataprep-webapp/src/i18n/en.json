@@ -4,7 +4,6 @@
 
   "_comment": "Navbar",
   "EDIT_PROFIL": "Edit profil",
-  "SEARCH": "Search Talend Data Preparation and Documentation",
   "LOGOUT": "Logout",
   "MENU": "MENU",
   "FEEDBACK_FORM": "Send Feedback",
@@ -208,9 +207,10 @@
   "_comment": "Recipe",
   "FILTERS_APPLIED": "Filters applied",
 
-  "_comment": "Payground",
+  "_comment": "Search",
+  "SEARCH": "Search Talend Data Preparation and Documentation",
+  "SEARCHING": "Searching ...",
   "PLAYGROUND_SEARCH": "Search Documentation",
-
 
   "_comment": "Statistics",
   "COUNT": "Count",

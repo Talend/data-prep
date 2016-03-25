@@ -296,16 +296,9 @@ header.navigation {
     width: 100%;
 
     input[type=search] {
-      box-sizing: border-box;
-      border-radius: $base-border-radius * 2;
-      border: $navigation-search-border;
       color: $navigation-color;
-      font-family: $base-font-family;
-      font-size: 0.9em;
       font-style: italic;
       margin: 0;
-      padding: 0.5em 0.8em;
-      width: 100%;
 
       @include media($large-screen) {
         width: 100%;

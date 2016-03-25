@@ -11,15 +11,15 @@
 
   ============================================================================*/
 
-describe('InventoryItem directive', function () {
+describe('InventoryItem directive', () => {
     'use strict';
 
     function strEndsWith(str, suffix) {
         return str.match(suffix + '$')[0] === suffix;
     }
 
-    var scope,  createElement, element, ctrl;
-    var dataset = {
+    let scope,  createElement, element, ctrl;
+    const dataset = {
         'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
         'name': 'US States',
         'author': 'anonymousUser',
@@ -29,7 +29,7 @@ describe('InventoryItem directive', function () {
         'preparations': [{name:'US States prepa'}, {name:'US States prepa 2'}]
     };
 
-    var preparation = {
+    const preparation = {
         'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
         'name': 'US States prep',
         'author': 'anonymousUser',
@@ -39,7 +39,7 @@ describe('InventoryItem directive', function () {
         'steps': [{name:'US States prepa'}, {name:'US States prepa 2'}]
     };
 
-    var folder = {
+    const folder = {
         'path': 'folder 1',
         'name': 'folder 1',
         'author': 'anonymousUser',
@@ -47,7 +47,7 @@ describe('InventoryItem directive', function () {
         'datasets': [{name: 'US States prepa'}, {name: 'US States prepa 2'}]
     };
 
-    var certifiedDataset = {
+    const certifiedDataset = {
         'id': '888888-bf80-41c8-92e5-66d70f22ec1f',
         'name': 'cars',
         'author': 'root',
@@ -60,7 +60,7 @@ describe('InventoryItem directive', function () {
     beforeEach(angular.mock.module('data-prep.inventory-item'));
 
     beforeEach(angular.mock.module('htmlTemplates'));
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
         $translateProvider.translations('en', {
             'OPEN_ACTION':'Open {{type}} \"{{name}}\"',
             'DATASET_DETAILS': 'owned by {{author}}, created {{created | TDPMoment}}, contains {{records}} lines',
@@ -74,24 +74,29 @@ describe('InventoryItem directive', function () {
         $translateProvider.preferredLanguage('en');
     }));
 
-    describe('dataset', function() {
+    afterEach(() => {
+        scope.$destroy();
+        element.remove();
+    });
 
-        beforeEach(inject(function ($rootScope, $compile) {
+    describe('dataset', () => {
+
+        beforeEach(inject(($rootScope, $compile) => {
             scope = $rootScope.$new();
 
             scope.dataset = dataset;
-            scope.openDataset = function(){};
-            scope.openRelatedInventory = function(){};
-            scope.copy = function(){};
-            scope.processCertif = function(){};
-            scope.rename = function(){};
-            scope.open = function(){};
-            scope.update = function(){};
-            scope.remove = function(){};
-            scope.openRelatedInv = function(){};
-            scope.toggleFavorite = function(){};
+            scope.openDataset = () =>{};
+            scope.openRelatedInventory = () =>{};
+            scope.copy = () =>{};
+            scope.processCertif = () =>{};
+            scope.rename = () =>{};
+            scope.open = () =>{};
+            scope.update = () =>{};
+            scope.remove = () =>{};
+            scope.openRelatedInv = () =>{};
+            scope.toggleFavorite = () =>{};
             scope.preparations = [];
-            createElement = function () {
+            createElement = () => {
                 element = angular.element('<inventory-item ' +
                     'item="dataset" ' +
                     'details="DATASET_DETAILS" ' +
@@ -114,50 +119,45 @@ describe('InventoryItem directive', function () {
             };
         }));
 
-        afterEach(function () {
-            scope.$destroy();
-            element.remove();
-        });
-
-        describe('display inventory components', function() {
-            it('should display inventory icon without certification pin', function () {
+        describe('display inventory components', () => {
+            it('should display inventory icon without certification pin', () => {
                 //when
                 createElement();
 
                 //then
-                var icon = element.find('.inventory-icon').eq(0);
-                var certificationIcon = icon.find('.pin');
+                const icon = element.find('.inventory-icon').eq(0);
+                const certificationIcon = icon.find('.pin');
                 expect(certificationIcon.length).toBe(0);
             });
-            it('should display CSV icon', function () {
+            it('should display CSV icon', () => {
                 //when
                 createElement();
 
                 //then
-                var icon = element.find('.inventory-icon').eq(0);
-                var iconSrc = icon.find('img')[0].src;
+                const icon = element.find('.inventory-icon').eq(0);
+                const iconSrc = icon.find('img')[0].src;
                 expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
             });
-            it('should display inventory icon with certification pin', function () {
+            it('should display inventory icon with certification pin', () => {
                 //when
                 scope.dataset = certifiedDataset;
                 createElement();
 
                 //then
-                var icon = element.find('.inventory-icon').eq(0);
-                var certificationIcon = icon.find('.pin');
+                const icon = element.find('.inventory-icon').eq(0);
+                const certificationIcon = icon.find('.pin');
                 expect(certificationIcon.length).toBe(1);
             });
 
-            it('should display inventory icon tooltip', function () {
+            it('should display inventory icon tooltip', () => {
                 //when
                 createElement();
 
                 //then
-                var title = element.find('.inventory-icon').eq(0).attr('title').trim();
+                const title = element.find('.inventory-icon').eq(0).attr('title').trim();
                 expect(title).toBe('Open ' + ctrl.type + ' "' + dataset.name + '"');
             });
-            it('should display related inventory icon tooltip', function () {
+            it('should display related inventory icon tooltip', () => {
                 //given
                 scope.preparations = dataset.preparations;
 
@@ -165,13 +165,13 @@ describe('InventoryItem directive', function () {
                 createElement();
 
                 //then
-                var title = element.find('.inventory-icon').eq(0).attr('title').trim();
+                const title = element.find('.inventory-icon').eq(0).attr('title').trim();
                 expect(title).toBe('Open ' + ctrl.relatedInventoriesType + ' "' + dataset.preparations[0].name + '"');
             });
 
-            it('should display inventory details', inject(function ($filter) {
+            it('should display inventory details', inject(($filter) => {
                 //given
-                var momentize = $filter('TDPMoment');
+                const momentize = $filter('TDPMoment');
 
                 //when
                 createElement();
@@ -181,23 +181,23 @@ describe('InventoryItem directive', function () {
             }));
 
 
-            it('should display inventory title', function () {
+            it('should display inventory title', () => {
                 //when
                 createElement();
 
                 //then
-                var title = element.find('talend-editable-text').eq(0).text().trim();
+                const title = element.find('talend-editable-text').eq(0).text().trim();
                 expect(title).toBe(dataset.name);
             });
 
-            it('should NOT display bottle icon: no related inventories', function () {
+            it('should NOT display bottle icon: no related inventories', () => {
                 //when
                 createElement();
 
                 //then
                 expect(element.find('.inventory-actions-related-item').length).toBe(0);
             });
-            it('should display bottle icon: at least 1 related inventory', function () {
+            it('should display bottle icon: at least 1 related inventory', () => {
                 //given
                 scope.preparations = dataset.preparations;
 
@@ -206,30 +206,30 @@ describe('InventoryItem directive', function () {
 
                 //then
                 expect(element.find('.inventory-actions-related-item').length).toBe(1);
-                var menuItems = element.find('.inventory-actions-related-item-menu > li');
+                const menuItems = element.find('.inventory-actions-related-item-menu > li');
                 expect(menuItems.length).toBe(4);
-                var relatedPrepsList = menuItems.eq(3).text().trim();
+                const relatedPrepsList = menuItems.eq(3).text().trim();
                 expect(relatedPrepsList.indexOf(dataset.preparations[1].name) > -1).toBeTruthy();
             });
 
-            it('should display update icon', function () {
+            it('should display update icon', () => {
                 //when
                 createElement();
 
                 //then
-                var icon = element.find('talend-file-selector').attr('button-data-icon');
+                const icon = element.find('talend-file-selector').attr('button-data-icon');
                 expect(icon).toBe('E');
             });
-            it('should display update icon tooltip', function () {
+            it('should display update icon tooltip', () => {
                 //when
                 createElement();
 
                 //then
-                var title = element.find('talend-file-selector').attr('button-title');
+                const title = element.find('talend-file-selector').attr('button-title');
                 expect(title).toBe('REPLACE_FILE_CONTENT');
             });
 
-            it('should display 2 dividers', function () {
+            it('should display 2 dividers', () => {
                 //when
                 createElement();
 
@@ -237,78 +237,78 @@ describe('InventoryItem directive', function () {
                 expect(element.find('.divider').length).toBe(2);
             });
 
-            it('should display copy/clone icon', function () {
+            it('should display copy/clone icon', () => {
                 //when
                 createElement();
 
                 //then
-                var icon = element.find('a').eq(0).attr('data-icon');
+                const icon = element.find('a').eq(0).attr('data-icon');
                 expect(icon).toBe('B');
             });
-            it('should display copy/clone icon tooltip', function () {
+            it('should display copy/clone icon tooltip', () => {
                 //when
                 createElement();
 
                 //then
-                var title = element.find('a').eq(0).attr('title');
+                const title = element.find('a').eq(0).attr('title');
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
 
-            it('should display remove icon', function () {
+            it('should display remove icon', () => {
                 //when
                 createElement();
 
                 //then
-                var icon = element.find('a').eq(1).attr('data-icon');
+                const icon = element.find('a').eq(1).attr('data-icon');
                 expect(icon).toBe('e');
             });
-            it('should display remove icon tooltip', function () {
+            it('should display remove icon tooltip', () => {
                 //when
                 createElement();
 
                 //then
-                var title = element.find('a').eq(1).attr('title');
+                const title = element.find('a').eq(1).attr('title');
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
 
-            it('should display certify icon', function () {
+            it('should display certify icon', () => {
                 //when
                 createElement();
 
                 //then
-                var icon = element.find('a').eq(2).attr('data-icon');
+                const icon = element.find('a').eq(2).attr('data-icon');
                 expect(icon).toBe('n');
             });
-            it('should display certify icon tooltip', function () {
+            it('should display certify icon tooltip', () => {
                 //when
                 createElement();
 
                 //then
-                var title = element.find('a').eq(2).attr('title');
+                const title = element.find('a').eq(2).attr('title');
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
 
-            it('should display favorite icon', function () {
+            it('should display favorite icon', () => {
                 //when
                 createElement();
 
             //then
-            var icon = element.find('a').eq(3).attr('data-icon');
+            const icon = element.find('a').eq(3).attr('data-icon');
             expect(icon).toBe('f');
         });
 
-        it('should display favorite icon tooltip', function () {
+        it('should display favorite icon tooltip', () => {
             //when
             createElement();
 
                 //then
-                var title = element.find('a').eq(3).attr('title');
+                const title = element.find('a').eq(3).attr('title');
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
         });
 
-        describe('actions on inventory components', function() {
-            beforeEach(inject(function() {
+        describe('actions on inventory components', () => {
+            beforeEach(inject(() => {
                 scope.openRelatedInventory = jasmine.createSpy('openRelatedInventory');
                 scope.open = jasmine.createSpy('open');
                 scope.rename = jasmine.createSpy('rename');
@@ -319,10 +319,10 @@ describe('InventoryItem directive', function () {
                 scope.toggleFavorite = jasmine.createSpy('toggleFavorite');
             }));
 
-            it('should open inventory item on file icon click', function () {
+            it('should open inventory item on file icon click', () => {
                 //given
                 createElement();
-                var icon = element.find('.inventory-icon');
+                const icon = element.find('.inventory-icon');
 
                 //when
                 icon.click();
@@ -330,11 +330,11 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.open).toHaveBeenCalledWith(dataset);
             });
-            it('should open the related inventory item on file icon click', function () {
+            it('should open the related inventory item on file icon click', () => {
                 //given
                 scope.preparations = [{}, {}];
                 createElement();
-                var icon = element.find('.inventory-icon');
+                const icon = element.find('.inventory-icon');
 
                 //when
                 icon.click();
@@ -343,10 +343,10 @@ describe('InventoryItem directive', function () {
                 expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[0]);
             });
 
-            it('should open inventory item on inventory title click', function () {
+            it('should open inventory item on inventory title click', () => {
                 //given
                 createElement();
-                var title = element.find('.inventory-title');
+                const title = element.find('.inventory-title');
 
                 //when
                 title.click();
@@ -354,11 +354,11 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.open).toHaveBeenCalledWith(dataset);
             });
-            it('should open the related inventory item on inventory title click', function () {
+            it('should open the related inventory item on inventory title click', () => {
                 //given
                 scope.preparations = [{}, {}];
                 createElement();
-                var title = element.find('.inventory-title');
+                const title = element.find('.inventory-title');
 
                 //when
                 title.click();
@@ -367,10 +367,10 @@ describe('InventoryItem directive', function () {
                 expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[0]);
             });
 
-            it('should open inventory item on element dblclick', function () {
+            it('should open inventory item on element dblclick', () => {
                 //given
                 createElement();
-                var inventory = element.find('.inventory-item');
+                const inventory = element.find('.inventory-item');
 
                 //when
                 inventory.dblclick();
@@ -378,11 +378,11 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.open).toHaveBeenCalledWith(dataset);
             });
-            it('should open the related inventory item on element dblclick', function () {
+            it('should open the related inventory item on element dblclick', () => {
                 //given
                 scope.preparations = [{}, {}];
                 createElement();
-                var inventory = element.find('.inventory-item');
+                const inventory = element.find('.inventory-item');
 
                 //when
                 inventory.dblclick();
@@ -390,11 +390,11 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[0]);
             });
-            it('should open related inventory item on bottle click', function () {
+            it('should open related inventory item on bottle click', () => {
                 //given
                 scope.preparations = [{}, {}];
                 createElement();
-                var bottle = element.find('.inventory-actions-related-item .button-dropdown-main').eq(0);
+                const bottle = element.find('.inventory-actions-related-item .button-dropdown-main').eq(0);
 
                 //when
                 bottle.click();
@@ -402,11 +402,11 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[0]);
             });
-            it('should open new inventory item and not the related inventory', function () {
+            it('should open new inventory item and not the related inventory', () => {
                 //given
                 scope.preparations = [{}, {}];
                 createElement();
-                var newPreparation = element.find('.inventory-actions-related-item-menu > li').eq(0);
+                const newPreparation = element.find('.inventory-actions-related-item-menu > li').eq(0);
 
                 //when
                 newPreparation.click();
@@ -414,11 +414,11 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.open).toHaveBeenCalledWith(dataset);
             });
-            it('should open 2nd related inventory item', function () {
+            it('should open 2nd related inventory item', () => {
                 //given
                 scope.preparations = [{}, {}];
                 createElement();
-                var secRelatedInv = element.find('.inventory-actions-related-item-menu > li').eq(3);
+                const secRelatedInv = element.find('.inventory-actions-related-item-menu > li').eq(3);
 
                 //when
                 secRelatedInv.dblclick();
@@ -427,10 +427,10 @@ describe('InventoryItem directive', function () {
                 expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[1]);
             });
 
-            it('should copy/clone inventory item on clone button click', function () {
+            it('should copy/clone inventory item on clone button click', () => {
                 //given
                 createElement();
-                var cloneBtn = element.find('a').eq(0);
+                const cloneBtn = element.find('a').eq(0);
 
                 //when
                 cloneBtn.click();
@@ -438,10 +438,10 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.copy).toHaveBeenCalled();
             });
-            it('should remove inventory item on basket button click', function () {
+            it('should remove inventory item on basket button click', () => {
                 //given
                 createElement();
-                var basketBtn = element.find('a').eq(1);
+                const basketBtn = element.find('a').eq(1);
 
                 //when
                 basketBtn.click();
@@ -449,10 +449,10 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.remove).toHaveBeenCalled();
             });
-            it('should certify inventory item on certification button click', function () {
+            it('should certify inventory item on certification button click', () => {
                 //given
                 createElement();
-                var certificationBtn = element.find('a').eq(2);
+                const certificationBtn = element.find('a').eq(2);
 
                 //when
                 certificationBtn.click();
@@ -460,10 +460,10 @@ describe('InventoryItem directive', function () {
                 //then
                 expect(ctrl.processCertification).toHaveBeenCalled();
             });
-            it('should favorite inventory item on favorite button click', function () {
+            it('should favorite inventory item on favorite button click', () => {
                 //given
                 createElement();
-                var favoriteBtn = element.find('a').eq(3);
+                const favoriteBtn = element.find('a').eq(3);
 
                 //when
                 favoriteBtn.click();
@@ -475,21 +475,21 @@ describe('InventoryItem directive', function () {
 
     });
 
-    describe('preparation', function() {
-        beforeEach(inject(function ($rootScope, $compile) {
+    describe('preparation', () => {
+        beforeEach(inject(($rootScope, $compile) => {
             scope = $rootScope.$new();
 
             scope.preparation = preparation;
 
-            scope.rename = function () {
+            scope.rename = () => {
             };
-            scope.open = function () {
+            scope.open = () => {
             };
 
-            scope.remove = function () {
+            scope.remove = () => {
             };
             scope.preparations = [];
-            createElement = function () {
+            createElement = () => {
                 element = angular.element('<inventory-item ' +
                     'item="preparation" ' +
                     'details="PREPARATION_DETAILS" ' +
@@ -505,40 +505,34 @@ describe('InventoryItem directive', function () {
             };
         }));
 
-        afterEach(function () {
-            scope.$destroy();
-            element.remove();
-        });
-
-        it('display inventory components', inject(function ($filter) {
-            var momentize = $filter('TDPMoment');
+        it('display inventory components', inject(($filter) => {
+            const momentize = $filter('TDPMoment');
 
             createElement();
 
-            var icon = element.find('.inventory-icon').eq(0);
-            var iconSrc = icon.find('.preparation-icon-div');
+            const icon = element.find('.inventory-icon').eq(0);
+            const iconSrc = icon.find('.preparation-icon-div');
             expect(iconSrc.length).toBe(1);
             expect(element.find('.inventory-title').eq(0).text().indexOf('US States prep')).toBe(0);
             expect(element.find('.inventory-description').eq(0).text()).toBe('owned by anonymousUser, created ' + momentize('1437020219741') + ', contains 1 step(s)');
         }));
     });
 
-
-    describe('folder', function() {
-        beforeEach(inject(function ($rootScope, $compile) {
+    describe('folder', () => {
+        beforeEach(inject(($rootScope, $compile) => {
             scope = $rootScope.$new();
 
             scope.folder = folder;
 
-            scope.rename = function () {
+            scope.rename = () => {
             };
-            scope.open = function () {
+            scope.open = () => {
             };
 
-            scope.remove = function () {
+            scope.remove = () => {
             };
             scope.preparations = [];
-            createElement = function () {
+            createElement = () => {
                 element = angular.element('<inventory-item ' +
                     'item="folder" ' +
                     'details="FOLDER_DETAILS" ' +
@@ -554,22 +548,45 @@ describe('InventoryItem directive', function () {
             };
         }));
 
-        afterEach(function () {
-            scope.$destroy();
-            element.remove();
-        });
-
-        it('display inventory components', inject(function ($filter) {
-            var momentize = $filter('TDPMoment');
+        it('display inventory components', inject(($filter) => {
+            const momentize = $filter('TDPMoment');
 
             createElement();
 
-            var icon = element.find('.inventory-icon').eq(0);
-            var iconSrc = icon.find('img')[0].src;
+            const icon = element.find('.inventory-icon').eq(0);
+            const iconSrc = icon.find('img')[0].src;
             expect(strEndsWith(iconSrc, 'assets/images/folder/folder-icon.png')).toBe(true);
             expect(element.find('.inventory-title').eq(0).text().indexOf('folder 1')).toBe(0);
             expect(element.find('.inventory-description').eq(0).text()).toBe('owned by anonymousUser, created ' + momentize('1437020219741') + ', contains 2 dataset(s)');
         }));
     });
 
+    describe('documentation', () => {
+        beforeEach(inject(($rootScope, $compile) => {
+            scope = $rootScope.$new();
+
+            createElement = () => {
+                element = angular.element('<inventory-item item="doc" details="{{details}}" type="documentation"></inventory-item>');
+                $compile(element)(scope);
+                scope.$digest();
+                return element;
+            };
+        }));
+
+        it('display inventory components', () => {
+            //given
+            scope.doc = {name: 'What is a recipe ?'};
+            scope.details = 'This is a recipe';
+
+            //when
+            createElement();
+
+            //then
+            const icon = element.find('.inventory-icon').eq(0);
+            const iconSrc = icon.find('.documentation-icon-div');
+            expect(iconSrc.length).toBe(1);
+            expect(element.find('.inventory-title').eq(0).text().indexOf('What is a recipe ?')).toBe(0);
+            expect(element.find('.inventory-description').eq(0).text()).toBe('This is a recipe');
+        });
+    });
 });

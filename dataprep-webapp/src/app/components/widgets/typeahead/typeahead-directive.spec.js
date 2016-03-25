@@ -14,7 +14,7 @@
 'use strict';
 
 describe('Typeahead directive', () => {
-    var scope, element;
+    var scope, element, ctrl;
 
     beforeEach(angular.mock.module('talend.widget'));
     beforeEach(angular.mock.module('htmlTemplates'));
@@ -25,7 +25,10 @@ describe('Typeahead directive', () => {
         scope.search = jasmine.createSpy('search');
 
         var html = `
-            <typeahead search="search">
+            <typeahead search="search"
+                       placeholder="Type here"
+                       searching-text="Searching ..."
+                       custom-render="true">
                 <div id="inventory"></div>
             </typeahead>
         `;
@@ -33,15 +36,50 @@ describe('Typeahead directive', () => {
         angular.element('body').append(element);
         scope.$digest();
 
-        const ctrl = element.controller('typeahead');
+        ctrl = element.controller('typeahead');
         ctrl.searchString = 'aze';
-        ctrl.results = true;
+        ctrl.visible = true;
         scope.$digest();
     }));
 
     afterEach(() => {
         scope.$destroy();
         element.remove();
+    });
+
+    describe('render', () => {
+        it('should render input', () => {
+            //then
+            expect(element.find('input[type="search"]').length).toBe(1);
+        });
+
+        it('should render searching message', () => {
+            //given
+            ctrl.searching = true;
+
+            //when
+            scope.$digest();
+
+            //then
+            expect(element.find('.searching').length).toBe(1);
+        });
+
+        it('should render searching message', () => {
+            //given
+            ctrl.searching = true;
+
+            //when
+            scope.$digest();
+
+            //then
+            expect(element.find('.searching').length).toBe(1);
+            expect(element.find('.searching').eq(0).text()).toBe('Searching ...');
+        });
+
+        it('should render custom result', () => {
+            //then
+            expect(element.find('#inventory').length).toBe(1);
+        });
     });
 
     describe('input keydown', () => {

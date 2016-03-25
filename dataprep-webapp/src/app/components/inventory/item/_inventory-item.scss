@@ -13,13 +13,22 @@
 
 .inventory-item {
 
-  .inventory-icon{
+  .inventory-icon {
+    @include display(flex);
+    @include justify-content(center);
+    @include align-items(center);
+
     .preparation-icon-div {
       font-size: 1.7em;
       color: $dark-blue;
     }
+    .documentation-icon-div {
+      font-size: 1.3em;
+      color: $dark-blue;
+    }
   }
   .inventory-title {
+    color: $black;
     padding: 3px 0;
     @include ellipsis(430px);
   }

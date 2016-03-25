@@ -16,17 +16,13 @@
  * @name data-prep.data-prep.documentation-search
  * @description This directive display an documentation search
  * @restrict E
- *
- * @usage
- * <documentation-search
- * </documentation-search>
-
+ * @usage <documentation-search></documentation-search>
  */
 
 import DocumentationSearchCtrl from './documentation-search-controller';
 
 const DocumentationSearch = {
-    templateUrl: 'app/components/playground/documentation-search/documentation-search.html',
+    templateUrl: 'app/components/search/documentation/documentation-search.html',
     controller: DocumentationSearchCtrl
 };
 

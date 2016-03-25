@@ -133,6 +133,8 @@ $border-color: #CECECE;
         color: $secondary-text;
 
         overflow: hidden;
+        white-space: normal;
+        max-height: 2.8em;
       }
     }
 

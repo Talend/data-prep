@@ -25,7 +25,7 @@ describe('Typeahead widget controller', () => {
     }));
 
     describe('on change', () => {
-        it('should update position', () => {
+        it('should trigger search callback', () => {
             //given
             var ctrl = createController();
             ctrl.search = jasmine.createSpy('search');
@@ -43,40 +43,72 @@ describe('Typeahead widget controller', () => {
             var ctrl = createController();
             ctrl.search = jasmine.createSpy('search');
             ctrl.searchString = 'toto';
-            ctrl.results = false;
+            ctrl.visible = false;
 
             //when
             ctrl.onChange();
 
             //then
-            expect(ctrl.results).toBe(true);
+            expect(ctrl.visible).toBe(true);
         });
+
+        it('should manage searching flag', inject(($q) => {
+            //given
+            var ctrl = createController();
+            ctrl.search = jasmine.createSpy('search').and.returnValue($q.when());
+            ctrl.searchString = 'toto';
+            ctrl.searching = false;
+
+            //when
+            ctrl.onChange();
+            expect(ctrl.searching).toBe(true);
+            scope.$digest();
+
+            //then
+            expect(ctrl.searching).toBe(false);
+        }));
+
+        it('should not reset searching flag when result is out of date', inject(($q) => {
+            //given
+            var ctrl = createController();
+            ctrl.search = jasmine.createSpy('search').and.returnValue($q.when());
+            ctrl.searchString = 'toto';
+            ctrl.searching = false;
+
+            //when
+            ctrl.onChange();
+            expect(ctrl.searching).toBe(true);
+            ctrl.searchString = 'tata';
+            scope.$digest();
+
+            //then
+            expect(ctrl.searching).toBe(true);
+        }));
     });
 
     describe('results visibility', () => {
         it('should hide result block', () => {
             //given
             var ctrl = createController();
-            ctrl.results = true;
+            ctrl.visible = true;
 
             //when
             ctrl.hideResults();
 
             //then
-            expect(ctrl.results).toBe(false);
+            expect(ctrl.visible).toBe(false);
         });
 
         it('should show result block', () => {
             //given
             var ctrl = createController();
-            ctrl.results = false;
+            ctrl.visible = false;
 
             //when
             ctrl.showResults();
 
             //then
-            expect(ctrl.results).toBe(true);
+            expect(ctrl.visible).toBe(true);
         });
     });
-
 });

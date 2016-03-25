@@ -19,5 +19,9 @@
        ng-model-options="{debounce: { default: 300, blur: 0 }}"
        ng-change="typeaheadCtrl.onChange()"
        class="input-search"/>
-<ng-transclude class="typeahead-result"
-               ng-if="typeaheadCtrl.searchString && typeaheadCtrl.results"></ng-transclude>
+<div class="typeahead-result"
+     ng-if="typeaheadCtrl.searchString && typeaheadCtrl.visible">
+
+    <div class="searching" ng-if="typeaheadCtrl.searching && typeaheadCtrl.searchingText">{{typeaheadCtrl.searchingText}}</div>
+    <ng-transclude ng-if="typeaheadCtrl.customRender === 'true'"></ng-transclude>
+</div>

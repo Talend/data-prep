@@ -9,7 +9,6 @@ $navigation-color: white;
 $navigation-height: 50px;
 $navigation-item-space: 10px;
 
-$navigation-search-border: 1px solid $medium-gray;
 
 #playground-header {
   display: table;
@@ -33,22 +32,6 @@ $navigation-search-border: 1px solid $medium-gray;
       input {
         display: inline-block;
         margin: 0;
-        width: auto;
-      }
-
-      .documentation-search {
-        input[type=search] {
-          box-sizing: border-box;
-          border-radius: $base-border-radius * 2;
-          border: $navigation-search-border;
-          color: $black;
-          font-family: $base-font-family;
-          font-size: 0.9em;
-          font-style: italic;
-          margin: 0;
-          padding: 0.5em 0.8em;
-          width: 475px;
-        }
       }
     }
   }

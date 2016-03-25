@@ -27,16 +27,9 @@
                  class="pin"
                  ng-if="inventoryItemCtrl.item.certificationStep!='NONE'"/>
         </div>
-
-        <div class="preparation-icon-div" ng-switch-when="preparation" data-icon="c">
-        </div>
-
-        <div class="documentation-icon-div" ng-switch-when="documentation" data-icon="l">
-        </div>
-
-        <div ng-switch-when="folder">
-            <img src="assets/images/folder/folder-icon.png"/>
-        </div>
+        <div class="preparation-icon-div" ng-switch-when="preparation" data-icon="c"></div>
+        <div class="documentation-icon-div" ng-switch-when="documentation" data-icon="l"></div>
+        <div ng-switch-when="folder"><img src="assets/images/folder/folder-icon.png"/></div>
     </div>
 
     <div class="inventory-text">
@@ -52,8 +45,7 @@
               class="inventory-title"
               ng-bind-html="inventoryItemCtrl.item.name"
               title="{{inventoryItemCtrl.item.tooltipName}}"></span>
-        <div class="inventory-description" ng-if="inventoryItemCtrl.type !== 'documentation'">{{inventoryItemCtrl.details | translate:inventoryItemCtrl.item}}</div>
-        <div class="inventory-description" ng-if="inventoryItemCtrl.type === 'documentation'" ng-bind-html="inventoryItemCtrl.item.description"></div>
+        <div class="inventory-description" ng-bind-html="inventoryItemCtrl.details | translate:inventoryItemCtrl.item"></div>
     </div>
 
     <!-- Draft actions icons -->

@@ -39,12 +39,12 @@ describe('Early Preview Service', function () {
         spyOn(EarlyPreviewService, 'cancelPendingPreview').and.returnValue();
     }));
 
-    it('should trigger preview without preparation id after a 300ms delay', inject(function ($timeout, PreviewService, EarlyPreviewService, RecipeService) {
+    it('should trigger preview without preparation id after a 1s delay', inject(function ($timeout, PreviewService, EarlyPreviewService, RecipeService) {
         //when
         stateMock.playground.preparation = null;
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
         expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
-        $timeout.flush(300);
+        $timeout.flush(1000);
 
         //then
         expect(RecipeService.earlyPreview).toHaveBeenCalledWith(
@@ -73,11 +73,11 @@ describe('Early Preview Service', function () {
         );
     }));
 
-    it('should trigger preview with preparation id after a 300ms delay', inject(function ($timeout, PreviewService, EarlyPreviewService, RecipeService) {
+    it('should trigger preview with preparation id after a 1s delay', inject(function ($timeout, PreviewService, EarlyPreviewService, RecipeService) {
         //when
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
         expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
-        $timeout.flush(300);
+        $timeout.flush(1000);
 
         //then
         expect(RecipeService.earlyPreview).toHaveBeenCalledWith(
@@ -139,7 +139,7 @@ describe('Early Preview Service', function () {
 
         //when
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
-        $timeout.flush(300);
+        $timeout.flush(1000);
 
         //then
         expect(RecipeService.earlyPreview).not.toHaveBeenCalled();
@@ -163,13 +163,13 @@ describe('Early Preview Service', function () {
         //given
         EarlyPreviewService.deactivatePreview();
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
-        $timeout.flush(300);
+        $timeout.flush(1000);
         expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
 
         //when
         EarlyPreviewService.activatePreview();
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
-        $timeout.flush(300);
+        $timeout.flush(1000);
 
         //then
         expect(RecipeService.earlyPreview).toHaveBeenCalledWith(

@@ -21,6 +21,7 @@
 export default function EarlyPreviewService($timeout, state, RecipeService, PreviewService) {
     'ngInject';
 
+    const DELAY = 1000; // early preview delay is 1 second
     var previewDisabled = false;
     var previewTimeout;
     var previewCancelerTimeout;
@@ -93,7 +94,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 
                 RecipeService.earlyPreview(action, params);
                 PreviewService.getPreviewAddRecords(preparationId, state.playground.dataset.id, action.name, params);
-            }, 300);
+            }, DELAY);
         };
     }
 

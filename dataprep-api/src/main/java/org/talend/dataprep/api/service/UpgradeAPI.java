@@ -3,11 +3,9 @@ package org.talend.dataprep.api.service;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.StringWriter;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.daikon.security.CryptoHelper;
+import org.talend.daikon.token.TokenGenerator;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.service.upgrade.UpgradeServerVersion;
 import org.talend.dataprep.metrics.Timed;
@@ -52,59 +51,6 @@ public class UpgradeAPI extends APIService {
 
     private String token;
 
-    /**
-     * Compute an ID unique for the machine that runs this code. Information includes:
-     * <ul>
-     * <li>MAC Address of the localhost interface (as returned by {@link InetAddress#getLocalHost()}).</li>
-     * <li>OS Name and version</li>
-     * <li>Local host name</li>
-     * </ul>
-     * Should any of the 3 steps above fails, code falls back for a random UUID.
-     *
-     * @param cryptoHelper A non-null {@link CryptoHelper helper} used to encrypt generated machine ID.
-     * @return A non-empty, non-null and encrypted id computed based on information of the running machine.
-     * @see InetAddress#getLocalHost()
-     * @see UUID#randomUUID()
-     */
-    public static String generateMachineId(CryptoHelper cryptoHelper) {
-        if (cryptoHelper == null) {
-            throw new IllegalArgumentException("Crypto helper cannot be null."); //$NON-NLS-1$
-        }
-        final StringBuilder sb = new StringBuilder();
-        try {
-            final InetAddress loopBackAddress = InetAddress.getLocalHost();
-            // Add all machine's MAC addresses ...
-            final Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
-            while (networks.hasMoreElements()) {
-                final NetworkInterface network = networks.nextElement();
-                final byte[] mac = network.getHardwareAddress();
-                if (mac != null) { // null mac address can be returned by getHardwareAddress().
-                    StringBuilder macAddress = new StringBuilder();
-                    for (byte macByte : mac) {
-                        macAddress.append(String.format("%02X", macByte)); //$NON-NLS-1$
-                    }
-                    if (!"0000000000E0".equals(macAddress.toString())) { // Skip empty mac address (if any)
-                        sb.append(macAddress.toString());
-                    }
-                }
-            }
-            sb.append('-');
-            // ... then OS ...
-            sb.append(System.getProperty("os.name"));
-            sb.append(System.getProperty("os.version"));
-            // ... host name ...
-            sb.append('-').append(loopBackAddress.getHostName());
-        } catch (SocketException | UnknownHostException e) {
-            LOGGER.debug("Unable to get local MAC address, fall back to UUID.", e); //$NON-NLS-1$
-            sb.append(UUID.randomUUID().toString());
-        }
-
-        // ... and encode the result with a static pass phrase.
-        final String machineId = cryptoHelper.encrypt(sb.toString());
-        LOGGER.debug("Generated machine id: {}", machineId);
-        return machineId;
-    }
-
     private static String toString(List<UpgradeServerVersion> versions) {
         final StringBuilder builder = new StringBuilder();
         builder.append("[ ");
@@ -129,7 +75,7 @@ public class UpgradeAPI extends APIService {
 
     @PostConstruct
     public void init() {
-        token = generateMachineId(new CryptoHelper("DataPrepIsSoCool"));
+        token = TokenGenerator.generateMachineToken(new CryptoHelper("DataPrepIsSoCool"));
         LOGGER.debug("Installation token: {}", token);
     }
 

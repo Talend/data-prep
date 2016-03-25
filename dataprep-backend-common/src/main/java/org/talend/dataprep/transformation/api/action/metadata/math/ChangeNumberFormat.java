@@ -49,9 +49,7 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
     /** Action name. */
     public static final String ACTION_NAME = "change_number_format"; //$NON-NLS-1$
 
-    /**
-     * Parameter to define original decimal & grouping separators.
-     */
+    /** Parameter to define original decimal & grouping separators. */
     public static final String FROM_SEPARATORS = "from_separators";
 
     /**
@@ -68,39 +66,39 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
     /**
      * Keys used in the values of different parameters:
      */
-    protected static final String CUSTOM = "custom";
+    public static final String CUSTOM = "custom";
 
-    protected static final String UNKNOWN_SEPARATORS = "unknown_separators";
+    private static final String UNKNOWN_SEPARATORS = "unknown_separators";
 
-    protected static final String US_SEPARATORS = "us_separators";
+    public static final String US_SEPARATORS = "us_separators";
 
-    protected static final String EU_SEPARATORS = "eu_separators";
+    public static final String EU_SEPARATORS = "eu_separators";
 
-    protected static final String CH_SEPARATORS = "ch_separators";
+    public static final String CH_SEPARATORS = "ch_separators";
 
-    protected static final String US_PATTERN = "us_pattern";
+    public static final String US_PATTERN = "us_pattern";
 
-    protected static final String EU_PATTERN = "eu_pattern";
+    public static final String EU_PATTERN = "eu_pattern";
 
-    protected static final String CH_PATTERN = "ch_pattern";
+    public static final String CH_PATTERN = "ch_pattern";
 
-    protected static final String SCIENTIFIC = "scientific";
+    public static final String SCIENTIFIC = "scientific";
 
-    protected static final DecimalFormat CH_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
+    private static final DecimalFormat CH_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
             DecimalFormatSymbols.getInstance(new Locale("FR", "CH")));
 
     /**
      * Constants to build parameters name by concat:
      */
-    protected static final String FROM = "from";
+    public static final String FROM = "from";
 
-    protected static final String TARGET = "target";
+    public static final String TARGET = "target";
 
-    protected static final String GROUPING = "_grouping";
+    public static final String GROUPING = "_grouping";
 
-    protected static final String DECIMAL = "_decimal";
+    public static final String DECIMAL = "_decimal";
 
-    protected static final String SEPARATOR = "_separator";
+    public static final String SEPARATOR = "_separator";
 
     /**
      * @see ActionMetadata#getName()
@@ -202,28 +200,9 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
      * @return the pattern to use according to the given parameters.
      */
     private NumberFormat getFormat(Map<String, String> parameters) {
-
         switch (parameters.get(TARGET_PATTERN)) {
         case CUSTOM:
-            final DecimalFormat decimalFormat = new DecimalFormat(parameters.get(TARGET_PATTERN + "_" + CUSTOM));
-
-            DecimalFormatSymbols decimalFormatSymbols = decimalFormat.getDecimalFormatSymbols();
-
-            String decimalSeparator = getCustomizableParam(TARGET + DECIMAL + SEPARATOR, parameters);
-            if (!StringUtils.isEmpty(decimalSeparator)) {
-                decimalFormatSymbols.setDecimalSeparator(decimalSeparator.charAt(0));
-            }
-
-            String groupingSeparator = getCustomizableParam(TARGET + GROUPING + SEPARATOR, parameters);
-            if (StringUtils.isEmpty(groupingSeparator) || groupingSeparator.equals(decimalSeparator)) {
-                decimalFormat.setGroupingUsed(false);
-            } else {
-                decimalFormatSymbols.setGroupingSeparator(groupingSeparator.charAt(0));
-            }
-
-            decimalFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-
-            return decimalFormat;
+            return getCustomFormat(parameters);
         case US_PATTERN:
             return US_DECIMAL_PATTERN;
         case EU_PATTERN:
@@ -232,18 +211,50 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
             return CH_DECIMAL_PATTERN;
         case SCIENTIFIC:
             return US_SCIENTIFIC_DECIMAL_PATTERN;
+        default:
+            throw new IllegalArgumentException("Pattern is empty");
         }
-
-        throw new IllegalArgumentException("Pattern is empty");
     }
 
+    /**
+     * Return the custom format out of the parameters.
+     * 
+     * @param parameters the action parameters.
+     * @return the custom format out of the parameters.
+     */
+    private NumberFormat getCustomFormat(Map<String, String> parameters) {
+        final DecimalFormat decimalFormat = new DecimalFormat(parameters.get(TARGET_PATTERN + "_" + CUSTOM));
+
+        DecimalFormatSymbols decimalFormatSymbols = decimalFormat.getDecimalFormatSymbols();
+
+        String decimalSeparator = getCustomizableParam(TARGET + DECIMAL + SEPARATOR, parameters);
+        if (!StringUtils.isEmpty(decimalSeparator)) {
+            decimalFormatSymbols.setDecimalSeparator(decimalSeparator.charAt(0));
+        }
+
+        String groupingSeparator = getCustomizableParam(TARGET + GROUPING + SEPARATOR, parameters);
+        if (StringUtils.isEmpty(groupingSeparator) || groupingSeparator.equals(decimalSeparator)) {
+            decimalFormat.setGroupingUsed(false);
+        } else {
+            decimalFormatSymbols.setGroupingSeparator(groupingSeparator.charAt(0));
+        }
+
+        decimalFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+
+        return decimalFormat;
+    }
+
+    /**
+     * @see ActionMetadata#compile(ActionContext)
+     */
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
-                actionContext.get(COMPILED_TARGET_FORMAT, (p) -> getFormat(actionContext.getParameters()));
+                actionContext.get(COMPILED_TARGET_FORMAT, p -> getFormat(actionContext.getParameters()));
             } catch (IllegalArgumentException e) {
+                LOGGER.warn("Unsupported number format", e);
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
         }
@@ -271,13 +282,9 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
         }
 
         try {
-            BigDecimal bd = null;
+            BigDecimal bd;
 
             switch (context.getParameters().get(FROM_SEPARATORS)) {
-            case UNKNOWN_SEPARATORS:
-            case US_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(value);
-                break;
             case EU_SEPARATORS:
                 bd = BigDecimalParser.toBigDecimal(value, ',', '.');
                 break;
@@ -285,17 +292,12 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
                 bd = BigDecimalParser.toBigDecimal(value, '.', '\'');
                 break;
             case CUSTOM:
-                String decSep = getCustomizableParam(FROM + DECIMAL + SEPARATOR, context.getParameters());
-                String groupSep = getCustomizableParam(FROM + GROUPING + SEPARATOR, context.getParameters());
-
-                if (StringUtils.isEmpty(decSep)) {
-                    decSep = ".";
-                }
-                if (StringUtils.isEmpty(groupSep)) {
-                    groupSep = ",";
-                }
-
-                bd = BigDecimalParser.toBigDecimal(value, decSep.charAt(0), groupSep.charAt(0));
+                bd = parseCustomNumber(context, value);
+                break;
+            case UNKNOWN_SEPARATORS:
+            case US_SEPARATORS:
+            default:
+                bd = BigDecimalParser.toBigDecimal(value);
                 break;
             }
 
@@ -304,8 +306,30 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
             row.set(columnId, newValue);
         } catch (NumberFormatException e) {
             LOGGER.debug("Unable to parse {} value as Number", value);
-            return;
         }
+    }
+
+    /**
+     * Parse the the given number with a custom separator.
+     *
+     * @param context the action context.
+     * @param number the number to parse.
+     * @return the given number parsed as BigDecimal using the action context custome separator.
+     */
+    private BigDecimal parseCustomNumber(ActionContext context, String number) {
+        BigDecimal bd;
+        String decSep = getCustomizableParam(FROM + DECIMAL + SEPARATOR, context.getParameters());
+        String groupSep = getCustomizableParam(FROM + GROUPING + SEPARATOR, context.getParameters());
+
+        if (StringUtils.isEmpty(decSep)) {
+            decSep = ".";
+        }
+        if (StringUtils.isEmpty(groupSep)) {
+            groupSep = ",";
+        }
+
+        bd = BigDecimalParser.toBigDecimal(number, decSep.charAt(0), groupSep.charAt(0));
+        return bd;
     }
 
     @Override

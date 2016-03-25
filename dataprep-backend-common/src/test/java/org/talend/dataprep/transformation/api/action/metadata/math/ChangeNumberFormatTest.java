@@ -21,10 +21,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.ActionMetad
 import static org.talend.dataprep.transformation.api.action.metadata.math.ChangeNumberFormat.*;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -71,6 +68,13 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest {
         assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
         assertThat(action.adapt(column), is(action));
+    }
+
+    @Test
+    public void shouldReturnBehaviour() throws Exception {
+        final Set<Behavior> actual = action.getBehavior();
+        assertEquals(1, actual.size());
+        assertTrue(actual.contains(Behavior.VALUES_COLUMN));
     }
 
     @Test

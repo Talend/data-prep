@@ -17,9 +17,11 @@ import static org.talend.dataprep.api.service.command.common.Defaults.emptyStrea
 import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,7 @@ import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 /**
  * Command used to retrieve the preparations matching a name.
@@ -44,7 +47,14 @@ public class PreparationListByName extends GenericCommand<InputStream> {
     private PreparationListByName(HttpClient client, String name, boolean exactMatch) {
         super(APIService.PREPARATION_GROUP, client);
         execute(() -> {
-            return new HttpGet(preparationServiceUrl + "/preparations?name=" + name + "&exactMatch="+exactMatch); //$NON-NLS-1$
+            try {
+                URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations");
+                uriBuilder.addParameter("name", name);
+                uriBuilder.addParameter("exactMatch",String.valueOf(exactMatch));
+                return new HttpGet(uriBuilder.build());
+            } catch (URISyntaxException e) {
+                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            }
         });
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_LIST, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());

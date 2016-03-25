@@ -420,9 +420,27 @@ public class FolderAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void shouldNotReturnMatchingPreparationsWhenPerformingInventory() throws IOException {
+    public void shouldReturnMatchingPreparationsWithSpaceWhenPerformingInventory() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "notMatchingPreparation", "text/csv");
+        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations", "text/csv");
+
+        // when
+        String inventory = given().queryParam("path", "/").queryParam("name", "Inventory ").get("/api/inventory/search")
+                .asString();
+
+        // then
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(inventory);
+        JsonNode preparations = rootNode.get("preparations");
+        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
+        assertThat(preparationList.size(), is(1));
+        assertEquals("testInventory OfPreparations", preparationList.get(0).getName());
+    }
+
+    @Test
+    public void shouldNotReturnNonMatchingPreparationsWhenPerformingInventory() throws IOException {
+        // given
+        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "nonMatchingPreparation", "text/csv");
 
         // when
         String inventory = given().queryParam("path", "/").queryParam("name", "Inventory").get("/api/inventory/search")

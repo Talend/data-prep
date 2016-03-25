@@ -36,10 +36,10 @@
         <jackson.version>2.6.4</jackson.version>
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
-        <org.talend.dataquality.version>1.4.2</org.talend.dataquality.version>
-        <org.talend.dataquality.common.version>1.4.2</org.talend.dataquality.common.version>
-        <org.talend.dataquality.semantic.version>1.4.2</org.talend.dataquality.semantic.version>
-        <org.talend.dataquality.statistics.version>1.4.3-SNAPSHOT</org.talend.dataquality.statistics.version>
+        <org.talend.dataquality.version>1.4.3</org.talend.dataquality.version>
+        <org.talend.dataquality.common.version>1.4.3</org.talend.dataquality.common.version>
+        <org.talend.dataquality.semantic.version>1.4.3</org.talend.dataquality.semantic.version>
+        <org.talend.dataquality.statistics.version>1.4.3</org.talend.dataquality.statistics.version>
         <org.talend.dataquality.record.linkage.version>3.0.0</org.talend.dataquality.record.linkage.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
@@ -154,7 +154,7 @@
             <dependency>
                 <groupId>org.talend.daikon</groupId>
                 <artifactId>daikon</artifactId>
-                <version>0.6.0-SNAPSHOT</version>
+                <version>0.5.0</version>
                 <!-- exclude old jackson version downloaded from apache avro -->
                 <exclusions>
                     <exclusion>

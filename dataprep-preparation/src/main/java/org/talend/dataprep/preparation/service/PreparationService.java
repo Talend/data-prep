@@ -56,6 +56,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
 public class PreparationService {
@@ -120,7 +121,11 @@ public class PreparationService {
     @Timed
     public Collection<PreparationDetails> listAll() {
         LOGGER.debug("Get list of preparations (with details).");
-        final Collection<Preparation> preparations = preparationRepository.listAll(Preparation.class);
+        Collection<Preparation> preparations = preparationRepository.listAll(Preparation.class);
+        preparations = preparations.stream()
+                // sort by last modification date
+                .sorted((p1, p2) -> Long.compare(p2.getLastModificationDate(),p1.getLastModificationDate()))
+                .collect(Collectors.toList());
         return getDetails(preparations);
     }
 
@@ -691,7 +696,7 @@ public class PreparationService {
      * @return the preparations details that match the given preparations.
      */
     private Collection<PreparationDetails> getDetails(Collection<Preparation> preparations) {
-        return preparations.stream().map(this::getDetails).collect(Collectors.toSet());
+        return preparations.stream().map(this::getDetails).collect(Collectors.toList()); // list keeps the order
     }
 
     /**

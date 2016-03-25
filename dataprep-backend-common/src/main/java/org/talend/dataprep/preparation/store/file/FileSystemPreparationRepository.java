@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -162,12 +163,14 @@ public class FileSystemPreparationRepository implements PreparationRepository {
             LOG.error("error listing preparations");
             files = new File[0];
         }
-        Collection<T> result =  Arrays.stream(files)
-                .filter(file -> StringUtils.startsWith(file.getName(), clazz.getSimpleName()))
-                .map(file ->  get(file.getName(), clazz))                  // read all files
-                .filter(entry -> entry != null)                            // filter out null entries
-                .filter(entry -> clazz.isAssignableFrom(entry.getClass())) // filter out the unwanted objects (should not be necessary but you never know)
-                .collect(Collectors.toSet());                              // and put it in a set
+        Collection<T> result;
+        try (final Stream<File> stream = Arrays.stream(files)) {
+             result = stream.filter(file -> StringUtils.startsWith(file.getName(), clazz.getSimpleName()))
+                    .map(file -> get(file.getName(), clazz))                   // read all files
+                    .filter(entry -> entry != null)                            // filter out null entries
+                    .filter(entry -> clazz.isAssignableFrom(entry.getClass())) // filter out the unwanted objects (should not be necessary but you never know)
+                    .collect(Collectors.toSet());                              // and put it in a set
+        }
         //@formatter:on
         LOG.debug("There are {} for class {}", result.size(), clazz.getName());
         return result;

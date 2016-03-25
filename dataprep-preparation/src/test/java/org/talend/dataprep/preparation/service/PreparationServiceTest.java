@@ -18,14 +18,13 @@ import static com.jayway.restassured.RestAssured.when;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -40,7 +39,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.talend.dataprep.api.preparation.*;
@@ -49,6 +47,7 @@ import org.talend.dataprep.preparation.Application;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,7 +69,7 @@ public class PreparationServiceTest {
     private PreparationRepository repository;
 
     @Autowired
-    private Jackson2ObjectMapperBuilder builder;
+    private ObjectMapper mapper;
 
     @Autowired
     private VersionService versionService;
@@ -102,7 +101,7 @@ public class PreparationServiceTest {
     // ------------------------------------------------------GETTER------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
     @Test
-    public void should_list_all_preparations() throws Exception {
+    public void shouldListAllPreparations() throws Exception {
         // given
         when().get("/preparations/all").then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[]"));
 
@@ -161,6 +160,36 @@ public class PreparationServiceTest {
                           "]")
                         .allowingAnyArrayOrdering());
         //@formatter:on
+    }
+
+    /**
+     * See <a href="https://jira.talendforge.org/browse/TDP-1604">TDP-1604</a>
+     */
+    @Test
+    public void listPreparationsShouldBeOrderedByLastModificationDate() throws Exception {
+        // given
+        when().get("/preparations/all").then().statusCode(HttpStatus.OK.value()).body(sameJSONAs("[]"));
+
+        List<String> preparationIds = new ArrayList<>(5);
+        for (int i=0;i<5;i++) {
+            final long now = new Date().getTime();
+            Preparation preparation = new Preparation("12345", rootStep.id(), versionService.version().getVersionId());
+            preparation.setName("prep-"+i);
+            preparation.setLastModificationDate(now);
+            repository.add(preparation);
+            preparationIds.add(0, preparation.id()); // last modified preparation is first
+            Thread.sleep(100); // to make sure the last modification date is older
+        }
+
+        // when
+        final InputStream responseContent = when().get("/preparations/all").asInputStream();
+        final List<Preparation> actual = mapper.readValue(responseContent, new TypeReference<List<Preparation>>() {});
+
+        // then
+        assertEquals(preparationIds.size(), actual.size());
+        for(int i=0; i<actual.size(); i++) {
+            assertEquals(preparationIds.get(i), actual.get(i).getId());
+        }
     }
 
     @Test
@@ -226,7 +255,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_return_list_of_specific_dataset_preparations() throws Exception {
+    public void shouldReturnListOfSpecificDatasetPreparations() throws Exception {
         // given : relevant preparation
         final String wantedDataSetId = "wanted";
         final String preparation1 = createPreparation(wantedDataSetId, "prep_1");
@@ -339,7 +368,7 @@ public class PreparationServiceTest {
         Preparation preparation = new Preparation(versionService.version().getVersionId());
         preparation.setDataSetId("1234");
         preparation.setName("test_name");
-        String preparationId = given().contentType(ContentType.JSON).body(builder.build().writer().writeValueAsBytes(preparation))
+        String preparationId = given().contentType(ContentType.JSON).body(mapper.writer().writeValueAsBytes(preparation))
                 .when().put("/preparations").asString();
 
         // Test preparation details update
@@ -357,7 +386,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_change_preparation_head() throws Exception {
+    public void shouldChangePreparationHead() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final String firstStepId = applyTransformation(preparationId, "upper_case.json");
@@ -378,7 +407,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_throw_exception_on_preparation_head_change_with_unknown_step() throws Exception {
+    public void shouldThrowExceptionOnPreparationHeadChangeWithUnknownStep() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final String firstStepId = applyTransformation(preparationId, "upper_case.json");
@@ -397,12 +426,11 @@ public class PreparationServiceTest {
                 .body("code", is("TDP_PS_PREPARATION_STEP_DOES_NOT_EXIST"));
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------APPEND
-    // STEP----------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------APPEND STEP----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     @Test
-    public void should_add_action_step_after_head() throws Exception {
+    public void shouldAddActionStepAfterHead() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         Preparation preparation = repository.get(preparationId, Preparation.class);
@@ -427,7 +455,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_add_action_with_filter_step_after_head() throws Exception {
+    public void shouldAddActionWithFilterStepAfterHead() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         Preparation preparation = repository.get(preparationId, Preparation.class);
@@ -455,7 +483,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_save_step_diff() throws Exception {
+    public void shouldSaveStepDiff() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final Preparation preparation = repository.get(preparationId, Preparation.class);
@@ -474,7 +502,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_return_error_when_scope_is_not_consistent_on_append_transformation() throws Exception {
+    public void shouldReturnErrorWhenScopeIsNotConsistentOnAppendTransformation() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
 
@@ -492,12 +520,11 @@ public class PreparationServiceTest {
                 .body("code", is("TDP_ALL_MISSING_ACTION_SCOPE"));
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------UPDATE
-    // STEP----------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------UPDATE STEP----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     @Test
-    public void should_modify_single_action() throws Exception {
+    public void shouldModifySingleAction() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final String firstStepId = applyTransformation(preparationId, "upper_case.json");
@@ -523,7 +550,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_modify_last_action() throws Exception {
+    public void shouldModifyLastAction() throws Exception {
         // Initial preparation
         final String preparationId = createPreparation("1234", "my preparation");
         final String firstStepId = applyTransformation(preparationId, "upper_case.json");
@@ -548,7 +575,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_modify_first_action() throws Exception {
+    public void shouldModifyFirstAction() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final String firstStepId = applyTransformation(preparationId, "upper_case.json");
@@ -580,7 +607,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_save_updated_step_diff_and_shift_columns_ids() throws Exception {
+    public void shouldSaveUpdatedStepDiffAndShiftColumnsIds() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final String step0 = applyTransformation(preparationId, "update/0.copy_birth.json");
@@ -610,7 +637,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_return_error_when_scope_is_not_consistent_on_transformation_update() throws Exception {
+    public void shouldReturnErrorWhenScopeIsNotConsistentOnTransformationUpdate() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "my preparation");
         final String stepId = applyTransformation(preparationId, "upper_case.json");
@@ -629,12 +656,11 @@ public class PreparationServiceTest {
                 .body("code", is("TDP_ALL_MISSING_ACTION_SCOPE"));
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------DELETE
-    // STEP----------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------DELETE STEP----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     @Test
-    public void should_delete_single_step() throws Exception {
+    public void shouldDeleteSingleStep() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
         final String firstStepId = applyTransformation(preparationId, "upper_case.json");
@@ -662,7 +688,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_delete_steps_that_apply_to_created_column() throws Exception {
+    public void shouldDeleteStepsThatApplyToCreatedColumn() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
         applyTransformation(preparationId, "upper_case.json");
@@ -695,7 +721,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_shift_column_created_after_step_with_all_actions_parameters_on_those_steps() throws Exception {
+    public void shouldShiftColumnCreatedAfterStepWithAllActionsParametersOnThoseSteps() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
         applyTransformation(preparationId, "upper_case.json");
@@ -748,7 +774,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_throw_exception_when_step_to_delete_is_root() throws Exception {
+    public void shouldThrowExceptionWhenStepToDeleteIsRoot() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
         applyTransformation(preparationId, "upper_case.json");
@@ -762,7 +788,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_throw_exception_when_step_doesnt_exist() throws Exception {
+    public void shouldThrowExceptionWhenStepDoesntExist() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
         applyTransformation(preparationId, "upper_case.json");
@@ -776,7 +802,7 @@ public class PreparationServiceTest {
     }
 
     @Test
-    public void should_update_modification_date_on_delete_step() throws Exception {
+    public void shouldUpdateModificationDateOnDeleteStep() throws Exception {
         // given
         final String preparationId = createPreparation("1234", "My preparation");
         applyTransformation(preparationId, "upper_case.json");
@@ -793,13 +819,14 @@ public class PreparationServiceTest {
         assertThat(oldModificationDate, lessThan(preparation.getLastModificationDate()));
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------------------UTILS-------------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------UTILS-------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     /**
-     * Create a new preparation with the given name
+     * Create a new preparation with the given name and creation date to 0.
      *
-     * @param name The preparation name
+     * @param datasetId the dataset id related to this preparation.
+     * @param name preparation name.
      * @return The preparation id
      */
     private String createPreparation(final String datasetId, final String name) {
@@ -807,7 +834,6 @@ public class PreparationServiceTest {
         preparation.setName(name);
         preparation.setCreationDate(0);
         repository.add(preparation);
-
         return preparation.id();
     }
 

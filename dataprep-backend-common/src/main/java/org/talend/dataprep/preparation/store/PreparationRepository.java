@@ -61,15 +61,15 @@ public interface PreparationRepository {
             result = listAll(Preparation.class);
         } else {
             if (exactMatch) {
-                result = listAll(Preparation.class) // @formatter:off
+                result = listAll(Preparation.class) //
                         .stream() //
                         .filter(preparation -> StringUtils.equalsIgnoreCase(name, preparation.getName())) //
-                        .collect(Collectors.toList()); // @formatter:on
+                        .collect(Collectors.toList()); //
             } else {
-                result = listAll(Preparation.class) // @formatter:off
+                result = listAll(Preparation.class) //
                         .stream() //
                         .filter(preparation -> StringUtils.containsIgnoreCase(preparation.getName(),name)) //
-                        .collect(Collectors.toList()); // @formatter:on
+                        .collect(Collectors.toList()); //
 
             }
         }

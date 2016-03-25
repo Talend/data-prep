@@ -190,7 +190,8 @@ public class Preparation extends Identifiable implements Serializable {
     @Override
     public String toString() {
         return "Preparation {" + //
-                "id='" + id() + '\'' + //
+                "name='" + name + '\'' + //
+                ", id='" + id() + '\'' + //
                 ", dataSetId='" + dataSetId + '\'' + //
                 ", author='" + author + '\'' + //
                 ", creationDate=" + creationDate + //

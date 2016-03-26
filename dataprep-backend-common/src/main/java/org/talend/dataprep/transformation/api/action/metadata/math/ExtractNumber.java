@@ -198,23 +198,33 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
 
         StringCharacterIterator iter = new StringCharacterIterator(value);
 
-        MetricPrefix metricPrefix = null;
+        MetricPrefix metricPrefixBefore = null,  metricPrefixAfter= null;
+        
+        boolean numberFound = false;
 
         // we build a new value including only number or separator as , or .
         StringBuilder reducedValue = new StringBuilder( value.length() );
 
         for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
-            // we take the first metric prefix found
-            if (metricPrefix == null) {
-                MetricPrefix found = metricPrefixes.get(String.valueOf(c));
-                if (found != null) {
-                    metricPrefix = found;
-                    continue;
-                }
-            }
             // we remove all non numeric characters but keep separators
-            if ( NumberUtils.isNumber(String.valueOf(c)) || SEPARATORS.contains(c)) {
-                reducedValue.append( c );
+            if (NumberUtils.isNumber(String.valueOf(c)) || SEPARATORS.contains(c)) {
+                reducedValue.append(c);
+                numberFound = true;
+            } else {
+                // we take the first metric prefix found before and after a number found
+                if (metricPrefixBefore == null) {
+                    MetricPrefix found = metricPrefixes.get(String.valueOf(c));
+                    if (found != null && !numberFound) {
+                        metricPrefixBefore = found;
+                    }
+                }
+                if (metricPrefixAfter == null) {
+                    MetricPrefix found = metricPrefixes.get(String.valueOf(c));
+                    if (found != null && numberFound) {
+                        metricPrefixAfter = found;
+                    }
+                }
+
             }
         }
 
@@ -225,7 +235,9 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
             return DEFAULT_RESULT;
         }
 
-        if (metricPrefix != null) {
+        if (metricPrefixBefore != null || metricPrefixAfter != null) {
+            // the metrix found after use first
+            MetricPrefix metricPrefix = metricPrefixAfter != null ? metricPrefixAfter : metricPrefixBefore;
             bigDecimal = bigDecimal.multiply(metricPrefix.getMultiply());
         }
 

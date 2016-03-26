@@ -110,7 +110,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -135,7 +135,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -160,7 +160,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -185,7 +185,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-            .isNotEmpty().hasSize(2)
+            .isNotEmpty().hasSize(2) //
             .contains(ColumnMetadata.Builder //
                     .column() //
                     .name("0000" + "_number") //
@@ -211,7 +211,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -236,7 +236,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-            .isNotEmpty().hasSize(2)
+            .isNotEmpty().hasSize(2) //
             .contains(ColumnMetadata.Builder //
                     .column() //
                     .name("0000" + "_number") //
@@ -271,7 +271,8 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2).contains(ColumnMetadata.Builder //
+                .isNotEmpty().hasSize(2) //
+                .contains(ColumnMetadata.Builder //
                 .column() //
                 .name("0000" + "_number") //
                 .type(Type.NUMERIC) //
@@ -298,7 +299,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -322,7 +323,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -347,7 +348,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2)
+                .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -372,7 +373,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         // then
         assertThat(row.getRowMetadata().getColumns()) //
-            .isNotEmpty().hasSize(2)
+            .isNotEmpty().hasSize(2) //
             .contains(ColumnMetadata.Builder //
                           .column() //
                           .name("0000" + "_number") //
@@ -385,5 +386,31 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         assertThat(row.get("0001")).isEqualTo("10");
 
     }
+
+    @Test
+    public void extract_with_G_and_other_prefix_before() throws Exception {
+        // given
+        DataSetRow row = getRow("deca 2G");
+        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        assertThat(row.getRowMetadata().getColumns()) //
+                .isNotEmpty().hasSize(2) //
+                .contains(ColumnMetadata.Builder //
+                        .column() //
+                        .name("0000" + "_number") //
+                        .type(Type.NUMERIC) //
+                        .computedId("0001") //
+                        .build());
+
+        assertThat(row.values()).isNotEmpty().hasSize(2);
+
+        assertThat(row.get("0001")).isEqualTo("2000000000");
+
+    }
+
 
 }

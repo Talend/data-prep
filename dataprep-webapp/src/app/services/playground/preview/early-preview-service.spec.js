@@ -44,7 +44,7 @@ describe('Early Preview Service', function () {
         stateMock.playground.preparation = null;
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
         expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
-        $timeout.flush(1000);
+        $timeout.flush(700);
 
         //then
         expect(RecipeService.earlyPreview).toHaveBeenCalledWith(
@@ -77,7 +77,7 @@ describe('Early Preview Service', function () {
         //when
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
         expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
-        $timeout.flush(1000);
+        $timeout.flush(700);
 
         //then
         expect(RecipeService.earlyPreview).toHaveBeenCalledWith(
@@ -139,7 +139,7 @@ describe('Early Preview Service', function () {
 
         //when
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
-        $timeout.flush(1000);
+        $timeout.flush(700);
 
         //then
         expect(RecipeService.earlyPreview).not.toHaveBeenCalled();
@@ -163,13 +163,13 @@ describe('Early Preview Service', function () {
         //given
         EarlyPreviewService.deactivatePreview();
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
-        $timeout.flush(1000);
+        $timeout.flush(700);
         expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
 
         //when
         EarlyPreviewService.activatePreview();
         EarlyPreviewService.earlyPreview(transformation, transfoScope)(params);
-        $timeout.flush(1000);
+        $timeout.flush(700);
 
         //then
         expect(RecipeService.earlyPreview).toHaveBeenCalledWith(

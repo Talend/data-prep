@@ -21,7 +21,9 @@
 export default function EarlyPreviewService($timeout, state, RecipeService, PreviewService) {
     'ngInject';
 
-    const DELAY = 1000; // early preview delay is 1 second
+    // early preview delay is 1 second
+    const DELAY = 700;
+
     var previewDisabled = false;
     var previewTimeout;
     var previewCancelerTimeout;

@@ -101,152 +101,32 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void extract_simple() throws Exception {
-        // given
-        DataSetRow row = getRow("5000");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("5000");
-
+        inner_test("5000", "5000");
     }
 
     @Test
     public void extract_simple_with_digit() throws Exception {
-        // given
-        DataSetRow row = getRow("5000.231");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("5000.231");
-
+        inner_test("5000.231", "5000.231");
     }
 
     @Test
     public void extract_simple_with_k() throws Exception {
-        // given
-        DataSetRow row = getRow("5k");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("5000");
-
+        inner_test("5k", "5000");
     }
 
     @Test
     public void extract_simple_with_k_and_euro() throws Exception {
-        // given
-        DataSetRow row = getRow("\u20ac5k");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-            .isNotEmpty().hasSize(2) //
-            .contains(ColumnMetadata.Builder //
-                    .column() //
-                    .name("0000" + "_number") //
-                    .type(Type.NUMERIC) //
-                    .computedId("0001") //
-                    .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("5000");
-
+        inner_test("\u20ac5k", "5000");
     }
-
 
     @Test
     public void extract_simple_with_k_and_digit() throws Exception {
-        // given
-        DataSetRow row = getRow("5.5k");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("5500");
-
+        inner_test("5.5k", "5500");
     }
 
     @Test
     public void extract_simple_with_k_first_and_digit() throws Exception {
-        // given
-        DataSetRow row = getRow("k5.5");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-            .isNotEmpty().hasSize(2) //
-            .contains(ColumnMetadata.Builder //
-                    .column() //
-                    .name("0000" + "_number") //
-                    .type(Type.NUMERIC) //
-                    .computedId("0001") //
-                    .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("5500");
+        inner_test("k5.5", "5500");
     }
 
     /**
@@ -273,11 +153,11 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
         assertThat(row.getRowMetadata().getColumns()) //
                 .isNotEmpty().hasSize(2) //
                 .contains(ColumnMetadata.Builder //
-                .column() //
-                .name("0000" + "_number") //
-                .type(Type.NUMERIC) //
-                .computedId("0001") //
-                .build());
+                        .column() //
+                        .name("0000" + "_number") //
+                        .type(Type.NUMERIC) //
+                        .computedId("0001") //
+                        .build());
 
         assertThat(row.values()).isNotEmpty().hasSize(2);
 
@@ -290,107 +170,37 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void extract_empty() throws Exception {
-        // given
-        DataSetRow row = getRow("");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("0");
+        inner_test("", "0");
     }
 
     @Test
     public void extract_nan() throws Exception {
-        // given
-        DataSetRow row = getRow("beer");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("0");
-
+        inner_test("beer", "0");
     }
 
     @Test
     public void extract_with_only_digits_and_k() throws Exception {
-        // given
-        DataSetRow row = getRow(".01k");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
-                .contains(ColumnMetadata.Builder //
-                        .column() //
-                        .name("0000" + "_number") //
-                        .type(Type.NUMERIC) //
-                        .computedId("0001") //
-                        .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("10");
-
+        inner_test(".01k", "10");
     }
 
     @Test
     public void extract_with_only_digits_and_k_and_euro() throws Exception {
-        // given
-        DataSetRow row = getRow("\u20ac.01k");
-        assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
-
-        // when
-        ActionTestWorkbench.test(row, factory.create(action, parameters));
-
-        // then
-        assertThat(row.getRowMetadata().getColumns()) //
-            .isNotEmpty().hasSize(2) //
-            .contains(ColumnMetadata.Builder //
-                          .column() //
-                          .name("0000" + "_number") //
-                          .type(Type.NUMERIC) //
-                          .computedId("0001") //
-                          .build());
-
-        assertThat(row.values()).isNotEmpty().hasSize(2);
-
-        assertThat(row.get("0001")).isEqualTo("10");
-
+        inner_test("\u20ac.01k", "10");
     }
 
     @Test
     public void extract_with_G_and_other_prefix_before() throws Exception {
+        inner_test("deca 2G", "2000000000");
+    }
+
+    @Test
+    public void extract_with_G_and_other_prefix_before_2() throws Exception {
+        inner_test("h2G", "2000000000");
+    }
+
+    public void inner_test(String from, String expected) throws Exception {
         // given
-        DataSetRow row = getRow("deca 2G");
+        DataSetRow row = getRow(from);
         assertThat(row.getRowMetadata().getColumns()).isNotEmpty().hasSize(1);
 
         // when
@@ -408,9 +218,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
         assertThat(row.values()).isNotEmpty().hasSize(2);
 
-        assertThat(row.get("0001")).isEqualTo("2000000000");
-
+        assertThat(row.get("0001")).isEqualTo(expected);
     }
-
 
 }

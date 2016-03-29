@@ -21,17 +21,18 @@ import InventorySearch from './inventory-search-component';
      * @name data-prep.data-prep.inventory-search
      * @description This module contains the component to manage an inventory search
      * @requires talend.widget
+     * @requires data-prep.services.documentation
+     * @requires data-prep.services.inventory
      * @requires data-prep.services.utils
-     * @requires data-prep.services.datasetWorkflowService:UploadWorkflowService
-     * @requires data-prep.services.preparation.service:PreparationService
+     * @requires data-prep.services.easter-eggs
      */
     angular.module('data-prep.inventory-search',
         [
             'pascalprecht.translate',
             'data-prep.search-bar',
-            'data-prep.services.utils',
-            'data-prep.services.inventory',
             'data-prep.services.documentation',
+            'data-prep.services.inventory',
+            'data-prep.services.utils',
             'data-prep.services.easter-eggs'
         ])
         .component('inventorySearch', InventorySearch);

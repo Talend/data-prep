@@ -17,7 +17,10 @@ import TypeaheadCtrl from './typeahead-controller';
  * @ngdoc directive
  * @name talend.widget.directive:Typeahead
  * @description This directive create an input with a dropdown element.
- * @param {function} search function called when input changes
+ * @param {function} search Function called when input changes
+ * @param {string} placeholder Input placeholder
+ * @param {string} searchingText Displayed text while searching
+ * @param {string} customRender If 'true' then typeahead will not render result, the rendering is done by user and transcluded
  */
 export default function Typeahead($timeout, $window) {
     'ngInject';
@@ -39,8 +42,7 @@ export default function Typeahead($timeout, $window) {
             post: (scope, iElement, iAttrs, ctrl) => {
                 const body = angular.element('body').eq(0);
                 const input = iElement.find('.input-search');
-                const container = iElement.find('.typeahead-result');
-                const offset = 20;
+                const selectedClass = 'selected';
 
                 function hideResults() {
                     $timeout(() => ctrl.hideResults());
@@ -50,67 +52,83 @@ export default function Typeahead($timeout, $window) {
                     $timeout(() => ctrl.showResults());
                 }
 
-                input.keydown((event) => {
-                    let menu = iElement.find('ul');
-                    let selected = menu.find('li.selected');
-                    let current;
-                    let listItems = menu.find('li');
+                function scrollToSelectedItem(container, next) {
+                    container.stop();
 
-                    listItems.removeClass('selected');
-
-                    function scrollToSelectedItem() {
-                        if (current.offset().top < current.height()) {
-                            container.animate({
-                                scrollTop: container.scrollTop() + current.offset().top - current.height() + offset
-                            });
-                        }
-                        if ((current.offset().top + current.height()) > container.height()) {
-                            container.animate({
-                                scrollTop: container.scrollTop() + current.offset().top - container.height() + offset
-                            });
-                        }
+                    const nextTop = next.offset().top;
+                    const containerTop = container.offset().top;
+                    if (nextTop < containerTop) {
+                        container.animate({
+                            scrollTop: container.scrollTop() - (containerTop - nextTop)
+                        }, 'fast');
                     }
 
+                    const nextBottom = nextTop + next.height();
+                    const containerBottom = containerTop + container.height();
+                    if (nextBottom > containerBottom) {
+                        container.animate({
+                            scrollTop: container.scrollTop() + (nextBottom - containerBottom)
+                        }, 'fast');
+                    }
+                }
+
+                function getItemList() {
+                    return iElement.find('ul').eq(0).find('>li');
+                }
+
+                function getCurrentItem() {
+                    return iElement.find('ul').eq(0).find('li.' + selectedClass).eq(0);
+                }
+
+                input.keydown((event) => {
+                    let current, next;
+
                     switch (event.keyCode) {
-                        case 27:
+                        case 27: //ESC
                             ctrl.hideResults();
                             scope.$digest();
                             break;
-                        case 40:
-                            if(!ctrl.visible){
+                        case 38: //UP
+                            current = getCurrentItem();
+                            next = (!current.length || current.is(':first-child')) ?
+                                getItemList().last() :
+                                current.prev();
+                            break;
+                        case 40: //DOWN
+                            if (!ctrl.visible) {
                                 showResults();
-                            } else {
-                                if (!selected.length || selected.is(':last-child')) {
-                                    current = listItems.eq(0);
-                                } else {
-                                    current = selected.next();
+                                break;
+                            }
+
+                            current = getCurrentItem();
+                            next = (!current.length || current.is(':last-child')) ?
+                                getItemList().eq(0) :
+                                current.next();
+                            break;
+                        case 13: //ENTER
+                            if (!ctrl.visible) {
+                                showResults();
+                                break;
+                            }
+
+                            current = getCurrentItem();
+                            if (current.length) {
+                                if (current.children().eq(0).is('a')) {
+                                    $window.open(current.children().eq(0).attr('href'), '_blank');
                                 }
-                            }
-                            break;
-                        case 38:
-                            if (!selected.length || selected.is(':first-child')) {
-                                current = listItems.last();
-                            } else {
-                                current = selected.prev();
-                            }
-                            break;
-                        case 13:
-                            if(!ctrl.visible){
-                                showResults();
-                            } else {
-                                if (selected.length) {
-                                    if (selected.children().eq(0).is('a')) {
-                                        $window.open(selected.children().eq(0).attr('href'),'_blank');
-                                    } else {
-                                        selected.children().click();
-                                    }
+                                else {
+                                    current.children().click();
                                 }
                             }
                             break;
                     }
-                    if (current) {
-                        current.addClass('selected');
-                        scrollToSelectedItem();
+
+                    if (next) {
+                        current.removeClass(selectedClass);
+                        next.addClass(selectedClass);
+
+                        const container = iElement.find('> .typeahead-result').eq(0);
+                        scrollToSelectedItem(container, next);
                     }
                 });
 

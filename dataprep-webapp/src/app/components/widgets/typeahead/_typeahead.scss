@@ -11,8 +11,6 @@
 
   ============================================================================*/
 
-$selected-color: #c9d7e4;
-
 typeahead {
   display: block;
   position: relative;
@@ -46,6 +44,6 @@ typeahead {
   }
 
   .selected{
-    background-color: $selected-color;
+    background-color: #c9d7e4;
   }
 }

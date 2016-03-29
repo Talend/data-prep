@@ -71,6 +71,8 @@ public class ActionContext {
 
     private Predicate<DataSetRow> filter = r -> true;
 
+    private Set<ColumnMetadata> modifiedColumns;
+
     /**
      * Default constructor.
      *
@@ -246,6 +248,23 @@ public class ActionContext {
     public ActionStatus getActionStatus() {
         return actionStatus;
     }
+
+    /**
+     *
+     * @return The {@link ColumnMetadata} modified by the Action
+     */
+    public Set<ColumnMetadata> getModifiedColumns() {
+        if (this.modifiedColumns == null){
+            this.modifiedColumns = new HashSet<>();
+        }
+        return this.modifiedColumns;
+    }
+
+    public void setModifiedColumns( Set<ColumnMetadata> modifiedColumns) {
+        this.modifiedColumns = modifiedColumns;
+    }
+
+
 
     /**
      * Changes the action status: implementation of actions may want to interrupt computation (no more changes to be

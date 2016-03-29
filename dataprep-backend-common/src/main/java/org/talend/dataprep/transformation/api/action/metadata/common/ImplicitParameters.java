@@ -33,7 +33,7 @@ public enum ImplicitParameters {
                                 SCOPE(STRING, EMPTY),
                                 FILTER(ParameterType.FILTER, EMPTY);
 
-    /** The paramter. */
+    /** The parameter. */
     private final Parameter parameter;
 
     /**

@@ -68,7 +68,7 @@ class DocumentationService {
      * @returns {object} The documentation elements
      */
     _createDocElement(parts) {
-        const doc = {};
+        const doc = {inventoryType: 'documentation'};
         for(let i = 0; i < properties.length; ++i) {
             const name = properties[i];
             const value = parts[i];

@@ -36,73 +36,11 @@ describe('Inventory Search component', () => {
         element.remove();
     });
 
-    it('should render typeahead', () => {
+    it('should render search-bar', () => {
         //when
         createElement();
 
         //then
-        expect(element.find('typeahead').length).toBe(1);
+        expect(element.find('search-bar').length).toBe(1);
     });
-
-    it('should render result', () => {
-        //given
-        createElement();
-        const ctrl = element.controller('inventorySearch');
-
-        //when
-        ctrl.results = [{inventoryType: 'dataset'}];
-        ctrl.docResults = [{}, {}];
-        scope.$apply();
-
-        //then
-        expect(element.find('inventory-item').length).toBe(3);
-    });
-
-    describe('no-result', () => {
-        it('should render no-result', () => {
-            //given
-            createElement();
-            const ctrl = element.controller('inventorySearch');
-
-            //when
-            ctrl.searching = false;
-            ctrl.results = [];
-            ctrl.docResults = [];
-            scope.$apply();
-
-            //then
-            expect(element.find('.no-results').length).toBe(1);
-        });
-
-        it('should NOT render no-result when search is in progress', () => {
-            //given
-            createElement();
-            const ctrl = element.controller('inventorySearch');
-
-            //when
-            ctrl.searching = true;
-            ctrl.results = [];
-            ctrl.docResults = [];
-            scope.$digest();
-
-            //then
-            expect(element.find('.no-results').length).toBe(0);
-        });
-
-        it('should NOT render no-result when there is a result', () => {
-            //given
-            createElement();
-            const ctrl = element.controller('inventorySearch');
-
-            //when
-            ctrl.searching = false;
-            ctrl.results = [{}];
-            ctrl.docResults = [];
-            scope.$digest();
-
-            //then
-            expect(element.find('.no-results').length).toBe(0);
-        });
-    });
-
 });

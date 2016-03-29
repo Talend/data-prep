@@ -13,21 +13,9 @@
   ~ ============================================================================
   -->
 
-<typeahead id="search-documentation"
-           search="$ctrl.search(value)"
-           placeholder="{{'PLAYGROUND_SEARCH' | translate}}"
-           searching-text="{{'SEARCHING' | translate}}"
-           custom-render="true"
-           class="inventory documentation-search">
-    <div ng-if="!$ctrl.searching && $ctrl.results.length === 0" class="no-results" translate-once="NO_RESULTS"></div>
-    <ul>
-        <li ng-repeat="doc in $ctrl.results">
-            <a href="{{doc.url}}" target="_blank">
-                <inventory-item item="doc"
-                                type="documentation"
-                                details="{{doc.description}}">
-                </inventory-item>
-            </a>
-        </li>
-    </ul>
-</typeahead>
+<search-bar id="search-documentation"
+            class="documentation-search"
+            search="$ctrl.search(value)"
+            items="$ctrl.results"
+            placeholder="{{'PLAYGROUND_SEARCH' | translate}}">
+</search-bar>

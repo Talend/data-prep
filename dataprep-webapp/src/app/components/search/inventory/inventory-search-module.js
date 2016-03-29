@@ -25,13 +25,13 @@ import InventorySearch from './inventory-search-component';
      */
     angular.module('data-prep.inventory-search',
         [
+            'pascalprecht.translate',
+            'data-prep.search-bar',
             'data-prep.services.utils',
-            'talend.widget',
             'data-prep.services.datasetWorkflowService',
             'data-prep.services.inventory',
             'data-prep.services.preparation',
-            'data-prep.services.documentation',
-            'pascalprecht.translate'
+            'data-prep.services.documentation'
         ])
         .component('inventorySearch', InventorySearch);
 })();

@@ -13,32 +13,27 @@
 
 /**
  * @ngdoc controller
- * @name data-prep.documentation-search.controller:DocumentationSearchCtrl
+ * @name data-prep.data-prep.search-bar.controller:DocumentationSearchCtrl
  * @description DocumentationSearchCtrl controller.
  * @requires data-prep.services.documentation.service:DocumentationService
  *
  */
-class DocumentationSearchCtrl {
-
-    constructor(DocumentationService) {
-        'ngInject';
-        this.documentationService = DocumentationService;
-    }
+class SearchBarCtrl {
 
     /**
      * @ngdoc method
-     * @name search
-     * @methodOf data-prep.documentation-search.controller:DocumentationSearchCtrl
-     * @description Search based on searchInput
+     * @name triggerSearch
+     * @methodOf data-prep.data-prep.search-bar.controller:DocumentationSearchCtrl
+     * @description Trigger search implementation based on searchInput
      */
-    search(searchInput) {
+    triggerSearch(searchInput) {
         this.results = null;
-        this.currentInput = searchInput;
 
-        return this.documentationService.search(searchInput)
-            .then((response)=> (this.currentInput === searchInput) && (this.results = response));
+        if (searchInput) {
+            return this.search({value: searchInput});
+        }
     }
 }
 
-export default DocumentationSearchCtrl;
+export default SearchBarCtrl;
 

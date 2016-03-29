@@ -1,0 +1,58 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<typeahead class="tdp-search inventory"
+           search="$ctrl.triggerSearch(value)"
+           placeholder="{{$ctrl.placeholder}}"
+           searching-text="{{'SEARCHING' | translate}}"
+           custom-render="true">
+    <div ng-if="$ctrl.items && $ctrl.items.length === 0" class="no-results" translate-once="NO_RESULTS"></div>
+    <ul>
+        <li ng-repeat="item in $ctrl.items track by $index">
+            <a class="documentation"
+               ng-href="{{item.url}}"
+               target="_blank"
+               ng-if="item.inventoryType === 'documentation'">
+                <inventory-item item="item"
+                                type="documentation"
+                                details="{{item.description}}">
+                </inventory-item>
+            </a>
+
+            <a class="documentation"
+               ng-if="item.inventoryType === 'folder'"
+               ui-sref="nav.index.datasets({folderPath: item.path})">
+                <inventory-item item="item"
+                                type="folder"
+                                details="SEARCH_FOLDER_DETAILS">
+                </inventory-item>
+            </a>
+
+            <inventory-item ng-if="item.inventoryType==='preparation'"
+                            item="item"
+                            type="preparation"
+                            details="SEARCH_PREPARATION_DETAILS"
+                            ng-click="$ctrl.preparationService.open(item)">
+            </inventory-item>
+
+            <inventory-item ng-if="item.inventoryType==='dataset'"
+                            details="SEARCH_DATASET_DETAILS"
+                            item="item"
+                            type="dataset"
+                            ng-click="$ctrl.uploadWorkflowService.openDataset(item.originalItem)">
+            </inventory-item>
+        </li>
+    </ul>
+</typeahead>

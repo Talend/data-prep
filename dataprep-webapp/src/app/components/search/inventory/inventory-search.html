@@ -13,42 +13,10 @@
   ~ ============================================================================
   -->
 
-<typeahead id="search-inventory-list"
-           class="inventory inventory-search"
+<search-bar id="search-inventory-list"
            search="$ctrl.search(value)"
            placeholder="{{'SEARCH' | translate}}"
-           searching-text="{{'SEARCHING' | translate}}"
-           custom-render="true">
-    <div ng-if="!$ctrl.searching && $ctrl.results.length === 0 && $ctrl.docResults.length === 0" class="no-results" translate-once="NO_RESULTS"></div>
-    <ul>
-        <li ng-repeat="doc in $ctrl.docResults">
-            <a href="{{doc.url}}" target="_blank" class="documentation">
-                <inventory-item item="doc"
-                                type="documentation"
-                                details="{{doc.description}}">
-                </inventory-item>
-            </a>
-        </li>
+           items="$ctrl.results">
+</search-bar>
 
-        <li ng-repeat="item in $ctrl.results">
-            <inventory-item ng-if="item.inventoryType==='preparation'"
-                            item="item"
-                            type="preparation"
-                            details="SEARCH_PREPARATION_DETAILS"
-                            ng-click="$ctrl.preparationService.open(item)">
-            </inventory-item>
-            <inventory-item ng-if="item.inventoryType==='folder'"
-                            item="item"
-                            type="folder"
-                            details="SEARCH_FOLDER_DETAILS"
-                            ng-click="$ctrl.goToFolder('nav.index.datasets', {folderPath: item.path})">
-            </inventory-item>
-            <inventory-item ng-if="item.inventoryType==='dataset'"
-                            details="SEARCH_DATASET_DETAILS"
-                            item="item"
-                            type="dataset"
-                            ng-click="$ctrl.uploadWorkflowService.openDataset(item.originalItem)">
-            </inventory-item>
-        </li>
-    </ul>
-</typeahead>
+{{$ctrl.results.length}}

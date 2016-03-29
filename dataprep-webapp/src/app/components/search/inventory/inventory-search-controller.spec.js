@@ -36,7 +36,6 @@ describe('Inventory Search controller', () => {
 
             //then
             expect(InventoryService.search).toHaveBeenCalledWith('barcelona');
-            expect(component.results).toBe(results);
         }));
 
         it('should call documentation search service', inject(($q, InventoryService, DocumentationService) => {
@@ -51,7 +50,6 @@ describe('Inventory Search controller', () => {
 
             //then
             expect(DocumentationService.search).toHaveBeenCalledWith('barcelona');
-            expect(component.docResults).toBe(docResults)
         }));
 
         it('should set results', inject(($q, InventoryService, DocumentationService) => {
@@ -65,8 +63,7 @@ describe('Inventory Search controller', () => {
             scope.$digest();
 
             //then
-            expect(component.results).toBe(results);
-            expect(component.docResults).toBe(docResults)
+            expect(component.results).toEqual(docResults.concat(results));
         }));
 
         it('should NOT set results when they are out of date', inject(($q, InventoryService, DocumentationService) => {
@@ -81,8 +78,22 @@ describe('Inventory Search controller', () => {
             scope.$digest();
 
             //then
-            expect(component.results).not.toBe(results);
-            expect(component.docResults).not.toBe(docResults)
+            expect(component.results).not.toEqual(docResults.concat(results));
+        }));
+
+        it('should set empty array as results when there are no result', inject(($q, InventoryService, DocumentationService) => {
+            const results = [];
+            const docResults = [];
+            spyOn(InventoryService, 'search').and.returnValue($q.when(results));
+            spyOn(DocumentationService, 'search').and.returnValue($q.when(docResults));
+            component.results = null;
+
+            //when
+            component.search('barcelona');
+            scope.$digest();
+
+            //then
+            expect(component.results).toEqual([]);
         }));
     });
 

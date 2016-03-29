@@ -40,24 +40,52 @@ class InventorySearchCtrl {
      * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
      * @description Search based on searchInput
      */
-    search (searchInput) {
+    search(searchInput) {
         this.results = null;
-        this.docResults = null;
         this.currentInput = searchInput;
 
-        if(searchInput){
-            const inventoryPromise = this.inventoryService.search(searchInput)
-                .then((response)=> {
-                    this.results = searchInput === this.currentInput && response;
-                });
+        const inventoryPromise = this._searchDoc(searchInput);
+        const docPromise = this._searchInventory(searchInput);
 
-            const docPromise = this.documentationService.search(searchInput)
-                .then((response)=> {
-                    this.docResults = searchInput === this.currentInput && response;
-                });
+        // if results (doc + inventory) are empty, we create an empty array
+        // the no-result message is based on the definition of results. It must be an empty array to show the message.
+        return this.$q.all([inventoryPromise, docPromise])
+            .then((responses) => {
+                this.results = this.results || (searchInput === this.currentInput && []);
+                return responses;
+            });
+    }
 
-            return this.$q.all([inventoryPromise, docPromise]);
-        }
+    /**
+     * @ngdoc method
+     * @name _searchDoc
+     * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
+     * @description Search documentation and populate results if not empty
+     */
+    _searchDoc(searchInput) {
+        return this.inventoryService.search(searchInput)
+            .then((response)=> {
+                if(searchInput === this.currentInput && response.length) {
+                    this.results = (this.results || []).concat(response);
+                }
+                return response;
+            })
+    }
+
+    /**
+     * @ngdoc method
+     * @name _searchDoc
+     * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
+     * @description Search inventory and populate results if not empty
+     */
+    _searchInventory(searchInput) {
+        return this.documentationService.search(searchInput)
+            .then((response)=> {
+                if(searchInput === this.currentInput && response.length) {
+                    this.results = response.concat(this.results || []);
+                }
+                return response;
+            });
     }
 
     /**
@@ -66,7 +94,7 @@ class InventorySearchCtrl {
      * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
      * @description go to a folder
      */
-    goToFolder (stateString, options) {
+    goToFolder(stateString, options) {
         this.$state.go(stateString, options);
     }
 }

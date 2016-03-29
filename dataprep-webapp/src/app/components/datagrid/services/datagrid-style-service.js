@@ -1,39 +1,34 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc service
  * @name data-prep.datagrid.service:DatagridStyleService
  * @description Datagrid private service that manage the grid style
- * @requires data-prep.services.playground.service:DatagridService
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.utils.service:TextFormatService
  */
-export default function DatagridStyleService(DatagridService, ConverterService, TextFormatService) {
-    'ngInject';
-    var grid;
+export default class DatagridStyleService {
+    constructor(ConverterService, TextFormatService) {
+        'ngInject';
 
-    return {
-        init: init,
-        columnFormatter: columnFormatter,
-        getColumnPreviewStyle: getColumnPreviewStyle,
-        highlightCellsContaining: highlightCellsContaining,
-        resetCellStyles: resetCellStyles,
-        resetStyles: resetStyles,
-        updateColumnClass: updateColumnClass
-    };
+        this.grid = null;
+        this.hightlightedColumnId = null;
+        this.hightlightedContent = null;
 
-    //--------------------------------------------------------------------------------------------------------------
+        this.ConverterService = ConverterService;
+        this.TextFormatService = TextFormatService;
+    }
 
     /**
      * @ngdoc method
@@ -41,9 +36,20 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @methodOf data-prep.datagrid.service:DatagridStyleService
      * @description Reset the cells css
      */
-    function resetCellStyles() {
-        grid.resetActiveCell();
-        grid.setCellCssStyles('highlight', {});
+    resetHighlightStyles() {
+        this.hightlightedColumnId = null;
+        this.hightlightedContent = null;
+    }
+
+    /**
+     * @ngdoc method
+     * @name resetCellStyles
+     * @methodOf data-prep.datagrid.service:DatagridStyleService
+     * @description Reset the cells css
+     */
+    resetCellStyles() {
+        this.grid.resetActiveCell();
+        this.resetHighlightStyles();
     }
 
     /**
@@ -54,7 +60,7 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @param {object} column The target column
      * @param {string} newClass The class to add
      */
-    function addClass(column, newClass) {
+    _addClass(column, newClass) {
         column.cssClass = (column.cssClass || '') + ' ' + newClass;
     }
 
@@ -66,9 +72,9 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @param {object} column The target column
      * @param {string} selectedColId The selected column id
      */
-    function updateSelectionClass(column, selectedColId) {
+    updateSelectionClass(column, selectedColId) {
         if (column.id === selectedColId) {
-            addClass(column, 'selected');
+            this._addClass(column, 'selected');
         }
     }
 
@@ -79,10 +85,10 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @description Add the 'number' class to the column if its type is a number type
      * @param {object} column the target column
      */
-    function updateNumbersClass(column) {
-        var simplifiedType = ConverterService.simplifyType(column.tdpColMetadata.type);
+    updateNumbersClass(column) {
+        const simplifiedType = this.ConverterService.simplifyType(column.tdpColMetadata.type);
         if (simplifiedType === 'integer' || simplifiedType === 'decimal') {
-            addClass(column, 'numbers');
+            this._addClass(column, 'numbers');
         }
     }
 
@@ -93,15 +99,15 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @description Set style classes on columns depending on its state (type, selection, ...)
      * @param {string} selectedColId The grid selected column Id
      */
-    function updateColumnClass(selectedColId) {
-        _.forEach(grid.getColumns(), function (column) {
+    updateColumnClass(selectedColId) {
+        _.forEach(this.grid.getColumns(), (column) => {
             if (column.id === 'tdpId') {
                 column.cssClass = 'index-column';
             }
             else {
                 column.cssClass = null;
-                updateSelectionClass(column, selectedColId);
-                updateNumbersClass(column);
+                this.updateSelectionClass(column, selectedColId);
+                this.updateNumbersClass(column);
             }
         });
     }
@@ -113,39 +119,51 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @description Value formatter used in SlickGrid column definition. This is called to get a cell formatted value
      * @param {object} col The column to format
      */
-    function columnFormatter(col) {
+    columnFormatter(col) {
+        const isInvalid = (value) => col.quality.invalidValues.indexOf(value) >= 0;
 
-        var invalidValues = col.quality.invalidValues;
-        var isInvalid = function isInvalid(value) {
-            return invalidValues.indexOf(value) >= 0;
-        };
+        function formatter(row, cell, value, columnDef, dataContext) {
+            let classNames = (col.id === this.hightlightedColumnId) && (value === this.hightlightedContent) ?
+                'highlight' :
+                '';
 
-        return function formatter(row, cell, value, columnDef, dataContext) {
             //hidden characters need to be shown
-            var returnStr = TextFormatService.adaptToGridConstraints(value);
+            const returnStr = this.TextFormatService.adaptToGridConstraints(value) || ' ';
 
             //entire row modification preview
             switch (dataContext.__tdpRowDiff) {
                 case 'delete':
-                    return '<div class="cellDeletedValue">' + (returnStr ? returnStr : ' ') + '</div>';
+                    classNames += ' cellDeletedValue';
+                    break;
                 case 'new':
-                    return '<div class="cellNewValue">' + (returnStr ? returnStr : ' ') + '</div>';
+                    classNames += ' cellNewValue';
+                    break;
             }
 
             //cell modification preview
             if (dataContext.__tdpDiff && dataContext.__tdpDiff[columnDef.id]) {
                 switch (dataContext.__tdpDiff[columnDef.id]) {
                     case 'update':
-                        return '<div class="cellUpdateValue">' + returnStr + '</div>';
+                        classNames += ' cellUpdateValue';
+                        break;
                     case 'new':
-                        return '<div class="cellNewValue">' + returnStr + '</div>';
+                        classNames += ' cellNewValue';
+                        break;
                     case 'delete':
-                        return '<div class="cellDeletedValue">' + (returnStr ? returnStr : ' ') + '</div>';
+                        classNames += ' cellDeletedValue';
+                        break;
                 }
             }
 
-            return returnStr + (isInvalid(value) ? '<div title="Invalid Value" class="red-rect"></div>' : '<div class="invisible-rect"></div>');
-        };
+            const formattedValue = `<div class="${classNames}">${returnStr}</div>`;
+            const indicator = isInvalid(value) ?
+                '<div title="Invalid Value" class="red-rect"></div>' :
+                '<div class="invisible-rect"></div>';
+
+            return formattedValue + indicator;
+        }
+
+        return formatter.bind(this);
     }
 
     /**
@@ -155,7 +173,7 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @description Get the column header preview style
      * @param {object} col The column metadata
      */
-    function getColumnPreviewStyle(col) {
+    getColumnPreviewStyle(col) {
         switch (col.__tdpColumnDiff) {
             case 'new':
                 return 'newColumn';
@@ -175,9 +193,9 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @description Reset the cell styles and update the columns style
      * @param {string} selectedColId The selected column id
      */
-    function resetStyles(selectedColId) {
-        resetCellStyles();
-        updateColumnClass(selectedColId);
+    resetStyles(selectedColId) {
+        this.resetCellStyles();
+        this.updateColumnClass(selectedColId);
     }
 
     /**
@@ -188,9 +206,9 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @param {String} content The value to highlight
      * @description Highlight the cells in column that contains the same value as content
      */
-    function highlightCellsContaining(colId, content) {
-        var sameContentConfig = DatagridService.getSameContentConfig(colId, content, 'highlight');
-        grid.setCellCssStyles('highlight', sameContentConfig);
+    highlightCellsContaining(colId, content) {
+        this.hightlightedColumnId = colId;
+        this.hightlightedContent = content;
     }
 
     /**
@@ -200,7 +218,7 @@ export default function DatagridStyleService(DatagridService, ConverterService, 
      * @param {object} newGrid The new grid
      * @description Initialize the grid and attach the style listeners
      */
-    function init(newGrid) {
-        grid = newGrid;
+    init(newGrid) {
+        this.grid = newGrid;
     }
 }

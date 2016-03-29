@@ -177,6 +177,9 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
              */
             var onColumnSelectionChange = function onColumnSelectionChange() {
                 if (grid) {
+                    //Update cell highlights
+                    DatagridStyleService.resetHighlightStyles();
+
                     //Update column style
                     $timeout.cancel(columnStyleTimeout);
                     columnStyleTimeout = $timeout(function () {
@@ -219,10 +222,12 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
                     }
 
                     if (stateSelectedLine && stateGridData && !stateGridData.preview) {
-                        const colId = stateSelectedColumn && stateSelectedColumn.id;
-                        const content = stateSelectedLine[colId];
-                        cellHighlightTimeout = $timeout(
-                            DatagridStyleService.highlightCellsContaining.bind(null, colId, content),
+                        cellHighlightTimeout = $timeout(() => {
+                                const colId = stateSelectedColumn && stateSelectedColumn.id;
+                                const content = stateSelectedLine[colId];
+                                DatagridStyleService.highlightCellsContaining(colId, content);
+                                grid.invalidate();
+                            },
                             500,
                             false
                         );

@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('Datagrid service', function () {
     'use strict';
@@ -44,7 +44,12 @@ describe('Datagrid service', function () {
             {tdpId: 7, firstname: 'Pepe 2', __tdpDiff: {firstname: 'update'}}, //firstname is updated in preview
             {tdpId: 8, firstname: 'Pipi'}
         ],
-        metadata: {columns: [{id: '0000', name: 'lastname'}, {id: '0001', name: 'firstname'}, {id: '0002', name: 'age'}]}
+        metadata: {
+            columns: [{id: '0000', name: 'lastname'}, {id: '0001', name: 'firstname'}, {
+                id: '0002',
+                name: 'age'
+            }]
+        }
     };
 
     beforeEach(angular.mock.module('data-prep.services.playground', function ($provide) {
@@ -109,29 +114,6 @@ describe('Datagrid service', function () {
     });
 
     describe('utils functions', function () {
-        it('should return the rows containing non empty searched value', inject(function (DatagridService) {
-            //given
-            var data = {
-                metadata: {columns: []},
-                records: [
-                    {tdpId: 1, text: 'mon toto est ici'},
-                    {tdpId: 2, text: 'ma tata est la'},
-                    {tdpId: 3, text: 'la tata est ici'},
-                    {tdpId: 4, text: 'mon toto est la'},
-                    {tdpId: 5, text: 'mi titi est ici'},
-                    {tdpId: 6, text: 'mi titi est la'},
-                    {tdpId: 7, text: 'mi titi est ici'}
-                ]
-            };
-            stateMock.playground.grid.dataView.setItems(data.records);
-
-            //when
-            var rowsId = DatagridService.getSameContentConfig('text', 'mi titi est ici', 'myClass');
-
-            //then
-            expect(rowsId).toEqual({4: {text: 'myClass'}, 6: {text: 'myClass'}});
-        }));
-
         it('should return every column id', inject(function (DatagridService) {
             //given
             stateMock.playground.data = {

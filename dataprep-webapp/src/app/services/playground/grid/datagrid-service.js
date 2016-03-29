@@ -35,7 +35,6 @@ export default function DatagridService(state, StateService, ConverterService) {
         updateData: updateData, //updata data in the current dataset
         getColumns: getColumns,
         getColumnsContaining: getColumnsContaining,
-        getSameContentConfig: getSameContentConfig,
         getNumericColumns: getNumericColumns,
 
         //preview
@@ -248,29 +247,6 @@ export default function DatagridService(state, StateService, ConverterService) {
         }
 
         return results;
-    }
-
-    /**
-     * @ngdoc method
-     * @name getSameContentConfig
-     * @methodOf data-prep.services.playground.service:DatagridService
-     * @param {string} colId The column index
-     * @param {string} term The cell content to search
-     * @param {string} cssClass The css class to apply
-     * @description Return displayed rows index where data[rowId][colId] contains the searched term
-     * @returns {Object} The SlickGrid css config for each column with the provided content
-     */
-    function getSameContentConfig(colId, term, cssClass) {
-        var config = {};
-        for (var i = 0; i < state.playground.grid.dataView.getLength(); ++i) {
-            var item = state.playground.grid.dataView.getItem(i);
-            if (term === item[colId]) {
-                config[i] = {};
-                config[i][colId] = cssClass;
-            }
-        }
-
-        return config;
     }
 
     /**

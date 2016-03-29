@@ -1,33 +1,33 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
-describe('Datagrid style service', function () {
+describe('Datagrid style service', () => {
     'use strict';
 
     var gridMock, gridColumns, stateMock;
 
     function assertColumnsHasNoStyles() {
-        gridColumns.forEach(function(column) {
+        gridColumns.forEach(function (column) {
             expect(column.cssClass).toBeFalsy();
         });
     }
 
-    beforeEach(angular.mock.module('data-prep.datagrid', function ($provide) {
+    beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
         stateMock = {playground: {grid: {}}};
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(function () {
+    beforeEach(() => {
         gridColumns = [
             {id: '0000', field: 'col0', tdpColMetadata: {id: '0000', name: 'col0', type: 'string'}},
             {id: '0001', field: 'col1', tdpColMetadata: {id: '0001', name: 'col1', type: 'integer'}},
@@ -37,7 +37,6 @@ describe('Datagrid style service', function () {
             {id: 'tdpId', field: 'tdpId', tdpColMetadata: {id: 'tdpId', name: '#'}}
         ];
 
-        /*global SlickGridMock:false */
         gridMock = new SlickGridMock();
         gridMock.initColumnsMock(gridColumns);
 
@@ -49,20 +48,22 @@ describe('Datagrid style service', function () {
         spyOn(gridMock, 'invalidate').and.returnValue();
     });
 
-    describe('reset cell styles', function() {
-        it('should reset cell styles configuration', inject(function (DatagridStyleService) {
+    describe('reset cell styles', () => {
+        it('should reset cell styles configuration', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
-            gridMock.setCellCssStyles('highlight', {'2': {'0000': 'highlight'}});
+            DatagridStyleService.hightlightedColumnId = '0000';
+            DatagridStyleService.hightlightedContent = 'toto';
 
             //when
             DatagridStyleService.resetCellStyles();
 
             //then
-            expect(gridMock.cssStyleConfig.highlight).toEqual({});
+            expect(DatagridStyleService.hightlightedColumnId).toBeFalsy();
+            expect(DatagridStyleService.hightlightedContent).toBeFalsy();
         }));
 
-        it('should reset grid active cell', inject(function (DatagridStyleService) {
+        it('should reset grid active cell', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
 
@@ -74,29 +75,27 @@ describe('Datagrid style service', function () {
         }));
     });
 
-    describe('highlight cells', function() {
-        it('should set highlight configuration', inject(function (DatagridService, DatagridStyleService) {
+    describe('highlight cells', () => {
+        it('should set highlight configuration', inject((DatagridStyleService) => {
             //given
             var colId = '0000';
             var content = 'toto';
-            var highlightClass = 'highlight';
-            var highLightConfig = {'2': {'0000': 'highlight'}};
-            spyOn(DatagridService, 'getSameContentConfig').and.returnValue(highLightConfig);
 
             DatagridStyleService.init(gridMock);
-            expect(gridMock.cssStyleConfig[highlightClass]).toBeFalsy();
+            expect(DatagridStyleService.hightlightedColumnId).toBeFalsy();
+            expect(DatagridStyleService.hightlightedContent).toBeFalsy();
 
             //when
             DatagridStyleService.highlightCellsContaining(colId, content);
 
             //then
-            expect(DatagridService.getSameContentConfig).toHaveBeenCalledWith(colId, content, highlightClass);
-            expect(gridMock.cssStyleConfig[highlightClass]).toBe(highLightConfig);
+            expect(DatagridStyleService.hightlightedColumnId).toBe(colId);
+            expect(DatagridStyleService.hightlightedContent).toBe(content);
         }));
     });
 
-    describe('update column styles', function() {
-        it('should set "selected" class on active cell column when this is NOT a preview', inject(function (DatagridStyleService) {
+    describe('update column styles', () => {
+        it('should set "selected" class on active cell column when this is NOT a preview', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             assertColumnsHasNoStyles();
@@ -114,7 +113,7 @@ describe('Datagrid style service', function () {
             expect(gridColumns[5].cssClass).toBe('index-column');
         }));
 
-        it('should set "number" class on number column', inject(function (DatagridStyleService) {
+        it('should set "number" class on number column', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             assertColumnsHasNoStyles();
@@ -132,21 +131,22 @@ describe('Datagrid style service', function () {
         }));
     });
 
-    describe('reset style', function() {
-        it('should reset cell styles', inject(function (DatagridStyleService) {
+    describe('reset style', () => {
+        it('should reset cell styles', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
-            gridMock.setCellCssStyles('highlight', {'2': {'0000': 'highlight'}});
+            DatagridStyleService.hightlightedColumnId = '0000';
+            DatagridStyleService.hightlightedContent = 'toto';
 
             //when
             DatagridStyleService.resetStyles(gridColumns[1].id);
 
             //then
-            expect(gridMock.resetActiveCell).toHaveBeenCalled();
-            expect(gridMock.cssStyleConfig.highlight).toEqual({});
+            expect(DatagridStyleService.hightlightedColumnId).toBeFalsy();
+            expect(DatagridStyleService.hightlightedContent).toBeFalsy();
         }));
 
-        it('should update column styles', inject(function (DatagridStyleService) {
+        it('should update column styles', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             assertColumnsHasNoStyles();
@@ -166,8 +166,8 @@ describe('Datagrid style service', function () {
         }));
     });
 
-    describe('column formatter', function() {
-        it('should adapt value into html with leading/trailing spaces management', inject(function (DatagridStyleService) {
+    describe('column formatter', () => {
+        it('should adapt value into html with leading/trailing spaces management', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             var col = {quality: {invalidValues: []}};
@@ -180,188 +180,206 @@ describe('Datagrid style service', function () {
             var result = formatter(null, null, value, columnDef, dataContext);
 
             //then
-            expect(result.indexOf('<span class="hiddenChars">  </span>my value<span class="hiddenChars">     </span>')).toBe(0);
+            expect(result.indexOf('<span class="hiddenChars">  </span>my value<span class="hiddenChars">     </span>') > 0).toBe(true);
         }));
 
-        it('should add invisible rectangle on valid value', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {};
-
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
-
-            //then
-            expect(result.indexOf('<div class="invisible-rect"></div>') > 0).toBe(true);
-        }));
-
-        it('should add red rectangle on invalid value', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: ['my value']}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {};
-
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
-
-            //then
-            expect(result.indexOf('<div title="Invalid Value" class="red-rect"></div>') > 0).toBe(true);
-        }));
-
-        it('should add red rectangle on invalid value case of non TEXT domains (ieemail address)', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: ['m&a>al<ej@talend']}};
-            var value = 'm&a>al<ej@talend';
-            var columnDef = gridColumns[1];
-            var dataContext = {};
-
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
-
-            //then
-            expect(result).toBe('m&amp;a&gt;al&lt;ej@talend<div title="Invalid Value" class="red-rect"></div>');
-        }));
-
-        it('should add "deleted" class on deleted row', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpRowDiff : 'delete'};
-
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
-
-            //then
-            expect(result).toBe('<div class="cellDeletedValue">my value</div>');
-        }));
-
-        it('should add a space " " as value on empty cell in a deleted row', inject(function (DatagridStyleService) {
+        it('should add a space " " as value on empty cell', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             var col = {quality: {invalidValues: []}};
             var value = '';
             var columnDef = gridColumns[1];
-            var dataContext = {__tdpRowDiff : 'delete'};
 
             //when
             var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+            var result = formatter(null, null, value, columnDef, {});
 
             //then
-            expect(result).toBe('<div class="cellDeletedValue"> </div>');
+            expect(result.indexOf('<div class=""> </div>')).toBe(0);
         }));
 
-        it('should add "new" class on a new row', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpRowDiff : 'new'};
+        describe('indicator', () => {
+            it('should add invisible rectangle on valid value', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {};
 
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
 
-            //then
-            expect(result).toBe('<div class="cellNewValue">my value</div>');
-        }));
+                //then
+                expect(result.indexOf('<div class="invisible-rect"></div>') > 0).toBe(true);
+            }));
 
-        it('should add a space " " as value on empty cell in a new row', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = '';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpRowDiff : 'new'};
+            it('should add red rectangle on invalid value', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: ['my value']}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {};
 
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
 
-            //then
-            expect(result).toBe('<div class="cellNewValue"> </div>');
-        }));
+                //then
+                expect(result.indexOf('<div title="Invalid Value" class="red-rect"></div>') > 0).toBe(true);
+            }));
+        });
 
-        it('should add "update" class on an updated cell', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpDiff : {'0001': 'update'}};
+        describe('new', () => {
+            it('should add "new" class on a new row', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {__tdpRowDiff: 'new'};
 
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
 
-            //then
-            expect(result).toBe('<div class="cellUpdateValue">my value</div>');
-        }));
+                //then
+                expect(result).toBe('<div class=" cellNewValue">my value</div><div class="invisible-rect"></div>');
+            }));
 
-        it('should add "new" class on a new cell', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpDiff : {'0001': 'new'}};
+            it('should add "new" class on a new cell', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {__tdpDiff: {'0001': 'new'}};
 
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
 
-            //then
-            expect(result).toBe('<div class="cellNewValue">my value</div>');
-        }));
+                //then
+                expect(result).toBe('<div class=" cellNewValue">my value</div><div class="invisible-rect"></div>');
+            }));
+        });
 
-        it('should add "delete" class on a deleted cell', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = 'my value';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpDiff : {'0001': 'delete'}};
+        describe('update', () => {
+            it('should add "update" class on an updated cell', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {__tdpDiff: {'0001': 'update'}};
 
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
 
-            //then
-            expect(result).toBe('<div class="cellDeletedValue">my value</div>');
-        }));
+                //then
+                expect(result).toBe('<div class=" cellUpdateValue">my value</div><div class="invisible-rect"></div>');
+            }));
+        });
 
-        it('should add a space " " as value on empty deleted cell', inject(function (DatagridStyleService) {
-            //given
-            DatagridStyleService.init(gridMock);
-            var col = {quality: {invalidValues: []}};
-            var value = '';
-            var columnDef = gridColumns[1];
-            var dataContext = {__tdpDiff : {'0001': 'delete'}};
+        describe('deleted', () => {
+            it('should add "deleted" class on deleted row', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {__tdpRowDiff: 'delete'};
 
-            //when
-            var formatter = DatagridStyleService.columnFormatter(col);
-            var result = formatter(null, null, value, columnDef, dataContext);
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
 
-            //then
-            expect(result).toBe('<div class="cellDeletedValue"> </div>');
-        }));
+                //then
+                expect(result).toBe('<div class=" cellDeletedValue">my value</div><div class="invisible-rect"></div>');
+            }));
+
+            it('should add "delete" class on a deleted cell', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                var col = {quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {__tdpDiff: {'0001': 'delete'}};
+
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
+
+                //then
+                expect(result).toBe('<div class=" cellDeletedValue">my value</div><div class="invisible-rect"></div>');
+            }));
+        });
+
+        describe('highlight', () => {
+            it('should add "highlight" class', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                DatagridStyleService.hightlightedColumnId = '0001';
+                DatagridStyleService.hightlightedContent = 'my value';
+
+                var col = {id: '0001', quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {};
+
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
+
+                //then
+                expect(result).toBe('<div class="highlight">my value</div><div class="invisible-rect"></div>');
+            }));
+
+            it('should NOT add "highlight" class if the column is not the target', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                DatagridStyleService.hightlightedColumnId = '0000';
+                DatagridStyleService.hightlightedContent = 'my value';
+
+                var col = {id: '0001', quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {};
+
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
+
+                //then
+                expect(result).toBe('<div class="">my value</div><div class="invisible-rect"></div>');
+            }));
+
+            it('should NOT add "highlight" class if content does not match', inject((DatagridStyleService) => {
+                //given
+                DatagridStyleService.init(gridMock);
+                DatagridStyleService.hightlightedColumnId = '0001';
+                DatagridStyleService.hightlightedContent = 'my specific value';
+
+                var col = {id: '0001', quality: {invalidValues: []}};
+                var value = 'my value';
+                var columnDef = gridColumns[1];
+                var dataContext = {};
+
+                //when
+                var formatter = DatagridStyleService.columnFormatter(col);
+                var result = formatter(null, null, value, columnDef, dataContext);
+
+                //then
+                expect(result).toBe('<div class="">my value</div><div class="invisible-rect"></div>');
+            }));
+        });
     });
 
-    describe('column preview style', function() {
-        it('should return "new" column style', inject(function (DatagridStyleService) {
+    describe('column preview style', () => {
+        it('should return "new" column style', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             var col = {__tdpColumnDiff: 'new'};
@@ -373,7 +391,7 @@ describe('Datagrid style service', function () {
             expect(diffClass).toBe('newColumn');
         }));
 
-        it('should return "deleted" column style', inject(function (DatagridStyleService) {
+        it('should return "deleted" column style', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             var col = {__tdpColumnDiff: 'delete'};
@@ -385,7 +403,7 @@ describe('Datagrid style service', function () {
             expect(diffClass).toBe('deletedColumn');
         }));
 
-        it('should return "updated" column style', inject(function (DatagridStyleService) {
+        it('should return "updated" column style', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             var col = {__tdpColumnDiff: 'update'};
@@ -397,7 +415,7 @@ describe('Datagrid style service', function () {
             expect(diffClass).toBe('updatedColumn');
         }));
 
-        it('should return empty string on no change diff', inject(function (DatagridStyleService) {
+        it('should return empty string on no change diff', inject((DatagridStyleService) => {
             //given
             DatagridStyleService.init(gridMock);
             var col = {};

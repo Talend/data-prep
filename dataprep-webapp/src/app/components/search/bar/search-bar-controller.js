@@ -15,10 +15,17 @@
  * @ngdoc controller
  * @name data-prep.data-prep.search-bar.controller:DocumentationSearchCtrl
  * @description DocumentationSearchCtrl controller.
- * @requires data-prep.services.documentation.service:DocumentationService
+ * @requires data-prep.services.datasetWorkflowService:UploadWorkflowService
+ * @requires data-prep.services.preparation.service:PreparationService
  *
  */
 class SearchBarCtrl {
+
+    constructor(UploadWorkflowService, PreparationService) {
+        'ngInject';
+        this.uploadWorkflowService = UploadWorkflowService;
+        this.preparationService = PreparationService;
+    }
 
     /**
      * @ngdoc method

@@ -21,8 +21,7 @@
     <div ng-if="$ctrl.items && $ctrl.items.length === 0" class="no-results" translate-once="NO_RESULTS"></div>
     <ul>
         <li ng-repeat="item in $ctrl.items track by $index">
-            <a class="documentation"
-               ng-href="{{item.url}}"
+            <a ng-href="{{item.url}}"
                target="_blank"
                ng-if="item.inventoryType === 'documentation'">
                 <inventory-item item="item"
@@ -31,8 +30,7 @@
                 </inventory-item>
             </a>
 
-            <a class="documentation"
-               ng-if="item.inventoryType === 'folder'"
+            <a ng-if="item.inventoryType === 'folder'"
                ui-sref="nav.index.datasets({folderPath: item.path})">
                 <inventory-item item="item"
                                 type="folder"

@@ -96,17 +96,4 @@ describe('Inventory Search controller', () => {
             expect(component.results).toEqual([]);
         }));
     });
-
-    describe('element selection', () => {
-        it('should go to folder', inject(($state) => {
-            //given
-            spyOn($state, 'go').and.returnValue();
-
-            //when
-            component.goToFolder('nav.index.datasets', {folderPath : '1/2'});
-
-            //then
-            expect($state.go).toHaveBeenCalledWith('nav.index.datasets', {folderPath : '1/2'});
-        }));
-    })
 });

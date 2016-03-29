@@ -16,20 +16,14 @@
  * @name data-prep.inventory-search.controller:InventorySearchCtrl
  * @description InventorySearchCtrl controller.
  * @requires data-prep.services.inventory.service:InventoryService
- * @requires data-prep.services.datasetWorkflowService:UploadWorkflowService
- * @requires data-prep.services.folder.service:FolderService
- * @requires data-prep.services.preparation.service:PreparationService
+ * @requires data-prep.services.documentation.service:DocumentationService
  *
  */
 class InventorySearchCtrl {
 
-    constructor($q, $state, UploadWorkflowService, InventoryService, FolderService, PreparationService, DocumentationService) {
+    constructor($q, InventoryService, DocumentationService) {
         'ngInject';
         this.$q = $q;
-        this.$state = $state;
-        this.uploadWorkflowService = UploadWorkflowService;
-        this.folderService = FolderService;
-        this.preparationService = PreparationService;
         this.inventoryService = InventoryService;
         this.documentationService = DocumentationService;
     }
@@ -86,16 +80,6 @@ class InventorySearchCtrl {
                 }
                 return response;
             });
-    }
-
-    /**
-     * @ngdoc method
-     * @name goToFolder
-     * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
-     * @description go to a folder
-     */
-    goToFolder(stateString, options) {
-        this.$state.go(stateString, options);
     }
 }
 

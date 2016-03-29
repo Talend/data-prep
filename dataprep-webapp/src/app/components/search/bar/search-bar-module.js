@@ -22,7 +22,12 @@ import SearchBarComponent from './search-bar-component';
      * @description This module contains the component to manage search
      * @requires talend.widget
      */
-    angular.module('data-prep.search-bar', ['talend.widget'])
+    angular.module('data-prep.search-bar',
+        [
+            'talend.widget',
+            'data-prep.services.datasetWorkflowService',
+            'data-prep.services.preparation'
+        ])
         .component('searchBar', SearchBarComponent);
 })();
 

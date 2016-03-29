@@ -23,23 +23,28 @@
  * @requires data-prep.datagrid.service:DatagridExternalService
  * @requires data-prep.datagrid.service:DatagridTooltipService
  */
-export default function DatagridGridService($timeout, StateService, state, DatagridService, DatagridStyleService, DatagridColumnService,
-                                            DatagridSizeService, DatagridExternalService, DatagridTooltipService) {
-    'ngInject';
+export default class DatagridGridService {
 
-    var grid = null;
-    var gridServices = [
-        DatagridColumnService,
-        DatagridStyleService,
-        DatagridSizeService,
-        DatagridExternalService,
-        DatagridTooltipService
-    ];
+    constructor($timeout, state, StateService, DatagridService,
+        DatagridStyleService, DatagridColumnService, DatagridSizeService, DatagridExternalService, DatagridTooltipService) {
+        'ngInject';
 
-    return {
-        initGrid: initGrid,
-        navigateToFocusedColumn: navigateToFocusedColumn
-    };
+        this.grid = null;
+        this.changeActiveTimeout = null;
+
+        this.$timeout = $timeout;
+        this.state = state;
+        this.StateService = StateService;
+        this.DatagridService = DatagridService;
+
+        this.gridServices = [
+            DatagridColumnService,
+            DatagridStyleService,
+            DatagridSizeService,
+            DatagridExternalService,
+            DatagridTooltipService
+        ];
+    }
 
     /**
      * @ngdoc method
@@ -47,14 +52,14 @@ export default function DatagridGridService($timeout, StateService, state, Datag
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description Attaches listeners for data update to reRender the grid
      */
-    function attachLongTableListeners() {
-        state.playground.grid.dataView.onRowCountChanged.subscribe(function () {
-            grid.updateRowCount();
-            grid.render();
+    _attachLongTableListeners() {
+        this.state.playground.grid.dataView.onRowCountChanged.subscribe(() => {
+            this.grid.updateRowCount();
+            this.grid.render();
         });
-        state.playground.grid.dataView.onRowsChanged.subscribe(function (e, args) {
-            grid.invalidateRows(args.rows);
-            grid.render();
+        this.state.playground.grid.dataView.onRowsChanged.subscribe((e, args) => {
+            this.grid.invalidateRows(args.rows);
+            this.grid.render();
         });
     }
 
@@ -64,25 +69,25 @@ export default function DatagridGridService($timeout, StateService, state, Datag
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description Attach listeners for saving the state of column id and line selection number
      */
-    function attachGridStateListeners() {
-        grid.onActiveCellChanged.subscribe(function (e, args) {
-            $timeout(() => {
+    _attachGridStateListeners() {
+        this.grid.onActiveCellChanged.subscribe((e, args) => {
+            this.$timeout.cancel(this.changeActiveTimeout);
+            this.changeActiveTimeout = this.$timeout(() => {
+                let columnMetadata = this.state.playground.grid.selectedColumn;
                 if (angular.isDefined(args.cell)) {
-                    var column = grid.getColumns()[args.cell];
-                    StateService.setGridSelection(column.tdpColMetadata, args.row);
-
-                } else {
-                    StateService.setGridSelection(state.playground.grid.selectedColumn, null);
+                    const column = this.grid.getColumns()[args.cell];
+                    columnMetadata = column && column.tdpColMetadata;
                 }
+                this.StateService.setGridSelection(columnMetadata, args.row);
             });
         });
 
-        grid.onHeaderContextMenu.subscribe(function (e, args) {
-            $timeout(StateService.setGridSelection.bind(null, args.column.tdpColMetadata, null));
+        this.grid.onHeaderContextMenu.subscribe((e, args) => {
+            this.$timeout(() => this.StateService.setGridSelection(args.column.tdpColMetadata, null));
         });
 
-        grid.onHeaderClick.subscribe(function (e, args) {
-            $timeout(StateService.setGridSelection.bind(null, args.column.tdpColMetadata, null));
+        this.grid.onHeaderClick.subscribe((e, args) => {
+            this.$timeout(() => this.StateService.setGridSelection(args.column.tdpColMetadata, null));
         });
     }
 
@@ -92,12 +97,12 @@ export default function DatagridGridService($timeout, StateService, state, Datag
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description navigates between columns
      */
-    function navigateToFocusedColumn() {
-        if (DatagridService.focusedColumn) {
-            var columnIndex = _.findIndex(grid.getColumns(), {id: DatagridService.focusedColumn});
-            var renderedRows = grid.getRenderedRange();
-            var centerRow = +((renderedRows.bottom - renderedRows.top) / 2).toFixed(0);
-            grid.scrollCellIntoView(renderedRows.top + centerRow, columnIndex, false);
+    navigateToFocusedColumn() {
+        if (this.DatagridService.focusedColumn) {
+            const columnIndex = _.findIndex(this.grid.getColumns(), {id: this.DatagridService.focusedColumn});
+            const renderedRows = this.grid.getRenderedRange();
+            const centerRow = +((renderedRows.bottom - renderedRows.top) / 2).toFixed(0);
+            this.grid.scrollCellIntoView(renderedRows.top + centerRow, columnIndex, false);
         }
     }
 
@@ -107,9 +112,9 @@ export default function DatagridGridService($timeout, StateService, state, Datag
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description Init other grid services with the new created grid
      */
-    function initGridServices() {
-        _.forEach(gridServices, function (service) {
-            service.init(grid);
+    _initGridServices() {
+        _.forEach(this.gridServices, (service) => {
+            service.init(this.grid);
         });
     }
 
@@ -121,9 +126,9 @@ export default function DatagridGridService($timeout, StateService, state, Datag
      The dataview is initiated and held by {@link data-prep.services.playground.service:DatagridService DatagridService}
      * @param {string} elementId The element where the grid will be inserted in the DOM. The element must exists
      */
-    function initGrid(elementId) {
+    initGrid(elementId) {
         //create grid
-        var options = {
+        const options = {
             autoEdit: false,
             editable: true,
             enableAddRow: false,
@@ -134,14 +139,14 @@ export default function DatagridGridService($timeout, StateService, state, Datag
             asyncEditorLoading: true,
             asyncEditorLoadDelay: 150
         };
-        grid = new Slick.Grid(elementId, state.playground.grid.dataView, [{id: 'tdpId'}], options);
+        this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{id: 'tdpId'}], options);
 
         //listeners
-        attachLongTableListeners();
-        attachGridStateListeners();
+        this._attachLongTableListeners();
+        this._attachGridStateListeners();
 
         //init other services
-        initGridServices();
-        return grid;
+        this._initGridServices();
+        return this.grid;
     }
 }

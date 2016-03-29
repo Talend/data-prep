@@ -152,7 +152,11 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
 
                     //focus specific column
                     $timeout.cancel(focusTimeout);
-                    focusTimeout = $timeout(DatagridGridService.navigateToFocusedColumn, 300, false);
+                    focusTimeout = $timeout(
+                        () => DatagridGridService.navigateToFocusedColumn(),
+                        500,
+                        false
+                    );
                 }
             };
 
@@ -197,7 +201,11 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
                     //manage column selection (external)
                     $timeout.cancel(externalTimeout);
                     if (getData() && !getData().preview) {
-                        externalTimeout = $timeout(DatagridExternalService.updateSuggestionPanel.bind(null, true), 300, false);
+                        externalTimeout = $timeout(
+                            () => DatagridExternalService.updateSuggestionPanel(true),
+                            500,
+                            false
+                        );
                     }
                 }
             };
@@ -256,7 +264,7 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
              * @methodOf data-prep.datagrid.directive:Datagrid
              * @description Init Slick grid and init datagrid private services.
              */
-            var initGridIfNeeded = function () {
+            function initGridIfNeeded() {
                 if (!grid) {
                     grid = DatagridGridService.initGrid('#datagrid');
 
@@ -264,7 +272,7 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
                     // To do so, the text is put into an invisible span so that the span can be measured.
                     DatagridTooltipService.tooltipRuler = iElement.find('#tooltip-ruler').eq(0);
                 }
-            };
+            }
 
             //------------------------------------------------------------------------------------------------------
             //-------------------------------------------------WATCHERS---------------------------------------------

@@ -157,7 +157,7 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
                 ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
                         .name(column.getName() + "_number") //
-                        .type(Type.NUMERIC) //
+                        .type(Type.STRING) // Leave actual type detection to transformation
                         .build();
                 rowMetadata.insertAfter(columnId, c);
                 return c;
@@ -188,9 +188,8 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
 
         // Test if the input value is a valid number before removing any characters:
         try {
-            BigDecimalParser.toBigDecimal(value);
             // If yes (no exception thrown), return the value as it, no change required:
-            return value;
+            return String.valueOf(BigDecimalParser.toBigDecimal(value));
         } catch (NumberFormatException e) {
             // If no, continue the process to remove non-numeric chars:
         }

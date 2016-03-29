@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionFactory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.metadata.date.CompareDatesTest;
@@ -47,6 +48,9 @@ public abstract class AbstractMetadataBaseTest {
 
     @Autowired
     public ActionFactory factory;
+
+    @Autowired
+    protected AnalyzerService analyzerService;
 
     protected String generateJson(String token, String operator) {
         ReplaceOnValueHelper r = new ReplaceOnValueHelper(token, operator);

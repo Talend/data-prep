@@ -32,7 +32,6 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
@@ -45,9 +44,6 @@ import org.talend.dataprep.transformation.api.action.parameters.Parameter;
  * @see Split
  */
 public class SplitTest extends AbstractMetadataBaseTest {
-
-    @Autowired
-    AnalyzerService analyzerService;
 
     /**
      * The action to test.

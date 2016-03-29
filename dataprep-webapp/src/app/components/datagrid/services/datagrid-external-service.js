@@ -22,67 +22,66 @@
  * @requires data-prep.services.lookup.service:LookupService
  *
  */
-export default function DatagridExternalService($timeout, state, StatisticsService, SuggestionService, PreviewService, LookupService) {
-    'ngInject';
+export default class DatagridExternalService {
+    constructor($timeout, state, StatisticsService, SuggestionService, PreviewService, LookupService) {
+        'ngInject';
 
-    var grid;
-    var suggestionTimeout;
-    var scrollTimeout;
-    var lastSelectedTab;
-    var lastSelectedColumn;
-    var lastSelectedLine;
+        this.grid = null;
+        this.scrollTimeout = null;
+        this.lastSelectedTab = null;
+        this.lastSelectedColumn = null;
+        this.lastSelectedLine = null;
 
-    return {
-        init: init,
-        updateSuggestionPanel: updateSuggestionPanel
-    };
+        this.$timeout = $timeout;
+        this.state = state;
+
+        this.StatisticsService = StatisticsService;
+        this.SuggestionService = SuggestionService;
+        this.PreviewService = PreviewService;
+        this.LookupService = LookupService;
+    }
 
     /**
      * @ngdoc method
      * @name updateSuggestionPanel
      * @methodOf data-prep.datagrid.service:DatagridExternalService
-     * @param {boolean} updateImmediately Update suggestions without timeout
      * @description Set the selected column into external services except the index column. This will trigger actions that use this property
      * Ex : StatisticsService for dataviz, ColumnSuggestionService for transformation list
      */
+    updateSuggestionPanel() {
+        const column = this.state.playground.grid.selectedColumn;
+        const line = this.state.playground.grid.selectedLine;
 
-    function updateSuggestionPanel(updateImmediately) {
-        var column = state.playground.grid.selectedColumn;
-        var line = state.playground.grid.selectedLine;
-
-        var columnHasChanged = column !== lastSelectedColumn;
-        var lineHasChanged = line !== lastSelectedLine;
+        const columnHasChanged = column !== this.lastSelectedColumn;
+        const lineHasChanged = line !== this.lastSelectedLine;
 
         if(!columnHasChanged && !lineHasChanged) {
             return;
         }
 
-        $timeout.cancel(suggestionTimeout);
-        suggestionTimeout = $timeout(function () {
-            lastSelectedColumn = column;
-            lastSelectedLine = line;
-            lastSelectedTab = !column ? 'LINE' : 'COLUMN';
+        this.lastSelectedColumn = column;
+        this.lastSelectedLine = line;
+        this.lastSelectedTab = !column ? 'LINE' : 'COLUMN';
 
-            //change tab
-            SuggestionService.selectTab(lastSelectedTab);
+        //change tab
+        this.SuggestionService.selectTab(this.lastSelectedTab);
 
-            //reset charts if we have no selected column
-            if(!lastSelectedColumn) {
-                StatisticsService.reset();
-            }
+        //reset charts if we have no selected column
+        if(!this.lastSelectedColumn) {
+            this.StatisticsService.reset();
+        }
 
-            //update line scope transformations if line has changed
-            if(lastSelectedLine && lineHasChanged) {
-                SuggestionService.setLine(lastSelectedLine);
-            }
+        //update line scope transformations if line has changed
+        if(this.lastSelectedLine && lineHasChanged) {
+            this.SuggestionService.setLine(this.lastSelectedLine);
+        }
 
-            //update column scope transformations and charts if we have a selected column that has changed
-            if (lastSelectedColumn && columnHasChanged) {
-                StatisticsService.updateStatistics();
-                SuggestionService.setColumn(lastSelectedColumn);
-                LookupService.updateTargetColumn();
-            }
-        }, updateImmediately ? 0 : 300);
+        //update column scope transformations and charts if we have a selected column that has changed
+        if (this.lastSelectedColumn && columnHasChanged) {
+            this.SuggestionService.setColumn(this.lastSelectedColumn);
+            this.StatisticsService.updateStatistics();
+            this.LookupService.updateTargetColumn();
+        }
     }
 
     /**
@@ -91,12 +90,14 @@ export default function DatagridExternalService($timeout, state, StatisticsServi
      * @methodOf data-prep.datagrid.service:DatagridExternalService
      * @description Attach grid scroll listener. It will update the displayed range for preview
      */
-    function attachGridScrollListener() {
-        grid.onScroll.subscribe(function () {
-            $timeout.cancel(scrollTimeout);
-            scrollTimeout = $timeout(function () {
-                PreviewService.gridRangeIndex = grid.getRenderedRange();
-            }, 200, false);
+    _attachGridScrollListener() {
+        this.grid.onScroll.subscribe(() => {
+            this.$timeout.cancel(this.scrollTimeout);
+            this.scrollTimeout = this.$timeout(
+                () => this.PreviewService.gridRangeIndex = this.grid.getRenderedRange(),
+                500,
+                false
+            );
         });
     }
 
@@ -107,8 +108,8 @@ export default function DatagridExternalService($timeout, state, StatisticsServi
      * @param {object} newGrid The new grid
      * @description Initialize the grid
      */
-    function init(newGrid) {
-        grid = newGrid;
-        attachGridScrollListener();
+    init(newGrid) {
+        this.grid = newGrid;
+        this._attachGridScrollListener();
     }
 }

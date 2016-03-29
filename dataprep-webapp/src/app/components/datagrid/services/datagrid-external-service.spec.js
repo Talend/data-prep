@@ -1,17 +1,17 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
-describe('Datagrid external service', function () {
+describe('Datagrid external service', () => {
     'use strict';
 
     var gridMock, stateMock;
@@ -25,7 +25,7 @@ describe('Datagrid external service', function () {
         {id: 'tdpId', field: 'tdpId', tdpColMetadata: {id: 'tdpId', name: 'tdpId'}}
     ];
 
-    beforeEach(angular.mock.module('data-prep.datagrid', function($provide) {
+    beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
         stateMock = {
             playground: {
                 grid: {}
@@ -34,7 +34,7 @@ describe('Datagrid external service', function () {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function (StatisticsService, SuggestionService, LookupService) {
+    beforeEach(inject((StatisticsService, SuggestionService, LookupService) => {
         /*global SlickGridMock:false */
         gridMock = new SlickGridMock();
         gridMock.initColumnsMock(gridColumns);
@@ -53,16 +53,16 @@ describe('Datagrid external service', function () {
         spyOn(LookupService, 'updateTargetColumn').and.returnValue();
     }));
 
-    beforeEach(function () {
+    beforeEach(() => {
         jasmine.clock().install();
     });
 
-    afterEach(function () {
+    afterEach(() => {
         jasmine.clock().uninstall();
     });
 
-    describe('on creation', function () {
-        it('should add scroll listener', inject(function (DatagridExternalService) {
+    describe('on creation', () => {
+        it('should add scroll listener', inject((DatagridExternalService) => {
             //when
             DatagridExternalService.init(gridMock);
 
@@ -71,69 +71,22 @@ describe('Datagrid external service', function () {
         }));
     });
 
-    describe('update right panel', function() {
-        describe('debounce', function() {
-            it('should update after 300ms', inject(function($timeout, DatagridExternalService, SuggestionService) {
-                //given
-                stateMock.playground.grid.selectedColumn = {id: '0001'};
+    describe('update right panel', () => {
 
-                //when
-                DatagridExternalService.updateSuggestionPanel();
-                $timeout.flush(0);
-                expect(SuggestionService.selectTab).not.toHaveBeenCalled();
-                $timeout.flush(300);
-
-                //then
-                expect(SuggestionService.selectTab).toHaveBeenCalled();
-            }));
-
-            it('should update immediately', inject(function($timeout, DatagridExternalService, SuggestionService) {
-                //given
-                stateMock.playground.grid.selectedColumn = {id: '0001'};
-
-                //when
-                DatagridExternalService.updateSuggestionPanel(true);
-                $timeout.flush(0);
-
-                //then
-                expect(SuggestionService.selectTab).toHaveBeenCalled();
-            }));
-
-            it('should cancel pending update and trigger a new one', inject(function($timeout, DatagridExternalService, SuggestionService) {
-                //given
-                stateMock.playground.grid.selectedColumn = {id: '0001'};
-
-                DatagridExternalService.updateSuggestionPanel();                // trigger an update but flush time < debounce time : there is a pending update
-                $timeout.flush(200);
-
-                expect(SuggestionService.selectTab).not.toHaveBeenCalled();
-
-                //when
-                DatagridExternalService.updateSuggestionPanel();                // trigger another update while there is a pending update
-                $timeout.flush(100);                                            // flush the pending request remaining time
-                expect(SuggestionService.selectTab).not.toHaveBeenCalled();     // first pending request should not have triggered
-                $timeout.flush(200);                                            // flush the second update remaining time
-
-                //then
-                expect(SuggestionService.selectTab).toHaveBeenCalled();
-            }));
-        });
-
-        describe('tab selection', function() {
-            it('should select "COLUMN" tab if no tab is provided', inject(function($timeout, DatagridExternalService, SuggestionService) {
+        describe('tab selection', () => {
+            it('should select "COLUMN" tab if no tab is provided', inject((DatagridExternalService, SuggestionService) => {
                 //given
                 stateMock.playground.grid.selectedColumn = {id: '0001'};
                 expect(SuggestionService.selectTab).not.toHaveBeenCalled();
 
                 //when
                 DatagridExternalService.updateSuggestionPanel();
-                $timeout.flush(300);
 
                 //then
                 expect(SuggestionService.selectTab).toHaveBeenCalledWith('COLUMN');
             }));
 
-            it('should select "LINE" tab when there is no selected column', inject(function($timeout, DatagridExternalService, SuggestionService) {
+            it('should select "LINE" tab when there is no selected column', inject((DatagridExternalService, SuggestionService) => {
                 //given
                 stateMock.playground.grid.selectedLine = {tdpId: 125};
                 stateMock.playground.grid.selectedColumn = null;
@@ -141,15 +94,14 @@ describe('Datagrid external service', function () {
 
                 //when
                 DatagridExternalService.updateSuggestionPanel();
-                $timeout.flush(300);
 
                 //then
                 expect(SuggestionService.selectTab).toHaveBeenCalledWith('LINE');
             }));
         });
 
-        describe('charts', function() {
-            it('should reset charts when there is no selected column', inject(function($timeout, DatagridExternalService, StatisticsService) {
+        describe('charts', () => {
+            it('should reset charts when there is no selected column', inject((DatagridExternalService, StatisticsService) => {
                 //given
                 stateMock.playground.grid.selectedLine = {tdpId: 125};
                 stateMock.playground.grid.selectedColumn = null;
@@ -157,65 +109,60 @@ describe('Datagrid external service', function () {
 
                 //when
                 DatagridExternalService.updateSuggestionPanel();
-                $timeout.flush(300);
 
                 //then
                 expect(StatisticsService.reset).toHaveBeenCalled();
             }));
 
-            it('should update charts when there is a selected column', inject(function($timeout, DatagridExternalService, StatisticsService) {
+            it('should update charts when there is a selected column', inject((DatagridExternalService, StatisticsService) => {
                 //given
                 stateMock.playground.grid.selectedColumn = {id: '0001'};
                 expect(StatisticsService.updateStatistics).not.toHaveBeenCalled();
 
                 //when
                 DatagridExternalService.updateSuggestionPanel();
-                $timeout.flush(300);
 
                 //then
                 expect(StatisticsService.updateStatistics).toHaveBeenCalled();
             }));
 
-            it('should load Lookup Panel when a new column is selected', inject(function($timeout, DatagridExternalService, LookupService) {
+            it('should load Lookup Panel when a new column is selected', inject((DatagridExternalService, LookupService) => {
                 //given
                 stateMock.playground.grid.selectedColumn = {id: '0001'};
                 expect(LookupService.updateTargetColumn).not.toHaveBeenCalled();
 
                 //when
                 DatagridExternalService.updateSuggestionPanel(null, null);
-                $timeout.flush(300);
 
                 //then
                 expect(LookupService.updateTargetColumn).toHaveBeenCalled();
             }));
         });
 
-        describe('transformations', function() {
-            it('should do nothing if selected column/line have not changed', inject(function($timeout, DatagridExternalService, SuggestionService) {
+        describe('transformations', () => {
+            it('should do nothing if selected column/line have not changed', inject((DatagridExternalService, SuggestionService) => {
                 //when
                 DatagridExternalService.updateSuggestionPanel();
-                $timeout.flush(300);
 
                 //then
                 expect(SuggestionService.setLine).not.toHaveBeenCalled();
                 expect(SuggestionService.setColumn).not.toHaveBeenCalled();
             }));
 
-            describe('line scope', function() {
-                it('should update when there is a selected line', inject(function($timeout, DatagridExternalService, SuggestionService) {
+            describe('line scope', () => {
+                it('should update when there is a selected line', inject((DatagridExternalService, SuggestionService) => {
                     //given
                     stateMock.playground.grid.selectedLine = {tdpId: 125};
                     expect(SuggestionService.setLine).not.toHaveBeenCalled();
 
                     //when
                     DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
 
                     //then
                     expect(SuggestionService.setLine).toHaveBeenCalledWith(stateMock.playground.grid.selectedLine);
                 }));
 
-                it('should NOT update when there is no selected line', inject(function($timeout, DatagridExternalService, SuggestionService) {
+                it('should NOT update when there is no selected line', inject((DatagridExternalService, SuggestionService) => {
                     //given
                     stateMock.playground.grid.selectedLine = null;
                     stateMock.playground.grid.selectedColumn = {id: '0001'};
@@ -223,45 +170,42 @@ describe('Datagrid external service', function () {
 
                     //when
                     DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
 
                     //then
                     expect(SuggestionService.setLine).not.toHaveBeenCalled();
                 }));
 
-                it('should NOT update when selected line has not changed', inject(function($timeout, DatagridExternalService, SuggestionService) {
+                it('should NOT update when selected line has not changed', inject((DatagridExternalService, SuggestionService) => {
                     //given
-                    stateMock.playground.grid.selectedLine = {tdpId: 125};
-                    DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
-                    expect(SuggestionService.setLine.calls.count()).toBe(1);
+                    const selectedLine = {tdpId: 125};
+                    stateMock.playground.grid.selectedLine = selectedLine;
+                    DatagridExternalService.lastSelectedLine = selectedLine;
+                    expect(SuggestionService.setLine).not.toHaveBeenCalled();
 
                     stateMock.playground.grid.selectedColumn = {id: '0001'};
 
                     //when
                     DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
 
                     //then
-                    expect(SuggestionService.setLine.calls.count()).toBe(1);
+                    expect(SuggestionService.setLine).not.toHaveBeenCalled();
                 }));
             });
 
-            describe('column scope', function() {
-                it('should update when there is a selected column', inject(function($timeout, DatagridExternalService, SuggestionService) {
+            describe('column scope', () => {
+                it('should update when there is a selected column', inject((DatagridExternalService, SuggestionService) => {
                     //given
                     stateMock.playground.grid.selectedColumn = {id: '0001'};
                     expect(SuggestionService.setColumn).not.toHaveBeenCalled();
 
                     //when
                     DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
 
                     //then
                     expect(SuggestionService.setColumn).toHaveBeenCalled();
                 }));
 
-                it('should NOT update when there is no selected column', inject(function($timeout, DatagridExternalService, SuggestionService) {
+                it('should NOT update when there is no selected column', inject((DatagridExternalService, SuggestionService) => {
                     //given
                     stateMock.playground.grid.selectedLine = {tdpId: 125};
                     stateMock.playground.grid.selectedColumn = null;
@@ -269,27 +213,23 @@ describe('Datagrid external service', function () {
 
                     //when
                     DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
 
                     //then
                     expect(SuggestionService.setColumn).not.toHaveBeenCalled();
                 }));
 
-                it('should NOT update when selected column has not changed', inject(function($timeout, DatagridExternalService, SuggestionService) {
+                it('should NOT update when selected column has not changed', inject((DatagridExternalService, SuggestionService) => {
                     //given
-                    stateMock.playground.grid.selectedColumn = {id: '0001'};
-                    DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
-                    expect(SuggestionService.setColumn.calls.count()).toBe(1);
-
-                    stateMock.playground.grid.selectedLine = {tdpId: 125};
+                    const selectedColumn = {id: '0001'};
+                    stateMock.playground.grid.selectedColumn = selectedColumn;
+                    DatagridExternalService.lastSelectedColumn = selectedColumn;
+                    expect(SuggestionService.setColumn).not.toHaveBeenCalled();
 
                     //when
                     DatagridExternalService.updateSuggestionPanel();
-                    $timeout.flush(300);
 
                     //then
-                    expect(SuggestionService.setColumn.calls.count()).toBe(1);
+                    expect(SuggestionService.setColumn).not.toHaveBeenCalled();
                 }));
             });
         });

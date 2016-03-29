@@ -76,7 +76,7 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
     private static final int MAX_FRACTION_DIGITS_DISPLAY = 30;
 
     /** List of supported separators. */
-    private static final List<Character> SEPARATORS =Arrays.asList('.', ',');
+    private static final List<Character> SEPARATORS = Arrays.asList('.', ',');
 
     /** K: the prefix, V: the value. */
     private Map<String, MetricPrefix> metricPrefixes = new HashMap<>(13);
@@ -155,16 +155,15 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
             // create new column and append it after current column
             context.column("result", r -> {
                 ColumnMetadata c = ColumnMetadata.Builder //
-                    .column() //
-                    .name(column.getName() + "_number") //
-                    .type(Type.NUMERIC) //
-                    .build();
+                        .column() //
+                        .name(column.getName() + "_number") //
+                        .type(Type.NUMERIC) //
+                        .build();
                 rowMetadata.insertAfter(columnId, c);
                 return c;
             });
         }
     }
-
 
     /**
      * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
@@ -198,12 +197,12 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
 
         StringCharacterIterator iter = new StringCharacterIterator(value);
 
-        MetricPrefix metricPrefixBefore = null,  metricPrefixAfter= null;
-        
+        MetricPrefix metricPrefixBefore = null, metricPrefixAfter = null;
+
         boolean numberFound = false;
 
         // we build a new value including only number or separator as , or .
-        StringBuilder reducedValue = new StringBuilder( value.length() );
+        StringBuilder reducedValue = new StringBuilder(value.length());
 
         for (char c = iter.first(); c != CharacterIterator.DONE; c = iter.next()) {
             // we remove all non numeric characters but keep separators
@@ -246,13 +245,13 @@ public class ExtractNumber extends ActionMetadata implements ColumnAction {
         return decimalFormat.format(bigDecimal.stripTrailingZeros());
     }
 
-
     /**
      * Internal class that models a Metric, e.g. kilo -> multiply by 1000
      */
     static class MetricPrefix {
 
         private final String name;
+
         private final BigDecimal multiply;
 
         MetricPrefix(BigDecimal multiply, String name) {

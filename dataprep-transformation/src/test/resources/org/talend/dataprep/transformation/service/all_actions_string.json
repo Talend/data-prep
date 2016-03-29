@@ -2823,6 +2823,28 @@
         "description": "Optional new column suffix",
         "label": "Suffix",
         "default": ""
+      },
+      {
+        "name": "concat_separator_condition",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "concat_both_not_empty",
+              "label": "Both not empty"
+            },
+            {
+              "value": "concat_always",
+              "label": "Always"
+            }
+          ],
+          "multiple": false
+        },
+        "default": "concat_both_not_empty",
+        "label": "Separator condition",
+        "description": "The condition to add or not the separator"
       }
     ],
     "dynamic": false,

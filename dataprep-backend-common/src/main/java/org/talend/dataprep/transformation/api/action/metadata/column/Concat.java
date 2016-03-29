@@ -74,6 +74,15 @@ public class Concat extends ActionMetadata implements ColumnAction, OtherColumnP
     public static final String CONCAT_NEW_COLUMN = "new_column";
 
     /**
+     * The parameter used to defined the strategy to add or not the separator
+     */
+    public static final String SEPARATOR_CONDITION = "concat_separator_condition";
+
+    public static final String BOTH_NOT_EMPTY = "concat_both_not_empty";
+
+    public static final String ALWAYS = "concat_always";
+
+    /**
      * @see ActionMetadata#getName()
      */
     @Override
@@ -108,6 +117,15 @@ public class Concat extends ActionMetadata implements ColumnAction, OtherColumnP
                 .item(CONSTANT_MODE) //
                 .defaultValue(OTHER_COLUMN_MODE) //
                 .build());
+
+        parameters.add(
+                SelectParameter.Builder.builder() //
+                        .name(SEPARATOR_CONDITION) //
+                        .item(BOTH_NOT_EMPTY) //
+                        .item(ALWAYS) //
+                        .defaultValue(BOTH_NOT_EMPTY) //
+                        .build()
+                );
 
         parameters.add(new Parameter(SUFFIX_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
         return parameters;
@@ -157,19 +175,34 @@ public class Concat extends ActionMetadata implements ColumnAction, OtherColumnP
 
         String concatColumn = context.column(CONCAT_NEW_COLUMN);
 
+        String separatorCondition = parameters.get(SEPARATOR_CONDITION);
+
         // Set new column value
         String sourceValue = row.get(columnId);
         // 64 should be ok for most of values
         StringBuilder newValue = new StringBuilder(64);
         newValue.append(getParameter(parameters, PREFIX_PARAMETER, StringUtils.EMPTY));
-        newValue.append(sourceValue == null ? StringUtils.EMPTY : sourceValue);
+        newValue.append(StringUtils.isBlank(sourceValue) ? StringUtils.EMPTY : sourceValue);
 
         if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)) {
             ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             String selectedColumnValue = row.get(selectedColumn.getId());
-            if (StringUtils.isNotBlank(selectedColumnValue)) {
-                newValue.append(getParameter(parameters, SEPARATOR_PARAMETER, StringUtils.EMPTY)).append(selectedColumnValue);
+
+            // both not empty is default
+            boolean addSeparator = StringUtils.equals(separatorCondition, ALWAYS) //
+                    ||  ( ( StringUtils.equals(separatorCondition, BOTH_NOT_EMPTY ) || StringUtils.isBlank(separatorCondition) ) //
+                            && StringUtils.isNotBlank(sourceValue) //
+                            && StringUtils.isNotBlank(selectedColumnValue) //
+                        );
+
+
+            if (addSeparator) {
+                newValue.append(getParameter(parameters, SEPARATOR_PARAMETER, StringUtils.EMPTY));
             }
+            if (StringUtils.isNotBlank(selectedColumnValue)){
+                newValue.append(selectedColumnValue);
+            }
+
         }
 
         newValue.append(getParameter(parameters, SUFFIX_PARAMETER, StringUtils.EMPTY));

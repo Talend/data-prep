@@ -130,6 +130,100 @@ public class ConcatTest extends AbstractMetadataBaseTest {
         assertEquals(expected, row);
     }
 
+
+    @Test
+    public void should_not_apply_without_first_value() {
+        // given
+        DataSetRow row = getRow("", "second", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", ""), //
+                MapEntry.entry("0001", "second"), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<second>"));
+    }
+
+    @Test
+    public void should_apply_without_first_value_and_both_not_empty() {
+        // given
+        DataSetRow row = getRow("", "second", "Done !");
+        parameters.put(Concat.SEPARATOR_CONDITION, Concat.ALWAYS);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", ""), //
+                MapEntry.entry("0001", "second"), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<-second>"));
+    }
+
+    @Test
+    public void should_not_apply_with_first_value_blank() {
+        // given
+        DataSetRow row = getRow(" ", "second", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", " "), //
+                MapEntry.entry("0001", "second"), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<second>"));
+    }
+
+    @Test
+    public void should_apply_with_first_value_blank_and_always() {
+        // given
+        DataSetRow row = getRow(" ", "second", "Done !");
+        parameters.put(Concat.SEPARATOR_CONDITION, Concat.ALWAYS);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", " "), //
+                MapEntry.entry("0001", "second"), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<-second>"));
+    }
+
+    @Test
+    public void should_apply_without_first_value_blank_and_both_not_empty() {
+        // given
+        DataSetRow row = getRow(" ", "second", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", " "), //
+                MapEntry.entry("0001", "second"), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<second>"));
+    }
+
+    @Test
+    public void should_apply_without_second_value_and_always() {
+        // given
+        DataSetRow row = getRow("first", "", "Done !");
+        parameters.put(Concat.SEPARATOR_CONDITION, Concat.ALWAYS);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "first"), //
+                MapEntry.entry("0001", ""), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<first->"));
+    }
+
     @Test
     public void should_apply_without_second_value() {
         // given
@@ -146,7 +240,22 @@ public class ConcatTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_apply_with_blank_second_value() {
+    public void should_apply_without_second_value_and_both_not_empty() {
+        // given
+        DataSetRow row = getRow("first", "", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "first"), //
+                MapEntry.entry("0001", ""), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<first>"));
+    }
+
+    @Test
+    public void should_not_apply_with_blank_second_value() {
         // given
         DataSetRow row = getRow("first", "  ", "Done !");
 
@@ -158,6 +267,69 @@ public class ConcatTest extends AbstractMetadataBaseTest {
                                                      MapEntry.entry("0001", "  "), //
                                                      MapEntry.entry("0002", "Done !"), //
                                                      MapEntry.entry("0003", "<first>"));
+    }
+
+    @Test
+    public void should_apply_with_blank_second_value_and_always() {
+        // given
+        DataSetRow row = getRow("first", "  ", "Done !");
+        parameters.put(Concat.SEPARATOR_CONDITION, Concat.ALWAYS);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "first"), //
+                MapEntry.entry("0001", "  "), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<first->"));
+    }
+
+    @Test
+    public void should_apply_with_both_blank_and_always() {
+        // given
+        DataSetRow row = getRow(" ", " ", "Done !");
+        parameters.put(Concat.SEPARATOR_CONDITION, Concat.ALWAYS);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", " "), //
+                MapEntry.entry("0001", " "), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<->"));
+    }
+
+    @Test
+    public void should_apply_with_both_empty_and_always() {
+        // given
+        DataSetRow row = getRow("", "", "Done !");
+        parameters.put(Concat.SEPARATOR_CONDITION, Concat.ALWAYS);
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", ""), //
+                MapEntry.entry("0001", ""), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<->"));
+    }
+
+    @Test
+    public void should_apply_with_blank_second_value_and_both_not_empty() {
+        // given
+        DataSetRow row = getRow("first", "  ", "Done !");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "first"), //
+                MapEntry.entry("0001", "  "), //
+                MapEntry.entry("0002", "Done !"), //
+                MapEntry.entry("0003", "<first>"));
     }
 
     @Test

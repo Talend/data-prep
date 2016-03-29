@@ -2833,7 +2833,7 @@
           "values": [
             {
               "value": "concat_both_not_empty",
-              "label": "Both not empty"
+              "label": "Both values not empty"
             },
             {
               "value": "concat_always",
@@ -2843,7 +2843,7 @@
           "multiple": false
         },
         "default": "concat_both_not_empty",
-        "label": "Separator condition",
+        "label": "Add Separator",
         "description": "The condition to add or not the separator"
       }
     ],

@@ -46,6 +46,10 @@ export default function Typeahead($timeout, $window) {
                     $timeout(() => ctrl.hideResults());
                 }
 
+                function showResults() {
+                    $timeout(() => ctrl.showResults());
+                }
+
                 input.keydown((event) => {
                     let menu = iElement.find('ul');
                     let selected = menu.find('li.selected');
@@ -73,10 +77,14 @@ export default function Typeahead($timeout, $window) {
                             scope.$digest();
                             break;
                         case 40:
-                            if (!selected.length || selected.is(':last-child')) {
-                                current = listItems.eq(0);
+                            if(!ctrl.visible){
+                                showResults();
                             } else {
-                                current = selected.next();
+                                if (!selected.length || selected.is(':last-child')) {
+                                    current = listItems.eq(0);
+                                } else {
+                                    current = selected.next();
+                                }
                             }
                             break;
                         case 38:
@@ -87,11 +95,15 @@ export default function Typeahead($timeout, $window) {
                             }
                             break;
                         case 13:
-                            if (selected.length) {
-                                if (selected.children().eq(0).is('a')) {
-                                    $window.open(selected.children().eq(0).attr('href'),'_blank');
-                                } else {
-                                    selected.children().click();
+                            if(!ctrl.visible){
+                                showResults();
+                            } else {
+                                if (selected.length) {
+                                    if (selected.children().eq(0).is('a')) {
+                                        $window.open(selected.children().eq(0).attr('href'),'_blank');
+                                    } else {
+                                        selected.children().click();
+                                    }
                                 }
                             }
                             break;

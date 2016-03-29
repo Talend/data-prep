@@ -213,6 +213,44 @@ describe('Typeahead directive', () => {
             //then
             expect($window.open).toHaveBeenCalledWith('http', '_blank');
         }));
+
+
+        it('should show results on keydown enter', inject(($timeout)=> {
+            //given
+            spyOn( ctrl, 'showResults' );
+
+            const input = element.find('.input-search');
+            const event = angular.element.Event('keydown');
+            event.keyCode = 13;
+
+            ctrl.visible = false;
+
+            //when
+            input.trigger(event);
+            $timeout.flush();
+
+            //then
+            expect(ctrl.showResults).toHaveBeenCalled();
+        }));
+
+        it('should show results on keydown arrow down', inject(($timeout)=> {
+            //given
+            spyOn( ctrl, 'showResults' );
+
+            const input = element.find('.input-search');
+            const event = angular.element.Event('keydown');
+            event.keyCode = 40;
+
+            ctrl.visible = false;
+
+            //when
+            input.trigger(event);
+            $timeout.flush();
+
+            //then
+            expect(ctrl.showResults).toHaveBeenCalled();
+        }));
+
     });
 
     describe('click', () => {

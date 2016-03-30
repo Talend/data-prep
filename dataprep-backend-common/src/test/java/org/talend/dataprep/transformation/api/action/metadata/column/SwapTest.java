@@ -99,13 +99,59 @@ public class SwapTest extends BaseDateTests {
         */
     }
 
+    @Test
+    public void swap_columns_with_empty() throws Exception {
+        // given
+        List<DataSetRow> rows = Lists.newArrayList( getRow( "5", "beer", "yup"), getRow( "10", "", "cheese"));
+        parameters.put( OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+
+
+        // when
+        ActionTestWorkbench.test( rows, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat( rows.get( 0 ).values() ) //
+            .contains( MapEntry.entry( "0000", "beer" ), //
+                       MapEntry.entry( "0001", "5" ), //
+                       MapEntry.entry( "0002", "yup" ));
+
+        Assertions.assertThat( rows.get( 1 ).values() ) //
+            .contains( MapEntry.entry( "0000", "" ), //
+                       MapEntry.entry( "0001", "10" ), //
+                       MapEntry.entry( "0002", "cheese" ));
+
+
+    }
+
+    @Test
+    public void swap_columns_with_blank() throws Exception {
+        // given
+        List<DataSetRow> rows = Lists.newArrayList( getRow( "5", "beer", "yup"), getRow( "10", " ", "cheese"));
+        parameters.put( OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+
+
+        // when
+        ActionTestWorkbench.test( rows, factory.create(action, parameters));
+
+        // then
+        Assertions.assertThat( rows.get( 0 ).values() ) //
+            .contains( MapEntry.entry( "0000", "beer" ), //
+                       MapEntry.entry( "0001", "5" ), //
+                       MapEntry.entry( "0002", "yup" ));
+
+        Assertions.assertThat( rows.get( 1 ).values() ) //
+            .contains( MapEntry.entry( "0000", " " ), //
+                       MapEntry.entry( "0001", "10" ), //
+                       MapEntry.entry( "0002", "cheese" ));
+
+
+    }
 
     @Test
     public void swap_not_fail_unknown_target_column() throws Exception {
         // given
         List<DataSetRow> rows = Lists.newArrayList( getRow( "5", "beer", "yup"), getRow( "10", "wine", "cheese"));
         parameters.put( OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0009");
-
 
         // when
         ActionTestWorkbench.test( rows, factory.create(action, parameters));

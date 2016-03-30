@@ -105,10 +105,18 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
             return;
         }
 
-        parameters.put(ImplicitParameters.OTHER_COLUMN_ID.getKey(), selectedColumn.getId());
+        String domain = selectedColumn.getDomain();
+        String type = selectedColumn.getType();
 
-        actionContext.getModifiedColumns().add(selectedColumn);
+        String columnId = parameters.get( ImplicitParameters.COLUMN_ID.getKey() );
 
+        ColumnMetadata originColumn = rowMetadata.getById( columnId );
+
+        selectedColumn.setDomain( originColumn.getDomain() );
+        selectedColumn.setType( originColumn.getType() );
+
+        originColumn.setDomain( domain );
+        originColumn.setType( type );
     }
 
     /**
@@ -130,17 +138,10 @@ public class Swap extends ActionMetadata implements ColumnAction, OtherColumnPar
         LOGGER.debug( "swapping columns {} <-> {}", columnId, selectedColumn.getId() );
 
         String columnValue = row.get( columnId );
-
         String selectedColumnValue = row.get( selectedColumn.getId() );
 
-        if (selectedColumnValue == null){
-            return;
-        }
-
-        row.set( columnId, selectedColumnValue );
-        row.set( selectedColumn.getId(), columnValue);
-
-
+        row.set( columnId, selectedColumnValue == null ? StringUtils.EMPTY : selectedColumnValue );
+        row.set( selectedColumn.getId(), columnValue == null ? StringUtils.EMPTY : columnValue );
     }
 
     @Override

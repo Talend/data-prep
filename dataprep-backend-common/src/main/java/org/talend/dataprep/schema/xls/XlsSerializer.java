@@ -1,23 +1,19 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.schema.xls;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +50,31 @@ import com.fasterxml.jackson.core.JsonGenerator;
 @Service("serializer#xls")
 public class XlsSerializer implements Serializer {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(XlsSerializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XlsSerializer.class);
 
     private final JsonFactory jsonFactory = new JsonFactory();
 
     @Resource(name = "serializer#excel#executor")
-    TaskExecutor executor;
+    private TaskExecutor executor;
+
+    private static boolean isHeaderLine(int lineIndex, List<ColumnMetadata> columns) {
+        boolean headerLine = false;
+        for (ColumnMetadata columnMetadata : columns) {
+            if (lineIndex < columnMetadata.getHeaderSize()) {
+                headerLine = true;
+            }
+        }
+        return headerLine;
+    }
+
+    private Runnable serializeNew(InputStream rawContent, DataSetMetadata metadata, PipedOutputStream jsonOutput) {
+        return new XLSXRunnable(jsonOutput, rawContent, metadata);
+    }
+
+    private Runnable serializeOld(InputStream rawContent, DataSetMetadata metadata, PipedOutputStream jsonOutput)
+            throws IOException {
+        return new XLSRunnable(rawContent, jsonOutput, metadata);
+    }
 
     @Override
     public InputStream serialize(InputStream inputStream, DataSetMetadata metadata) {
@@ -90,15 +105,111 @@ public class XlsSerializer implements Serializer {
         }
     }
 
-    /**
-     * serialize method for new xls format (use some stream parsing to get values)
-     * 
-     * @param rawContent
-     * @param metadata
-     * @return
-     */
-    public Runnable serializeNew(InputStream rawContent, DataSetMetadata metadata, PipedOutputStream jsonOutput) {
-        Runnable runnable = () -> {
+    private static class DefaultSheetContentsHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
+
+        private static final Logger logger = LoggerFactory.getLogger(DefaultSheetContentsHandler.class);
+
+        private final JsonGenerator generator;
+
+        private final DataSetMetadata metadata;
+
+        private final int columnsNumber;
+
+        private int currentRow;
+
+        private boolean headerLine = false;
+
+        private List<String> values;
+
+        private int columnIndex = 0;
+
+        DefaultSheetContentsHandler(JsonGenerator generator, DataSetMetadata metadata) {
+            this.generator = generator;
+            this.metadata = metadata;
+            this.columnsNumber = metadata.getRowMetadata().getColumns().size();
+        }
+
+        @Override
+        public void cell(String cellReference, String formattedValue, XSSFComment comment) {
+            if (!headerLine) {
+                logger.trace("cell {} -> {}", cellReference, formattedValue);
+                // in case of formula error poi return a string starting with "ERROR:"
+                // "ERROR:"
+                // FIXME this may be wrong if a user really this!! but we do not have control here
+                // except overriding XSSFSheetXMLHandler#endElement
+                this.values.set(columnIndex++, StringUtils.startsWith(formattedValue, "ERROR:") ? //
+                        StringUtils.EMPTY : formattedValue);
+            }
+        }
+
+        @Override
+        public void startRow(int rowNum) {
+            logger.trace("startRow {}", rowNum);
+            this.currentRow = rowNum;
+            // is header line?
+            if (isHeaderLine(this.currentRow, metadata.getRowMetadata().getColumns())) {
+                headerLine = true;
+            } else {
+                this.values = createListWithEmpty(columnsNumber);
+            }
+        }
+
+        @Override
+        public void endRow(int rowNum) {
+            logger.trace("endRow {}", rowNum);
+            if (!headerLine) {
+                try {
+                    generator.writeStartObject();
+                    for (int j = 0; j < metadata.getRowMetadata().getColumns().size(); j++) {
+                        ColumnMetadata columnMetadata = metadata.getRowMetadata().getColumns().get(j);
+                        String cellValue = this.values.get(j);
+                        generator.writeFieldName(columnMetadata.getId());
+                        if (cellValue != null) {
+                            generator.writeString(cellValue);
+                        } else {
+                            generator.writeNull();
+                        }
+                    }
+                    generator.writeEndObject();
+                } catch (IOException e) {
+                    throw new TDPException(CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON, e);
+                } finally {
+                    columnIndex = 0;
+                }
+            }
+            headerLine = false;
+        }
+
+        private List<String> createListWithEmpty(int size) {
+            List<String> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                list.add(StringUtils.EMPTY);
+            }
+            return list;
+        }
+
+        @Override
+        public void headerFooter(String text, boolean isHeader, String tagName) {
+            logger.trace("headerFooter");
+        }
+    }
+
+    private class XLSXRunnable implements Runnable {
+
+        private final PipedOutputStream jsonOutput;
+
+        private final InputStream rawContent;
+
+        private final DataSetMetadata metadata;
+
+        XLSXRunnable(PipedOutputStream jsonOutput, InputStream rawContent, DataSetMetadata metadata) {
+            this.jsonOutput = jsonOutput;
+            this.rawContent = rawContent;
+            this.metadata = metadata;
+        }
+
+        @Override
+        public void run() {
             try {
                 JsonGenerator generator = jsonFactory.createGenerator(jsonOutput);
 
@@ -169,126 +280,25 @@ public class XlsSerializer implements Serializer {
                     LOGGER.error("Unable to close output", e);
                 }
             }
-        };
-
-        return runnable;
+        }
     }
 
-    /*
-     * private static class CustomDataFormater extends DataFormatter {
-     * 
-     * 
-     * public CustomDataFormater() { super(Locale.FRENCH, false);
-     * 
-     * }
-     * 
-     * @Override public String formatRawCellContents( double value, int formatIndex, String formatString, boolean
-     * use1904Windowing ) { return super.formatRawCellContents( value, formatIndex, formatString, use1904Windowing ); }
-     * 
-     * @Override public String formatCellValue( Cell cell, FormulaEvaluator evaluator ) { return super.formatCellValue(
-     * cell, evaluator ); } }
-     */
+    private class XLSRunnable implements Runnable {
 
-    static class DefaultSheetContentsHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
+        private final InputStream rawContent;
 
-        private Logger logger = LoggerFactory.getLogger(getClass());
+        private final PipedOutputStream jsonOutput;
 
-        final JsonGenerator generator;
+        private final DataSetMetadata metadata;
 
-        final DataSetMetadata metadata;
-
-        private int currentRow;
-
-        private boolean headerLine = false;
-
-        private final int columnsNumber;
-
-        private List<String> values;
-
-        public DefaultSheetContentsHandler(JsonGenerator generator, DataSetMetadata metadata) {
-            this.generator = generator;
+        XLSRunnable(InputStream rawContent, PipedOutputStream jsonOutput, DataSetMetadata metadata) {
+            this.rawContent = rawContent;
+            this.jsonOutput = jsonOutput;
             this.metadata = metadata;
-            this.columnsNumber = metadata.getRowMetadata().getColumns().size();
         }
 
         @Override
-        public void cell(String cellReference, String formattedValue, XSSFComment comment) {
-            if (!headerLine) {
-                logger.trace("cell {} -> {}", cellReference, formattedValue);
-                int colNumber = XlsUtils.getColumnsNumberLastCell(cellReference);
-                // in case of formula error poi return a string starting with "ERROR:"
-                // "ERROR:"
-                // FIXME this may be wrong if a user really this!! but we do not have control here
-                // except overriding XSSFSheetXMLHandler#endElement
-                this.values.set(colNumber - 1, StringUtils.startsWith(formattedValue, "ERROR:") ? //
-                        StringUtils.EMPTY : formattedValue);
-            }
-
-        }
-
-        @Override
-        public void startRow(int rowNum) {
-            logger.trace("startRow {}", rowNum);
-            this.currentRow = rowNum;
-            // is header line?
-            if (isHeaderLine(this.currentRow, metadata.getRowMetadata().getColumns())) {
-                headerLine = true;
-            } else {
-                this.values = createListWithEmpty(columnsNumber);
-
-            }
-        }
-
-        @Override
-        public void endRow(int rowNum) {
-            logger.trace("endRow {}", rowNum);
-            if (!headerLine) {
-                try {
-                    generator.writeStartObject();
-                    for (int j = 0; j < metadata.getRowMetadata().getColumns().size(); j++) {
-                        ColumnMetadata columnMetadata = metadata.getRowMetadata().getColumns().get(j);
-                        String cellValue = this.values.get(j);
-                        generator.writeFieldName(columnMetadata.getId());
-                        if (cellValue != null) {
-                            generator.writeString(cellValue);
-                        } else {
-                            generator.writeNull();
-                        }
-                    }
-                    generator.writeEndObject();
-                } catch (IOException e) {
-                    throw new TDPException(CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON, e);
-                }
-
-            }
-            headerLine = false;
-        }
-
-        private List<String> createListWithEmpty(int size) {
-            List<String> list = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                list.add(StringUtils.EMPTY);
-            }
-            return list;
-        }
-
-        @Override
-        public void headerFooter(String text, boolean isHeader, String tagName) {
-            logger.trace("headerFooter");
-        }
-    }
-
-    /**
-     * serialize method for old xls format (full workbook loaded in memory)
-     * 
-     * @param rawContent
-     * @param metadata
-     * @return
-     */
-    public Runnable serializeOld(InputStream rawContent, DataSetMetadata metadata, PipedOutputStream jsonOutput)
-            throws IOException {
-
-        Runnable runnable = () -> {
+        public void run() {
             try {
 
                 Workbook workbook = WorkbookFactory.create(rawContent);
@@ -369,19 +379,6 @@ public class XlsSerializer implements Serializer {
                     LOGGER.error("Unable to close output", e);
                 }
             }
-        };
-        return runnable;
-
-    }
-
-    protected static boolean isHeaderLine(int lineIndex, List<ColumnMetadata> columns) {
-        boolean headerLine = false;
-        for (ColumnMetadata columnMetadata : columns) {
-            if (lineIndex < columnMetadata.getHeaderSize()) {
-                headerLine = true;
-            }
         }
-        return headerLine;
     }
-
 }

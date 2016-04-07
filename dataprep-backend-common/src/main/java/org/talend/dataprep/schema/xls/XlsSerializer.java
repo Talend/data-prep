@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -106,6 +105,11 @@ public class XlsSerializer implements Serializer {
         }
     }
 
+    /**
+     * The ui and statistics calculation will not be happy with null from some cell.
+     * So as the parser event may not generate event for empty, we need to build a list with empty values
+     * and populate it with values and calculate the column index from the cell reference.
+     */
     private static class DefaultSheetContentsHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
 
         private static final Logger logger = LoggerFactory.getLogger(DefaultSheetContentsHandler.class);
@@ -132,7 +136,7 @@ public class XlsSerializer implements Serializer {
         public void cell(String cellReference, String formattedValue, XSSFComment comment) {
             if (!headerLine) {
                 logger.trace("cell {} -> {}", cellReference, formattedValue);
-                int columnIndex = XlsUtils.getColumnsNumberLastCell( cellReference );
+                int columnIndex = XlsUtils.getColumnNumberFromCellRef( cellReference );
                 // in case of formula error poi return a string starting with "ERROR:"
                 // "ERROR:"
                 // FIXME this may be wrong if a user really this!! but we do not have control here

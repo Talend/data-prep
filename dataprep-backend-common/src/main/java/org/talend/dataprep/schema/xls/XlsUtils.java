@@ -326,29 +326,26 @@ public class XlsUtils {
         }
         String secondPart = parts[1];
 
-        return getColumnsNumberLastCell(secondPart) + 1;
+        return getColumnNumberFromCellRef( secondPart) + 1;
     }
 
     /**
-     * return the column number from a cell reference
+     * return the column number from a cell reference (AA242)
      * 
      * @param lastCell
      * @return
      */
-    public static int getColumnsNumberLastCell(String lastCell) {
+    public static int getColumnNumberFromCellRef( String lastCell) {
 
         StringBuilder letters = new StringBuilder();
-        // get all letters
+        // get all letters to remove row number
         StringCharacterIterator iter = new StringCharacterIterator(lastCell);
         for (char c = iter.first(); c != StringCharacterIterator.DONE; c = iter.next()) {
             if (!NumberUtils.isNumber(String.valueOf(c))) {
                 letters.append(c);
             }
         }
-
-        // AG 26 + G
-        // BB 2 * 26 + B
-        // ZZG 26 * 26 + G
+        // use poi api to calculate column number from an excell column format
         return CellReference.convertColStringToIndex(letters.toString());
 
     }

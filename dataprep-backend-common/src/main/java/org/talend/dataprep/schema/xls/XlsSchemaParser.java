@@ -255,9 +255,9 @@ public class XlsSchemaParser implements SchemaParser {
         public void cell(String cellReference, String formattedValue, XSSFComment comment) {
             logger.debug("cell {}", cellReference);
 
-            int colNumber = XlsUtils.getColumnsNumberLastCell(cellReference);
+            int colNumber = XlsUtils.getColumnNumberFromCellRef( cellReference);
 
-            // here we need to populate empty columns
+            // here we need to populate empty columns as we need to have same number for columns meta and values
             // so we check the difference with the last column number
             int colNumberDiff = colNumber - lastColumnNumber;
             if (colNumberDiff > 1) {

@@ -233,7 +233,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 .formParam(ExportFormat.PREFIX + "csvSeparator", ";") //
                 .formParam("preparationId", preparationId) //
                 .formParam("stepId", "head") //
-                .formParam(ExportFormat.PREFIX + ExportFormat.Parameter.FILENAME_PARAMETER, fileName) //
+                .formParam(ExportFormat.PREFIX + "fileName", fileName) //
                 .when() //
                 .expect().statusCode(200).log().ifError() //
                 .get("/api/export");

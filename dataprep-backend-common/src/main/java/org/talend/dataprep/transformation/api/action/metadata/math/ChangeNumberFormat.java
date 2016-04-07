@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
 import static org.talend.daikon.number.BigDecimalParser.*;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -35,8 +35,8 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * Change the pattern on a 'number' column.

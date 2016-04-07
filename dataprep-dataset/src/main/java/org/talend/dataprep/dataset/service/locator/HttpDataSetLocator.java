@@ -31,9 +31,6 @@ import java.io.InputStream;
 @Component
 public class HttpDataSetLocator implements DataSetLocator {
 
-    /** DataSet media type for remote http datasets. */
-    public static final String MEDIA_TYPE = "application/vnd.remote-ds.http";
-
     /** Jackson builder. */
     @Autowired
     @Lazy
@@ -44,7 +41,7 @@ public class HttpDataSetLocator implements DataSetLocator {
      */
     @Override
     public boolean accept(String contentType) {
-        return StringUtils.startsWith(contentType, MEDIA_TYPE);
+        return StringUtils.startsWith(contentType, HttpLocation.MEDIA_TYPE);
     }
 
     /**

@@ -1443,6 +1443,23 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(column.getQuality().getInvalid(), is(2)); // 2 invalid values
     }
 
+    @Test
+    public void listEncodings() throws Exception {
+        InputStream content = when().get("/datasets/encodings").asInputStream();
+        final String contentAsString = IOUtils.toString(content);
+        assertThat(contentAsString, not(isEmptyString()));
+    }
+
+    @Test
+    public void listImports() throws Exception {
+        // Given
+        InputStream content = when().get("/datasets/imports").asInputStream();
+        final String contentAsString = IOUtils.toString(content);
+
+        // Then
+        assertThat(contentAsString, not(is("[]"))); // There should be some exports available
+    }
+
     private String insertEmptyDataSet() {
         String datasetId = UUID.randomUUID().toString();
         DataSetMetadata dataSetMetadata = metadataBuilder.metadata().id(datasetId)

@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
@@ -51,6 +53,7 @@ import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.asynchronous.AsynchronousDataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.asynchronous.StatisticsAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.*;
+import org.talend.dataprep.dataset.service.api.Import;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.service.locator.DataSetLocatorService;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
@@ -173,6 +176,12 @@ public class DataSetService {
     private EncodingSupport encodings;
 
     /**
+     * All possible data set locations.
+     */
+    @Autowired
+    private List<DataSetLocation> locations;
+
+    /**
      * DataSet metadata builder.
      */
     @Autowired
@@ -180,6 +189,12 @@ public class DataSetService {
 
     @Autowired
     private VersionService versionService;
+
+    @Autowired
+    InventoryUtils inventoryUtils;
+
+    @Value("#{'${dataset.imports}'.split(',')}")
+    private Set<String> enabledImports;
 
     /**
      * Sort the synchronous analyzers.
@@ -297,6 +312,7 @@ public class DataSetService {
     @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     @VolumeMetered
+    @PublicAPI
     public String create(
             @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "") String name,
             @RequestHeader(CONTENT_TYPE) String contentType,
@@ -791,20 +807,23 @@ public class DataSetService {
                 }
 
                 // Validate that the new data set metadata and removes the draft status
-                FormatFamily format = formatFamilyFactory.getFormatFamily(dataSetMetadata.getContent().getFormatGuessId());
-                try {
-                    DraftValidator draftValidator = format.getDraftValidator();
-                    DraftValidator.Result result = draftValidator.validate(dataSetMetadata);
-                    if (result.isDraft()) {
-                        // This is not an exception case: data set may remain a draft after update (although rather
-                        // unusual)
-                        LOG.warn("Data set #{} is still a draft after update.", dataSetId);
-                        return;
+                final String formatGuessId = dataSetMetadata.getContent().getFormatGuessId();
+                if (formatFamilyFactory.hasFormatFamily(formatGuessId)) {
+                    FormatFamily format = formatFamilyFactory.getFormatFamily(formatGuessId);
+                    try {
+                        DraftValidator draftValidator = format.getDraftValidator();
+                        DraftValidator.Result result = draftValidator.validate(dataSetMetadata);
+                        if (result.isDraft()) {
+                            // This is not an exception case: data set may remain a draft after update (although rather
+                            // unusual)
+                            LOG.warn("Data set #{} is still a draft after update.", dataSetId);
+                            return;
+                        }
+                        // Data set metadata to update is no longer a draft
+                        metadataForUpdate.setDraft(false);
+                    } catch (UnsupportedOperationException e) {
+                        // no need to validate draft here
                     }
-                    // Data set metadata to update is no longer a draft
-                    metadataForUpdate.setDraft(false);
-                } catch (UnsupportedOperationException e) {
-                    // no need to validate draft here
                 }
 
                 // update schema
@@ -983,6 +1002,31 @@ public class DataSetService {
     @PublicAPI
     public List<String> listSupportedEncodings() {
         return encodings.getSupportedCharsets().stream().map(Charset::displayName).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "list the supported encodings for dataset", notes = "This list can be used by user to change dataset encoding.")
+    @Timed
+    @PublicAPI
+    public List<Import> listSupportedImports() {
+        return locations.stream() //
+                .filter(l -> enabledImports.contains(l.getLocationType())) //
+                .map(l -> new Import(l.getLocationType(), //
+                        l.getAcceptedContentType(), //
+                        l.getParameters(), //
+                        LocalStoreLocation.NAME.equals(l.getLocationType()))) //
+                .sorted((i1, i2) -> { //
+                    int i1Value = i1.isDefaultImport() ? 1 : -1;
+                    int i2Value = i2.isDefaultImport() ? 1 : -1;
+                    final int compare = i2Value - i1Value;
+                    if (compare == 0) {
+                        // Same level, use location type alphabetical order to determine order.
+                        return i1.getLocationType().compareTo(i2.getLocationType());
+                    } else {
+                        return compare;
+                    }
+                }) //
+                .collect(Collectors.toList());
     }
 
     /**

@@ -23,9 +23,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.*;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
-import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 
 @Component(CompareDates.ACTION_BEAN_PREFIX + CompareDates.ACTION_NAME)
 public class CompareDates extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {

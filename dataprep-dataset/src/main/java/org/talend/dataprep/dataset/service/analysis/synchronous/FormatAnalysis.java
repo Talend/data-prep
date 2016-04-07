@@ -147,8 +147,9 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
         FormatFamily formatFamily = format.getFormatFamily();
         DataSetContent dataSetContent = metadata.getContent();
 
+        final String mediaType = metadata.getLocation().toMediaType(format.getFormatFamily());
         dataSetContent.setFormatGuessId(formatFamily.getBeanId());
-        dataSetContent.setMediaType(formatFamily.getMediaType());
+        dataSetContent.setMediaType(mediaType);
         metadata.setEncoding(format.getEncoding());
 
         parseColumnNameInformation(metadata.getId(), metadata, format);

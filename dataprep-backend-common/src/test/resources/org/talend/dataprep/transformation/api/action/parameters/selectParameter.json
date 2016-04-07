@@ -3,9 +3,7 @@
   "type": "select",
   "implicit": false,
   "canBeBlank": false,
-  "label": "Column",
-  "description": "The column to which you want to apply this action",
-  "default": "",
+  "placeHolder": "",
   "configuration": {
     "values": [
       {
@@ -25,13 +23,17 @@
             "type": "integer",
             "implicit": false,
             "canBeBlank": false,
-            "label": "Parts",
+            "placeHolder": "",
             "description": "Number of Parts to split the value in",
+            "label": "Parts",
             "default": ""
           }
         ]
       }
     ],
     "multiple": false
-  }
+  },
+  "description": "The column to which you want to apply this action",
+  "label": "Column",
+  "default": ""
 }

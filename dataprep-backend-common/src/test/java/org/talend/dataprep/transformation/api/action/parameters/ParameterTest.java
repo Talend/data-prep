@@ -21,6 +21,8 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
 
 /**
  * Unit test for the parameter class. Mostly check the equals and json de/serialization

@@ -23,7 +23,7 @@ import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionScope;
 import org.talend.dataprep.transformation.api.action.metadata.category.ScopeCategory;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.util.MessagesBundleContext;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

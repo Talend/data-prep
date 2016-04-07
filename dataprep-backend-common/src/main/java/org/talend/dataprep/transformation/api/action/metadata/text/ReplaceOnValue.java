@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.text;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.*;
+import static org.talend.dataprep.parameters.ParameterType.*;
 
 import java.security.InvalidParameterException;
 import java.util.EnumSet;
@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.CellAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * Replace the content or part of a cell by a value.

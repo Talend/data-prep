@@ -1,26 +1,25 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.format.export.ExportFormat;
-
-import com.google.common.collect.Lists;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * CSV format type.
@@ -37,24 +36,17 @@ public class CSVFormat extends ExportFormat {
     public CSVFormat() {
         //@formatter:off
         super("CSV", "text/csv", ".csv", true, false,
-                Lists.newArrayList(
-                        new Parameter("csvSeparator",
-                                "CHOOSE_SEPARATOR",
-                                "radio",
-                                new ParameterValue(";", "SEPARATOR_SEMI_COLON"),
-                                Arrays.asList(
-                                        new ParameterValue("\u0009", "SEPARATOR_TAB"), // &#09;
-                                        new ParameterValue(" ", "SEPARATOR_SPACE"),
-                                        new ParameterValue(",", "SEPARATOR_COMMA")
-                                )
-                        ),
-                        new Parameter(Parameter.FILENAME_PARAMETER,
-                                "EXPORT_FILENAME", 
-                                "text",
-                                new ParameterValue(StringUtils.EMPTY, "EXPORT_FILENAME_DEFAULT"),
-                                Collections.emptyList()
-                        )
-                ));
+                Arrays.asList(SelectParameter.Builder.builder().name("CHOOSE_SEPARATOR")
+                        .item(";", "SEPARATOR_PIPE")
+                        .item("\u0009", "SEPARATOR_TAB")
+                        .item(" ", "SEPARATOR_SPACE")
+                        .item(",", "SEPARATOR_COMMA")
+                        .defaultValue(";")
+                        .build(),
+                new Parameter("fileName",
+                        ParameterType.STRING,
+                        "")
+        ));
         //@formatter:on
     }
 

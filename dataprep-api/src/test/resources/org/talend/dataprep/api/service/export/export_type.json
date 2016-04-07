@@ -1,49 +1,74 @@
 [
   {
-    "mimeType": "application/vnd.ms-excel",
-    "extension": ".xlsx",
-    "id": "XLSX",
-    "needParameters": "true",
-    "defaultExport": "true"
-  },
-  {
     "mimeType": "text/csv",
     "extension": ".csv",
     "id": "CSV",
     "needParameters": "true",
     "defaultExport": "false",
+    "enabled": true,
+    "disableReason": "",
     "parameters": [
       {
-        "name": "csvSeparator",
-        "labelKey": "CHOOSE_SEPARATOR",
-        "type": "radio",
-        "defaultValue": {
-          "value": ";",
-          "labelKey": "SEPARATOR_SEMI_COLON"
+        "name": "CHOOSE_SEPARATOR",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "configuration": {
+          "values": [
+            {
+              "value": ";",
+              "label": "SEPARATOR_PIPE"
+            },
+            {
+              "value": "\t",
+              "label": "SEPARATOR_TAB"
+            },
+            {
+              "value": " ",
+              "label": "SEPARATOR_SPACE"
+            },
+            {
+              "value": ",",
+              "label": "SEPARATOR_COMMA"
+            }
+          ],
+          "multiple": false
         },
-        "values": [
-          {
-            "value": "\t",
-            "labelKey": "SEPARATOR_TAB"
-          },
-          {
-            "value": " ",
-            "labelKey": "SEPARATOR_SPACE"
-          },
-          {
-            "value": ",",
-            "labelKey": "SEPARATOR_COMMA"
-          }
-        ]
+        "description": "parameter.CHOOSE_SEPARATOR.desc",
+        "label": "parameter.CHOOSE_SEPARATOR.label",
+        "default": ";"
       },
       {
         "name": "fileName",
-        "labelKey": "EXPORT_FILENAME",
-        "type": "text",
-        "defaultValue": {
-          "value": "",
-          "labelKey": "EXPORT_FILENAME_DEFAULT"
-        }
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": true,
+        "placeHolder": "",
+        "description": "parameter.fileName.desc",
+        "label": "parameter.fileName.label",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "mimeType": "application/vnd.ms-excel",
+    "extension": ".xlsx",
+    "id": "XLSX",
+    "needParameters": "true",
+    "defaultExport": "true",
+    "enabled": true,
+    "disableReason": "",
+    "parameters": [
+      {
+        "name": "fileName",
+        "type": "string",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "description": "parameter.fileName.desc",
+        "label": "parameter.fileName.label",
+        "default": ""
       }
     ]
   }

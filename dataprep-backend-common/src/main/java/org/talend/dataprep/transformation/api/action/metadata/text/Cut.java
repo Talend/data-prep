@@ -16,7 +16,7 @@ package org.talend.dataprep.transformation.api.action.metadata.text;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.STRINGS;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.REGEX;
+import static org.talend.dataprep.parameters.ParameterType.REGEX;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ReplaceOnValueHelper;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 
 @Component(Cut.ACTION_BEAN_PREFIX + Cut.CUT_ACTION_NAME)
 public class Cut extends ActionMetadata implements ColumnAction {

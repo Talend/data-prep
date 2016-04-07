@@ -30,9 +30,9 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
-import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * duplicate a column
@@ -119,7 +119,7 @@ public class CreateNewColumn extends ActionMetadata implements ColumnAction {
                         .item(EMPTY_MODE)
                         .item(CONSTANT_MODE, constantParameter)
                         .item(COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
-                                                         StringUtils.EMPTY, false, false, //
+                                                         StringUtils.EMPTY, false, false, StringUtils.EMPTY,
                                                          getMessagesBundle()))
                         .defaultValue(COLUMN_MODE)
                         .build()

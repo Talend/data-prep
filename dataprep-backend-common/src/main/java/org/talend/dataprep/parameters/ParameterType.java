@@ -11,7 +11,7 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.transformation.api.action.parameters;
+package org.talend.dataprep.parameters;
 
 /**
  * List of available parameter type.
@@ -52,7 +52,11 @@ public enum ParameterType {
     /**
     * This kind of parameter allow users to pass along multiple values as an array.
     */
-    LIST;
+    LIST,
+    /**
+     * This kind of parameter allow users to pass a user local file.
+     */
+    FILE;
     public String asString() {
         return this.name().toLowerCase();
     }

@@ -4,29 +4,38 @@
   "id": "TOTO",
   "needParameters": "true",
   "defaultExport": "false",
+  "enabled": true,
+  "disableReason": "",
   "parameters": [
     {
       "name": "totoSeparator",
-      "labelKey": "CHOOSE_SEPARATOR",
-      "type": "radio",
-      "defaultValue": {
-        "value": "|",
-        "labelKey": "SEPARATOR_PIPE"
+      "type": "select",
+      "implicit": false,
+      "canBeBlank": false,
+      "configuration": {
+        "values": [
+          {
+            "value": "|",
+            "label": "SEPARATOR_PIPE"
+          },
+          {
+            "value": "\t",
+            "label": "SEPARATOR_TAB"
+          },
+          {
+            "value": ":",
+            "label": "SEPARATOR_COLUMN"
+          },
+          {
+            "value": ".",
+            "label": "SEPARATOR_DOT"
+          }
+        ],
+        "multiple": false
       },
-      "values": [
-        {
-          "value": "\t",
-          "labelKey": "SEPARATOR_TAB"
-        },
-        {
-          "value": ":",
-          "labelKey": "SEPARATOR_COLUMN"
-        },
-        {
-          "value": ".",
-          "labelKey": "SEPARATOR_DOT"
-        }
-      ]
+      "description": "parameter.totoSeparator.desc",
+      "label": "parameter.totoSeparator.label",
+      "default": "|"
     }
   ]
 }

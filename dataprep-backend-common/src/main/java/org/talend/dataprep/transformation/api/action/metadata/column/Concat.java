@@ -32,9 +32,9 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
-import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
@@ -112,7 +112,7 @@ public class Concat extends ActionMetadata implements ColumnAction, OtherColumnP
                 .name(MODE_PARAMETER)
                 .item(OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, //
-                                false, false, getMessagesBundle()),
+                                false, false, StringUtils.EMPTY, getMessagesBundle()),
                         new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY), //
                         SelectParameter.Builder.builder() //
                                 .name(SEPARATOR_CONDITION) //

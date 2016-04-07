@@ -15,8 +15,8 @@ package org.talend.dataprep.transformation.api.action.metadata.text;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.SPLIT;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.INTEGER;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -37,8 +37,8 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * Extract tokens from a String cell value based on regex matching groups.

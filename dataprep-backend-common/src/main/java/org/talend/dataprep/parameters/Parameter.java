@@ -1,22 +1,23 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
-package org.talend.dataprep.transformation.api.action.parameters;
+package org.talend.dataprep.parameters;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.util.MessagesBundleContext;
 
@@ -33,14 +34,21 @@ public class Parameter implements Serializable {
 
     /** The parameter name. */
     private final String name;
+
     /** The parameter type. */
     private final String type;
+
     /** The parameter default value. */
     private final String defaultValue;
+
     /** True if the parameter is not displayed to the user. */
     private final boolean implicit;
+
     /** True if the parameter can be blank. */
     private final boolean canBeBlank;
+
+    /** Provides a hint to user on how to fill parameter (e.g "http://" for a url, "mm/dd/yy" for a date). */
+    private final String placeHolder;
 
     /** The configuration. */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -93,12 +101,18 @@ public class Parameter implements Serializable {
      */
     public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
             final boolean canBeBlank) {
-        this(name, type, defaultValue, implicit, canBeBlank, null);
+        this(name, type, defaultValue, implicit, canBeBlank, StringUtils.EMPTY, null);
     }
 
     public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
-                     final boolean canBeBlank, MessagesBundle messagesBundle) {
+                     final boolean canBeBlank, String placeHolder) {
+        this(name, type, defaultValue, implicit, canBeBlank, placeHolder, null);
+    }
+
+    public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
+                     final boolean canBeBlank, String placeHolder, MessagesBundle messagesBundle) {
         this.name = name;
+        this.placeHolder = placeHolder;
         this.type = type.asString();
         this.defaultValue = defaultValue;
         this.implicit = implicit;
@@ -160,6 +174,10 @@ public class Parameter implements Serializable {
         return canBeBlank;
     }
 
+    public String getPlaceHolder() {
+        return placeHolder;
+    }
+
     /**
      * @return the parameter configuration
      */
@@ -168,7 +186,7 @@ public class Parameter implements Serializable {
     }
 
     @JsonIgnore
-    private MessagesBundle getMessagesBundle(){
+    private MessagesBundle getMessagesBundle() {
         if (this.messagesBundle == null) {
             this.messagesBundle = MessagesBundleContext.get();
         }

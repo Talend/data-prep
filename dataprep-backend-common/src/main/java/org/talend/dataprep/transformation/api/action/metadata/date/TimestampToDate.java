@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 
 @Component(TimestampToDate.ACTION_BEAN_PREFIX + TimestampToDate.ACTION_NAME)
 public class TimestampToDate extends ActionMetadata implements ColumnAction, DatePatternParamModel {

@@ -104,12 +104,16 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * Error return when the uploaded content is mal formatted .
      */
-    MALFORMATTED_CONTENT(BAD_REQUEST.value()),
+    MALFORMATED_CONTENT(BAD_REQUEST.value()),
     /**
      * Error returned when there's an error fetching the list of
      * supported encodings.
      */
     UNABLE_TO_LIST_SUPPORTED_ENCODINGS(INTERNAL_SERVER_ERROR.value()),
+    /**
+     * Error returned when there's an error fetching the list of possible imports.
+     */
+    UNABLE_TO_LIST_SUPPORTED_IMPORTS(INTERNAL_SERVER_ERROR.value()),
     /**
      * Error thrown when a folder is... not... found !
      */
@@ -149,7 +153,24 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * Error thrown when a folder entry could not be read.
      */
-    UNABLE_TO_READ_FOLDER_ENTRY(INTERNAL_SERVER_ERROR.value(), "path", "type");
+    UNABLE_TO_READ_FOLDER_ENTRY(INTERNAL_SERVER_ERROR.value(), "path", "type"),
+    /**
+     * Error thrown when not able to receive content from a job.
+     */
+    UNABLE_TO_RECEIVE_CONTENT(INTERNAL_SERVER_ERROR.value()),
+    /**
+     * Error thrown when receiving content from a job takes too long.
+     */
+    TIMEOUT_RECEIVING_CONTENT(INTERNAL_SERVER_ERROR.value()),
+    /**
+     * Error thrown when data prep fails to run remote job.
+     */
+    UNABLE_TO_RUN_REMOTE_JOB(INTERNAL_SERVER_ERROR.value()),
+    /**
+     * Error thrown when data prep fails to list available tasks (for running remote jobs).
+     */
+    UNABLE_TO_LIST_REMOTE_TASKS(INTERNAL_SERVER_ERROR.value());
+
 
     /**
      * The http status to use.

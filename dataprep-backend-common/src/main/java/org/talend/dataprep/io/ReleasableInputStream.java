@@ -11,7 +11,7 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.command;
+package org.talend.dataprep.io;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +28,8 @@ public class ReleasableInputStream extends InputStream {
     private final InputStream delegate;
 
     private final Runnable onClose;
+
+    private boolean isClosed;
 
     public ReleasableInputStream(InputStream delegate, Runnable onClose) {
         this.delegate = delegate;
@@ -105,10 +107,14 @@ public class ReleasableInputStream extends InputStream {
         }
     }
 
-    private void safeClose() {
+    private synchronized void safeClose() {
+        if (isClosed) {
+            return;
+        }
         try {
             LOG.debug("Safe close on stream using {}", onClose);
             onClose.run();
+            isClosed = true;
         } catch (Exception e) {
             LOG.error("Unable to invoke onClose closure.", e);
         }

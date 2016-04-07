@@ -42,7 +42,7 @@ public class HttpDataSetLocatorTest extends DataSetBaseTest {
 
     @Test
     public void should_accept_media_type() {
-        assertTrue(locator.accept(HttpDataSetLocator.MEDIA_TYPE));
+        assertTrue(locator.accept(HttpLocation.MEDIA_TYPE));
     }
 
     @Test

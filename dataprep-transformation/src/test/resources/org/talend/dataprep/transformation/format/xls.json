@@ -4,15 +4,18 @@
   "id": "XLSX",
   "needParameters": "true",
   "defaultExport": "true",
+  "enabled": true,
+  "disableReason": "",
   "parameters": [
     {
       "name": "fileName",
-      "labelKey": "EXPORT_FILENAME",
-      "type": "text",
-      "defaultValue": {
-        "value": "",
-        "labelKey": "EXPORT_FILENAME_DEFAULT"
-      }
+      "type": "string",
+      "implicit": false,
+      "canBeBlank": false,
+      "placeHolder": "",
+      "description": "parameter.fileName.desc",
+      "label": "parameter.fileName.label",
+      "default": ""
     }
   ]
 }

@@ -23,9 +23,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.DataSetRow;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
 /**
  * Base class for all round tests.

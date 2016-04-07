@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.talend.dataprep.api.dataset.location.HttpLocation;
 import org.talend.dataprep.dataset.DataSetBaseTest;
 import org.talend.dataprep.dataset.service.locator.HttpDataSetLocator;
 
@@ -35,7 +36,7 @@ public class HttpContentStoreTest extends DataSetBaseTest {
         int before = dataSetMetadataRepository.size();
         String dataSetId = given() //
                 .body(remoteLocation.getBytes()) //
-                .header("Content-Type", HttpDataSetLocator.MEDIA_TYPE) //
+                .header("Content-Type", HttpLocation.MEDIA_TYPE) //
                 .queryParam("name", "test_remote_http") //
                 .when() //
                 .post("/datasets") //
@@ -54,7 +55,7 @@ public class HttpContentStoreTest extends DataSetBaseTest {
 
         int statusCode = given() //
                 .body(remoteLocation.getBytes()) //
-                .header("Content-Type", HttpDataSetLocator.MEDIA_TYPE) //
+                .header("Content-Type", HttpLocation.MEDIA_TYPE) //
                 .queryParam("name", "test_remote_http") //
                 .when() //
                 .post("/datasets") //

@@ -14,14 +14,14 @@
 package org.talend.dataprep.transformation.api.action.metadata.common;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
 
 /**
  * Common implicit parameters used by nearly all actions.

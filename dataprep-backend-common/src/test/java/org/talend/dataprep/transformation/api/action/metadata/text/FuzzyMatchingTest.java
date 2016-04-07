@@ -34,7 +34,7 @@ import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBa
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * Test class for FuzzyMatching action. Creates one consumer, and test it.

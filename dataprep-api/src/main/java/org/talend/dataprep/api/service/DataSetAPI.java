@@ -416,8 +416,7 @@ public class DataSetAPI extends APIService {
         final String json;
         try {
             json = new String(byteArray.toByteArray());
-            final T object = mapper.readerFor(type).readValue(json);
-            return object;
+            return mapper.readerFor(type).readValue(json);
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
         } finally {
@@ -425,6 +424,7 @@ public class DataSetAPI extends APIService {
         }
 
     }
+
     @RequestMapping(value = "/api/datasets/encodings", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List supported dataset encodings.", notes = "Returns the supported dataset encodings.")
     @Timed
@@ -444,4 +444,25 @@ public class DataSetAPI extends APIService {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
+
+    @RequestMapping(value = "/api/datasets/imports", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List supported imports for a dataset.", notes = "Returns the supported import types.")
+    @Timed
+    @PublicAPI
+    public void listImports(final OutputStream output) {
+
+        // Get dataset metadata
+        HystrixCommand<InputStream> retrieveImports = getCommand(DataSetGetImports.class);
+
+        try (InputStream content = retrieveImports.execute()) {
+            IOUtils.copyLarge(content, output);
+            output.flush();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Listing datasets (pool: {}) done.", getConnectionStats());
+            }
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
+    }
+
 }

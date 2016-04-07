@@ -15,7 +15,6 @@ package org.talend.dataprep.api.service.command.export;
 
 import static org.talend.dataprep.command.Defaults.pipeStream;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
-import static org.talend.dataprep.format.export.ExportFormat.Parameter.FILENAME_PARAMETER;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -100,7 +99,7 @@ public class Export extends GenericCommand<InputStream> {
 
         for (Map.Entry<String, String> entry : arguments.entrySet()) {
             // skip the mandatory export name that's already taken cared of
-            if (StringUtils.equals(PREFIX + FILENAME_PARAMETER, entry.getKey())) {
+            if (StringUtils.equals(PREFIX + "fileName", entry.getKey())) {
                 continue;
             }
             builder.addParameter(entry.getKey(), entry.getValue());

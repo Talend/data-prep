@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.line;
 
 import static org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
 import java.util.*;
 
@@ -30,7 +30,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.metadata.common.RowAction;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * This action does two things:

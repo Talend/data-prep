@@ -17,6 +17,7 @@ import java.util.Collections;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * Json format type.

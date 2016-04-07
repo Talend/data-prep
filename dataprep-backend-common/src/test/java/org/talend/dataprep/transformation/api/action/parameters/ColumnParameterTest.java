@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.talend.dataprep.parameters.ColumnParameter;
 
 /**
  * Unit test for the ColumnParameter bean. Mostly test the json serialization.

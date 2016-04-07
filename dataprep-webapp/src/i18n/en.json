@@ -108,6 +108,8 @@
   "IMPORT_HTTP_DATASET": "Add HTTP Dataset",
   "ENTER_DATASET_URL": "Enter the dataset URL",
   "IMPORT_HDFS_DATASET": "Add HDFS Dataset",
+  "IMPORT_JOB_DATASET": "Add Talend Job Dataset",
+  "SELECT_TALEND_JOB": "Select a Talend Job",
 
   "_comment": "Common",
   "LOADING": "Loading...",

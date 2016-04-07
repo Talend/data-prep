@@ -16,12 +16,13 @@ package org.talend.dataprep.transformation.api.action.metadata.datablending;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters.COLUMN_ID;
 import static org.talend.dataprep.transformation.api.action.metadata.datablending.Lookup.Parameters.*;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.LIST;
-import static org.talend.dataprep.transformation.api.action.parameters.ParameterType.STRING;
+import static org.talend.dataprep.parameters.ParameterType.LIST;
+import static org.talend.dataprep.parameters.ParameterType.STRING;
 
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.parameters.Parameter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,11 +115,11 @@ public class Lookup extends ActionMetadata implements DataSetAction {
         final List<Parameter> parameters = new ArrayList<>();
         parameters.add(ImplicitParameters.COLUMN_ID.getParameter());
         parameters.add(ImplicitParameters.FILTER.getParameter());
-        parameters.add(new Parameter(LOOKUP_DS_NAME.getKey(), STRING, adaptedNameValue, false, false, getMessagesBundle()));
-        parameters.add(new Parameter(LOOKUP_DS_ID.getKey(), STRING, adaptedDatasetIdValue, false, false, getMessagesBundle()));
-        parameters.add(new Parameter(LOOKUP_JOIN_ON.getKey(), STRING, EMPTY, false, false, getMessagesBundle()));
-        parameters.add(new Parameter(LOOKUP_JOIN_ON_NAME.getKey(), STRING, EMPTY, false, false, getMessagesBundle()));
-        parameters.add(new Parameter(LOOKUP_SELECTED_COLS.getKey(), LIST, EMPTY, false, false, getMessagesBundle()));
+        parameters.add(new Parameter(LOOKUP_DS_NAME.getKey(), STRING, adaptedNameValue, false, false, StringUtils.EMPTY , getMessagesBundle()));
+        parameters.add(new Parameter(LOOKUP_DS_ID.getKey(), STRING, adaptedDatasetIdValue, false, false, StringUtils.EMPTY, getMessagesBundle()));
+        parameters.add(new Parameter(LOOKUP_JOIN_ON.getKey(), STRING, EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle()));
+        parameters.add(new Parameter(LOOKUP_JOIN_ON_NAME.getKey(), STRING, EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle()));
+        parameters.add(new Parameter(LOOKUP_SELECTED_COLS.getKey(), LIST, EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle()));
         return parameters;
     }
 
@@ -153,7 +154,7 @@ public class Lookup extends ActionMetadata implements DataSetAction {
             }
             //
             LookupRowMatcher rowMatcher = context.get("rowMatcher", //
-                    (p) -> {
+                        (p) -> {
                        String dataSetId = p.get(LOOKUP_DS_ID.getKey());
                        return applicationContext.getBean(LookupRowMatcher.class, dataSetId);
             });

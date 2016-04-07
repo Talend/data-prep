@@ -20,14 +20,12 @@ import org.talend.dataprep.format.export.ExportFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * Format JSON parameter.
  */
 public class ExportFormatSerializer extends JsonSerializer<ExportFormat> {
-
-    /** Constant used to the 'labelKey' */
-    private static final String LABEL = "labelKey";
 
     /**
      * @see ExportFormatSerializer#serialize(ExportFormat, JsonGenerator, SerializerProvider)
@@ -46,50 +44,10 @@ public class ExportFormatSerializer extends JsonSerializer<ExportFormat> {
 
         if (!value.getParameters().isEmpty()) {
             gen.writeFieldName("parameters");
-            gen.writeStartArray(value.getParameters().size());
-            for (ExportFormat.Parameter parameter : value.getParameters()) {
-                gen.writeStartObject();
-                gen.writeStringField("name", parameter.getName());
-                gen.writeStringField(LABEL, parameter.getLabelKey());
-                gen.writeStringField("type", parameter.getType());
-                gen.writeFieldName("defaultValue");
-                gen.writeStartObject();
-                gen.writeStringField("value", parameter.getDefaultValue().getValue());
-                gen.writeStringField(LABEL, parameter.getDefaultValue().getLabelKey());
-                gen.writeEndObject();
-
-                writeParameterValues(gen, parameter);
-
-                gen.writeEndObject();
-            }
-            gen.writeEndArray();
+            gen.writeObject(value.getParameters());
         }
 
         gen.writeEndObject();
-    }
-
-    /**
-     * Write parameters values.
-     * 
-     * @param gen the json generator to use.
-     * @param parameter the parameter to serialize.
-     * @throws IOException if an error occurs.
-     */
-    private void writeParameterValues(JsonGenerator gen, ExportFormat.Parameter parameter) throws IOException {
-        if (parameter.getValues().isEmpty()) {
-            return;
-        }
-
-        gen.writeFieldName("values");
-        gen.writeStartArray(parameter.getValues().size());
-        for (ExportFormat.ParameterValue parameterValue : parameter.getValues()) {
-            gen.writeStartObject();
-            gen.writeStringField("value", parameterValue.getValue());
-            gen.writeStringField(LABEL, parameterValue.getLabelKey());
-
-            gen.writeEndObject();
-        }
-        gen.writeEndArray();
     }
 
 }

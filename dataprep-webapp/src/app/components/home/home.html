@@ -119,6 +119,33 @@
             </button>
         </div>
     </talend-modal>
+
+    <!-- Import Talend Job dataset -->
+    <talend-modal fullscreen="false"
+                  close-button="true"
+                  state="homeCtrl.datasetJobModal"
+                  disable-enter="true">
+
+        <div class="modal-title" translate-once="IMPORT_JOB_DATASET"></div>
+        <span translate-once="ENTER_DATASET_NAME"></span>
+        <input type="text" ng-model="homeCtrl.datasetName" required/>
+        <span translate-once="SELECT_TALEND_JOB"></span>
+        <select type="text" ng-model="homeCtrl.datasetJob" required>
+            <option>Job1</option>
+            <option>Job2</option>
+        </select>
+
+        <div class="modal-buttons">
+            <button class="talend-modal-close btn-secondary modal-secondary-button">
+                <span translate-once="CANCEL"></span>
+            </button>
+            <button class="talend-modal-close btn-primary modal-primary-button"
+                    ng-click="homeCtrl.importJobDataSet()"
+                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                <span translate-once="OK"></span>
+            </button>
+        </div>
+    </talend-modal>
 </header>
 
 <div class="home">

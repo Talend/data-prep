@@ -96,7 +96,11 @@ public interface ContentCache {
          */
         LONG(TimeUnit.DAYS.toMillis(1)),
         /**
-         * A very short expiration time (
+         * A very short expiration time (5 seconds).
+         */
+        VERY_SHORT(TimeUnit.SECONDS.toMillis(5)),
+        /**
+         * A very short expiration time (using ContentCache.EVICTION_PERIOD). Useful for tests on eviction.
          */
         IMMEDIATE(ContentCache.EVICTION_PERIOD + 500L);
 

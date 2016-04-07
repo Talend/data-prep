@@ -16,6 +16,7 @@ package org.talend.dataprep.cache;
 /**
  * Content cache key used to group all information needed by the cache.
  */
+@FunctionalInterface
 public interface ContentCacheKey {
 
     /**

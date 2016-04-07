@@ -65,6 +65,10 @@ public interface FormatFamily {
             return formatFamilyMap.get(formatGuessId);
         }
 
+        public boolean hasFormatFamily(String formatGuessId) {
+            return formatFamilyMap.containsKey(formatGuessId);
+        }
+
     }
 
 }

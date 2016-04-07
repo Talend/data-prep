@@ -13,13 +13,21 @@
 
 package org.talend.dataprep.api.dataset.location;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.schema.FormatFamily;
 
 /**
  * Location used for local store.
  */
+@Component
 public class LocalStoreLocation implements DataSetLocation {
 
     /** Name of this store. */
@@ -33,6 +41,20 @@ public class LocalStoreLocation implements DataSetLocation {
         return NAME;
     }
 
+    @Override
+    public List<Parameter> getParameters() {
+        return Collections.singletonList(new Parameter("datasetFile", ParameterType.FILE, "", false, false, "*.csv", null));
+    }
+
+    @Override
+    public String getAcceptedContentType() {
+        return MediaType.TEXT_PLAIN_VALUE;
+    }
+
+    @Override
+    public String toMediaType(FormatFamily formatFamily) {
+        return formatFamily.getMediaType();
+    }
 
     /**
      * @see Object#equals(Object)

@@ -17,7 +17,6 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
-import static org.talend.dataprep.format.export.ExportFormat.Parameter.FILENAME_PARAMETER;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,8 +103,8 @@ public class ExportAPI extends APIService {
 
         String exportName = EMPTY;
 
-        if (parameters.getArguments().containsKey(PREFIX + FILENAME_PARAMETER)) {
-            exportName = parameters.getArguments().get(PREFIX + FILENAME_PARAMETER);
+        if (parameters.getArguments().containsKey(PREFIX + "fileName")) {
+            exportName = parameters.getArguments().get(PREFIX + "fileName");
         }
 
         // deal with preparation (update the export name and dataset id if needed)

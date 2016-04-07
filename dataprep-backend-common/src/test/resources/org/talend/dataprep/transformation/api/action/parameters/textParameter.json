@@ -3,7 +3,8 @@
   "type": "string",
   "implicit": true,
   "canBeBlank": false,
-  "label": "Column",
+  "placeHolder": "",
   "description": "The column to which you want to apply this action",
+  "label": "Column",
   "default": "0001"
 }

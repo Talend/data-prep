@@ -27,9 +27,9 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.transformation.api.action.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.parameters.ParameterType;
-import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 
 public abstract class AbstractCompareAction extends ActionMetadata implements ColumnAction, OtherColumnParameters, CompareAction {
 
@@ -52,7 +52,7 @@ public abstract class AbstractCompareAction extends ActionMetadata implements Co
                         .item(CONSTANT_MODE, getDefaultConstantValue()) //
                         .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                                                StringUtils.EMPTY, false, false, //
-                                                               getMessagesBundle())) //
+                                                               StringUtils.EMPTY, getMessagesBundle())) //
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );

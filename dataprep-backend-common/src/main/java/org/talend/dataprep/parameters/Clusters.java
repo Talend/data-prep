@@ -11,7 +11,7 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.transformation.api.action.parameters;
+package org.talend.dataprep.parameters;
 
 import static java.util.stream.Collectors.toList;
 

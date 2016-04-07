@@ -3,13 +3,14 @@
   "type": "column",
   "implicit": false,
   "canBeBlank": false,
-  "label": "Column",
-  "description": "The column to which you want to apply this action",
-  "default": "0001",
+  "placeHolder": "",
   "configuration": {
     "filters": [
       "numeric",
       "string"
     ]
-  }
+  },
+  "description": "The column to which you want to apply this action",
+  "label": "Column",
+  "default": "0001"
 }

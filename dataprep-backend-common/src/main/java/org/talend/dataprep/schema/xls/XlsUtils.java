@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.schema.xls;
 
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,11 +44,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 /**
  * some utils methods for excel files
@@ -307,7 +308,7 @@ public class XlsUtils {
     }
 
     /**
-     * xlsx xml contains informations for the dimension in a format as "B1:AG142" A1:D5 so the column number is givent
+     * xlsx xml contains informations for the dimension in a format as "B1:AG142" A1:D5 so the column number is given
      * by the letters from the second part. we don't mind about the start we always start from A1 as data-prep doesn't
      * want to ignore empty columns
      * 
@@ -325,37 +326,30 @@ public class XlsUtils {
         }
         String secondPart = parts[1];
 
-        return getColumnsNumberLastCell(secondPart);
+        return getColumnsNumberLastCell(secondPart) + 1;
     }
 
     /**
      * return the column number from a cell reference
+     * 
      * @param lastCell
      * @return
      */
     public static int getColumnsNumberLastCell(String lastCell) {
 
-        List<String> letters = new ArrayList<>();
+        StringBuilder letters = new StringBuilder();
         // get all letters
         StringCharacterIterator iter = new StringCharacterIterator(lastCell);
         for (char c = iter.first(); c != StringCharacterIterator.DONE; c = iter.next()) {
             if (!NumberUtils.isNumber(String.valueOf(c))) {
-                letters.add(String.valueOf(c));
+                letters.append(c);
             }
         }
 
-        int columnsNumber = 0;
+        // AG 26 + G
+        // BB 2 * 26 + B
+        // ZZG 26 * 26 + G
+        return CellReference.convertColStringToIndex(letters.toString());
 
-        for (int i = 0, size = letters.size(); i < size; i++) {
-            String letter = letters.get(i);
-            // special values for A if not the last one...
-            if (letters.size() > 1 && StringUtils.equals(letter, "A")) {
-                columnsNumber += 26;
-            } else {
-                columnsNumber += Character.getNumericValue(letter.charAt(0)) - Character.getNumericValue('A') + 1;
-            }
-        }
-
-        return columnsNumber;
     }
 }

@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -121,8 +122,6 @@ public class XlsSerializer implements Serializer {
 
         private List<String> values;
 
-        private int columnIndex = 0;
-
         DefaultSheetContentsHandler(JsonGenerator generator, DataSetMetadata metadata) {
             this.generator = generator;
             this.metadata = metadata;
@@ -133,11 +132,12 @@ public class XlsSerializer implements Serializer {
         public void cell(String cellReference, String formattedValue, XSSFComment comment) {
             if (!headerLine) {
                 logger.trace("cell {} -> {}", cellReference, formattedValue);
+                int columnIndex = XlsUtils.getColumnsNumberLastCell( cellReference );
                 // in case of formula error poi return a string starting with "ERROR:"
                 // "ERROR:"
                 // FIXME this may be wrong if a user really this!! but we do not have control here
                 // except overriding XSSFSheetXMLHandler#endElement
-                this.values.set(columnIndex++, StringUtils.startsWith(formattedValue, "ERROR:") ? //
+                this.values.set(columnIndex , StringUtils.startsWith(formattedValue, "ERROR:") ? //
                         StringUtils.EMPTY : formattedValue);
             }
         }
@@ -173,8 +173,6 @@ public class XlsSerializer implements Serializer {
                     generator.writeEndObject();
                 } catch (IOException e) {
                     throw new TDPException(CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON, e);
-                } finally {
-                    columnIndex = 0;
                 }
             }
             headerLine = false;

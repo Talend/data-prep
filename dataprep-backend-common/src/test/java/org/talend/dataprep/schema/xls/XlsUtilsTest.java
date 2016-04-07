@@ -88,9 +88,11 @@ public class XlsUtilsTest {
 
     @Test
     public void col_number_from_cell_ref() throws Exception {
-        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("D5")).isEqualTo(4);
-        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("A15")).isEqualTo(1);
-        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("AG142")).isEqualTo(33);
+        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("A5")).isEqualTo(0);
+        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("D5")).isEqualTo(3);
+        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("A15")).isEqualTo(0);
+        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("AG142")).isEqualTo(32);
+        Assertions.assertThat(XlsUtils.getColumnsNumberLastCell("BB11")).isEqualTo(53);
     }
 
 }

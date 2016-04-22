@@ -37,7 +37,6 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
         update: update,
         delete: deleteDataset,
 
-        importRemoteDataset: importRemoteDataset,
         processCertification: processCertification,
         toggleFavorite: toggleFavorite,
     };
@@ -83,24 +82,6 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
     /**
      * @ngdoc method
-     * @name create
-     * @methodOf data-prep.services.dataset.service:DatasetListService
-     * @param {object} dataset The dataset to create
-     * @description Create a dataset from backend and refresh its internal list
-     * @returns {promise} The pending POST promise
-     */
-    function create(dataset) {
-        var promise = DatasetRestService.create(dataset);
-
-        //The appended promise is not returned because DatasetRestService.create return a $upload object with progress function
-        //which is used by the caller
-        promise.then(refreshDatasets);
-
-        return promise;
-    }
-
-    /**
-     * @ngdoc method
      * @name clone
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @param {object} dataset The dataset to clone
@@ -116,14 +97,16 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
     /**
      * @ngdoc method
-     * @name importRemoteDataset
+     * @name create
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @param {object} parameters The import parameters to import
+     * @param {object} file The file imported from local
+     * @param {string} contentType The request Content-Type
      * @description Import a remote dataset from backend and refresh its internal list
      * @returns {promise} The pending POST promise
      */
-    function importRemoteDataset(parameters) {
-        var promise = DatasetRestService.import(parameters);
+    function create(parameters, contentType, file) {
+        var promise = DatasetRestService.create(folder, parameters, contentType, file);
 
         //The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
         //which is used by the caller

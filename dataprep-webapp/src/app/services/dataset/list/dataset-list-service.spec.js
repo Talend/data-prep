@@ -83,7 +83,6 @@ describe('Dataset List Service', () => {
         restPromise = $q.when(true);
 
         spyOn(DatasetRestService, 'create').and.returnValue(restPromise);
-        spyOn(DatasetRestService, 'import').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'update').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'clone').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'delete').and.returnValue(restPromise);
@@ -172,59 +171,6 @@ describe('Dataset List Service', () => {
         });
     });
 
-    describe('import', () => {
-
-        beforeEach(inject(($q, DatasetRestService) => {
-            spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.when({data: datasets.slice(0)}));
-        }));
-
-        it('should import remote dataset', inject(($rootScope, DatasetListService, DatasetRestService) => {
-            //given
-            const importParameters = {
-                type: 'http',
-                name: 'great remote dataset',
-                url: 'moc.dnelat//:ptth'
-            };
-
-            //when
-            DatasetListService.importRemoteDataset(importParameters);
-
-            //then
-            expect(DatasetRestService.import).toHaveBeenCalledWith(importParameters);
-        }));
-
-        it('should refresh datasets list', inject(($rootScope, DatasetListService, DatasetRestService) => {
-            //given
-            const importParameters = {
-                type: 'http',
-                name: 'great remote dataset',
-                url: 'moc.dnelat//:ptth'
-            };
-
-            //when
-            DatasetListService.importRemoteDataset(importParameters);
-            $rootScope.$apply();
-
-            //then
-            expect(DatasetRestService.getDatasets).toHaveBeenCalled();
-        }));
-
-        it('should return original REST promise (not the promise with dataset list refresh)', inject(($rootScope, DatasetListService) => {
-            //given
-            const importParameters = {
-                type: 'http',
-                name: 'great remote dataset',
-                url: 'moc.dnelat//:ptth'
-            };
-
-            //when
-            const promise = DatasetListService.importRemoteDataset(importParameters);
-
-            //then
-            expect(promise).toBe(restPromise);
-        }));
-    });
-
     describe('create', () => {
 
         beforeEach(inject(($q, DatasetRestService) => {
@@ -234,13 +180,15 @@ describe('Dataset List Service', () => {
         it('should create dataset', inject(($rootScope, DatasetListService, DatasetRestService) => {
             //given
             const dataset = {name: 'my dataset'};
+            var file = {id: '0001'};
+            var contentType = 'text/plain';
 
             //when
-            DatasetListService.create(dataset);
+            DatasetListService.create(dataset, contentType, file);
             $rootScope.$apply();
 
             //then
-            expect(DatasetRestService.create).toHaveBeenCalledWith(dataset);
+            expect(DatasetRestService.create).toHaveBeenCalledWith(dataset, contentType, file);
         }));
 
         it('should refresh datasets list', inject(($rootScope, DatasetListService, DatasetRestService) => {

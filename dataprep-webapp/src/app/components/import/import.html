@@ -1,0 +1,65 @@
+<div id="help-import" ng-if="$ctrl.importTypes.length > 0">
+    <talend-button-dropdown button-icon="m"
+                            button-text="{{'IMPORT_DATASET' | translate }}"
+                            button-action="$ctrl.startDefaultImport()">
+        <ul>
+            <li ng-repeat="importType in $ctrl.importTypes" ng-click="$ctrl.startImport(importType)">
+                {{importType.label}}
+            </li>
+        </ul>
+    </talend-button-dropdown>
+</div>
+<input type="file"
+       id="datasetFile"
+       name="datasetFile"
+       class="ng-hide"
+       ng-file-select
+       accept="*.csv"
+       ng-model="$ctrl.datasetFile"
+       ng-file-change="$ctrl.import($ctrl.currentInputType)"/>
+
+<talend-modal fullscreen="false"
+              state="$ctrl.showModal"
+              close-button="true"
+              disable-enter="true">
+    <div class="modal-title">{{$ctrl.currentInputType.title}}</div>
+    <br/>
+    <form name="$ctrl.datasetForm" ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
+
+        <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
+
+        <div class="modal-buttons">
+            <button class="talend-modal-close btn-secondary modal-secondary-button"
+                    type="button"
+                    translate-once="CANCEL"></button>
+            <button class="talend-modal-close btn-primary modal-primary-button"
+                    ng-disabled="$ctrl.datasetForm.$invalid"
+                    translate-once="OK"></button>
+        </div>
+    </form>
+</talend-modal>
+
+<talend-modal fullscreen="false"
+              close-button="true"
+              state="$ctrl.datasetNameModal"
+              disable-enter="true">
+    <span translate-once="ENTER_DATASET_NAME"></span>
+    <form name="$ctrl.datasetNameForm"
+          ng-submit="$ctrl.datasetNameForm.$valid && $ctrl.uploadDatasetName()">
+        <input type="text"
+               ng-model="$ctrl.datasetName"
+               required
+               ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
+
+        <div class="modal-buttons">
+            <button class="talend-modal-close btn-secondary modal-secondary-button"
+                    type="button"
+                    translate-once="CANCEL"></button>
+            <button class="talend-modal-close btn-primary modal-primary-button"
+                    ng-disabled="$ctrl.datasetNameForm.$invalid"
+                    translate-once="OK"></button>
+        </div>
+    </form>
+</talend-modal>
+
+<dataset-xls-preview></dataset-xls-preview>

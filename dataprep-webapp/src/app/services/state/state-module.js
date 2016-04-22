@@ -25,6 +25,7 @@ import { recipeState, RecipeStateService } from './recipe/recipe-state-service';
 import { statisticsState, StatisticsStateService } from './statistics/statistics-state-service';
 import { suggestionsState, SuggestionsStateService } from './suggestions/suggestions-state-service';
 import { routeState, RouteStateService } from './route/route-state-service';
+import { importState, ImportStateService } from './import/import-state-service';
 import { state, StateService } from './state-service';
 
 (() => {
@@ -77,6 +78,9 @@ import { state, StateService } from './state-service';
 
         .service('RouteStateService', RouteStateService)
         .constant('routeState', routeState)
+
+        .service('ImportStateService', ImportStateService)
+        .constant('importState', importState)
 
         .service('StateService', StateService)
         .constant('state', state);

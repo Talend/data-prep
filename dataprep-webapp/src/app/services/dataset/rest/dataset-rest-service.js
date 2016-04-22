@@ -22,7 +22,6 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
     'ngInject';
 
     return {
-        import: importRemoteDataset,
         create: create,
         update: update,
         delete: deleteDataset,
@@ -50,36 +49,22 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @ngdoc method
      * @name create
      * @methodOf data-prep.services.dataset.service:DatasetRestService
-     * @description Create the dataset
-     * @param {dataset} dataset The dataset infos to create
-     * @returns {Promise} the $upload promise
-     */
-    function create(dataset) {
-        return $upload.http({
-            url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(dataset.name),
-            headers: {'Content-Type': 'text/plain'},
-            data: dataset.file
-        });
-    }
-
-    /**
-     * @ngdoc method
-     * @name importRemoteDataset
-     * @methodOf data-prep.services.dataset.service:DatasetRestService
      * @description Import the remote dataset
      * @param {parameters} parameters The import parameters
+     * @param {object} folder The dataset folder
+     * @param {object} file The file imported from local
+     * @param {string} contentType The request Content-Type
      * @returns {Promise} The POST promise
      */
-    function importRemoteDataset(parameters) {
-        const req = {
-            method: 'POST',
+    function create(parameters, contentType, file) {
+        var req = {
             url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name),
             headers: {
-                'Content-Type': 'application/vnd.remote-ds.' + parameters.type
+                'Content-Type': contentType
             },
-            data: parameters
+            data: file? file: parameters
         };
-        return $http(req);
+        return $upload.http(req);
     }
 
     /**

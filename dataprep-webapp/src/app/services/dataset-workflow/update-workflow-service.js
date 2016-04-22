@@ -35,7 +35,7 @@ export default function UpdateWorkflowService(StateService, MessageService, Data
         var dataset = DatasetService.createDatasetInfo(file, existingDataset.name, existingDataset.id);
         StateService.startUploadingDataset(dataset);
 
-        DatasetService.update(dataset)
+        return DatasetService.update(dataset)
             .progress(function (event) {
                 dataset.progress = parseInt(100.0 * event.loaded / event.total);
             })

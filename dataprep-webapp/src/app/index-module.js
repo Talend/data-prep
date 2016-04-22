@@ -23,6 +23,7 @@
             'data-prep.services.rest', // rest interceptors
             'data-prep.services.dataset', // for configuration
             'data-prep.services.export', // for configuration
+            'data-prep.services.import', // for configuration
             'data-prep.services.utils', // for configuration
             'pascalprecht.translate',
         ])
@@ -142,10 +143,12 @@
                         RestURLs.setServerUrl(config.data.serverUrl);
                     })
                     // Fetch dynamic configuration (export types, supported encodings, ...)
-                    .run((ExportService, DatasetService) => {
+                    .run((ImportService, ExportService, DatasetService) => {
                         'ngInject';
+                        ImportService.initImport();
                         ExportService.refreshTypes();
                         DatasetService.refreshSupportedEncodings();
+
                     });
 
                 angular.module('data-prep.services.utils')

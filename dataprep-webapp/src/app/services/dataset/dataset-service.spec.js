@@ -49,7 +49,6 @@ describe('Dataset Service', () => {
         promiseWithProgress = $q.when(true);
 
         spyOn(DatasetListService, 'create').and.returnValue(promiseWithProgress);
-        spyOn(DatasetListService, 'importRemoteDataset').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'update').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'delete').and.returnValue($q.when(true));
         spyOn(DatasetListService, 'clone').and.returnValue($q.when(true));

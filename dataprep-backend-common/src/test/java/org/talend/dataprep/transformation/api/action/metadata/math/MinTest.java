@@ -63,10 +63,7 @@ public class MinTest
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals( "5.0", row.get( "0003" ));
     }
 
@@ -81,10 +78,7 @@ public class MinTest
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals( "5.0", row.get( "0003" ));
     }
 
@@ -100,10 +94,7 @@ public class MinTest
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals( "5.0", row.get( "0003" ));
     }
 
@@ -119,10 +110,7 @@ public class MinTest
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals( "1.0", row.get( "0003" ));
     }
 
@@ -138,10 +126,7 @@ public class MinTest
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals( "5.0", row.get( "0003" ));
     }
 
@@ -157,11 +142,13 @@ public class MinTest
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals( "5.0", row.get( "0003" ));
     }
 
+    private void assertColumnWithResultCreated(DataSetRow row) {
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
 }

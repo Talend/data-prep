@@ -62,11 +62,8 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_max").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
-        assertEquals( "7.0", row.get( "0003" ));
+        assertColumnWithResultCreated(row);
+        assertEquals("7.0", row.get("0003"));
     }
 
     @Test
@@ -80,11 +77,8 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_max").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
-        assertEquals( "5.0", row.get( "0003" ));
+        assertColumnWithResultCreated(row);
+        assertEquals("5.0", row.get("0003"));
     }
 
     @Test
@@ -103,7 +97,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
 
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals("5.0", row.get("0003"));
     }
 
     @Test
@@ -118,11 +112,8 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_max").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
-        assertEquals( "8.0", row.get( "0003" ));
+        assertColumnWithResultCreated(row);
+        assertEquals("8.0", row.get("0003"));
     }
 
     @Test
@@ -137,11 +128,8 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_max").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
-        assertEquals( "5.0", row.get( "0003" ));
+        assertColumnWithResultCreated(row);
+        assertEquals("5.0", row.get("0003"));
     }
 
     @Test
@@ -156,11 +144,14 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
+        assertColumnWithResultCreated(row);
+        assertEquals("5.0", row.get("0003"));
+    }
+
+    private void assertColumnWithResultCreated(DataSetRow row) {
         ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_max").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
-
-        assertEquals( "5.0", row.get( "0003" ));
     }
 
 }

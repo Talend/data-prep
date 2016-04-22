@@ -14,7 +14,7 @@ package org.talend.dataprep.transformation.api.action.metadata.math;
 
 import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.CONSTANT_VALUE;
 import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
-import static org.talend.dataprep.transformation.api.action.metadata.math.Max.MAX_NAME;
+import static org.talend.dataprep.transformation.api.action.metadata.math.Min.MIN_NAME;
 
 import java.util.Map;
 
@@ -35,16 +35,16 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 
 /**
- * Calculate Max with a constant or an other column 
+ * Calculate Min with a constant or an other column 
  */
-@Component(ActionMetadata.ACTION_BEAN_PREFIX + MAX_NAME)
-public class Max extends AbstractBasicMathAction {
+@Component(ActionMetadata.ACTION_BEAN_PREFIX + MIN_NAME)
+public class Min extends AbstractBasicMathAction {
 
-    protected static final String MAX_NAME = "max_numbers";
+    protected static final String MIN_NAME = "min_numbers";
 
     @Override
     public String getName() {
-        return MAX_NAME;
+        return MIN_NAME;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Max extends AbstractBasicMathAction {
             context.column("result", r -> {
                 ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
-                        .name(column.getName() + "_max") //
+                        .name(column.getName() + "_min") //
                         .type(Type.STRING) // Leave actual type detection to transformation
                         .build();
                 rowMetadata.insertAfter(columnId, c);
@@ -91,28 +91,28 @@ public class Max extends AbstractBasicMathAction {
 
         String mode = parameters.get(OtherColumnParameters.MODE_PARAMETER);
 
-        String maxWith;
+        String minWith;
         switch (mode) {
         case OtherColumnParameters.CONSTANT_MODE:
-            maxWith = parameters.get(CONSTANT_VALUE);
+            minWith = parameters.get(CONSTANT_VALUE);
             break;
         case OtherColumnParameters.OTHER_COLUMN_MODE:
             String otherColId = parameters.get(SELECTED_COLUMN_PARAMETER);
-            maxWith = row.get(otherColId);
+            minWith = row.get(otherColId);
             break;
         default:
             throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, //
                     ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
         }
 
-        String max = Double.toString(NumberUtils.toDouble(colValue, 0));
+        String min = Double.toString(NumberUtils.toDouble(colValue, 0));
 
-        if (StringUtils.isNotBlank(maxWith)) {
-            max = Double.toString(FastMath.max(NumberUtils.toDouble(colValue, Double.MIN_VALUE), //
-                    NumberUtils.toDouble(maxWith, Double.MIN_VALUE)));
+        if (StringUtils.isNotBlank(minWith)) {
+            min = Double.toString(FastMath.min(NumberUtils.toDouble(colValue, Double.MAX_VALUE), //
+                    NumberUtils.toDouble(minWith, Double.MAX_VALUE)));
         }
 
         String newColumnId = context.column("result");
-        row.set(newColumnId, max);
+        row.set(newColumnId, min);
     }
 }

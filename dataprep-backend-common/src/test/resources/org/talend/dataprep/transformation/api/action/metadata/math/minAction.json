@@ -1,0 +1,13 @@
+{
+  "actions": [
+    {
+      "action": "min_numbers",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "column",
+        "mode":"Another column",
+        "selected_column": "0001"
+      }
+    }
+  ]
+}

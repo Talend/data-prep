@@ -31,7 +31,7 @@ import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTest
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 
 /**
- * Unit test for the CompareNumbers action.
+ * Unit test for the Max action.
  *
  * @see Max
  */
@@ -93,10 +93,7 @@ public class MaxTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(row, factory.create(action, parameters));
 
         // then
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_max").type(Type.STRING).build();
-        ColumnMetadata actual = row.getRowMetadata().getById("0003");
-        assertEquals(expected, actual);
-
+        assertColumnWithResultCreated(row);
         assertEquals("5.0", row.get("0003"));
     }
 

@@ -31,28 +31,27 @@ import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTest
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 
 /**
- * Unit test for the Min action.
+ * Unit test for the Pow action.
  *
- * @see Min
+ * @see Pow
  */
-public class MinTest
-    extends AbstractMetadataBaseTest {
+public class PowTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
-    private Min action;
+    private Pow action;
 
     /** The action parameters. */
     private Map<String, String> parameters;
 
     @Before
     public void setUp() throws Exception {
-        final InputStream parametersSource = MinTest.class.getResourceAsStream( "minAction.json");
+        final InputStream parametersSource = PowTest.class.getResourceAsStream("powAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
     @Test
-    public void min_with_constant() {
+    public void pow_with_constant() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
 
@@ -64,11 +63,11 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals("78125.0", row.get("0003"));
     }
 
     @Test
-    public void min_with_undefined_constant() {
+    public void pow_with_undefined_constant() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
 
@@ -79,11 +78,11 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals("5.0", row.get("0003"));
     }
 
     @Test
-    public void min_with_NaN_constant() {
+    public void pow_with_NaN_constant() {
         // given
         DataSetRow row = getRow("5", "3", "Done !");
 
@@ -95,13 +94,13 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals("5.0", row.get("0003"));
     }
 
     @Test
-    public void min_with_other_column() {
+    public void pow_with_other_column() {
         // given
-        DataSetRow row = getRow("5", "1", "Done !");
+        DataSetRow row = getRow("5", "2", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
@@ -111,13 +110,13 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "1.0", row.get( "0003" ));
+        assertEquals("25.0", row.get("0003"));
     }
 
     @Test
-    public void min_with_undefined_other_column() {
+    public void pow_with_undefined_other_column() {
         // given
-        DataSetRow row = getRow("5", "8", "Done !");
+        DataSetRow row = getRow("5", "3", "Done !");
 
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.OTHER_COLUMN_MODE);
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "000xx");
@@ -127,11 +126,11 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals("5.0", row.get("0003"));
     }
 
     @Test
-    public void min_with_NaN_other_column() {
+    public void pow_with_NaN_other_column() {
         // given
         DataSetRow row = getRow("5", "8", "Done !");
 
@@ -143,12 +142,13 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals("5.0", row.get("0003"));
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_min").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_pow").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+
 }

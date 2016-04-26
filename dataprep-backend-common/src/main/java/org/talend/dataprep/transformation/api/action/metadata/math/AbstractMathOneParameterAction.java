@@ -40,6 +40,8 @@ import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
  */
 public abstract class AbstractMathOneParameterAction extends ActionMetadata implements ColumnAction {
 
+    protected static final String ERROR_RESULT = StringUtils.EMPTY;
+
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = super.getParameters();
@@ -110,7 +112,11 @@ public abstract class AbstractMathOneParameterAction extends ActionMetadata impl
                                         ExceptionContext.build().put( "paramName", OtherColumnParameters.CONSTANT_MODE));
         }
 
-        String result = calculateResult( colValue, parameterValue );
+        String result = ERROR_RESULT;
+
+        if (NumberUtils.isNumber( colValue ) && NumberUtils.isNumber( parameterValue )){
+            result = calculateResult( colValue, parameterValue );
+        }
 
         String newColumnId = context.column("result");
         row.set(newColumnId, result);

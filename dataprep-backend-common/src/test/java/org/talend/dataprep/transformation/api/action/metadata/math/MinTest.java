@@ -19,6 +19,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.ActionMetad
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals( StringUtils.EMPTY, row.get( "0003" ));
     }
 
     @Test
@@ -95,7 +96,7 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals( StringUtils.EMPTY, row.get( "0003" ));
     }
 
     @Test
@@ -127,7 +128,7 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals( StringUtils.EMPTY, row.get( "0003" ));
     }
 
     @Test
@@ -143,7 +144,7 @@ public class MinTest
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals( "5.0", row.get( "0003" ));
+        assertEquals( StringUtils.EMPTY, row.get( "0003" ));
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {

@@ -19,16 +19,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.math3.util.FastMath;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.parameters.Parameter;
@@ -38,9 +33,7 @@ import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
 /**
  * Abstract Action for basic math action with one parameter (constant or an other column)
  */
-public abstract class AbstractMathOneParameterAction extends ActionMetadata implements ColumnAction {
-
-    protected static final String ERROR_RESULT = StringUtils.EMPTY;
+public abstract class AbstractMathOneParameterAction extends AbstractMathAction implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters() {
@@ -58,34 +51,6 @@ public abstract class AbstractMathOneParameterAction extends ActionMetadata impl
 
         return parameters;
     }
-
-    protected abstract String getColumnNameSuffix();
-
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
-    @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
-
-            String columnId = context.getColumnId();
-            RowMetadata rowMetadata = context.getRowMetadata();
-            ColumnMetadata column = rowMetadata.getById( columnId);
-
-            // create new column and append it after current column
-            context.column("result", r -> {
-                ColumnMetadata c = ColumnMetadata.Builder //
-                    .column() //
-                    .name(column.getName() + "_" + getColumnNameSuffix()) //
-                    .type( Type.STRING) // Leave actual type detection to transformation
-                    .build();
-                rowMetadata.insertAfter(columnId, c);
-                return c;
-            });
-        }
-    }
-
 
     protected abstract String calculateResult(String columnValue, String parameter);
 

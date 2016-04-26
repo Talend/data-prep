@@ -36,16 +36,6 @@ public class Max extends AbstractMathOneParameterAction {
     }
 
     @Override
-    public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
-    }
-
-    @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        return true;
-    }
-
-    @Override
     protected String getColumnNameSuffix() {
         return "max";
     }

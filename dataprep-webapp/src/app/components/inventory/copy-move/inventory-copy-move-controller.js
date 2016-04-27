@@ -26,6 +26,12 @@ class InventoryCopyMoveCtrl {
         this.$element.find('#copy-move-name-input').eq(0)[0].focus();
     }
 
+    /**
+     * @ngdoc method
+     * @name copy
+     * @methodOf data-prep.dataset-copy-move.controller:DatasetCopyMoveCtrl
+     * @description Perform a copy to the folder destination
+     */
     copy() {
         this.isCopying = true;
         this.copyMoveForm.$commitViewValue();
@@ -43,6 +49,12 @@ class InventoryCopyMoveCtrl {
             });
     }
 
+    /**
+     * @ngdoc method
+     * @name move
+     * @methodOf data-prep.dataset-copy-move.controller:DatasetCopyMoveCtrl
+     * @description Perform a move to the folder destination
+     */
     move() {
         this.isMoving = true;
         this.copyMoveForm.$commitViewValue();

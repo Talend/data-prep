@@ -152,25 +152,6 @@ export default function RecipeCtrl(state, RecipeService, PlaygroundService, Prev
     //---------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
-     * @name getAddedColumnsInLookup
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The current step
-     * @description having the Ids od the added columns, it collects the responding names
-     * @returns {Object} 2 arrays of the added columns names
-     */
-    vm.getAddedColumnsInLookup = function getAddedColumnsInLookup(step) {
-        var allAddedCols = _.pluck(step.actionParameters.parameters.lookup_selected_cols, 'name');
-        var addedColsDetails = {};
-        addedColsDetails.initialColsNbr = allAddedCols.length;
-        addedColsDetails.firstCol = allAddedCols.splice(0, 1).join();
-        addedColsDetails.secondCol = allAddedCols.splice(0, 1).join();
-        addedColsDetails.restOfColsNbr = allAddedCols.length;
-        addedColsDetails.restOfCols = allAddedCols.join(', ');
-        return addedColsDetails;
-    };
-
-    /**
-     * @ngdoc method
      * @name hasParameters
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @param {object} step The step to test

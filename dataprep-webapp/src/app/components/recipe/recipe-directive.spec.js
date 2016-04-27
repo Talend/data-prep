@@ -761,7 +761,7 @@ describe('Recipe directive', function () {
 
         //then
         expect(element.find('>.recipe >ul sc-accordion-item ').length).toBe(1);
-        expect(element.find('>.recipe >ul sc-accordion-item trigger').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Lookup done with dataset customers_100_with_pb. Join has been set between id and id. firstname , lastname and 2 other column(s) have been added.');
+        expect(element.find('>.recipe >ul sc-accordion-item trigger').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Lookup');
     }));
 
     it('should render early preview step', inject(function (RecipeService) {

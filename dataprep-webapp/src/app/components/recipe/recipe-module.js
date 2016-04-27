@@ -22,11 +22,12 @@ import Recipe from './recipe-directive';
      * @name data-prep.recipe
      * @description This module contains the controller and directives to manage the recipe
      * @requires talend.widget
+     * @requires data-prep.recipe-bullet
      * @requires data-prep.services.playground
      * @requires data-prep.services.recipe
      * @requires data-prep.services.preparation
      * @requires data-prep.services.state
-     * @requires data-prep.recipe-bullet
+     * @requires data-prep.step-description
      * @requires data-prep.transformation-form
      */
     angular.module('data-prep.recipe',
@@ -34,11 +35,12 @@ import Recipe from './recipe-directive';
             'pascalprecht.translate',
             'talend.sunchoke',
             'talend.widget',
+            'data-prep.recipe-bullet',
             'data-prep.services.playground',
             'data-prep.services.recipe',
             'data-prep.services.preparation',
             'data-prep.services.state',
-            'data-prep.recipe-bullet',
+            'data-prep.step-description',
             'data-prep.transformation-form',
             'data-prep.services.filter',
             'data-prep.services.utils',

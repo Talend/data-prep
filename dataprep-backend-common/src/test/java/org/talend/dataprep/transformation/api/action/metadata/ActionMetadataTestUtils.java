@@ -26,6 +26,7 @@ import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Actions;
 import org.talend.dataprep.api.preparation.json.MixedContentMapModule;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -42,6 +43,16 @@ public class ActionMetadataTestUtils {
      */
     public static ColumnMetadata getColumn(Type type) {
         return ColumnMetadata.Builder.column().id(0).name("name").type(type).build();
+    }
+
+    /**
+     *
+     * @param type the wanted data type.
+     * @param semanticCategory the wanted semantic category.
+     * @return a new column that matches the given data type and semantic domain.
+     */
+    public static ColumnMetadata getColumn(Type type, SemanticCategoryEnum semanticCategory) {
+        return ColumnMetadata.Builder.column().id(0).name("name").type(type).domain(semanticCategory.name()).build();
     }
 
     /**

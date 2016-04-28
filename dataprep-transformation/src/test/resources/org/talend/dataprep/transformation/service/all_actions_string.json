@@ -4295,5 +4295,9 @@
     "label": "Tangent",
     "docUrl": "",
     "actionScope": []
+  },
+  {
+    "name": "mask_data_by_domain",
+    "category": "data_masking",
   }
 ]

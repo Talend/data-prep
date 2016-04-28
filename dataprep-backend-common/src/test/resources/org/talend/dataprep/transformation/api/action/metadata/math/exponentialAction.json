@@ -1,7 +1,7 @@
 {
   "actions": [
     {
-      "action": "square_numbers",
+      "action": "exponential_numbers",
       "parameters": {
         "column_id": "0000",
         "scope": "column"

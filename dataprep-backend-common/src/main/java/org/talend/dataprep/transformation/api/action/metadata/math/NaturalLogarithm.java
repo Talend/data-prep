@@ -12,7 +12,7 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
-import static org.talend.dataprep.transformation.api.action.metadata.math.Logarithm.LOGARITHM_NAME;
+import static org.talend.dataprep.transformation.api.action.metadata.math.NaturalLogarithm.NATURAL_LOGARITHM_NAME;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
@@ -21,25 +21,25 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**
- * Create a new column with Logarithm
+ * Create a new column with Natural Logarithm
  */
-@Component(ActionMetadata.ACTION_BEAN_PREFIX + LOGARITHM_NAME)
-public class Logarithm extends AbstractMathNoParameterAction {
+@Component(ActionMetadata.ACTION_BEAN_PREFIX + NATURAL_LOGARITHM_NAME)
+public class NaturalLogarithm extends AbstractMathNoParameterAction {
 
-    protected static final String LOGARITHM_NAME = "logarithm_numbers";
+    protected static final String NATURAL_LOGARITHM_NAME = "natural_logarithm_numbers";
 
     @Override
     protected String calculateResult(String columnValue) {
         double value = NumberUtils.toDouble(columnValue);
 
-        double result = FastMath.log10(value);
+        double result = FastMath.log(value);
 
-        return Double.isNaN( result )? ERROR_RESULT:Double.toString(result);
+        return Double.isNaN(result) ? ERROR_RESULT : Double.toString(result);
     }
 
     @Override
     protected String getColumnNameSuffix() {
-        return "logarithm";
+        return "natural_logarithm";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class Logarithm extends AbstractMathNoParameterAction {
 
     @Override
     public String getName() {
-        return LOGARITHM_NAME;
+        return NATURAL_LOGARITHM_NAME;
     }
 
 }

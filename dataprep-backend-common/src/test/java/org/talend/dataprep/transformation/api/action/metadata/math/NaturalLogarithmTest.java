@@ -31,27 +31,28 @@ import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBa
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 
 /**
- * Unit test for the Logarithm action.
+ * Unit test for the Natural Logarithm action.
  *
- * @see Logarithm
+ * @see NaturalLogarithm
  */
-public class LogarithmTest extends AbstractMetadataBaseTest {
+public class NaturalLogarithmTest
+    extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
-    private Logarithm action;
+    private NaturalLogarithm action;
 
     /** The action parameters. */
     private Map<String, String> parameters;
 
     @Before
     public void setUp() throws Exception {
-        final InputStream parametersSource = LogarithmTest.class.getResourceAsStream("logarithmAction.json");
+        final InputStream parametersSource = NaturalLogarithmTest.class.getResourceAsStream( "naturalLogarithmAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
     @Test
-    public void logarithm_with_positive() {
+    public void natural_logarithm_with_positive() {
         // given
         DataSetRow row = getRow("3", "3", "Done !");
 
@@ -60,11 +61,11 @@ public class LogarithmTest extends AbstractMetadataBaseTest {
 
         // then
         assertColumnWithResultCreated(row);
-        assertEquals("0.47712125471966244", row.get("0003"));
+        assertEquals("1.0986122886681098", row.get("0003"));
     }
 
     @Test
-    public void logarithm_with_negative() {
+    public void natural_logarithm_with_negative() {
         // given
         DataSetRow row = getRow("-3", "3", "Done !");
 
@@ -77,7 +78,7 @@ public class LogarithmTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void logarithm_with_NaN() {
+    public void natural_logarithm_with_NaN() {
         // given
         DataSetRow row = getRow("beer", "3", "Done !");
 
@@ -90,7 +91,7 @@ public class LogarithmTest extends AbstractMetadataBaseTest {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_logarithm").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_natural_logarithm").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

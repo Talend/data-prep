@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -186,13 +187,14 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         assertTrue(actual.contains(expected));
     }
 
+
     /**
      * @param datasetId the preparation id.
      * @return a preparation with a root step an a the given dataset id.
      */
     @Override
     protected Preparation getPreparation(String datasetId) {
-        Preparation preparation = new Preparation(datasetId, rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, rootStep.id(), versionService.version().getVersionId());
         preparation.setName("prep-" + datasetId);
         return preparation;
     }

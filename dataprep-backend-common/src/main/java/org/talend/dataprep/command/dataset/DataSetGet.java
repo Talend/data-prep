@@ -18,6 +18,7 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_DOES_NOT_EXIST;
 
 import java.io.InputStream;
 
@@ -52,6 +53,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
             return new HttpGet(url);
         });
         onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
+        on(HttpStatus.NOT_FOUND).then((req, res) -> {throw new TDPException(DATASET_DOES_NOT_EXIST, build().put("id", dataSetId));});
         on(HttpStatus.NO_CONTENT).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
     }

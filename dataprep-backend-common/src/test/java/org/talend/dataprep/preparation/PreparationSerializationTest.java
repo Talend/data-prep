@@ -61,7 +61,7 @@ public class PreparationSerializationTest {
 
     @Test
     public void emptyPreparation() throws Exception {
-        Preparation preparation = new Preparation(versionService.version().getVersionId());
+        Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7", versionService.version().getVersionId());
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
         builder.build().writer().writeValue(output, preparation);
@@ -71,7 +71,7 @@ public class PreparationSerializationTest {
 
     @Test
     public void namePreparation() throws Exception {
-        Preparation preparation = new Preparation(versionService.version().getVersionId());
+        Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7", versionService.version().getVersionId());
         preparation.setName("MyName");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -82,7 +82,7 @@ public class PreparationSerializationTest {
 
     @Test
     public void preparationDataSet() throws Exception {
-        Preparation preparation = new Preparation(versionService.version().getVersionId());
+        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", versionService.version().getVersionId());
         preparation.setDataSetId("12345");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -93,7 +93,7 @@ public class PreparationSerializationTest {
 
     @Test
     public void preparationAuthor() throws Exception {
-        Preparation preparation = new Preparation(versionService.version().getVersionId());
+        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", versionService.version().getVersionId());
         preparation.setDataSetId("12345");
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
@@ -105,7 +105,7 @@ public class PreparationSerializationTest {
 
     @Test
     public void preparationDetailsSteps() throws Exception {
-        Preparation preparation = new Preparation("12345", rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation("0c02c9f868217ecc9d619931e127268c68809e9e", "12345", rootStep.id(), versionService.version().getVersionId());
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
@@ -124,7 +124,7 @@ public class PreparationSerializationTest {
         final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
         repository.add(s1);
         // Use it in preparation
-        Preparation preparation = new Preparation("12345", s1.id(), version);
+        Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
         builder.build().writer().writeValue(output, new PreparationDetails(preparation));

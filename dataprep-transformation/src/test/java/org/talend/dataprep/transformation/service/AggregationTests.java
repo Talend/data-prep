@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.service;
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
@@ -23,9 +24,6 @@ import java.time.Instant;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 
 import com.jayway.restassured.response.Response;
@@ -35,10 +33,6 @@ import com.jayway.restassured.response.Response;
  */
 public class AggregationTests extends TransformationServiceBaseTests {
 
-    /** The dataprep ready to use jackson object mapper. */
-    @Autowired
-    protected Jackson2ObjectMapperBuilder builder;
-
     @Test
     public void invalidOperation() throws IOException {
         // given
@@ -46,7 +40,7 @@ public class AggregationTests extends TransformationServiceBaseTests {
 
         // when
         final Response response = given()//
-                .contentType(MediaType.APPLICATION_JSON_VALUE).body(invalidOperation)//
+                .contentType(APPLICATION_JSON_VALUE).body(invalidOperation)//
                 .when().post("/aggregate");
 
         // then
@@ -99,14 +93,14 @@ public class AggregationTests extends TransformationServiceBaseTests {
 
         // when
         final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream("../aggregation/sum.json"));
-        final AggregationParameters parameters = builder.build().readerFor(AggregationParameters.class).readValue(actionsAsJson);
+        final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(null);
         parameters.setPreparationId(preparationId);
         parameters.setStepId(null);
 
         String actual = given()//
-                .body(builder.build().writer().writeValueAsString(parameters))//
-                .contentType(MediaType.APPLICATION_JSON_VALUE) //
+                .body(mapper.writeValueAsString(parameters))//
+                .contentType(APPLICATION_JSON_VALUE) //
                 .when().post("/aggregate")//
                 .asString();
 
@@ -142,14 +136,14 @@ public class AggregationTests extends TransformationServiceBaseTests {
 
         // update the actions
         final String actionsAsJson = IOUtils.toString(this.getClass().getResourceAsStream(actions));
-        final AggregationParameters parameters = builder.build().readerFor(AggregationParameters.class).readValue(actionsAsJson);
+        final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(datasetId);
         parameters.setPreparationId(null);
         parameters.setStepId(null);
 
         return given()//
-                .body(builder.build().writer().writeValueAsString(parameters))//
-                .contentType(MediaType.APPLICATION_JSON_VALUE) //
+                .body(mapper.writer().writeValueAsString(parameters))//
+                .contentType(APPLICATION_JSON_VALUE) //
                 .when().expect().statusCode(200).log().ifError().post("/aggregate")//
                 .asString();
     }

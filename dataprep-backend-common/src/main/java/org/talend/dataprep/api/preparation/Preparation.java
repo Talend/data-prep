@@ -20,8 +20,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -29,6 +27,9 @@ public class Preparation extends Identifiable implements Serializable {
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
+
+    /** The preparation id. */
+    private String id;
 
     /** The dataset id. */
     private String dataSetId;
@@ -66,10 +67,12 @@ public class Preparation extends Identifiable implements Serializable {
     /**
      * Default constructor.
      * 
+     * @param id the preparation id.
      * @param appVersion the application version to store within the preparation.
      */
     @JsonCreator
-    public Preparation(@JsonProperty("app-version") String appVersion) {
+    public Preparation(@JsonProperty("id") String id, @JsonProperty("app-version") String appVersion) {
+        this.id = id;
         this.creationDate = System.currentTimeMillis();
         this.lastModificationDate = this.creationDate;
         this.appVersion = appVersion;
@@ -78,12 +81,13 @@ public class Preparation extends Identifiable implements Serializable {
     /**
      * Create a preparation out of the given parameters.
      *
+     * @param id the preparation id.
      * @param dataSetId the dataset id.
      * @param headId the head step id.
      * @param appVersion the application version to store within the preparation.
      */
-    public Preparation(String dataSetId, String headId, String appVersion) {
-        this(appVersion);
+    public Preparation(String id, String dataSetId, String headId, String appVersion) {
+        this(id, appVersion);
         this.dataSetId = dataSetId;
         this.headId = headId;
     }
@@ -161,7 +165,7 @@ public class Preparation extends Identifiable implements Serializable {
 
     @Override
     public String getId() {
-        return DigestUtils.sha1Hex(dataSetId + author + creationDate);
+        return id;
     }
 
     /**
@@ -187,7 +191,7 @@ public class Preparation extends Identifiable implements Serializable {
     public String toString() {
         return "Preparation {" + //
                 "name='" + name + '\'' + //
-                ", id='" + id() + '\'' + //
+                ", id='" + id + '\'' + //
                 ", dataSetId='" + dataSetId + '\'' + //
                 ", author='" + author + '\'' + //
                 ", creationDate=" + creationDate + //
@@ -200,7 +204,7 @@ public class Preparation extends Identifiable implements Serializable {
     }
 
     public Preparation merge(Preparation other) {
-        Preparation merge = new Preparation(other.getAppVersion());
+        Preparation merge = new Preparation(id, other.getAppVersion());
         merge.dataSetId = other.dataSetId != null ? other.dataSetId : dataSetId;
         merge.author = other.author != null ? other.author : author;
         merge.name = other.name != null ? other.name : name;
@@ -222,7 +226,8 @@ public class Preparation extends Identifiable implements Serializable {
             return false;
         }
         Preparation that = (Preparation) o;
-        return Objects.equals(creationDate, that.creationDate) &&
+        return Objects.equals(id, that.id) &&
+                Objects.equals(creationDate, that.creationDate) &&
                 Objects.equals(lastModificationDate, that.lastModificationDate) &&
                 Objects.equals(dataSetId, that.dataSetId) &&
                 Objects.equals(author, that.author) &&
@@ -235,6 +240,6 @@ public class Preparation extends Identifiable implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(dataSetId, author, name, creationDate, lastModificationDate, headId);
+        return Objects.hash(id, dataSetId, author, name, creationDate, lastModificationDate, headId);
     }
 }

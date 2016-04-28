@@ -18,19 +18,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.FolderRepositoryAdapter;
 import org.talend.dataprep.folder.store.NotEmptyFolderException;
 
 @Component("folderRepository#in-memory")
-@ConditionalOnProperty(name = "folder.store", havingValue = "in-memory", matchIfMissing = false)
-public class InMemoryFolderRepository extends FolderRepositoryAdapter implements FolderRepository {
+@ConditionalOnProperty(name = "folder.store", havingValue = "in-memory")
+public class InMemoryFolderRepository extends FolderRepositoryAdapter {
 
     /**
      * all folders key is the path
@@ -89,7 +92,7 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
                     // path asked /foo
                     // /foo/bar/beer /foo/bar
                     // /bar/beer /bar
-                    // remove path start then count occurences of /
+                    // remove path start then count occurrences of /
 
                     String endPath = StringUtils.removeStart(folder.getPath(), cleanedPath);
                     if (StringUtils.countMatches(endPath, "/") == 1) {
@@ -191,12 +194,17 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     }
 
     @Override
-    public Iterable<FolderEntry> entries(String path, FolderEntry.ContentType contentType) {
-        return folderEntriesMap.get(cleanPath(path));
+    public Iterable<FolderEntry> entries(String path, FolderContentType contentType) {
+        List<FolderEntry> folderEntries = folderEntriesMap.get(cleanPath(path));
+        if (folderEntries == null) {
+            folderEntries = new ArrayList<>();
+        }
+
+        return folderEntries.stream().filter(e -> e.getContentType() == contentType).collect(Collectors.toList());
     }
 
     @Override
-    public Iterable<FolderEntry> findFolderEntries(String contentId, FolderEntry.ContentType contentType) {
+    public Iterable<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType) {
         List<FolderEntry> entries = new ArrayList<>();
 
         this.folderEntriesMap.values().stream().forEach(folderEntries -> folderEntries.stream().forEach(folderEntry -> {
@@ -242,7 +250,7 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     }
 
     @Override
-    public void removeFolderEntry(String givenPath, String contentId, FolderEntry.ContentType contentType) {
+    public void removeFolderEntry(String givenPath, String contentId, FolderContentType contentType) {
         String folderPath = cleanPath(givenPath);
         List<FolderEntry> entries = folderEntriesMap.get(folderPath);
         final FolderEntry entry = new FolderEntry(contentType, contentId);
@@ -254,5 +262,31 @@ public class InMemoryFolderRepository extends FolderRepositoryAdapter implements
     public long size() {
         return this.foldersMap.size();
     }
+
+
+    /**
+     * @see FolderRepository#locateEntry(String, FolderContentType)
+     */
+    @Override
+    public Folder locateEntry(String contentId, FolderContentType type) {
+        return folderEntriesMap.entrySet().stream() //
+                .filter(e -> e.getValue().stream().filter(filterFolderEntry(contentId, type)).findFirst().orElse(null) != null) //
+                .map(e -> foldersMap.get(e.getKey())) //
+                // return the first (should be the only one) or null if not found.
+                .findFirst().orElse(null);
+    }
+
+
+    /**
+     * Return a filter for content id and folder entry type.
+     *
+     * @param contentId the wanted content id.
+     * @param type the wanted folder entry type.
+     * @return true if the given entry matches the content id and content type.
+     */
+    private Predicate<FolderEntry> filterFolderEntry(String contentId, FolderContentType type) {
+        return entry -> entry.getContentId().equals(contentId) && entry.getContentType() == type;
+    }
+
 
 }

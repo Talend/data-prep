@@ -86,7 +86,7 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * This dataset name is already used
      */
-    DATASET_NAME_ALREADY_USED(BAD_REQUEST.value(), "id", "name", "folder"),
+    DATASET_NAME_ALREADY_USED(CONFLICT.value(), "id", "name", "folder"),
     /**
      * Error when a folder is not empty
      */

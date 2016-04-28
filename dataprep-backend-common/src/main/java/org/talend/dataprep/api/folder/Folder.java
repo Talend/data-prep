@@ -32,14 +32,14 @@ public class Folder implements Serializable {
     @JsonProperty("path")
     private String path;
 
-    @JsonProperty("name")
     private String name;
 
-    @JsonProperty("creationDate")
     private long creationDate;
 
-    @JsonProperty("lastModificationDate")
     private long lastModificationDate;
+
+    /** Number of preparations held in this folder. */
+    private long nbPreparations;
 
     /**
      * Default empty constructor.
@@ -106,6 +106,23 @@ public class Folder implements Serializable {
         this.lastModificationDate = lastModificationDate;
     }
 
+    /**
+     * @return the NbPreparations
+     */
+    public long getNbPreparations() {
+        return nbPreparations;
+    }
+
+    /**
+     * @param nbPreparations the nbPreparations to set.
+     */
+    public void setNbPreparations(long nbPreparations) {
+        this.nbPreparations = nbPreparations;
+    }
+
+    /**
+     * @see Object#equals(Object)
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -114,19 +131,33 @@ public class Folder implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Folder that = (Folder) o;
-        return Objects.equals(path, that.path);
+        Folder folder = (Folder) o;
+        return creationDate == folder.creationDate //
+                && lastModificationDate == folder.lastModificationDate //
+                && nbPreparations == folder.nbPreparations //
+                && Objects.equals(path, folder.path) //
+                && Objects.equals(name, folder.name);
     }
 
+    /**
+     * @see Object#hashCode
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(path);
+        return Objects.hash(path, name, creationDate, lastModificationDate, nbPreparations);
     }
 
+    /**
+     * @see Object#toString()
+     */
     @Override
     public String toString() {
-        return "Folder{" + "name='" + name + '\'' + ", path='" + path + '\'' + ", creationDate='" + creationDate + '\''
-                + ", lastModificationDate='" + lastModificationDate + '\'' + '}';
+        return "Folder{" + //
+                "path='" + path + '\'' + //
+                ", name='" + name + '\'' + //
+                ", creationDate=" + creationDate + //
+                ", lastModificationDate=" + lastModificationDate + //
+                ", nbPreparations=" + nbPreparations + //
+                '}';
     }
-
 }

@@ -30,13 +30,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.mock.env.MockPropertySource;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
@@ -61,7 +61,7 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
 
     /** The dataprep ready to use jackson object mapper. */
     @Autowired
-    protected Jackson2ObjectMapperBuilder builder;
+    protected ObjectMapper mapper;
 
     @Before
     public void setUp() {
@@ -82,14 +82,10 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
     }
 
     protected String createDataset(final String file, final String name, final String type) throws IOException {
-        return createDataset(file, name, type, null);
-    }
 
-    protected String createDataset(final String file, final String name, final String type, final String folderPath)
-            throws IOException {
         try {
             Thread.sleep(250L); // a little pause is needed otherwise an error UNKNOWN_DATASET_CONTENT may sometime
-                                // happen
+            // happen
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
@@ -98,28 +94,27 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
                 .contentType(ContentType.JSON) //
                 .body(datasetContent) //
                 .queryParam("Content-Type", type) //
+                .queryParam("name", name) //
+                .expect().statusCode(200).log().ifError() //
                 .when() //
-                .post("/datasets?name={name}&folderPath={folderPath}", name, folderPath);
+                .post("/datasets");
 
-        final int statusCode = post.getStatusCode();
-        if (statusCode != 200) {
-            LOGGER.error("Unable to create dataset (HTTP " + statusCode + "). Error: {}", post.asString());
-        }
-        assertThat(statusCode, is(200));
+        assertThat(post.getStatusCode(), is(200));
         final String dataSetId = post.asString();
         assertNotNull(dataSetId);
         assertThat(dataSetId, not(""));
 
         return dataSetId;
+
     }
 
     protected String createEmptyPreparationFromDataset(final String dataSetId, final String name) throws IOException {
-        final Response post = given().contentType(ContentType.JSON)
-                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\"}").when().put("/preparations");
-
-        if (post.getStatusCode() != 200) {
-            LOGGER.error("Unable to create preparation (HTTP " + post.getStatusCode() + "). Error: {}", post.asString());
-        }
+        final Response post = given() //
+                .contentType(ContentType.JSON)//
+                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\"}")//
+                .when()//
+                .expect().statusCode(200).log().ifError() //
+                .post("/preparations");
 
         assertThat(post.getStatusCode(), is(200));
 
@@ -139,6 +134,7 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
         given().contentType(ContentType.JSON) //
                 .body(action) //
                 .when() //
+                .expect().statusCode(200).log().ifError() //
                 .post("/preparations/{id}/actions", preparationId) //
                 .then() //
                 .statusCode(is(200));
@@ -150,7 +146,7 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
                 .get("/preparations/{id}", preparationId) //
                 .asString();
 
-        return builder.build().readerFor(Preparation.class).readValue(json);
+        return mapper.readerFor(Preparation.class).readValue(json);
 
     }
 }

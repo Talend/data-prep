@@ -16,6 +16,7 @@ package org.talend.dataprep.preparation.store.inmemory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -124,7 +125,8 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
      * @return a new Preparation.
      */
     private Preparation getPreparation(String datasetId, String rootName) {
-        Preparation preparation = new Preparation(datasetId, getStep(rootName).id(), "1.0");
+
+        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, getStep(rootName).id(), "1.0");
         preparation.setName(rootName + "_name");
         preparation.setAuthor(rootName + "_name");
         return preparation;

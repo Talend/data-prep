@@ -35,7 +35,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
  */
 @Component
 @Scope("request")
-public class PreparationListByName extends GenericCommand<InputStream> {
+public class PreparationSearchByName extends GenericCommand<InputStream> {
 
     /**
      * Private constructor used to construct the generic command used to list of preparations matching name.
@@ -43,7 +43,7 @@ public class PreparationListByName extends GenericCommand<InputStream> {
      * @param name the specified name
      * @param exactMatch the specified boolean
      */
-    private PreparationListByName(String name, boolean exactMatch) {
+    private PreparationSearchByName(String name, boolean exactMatch) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> {
             try {

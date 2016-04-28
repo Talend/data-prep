@@ -64,7 +64,7 @@ public class PreparationCleanerTest {
         final Step firstStep = new Step(rootStep.getId(), "first", version);
         final Step secondStep = new Step(firstStep.getId(), "second", version);
         final Step orphanStep = new Step(secondStep.getId(), "orphan", version);
-        final Preparation preparation = new Preparation("1", secondStep.id(), version);
+        final Preparation preparation = new Preparation("#123", "1", secondStep.id(), version);
 
         repository.add(firstStep);
         repository.add(secondStep);
@@ -100,8 +100,8 @@ public class PreparationCleanerTest {
         final Step secondStep = new Step(firstStep.getId(), "second", version);
         final Step thirdStep = new Step(secondStep.getId(), "third", version);
 
-        final Preparation firstPreparation = new Preparation("1", firstStep.id(), version);
-        final Preparation secondPreparation = new Preparation("2", thirdStep.id(), version);
+        final Preparation firstPreparation = new Preparation("#458", "1", firstStep.id(), version);
+        final Preparation secondPreparation = new Preparation("#5428", "2", thirdStep.id(), version);
 
         repository.add(firstStep);
         repository.add(secondStep);

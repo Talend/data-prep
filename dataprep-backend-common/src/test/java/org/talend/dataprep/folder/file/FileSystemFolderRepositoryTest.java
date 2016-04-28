@@ -26,11 +26,11 @@ import org.talend.dataprep.folder.AbstractFolderTest;
 import org.talend.dataprep.folder.store.FolderRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = FolderRepositoryTest.class)
+@SpringApplicationConfiguration(classes = FileSystemFolderRepositoryTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "folder.store=file",
         "folder.store.file.location=target/test/store/folders" })
-public class FolderRepositoryTest extends AbstractFolderTest {
+public class FileSystemFolderRepositoryTest extends AbstractFolderTest {
 
     @Inject
     @Named("folderRepository#file")

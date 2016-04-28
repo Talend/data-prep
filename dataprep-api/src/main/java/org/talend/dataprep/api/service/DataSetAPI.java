@@ -95,6 +95,23 @@ public class DataSetAPI extends APIService {
         return result;
     }
 
+    @RequestMapping(value = "/api/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy the dataset.", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE,
+            notes = "Copy the dataset, returns the id of the copied created data set.")
+    public String copy(
+            @ApiParam(value = "Name of the copy") @RequestParam(defaultValue = "") String name,
+            @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Copying {} (pool: {})...", id, getConnectionStats());
+        }
+
+        HystrixCommand<String> creation = getCommand(CopyDataSet.class, id, name);
+        String result = creation.execute();
+        LOG.info("Dataset {} copied --> {} named {}.", id, result, name);
+        return result;
+    }
+
     @RequestMapping(value = "/api/datasets/{id}/metadata", method = PUT, consumes = ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Update a data set metadata by id.", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, //
             notes = "Update a data set metadata based on content provided in PUT body with given id. For documentation purposes. Returns the id of the updated data set metadata.")

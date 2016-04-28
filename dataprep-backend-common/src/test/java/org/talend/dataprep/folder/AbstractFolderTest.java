@@ -14,8 +14,9 @@
 package org.talend.dataprep.folder;
 
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Test;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.NotEmptyFolderException;
@@ -165,40 +167,40 @@ public abstract class AbstractFolderTest {
 
         assertChildrenSize("", 1);
 
-        FolderEntry beerEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "littlecreatures");
+        FolderEntry beerEntry = new FolderEntry(DATASET, "littlecreatures");
 
-        FolderEntry wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        FolderEntry wineEntry = new FolderEntry(DATASET, "bordeaux");
 
         getFolderRepository().addFolderEntry(beerEntry, "/foo");
 
         getFolderRepository().addFolderEntry(wineEntry, "foo");
 
-        wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        wineEntry = new FolderEntry(DATASET, "bordeaux");
 
         getFolderRepository().addFolderEntry(wineEntry, "foo/beer");
 
-        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        folderEntries = getFolderRepository().findFolderEntries("bordeaux", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().findFolderEntries("bordeaux", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        folderEntries = getFolderRepository().findFolderEntries("littlecreatures", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().findFolderEntries("littlecreatures", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
-        getFolderRepository().removeFolderEntry("/foo", "littlecreatures", FolderEntry.ContentType.DATASET);
+        getFolderRepository().removeFolderEntry("/foo", "littlecreatures", DATASET);
 
-        getFolderRepository().removeFolderEntry("foo", "bordeaux", FolderEntry.ContentType.DATASET);
+        getFolderRepository().removeFolderEntry("foo", "bordeaux", DATASET);
 
-        getFolderRepository().removeFolderEntry("foo/beer", "bordeaux", FolderEntry.ContentType.DATASET);
+        getFolderRepository().removeFolderEntry("foo/beer", "bordeaux", DATASET);
 
-        folderEntries = getFolderRepository().entries("/foo", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("/foo", DATASET);
         entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isEmpty();
@@ -233,34 +235,34 @@ public abstract class AbstractFolderTest {
 
         assertChildrenSize("", 1);
 
-        FolderEntry beerEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "littlecreatures");
+        FolderEntry beerEntry = new FolderEntry(DATASET, "littlecreatures");
 
-        FolderEntry wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        FolderEntry wineEntry = new FolderEntry(DATASET, "bordeaux");
 
         getFolderRepository().addFolderEntry(beerEntry, "/foo");
 
         getFolderRepository().addFolderEntry(wineEntry, "foo");
 
-        wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        wineEntry = new FolderEntry(DATASET, "bordeaux");
 
         getFolderRepository().addFolderEntry(wineEntry, "foo/beer");
 
-        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        folderEntries = getFolderRepository().findFolderEntries("bordeaux", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().findFolderEntries("bordeaux", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        folderEntries = getFolderRepository().findFolderEntries("littlecreatures", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().findFolderEntries("littlecreatures", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
-        folderEntries = getFolderRepository().entries("/foo", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("/foo", DATASET);
         entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize( 2 );
@@ -286,27 +288,27 @@ public abstract class AbstractFolderTest {
         assertChildrenSize("", 2);
 
         //  bordeaux in /foo
-        FolderEntry wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        FolderEntry wineEntry = new FolderEntry(DATASET, "bordeaux");
         getFolderRepository().addFolderEntry(wineEntry, "foo");
-        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
 
         // copy bordeaux in /bar
         getFolderRepository().copyFolderEntry(wineEntry, "bar");
-        folderEntries = getFolderRepository().entries("bar", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("bar", DATASET);
         entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
-        assertFolderEntry(entries.get(0), "bordeaux", FolderEntry.ContentType.DATASET);
+        assertFolderEntry(entries.get(0), "bordeaux", DATASET);
 
         // still in foo as it's a copy
-        folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("foo", DATASET);
         entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
 
     }
 
-    private void assertFolderEntry(FolderEntry entry, String contentId, FolderEntry.ContentType contentType) {
+    private void assertFolderEntry(FolderEntry entry, String contentId, FolderContentType contentType) {
         assertEquals(entry.getContentId(), contentId);
         assertEquals(entry.getContentType(), contentType);
 
@@ -328,21 +330,21 @@ public abstract class AbstractFolderTest {
         assertChildrenSize("", 2);
 
         // bordeaux in /foo
-        FolderEntry wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        FolderEntry wineEntry = new FolderEntry(DATASET, "bordeaux");
         getFolderRepository().addFolderEntry(wineEntry, "foo");
-        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
 
         // move bordeaux to /bar
         getFolderRepository().moveFolderEntry(wineEntry, "foo", "bar");
-        folderEntries = getFolderRepository().entries("bar", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("bar", DATASET);
         entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
-        assertFolderEntry(entries.get(0), "bordeaux", FolderEntry.ContentType.DATASET);
+        assertFolderEntry(entries.get(0), "bordeaux", DATASET);
 
         // not in foo as it's a move
-        folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("foo", DATASET);
         entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isEmpty();
 
@@ -365,31 +367,31 @@ public abstract class AbstractFolderTest {
 
         assertChildrenSize("", 1);
 
-        FolderEntry beerEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "littlecreatures");
+        FolderEntry beerEntry = new FolderEntry(DATASET, "littlecreatures");
         getFolderRepository().addFolderEntry(beerEntry, "/foo");
 
-        FolderEntry wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        FolderEntry wineEntry = new FolderEntry(DATASET, "bordeaux");
         getFolderRepository().addFolderEntry(wineEntry, "foo");
 
-        wineEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "bordeaux");
+        wineEntry = new FolderEntry(DATASET, "bordeaux");
         getFolderRepository().addFolderEntry(wineEntry, "foo/beer");
 
-        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", FolderEntry.ContentType.DATASET);
+        Iterable<FolderEntry> folderEntries = getFolderRepository().entries("foo", DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        folderEntries = getFolderRepository().findFolderEntries("bordeaux", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().findFolderEntries("bordeaux", DATASET);
         entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
-        folderEntries = getFolderRepository().findFolderEntries("littlecreatures", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().findFolderEntries("littlecreatures", DATASET);
         entries = Lists.newArrayList(folderEntries);
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
-        getFolderRepository().removeFolderEntry("foo", "littlecreatures", FolderEntry.ContentType.DATASET);
+        getFolderRepository().removeFolderEntry("foo", "littlecreatures", DATASET);
 
-        folderEntries = getFolderRepository().entries("/foo", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("/foo", DATASET);
         entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
@@ -401,14 +403,14 @@ public abstract class AbstractFolderTest {
         assertChildrenSize("/wine", 2);
 
         // test FolderEntry moved as well
-        folderEntries = getFolderRepository().entries("/wine", FolderEntry.ContentType.DATASET);
+        folderEntries = getFolderRepository().entries("/wine", DATASET);
         entries = Lists.newArrayList(folderEntries);
 
         Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
-        getFolderRepository().removeFolderEntry("/wine", "bordeaux", FolderEntry.ContentType.DATASET);
+        getFolderRepository().removeFolderEntry("/wine", "bordeaux", DATASET);
 
-        getFolderRepository().removeFolderEntry("/wine/beer", "bordeaux", FolderEntry.ContentType.DATASET);
+        getFolderRepository().removeFolderEntry("/wine/beer", "bordeaux", DATASET);
 
         getFolderRepository().removeFolder("/wine");
 
@@ -486,6 +488,40 @@ public abstract class AbstractFolderTest {
         assertTrue(getFolderRepository().exists("/"));
     }
 
+
+    @Test
+    public void shouldLocateEntry() throws Exception {
+        // given (root & 2 entries)
+        final Folder root = getFolderRepository().addFolder("/");
+
+        final FolderEntry littleCreatures = new FolderEntry(DATASET, "littleCreatures");
+        getFolderRepository().addFolderEntry(littleCreatures, root.getPath());
+
+        final FolderEntry bordeaux = new FolderEntry(PREPARATION, "bordeaux");
+        getFolderRepository().addFolderEntry(bordeaux, root.getPath());
+
+        // given (foo & 2 entries)
+        final Folder foo = getFolderRepository().addFolder("/foo");
+
+        final FolderEntry cars = new FolderEntry(DATASET, "cars");
+        getFolderRepository().addFolderEntry(cars, foo.getPath());
+
+        final FolderEntry boats = new FolderEntry(PREPARATION, "boats");
+        getFolderRepository().addFolderEntry(boats, foo.getPath());
+
+        // add some noise
+        getFolderRepository().addFolder("/foo/bar");
+        getFolderRepository().addFolder("/hello");
+
+        // then
+        assertNull(getFolderRepository().locateEntry("not to ne found", PREPARATION));
+        assertEquals(root, getFolderRepository().locateEntry(bordeaux.getContentId(), bordeaux.getContentType()));
+        assertEquals(root, getFolderRepository().locateEntry(littleCreatures.getContentId(), littleCreatures.getContentType()));
+
+        assertEquals(foo, getFolderRepository().locateEntry(cars.getContentId(), cars.getContentType()));
+        assertEquals(foo, getFolderRepository().locateEntry(boats.getContentId(), boats.getContentType()));
+    }
+
     @Test
     public void shouldNotFindFolder() throws Exception {
         // given
@@ -497,7 +533,7 @@ public abstract class AbstractFolderTest {
         assertFalse(getFolderRepository().exists("titititi/totototo"));
     }
 
-    protected void assertChildrenSize(String folder, int childrenNumber) {
+    private void assertChildrenSize(String folder, int childrenNumber) {
         Iterable<Folder> iterable = getFolderRepository().children(folder);
         List<Folder> folders = Lists.newArrayList(iterable);
         if (childrenNumber > 0) {
@@ -507,7 +543,7 @@ public abstract class AbstractFolderTest {
         }
     }
 
-    protected void assertOnSearch(String query, int foundNumber) {
+    private void assertOnSearch(String query, int foundNumber) {
         Iterable<Folder> folders = getFolderRepository().searchFolders(query);
         Assertions.assertThat(Lists.newArrayList(folders)).isNotNull().isNotEmpty().hasSize(foundNumber);
     }

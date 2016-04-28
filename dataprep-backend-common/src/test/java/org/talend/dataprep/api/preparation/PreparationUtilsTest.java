@@ -218,7 +218,7 @@ public class PreparationUtilsTest {
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent = new PreparationActions(actions, version);
         final Step step = new Step(rootStep.id(), newContent.id(), version);
-        final Preparation preparation = new Preparation("1234", step.id(), version);
+        final Preparation preparation = new Preparation("#15325878", "1234", step.id(), version);
 
         repository.add(newContent);
         repository.add(step);

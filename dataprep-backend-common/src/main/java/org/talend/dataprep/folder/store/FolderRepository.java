@@ -34,7 +34,7 @@ public interface FolderRepository {
      * visible by current user.
      * @param path the parent folder in the format /ffo/blab/mm or <code>null</code> for root folder
      */
-    Iterable<Folder> children( String path);
+    Iterable<Folder> children(String path);
 
     /**
      * 
@@ -133,4 +133,12 @@ public interface FolderRepository {
      */
     Iterable<Folder> searchFolders(String queryString);
 
+    /**
+     * Return the folder that holds the given content id and content type.
+     *
+     * @param contentId the wanted content id.
+     * @param type the content type.
+     * @return the folder that holds the wanted entry or null if not found.
+     */
+    Folder locateEntry(String contentId, FolderContentType type);
 }

@@ -15,23 +15,27 @@ package org.talend.dataprep.folder.store;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Abstract class used to share code between FolderRepository implementations.
+ */
 public abstract class FolderRepositoryAdapter implements FolderRepository {
 
-    protected static final String HOME_FOLDER_KEY = "HOME_FOLDER";
-
-    protected static final char PATH_SEPARATOR = '/';
+    /** Constant for HOME_FOLDER. */
+    private static final String HOME_FOLDER_KEY = "HOME_FOLDER";
+    /** Constant for path separator. */
+    protected static final Character PATH_SEPARATOR = '/';
 
     /**
      * @param path a path as /beer/wine /foo
      * @return extract last part of a path /beer/wine -> wine /foo -> foo, / -> HOME_FOLDER
      */
     protected String extractName(String path) {
-        if (StringUtils.isEmpty(path) || StringUtils.equals(path, String.valueOf(PATH_SEPARATOR))) {
+        if (StringUtils.isEmpty(path) || StringUtils.equals(path, PATH_SEPARATOR.toString())) {
             return HOME_FOLDER_KEY;
         }
 
         return StringUtils.contains(path, PATH_SEPARATOR) ? //
-                StringUtils.substringAfterLast(path, String.valueOf(PATH_SEPARATOR)) : path;
+                StringUtils.substringAfterLast(path, PATH_SEPARATOR.toString()) : path;
     }
 
     /**
@@ -45,7 +49,7 @@ public abstract class FolderRepositoryAdapter implements FolderRepository {
         if (StringUtils.isEmpty(path) || StringUtils.equals(path, String.valueOf(PATH_SEPARATOR))) {
             return String.valueOf(PATH_SEPARATOR);
         }
-        path = StringUtils.strip(path, String.valueOf(PATH_SEPARATOR));
+        path = StringUtils.strip(path, PATH_SEPARATOR.toString());
         return path;
     }
 }

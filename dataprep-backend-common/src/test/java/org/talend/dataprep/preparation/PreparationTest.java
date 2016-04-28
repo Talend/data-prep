@@ -65,10 +65,10 @@ public class PreparationTest {
     @Test
     public void testDefaultPreparation() throws Exception {
 
-        final Preparation preparation = new Preparation("12345", rootStep.id(), versionService.version().getVersionId());
+        final Preparation preparation = new Preparation("#123", "12345", rootStep.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0L);
 
-        assertThat(preparation.id(), is("b7368bd7e4de38ff954636d0ac0438c7fb56a208"));
+        assertThat(preparation.id(), is("#123"));
         assertThat(preparation.getHeadId(), is(rootStep.id()));
     }
 
@@ -82,7 +82,7 @@ public class PreparationTest {
 
     @Test
     public void testTimestamp() throws Exception {
-        Preparation preparation = new Preparation("1234", rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation("#584284", "1234", rootStep.id(), versionService.version().getVersionId());
         final long time0 = preparation.getLastModificationDate();
         TimeUnit.MILLISECONDS.sleep(50);
         preparation.updateLastModificationDate();
@@ -93,19 +93,19 @@ public class PreparationTest {
     @Test
     public void testId_withName() throws Exception {
         // Preparation id with name
-        Preparation preparation = new Preparation("1234", rootStep.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation("#87374", "1234", rootStep.id(), versionService.version().getVersionId());
         preparation.setName("My Preparation");
         preparation.setCreationDate(0L);
         final String id0 = preparation.getId();
-        assertThat(id0, is("8b6281c5e99c41313a83777c3ab43b06adda9e5c"));
+        assertThat(id0, is("#87374"));
         // Same preparation (but with empty name): id must remain same
         preparation.setName("");
         final String id1 = preparation.getId();
-        assertThat(id1, is("8b6281c5e99c41313a83777c3ab43b06adda9e5c"));
+        assertThat(id1, is("#87374"));
         // Same preparation (but with null name, null and empty names should be treated all the same): id must remain same
         preparation.setName(null);
         final String id2 = preparation.getId();
-        assertThat(id2, is("8b6281c5e99c41313a83777c3ab43b06adda9e5c"));
+        assertThat(id2, is("#87374"));
     }
 
     @Test
@@ -120,11 +120,11 @@ public class PreparationTest {
         final Step s = new Step(rootStep.id(), newContent.id(), version);
         repository.add(s);
 
-        Preparation preparation = new Preparation("1234", s.id(), version);
+        Preparation preparation = new Preparation("#48368", "1234", s.id(), version);
         preparation.setCreationDate(0L);
         repository.add(preparation);
 
-        assertThat(preparation.id(), Is.is("8b6281c5e99c41313a83777c3ab43b06adda9e5c"));
+        assertThat(preparation.id(), Is.is("#48368"));
     }
 
     @Test
@@ -138,11 +138,11 @@ public class PreparationTest {
         final Step s = new Step(rootStep.id(), newContent.id(), version);
         repository.add(s);
 
-        final Preparation preparation = new Preparation("1234", s.id(), version);
+        final Preparation preparation = new Preparation("#5438743", "1234", s.id(), version);
         preparation.setCreationDate(0L);
         repository.add(preparation);
 
-        assertThat(preparation.id(), Is.is("8b6281c5e99c41313a83777c3ab43b06adda9e5c"));
+        assertThat(preparation.id(), Is.is("#5438743"));
     }
 
     @Test
@@ -163,18 +163,18 @@ public class PreparationTest {
         repository.add(s2);
 
         // Preparation
-        final Preparation preparation = new Preparation("1234", s2.id(), version);
+        final Preparation preparation = new Preparation("#54258728", "1234", s2.id(), version);
         preparation.setCreationDate(0L);
         repository.add(preparation);
 
-        assertThat(preparation.id(), Is.is("8b6281c5e99c41313a83777c3ab43b06adda9e5c"));
+        assertThat(preparation.id(), Is.is("#54258728"));
     }
 
     @Test
     public void should_merge_from_other() {
-        Preparation source = new Preparation(versionService.version().getVersionId());
+        Preparation source = new Preparation("#4837", versionService.version().getVersionId());
 
-        Preparation theOtherOne = new Preparation(versionService.version().getVersionId());
+        Preparation theOtherOne = new Preparation("#4837", versionService.version().getVersionId());
         theOtherOne.setAuthor("Joss Stone");
         theOtherOne.setCreationDate(source.getCreationDate() - 1000);
         theOtherOne.setDataSetId("ds#123456");
@@ -189,9 +189,9 @@ public class PreparationTest {
 
     @Test
     public void should_merge_from_source() {
-        Preparation theOtherOne = new Preparation(versionService.version().getVersionId());
+        Preparation theOtherOne = new Preparation("#23874", versionService.version().getVersionId());
 
-        Preparation source = new Preparation(versionService.version().getVersionId());
+        Preparation source = new Preparation("#158387", versionService.version().getVersionId());
         source.setAuthor("Bloc Party");
         source.setCreationDate(theOtherOne.getCreationDate() - 1000);
         source.setDataSetId("ds#65478");

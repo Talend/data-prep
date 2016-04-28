@@ -16,17 +16,17 @@ package org.talend.dataprep.api.service;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderContent;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.Preparation;
 
@@ -83,27 +83,22 @@ public class FolderAPITest extends ApiServiceTestBase {
     @Test
     public void should_fetch_all_folders() throws IOException {
         //given
-        createFolder("drink");
-        createFolder("/drink/beer");
-        createFolder("/drink/wine");
-        createFolder("/drink/wine/bordeaux");
+        List<String> folders = Arrays.asList("drink", "/drink/beer", "/drink/wine", "/drink/wine/bordeaux");
+        folders.forEach(f -> createFolder(f));
 
         //when
-        final List<Folder> folders = getAllFolders();
+        final List<Folder> actual = getAllFolders();
 
         //then
         assertThat(folders, hasSize(4));
-        assertThat(folders.get(0).getPath(), is("drink"));
-        assertThat(folders.get(1).getPath(), is("drink/wine/bordeaux"));
-        assertThat(folders.get(2).getPath(), is("drink/wine"));
-        assertThat(folders.get(3).getPath(), is("drink/beer"));
+        containsInAnyOrder(actual, folders);
     }
 
     @Test
     public void should_add_entry_in_folder() throws IOException {
         //given
         createFolder("beer");
-        final FolderEntry folderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "6f8a54051bc454");
+        final FolderEntry folderEntry = new FolderEntry(DATASET, "6f8a54051bc454");
 
         //when
         final FolderEntry createdEntry = createFolderEntry(folderEntry, "/beer");
@@ -119,10 +114,10 @@ public class FolderAPITest extends ApiServiceTestBase {
         //given
         createFolder("beer");
 
-        final FolderEntry firstFolderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "6f8a54051bc454");
+        final FolderEntry firstFolderEntry = new FolderEntry(DATASET, "6f8a54051bc454");
         final FolderEntry firstCreatedEntry = createFolderEntry(firstFolderEntry, "/beer");
 
-        final FolderEntry secondFolderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "32ac4646aa98b51");
+        final FolderEntry secondFolderEntry = new FolderEntry(DATASET, "32ac4646aa98b51");
         final FolderEntry secondCreatedEntry = createFolderEntry(secondFolderEntry, "/beer");
 
         final List<FolderEntry> entries = getFolderEntries("/beer");
@@ -156,7 +151,7 @@ public class FolderAPITest extends ApiServiceTestBase {
     public void should_return_conflict_on_non_empty_folder_remove() throws IOException {
         //given
         createFolder("beer");
-        final FolderEntry folderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, "6f8a54051bc454");
+        final FolderEntry folderEntry = new FolderEntry(DATASET, "6f8a54051bc454");
         createFolderEntry(folderEntry, "/beer");
 
         //when
@@ -168,141 +163,48 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertThat(folders, hasSize(1));
     }
 
+    /**
+     * This test does not check the whole content (this is already done by unit tests in lower services) but make sure
+     * the plumbing is ok.
+     */
     @Test
-    public void should_fetch_folder_content_ordered_by_date_desc() throws Exception {
-        //given
-        createFolder("foo/beer");
-        createFolder("foo/bar");
+    public void shouldListPreparationsInFolder() throws Exception {
+        // given
+        folderRepository.addFolder("/one");
+        folderRepository.addFolder("/two");
+        createPreparationFromFile("dataset/dataset.csv", "yet another preparation", "text/csv", "/");
+        createPreparationFromFile("dataset/dataset.csv", "prep 2", "text/csv", "/");
+        createPreparationFromFile("dataset/dataset.csv", "preparation 3 !", "text/csv", "/");
 
-        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
+        // when
+        final Response response = given() //
+                .queryParam("folder", "/") //
+                .when()//
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/folders/preparations");
 
-        final FolderEntry folderEntry1 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId1);
-        createFolderEntry(folderEntry1, "/foo");
-        final FolderEntry folderEntry2 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId2);
-        createFolderEntry(folderEntry2, "/foo");
-        final FolderEntry folderEntry3 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId3);
-        createFolderEntry(folderEntry3, "/foo");
+        // then
+        assertThat(response.getStatusCode(), is(200));
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
 
-        final ObjectMapper mapper = builder.build();
+        final JsonNode folders = rootNode.get("folders");
+        assertNotNull(folders);
+        assertEquals(2, folders.size());
 
-        //when
-        String list = when() //
-                .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "desc", "foo") //
-                .asString();
-
-        //then
-        final FolderContent folderContent = mapper.readValue(list, FolderContent.class);
-        assertThat(folderContent.getDatasets(), hasSize(3));
-        assertThat(folderContent.getDatasets().get(0).getId(), is(dataSetId3));
-        assertThat(folderContent.getDatasets().get(1).getId(), is(dataSetId2));
-        assertThat(folderContent.getDatasets().get(2).getId(), is(dataSetId1));
+        final JsonNode preparations = rootNode.get("preparations");
+        assertNotNull(preparations);
+        assertEquals(3, preparations.size());
+        for (JsonNode preparation : preparations) {
+            final JsonNode dataset = preparation.get("dataset");
+            assertNotNull(dataset);
+            assertTrue(dataset.has("dataSetId"));
+            assertTrue(dataset.has("dataSetName"));
+            assertTrue(dataset.has("dataSetNbRow"));
+        }
     }
 
     @Test
-    public void should_fetch_folder_content_ordered_by_date_asc() throws Exception {
-        //given
-        createFolder("foo");
-
-        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId3 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
-
-        final FolderEntry folderEntry1 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId1);
-        createFolderEntry(folderEntry1, "/foo");
-        final FolderEntry folderEntry2 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId2);
-        createFolderEntry(folderEntry2, "/foo");
-        final FolderEntry folderEntry3 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId3);
-        createFolderEntry(folderEntry3, "/foo");
-
-        final ObjectMapper mapper = builder.build();
-
-        //when
-        String list = when() //
-                .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "date", "asc", "foo") //
-                .asString();
-
-        //then
-        final FolderContent folderContent = mapper.readValue(list, FolderContent.class);
-        assertThat(folderContent.getDatasets(), hasSize(3));
-        assertThat(folderContent.getDatasets().get(0).getId(), is(dataSetId1));
-        assertThat(folderContent.getDatasets().get(1).getId(), is(dataSetId2));
-        assertThat(folderContent.getDatasets().get(2).getId(), is(dataSetId3));
-    }
-
-    @Test
-    public void should_fetch_folder_content_ordered_by_name_asc() throws Exception {
-        //given
-        createFolder("foo");
-
-        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId2 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId3 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
-
-        final FolderEntry folderEntry1 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId1);
-        createFolderEntry(folderEntry1, "/foo");
-        final FolderEntry folderEntry2 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId2);
-        createFolderEntry(folderEntry2, "/foo");
-        final FolderEntry folderEntry3 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId3);
-        createFolderEntry(folderEntry3, "/foo");
-
-        final ObjectMapper mapper = builder.build();
-
-        //when
-        String list = when() //
-                .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "name", "asc", "foo") //
-                .asString();
-
-        //then
-        final FolderContent folderContent = mapper.readValue(list, FolderContent.class);
-        assertThat(folderContent.getDatasets(), hasSize(3));
-        assertThat(folderContent.getDatasets().get(0).getId(), is(dataSetId1));
-        assertThat(folderContent.getDatasets().get(1).getId(), is(dataSetId3));
-        assertThat(folderContent.getDatasets().get(2).getId(), is(dataSetId2));
-    }
-
-    @Test
-    public void should_fetch_folder_content_ordered_by_name_desc() throws Exception {
-        //given
-        createFolder("foo");
-
-        final String dataSetId1 = createDataset("dataset/dataset.csv", "aaaa", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId2 = createDataset("dataset/dataset.csv", "cccc", "text/csv");
-        Thread.sleep(100);
-        final String dataSetId3 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
-
-        final FolderEntry folderEntry1 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId1);
-        createFolderEntry(folderEntry1, "/foo");
-        final FolderEntry folderEntry2 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId2);
-        createFolderEntry(folderEntry2, "/foo");
-        final FolderEntry folderEntry3 = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId3);
-        createFolderEntry(folderEntry3, "/foo");
-
-        final ObjectMapper mapper = builder.build();
-
-        //when
-        String list = when() //
-                .get("/api/folders/datasets?sort={sort}&order={order}&folder={folder}", "name", "desc", "foo") //
-                .asString();
-
-        //then
-        final FolderContent folderContent = mapper.readValue(list, FolderContent.class);
-        assertThat(folderContent.getDatasets(), hasSize(3));
-        assertThat(folderContent.getDatasets().get(0).getId(), is(dataSetId2));
-        assertThat(folderContent.getDatasets().get(1).getId(), is(dataSetId3));
-        assertThat(folderContent.getDatasets().get(2).getId(), is(dataSetId1));
-    }
-
-    @Test
-    public void add_then_search_folders() throws Exception {
+    public void search_folders() throws Exception {
         createFolder("foo");
         createFolder("bar");
         createFolder("foo/beer");
@@ -321,19 +223,19 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertOnSearch("GoOd", 2);
     }
 
-    protected void assertOnSearch(String searchQuery, int expectedSize) throws Exception {
+    private void assertOnSearch(String searchQuery, int expectedSize) throws Exception {
         //when
         final Response response = RestAssured.given() //
                 .queryParam("pathName", searchQuery).when() //
                 .get("/api/folders/search");
-        final List<Folder> folders = builder.build().readValue(response.asString(), new TypeReference<List<Folder>>() {
+        final List<Folder> folders = mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
 
         //then
         Assertions.assertThat(folders).hasSize(expectedSize);
     }
 
-    protected void createFolder(final String path) {
+    private void createFolder(final String path) {
         final Response response = RestAssured.given() //
                 .queryParam("path", path) //
                 .when() //
@@ -342,114 +244,57 @@ public class FolderAPITest extends ApiServiceTestBase {
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
     }
 
-    protected Response removeFolder(final String path) {
+    private Response removeFolder(final String path) {
         return RestAssured.given() //
                 .queryParam("path", path) //
                 .when() //
                 .delete("/api/folders");
     }
 
-    protected List<Folder> getAllFolders() throws IOException {
+    private List<Folder> getAllFolders() throws IOException {
         final Response response = RestAssured.given() //
                 .when() //
                 .get("/api/folders/all");
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
-        return builder.build().readValue(response.asString(), new TypeReference<List<Folder>>() {
+        return mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
     }
 
-    protected List<Folder> getFolderContent(final String path) throws IOException {
+    private List<Folder> getFolderContent(final String path) throws IOException {
         final Response response = RestAssured.given() //
                 .queryParam("path", path) //
                 .when() //
                 .get("/api/folders");
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
-        return builder.build().readValue(response.asString(), new TypeReference<List<Folder>>() {
+        return mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
     }
 
-    protected FolderEntry createFolderEntry(final FolderEntry folderEntry, String path) throws JsonProcessingException {
+    private FolderEntry createFolderEntry(final FolderEntry folderEntry, String path) throws JsonProcessingException {
         return folderRepository.addFolderEntry(folderEntry, path);
     }
 
-    protected void removeFolderEntry(final String contentId) {
+    private void removeFolderEntry(final String contentId) {
         final Response response = RestAssured.given() //
                 .queryParam("path", "/beer") //
-                .pathParam("contentType", FolderEntry.ContentType.DATASET) //
+                .pathParam("contentType", DATASET) //
                 .pathParam("id", contentId) //
                 .delete("/api/folders/entries/{contentType}/{id}");
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
     }
 
-    protected List<FolderEntry> getFolderEntries(final String path) throws IOException {
+    private List<FolderEntry> getFolderEntries(final String path) throws IOException {
         final Response response = RestAssured.given() //
                 .queryParam("path", path) //
-                .queryParam("contentType", FolderEntry.ContentType.DATASET) //
+                .queryParam("contentType", DATASET) //
                 .get("/api/folders/entries");
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
-        return builder.build().readValue(response.asString(), new TypeReference<List<FolderEntry>>() {
+        return mapper.readValue(response.asString(), new TypeReference<List<FolderEntry>>() {
         });
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-    //-----------------------------------------------------INVENTORY------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
-
-
-    @Test
-    public void shouldReturnMatchingPreparationsWhenPerformingInventory() throws IOException {
-        // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventoryOfPreparations", "text/csv");
-
-        // when
-        String inventory = given().queryParam("path", "/").queryParam("name", "Inventory").get("/api/inventory/search")
-                .asString();
-
-        // then
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(inventory);
-        JsonNode preparations = rootNode.get("preparations");
-        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
-        assertThat(preparationList.size(), is(1));
-        assertEquals("testInventoryOfPreparations", preparationList.get(0).getName());
-    }
-
-    @Test
-    public void shouldReturnMatchingPreparationsWithSpaceWhenPerformingInventory() throws IOException {
-        // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations", "text/csv");
-
-        // when
-        String inventory = given().queryParam("path", "/").queryParam("name", "Inventory ").get("/api/inventory/search")
-                .asString();
-
-        // then
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(inventory);
-        JsonNode preparations = rootNode.get("preparations");
-        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
-        assertThat(preparationList.size(), is(1));
-        assertEquals("testInventory OfPreparations", preparationList.get(0).getName());
-    }
-
-    @Test
-    public void shouldNotReturnNonMatchingPreparationsWhenPerformingInventory() throws IOException {
-        // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "nonMatchingPreparation", "text/csv");
-
-        // when
-        String inventory = given().queryParam("path", "/").queryParam("name", "Inventory").get("/api/inventory/search")
-                .asString();
-
-        // then
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(inventory);
-        JsonNode preparations = rootNode.get("preparations");
-        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
-        assertThat(preparationList.size(), is(0));
-    }
 }

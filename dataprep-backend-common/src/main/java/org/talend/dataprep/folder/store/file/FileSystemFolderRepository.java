@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.folder.store.file;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.TERMINATE;
 import static java.util.Collections.emptyList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.daikon.exception.ExceptionContext.build;
@@ -38,6 +40,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
@@ -47,12 +50,15 @@ import org.talend.dataprep.folder.store.NotEmptyFolderException;
 
 import com.google.common.collect.Lists;
 
+/**
+ * File system folder repository implementation.
+ */
 @Component("folderRepository#file")
-@ConditionalOnProperty(name = "folder.store", havingValue = "file", matchIfMissing = false)
+@ConditionalOnProperty(name = "folder.store", havingValue = "file")
 public class FileSystemFolderRepository extends FolderRepositoryAdapter {
 
     /**
-     * Where to store the folders
+     * Where to store the folders.
      */
     @Value("${folder.store.file.location}")
     private String foldersLocation;
@@ -90,6 +96,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         return Files.exists(folderPath);
     }
 
+    /**
+     * @see FolderRepository#children(String)
+     */
     @Override
     public Iterable<Folder> children(String parentPath) {
         try {
@@ -127,12 +136,21 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
     }
 
     /**
-     * @param path
+     * @param path the path to convert in String.
      * @return a path using {@link FolderRepositoryAdapter#PATH_SEPARATOR}
      */
-    protected String pathAsString(Path path) {
-        Path relativePath = path.subpath(getRootFolder().getNameCount(), path.getNameCount());
-        final StringBuilder stringBuilder = new StringBuilder(PATH_SEPARATOR);
+    private String pathAsString(Path path) {
+        Path relativePath;
+
+        // take care of the root folder case to prevent IllegalArgumentException
+        if (getRootFolder().getNameCount() == path.getNameCount()) {
+            return PATH_SEPARATOR.toString();
+        }
+        else {
+            relativePath = path.subpath(getRootFolder().getNameCount(), path.getNameCount());
+        }
+
+        final StringBuilder stringBuilder = new StringBuilder(String.valueOf(PATH_SEPARATOR));
         relativePath.iterator().forEachRemaining(thePath -> stringBuilder.append(thePath.toString()).append(PATH_SEPARATOR));
         return StringUtils.removeEnd(stringBuilder.toString(), "/");
     }
@@ -166,6 +184,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
+    /**
+     * @see FolderRepository#renameFolder(String, String)
+     */
     @Override
     public void renameFolder(String path, String newPath) {
         if (StringUtils.isEmpty(path) //
@@ -195,6 +216,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
 
     }
 
+    /**
+     * @see FolderRepository#addFolderEntry(FolderEntry, String)
+     */
     @Override
     public FolderEntry addFolderEntry(FolderEntry folderEntry, String entryPath) {
 
@@ -230,8 +254,11 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
+    /**
+     * @see FolderRepository#removeFolderEntry(String, String, FolderContentType)
+     */
     @Override
-    public void removeFolderEntry(String folderPath, String contentId, FolderEntry.ContentType contentType) {
+    public void removeFolderEntry(String folderPath, String contentId, FolderContentType contentType) {
 
         if (contentType == null) {
             throw new IllegalArgumentException("The content type of the folder entry to be removed cannot be null.");
@@ -247,7 +274,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                             try (InputStream inputStream = Files.newInputStream(pathFile)) {
                                 Properties properties = new Properties();
                                 properties.load(inputStream);
-                                if (contentType.equals(FolderEntry.ContentType.get(properties.getProperty("contentType"))) && //
+                                if (contentType.equals(FolderContentType.fromName(properties.getProperty("contentType"))) && //
                                         StringUtils.equalsIgnoreCase(properties.getProperty("contentId"), //
                                                 contentId)) {
                                     Files.delete(pathFile);
@@ -262,6 +289,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
+    /**
+     * @see FolderRepository#removeFolder(String)
+     */
     @Override
     public void removeFolder(String folder) throws NotEmptyFolderException {
 
@@ -292,7 +322,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
 
                             FolderEntry folderEntry = new FolderEntry();
                             folderEntry.setFolderId(path.getParent().toString());
-                            folderEntry.setContentType(FolderEntry.ContentType.get(properties.getProperty("contentType")));
+                            folderEntry.setContentType(FolderContentType.fromName(properties.getProperty("contentType")));
                             folderEntry.setContentId(properties.getProperty("contentId"));
                             folderEntries.add(folderEntry);
                         }
@@ -316,8 +346,10 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
-    @Override
-    public Iterable<FolderEntry> entries(String folder, FolderEntry.ContentType contentType) {
+    /**
+     * @see FolderRepository#entries(String, FolderContentType)
+     */    @Override
+    public Iterable<FolderEntry> entries(String folder, FolderContentType contentType) {
 
         Path path = Paths.get(getRootFolder().toString(), StringUtils.split(folder, PATH_SEPARATOR));
 
@@ -333,7 +365,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                             try (InputStream inputStream = Files.newInputStream(pathFile)) {
                                 Properties properties = new Properties();
                                 properties.load(inputStream);
-                                if (contentType.equals(FolderEntry.ContentType.get(properties.getProperty("contentType")))) {
+                                if (contentType.equals(FolderContentType.fromName(properties.getProperty("contentType")))) {
 
                                     FolderEntry folderEntry = new FolderEntry();
                                     folderEntry.setFolderId(properties.getProperty("folderId"));
@@ -354,8 +386,11 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
+    /**
+     * @see FolderRepository#findFolderEntries(String, FolderContentType)
+     */
     @Override
-    public Iterable<FolderEntry> findFolderEntries(String contentId, FolderEntry.ContentType contentType) {
+    public Iterable<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType) {
         Set<FolderEntry> folderEntries = new HashSet<>();
 
         try {
@@ -369,7 +404,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                         paths.forEach(path -> filesFound.set(true));
                     }
 
-                    return filesFound.get() ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
+                    return filesFound.get() ? CONTINUE : FileVisitResult.SKIP_SUBTREE;
                 }
 
                 @Override
@@ -378,7 +413,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                         Properties properties = new Properties();
                         properties.load(inputStream);
                         if (StringUtils.equals(properties.getProperty("contentId"), contentId) && //
-                                contentType.equals(FolderEntry.ContentType.get(properties.getProperty("contentType")))) {
+                                contentType.equals(FolderContentType.fromName(properties.getProperty("contentType")))) {
                             final FolderEntry entry = new FolderEntry(contentType, contentId);
                             Path parent = file.getParent();
                             String folderId = parent.equals(getRootFolder()) ? "" : pathAsString(parent);
@@ -386,17 +421,17 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                             folderEntries.add(entry);
                         }
                     }
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
             });
         } catch (IOException e) {
@@ -406,6 +441,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         return folderEntries;
     }
 
+    /**
+     * @see FolderRepository#clear()
+     */
     @Override
     public void clear() {
         try {
@@ -416,6 +454,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
+    /**
+     * @see FolderRepository#allFolder()
+     */
     @Override
     public Iterable<Folder> allFolder() {
 
@@ -450,6 +491,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         return folders;
     }
 
+    /**
+     * @see FolderRepository#searchFolders(String)
+     */
     @Override
     public Iterable<Folder> searchFolders(String queryString) {
         Set<Folder> folders = new HashSet<>();
@@ -487,7 +531,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         return folders;
     }
 
-    protected void visitFolders(final FoldersConsumer foldersConsumer, final Path startFolder) {
+    private void visitFolders(final FoldersConsumer foldersConsumer, final Path startFolder) {
 
         try {
             Files.walkFileTree(startFolder, new FileVisitor<Path>() {
@@ -497,22 +541,22 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                     try (Stream<Path> paths = Files.list(dir)) {
                         paths.forEach(foldersConsumer);
                     }
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
+                    return CONTINUE;
                 }
             });
         } catch (IOException e) {
@@ -527,10 +571,13 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         Collection<FolderEntry> getFolderEntries();
     }
 
-    protected String buildFileName(FolderEntry folderEntry) {
+    private String buildFileName(FolderEntry folderEntry) {
         return folderEntry.getContentType().toString() + '@' + folderEntry.getContentId();
     }
 
+    /**
+     * @see FolderRepository#copyFolderEntry(FolderEntry, String)
+     */
     @Override
     public void copyFolderEntry(FolderEntry folderEntry, String destinationPath) {
         FolderEntry cloned = new FolderEntry(folderEntry.getContentType(), folderEntry.getContentId());
@@ -539,6 +586,9 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         addFolderEntry(cloned, targetPath);
     }
 
+    /**
+     * @see FolderRepository#moveFolderEntry(FolderEntry, String, String)
+     */
     @Override
     public void moveFolderEntry(FolderEntry folderEntry, String sourcePath, String destinationPath) {
         Path path = Paths.get(getRootFolder().toString(), StringUtils.split(destinationPath, PATH_SEPARATOR));
@@ -562,16 +612,37 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
+    /**
+     * @see FolderRepository#locateEntry(String, FolderContentType)
+     */
+    @Override
+    public Folder locateEntry(String contentId, FolderContentType type) {
+
+        FolderLocator locator = new FolderLocator(contentId, type);
+        try {
+            Files.walkFileTree(getRootFolder(), locator);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
+        return locator.getResult();
+    }
+
+
+    /**
+     * @see FolderRepository#size()
+     */
     @Override
     public long size() {
         return foldersNumber(getRootFolder());
     }
 
     /**
-     * @param path
+     * @param path the path to number folders from.
      * @return the folder number of a directory recursively
      */
-    protected int foldersNumber(Path path) {
+    private int foldersNumber(Path path) {
 
         if (!Files.isDirectory(path)) {
             return 0;
@@ -606,7 +677,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
 
         private final long creationDate;
 
-        public FileInfo(long lastModificationDate, long creationDate) {
+        FileInfo(long lastModificationDate, long creationDate) {
             this.lastModificationDate = lastModificationDate;
             this.creationDate = creationDate;
         }
@@ -637,4 +708,56 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
 
     }
 
+    private class FolderLocator implements FileVisitor<Path> {
+
+        private String wantedContentId;
+        private FolderContentType wantedContentType;
+        private Folder result;
+
+        public FolderLocator(String wantedContentId, FolderContentType wantedContentType) {
+            this.wantedContentId = wantedContentId;
+            this.wantedContentType = wantedContentType;
+            result = null;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            return CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            try (InputStream inputStream = Files.newInputStream(file)) {
+                Properties properties = new Properties();
+                properties.load(inputStream);
+                if (StringUtils.equals(properties.getProperty("contentId"), wantedContentId) && //
+                        wantedContentType.equals(FolderContentType.fromName(properties.getProperty("contentType")))) {
+
+                    final Path parent = file.getParent();
+                    String parentPath = pathAsString(parent);
+                    FileInfo fileInfo = FileInfo.create(parent);
+                    result =  new Folder(parentPath, extractName(parentPath), fileInfo.getCreationDate(), fileInfo.getLastModificationDate());
+                    return TERMINATE;
+                }
+            }
+            return CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            return CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            return CONTINUE;
+        }
+
+        /**
+         * @return the Result
+         */
+        public Folder getResult() {
+            return result;
+        }
+    }
 }

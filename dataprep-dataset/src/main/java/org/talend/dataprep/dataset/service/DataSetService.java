@@ -13,8 +13,12 @@
 
 package org.talend.dataprep.dataset.service;
 
+import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
+import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.jms.Message;
@@ -41,7 +44,6 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
-import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
@@ -57,7 +59,6 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
-import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
@@ -166,12 +167,6 @@ public class DataSetService {
     private Security security;
 
     /**
-     * Folder repository.
-     */
-    @Autowired
-    private FolderRepository folderRepository;
-
-    /**
      * Encoding support service.
      */
     @Autowired
@@ -185,9 +180,6 @@ public class DataSetService {
 
     @Autowired
     private VersionService versionService;
-
-    @Autowired
-    InventoryUtils inventoryUtils;
 
     /**
      * Sort the synchronous analyzers.
@@ -231,41 +223,19 @@ public class DataSetService {
         }
     }
 
-    @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets", notes = "Returns the list of data sets the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed
     public Iterable<DataSetMetadata> list(@ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "DATE", required = false) String sort,
-                                          @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order,
-                                          @ApiParam(value = "Folder id to search datasets") @RequestParam(defaultValue = "", required = false) String folder) {
+                                          @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
 
 
-        Spliterator<DataSetMetadata> iterator;
-        if (StringUtils.isNotEmpty(folder)) {
-            // TODO dataset must be a constant somewhere!!
-            Iterable<FolderEntry> entries = folderRepository.entries(folder, FolderEntry.ContentType.DATASET);
-            final List<DataSetMetadata> metadatas = new ArrayList<>();
-            entries.forEach(folderEntry ->
-            {
-                DataSetMetadata dataSetMetadata =
-                        dataSetMetadataRepository.get(folderEntry.getContentId());
-                if (dataSetMetadata != null) {
-                    metadatas.add(dataSetMetadataRepository.get(folderEntry.getContentId()));
-                } else {
-                    folderRepository.removeFolderEntry(folderEntry.getFolderId(), //
-                            folderEntry.getContentId(), //
-                            folderEntry.getContentType());
-                }
-            });
-            iterator = metadatas.spliterator();
-        } else {
-            iterator = dataSetMetadataRepository.list().spliterator();
-        }
+        Spliterator<DataSetMetadata> iterator = dataSetMetadataRepository.list().spliterator();
 
-        final Comparator<String> comparisonOrder = getOrderComparator(order);
-        final Comparator<DataSetMetadata> comparator = getDataSetMetadataComparator(sort, comparisonOrder);
+        final Comparator<DataSetMetadata> comparator = getDataSetMetadataComparator(sort, order);
 
         // Return sorted results
-        try (Stream<DataSetMetadata> stream = StreamSupport.stream(iterator, false)) {
+        try (Stream<DataSetMetadata> stream = stream(iterator, false)) {
             return stream.filter(metadata -> !metadata.getLifecycle().importing()) //
                     .map(metadata -> {
                         completeWithUserData(metadata);
@@ -287,7 +257,7 @@ public class DataSetService {
      * @return a list containing all data sets that are compatible with the data set with id <tt>dataSetId</tt> and
      * empty list if no data set is compatible.
      */
-    @RequestMapping(value = "/datasets/{id}/compatibledatasets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/compatibledatasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all compatible data sets", notes = "Returns the list of data sets the current user is allowed to see and which are compatible with the specified data set id.")
     @Timed
     public Iterable<DataSetMetadata> listCompatibleDatasets(
@@ -298,11 +268,10 @@ public class DataSetService {
 
         Spliterator<DataSetMetadata> iterator = dataSetMetadataRepository.listCompatible(dataSetId).spliterator();
 
-        final Comparator<String> comparisonOrder = getOrderComparator(order);
-        final Comparator<DataSetMetadata> comparator = getDataSetMetadataComparator(sort, comparisonOrder);
+        final Comparator<DataSetMetadata> comparator = getDataSetMetadataComparator(sort, order);
 
         // Return sorted results
-        try (Stream<DataSetMetadata> stream = StreamSupport.stream(iterator, false)) {
+        try (Stream<DataSetMetadata> stream = stream(iterator, false)) {
             return stream.filter(metadata -> !metadata.getLifecycle().importing()) //
                     .map(metadata -> {
                         completeWithUserData(metadata);
@@ -323,19 +292,25 @@ public class DataSetService {
      * @return The new data id.
      * @see #get(boolean, Long, String)
      */
-    @RequestMapping(value = "/datasets", method = POST, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Create a data set", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
+    //@formatter:off
+    @RequestMapping(value = "/datasets", method = POST, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Create a data set", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE, notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
     @VolumeMetered
     public String create(
-            @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "", required = false) String name,
-            @RequestHeader(CONTENT_TYPE) String contentType, @ApiParam(value = "content") InputStream content,
-            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "/", required = false) String folderPath)
-            throws IOException {
-        HttpResponseContext.header(CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+            @ApiParam(value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(defaultValue = "") String name,
+            @RequestHeader(CONTENT_TYPE) String contentType,
+            @ApiParam(value = "content") InputStream content) throws IOException {
+    //@formatter:on
+
+        HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
+
         final String id = UUID.randomUUID().toString();
         final Marker marker = Markers.dataset(id);
         LOG.debug(marker, "Creating...");
+
+        // check that the name is not already taken
+        checkIfNameIsAvailable(id, name);
 
         // get the location out of the content type and the request body
         DataSetLocation location;
@@ -367,10 +342,6 @@ public class DataSetService {
         // Queue events (format analysis, content indexing for search...)
         queueEvents(id);
 
-        // create associated folderEntry
-        FolderEntry folderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, id);
-        folderRepository.addFolderEntry(folderEntry, folderPath);
-
         LOG.debug(marker, "Created!");
 
         return id;
@@ -385,7 +356,7 @@ public class DataSetService {
      * @param sample    Size of the wanted sample, if missing, the full dataset is returned.
      * @param dataSetId A data set id.
      */
-    @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/content", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a data set by id", notes = "Get a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
@@ -394,7 +365,7 @@ public class DataSetService {
             @RequestParam(required = false) @ApiParam(name = "sample", defaultValue = "0", value = "Size of the wanted sample, if missing, the full dataset is returned") Long sample, //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId) {
 
-        HttpResponseContext.header(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        HttpResponseContext.header(CONTENT_TYPE, APPLICATION_JSON_VALUE);
         final Marker marker = Markers.dataset(dataSetId);
         LOG.debug(marker, "Get data set #{}", dataSetId);
 
@@ -445,7 +416,7 @@ public class DataSetService {
      * @param dataSetId A data set id. If <code>null</code> <b>or</b> if no data set with provided id exits, operation
      *                  returns {@link org.apache.commons.httpclient.HttpStatus#SC_NO_CONTENT}
      */
-    @RequestMapping(value = "/datasets/{id}/metadata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/metadata", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get metadata information of a data set by id", notes = "Get metadata information of a data set by id. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
@@ -471,144 +442,11 @@ public class DataSetService {
     }
 
     /**
-     * Clone to a new data set and returns the new data set id as text in the response.
-     *
-     * @param cloneName the name of the cloned dataset
-     * @param folderPath the folder path to clone the dataset
-     * @return The new data id.
-     */
-    @RequestMapping(value = "/datasets/clone/{id}", method = PUT, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Clone a data set", produces = MediaType.TEXT_PLAIN_VALUE, notes = "Clone a new data set based on the given id. Returns the id of the newly created data set.")
-    @Timed
-    public String clone(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
-            @ApiParam(value = "The name of the cloned dataset.") @RequestParam(defaultValue = "", required = false) String cloneName,
-            @ApiParam(value = "The folder path to create the entry.") @RequestParam(defaultValue = "", required = false) String folderPath)
-            throws IOException {
-
-        HttpResponseContext.header(CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-
-        DataSetMetadata original = dataSetMetadataRepository.get(dataSetId);
-        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
-        try {
-            lock.lock(); // lock to ensure any asynchronous analysis is completed.
-            // if no metadata it's an empty one the get method has already set NO CONTENT http return code
-            // so simply return!!
-            if (original == null) {
-                return StringUtils.EMPTY;
-            }
-            // use a default name if empty (original name + " Copy" )
-            if (StringUtils.isEmpty(cloneName)) {
-                cloneName = original.getName() + " Copy";
-            }
-            // first check if the name is already used in the target folder
-            final Iterable<FolderEntry> entries = folderRepository.entries(folderPath, FolderEntry.ContentType.DATASET);
-            final String newDatasetName = cloneName;
-            entries.forEach(folderEntry -> {
-                DataSetMetadata dataSetEntry = dataSetMetadataRepository.get(folderEntry.getContentId());
-                if (dataSetEntry != null && StringUtils.equals(newDatasetName, dataSetEntry.getName())) {
-                    final ExceptionContext context = ExceptionContext.build() //
-                            .put("id", folderEntry.getContentId()) //
-                            .put("folder", folderPath) //
-                            .put("name", newDatasetName);
-                    throw new TDPException(DataSetErrorCodes.DATASET_NAME_ALREADY_USED, context, true);
-                }
-            });
-            // Create copy (based on original data set metadata)
-            final String newId = UUID.randomUUID().toString();
-            final Marker marker = Markers.dataset(newId);
-            LOG.debug(marker, "Cloning...");
-            DataSetMetadata target = metadataBuilder.metadata() //
-                    .copy(original) //
-                    .id(newId) //
-                    .name(cloneName) //
-                    .author(security.getUserId()) //
-                    .location(original.getLocation()) //
-                    .created(System.currentTimeMillis()) //
-                    .build();
-            // Save data set content
-            LOG.debug(marker, "Storing content...");
-            try (InputStream content = contentStore.getAsRaw(original)) {
-                contentStore.storeAsRaw(target, content);
-            }
-            LOG.debug(marker, "Content stored.");
-
-            // Create the new data set
-            dataSetMetadataRepository.add(target);
-
-        // create associated folderEntry
-        FolderEntry folderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, newId);
-        folderRepository.addFolderEntry(folderEntry, folderPath);
-
-            LOG.debug(marker, "Cloned!");
-            return newId;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Move a data set to an other folder
-     *
-     * @param folderPath    The original folder path of the dataset
-     * @param newFolderPath The new folder path of the dataset
-     */
-    @RequestMapping(value = "/datasets/move/{id}", method = PUT, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Move a data set", produces = MediaType.TEXT_PLAIN_VALUE, notes = "Move a data set to an other folder.")
-    @Timed
-    public void move(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to move") String dataSetId,
-                     @ApiParam(value = "The original folder path of the dataset.") @RequestParam(defaultValue = "", required = false) String folderPath,
-                     @ApiParam(value = "The new folder path of the dataset.") @RequestParam(defaultValue = "", required = false) String newFolderPath,
-                     @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName)
-            throws IOException {
-
-        HttpResponseContext.header(CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-
-        DataSet dataSet = get(true, null, dataSetId);
-
-        final String dataSetName = StringUtils.isEmpty(newName) ? dataSet.getMetadata().getName() : newName;
-
-        // if no metadata it's an empty one the get method has already set NO CONTENT http return code
-        // so simply return!!
-        if (dataSet.getMetadata() == null) {
-            return;
-        }
-        // first check if the name is already used in the target folder
-        final Iterable<FolderEntry> entries = folderRepository.entries(newFolderPath, FolderEntry.ContentType.DATASET);
-
-        entries.forEach(folderEntry -> {
-            DataSetMetadata dataSetEntry = dataSetMetadataRepository.get(folderEntry.getContentId());
-            if (dataSetEntry != null && StringUtils.equals(dataSetName, dataSetEntry.getName())) {
-                final ExceptionContext context = ExceptionContext.build() //
-                        .put("id", folderEntry.getContentId()) //
-                        .put("folder", folderPath) //
-                        .put("name", dataSetName);
-                throw new TDPException(DataSetErrorCodes.DATASET_NAME_ALREADY_USED, context, true);
-            }
-        });
-
-        // rename the dataset only if we received a new name
-        if (StringUtils.isNotEmpty(newName) && !StringUtils.equals(newName, dataSet.getMetadata().getName())) {
-            DistributedLock datasetLock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
-            datasetLock.lock();
-            try {
-                dataSet.getMetadata().setName(newName);
-                dataSetMetadataRepository.add(dataSet.getMetadata());
-            } finally {
-                datasetLock.unlock();
-            }
-        }
-        FolderEntry folderEntry = new FolderEntry(FolderEntry.ContentType.DATASET, dataSetId);
-
-        folderRepository.moveFolderEntry(folderEntry, folderPath, newFolderPath);
-    }
-
-    /**
      * Deletes a data set with provided id.
      *
      * @param dataSetId A data set id. If data set id is unknown, no exception nor status code to indicate this is set.
      */
-    @RequestMapping(value = "/datasets/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     public void delete(
@@ -624,18 +462,98 @@ public class DataSetService {
         } finally {
             lock.unlock();
         }
-
-        // delete the associated folder entries
-        // TODO make this async?
-        for (FolderEntry folderEntry : folderRepository.findFolderEntries(dataSetId, FolderEntry.ContentType.DATASET)) {
-            folderRepository.removeFolderEntry(folderEntry.getFolderId(), //
-                    folderEntry.getContentId(), //
-                    folderEntry.getContentType());
-        }
-
     }
 
-    @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    /**
+     * Copy this dataset to a new one and returns the new data set id as text in the response.
+     *
+     * @param copyName the name of the copy
+     * @return The new data id.
+     */
+    @RequestMapping(value = "/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy a data set", produces = TEXT_PLAIN_VALUE, notes = "Copy a new data set based on the given id. Returns the id of the newly created data set.")
+    @Timed
+    public String copy(
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
+            @ApiParam(value = "The name of the cloned dataset.") @RequestParam(defaultValue = "", required = false) String copyName)
+            throws IOException {
+
+        HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
+
+        DataSetMetadata original = dataSetMetadataRepository.get(dataSetId);
+        if (original == null) {
+            return StringUtils.EMPTY;
+        }
+
+        // use a default name if empty (original name + " Copy" )
+        final String newName;
+        if (StringUtils.isEmpty(copyName)) {
+            newName = original.getName() + " Copy";
+        }
+        else {
+            newName = copyName;
+        }
+
+        final DistributedLock lock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
+        try {
+            lock.lock(); // lock to ensure any asynchronous analysis is completed.
+
+            // check that the name is not already taken
+            checkIfNameIsAvailable(dataSetId, newName);
+
+            // Create copy (based on original data set metadata)
+            final String newId = UUID.randomUUID().toString();
+            final Marker marker = Markers.dataset(newId);
+            LOG.debug(marker, "Cloning...");
+            DataSetMetadata target = metadataBuilder.metadata() //
+                    .copy(original) //
+                    .id(newId) //
+                    .name(copyName) //
+                    .author(security.getUserId()) //
+                    .location(original.getLocation()) //
+                    .created(System.currentTimeMillis()) //
+                    .build();
+
+            // Save data set content
+            LOG.debug(marker, "Storing content...");
+            try (InputStream content = contentStore.getAsRaw(original)) {
+                contentStore.storeAsRaw(target, content);
+            }
+
+            LOG.debug(marker, "Content stored.");
+
+            // Create the new data set
+            dataSetMetadataRepository.add(target);
+
+            LOG.info(marker, "Copy done --> {}", newId);
+
+            return newId;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Make sure the given name is not used by another dataset. If yes, throws a TDPException.
+     *
+     * @param id the dataset id to
+     * @param name the name to check.
+     */
+    private void checkIfNameIsAvailable(String id, String name) {
+
+        final Optional<DataSetMetadata> clash = stream(dataSetMetadataRepository.list().spliterator(), false) //
+                .filter(m -> name.equals(m.getName())) //
+                .findFirst();
+
+        if (clash.isPresent()) {
+            final ExceptionContext context = ExceptionContext.build() //
+                    .put("id", id) //
+                    .put("name", name);
+            throw new TDPException(DATASET_NAME_ALREADY_USED, context, true);
+        }
+    }
+
+    @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
     @Timed
     public void processCertification(
@@ -677,7 +595,7 @@ public class DataSetService {
      * @param dataSetContent The new content for the data set. If empty, existing content will <b>not</b> be replaced.
      *                       For delete operation, look at {@link #delete(String)}.
      */
-    @RequestMapping(value = "/datasets/{id}/raw", method = PUT, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets/{id}/raw", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Update a data set by id", consumes = "text/plain", notes = "Update a data set content based on provided id and PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
     @Timed
     @VolumeMetered
@@ -712,7 +630,7 @@ public class DataSetService {
     /**
      * List all dataset related error codes.
      */
-    @RequestMapping(value = "/datasets/errors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/errors", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all dataset related error codes.", notes = "Returns the list of all dataset related error codes.")
     @Timed
     public Iterable<JsonErrorCodeDescription> listErrors() {
@@ -733,7 +651,7 @@ public class DataSetService {
      * @param sheetName the sheet name to preview
      * @param dataSetId A data set id.
      */
-    @RequestMapping(value = "/datasets/{id}/preview", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/preview", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a data preview set by id", notes = "Get a data set preview content based on provided id. Not valid or non existing data set id returns empty content. Data set not in drat status will return a redirect 301")
     @Timed
     @ResponseBody
@@ -769,7 +687,7 @@ public class DataSetService {
 
             String theSheetName = dataSetMetadata.getSheetName();
 
-            Optional<Schema.SheetContent> sheetContentFound = dataSetMetadata.getSchemaParserResult()
+            Optional<SchemaParserResult.SheetContent> sheetContentFound = dataSetMetadata.getSchemaParserResult()
                     .getSheetContents().stream().filter(sheetContent -> theSheetName.equals(sheetContent.getName())).findFirst();
 
             if (!sheetContentFound.isPresent()) {
@@ -803,7 +721,7 @@ public class DataSetService {
      *
      * @param dataSetMetadata, the metadata to be updated
      */
-    void completeWithUserData(DataSetMetadata dataSetMetadata) {
+    private void completeWithUserData(DataSetMetadata dataSetMetadata) {
         String userId = security.getUserId();
         UserData userData = userDataRepository.get(userId);
         if (userData != null) {
@@ -818,7 +736,7 @@ public class DataSetService {
      * @param dataSetMetadata The new content for the data set. If empty, existing content will <b>not</b> be replaced.
      *                        For delete operation, look at {@link #delete(String)}.
      */
-    @RequestMapping(value = "/datasets/{id}", method = PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Update a data set metadata by id", consumes = "application/json", notes = "Update a data set metadata according to the content of the PUT body. Id should be a UUID returned by the list operation. Not valid or non existing data set id return an error response.")
     @Timed
     public void updateDataSet(
@@ -912,7 +830,7 @@ public class DataSetService {
      * @return a list of the dataset Ids of all the favorites dataset for the current user or an empty list if none
      * found
      */
-    @RequestMapping(value = "/datasets/favorites", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/favorites", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "return all favorites datasets of the current user", notes = "Returns the list of favorites datasets.")
     @Timed
     public Iterable<String> favorites() {
@@ -930,7 +848,7 @@ public class DataSetService {
      *                   dataSetId to the favorite list
      * @param dataSetId, the id of the favorites data set. If the data set does not exists nothing is done.
      */
-    @RequestMapping(value = "/datasets/{id}/favorite", method = PUT, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/datasets/{id}/favorite", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "set or unset a dataset as favorite", notes = "Specify if a dataset is or is not a favorite for the current user.")
     @Timed
     public void setFavorites(
@@ -1035,7 +953,31 @@ public class DataSetService {
         }
     }
 
-    @RequestMapping(value = "/datasets/encodings", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Search datasets.
+     *
+     * @param name what to searched in datasets.
+     * @return the list of found datasets metadata.
+     */
+    @RequestMapping(value = "/datasets/search", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search the dataset metadata", notes = "Search the dataset metadata.")
+    @Timed
+    public Iterable<DataSetMetadata> search(@RequestParam @ApiParam(value = "What to search in datasets") final String name) {
+
+        LOG.debug("search datasets metadata for {}", name);
+
+        final Set<DataSetMetadata> found;
+        try (final Stream<DataSetMetadata> stream = stream(dataSetMetadataRepository.list().spliterator(), false)) {
+            found = stream.filter(m -> StringUtils.containsIgnoreCase(m.getName(), name)).collect(Collectors.toSet());
+        }
+
+        LOG.info("found {} dataset while searching {}", found.size(), name);
+
+        return found;
+    }
+
+
+    @RequestMapping(value = "/datasets/encodings", method = GET, consumes = MediaType.ALL_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "list the supported encodings for dataset", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
@@ -1060,52 +1002,5 @@ public class DataSetService {
         try (Stream<DataSetRow> stream = contentStore.sample(dataSetMetadata, sample)) {
             statisticsAnalysis.computeFullStatistics(copy.getMetadata(), stream);
         }
-    }
-
-    /**
-     * Return a dataset metadata comparator from the given parameters.
-     *
-     * @param sort the sort key.
-     * @param comparisonOrder the order comparator to use.
-     * @return a dataset metadata comparator from the given parameters.
-     */
-    private Comparator<DataSetMetadata> getDataSetMetadataComparator(String sort,
-            Comparator<String> comparisonOrder) {
-        // Select comparator for sort (either by name or date)
-        final Comparator<DataSetMetadata> comparator;
-        switch (sort.toUpperCase()) {
-        case "NAME":
-            comparator = Comparator.comparing(dataSetMetadata -> dataSetMetadata.getName().toUpperCase(), comparisonOrder);
-            break;
-        case "DATE":
-            comparator = Comparator.comparing(dataSetMetadata -> String.valueOf(dataSetMetadata.getCreationDate()),
-                    comparisonOrder);
-            break;
-        default:
-            throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, ExceptionContext.build().put("sort", sort));
-        }
-        return comparator;
-    }
-
-    /**
-     * Return an order comparator.
-     *
-     * @param order the order key.
-     * @return an order comparator.
-     */
-    private Comparator<String> getOrderComparator(String order) {
-        // Select order (asc or desc)
-        final Comparator<String> comparisonOrder;
-        switch (order.toUpperCase()) {
-        case "ASC":
-            comparisonOrder = Comparator.naturalOrder();
-            break;
-        case "DESC":
-            comparisonOrder = Comparator.reverseOrder();
-            break;
-        default:
-            throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, ExceptionContext.build().put("order", order));
-        }
-        return comparisonOrder;
     }
 }

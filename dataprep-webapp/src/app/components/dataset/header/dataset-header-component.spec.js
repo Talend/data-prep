@@ -40,8 +40,8 @@ describe('Dataset header component', () => {
             inventory: {
                 sortList: sortList,
                 orderList: orderList,
-                sort: sortList[0],
-                order: orderList[0]
+                datasetsSort: sortList[0],
+                datasetsOrder: orderList[0]
             }
         };
         $provide.constant('state', stateMock);
@@ -63,19 +63,11 @@ describe('Dataset header component', () => {
         element.remove();
     });
 
-    it('should render "add folder" button', () => {
-        //when
-        createElement();
-
-        //then
-        expect(element.find('#add-folder-button').length).toBe(1);
-    });
-
     it('should render sort switch', () => {
         //when
         createElement();
 
         //then
-        expect(element.find('#dataset-inventory-sort').text().replace(/[\s]+/g, ' ').trim()).toBe('Sorted by name in asc order');
+        expect(element.find('.inventory-sort').text().replace(/[\s]+/g, ' ').trim()).toBe('Sorted by name in asc order');
     });
 });

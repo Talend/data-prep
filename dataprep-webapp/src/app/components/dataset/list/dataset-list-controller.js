@@ -18,30 +18,25 @@
  * @requires data-prep.services.state.constant:state
  * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.dataset.service:DatasetService
+ * @requires data-prep.services.preparation.service:PreparationService
  *
  * @requires data-prep.services.datasetWorkflowService.service:UploadWorkflowService
  * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
  *
  * @requires talend.widget.service:TalendConfirmService
  * @requires data-prep.services.utils.service:MessageService
- * @requires data-prep.services.folder.service:FolderService
- * @requires data-prep.services.preparation.service:PreparationService
  */
 export default class DatasetListCtrl {
-    constructor($stateParams, $state,                               // ui-router
-                state, StateService,                                // app state
-                DatasetService, FolderService, PreparationService,  // inventory
+    constructor(state, StateService,                                // app state
+                DatasetService, PreparationService,                 // inventory
                 UploadWorkflowService, UpdateWorkflowService,       // inventory workflow
                 TalendConfirmService, MessageService) {             // utils
         'ngInject';
 
-        this.$stateParams = $stateParams;
-        this.$state = $state;
         this.state = state;
         this.StateService = StateService;
         this.DatasetService = DatasetService;
         this.PreparationService = PreparationService;
-        this.FolderService = FolderService;
         this.UploadWorkflowService = UploadWorkflowService;
         this.UpdateWorkflowService = UpdateWorkflowService;
         this.TalendConfirmService = TalendConfirmService;
@@ -49,35 +44,12 @@ export default class DatasetListCtrl {
 
         //TODO refacto inventory item to take function and remove this
         this.uploadUpdatedDatasetFile = this.uploadUpdatedDatasetFile.bind(this);
-        this.openFolderSelection = this.openFolderSelection.bind(this);
         this.processCertification = this.processCertification.bind(this);
         this.remove = this.remove.bind(this);
         this.rename = this.rename.bind(this);
-        this.goToFolder = this.goToFolder.bind(this);
-        this.removeFolder = this.removeFolder.bind(this);
-        this.renameFolder = this.renameFolder.bind(this);
+        this.clone = this.clone.bind(this);
 
         this.renamingList = [];
-    }
-
-    $onInit() {
-        //Load folders content
-        if (this.$stateParams.folderPath) {
-            const folderDefinition = {
-                path: this.$stateParams.folderPath,
-                name: _.chain(this.$stateParams.folderPath)
-                    .split('/')
-                    .filter((part) => part)
-                    .last()
-                    .value(),
-            };
-            this.FolderService
-                .getContent(folderDefinition)
-                .catch(() => this.$state.go('nav.index.datasets', {folderPath: ''}));
-        }
-        else {
-            this.FolderService.getContent();
-        }
     }
 
     /**
@@ -108,9 +80,8 @@ export default class DatasetListCtrl {
             .then(() => this.MessageService.success(
                 'REMOVE_SUCCESS_TITLE',
                 'REMOVE_SUCCESS',
-                {type: 'dataset', name: dataset.name}
-            ))
-            .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
+                { type: 'dataset', name: dataset.name }
+            ));
     }
 
     /**
@@ -136,10 +107,7 @@ export default class DatasetListCtrl {
         }
 
         if (this.DatasetService.getDatasetByName(cleanName)) {
-            this.MessageService.error(
-                'DATASET_NAME_ALREADY_USED_TITLE',
-                'DATASET_NAME_ALREADY_USED'
-            );
+            this.MessageService.error('DATASET_NAME_ALREADY_USED_TITLE', 'DATASET_NAME_ALREADY_USED');
             return;
         }
 
@@ -167,62 +135,7 @@ export default class DatasetListCtrl {
      */
     processCertification(dataset) {
         this.DatasetService
-            .processCertification(dataset)
-            .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
-    }
-
-    /**
-     * @ngdoc method
-     * @name goToFolder
-     * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-     * @description Redirect to folder
-     * @param {object} folder The target folder
-     */
-    goToFolder(folder) {
-        this.$state.go('nav.index.datasets', {folderPath: folder.path});
-    }
-
-    /**
-     * @ngdoc method
-     * @name renameFolder
-     * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-     * @description Rename a folder
-     * @param {object} folder the folder to rename
-     * @param {string} newName the new last part of the path
-     */
-    renameFolder(folder, newName) {
-        const path = folder.path;
-        const lastSlashIndex = path.lastIndexOf('/');
-        const parentFolder = path.substring(0, lastSlashIndex);
-        const newPath = `${parentFolder}/${newName}`;
-
-        this.FolderService.rename(path, newPath)
-            .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
-    }
-
-    /**
-     * @ngdoc method
-     * @name removeFolder
-     * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-     * @description Remove a folder
-     * @param {object} folder The folder to remove
-     */
-    removeFolder(folder) {
-        this.FolderService.remove(folder.path)
-            .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
-    }
-
-
-    /**
-     * @ngdoc method
-     * @name openFolderSelection
-     * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-     * @description Remove a folder
-     * @param {object} dataset The dataset to clone or copy
-     */
-    openFolderSelection(dataset) {
-        this.datasetCopyVisibility = true;
-        this.datasetToCopyMove = dataset;
+            .processCertification(dataset);
     }
 
     /**
@@ -231,33 +144,9 @@ export default class DatasetListCtrl {
      * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
      * @description makes a copy of a dataset
      * @param {object} dataset to move
-     * @param {object} destinationFolder destination folder
-     * @param {string} name of the new dataset
      */
-    clone(dataset, destinationFolder, name) {
-        return this.DatasetService.clone(dataset, destinationFolder, name)
-            .then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'))
-            .then(() => {
-                this.datasetCopyVisibility = false
-            })
-            .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
-    }
-
-    /**
-     * @ngdoc method
-     * @name move
-     * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-     * @description moves a dataset from 1 folder to another
-     * @param {object} dataset to move
-     * @param {object} destinationFolder destination folder
-     * @param {string} name of the new dataset
-     **/
-    move(dataset, destinationFolder, name) {
-        return this.DatasetService.move(dataset, destinationFolder, name)
-            .then(() => this.MessageService.success('MOVE_SUCCESS_TITLE', 'MOVE_SUCCESS'))
-            .then(() => {
-                this.datasetCopyVisibility = false
-            })
-            .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
+    clone(dataset) {
+        return this.DatasetService.clone(dataset)
+            .then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
     }
 }

@@ -1,0 +1,67 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="inventory-header">
+    <div class="inventory-sort">
+        <span translate-once="SORTED_BY"></span>
+        <talend-button-switch
+                class="button-switch"
+                values="$ctrl.sortList"
+                current-value="$ctrl.sort"
+                display-key="name"
+                change-action="$ctrl.onSortChange({ sort: selected })">
+        </talend-button-switch>
+        <span translate-once="SORT_IN"></span>
+        <talend-button-switch
+                class="button-switch"
+                values="$ctrl.orderList"
+                current-value="$ctrl.order"
+                display-key="name"
+                change-action="$ctrl.onOrderChange({ order: selected })">
+        </talend-button-switch>
+        <div translate-once="SORT_ORDER"></div>
+    </div>
+
+    <button id="add-folder-button"
+            class="add-folder"
+            ng-if="$ctrl.canCreateFolder"
+            ng-click="$ctrl.openFolderModal()"
+            translate-once="CREATE_FOLDER"></button>
+</div>
+
+<talend-modal id="create-folder-modal"
+              fullscreen="false"
+              close-button="true"
+              state="$ctrl.folderNameModal"
+              ng-if="$ctrl.canCreateFolder && $ctrl.folderNameModal"
+              disable-enter="true">
+    <span translate-once="ENTER_FOLDER_NAME"></span>
+    <form name="$ctrl.folderNameForm" ng-submit="$ctrl.folderNameForm.$valid && $ctrl.addFolder()">
+        <input id="create-folder-name"
+               type="text"
+               ng-model="$ctrl.folderName"
+               ng-model-options="{debounce: { default: 300, blur: 0 }}"
+               unique-folder="$ctrl.folderList"/>
+
+        <div class="modal-buttons">
+            <button type="button"
+                    class="talend-modal-close btn-secondary modal-secondary-button"
+                    translate-once="CANCEL"></button>
+            <button class="btn-primary modal-primary-button"
+                    translate-once="OK"
+                    ng-disabled="$ctrl.folderNameForm.$invalid"></button>
+        </div>
+    </form>
+</talend-modal>

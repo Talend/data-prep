@@ -1,4 +1,4 @@
-    /*  ============================================================================
+/*  ============================================================================
 
  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
@@ -11,149 +11,34 @@
 
  ============================================================================*/
 
-describe('Folder services', function () {
+describe('Folder services', () => {
     'use strict';
 
-    var stateMock, preparations;
+    let stateMock;
 
-    var sortList = [
-        {id: 'name', name: 'NAME_SORT', property: 'name'},
-        {id: 'date', name: 'DATE_SORT', property: 'created'}
+    const sortList = [
+        { id: 'name', name: 'NAME_SORT', property: 'name' },
+        { id: 'date', name: 'DATE_SORT', property: 'created' },
     ];
 
-    var orderList = [
-        {id: 'asc', name: 'ASC_ORDER'},
-        {id: 'desc', name: 'DESC_ORDER'}
+    const orderList = [
+        { id: 'asc', name: 'ASC_ORDER' },
+        { id: 'desc', name: 'DESC_ORDER' },
     ];
 
-    beforeEach(angular.mock.module('data-prep.services.folder', function ($provide) {
+    beforeEach(angular.mock.module('data-prep.services.folder', ($provide) => {
         stateMock = {
             inventory: {
-                datasets: [],
                 sortList: sortList,
                 orderList: orderList,
-                sort: sortList[0],
-                order: orderList[0],
-                currentFolderContent: {}
-            }
+                preparationsSort: sortList[0],
+                preparationsOrder: orderList[0],
+            },
         };
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
-        $translateProvider.translations('en', {
-            'HOME_FOLDER': 'Home'
-        });
-        $translateProvider.preferredLanguage('en');
-    }));
-
-    beforeEach(inject(function ($q, FolderRestService) {
-        preparations = [
-            {
-                'id': 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
-                'dataSetId': 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-                'author': 'anonymousUser',
-                'creationDate': 1427447300300,
-                'steps': [
-                    '35890aabcf9115e4309d4ce93367bf5e4e77b82a',
-                    '4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
-                    '8a1c49d1b64270482e8db8232357c6815615b7cf',
-                    '599725f0e1331d5f8aae24f22cd1ec768b10348d'
-                ],
-                'actions': [
-                    {
-                        'action': 'lowercase',
-                        'parameters': {
-                            'column_name': 'birth'
-                        }
-                    },
-                    {
-                        'action': 'uppercase',
-                        'parameters': {
-                            'column_name': 'country'
-                        }
-                    },
-                    {
-                        'action': 'cut',
-                        'parameters': {
-                            'pattern': '.',
-                            'column_name': 'first_item'
-                        }
-                    }
-                ]
-            },
-            {
-                'id': 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
-                'dataSetId': '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
-                'author': 'anonymousUser',
-                'lastModificationDate': 1427447330693,
-                'steps': [
-                    '47e2444dd1301120b539804507fd307072294048',
-                    'ae1aebf4b3fa9b983c895486612c02c766305410',
-                    '24dcd68f2117b9f93662cb58cc31bf36d6e2867a',
-                    '599725f0e1331d5f8aae24f22cd1ec768b10348d'
-                ],
-                'actions': [
-                    {
-                        'action': 'cut',
-                        'parameters': {
-                            'pattern': '-',
-                            'column_name': 'birth'
-                        }
-                    },
-                    {
-                        'action': 'fillemptywithdefault',
-                        'parameters': {
-                            'default_value': 'N/A',
-                            'column_name': 'state'
-                        }
-                    },
-                    {
-                        'action': 'uppercase',
-                        'parameters': {
-                            'column_name': 'lastname'
-                        }
-                    }
-                ]
-            },
-            {
-                'id': 'ds3f51sf3q1df35qsf412qdsf15ds3ff454qg8r4qr',
-                'dataSetId': '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
-                'author': 'anonymousUser',
-                'lastModificationDate': 1437487330692,
-                'steps': [
-                    '87e38cv438dth4yd6k84x3dr84htryj84xc3k21u'
-                ],
-                'actions': [
-                    {
-                        'action': 'cut',
-                        'parameters': {
-                            'pattern': '-',
-                            'column_name': 'birth'
-                        }
-                    }
-                ]
-            },
-            {
-                'id': 'jghjjghjgh',
-                'dataSetId': '3b21388c-f54a-4334-9bef-748912d0806f',
-                'author': 'anonymousUser',
-                'creationDate': 1437497330694,
-                'steps': [
-                    '3w8xt4hxt3fh125ydx8y6j4i8l4ds358g4zfbe3e'
-                ],
-                'actions': [
-                    {
-                        'action': 'cut',
-                        'parameters': {
-                            'pattern': '-',
-                            'column_name': 'birth'
-                        }
-                    }
-                ]
-            }
-        ];
-
+    beforeEach(inject(($q, FolderRestService) => {
         spyOn(FolderRestService, 'create').and.returnValue($q.when());
         spyOn(FolderRestService, 'children').and.returnValue($q.when());
         spyOn(FolderRestService, 'search').and.returnValue($q.when());
@@ -161,8 +46,8 @@ describe('Folder services', function () {
         spyOn(FolderRestService, 'remove').and.returnValue($q.when());
     }));
 
-    describe('simple REST calls', function () {
-        it('should call rest children', inject(function ($rootScope, FolderService, FolderRestService) {
+    describe('simple REST calls', () => {
+        it('should call rest children', inject((FolderService, FolderRestService) => {
             //when
             FolderService.children('/foo');
 
@@ -170,7 +55,7 @@ describe('Folder services', function () {
             expect(FolderRestService.children).toHaveBeenCalledWith('/foo');
         }));
 
-        it('should call rest create', inject(function ($rootScope, FolderService, FolderRestService) {
+        it('should call rest create', inject((FolderService, FolderRestService) => {
             //when
             FolderService.create('/foo');
 
@@ -178,7 +63,7 @@ describe('Folder services', function () {
             expect(FolderRestService.create).toHaveBeenCalledWith('/foo');
         }));
 
-        it('should call rest rename', inject(function ($rootScope, FolderService, FolderRestService) {
+        it('should call rest rename', inject((FolderService, FolderRestService) => {
             //when
             FolderService.rename('foo', 'beer');
 
@@ -186,7 +71,7 @@ describe('Folder services', function () {
             expect(FolderRestService.rename).toHaveBeenCalledWith('foo', 'beer');
         }));
 
-        it('should call rest remove', inject(function ($rootScope, FolderService, FolderRestService) {
+        it('should call rest remove', inject((FolderService, FolderRestService) => {
             //when
             FolderService.remove('foo');
 
@@ -194,7 +79,7 @@ describe('Folder services', function () {
             expect(FolderRestService.remove).toHaveBeenCalledWith('foo');
         }));
 
-        it('should call rest search', inject(function ($rootScope, FolderService, FolderRestService) {
+        it('should call rest search', inject((FolderService, FolderRestService) => {
             //when
             FolderService.search('path');
 
@@ -203,124 +88,101 @@ describe('Folder services', function () {
         }));
     });
 
-    describe('content', function () {
-        var content;
-        beforeEach(inject(function ($q, StateService, FolderRestService) {
-            content = {
-                data: {
-                    folders: [{path: 'toto', name: 'toto'}],
-                    datasets: [
-                        {
-                            'id': 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-                            'name': 'customers_jso_light',
-                            'author': 'anonymousUser',
-                            'records': 15,
-                            'nbLinesHeader': 1,
-                            'nbLinesFooter': 0,
-                            'created': '03-30-2015 08:06'
-                        }]
-                }
-            };
+    describe('refresh content', () => {
+        const content = {
+            folders: [{ path: 'toto', name: 'toto' }],
+            preparations: [{ id: '5a8cf1763b58' }]
+        };
+
+        beforeEach(inject(($q, StateService, FolderRestService) => {
             spyOn(FolderRestService, 'getContent').and.returnValue($q.when(content));
-            spyOn(StateService, 'setFoldersStack').and.returnValue();
-            spyOn(StateService, 'setCurrentFolder').and.returnValue();
-            spyOn(StateService, 'setCurrentFolderContent').and.returnValue();
+            spyOn(StateService, 'setFolder').and.returnValue();
         }));
 
-        it('should get folder content', inject(function ($rootScope, FolderService, FolderRestService) {
-            //when
-            FolderService.getContent({path: 'toto', name: 'toto'});
+        it('should call rest service with sort and order', inject((FolderService, FolderRestService) => {
+            // given
+            stateMock.inventory.preparationsSort = sortList[1];
+            stateMock.inventory.preparationsOrder = orderList[1];
+
+            // when
+            FolderService.refreshContent('/my/path');
+
+            // then
+            expect(FolderRestService.getContent).toHaveBeenCalledWith('/my/path', 'date', 'desc');
+        }));
+
+        it('should set the folder content in app state', inject(($rootScope, FolderService, StateService) => {
+            // given
+            stateMock.inventory.preparationsSort = sortList[1];
+            stateMock.inventory.preparationsOrder = orderList[1];
+
+            // when
+            FolderService.refreshContent('/my/path');
             $rootScope.$digest();
 
-            //then
-            expect(FolderRestService.getContent).toHaveBeenCalledWith('toto', 'name', 'asc');
+            // then
+            expect(StateService.setFolder).toHaveBeenCalledWith('/my/path', content);
         }));
-
-        it('should get content for root folder when there is no provided folder', inject(function ($rootScope, FolderService, FolderRestService) {
-            //when
-            FolderService.getContent();
-            $rootScope.$digest();
-
-            //then
-            expect(FolderRestService.getContent).toHaveBeenCalledWith(undefined, 'name', 'asc');
-        }));
-
-        it('should populate state with folder content infos', inject(function ($rootScope, FolderService, StateService) {
-            //when
-            FolderService.getContent({path: 'titi/toto', name: 'toto'});
-            $rootScope.$digest();
-
-            //then
-            expect(StateService.setCurrentFolder).toHaveBeenCalledWith({path: 'titi/toto', name: 'toto'});
-            expect(StateService.setCurrentFolderContent).toHaveBeenCalledWith(content.data);
-            expect(StateService.setFoldersStack).toHaveBeenCalledWith([
-                {path: '', name: 'Home'},
-                {path: 'titi', name: 'titi'},
-                {path: 'titi/toto', name: 'toto'}
-            ]);
-        }));
-
-        it('should refresh sort parameters', inject(function ($timeout, StorageService, StateService, FolderService) {
-            //given
-            spyOn(StorageService, 'getDatasetsSort').and.returnValue('date');
-            spyOn(StateService, 'setDatasetsSort');
-
-            //when
-            FolderService.refreshDatasetsSort();
-
-            //then
-            expect(StateService.setDatasetsSort).toHaveBeenCalledWith({id: 'date', name: 'DATE_SORT', property: 'created'});
-        }));
-
-        it('should refresh sort order parameters', inject(function ($timeout, StorageService, StateService, FolderService) {
-            //given
-            spyOn(StorageService, 'getDatasetsOrder').and.returnValue('desc');
-            spyOn(StateService, 'setDatasetsOrder');
-
-            //when
-            FolderService.refreshDatasetsOrder();
-
-            //then
-            expect(StateService.setDatasetsOrder).toHaveBeenCalledWith({id: 'desc', name: 'DESC_ORDER'});
-        }));
-
-
     });
 
-    describe('populate menu children', function () {
-        beforeEach(inject(function ($q, StateService, FolderRestService) {
-            var content = {
-                data: {
-                    folders: [{path: 'toto', name: 'toto'}]
-                }
-            };
-            spyOn(FolderRestService, 'getContent').and.returnValue($q.when(content));
-            spyOn(StateService, 'setMenuChildren').and.returnValue();
+    describe('init', () => {
+        it('should set the preparation sort when there is a saved one', inject((StateService, StorageService, FolderService) => {
+            // given
+            spyOn(StorageService, 'getPreparationsSort').and.returnValue('date');
+            spyOn(StateService, 'setPreparationsSort').and.returnValue();
+
+            // when
+            FolderService.init('/my/path');
+
+            // then
+            expect(StateService.setPreparationsSort).toHaveBeenCalledWith(sortList[1]);
         }));
 
-        it('should call populateMenuChildren REST service', inject(function (FolderService, FolderRestService) {
-            //when
-            FolderService.populateMenuChildren({path: 'toto', name: 'toto'});
+        it('should NOT set the preparation sort when there is NO saved one', inject((StateService, StorageService, FolderService) => {
+            // given
+            spyOn(StorageService, 'getPreparationsSort').and.returnValue(null);
+            spyOn(StateService, 'setPreparationsSort').and.returnValue();
 
-            //then
-            expect(FolderRestService.getContent).toHaveBeenCalledWith('toto');
+            // when
+            FolderService.init('/my/path');
+
+            // then
+            expect(StateService.setPreparationsSort).not.toHaveBeenCalled();
         }));
 
-        it('should call populateMenuChildren REST service without provided folder', inject(function (FolderService, FolderRestService) {
-            //when
-            FolderService.populateMenuChildren();
+        it('should set the preparation order when there is a saved one', inject((StateService, StorageService, FolderService) => {
+            // given
+            spyOn(StorageService, 'getPreparationsOrder').and.returnValue('desc');
+            spyOn(StateService, 'setPreparationsOrder').and.returnValue();
 
-            //then
-            expect(FolderRestService.getContent).toHaveBeenCalledWith(undefined);
+            // when
+            FolderService.init('/my/path');
+
+            // then
+            expect(StateService.setPreparationsOrder).toHaveBeenCalledWith(orderList[1]);
         }));
 
-        it('should set menu children state', inject(function ($rootScope, FolderService, StateService) {
-            //when
-            FolderService.populateMenuChildren({path: 'toto', name: 'toto'});
-            $rootScope.$digest();
+        it('should NOT set the preparation order when there is NO saved one', inject((StateService, StorageService, FolderService) => {
+            // given
+            spyOn(StorageService, 'getPreparationsOrder').and.returnValue(null);
+            spyOn(StateService, 'setPreparationsOrder').and.returnValue();
 
-            //then
-            expect(StateService.setMenuChildren).toHaveBeenCalledWith([{path: 'toto', name: 'toto'}]);
+            // when
+            FolderService.init('/my/path');
+
+            // then
+            expect(StateService.setPreparationsOrder).not.toHaveBeenCalled();
+        }));
+
+        it('should refresh folder content', inject(($q, FolderRestService, FolderService) => {
+            // given
+            spyOn(FolderRestService, 'getContent').and.returnValue($q.when());
+
+            // when
+            FolderService.init('/my/path');
+
+            // then
+            expect(FolderRestService.getContent).toHaveBeenCalled();
         }));
     });
 });

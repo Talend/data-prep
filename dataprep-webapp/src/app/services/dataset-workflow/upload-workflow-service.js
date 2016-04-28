@@ -20,7 +20,7 @@
  * @requires data-prep.services.dataset.service:DatasetService
  * @requires data-prep.services.utils.service:MessageService
  */
-export default function UploadWorkflowService($stateParams, $state, StateService, DatasetSheetPreviewService, DatasetService, MessageService) {
+export default function UploadWorkflowService($state, StateService, DatasetSheetPreviewService, DatasetService, MessageService) {
     'ngInject';
 
     var self = this;
@@ -63,7 +63,7 @@ export default function UploadWorkflowService($stateParams, $state, StateService
             self.openDraft(dataset);
         }
         else {
-            StateService.setPreviousRoute('nav.index.datasets', {folderPath: $stateParams.folderPath});
+            StateService.setPreviousRoute('nav.index.datasets');
             $state.go('playground.dataset', {datasetid: dataset.id});
         }
     };

@@ -11,8 +11,9 @@
 
   ============================================================================*/
 
-#dataset-inventory-header {
+.inventory-header {
   @include display(flex);
+  @include flex-direction(row-reverse);
   @include align-items(flex-end);
   @include justify-content(space-between);
 
@@ -20,7 +21,7 @@
   font-size: 0.9em;
   height: 50px;
 
-  #add-folder-button {
+  .add-folder {
     color: $dark-gray;
     font-weight: 600;
 
@@ -33,7 +34,7 @@
     padding: 5px 10px;
   }
 
-  #dataset-inventory-sort {
+  .inventory-sort {
     @include display(flex);
     @include align-items(center);
     @include justify-content(flex-end);

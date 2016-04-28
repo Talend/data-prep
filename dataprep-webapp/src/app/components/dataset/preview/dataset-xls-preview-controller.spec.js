@@ -11,23 +11,23 @@
 
  ============================================================================*/
 
-describe('Dataset xls preview controller', function () {
+describe('Dataset xls preview controller', () => {
     'use strict';
 
-    var createController, scope, gridElement, stateMock;
-    var content = {column: [], records: []};
+    let createController, scope, gridElement, stateMock;
+    const content = { column: [], records: [] };
 
-    beforeEach(angular.mock.module('data-prep.dataset-xls-preview', function ($provide) {
-        stateMock = {inventory: {currentFolder: {path: 'HOME'}}};
+    beforeEach(angular.mock.module('data-prep.dataset-xls-preview', ($provide) => {
+        stateMock = { inventory: { currentFolder: { path: 'HOME' } } };
         $provide.constant('state', stateMock);
     }));
 
 
-    beforeEach(inject(function ($rootScope, $controller, $q, $timeout, $state,
-                                DatasetSheetPreviewService, DatasetService, PlaygroundService, StateService) {
+    beforeEach(inject(($rootScope, $controller, $q, $timeout, $state,
+                       DatasetSheetPreviewService, DatasetService, PlaygroundService, StateService) => {
         scope = $rootScope.$new();
 
-        createController = function () {
+        createController = () => {
             const ctrl = $controller('DatasetXlsPreviewCtrl', {
                 $scope: scope
             });
@@ -47,14 +47,14 @@ describe('Dataset xls preview controller', function () {
         spyOn($state, 'go').and.returnValue();
     }));
 
-    afterEach(function () {
+    afterEach(() => {
         gridElement.remove();
     });
 
     describe('bindings', () => {
-        it('should bind modal visibility flag getter to DatasetSheetPreviewService.showModal', inject(function (DatasetSheetPreviewService) {
+        it('should bind modal visibility flag getter to DatasetSheetPreviewService.showModal', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             expect(ctrl.visible).toBeFalsy();
 
             //when
@@ -64,9 +64,9 @@ describe('Dataset xls preview controller', function () {
             expect(ctrl.visible).toBe(true);
         }));
 
-        it('should bind modal visibility flag setter to DatasetSheetPreviewService.showModal', inject(function (DatasetSheetPreviewService) {
+        it('should bind modal visibility flag setter to DatasetSheetPreviewService.showModal', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             DatasetSheetPreviewService.showModal = true;
 
             //when
@@ -76,10 +76,10 @@ describe('Dataset xls preview controller', function () {
             expect(DatasetSheetPreviewService.showModal).toBe(false);
         }));
 
-        it('should bind metadata getter to DatasetSheetPreviewService.currentMetadata', inject(function (DatasetSheetPreviewService) {
+        it('should bind metadata getter to DatasetSheetPreviewService.currentMetadata', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
-            var metadata = {id: 'toto'};
+            const ctrl = createController();
+            const metadata = { id: 'toto' };
             expect(ctrl.metadata).toBeFalsy();
 
             //when
@@ -89,9 +89,9 @@ describe('Dataset xls preview controller', function () {
             expect(ctrl.metadata).toBe(metadata);
         }));
 
-        it('should bind selectedSheetName getter to DatasetSheetPreviewService.selectedSheetName', inject(function (DatasetSheetPreviewService) {
+        it('should bind selectedSheetName getter to DatasetSheetPreviewService.selectedSheetName', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             expect(ctrl.selectedSheetName).toBeFalsy();
 
             //when
@@ -101,9 +101,9 @@ describe('Dataset xls preview controller', function () {
             expect(ctrl.selectedSheetName).toBe('my sheet');
         }));
 
-        it('should bind selectedSheetName setter to DatasetSheetPreviewService.selectedSheetName', inject(function (DatasetSheetPreviewService) {
+        it('should bind selectedSheetName setter to DatasetSheetPreviewService.selectedSheetName', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             DatasetSheetPreviewService.selectedSheetName = 'my sheet';
 
             //when
@@ -115,7 +115,7 @@ describe('Dataset xls preview controller', function () {
     });
 
     describe('init', () => {
-        it('should set grid in service', inject(function (DatasetSheetPreviewService) {
+        it('should set grid in service', inject((DatasetSheetPreviewService) => {
             //given
             expect(DatasetSheetPreviewService.grid).toBeFalsy();
 
@@ -128,9 +128,9 @@ describe('Dataset xls preview controller', function () {
     });
 
     describe('select sheet', () => {
-        it('should load the selected sheet preview', inject(function (DatasetSheetPreviewService) {
+        it('should load the selected sheet preview', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             ctrl.selectedSheetName = 'my sheet';
 
             //when
@@ -142,9 +142,9 @@ describe('Dataset xls preview controller', function () {
     });
 
     describe('validation', () => {
-        it('should set the selected sheet to the dataset', inject(function (DatasetSheetPreviewService) {
+        it('should set the selected sheet to the dataset', inject((DatasetSheetPreviewService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             ctrl.selectedSheetName = 'my sheet';
 
             //when
@@ -154,10 +154,10 @@ describe('Dataset xls preview controller', function () {
             expect(DatasetSheetPreviewService.setDatasetSheet).toHaveBeenCalledWith('my sheet');
         }));
 
-        it('should hide modal', inject(function (DatasetSheetPreviewService) {
+        it('should hide modal', inject((DatasetSheetPreviewService) => {
             //given
-            DatasetSheetPreviewService.currentMetadata = {id: 'toto'};
-            var ctrl = createController();
+            DatasetSheetPreviewService.currentMetadata = { id: 'toto' };
+            const ctrl = createController();
             ctrl.visible = true;
 
             //when
@@ -168,21 +168,20 @@ describe('Dataset xls preview controller', function () {
             expect(ctrl.visible).toBe(false);
         }));
 
-        it('should open dataset', inject(function ($state, $stateParams, DatasetSheetPreviewService, StateService) {
+        it('should open dataset', inject(($state, DatasetSheetPreviewService, StateService) => {
             //given
-            var ctrl = createController();
+            const ctrl = createController();
             ctrl.selectedSheetName = 'my sheet';
 
-            DatasetSheetPreviewService.currentMetadata = {id: '13aa256cf813a25d158'};
-            $stateParams.folderPath = '/my/folder';
+            DatasetSheetPreviewService.currentMetadata = { id: '13aa256cf813a25d158' };
 
             //when
             ctrl.setDatasetSheet();
             scope.$digest();
 
             //then
-            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets', {folderPath: '/my/folder'});
-            expect($state.go).toHaveBeenCalledWith('playground.dataset', {datasetid: '13aa256cf813a25d158'});
+            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets');
+            expect($state.go).toHaveBeenCalledWith('playground.dataset', { datasetid: '13aa256cf813a25d158' });
         }));
     });
 });

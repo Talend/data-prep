@@ -1,11 +1,11 @@
-describe('Preparation Service', function () {
+describe('Preparation Service', () => {
     'use strict';
 
     let stateMock;
     const preparations = [
-        {id: '4385fa764bce39593a405d91bc88', dataSetId: '3214a5454ef8642c13'},
-        {id: '58444bce39593a405d9456'},
-        {id: '2545764bce39593a405d91bc8673'}
+        { id: '4385fa764bce39593a405d91bc88', dataSetId: '3214a5454ef8642c13' },
+        { id: '58444bce39593a405d9456' },
+        { id: '2545764bce39593a405d91bc8673' }
     ];
     const newPreparationId = '6cd546546548a745';
 
@@ -23,13 +23,13 @@ describe('Preparation Service', function () {
 
     beforeEach(inject(($q, PreparationListService, PreparationRestService, StorageService) => {
         spyOn(PreparationListService, 'refreshPreparations').and.returnValue($q.when(preparations));
-        spyOn(PreparationListService, 'create').and.returnValue($q.when({id: newPreparationId}));
+        spyOn(PreparationListService, 'create').and.returnValue($q.when({ id: newPreparationId }));
         spyOn(PreparationListService, 'update').and.returnValue($q.when({
             id: updatedPreparationId,
             dataSetId: updatedDatasetId
         }));
         spyOn(PreparationListService, 'delete').and.returnValue($q.when(true));
-        spyOn(PreparationListService, 'clone').and.returnValue($q.when(true));
+        spyOn(PreparationListService, 'copy').and.returnValue($q.when(true));
 
         spyOn(PreparationRestService, 'updateStep').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'getContent').and.returnValue($q.when(true));
@@ -183,19 +183,17 @@ describe('Preparation Service', function () {
             }));
         });
 
-
         describe('open', () => {
-            it('should open a preparation', inject(($stateParams, $rootScope, $state, StateService, PreparationService) => {
+            it('should set previous state to preparations', inject(($stateParams, $rootScope, $state, StateService, PreparationService) => {
                 //given
                 spyOn($state, 'go').and.returnValue();
                 spyOn(StateService, 'setPreviousRoute').and.returnValue();
 
-                var preparation = {
+                const preparation = {
                     id: 'de618c62ef97b3a95b5c171bc077ffe22e1d6f79',
                     dataSetId: 'dacd45cf-5bd0-4768-a9b7-f6c199581efc',
                     author: 'anonymousUser'
                 };
-
                 $stateParams.folderPath = 'test/';
 
                 //when
@@ -203,20 +201,42 @@ describe('Preparation Service', function () {
                 $rootScope.$digest();
 
                 //then
-                expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets', {folderPath: 'test/'});
-                expect($state.go).toHaveBeenCalledWith('playground.preparation', {prepid: preparation.id});
+                expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.preparations', { folderPath: 'test/' });
+            }));
+
+            it('should open a preparation', inject(($stateParams, $rootScope, $state, StateService, PreparationService) => {
+                //given
+                spyOn($state, 'go').and.returnValue();
+                spyOn(StateService, 'setPreviousRoute').and.returnValue();
+
+                const preparation = {
+                    id: 'de618c62ef97b3a95b5c171bc077ffe22e1d6f79',
+                    dataSetId: 'dacd45cf-5bd0-4768-a9b7-f6c199581efc',
+                    author: 'anonymousUser'
+                };
+
+                //when
+                PreparationService.open(preparation);
+                $rootScope.$digest();
+
+                //then
+                expect($state.go).toHaveBeenCalledWith('playground.preparation', { prepid: preparation.id });
             }));
         });
-
-
     });
 
     describe('steps', () => {
         describe('copyImplicitParameters', () => {
             it('should copy implicit parameters when they are in original params', inject((PreparationService) => {
                 //given
-                const newParams = {value: 'tata'};
-                const oldParams = {value: 'toto', scope: 'cell', column_id: '0001', row_id: '256', column_name: 'state'};
+                const newParams = { value: 'tata' };
+                const oldParams = {
+                    value: 'toto',
+                    scope: 'cell',
+                    column_id: '0001',
+                    row_id: '256',
+                    column_name: 'state'
+                };
 
                 //when
                 PreparationService.copyImplicitParameters(newParams, oldParams);
@@ -233,14 +253,14 @@ describe('Preparation Service', function () {
 
             it('should NOT copy implicit parameters when they are NOT in original params', inject((PreparationService) => {
                 //given
-                const newParams = {value: 'tata'};
-                const oldParams = {value: 'toto', scope: 'cell'};
+                const newParams = { value: 'tata' };
+                const oldParams = { value: 'toto', scope: 'cell' };
 
                 //when
                 PreparationService.copyImplicitParameters(newParams, oldParams);
 
                 //then
-                expect(newParams).toEqual({value: 'tata', scope: 'cell'});
+                expect(newParams).toEqual({ value: 'tata', scope: 'cell' });
             }));
         });
 
@@ -253,10 +273,10 @@ describe('Preparation Service', function () {
                         name: 'firstname'
                     },
                     actionParameters: {
-                        parameters: {value: '--', column_name: 'firstname', column_id: '1'}
+                        parameters: { value: '--', column_name: 'firstname', column_id: '1' }
                     }
                 };
-                const newParams = {value: '.'};
+                const newParams = { value: '.' };
 
                 //when
                 const result = PreparationService.paramsHasChanged(step, newParams);
@@ -273,10 +293,10 @@ describe('Preparation Service', function () {
                         name: 'firstname'
                     },
                     actionParameters: {
-                        parameters: {value: '--', column_id: '1', column_name: 'firstname'}
+                        parameters: { value: '--', column_id: '1', column_name: 'firstname' }
                     }
                 };
-                const newParams = {value: '--', column_id: '1', column_name: 'firstname'};
+                const newParams = { value: '--', column_id: '1', column_name: 'firstname' };
 
                 //when
                 const result = PreparationService.paramsHasChanged(step, newParams);
@@ -295,9 +315,9 @@ describe('Preparation Service', function () {
                         stepId: '867654ab15edf576844c4',
                         name: 'deletematch'
                     },
-                    column: {id: '1', name: 'firstname'}
+                    column: { id: '1', name: 'firstname' }
                 };
-                const parameters = {value: 'Toto', column_name: 'firstname', column_id: '1', scope: 'column'};
+                const parameters = { value: 'Toto', column_name: 'firstname', column_id: '1', scope: 'column' };
 
                 //when
                 PreparationService.updateStep(preparationId, step, parameters);
@@ -309,7 +329,7 @@ describe('Preparation Service', function () {
                     '867654ab15edf576844c4',  //step id
                     {
                         action: 'deletematch', //step name
-                        parameters: {value: 'Toto', column_name: 'firstname', column_id: '1', scope: 'column'} //params
+                        parameters: { value: 'Toto', column_name: 'firstname', column_id: '1', scope: 'column' } //params
                     }
                 );
             }));

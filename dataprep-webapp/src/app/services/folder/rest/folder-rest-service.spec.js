@@ -1,30 +1,30 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
-describe('Folder Rest Service', function () {
+describe('Folder Rest Service', () => {
     'use strict';
 
-    var $httpBackend;
+    let $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.services.folder'));
 
-    beforeEach(inject(function ($rootScope, $injector, RestURLs) {
+    beforeEach(inject(($rootScope, $injector, RestURLs) => {
         RestURLs.setServerUrl('');
         $httpBackend = $injector.get('$httpBackend');
     }));
 
-    describe('children', function () {
-        it('should call get root\'s children when there is no provided path', inject(function ($rootScope, FolderRestService, RestURLs) {
+    describe('children', () => {
+        it('should call get root\'s children when there is no provided path', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
             $httpBackend
                 .expectGET(RestURLs.folderUrl)
@@ -36,9 +36,9 @@ describe('Folder Rest Service', function () {
             $rootScope.$digest();
         }));
 
-        it('should call get folder\'s children', inject(function ($rootScope, FolderRestService, RestURLs) {
+        it('should call get folder\'s children', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
-            var path = '/foo/bar';
+            const path = '/foo/bar';
 
             $httpBackend
                 .expectGET(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
@@ -51,10 +51,10 @@ describe('Folder Rest Service', function () {
         }));
     });
 
-    describe('create', function () {
-        it('should call create folder', inject(function ($rootScope, FolderRestService, RestURLs) {
+    describe('create', () => {
+        it('should call create folder', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
-            var path = '/foo/bar';
+            const path = '/foo/bar';
 
             $httpBackend
                 .expectPUT(RestURLs.folderUrl + '?path=' + encodeURIComponent(path))
@@ -67,11 +67,11 @@ describe('Folder Rest Service', function () {
         }));
     });
 
-    describe('content', function () {
-        it('should get root folder content when there is no provided path', inject(function ($rootScope, FolderRestService, RestURLs) {
+    describe('content', () => {
+        it('should get root folder content when there is no provided path', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
             $httpBackend
-                .expectGET(RestURLs.folderUrl + '/datasets' + '?folder=%2F')
+                .expectGET(RestURLs.folderUrl + '/preparations?folder=%2F')
                 .respond(200);
 
             //when
@@ -80,12 +80,12 @@ describe('Folder Rest Service', function () {
             $rootScope.$digest();
         }));
 
-        it('should get folder content', inject(function ($rootScope, FolderRestService, RestURLs) {
+        it('should get folder content', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
-            var folderPath = 'toto';
+            const folderPath = 'toto';
 
             $httpBackend
-                .expectGET(RestURLs.folderUrl + '/datasets' + '?folder=toto')
+                .expectGET(RestURLs.folderUrl + '/preparations?folder=toto')
                 .respond(200);
 
             //when
@@ -94,14 +94,14 @@ describe('Folder Rest Service', function () {
             $rootScope.$digest();
         }));
 
-        it('should get folder content with sort and order', inject(function ($rootScope, FolderRestService, RestURLs) {
+        it('should get folder content with sort and order', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
-            var folderPath = 'toto';
-            var sort = 'name';
-            var order = 'asc';
+            const folderPath = 'toto';
+            const sort = 'name';
+            const order = 'asc';
 
             $httpBackend
-                .expectGET(RestURLs.folderUrl + '/datasets' + '?folder=toto&sort=name&order=asc')
+                .expectGET(RestURLs.folderUrl + '/preparations?folder=toto&sort=name&order=asc')
                 .respond(200);
 
             //when
@@ -111,10 +111,10 @@ describe('Folder Rest Service', function () {
         }));
     });
 
-    describe('remove', function () {
-        it('should call remove', inject(function ($rootScope, FolderRestService, RestURLs) {
+    describe('remove', () => {
+        it('should call remove', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
-            var folderPath = 'the beer';
+            const folderPath = 'the beer';
             $httpBackend
                 .expectDELETE(RestURLs.folderUrl + '?path=' + encodeURIComponent(folderPath))
                 .respond(200);
@@ -126,8 +126,8 @@ describe('Folder Rest Service', function () {
         }));
     });
 
-    describe('rename', function () {
-        it('should call rename', inject(function ($rootScope, FolderRestService, RestURLs) {
+    describe('rename', () => {
+        it('should call rename', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
             $httpBackend
                 .expectPUT(RestURLs.folderUrl + '/rename?path=foo&newPath=beer')
@@ -140,8 +140,8 @@ describe('Folder Rest Service', function () {
         }));
     });
 
-    describe('search', function () {
-        it('should search with no folder name', inject(function ($rootScope, FolderRestService, RestURLs) {
+    describe('search', () => {
+        it('should search with no folder name', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
             $httpBackend
                 .expectGET(RestURLs.folderUrl + '/search')
@@ -153,9 +153,9 @@ describe('Folder Rest Service', function () {
             $rootScope.$digest();
         }));
 
-        it('should call search with the provided folder path', inject(function ($rootScope, FolderRestService, RestURLs) {
+        it('should call search with the provided folder path', inject(($rootScope, FolderRestService, RestURLs) => {
             //given
-            var path = '/foo/bar';
+            const path = '/foo/bar';
             $httpBackend
                 .expectGET(RestURLs.folderUrl + '/search?pathName=' + encodeURIComponent(path))
                 .respond(200);

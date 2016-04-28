@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -43,8 +44,10 @@ public class CopyDataSet extends GenericCommand<String> {
         super(GenericCommand.DATASET_GROUP);
         execute(() -> {
             try {
-                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/copy") //
-                    .addParameter( "copyName", name );
+                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/copy");
+                if(StringUtils.isNotBlank(name)) {
+                    uriBuilder.addParameter("copyName", name);
+                }
                 return new HttpPost(uriBuilder.build());
             } catch (URISyntaxException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);

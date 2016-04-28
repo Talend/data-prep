@@ -26,7 +26,7 @@ describe('Dataset List Service', () => {
                 'records': 15,
                 'nbLinesHeader': 1,
                 'nbLinesFooter': 0,
-                'created': '03-30-2015 08:06'
+                'created': '03-30-2015 08:06',
             },
             {
                 'id': '3b21388c-f54a-4334-9bef-748912d0806f',
@@ -35,7 +35,7 @@ describe('Dataset List Service', () => {
                 'records': 1000,
                 'nbLinesHeader': 1,
                 'nbLinesFooter': 0,
-                'created': '03-30-2015 07:35'
+                'created': '03-30-2015 07:35',
             },
             {
                 'id': '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
@@ -44,7 +44,7 @@ describe('Dataset List Service', () => {
                 'records': 29379,
                 'nbLinesHeader': 1,
                 'nbLinesFooter': 0,
-                'created': '03-30-2015 08:05'
+                'created': '03-30-2015 08:05',
             },
             {
                 'id': '5e95be9e-88cd-4765-9ecc-ee48cc28b6d5',
@@ -53,8 +53,8 @@ describe('Dataset List Service', () => {
                 'records': 400,
                 'nbLinesHeader': 1,
                 'nbLinesFooter': 0,
-                'created': '03-30-2015 08:06'
-            }
+                'created': '03-30-2015 08:06',
+            },
         ];
     }
 
@@ -71,14 +71,8 @@ describe('Dataset List Service', () => {
     beforeEach(angular.mock.module('data-prep.services.dataset', ($provide) => {
         stateMock = {
             inventory: {
-                datasets: [],
-                sortList: sortList,
-                orderList: orderList,
-                sort: sortList[1],
-                order: orderList[1],
-                currentFolder: {
-                    path: ''
-                }
+                datasetsSort: sortList[1],
+                datasetsOrder: orderList[1],
             }
         };
         $provide.constant('state', stateMock);
@@ -92,91 +86,90 @@ describe('Dataset List Service', () => {
         spyOn(DatasetRestService, 'import').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'update').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'clone').and.returnValue(restPromise);
-        spyOn(DatasetRestService, 'move').and.returnValue(restPromise);
-        spyOn(DatasetRestService, 'delete').and.returnValue($q.when(true));
-        spyOn(DatasetRestService, 'processCertification').and.returnValue($q.when(true));
-        spyOn(DatasetRestService, 'toggleFavorite').and.returnValue($q.when(true));
+        spyOn(DatasetRestService, 'delete').and.returnValue(restPromise);
+        spyOn(DatasetRestService, 'processCertification').and.returnValue(restPromise);
+        spyOn(DatasetRestService, 'toggleFavorite').and.returnValue(restPromise);
 
         spyOn(StateService, 'setDatasets').and.returnValue();
         spyOn(StateService, 'removeDataset').and.returnValue();
     }));
 
     describe('getter/refresher', () => {
+        describe('nominal', () => {
+            beforeEach(inject(($q, DatasetRestService) => {
+                spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.when({data: datasets.slice(0)}));
+            }));
 
-        beforeEach(inject(($q, DatasetRestService) => {
-            spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.when({data: datasets.slice(0)}));
-        }));
+            it('should refresh dataset list', inject(($rootScope, DatasetListService, StateService) => {
+                //given
+                stateMock.inventory.datasets = [{name: 'my dataset'}, {name: 'my second dataset'}];
 
-        it('should refresh dataset list', inject(function ($rootScope, DatasetListService, StateService) {
-            //given
-            stateMock.inventory.datasets = [{name: 'my dataset'}, {name: 'my second dataset'}];
+                //when
+                DatasetListService.refreshDatasets();
+                $rootScope.$apply();
 
-            //when
-            DatasetListService.refreshDatasets();
-            $rootScope.$apply();
+                //then
+                expect(StateService.setDatasets).toHaveBeenCalledWith(datasets);
+            }));
 
-            //then
-            expect(StateService.setDatasets).toHaveBeenCalledWith(datasets);
-        }));
+            it('should trigger another refresh when one is already pending with different sort condition', inject(($rootScope, DatasetListService, DatasetRestService, StateService) => {
+                //given
+                stateMock.inventory.datasets = [{name: 'my dataset'}, {name: 'my second dataset'}];
+                DatasetListService.refreshDatasets();
 
-        it('should trigger another refresh when one is already pending with different sort condition', inject(function ($rootScope, DatasetListService, DatasetRestService, StateService) {
-            //given
-            stateMock.inventory.datasets = [{name: 'my dataset'}, {name: 'my second dataset'}];
-            DatasetListService.refreshDatasets();
+                //when
+                DatasetListService.refreshDatasets();
+                $rootScope.$apply();
 
-            //when
-            DatasetListService.refreshDatasets();
-            $rootScope.$apply();
+                //then
+                expect(StateService.setDatasets).toHaveBeenCalledWith(datasets);
+                expect(DatasetRestService.getDatasets.calls.count()).toBe(2);
+            }));
 
-            //then
-            expect(StateService.setDatasets).toHaveBeenCalledWith(datasets);
-            expect(DatasetRestService.getDatasets.calls.count()).toBe(2);
-        }));
+            it('should call refreshDatasets when datasetsPromise is false', inject((DatasetRestService, DatasetListService) => {
+                //when
+                DatasetListService.getDatasetsPromise();
 
-        it('should call refreshDatasets when datasetsPromise is false', inject(function (DatasetRestService, DatasetListService) {
-            //when
-            DatasetListService.getDatasetsPromise();
+                //then
+                expect(DatasetRestService.getDatasets).toHaveBeenCalled();
+            }));
 
-            //then
-            expect(DatasetRestService.getDatasets).toHaveBeenCalled();
-        }));
+            it('should return datasetsPromise when datasetsPromise is not false', inject((DatasetRestService, DatasetListService) => {
 
-        it('should return datasetsPromise when datasetsPromise is not false', inject(function (DatasetRestService, DatasetListService) {
+                //given
+                stateMock.inventory.datasets = null;
 
-            //given
-            stateMock.inventory.datasets = null;
+                //when
+                DatasetListService.getDatasetsPromise();
+                DatasetListService.getDatasetsPromise();
 
-            //when
-            DatasetListService.getDatasetsPromise();
-            DatasetListService.getDatasetsPromise();
+                //then
+                expect(DatasetRestService.getDatasets.calls.count()).toBe(1);
+            }));
 
-            //then
-            expect(DatasetRestService.getDatasets.calls.count()).toBe(1);
-        }));
+            it('should return datasetsPromise', inject((DatasetRestService, DatasetListService) => {
+                //when
+                const datasetsPromise = DatasetListService.hasDatasetsPromise();
 
-        it('should return datasetsPromise', inject(function (DatasetRestService, DatasetListService) {
-            //when
-            const datasetsPromise = DatasetListService.hasDatasetsPromise();
+                //then
+                expect(datasetsPromise).toBeFalsy();
+            }));
+        });
 
-            //then
-            expect(datasetsPromise).toBeFalsy();
-        }));
-    });
+        describe('errors', () => {
+            beforeEach(inject(($q, DatasetRestService) => {
+                spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.reject());
+            }));
 
+            it('should refresh dataset list when REST request is failed', inject(($rootScope, DatasetListService, StateService) => {
+                //when
+                DatasetListService.refreshDatasets();
+                $rootScope.$apply();
 
-    describe('getter/refresher errors ', () => {
-        beforeEach(inject(($q, DatasetRestService) => {
-            spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.reject());
-        }));
-
-        it('should refresh dataset list when REST request is failed', inject(function ($rootScope, DatasetListService, StateService, DatasetRestService) {
-            //when
-            DatasetListService.refreshDatasets();
-            $rootScope.$apply();
-
-            //then
-            expect(StateService.setDatasets).toHaveBeenCalledWith([]);
-        }));
+                //then
+                expect(StateService.setDatasets).toHaveBeenCalledWith([]);
+            }));
+        });
     });
 
     describe('import', () => {
@@ -192,13 +185,12 @@ describe('Dataset List Service', () => {
                 name: 'great remote dataset',
                 url: 'moc.dnelat//:ptth'
             };
-            const folder = {id : '', path: '', name: 'Home'};
 
             //when
-            DatasetListService.importRemoteDataset(importParameters, folder);
+            DatasetListService.importRemoteDataset(importParameters);
 
             //then
-            expect(DatasetRestService.import).toHaveBeenCalledWith(importParameters, folder);
+            expect(DatasetRestService.import).toHaveBeenCalledWith(importParameters);
         }));
 
         it('should refresh datasets list', inject(($rootScope, DatasetListService, DatasetRestService) => {
@@ -208,10 +200,9 @@ describe('Dataset List Service', () => {
                 name: 'great remote dataset',
                 url: 'moc.dnelat//:ptth'
             };
-            const folder = {id : '', path: '', name: 'Home'};
 
             //when
-            DatasetListService.importRemoteDataset(importParameters, folder);
+            DatasetListService.importRemoteDataset(importParameters);
             $rootScope.$apply();
 
             //then
@@ -225,10 +216,9 @@ describe('Dataset List Service', () => {
                 name: 'great remote dataset',
                 url: 'moc.dnelat//:ptth'
             };
-            const folder = {id : '', path: '', name: 'Home'};
 
             //when
-            const promise = DatasetListService.importRemoteDataset(importParameters, folder);
+            const promise = DatasetListService.importRemoteDataset(importParameters);
 
             //then
             expect(promise).toBe(restPromise);
@@ -244,14 +234,13 @@ describe('Dataset List Service', () => {
         it('should create dataset', inject(($rootScope, DatasetListService, DatasetRestService) => {
             //given
             const dataset = {name: 'my dataset'};
-            const folder = {id : '', path: '', name: 'Home'};
 
             //when
-            DatasetListService.create(dataset, folder);
+            DatasetListService.create(dataset);
             $rootScope.$apply();
 
             //then
-            expect(DatasetRestService.create).toHaveBeenCalledWith(dataset, folder);
+            expect(DatasetRestService.create).toHaveBeenCalledWith(dataset);
         }));
 
         it('should refresh datasets list', inject(($rootScope, DatasetListService, DatasetRestService) => {
@@ -285,82 +274,25 @@ describe('Dataset List Service', () => {
         }));
 
         it('should call rest service clone', inject((DatasetRestService, DatasetListService) => {
-            const folder = {id: 'foo'};
-
             //when
-            DatasetListService.clone(datasets[0], folder, 'beer');
+            DatasetListService.clone(datasets[0]);
 
             //then
-            expect(DatasetRestService.clone).toHaveBeenCalledWith(datasets[0], folder, 'beer');
+            expect(DatasetRestService.clone).toHaveBeenCalledWith(datasets[0]);
         }));
 
         it('should refresh datasets list', inject(($rootScope, DatasetRestService, DatasetListService) => {
-            const folder = {id: 'foo'};
-
             //when
-            DatasetListService.clone(datasets[0], folder, 'beer');
-            $rootScope.$apply();
+            DatasetListService.clone(datasets[0]);
+            $rootScope.$digest();
 
             //then
             expect(DatasetRestService.getDatasets).toHaveBeenCalled();
         }));
 
         it('should return original REST promise (not the promise with dataset list refresh)', inject(($rootScope, DatasetListService) => {
-            //given
-            const folder = {id: 'foo'};
-
             //when
-            const promise = DatasetListService.clone(datasets[0], folder, 'beer');
-
-            //then
-            expect(promise).toBe(restPromise);
-        }));
-    });
-
-    describe('move', () => {
-
-        beforeEach(inject(($q, DatasetRestService) => {
-            spyOn(DatasetRestService, 'getDatasets').and.returnValue($q.when({data: datasets.slice(0)}));
-        }));
-
-        it('should call rest service move', inject((DatasetRestService, DatasetListService) => {
-            //given
-            const dataset = {id: '8435618646684615'};
-            const folder = {path: '/toto'};
-            const newFolder = {path: '/tata'};
-            const newName = 'my dataset';
-
-            //when
-            DatasetListService.move(dataset, newFolder, newName);
-
-            //then
-            expect(DatasetRestService.move).toHaveBeenCalledWith(dataset, stateMock.inventory.currentFolder, newFolder, newName);
-        }));
-
-        it('should refresh datasets list', inject(($rootScope, DatasetRestService, DatasetListService) => {
-            //given
-            const dataset = {id: '8435618646684615'};
-            const folder = {path: '/toto'};
-            const newFolder = {path: '/tata'};
-            const newName = 'my dataset';
-
-            //when
-            DatasetListService.move(dataset, folder, newFolder, newName);
-            $rootScope.$apply();
-
-            //then
-            expect(DatasetRestService.getDatasets).toHaveBeenCalled();
-        }));
-
-        it('should return original REST promise (not the promise with dataset list refresh)', inject(($rootScope, DatasetListService) => {
-            //given
-            const dataset = {id: '8435618646684615'};
-            const folder = {path: '/toto'};
-            const newFolder = {path: '/tata'};
-            const newName = 'my dataset';
-
-            //when
-            const promise = DatasetListService.move(dataset, folder, newFolder, newName);
+            const promise = DatasetListService.clone(datasets[0]);
 
             //then
             expect(promise).toBe(restPromise);

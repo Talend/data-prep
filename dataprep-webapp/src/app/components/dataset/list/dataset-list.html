@@ -13,50 +13,23 @@
   ~ ============================================================================
   -->
 
-<div class="dataset-inventory">
-    <div id="dataset-inventory-list" class="inventory-list">
-        <inventory-item
-                id="folder_{{$index}}"
-                ng-repeat="folder in $ctrl.state.inventory.currentFolderContent.folders track by folder.path"
-                item="folder"
-                type="folder"
-                details="FOLDER_DETAILS"
-                open="$ctrl.goToFolder"
-                remove="$ctrl.removeFolder"
-                rename="$ctrl.renameFolder">
-        </inventory-item>
-
-        <inventory-item
-                id="dataset_{{$index}}"
-                ng-repeat="dataset in $ctrl.state.inventory.currentFolderContent.datasets track by dataset.id"
-                item="dataset"
-                type="dataset"
-                details="DATASET_DETAILS"
-                file-model="$ctrl.updateDatasetFile"
-                related-inventories="dataset.preparations"
-                related-inventories-type="preparation"
-                open="$ctrl.UploadWorkflowService.openDataset"
-                open-related-inventory="$ctrl.PreparationService.open"
-                update="$ctrl.uploadUpdatedDatasetFile"
-                copy="$ctrl.openFolderSelection"
-                process-certification="$ctrl.processCertification"
-                remove="$ctrl.remove"
-                rename="$ctrl.rename"
-                toggle-favorite="$ctrl.DatasetService.toggleFavorite">
-        </inventory-item>
-    </div>
+<div id="dataset-inventory-list" class="inventory-list">
+    <inventory-item
+            id="dataset_{{$index}}"
+            ng-repeat="dataset in $ctrl.state.inventory.datasets track by dataset.id"
+            item="dataset"
+            type="dataset"
+            details="DATASET_DETAILS"
+            file-model="$ctrl.updateDatasetFile"
+            related-inventories="dataset.preparations"
+            related-inventories-type="preparation"
+            open="$ctrl.UploadWorkflowService.openDataset"
+            open-related-inventory="$ctrl.PreparationService.open"
+            update="$ctrl.uploadUpdatedDatasetFile"
+            copy="$ctrl.clone"
+            process-certification="$ctrl.processCertification"
+            remove="$ctrl.remove"
+            rename="$ctrl.rename"
+            toggle-favorite="$ctrl.DatasetService.toggleFavorite">
+    </inventory-item>
 </div>
-
-<talend-modal fullscreen="false"
-              close-button="false"
-              ng-if="$ctrl.datasetCopyVisibility"
-              state="$ctrl.datasetCopyVisibility"
-              disable-close-on-background-click="true"
-              disable-enter="true">
-
-    <dataset-copy-move
-            initial-folder="$ctrl.state.inventory.currentFolder"
-            dataset="$ctrl.datasetToCopyMove"
-            on-copy="$ctrl.clone(dataset, destination, name)"
-            on-move="$ctrl.move(dataset, destination, name)"></dataset-copy-move>
-</talend-modal>

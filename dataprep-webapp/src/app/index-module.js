@@ -68,28 +68,34 @@
                     abstract: true,
                     url: '/index',
                     template: '<home></home>',
-                    resolve: {
-                        inventory: ($q, DatasetService, PreparationService) => {
-                            'ngInject';
-                            return $q.all([
-                                DatasetService.refreshDatasets(),
-                                PreparationService.refreshPreparations(),
-                            ]);
-                        },
-                    },
                 })
                 .state('nav.index.datasets', {
-                    url: '/datasets/{folderPath:.*}',
+                    url: '/datasets',
                     views: {
                         'home-content-header': { template: '<dataset-header></dataset-header>' },
                         'home-content': { template: '<dataset-list></dataset-list>' },
                     },
-                    params: { folderPath: '' },
+                    resolve: {
+                        inventory: ($q, DatasetService, PreparationService) => {
+                            'ngInject';
+                            return $q.all([
+                                    DatasetService.init(),
+                                    PreparationService.refreshPreparations(),
+                                ]);
+                        },
+                    },
                 })
                 .state('nav.index.preparations', {
-                    url: '/preparations',
+                    url: '/preparations/{folderPath:.*}',
                     views: {
+                        'home-content-header': { template: '<preparation-header></preparation-header>' },
                         'home-content': { template: '<preparation-list></preparation-list>' },
+                    },
+                    resolve: {
+                        inventory: ($stateParams, FolderService) => {
+                            'ngInject';
+                            return FolderService.init($stateParams.folderPath);
+                        },
                     },
                 })
 
@@ -109,7 +115,7 @@
                 })
                 .state('playground.preparation', { url: '/preparation?prepid' })
                 .state('playground.dataset', { url: '/dataset?datasetid' });
-            $urlRouterProvider.otherwise('/index/preparations');
+            $urlRouterProvider.otherwise('/index/preparations/');
         })
 
         // Language to use at startup (for now only english)
@@ -125,7 +131,7 @@
         return $http.get('/assets/config/config.json')
             .then((config) => {
                 app
-                    // Debug config
+                // Debug config
                     .config(($compileProvider) => {
                         'ngInject';
                         $compileProvider.debugInfoEnabled(config.data.enableDebug);

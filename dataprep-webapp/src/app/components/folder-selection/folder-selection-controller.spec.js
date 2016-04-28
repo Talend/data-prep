@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-describe('folder selection controller', () => {
+describe('Folder selection controller', () => {
 
     let createController, scope, ctrl;
 
@@ -35,7 +35,10 @@ describe('folder selection controller', () => {
     }));
 
     describe('initialization', () => {
-        it('should init tree with home folder', () => {
+        it('should init tree with home folder', inject(($q, FolderService) => {
+            //given
+            spyOn(FolderService, 'children').and.returnValue($q.when([]));
+
             //when
             ctrl = createController();
             ctrl.$onInit();
@@ -53,7 +56,7 @@ describe('folder selection controller', () => {
                     name: 'Home'
                 }
             });
-        });
+        }));
 
         it('should fetch Home children when selected folder is Home', inject(function ($q, FolderService) {
             //given

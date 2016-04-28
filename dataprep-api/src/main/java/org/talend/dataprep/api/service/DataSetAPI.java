@@ -99,7 +99,7 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Copy the dataset.", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE,
             notes = "Copy the dataset, returns the id of the copied created data set.")
     public String copy(
-            @ApiParam(value = "Name of the copy") @RequestParam(defaultValue = "") String name,
+            @ApiParam(value = "Name of the copy") @RequestParam(required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id) {
 
         if (LOG.isDebugEnabled()) {
@@ -108,7 +108,7 @@ public class DataSetAPI extends APIService {
 
         HystrixCommand<String> creation = getCommand(CopyDataSet.class, id, name);
         String result = creation.execute();
-        LOG.info("Dataset {} copied --> {} named {}.", id, result, name);
+        LOG.info("Dataset {} copied --> {} named '{}'", id, result, name);
         return result;
     }
 

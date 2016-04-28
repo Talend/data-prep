@@ -16,7 +16,7 @@ describe('Preparation Picker controller', () => {
     const datasets = [
         {id: 'de3cc32a-b624-484e-b8e7-dab9061a009c', name: 'my dataset'},
         {id: '4d0a2718-bec6-4614-ad6c-8b3b326ff6c9', name: 'my second dataset'},
-        {id: '555a2718-bec6-4614-ad6c-8b3b326ff6c7', name: 'my second dataset (1)'}
+        {id: '555a2718-bec6-4614-ad6c-8b3b326ff6c7', name: 'my second dataset (1)'},
     ];
 
     let compatiblePreps = [
@@ -30,10 +30,10 @@ describe('Preparation Picker controller', () => {
                     '35890aabcf9115e4309d4ce93367bf5e4e77b82a',
                     '4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
                     '8a1c49d1b64270482e8db8232357c6815615b7cf',
-                    '599725f0e1331d5f8aae24f22cd1ec768b10348d'
-                ]
+                    '599725f0e1331d5f8aae24f22cd1ec768b10348d',
+                ],
             },
-            dataset: datasets[0]
+            dataset: datasets[0],
         },
         {
             prepration: {
@@ -45,102 +45,71 @@ describe('Preparation Picker controller', () => {
                     '47e2444dd1301120b539804507fd307072294048',
                     'ae1aebf4b3fa9b983c895486612c02c766305410',
                     '24dcd68f2117b9f93662cb58cc31bf36d6e2867a',
-                    '599725f0e1331d5f8aae24f22cd1ec768b10348d'
-                ]
+                    '599725f0e1331d5f8aae24f22cd1ec768b10348d',
+                ],
             },
-            dataset: datasets[1]
+            dataset: datasets[1],
         }
     ];
 
-    let createController, scope, ctrl, stateMock;
+    let createController, scope;
 
-    beforeEach(angular.mock.module('data-prep.preparation-picker', ($provide) => {
-        stateMock = {
-            inventory: {
-                datasets: datasets
-            },
-            playground: {
-                preparation: null,
-                dataset: {
-                    id: 'dsId',
-                    name: 'myDsName'
-                }
-            }
-        };
-        $provide.constant('state', stateMock);
-    }));
+    beforeEach(angular.mock.module('data-prep.preparation-picker'));
 
-    beforeEach(inject(($rootScope, $componentController) => {
+    beforeEach(inject(($rootScope, $componentController, $q) => {
         scope = $rootScope.$new();
 
         createController = () => {
-            return $componentController('preparationPicker', {$scope: scope});
+            return $componentController(
+                'preparationPicker',
+                {$scope: scope},
+                {
+                    dataset: { id: 'dsId', name: 'myDsName' },
+                    fetchPreparations: jasmine.createSpy('fetchPreparations').and.returnValue($q.when(compatiblePreps)),
+                    onSelect: jasmine.createSpy('onSelect'),
+                }
+            );
         };
     }));
 
-    beforeEach(() => {
-        ctrl = createController();
-    });
+    describe('on init', () => {
+        it('should fetch preparations', () => {
+            // given
+            const ctrl = createController();
 
-    describe('initialization', () => {
-
-        it('should call fetch compatible preparations callback', inject(($q, DatasetService) => {
-            //given
-            spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when());
-
-            //when
+            // when
             ctrl.$onInit();
 
-            //then
-            expect(DatasetService.getCompatiblePreparations).toHaveBeenCalledWith(stateMock.playground.dataset.id);
-        }));
+            // then
+            expect(ctrl.fetchPreparations).toHaveBeenCalledWith({ datasetId: 'dsId' });
+        });
 
-        it('should fetch and populate the compatible preparations starting from a dataset', inject(($q, DatasetService) => {
-            //given
-            spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when(compatiblePreps));
+        it('should init preparations list with candidates', () => {
+            // given
+            const ctrl = createController();
 
-            //when
+            expect(ctrl.candidatePreparations).toEqual([]);
+
+            // when
+            ctrl.$onInit();
+            scope.$digest();
+
+            // then
+            expect(ctrl.candidatePreparations).toBe(compatiblePreps);
+        });
+
+        it('should manage fetching flag', () => {
+            // given
+            const ctrl = createController();
+            expect(ctrl.isFetchingPreparations).toBeFalsy();
+
+            // when
             ctrl.$onInit();
             expect(ctrl.isFetchingPreparations).toBe(true);
             scope.$digest();
 
-            //then
-            expect(ctrl.candidatePreparations).toBe(compatiblePreps);
+            // then
             expect(ctrl.isFetchingPreparations).toBe(false);
-        }));
-    });
-
-    describe('select a preparation', () => {
-        it('should call application process function', inject(($q, PlaygroundService) => {
-            //given
-            const chosenPreparation = compatiblePreps[0];
-            spyOn(PlaygroundService, 'applyPreparationToDataset').and.returnValue($q.when(true));
-            ctrl.selectedPreparation = chosenPreparation.preparation;
-            ctrl.datasetId = 'myDsName';
-            ctrl.newPreparationName = 'new Name';
-
-            //when
-            ctrl.selectPreparation(chosenPreparation);
-
-            //then
-            expect(PlaygroundService.applyPreparationToDataset).toHaveBeenCalledWith(ctrl.selectedPreparation.id, ctrl.dataset.id);
-        }));
-
-        it('should redirect to the new preparation', inject(($q, $state, PlaygroundService) => {
-            //given
-            const chosenPreparation = compatiblePreps[0];
-            spyOn(PlaygroundService, 'applyPreparationToDataset').and.returnValue($q.when('updatedPreparationId'));
-            spyOn($state, 'go').and.returnValue();
-            ctrl.selectedPreparation = chosenPreparation.preparation;
-            ctrl.datasetId = 'myDsName';
-            ctrl.newPreparationName = 'new Name';
-
-            //when
-            ctrl.selectPreparation(chosenPreparation);
-            scope.$digest();
-
-            //then
-            expect($state.go).toHaveBeenCalledWith('playground.preparation', {prepid: 'updatedPreparationId'}, {reload: true});
-        }));
+        });
     });
 });

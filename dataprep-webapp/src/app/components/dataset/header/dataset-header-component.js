@@ -15,7 +15,7 @@ import DatasetHeaderCtrl from './dataset-header-controller';
 
 const DatasetHeaderComponent = {
     templateUrl: 'app/components/dataset/header/dataset-header.html',
-    controller: DatasetHeaderCtrl
+    controller: DatasetHeaderCtrl,
 };
 
 export default DatasetHeaderComponent;

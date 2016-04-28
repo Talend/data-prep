@@ -27,12 +27,12 @@ export default function InventoryRestService($http, RestURLs) {
      * @ngdoc method
      * @name search
      * @methodOf data-prep.services.inventory.service:InventoryRestService
-     * @param {String} search string
+     * @param {String} searchString The string to search
      * @param {Promise} deferredAbort abort request when resolved
      */
     function search(searchString, deferredAbort) {
         return $http({
-            url: RestURLs.inventoryUrl + '/search?path=/&name=' + encodeURIComponent(searchString),
+            url: `${RestURLs.searchUrl}?path=/&name=${encodeURIComponent(searchString)}`,
             method: 'GET',
             timeout: deferredAbort.promise
         });

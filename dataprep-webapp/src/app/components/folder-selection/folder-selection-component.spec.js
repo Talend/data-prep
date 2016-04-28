@@ -26,38 +26,38 @@ describe('folder selection component', () => {
             alreadyToggled: true,
             display: true,
             collapsed: false,
-            name: 'Home'
+            name: 'Home',
         },
         {
             name: '1-folder1',
             path: '1-folder1',
             level: 1,
-            display: true
+            display: true,
         },
         {
             path: '1-folder1/2-folder11',
             name: '2-folder11',
             level: 2,
-            display: true
+            display: true,
         },
         {
             path: '1-folder1/2-folder12',
             name: '2-folder12',
             level: 2,
-            display: true
+            display: true,
         },
         {
             path: '1-folder1/2-folder13',
             name: '2-folder13',
             level: 2,
-            display: true
+            display: true,
         },
         {
             name: '1-folder2',
             path: '1-folder2',
             level: 1,
-            display: false
-        }
+            display: false,
+        },
     ];
 
     beforeEach(inject(($rootScope, $compile) => {
@@ -68,6 +68,10 @@ describe('folder selection component', () => {
             $compile(element)(scope);
             scope.$digest();
         };
+    }));
+
+    beforeEach(inject(($q, FolderService) => {
+        spyOn(FolderService, 'children').and.returnValue($q.when([]));
     }));
 
     afterEach(() => {

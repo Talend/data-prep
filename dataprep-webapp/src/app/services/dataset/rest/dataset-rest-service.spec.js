@@ -1,45 +1,45 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
-describe('Dataset Rest Service', function () {
+describe('Dataset Rest Service', () => {
     'use strict';
 
-    var $httpBackend;
+    let $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.services.dataset'));
 
-    beforeEach(inject(function ($rootScope, $injector, RestURLs) {
+    beforeEach(inject(($rootScope, $injector, RestURLs) => {
         RestURLs.setServerUrl('');
         $httpBackend = $injector.get('$httpBackend');
 
         spyOn($rootScope, '$emit').and.returnValue();
     }));
 
-    describe('list', function() {
-        it('should call dataset list rest service WITHOUT sort parameters', inject(function ($rootScope, DatasetRestService, RestURLs, $q) {
+    describe('list', () => {
+        it('should call dataset list rest service WITHOUT sort parameters', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasets = [
-                {name: 'Customers (50 lines)'},
-                {name: 'Us states'},
-                {name: 'Customers (1K lines)'}
+            let result = null;
+            const datasets = [
+                { name: 'Customers (50 lines)' },
+                { name: 'Us states' },
+                { name: 'Customers (1K lines)' }
             ];
             $httpBackend
                 .expectGET(RestURLs.datasetUrl)
                 .respond(200, datasets);
 
             //when
-            DatasetRestService.getDatasets(undefined, undefined, $q.defer()).then(function (response) {
+            DatasetRestService.getDatasets(undefined, undefined, $q.defer()).then((response) => {
                 result = response.data;
             });
             $httpBackend.flush();
@@ -49,20 +49,20 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(datasets);
         }));
 
-        it('should call dataset list rest service WITH sort parameters', inject(function ($rootScope, DatasetRestService, RestURLs, $q) {
+        it('should call dataset list rest service WITH sort parameters', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasets = [
-                {name: 'Customers (50 lines)'},
-                {name: 'Us states'},
-                {name: 'Customers (1K lines)'}
+            let result = null;
+            const datasets = [
+                { name: 'Customers (50 lines)' },
+                { name: 'Us states' },
+                { name: 'Customers (1K lines)' }
             ];
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '?sort=name&order=asc')
                 .respond(200, datasets);
 
             //when
-            DatasetRestService.getDatasets('name', 'asc', $q.defer()).then(function (response) {
+            DatasetRestService.getDatasets('name', 'asc', $q.defer()).then((response) => {
                 result = response.data;
             });
             $httpBackend.flush();
@@ -72,20 +72,20 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(datasets);
         }));
 
-        it('should call dataset list rest service WITH sort parameters (only sortType)', inject(function ($rootScope, DatasetRestService, RestURLs, $q) {
+        it('should call dataset list rest service WITH sort parameters (only sortType)', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasets = [
-                {name: 'Customers (50 lines)'},
-                {name: 'Us states'},
-                {name: 'Customers (1K lines)'}
+            let result = null;
+            const datasets = [
+                { name: 'Customers (50 lines)' },
+                { name: 'Us states' },
+                { name: 'Customers (1K lines)' }
             ];
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '?sort=name')
                 .respond(200, datasets);
 
             //when
-            DatasetRestService.getDatasets('name', undefined, $q.defer()).then(function (response) {
+            DatasetRestService.getDatasets('name', undefined, $q.defer()).then((response) => {
                 result = response.data;
             });
             $httpBackend.flush();
@@ -95,20 +95,20 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(datasets);
         }));
 
-        it('should call dataset list rest service WITH sort parameters (only sortOrder)', inject(function ($rootScope, DatasetRestService, RestURLs, $q) {
+        it('should call dataset list rest service WITH sort parameters (only sortOrder)', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasets = [
-                {name: 'Customers (50 lines)'},
-                {name: 'Us states'},
-                {name: 'Customers (1K lines)'}
+            let result = null;
+            const datasets = [
+                { name: 'Customers (50 lines)' },
+                { name: 'Us states' },
+                { name: 'Customers (1K lines)' }
             ];
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '?order=asc')
                 .respond(200, datasets);
 
             //when
-            DatasetRestService.getDatasets(undefined, 'asc', $q.defer()).then(function (response) {
+            DatasetRestService.getDatasets(undefined, 'asc', $q.defer()).then((response) => {
                 result = response.data;
             });
             $httpBackend.flush();
@@ -119,20 +119,18 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('creation', function() {
-        it('should call dataset creation rest service with root folder path', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('creation', () => {
+        it('should call dataset creation rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var datasetId = null;
-            var dataset = {name: 'my dataset', file: {path: '/path/to/file'}, error: false};
-            var folder = {id : '', path: '', name: 'Home'};
+            let datasetId = null;
+            const dataset = { name: 'my dataset', file: { path: '/path/to/file' }, error: false };
 
             $httpBackend
-                .expectPOST(RestURLs.datasetUrl + '?name=my%20dataset&folderPath=%2F')
-
+                .expectPOST(RestURLs.datasetUrl + '?name=my%20dataset')
                 .respond(200, 'e85afAa78556d5425bc2');
 
             //when
-            DatasetRestService.create(dataset, folder).then(function (res) {
+            DatasetRestService.create(dataset).then((res) => {
                 datasetId = res.data;
             });
             $httpBackend.flush();
@@ -142,71 +140,25 @@ describe('Dataset Rest Service', function () {
             expect(datasetId).toBe('e85afAa78556d5425bc2');
         }));
 
-        it('should call dataset creation rest service with a folder path', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call dataset creation rest service with import parameters for remote http', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var datasetId = null;
-            var dataset = {name: 'my dataset', file: {path: '/path/to/file'}, error: false};
-            var folder = {id : '1', path: '1', name: '1'};
-
-            $httpBackend
-                .expectPOST(RestURLs.datasetUrl + '?name=my%20dataset&folderPath=1')
-
-                .respond(200, 'e85afAa78556d5425bc2');
-
-            //when
-            DatasetRestService.create(dataset, folder).then(function (res) {
-                datasetId = res.data;
-            });
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            expect(datasetId).toBe('e85afAa78556d5425bc2');
-        }));
-
-        it('should call dataset creation rest service with import parameters for remote http with root folder path', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var datasetId = null;
-            var importParameters = {
+            let datasetId = null;
+            const importParameters = {
                 type: 'http',
                 name: 'greatremotedataset',
-                url: 'moc.dnelat//:ptth'
+                url: 'moc.dnelat//:ptth',
             };
-            var headers = {'Content-Type': 'application/vnd.remote-ds.http', 'Accept': 'application/json, text/plain, */*'};
-            var folder = {id : '', path: '', name: 'Home'};
+            const headers = {
+                'Content-Type': 'application/vnd.remote-ds.http',
+                'Accept': 'application/json, text/plain, */*'
+            };
 
             $httpBackend
-                .expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset&folderPath=%2F', importParameters, headers)
+                .expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset', importParameters, headers)
                 .respond(200, '54g5g4d3fg4d3f5q5g4');
 
             //when
-            DatasetRestService.import(importParameters, folder).then(function (res) {
-                datasetId = res.data;
-            });
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            expect(datasetId).toBe('54g5g4d3fg4d3f5q5g4');
-        }));
-
-        it('should call dataset creation rest service with import parameters for remote http with a folder path', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var datasetId = null;
-            var importParameters = {
-                type: 'http',
-                name: 'greatremotedataset',
-                url: 'moc.dnelat//:ptth'
-            };
-            var headers = {'Content-Type': 'application/vnd.remote-ds.http', 'Accept': 'application/json, text/plain, */*'};
-            var folder = {id : '1', path: '1', name: '1'};
-
-            $httpBackend
-                .expectPOST(RestURLs.datasetUrl + '?name=greatremotedataset&folderPath=1', importParameters, headers)
-                .respond(200, '54g5g4d3fg4d3f5q5g4');
-
-            //when
-            DatasetRestService.import(importParameters, folder).then(function (res) {
+            DatasetRestService.import(importParameters).then((res) => {
                 datasetId = res.data;
             });
             $httpBackend.flush();
@@ -217,10 +169,15 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('update', function() {
-        it('should call dataset update rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('update', () => {
+        it('should call dataset update rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var dataset = {name: 'my dataset', file: {path: '/path/to/file'}, error: false, id: 'e85afAa78556d5425bc2'};
+            const dataset = {
+                name: 'my dataset',
+                file: { path: '/path/to/file' },
+                error: false,
+                id: 'e85afAa78556d5425bc2',
+            };
 
             $httpBackend
                 .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?name=my%20dataset')
@@ -235,9 +192,9 @@ describe('Dataset Rest Service', function () {
             //expect PUT not to throw any exception
         }));
 
-        it('should call dataset metadata update rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call dataset metadata update rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var metadata = {id: 'e85afAa78556d5425bc2', name: 'my dataset'};
+            const metadata = { id: 'e85afAa78556d5425bc2', name: 'my dataset' };
 
             $httpBackend
                 .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2/metadata', metadata)
@@ -252,11 +209,11 @@ describe('Dataset Rest Service', function () {
             //expect PUT not to throw any exception
         }));
 
-        it('should call update column service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call update column service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var datasetId = '75b1547dc4145e218';
-            var columnId = '24a5416584cf63b26';
-            var params = {
+            const datasetId = '75b1547dc4145e218';
+            const columnId = '24a5416584cf63b26';
+            const params = {
                 domain: 'CITY'
             };
 
@@ -274,10 +231,15 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('delete', function() {
-        it('should call dataset delete rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('delete', () => {
+        it('should call dataset delete rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var dataset = {name: 'my dataset', file: {path: '/path/to/file'}, error: false, id: 'e85afAa78556d5425bc2'};
+            const dataset = {
+                name: 'my dataset',
+                file: { path: '/path/to/file' },
+                error: false,
+                id: 'e85afAa78556d5425bc2'
+            };
 
             $httpBackend
                 .expectDELETE(RestURLs.datasetUrl + '/e85afAa78556d5425bc2')
@@ -293,19 +255,19 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('content', function() {
-        it('should call dataset get metadata rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('content', () => {
+        it('should call dataset get metadata rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasetId = 'e85afAa78556d5425bc2';
-            var data = [{column: []}];
+            let result = null;
+            const datasetId = 'e85afAa78556d5425bc2';
+            const data = [{ column: [] }];
 
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/e85afAa78556d5425bc2/metadata')
                 .respond(200, data);
 
             //when
-            DatasetRestService.getMetadata(datasetId).then(function (data) {
+            DatasetRestService.getMetadata(datasetId).then((data) => {
                 result = data;
             });
             $httpBackend.flush();
@@ -315,18 +277,18 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(data);
         }));
 
-        it('should call dataset get content rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call dataset get content rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasetId = 'e85afAa78556d5425bc2';
-            var data = [{column: [], records: []}];
+            let result = null;
+            const datasetId = 'e85afAa78556d5425bc2';
+            const data = [{ column: [], records: [] }];
 
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?metadata=false')
                 .respond(200, data);
 
             //when
-            DatasetRestService.getContent(datasetId, false).then(function (data) {
+            DatasetRestService.getContent(datasetId, false).then((data) => {
                 result = data;
             });
             $httpBackend.flush();
@@ -337,10 +299,10 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('certification', function() {
-        it('should call dataset certification rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('certification', () => {
+        it('should call dataset certification rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var datasetId = 'e85afAa78556d5425bc2';
+            const datasetId = 'e85afAa78556d5425bc2';
 
             $httpBackend
                 .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2/processcertification')
@@ -356,20 +318,20 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('sheet preview', function() {
-        it('should call dataset sheet preview service with default sheet', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('sheet preview', () => {
+        it('should call dataset sheet preview service with default sheet', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasetId = 'e85afAa78556d5425bc2';
-            var data = {columns: [{id: 'col1'}], records: [{col1: 'toto'}, {col1: 'tata'}]};
+            let result = null;
+            const datasetId = 'e85afAa78556d5425bc2';
+            const data = { columns: [{ id: 'col1' }], records: [{ col1: 'toto' }, { col1: 'tata' }] };
 
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/preview/' + datasetId + '?metadata=true')
-                .respond(200, {data: data});
+                .respond(200, { data: data });
 
             //when
             DatasetRestService.getSheetPreview(datasetId)
-                .then(function (response) {
+                .then((response) => {
                     result = response.data;
                 });
             $httpBackend.flush();
@@ -379,20 +341,20 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(data);
         }));
 
-        it('should call dataset sheet preview service with provided sheet', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call dataset sheet preview service with provided sheet', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var result = null;
-            var datasetId = 'e85afAa78556d5425bc2';
-            var sheetName = 'my sheet';
-            var data = {columns: [{id: 'col1'}], records: [{col1: 'toto'}, {col1: 'tata'}]};
+            let result = null;
+            const datasetId = 'e85afAa78556d5425bc2';
+            const sheetName = 'my sheet';
+            const data = { columns: [{ id: 'col1' }], records: [{ col1: 'toto' }, { col1: 'tata' }] };
 
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/preview/' + datasetId + '?metadata=true&sheetName=my%20sheet')
-                .respond(200, {data: data});
+                .respond(200, { data: data });
 
             //when
             DatasetRestService.getSheetPreview(datasetId, sheetName)
-                .then(function (response) {
+                .then((response) => {
                     result = response.data;
                 });
             $httpBackend.flush();
@@ -402,15 +364,15 @@ describe('Dataset Rest Service', function () {
             expect(result).toEqual(data);
         }));
 
-        it('should show loading on call dataset sheet preview service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should show loading on call dataset sheet preview service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var datasetId = 'e85afAa78556d5425bc2';
-            var sheetName = 'my sheet';
-            var data = {columns: [{id: 'col1'}], records: [{col1: 'toto'}, {col1: 'tata'}]};
+            const datasetId = 'e85afAa78556d5425bc2';
+            const sheetName = 'my sheet';
+            const data = { columns: [{ id: 'col1' }], records: [{ col1: 'toto' }, { col1: 'tata' }] };
 
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/preview/' + datasetId + '?metadata=true&sheetName=my%20sheet')
-                .respond(200, {data: data});
+                .respond(200, { data: data });
 
             //when
             DatasetRestService.getSheetPreview(datasetId, sheetName);
@@ -423,11 +385,11 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('favorite', function() {
-        it('should call set favorite', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('favorite', () => {
+        it('should call set favorite', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var dataset = {
-                name: 'my dataset', file: {path: '/path/to/file'}, error: false, id: 'e85afAa78556d5425bc2',
+            const dataset = {
+                name: 'my dataset', file: { path: '/path/to/file' }, error: false, id: 'e85afAa78556d5425bc2',
                 favorite: true
             };
 
@@ -445,13 +407,13 @@ describe('Dataset Rest Service', function () {
         }));
     });
 
-    describe('clone', function() {
-        it('should call clone w/o new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('clone', () => {
+        it('should call clone rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var dataset = {id: 'foobar'};
+            const dataset = { id: 'foobar' };
 
             $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/clone/foobar')
+                .expectPOST(RestURLs.datasetUrl + '/foobar/copy')
                 .respond(200);
 
             //when
@@ -462,148 +424,13 @@ describe('Dataset Rest Service', function () {
             //then
             //expect GET not to throw any exception;
         }));
-
-        it('should call clone with a new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var dataset = {id: 'foobar'};
-            var newName = 'wine';
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/clone/foobar?cloneName=' + encodeURIComponent(newName))
-                .respond(200);
-
-            //when
-            DatasetRestService.clone(dataset, null, newName);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect GET not to throw any exception;
-        }));
-
-        it('should call clone w/o folder and w/o clone name', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var dataset = {id: 'foobar'};
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/clone/foobar')
-                .respond(200);
-
-            //when
-            DatasetRestService.clone(dataset);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect GET not to throw any exception;
-        }));
-
-        it('should call clone with folder path', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var dataset = {id: 'foobar'};
-            var newFolder = {id:'/wine/beer'};
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/clone/foobar?folderPath=' + encodeURIComponent(newFolder.path))
-                .respond(200);
-
-            //when
-            DatasetRestService.clone(dataset, newFolder);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect GET not to throw any exception;
-        }));
-
-        it('should call clone with folder path and clone name', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var dataset = {id: 'foobar'};
-            var newFolder = {id:'/wine/beer'};
-            var cloneName = 'foo-bar';
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/clone/foobar?folderPath=' + encodeURIComponent(newFolder.path) + '&cloneName=' + encodeURIComponent(cloneName))
-                .respond(200);
-
-            //when
-            DatasetRestService.clone(dataset, newFolder, cloneName);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect PUT not to throw any exception;
-        }));
-
-        it('should call clone w/o folder path and clone name', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var dataset = {id: 'foobar'};
-            var cloneName = 'foo-bar';
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/clone/foobar?cloneName=' + encodeURIComponent(cloneName))
-                .respond(200);
-
-            //when
-            DatasetRestService.clone(dataset, null, cloneName);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect PUT not to throw any exception;
-        }));
     });
 
-    describe('move', function() {
-        it('should call move w/o new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
+    describe('encodings', () => {
+        it('should call encodings GET', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given
-            var dataset = {id: 'foobar'};
-            var folder = {path:'/'};
-            var newFolder = {path:'/wine/beer'};
-
-            var moveRequest = {folderPath: folder.path, newFolderPath: newFolder.path};
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/move/foobar', moveRequest)
-                .respond(200);
-
-            //when
-            DatasetRestService.move(dataset,folder,newFolder);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect PUT not to throw any exception;
-        }));
-
-        it('should call move w a new name', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var dataset = {id: 'foobar'};
-            var folder = {path:'/'};
-            var newFolder = {path:'/wine/beer'};
-            var newName = 'good one';
-
-            var moveRequest = {folderPath: folder.path, newFolderPath: newFolder.path, newName: newName};
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/move/foobar', moveRequest)
-                .respond(200);
-
-            //when
-            DatasetRestService.move(dataset,folder,newFolder,newName);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect PUT not to throw any exception;
-        }));
-    });
-
-    describe('encodings', function() {
-        it('should call encodings GET', inject(function ($rootScope, DatasetRestService, RestURLs) {
-            //given
-            var encodings = ['UTF-8', 'UTF-16'];
-            var result = null;
+            const encodings = ['UTF-8', 'UTF-16'];
+            let result = null;
 
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/encodings')
@@ -611,7 +438,7 @@ describe('Dataset Rest Service', function () {
 
             //when
             DatasetRestService.getEncodings()
-                .then(function(encodingsFromCall) {
+                .then((encodingsFromCall) => {
                     result = encodingsFromCall;
                 });
             $httpBackend.flush();
@@ -619,6 +446,28 @@ describe('Dataset Rest Service', function () {
 
             //then
             expect(result).toEqual(encodings);
+        }));
+    });
+
+    describe('compatible preparations', () => {
+        it('should call rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
+            //given
+            let result = null;
+            const datasetId = 'e85afAa78556d5425bc2';
+            const preparations = [{id: '36c2692ef5'}];
+
+            $httpBackend
+                .expectGET(`${RestURLs.datasetUrl}/${datasetId}/compatiblepreparations`)
+                .respond(200, preparations);
+
+            //when
+            DatasetRestService.getCompatiblePreparations(datasetId)
+                .then((preps) => { result = preps });
+            $httpBackend.flush();
+            $rootScope.$digest();
+
+            //then
+            expect(result).toEqual(preparations);
         }));
     });
 });

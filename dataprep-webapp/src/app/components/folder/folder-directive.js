@@ -24,6 +24,6 @@ export default function Folder() {
         restrict: 'E',
         bindToController: true,
         controllerAs: 'folderCtrl',
-        controller: 'FolderCtrl'
+        controller: 'FolderCtrl',
     };
 }

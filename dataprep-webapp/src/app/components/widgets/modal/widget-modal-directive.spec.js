@@ -434,7 +434,7 @@ describe('Modal directive', function () {
             //when
             scope.state = true;
             scope.$digest();
-            $timeout.flush(200);
+            $timeout.flush();
 
             //then
             expect(document.activeElement.id).toBe('secondInput'); //eslint-disable-line angular/document-service

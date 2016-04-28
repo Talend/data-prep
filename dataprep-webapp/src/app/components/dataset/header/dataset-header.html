@@ -13,51 +13,11 @@
   ~ ============================================================================
   -->
 
-<div id="dataset-inventory-header">
-    <button id="add-folder-button"
-            ng-click="$ctrl.openFolderModal()"
-            translate-once="CREATE_FOLDER"></button>
-
-    <div id="dataset-inventory-sort">
-        <span translate-once="SORTED_BY"></span>
-        <talend-button-switch
-                class="button-switch"
-                values="$ctrl.state.inventory.sortList"
-                current-value="$ctrl.state.inventory.sort"
-                display-key="name"
-                change-action="$ctrl.updateSortBy(selected)">
-        </talend-button-switch>
-        <span translate-once="SORT_IN"></span>
-        <talend-button-switch
-                class="button-switch"
-                values="$ctrl.state.inventory.orderList"
-                current-value="$ctrl.state.inventory.order"
-                display-key="name"
-                change-action="$ctrl.updateSortOrder(selected)">
-        </talend-button-switch>
-        <div translate-once="SORT_ORDER"></div>
-    </div>
-</div>
-
-<talend-modal fullscreen="false"
-              close-button="true"
-              state="$ctrl.folderNameModal"
-              ng-if="$ctrl.folderNameModal"
-              disable-enter="true">
-    <span translate-once="ENTER_FOLDER_NAME"></span>
-    <form name="$ctrl.folderNameForm" ng-submit="$ctrl.folderNameForm.$valid && $ctrl.addFolder()">
-        <input type="text"
-               ng-model="$ctrl.folderName"
-               ng-model-options="{debounce: { default: 300, blur: 0 }}"
-               unique-folder="$ctrl.state.folder.currentFolderContent.folders"/>
-
-        <div class="modal-buttons">
-            <button type="button"
-                    class="talend-modal-close btn-secondary modal-secondary-button"
-                    translate-once="CANCEL"></button>
-            <button class="btn-primary modal-primary-button"
-                    translate-once="OK"
-                    ng-disabled="$ctrl.folderNameForm.$invalid"></button>
-        </div>
-    </form>
-</talend-modal>
+<inventory-header
+    id="dataset-inventory-header"
+    sort="$ctrl.state.inventory.datasetsSort"
+    order="$ctrl.state.inventory.datasetsOrder"
+    sort-list="$ctrl.state.inventory.sortList"
+    order-list="$ctrl.state.inventory.orderList"
+    on-sort-change="$ctrl.updateSortBy(sort)"
+    on-order-change="$ctrl.updateSortOrder(order)"></inventory-header>

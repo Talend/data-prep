@@ -26,11 +26,10 @@
 
     <div class="preparation-list inventory-tile-list">
         <inventory-tile
-                ng-repeat="candidate in $ctrl.candidatePreparations track by $index"
+                ng-repeat="candidate in $ctrl.candidatePreparations track by candidate.preparation.id"
 
                 dataset="candidate.dataset"
-                on-favorite="angular.noop"
-                on-click="$ctrl.selectPreparation(preparation)"
+                on-click="$ctrl.onSelect({preparationId: candidate.preparation.id})"
                 preparation="candidate.preparation"
         ></inventory-tile>
     </div>

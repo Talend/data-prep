@@ -34,7 +34,7 @@ export default function RestURLs() {
         this.typesUrl = serverUrl + '/api/types';
         this.folderUrl = serverUrl + '/api/folders';
         this.mailUrl = serverUrl + '/api/mail';
-        this.inventoryUrl = serverUrl + '/api/inventory';
+        this.searchUrl = serverUrl + '/api/search';
         this.upgradeVersion = serverUrl + '/api/upgrade/check';
     }
 }

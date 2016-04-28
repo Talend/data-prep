@@ -11,33 +11,33 @@
 
  ============================================================================*/
 
-describe('Inventory Rest Service', function () {
+describe('Inventory Rest Service', () => {
     'use strict';
 
-    var $httpBackend;
+    let $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.services.inventory'));
 
-    beforeEach(inject(function ($injector, RestURLs) {
+    beforeEach(inject(($injector, RestURLs) => {
         RestURLs.setServerUrl('');
         $httpBackend = $injector.get('$httpBackend');
     }));
-    it('should call inventory search rest service ', inject(function ($rootScope, InventoryRestService, RestURLs, $q) {
+
+    it('should call inventory search rest service ', inject(($rootScope, $q, InventoryRestService, RestURLs) => {
         //given
-        var result = null;
-        var expectedResult = {
+        let result = null;
+        const expectedResult = {
             folders: [],
             preparations: [],
             datasets: []
         };
         $httpBackend
-            .expectGET(RestURLs.inventoryUrl + '/search?path=/&name=test')
+            .expectGET(RestURLs.searchUrl + '?path=/&name=test')
             .respond(200, expectedResult);
 
         //when
-        InventoryRestService.search('test', $q.defer()).then(function (response) {
-            result = response.data;
-        });
+        InventoryRestService.search('test', $q.defer())
+            .then((response) => { result = response.data });
 
         $httpBackend.flush();
         $rootScope.$digest();

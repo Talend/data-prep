@@ -15,12 +15,13 @@
  * @ngdoc service
  * @name data-prep.services.preparation.service:PreparationService
  * @description Preparation list service. this service manage the operations that touches the preparations
+ * @requires data-prep.services.state.constant:state
+ * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.utils.service:StorageService
  * @requires data-prep.services.preparation.service:PreparationListService
  * @requires data-prep.services.preparation.service:PreparationRestService
- * @requires data-prep.services.state.service:StateService
  */
-export default function PreparationService($stateParams, $q, state, $state, StateService, StorageService, PreparationListService, PreparationRestService) {
+export default function PreparationService($q, $state, $stateParams, state, StateService, StorageService, PreparationListService, PreparationRestService) {
     'ngInject';
 
     return {
@@ -34,7 +35,8 @@ export default function PreparationService($stateParams, $q, state, $state, Stat
 
         //preparation lifecycle
         create: create,
-        clone: PreparationListService.clone,
+        copy: PreparationListService.copy,
+        move: PreparationListService.move,
         update: PreparationRestService.update,
         delete: deletePreparation,
         setName: setName,
@@ -47,6 +49,7 @@ export default function PreparationService($stateParams, $q, state, $state, Stat
         updateStep: updateStep,
         removeStep: PreparationRestService.removeStep,
         setHead: PreparationRestService.setHead,
+        copySteps: PreparationRestService.copySteps,
 
         //preview
         getPreviewDiff: PreparationRestService.getPreviewDiff,
@@ -198,7 +201,7 @@ export default function PreparationService($stateParams, $q, state, $state, Stat
      * @description open a preparation
      */
     function open(preparation) {
-        StateService.setPreviousRoute('nav.index.datasets', {folderPath: $stateParams.folderPath});
+        StateService.setPreviousRoute('nav.index.preparations', {folderPath: $stateParams.folderPath});
         $state.go('playground.preparation', {prepid: preparation.id});
     }
 }

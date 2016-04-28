@@ -26,9 +26,10 @@
  * @requires data-prep.services.lookup.service:LookupService
  * @requires data-prep.services.utils.service:MessageService
  */
-export default function PlaygroundCtrl($timeout, $state, $stateParams, state, StateService, PlaygroundService, PreparationService,
-                                       PreviewService, RecipeService, RecipeBulletService, OnboardingService,
-                                       LookupService, MessageService) {
+export default function PlaygroundCtrl($timeout, $state, $stateParams, state, StateService,
+                                       PlaygroundService, DatasetService, PreparationService,
+                                       PreviewService, RecipeService, RecipeBulletService,
+                                       OnboardingService, LookupService, MessageService) {
     'ngInject';
 
     const vm = this;
@@ -40,6 +41,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
     vm.toggleParameters = StateService.toggleDatasetParameters;
     vm.previewInProgress = PreviewService.previewInProgress;
     vm.startOnBoarding = OnboardingService.startTour;
+    vm.fetchCompatiblePreparations = DatasetService.getCompatiblePreparations;
 
     /**
      * @ngdoc property
@@ -60,8 +62,26 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
     //--------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------PREPARATION PICKER------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    vm.togglePreparationPicker = function togglePreparationPicker() {
-        vm.displayPreparationPicker = !vm.displayPreparationPicker;
+    /**
+     * @ngdoc method
+     * @name showPicker
+     * @methodOf data-prep.playground.controller:PlaygroundCtrl
+     * @description Toggle preparation picker modal
+     */
+    vm.showPreparationPicker = function showPreparationPicker() {
+        vm.displayPreparationPicker = true;
+    };
+
+    /**
+     * @ngdoc method
+     * @name applySteps
+     * @param {string} preparationId The preparation to apply
+     * @methodOf data-prep.playground.controller:PlaygroundCtrl
+     * @description Apply the preparation steps to the current preparation
+     */
+    vm.applySteps = function applySteps(preparationId) {
+        return PlaygroundService.copySteps(preparationId)
+            .then(() => { vm.displayPreparationPicker = false });
     };
 
     //--------------------------------------------------------------------------------------------------------------
@@ -153,8 +173,18 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
      */
     vm.confirmSaveOnClose = function confirmSaveOnClose() {
         vm.saveInProgress = true;
+        let operation;
+
+        const prepId = state.playground.preparation.id;
+        const destinationPath = vm.destinationFolder.path;
         const cleanName = vm.state.playground.preparationName.trim();
-        changeName(cleanName).then(close);
+        if(destinationPath) {
+            operation = PreparationService.move(prepId, '', destinationPath, cleanName)
+        }
+        else {
+            operation = PreparationService.setName(prepId, cleanName);
+        }
+        return operation.then(close);
     };
 
     /**

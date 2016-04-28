@@ -23,7 +23,7 @@
 export default function PreparationListService(PreparationRestService, StateService) {
     'ngInject';
 
-    var preparationsPromise;
+    let preparationsPromise;
 
     return {
         refreshPreparations: refreshPreparations,
@@ -31,7 +31,8 @@ export default function PreparationListService(PreparationRestService, StateServ
         hasPreparationsPromise: hasPreparationsPromise,
 
         create: create,
-        clone: clone,
+        copy: copy,
+        move: move,
         update: update,
         delete: deletePreparation
     };
@@ -89,27 +90,45 @@ export default function PreparationListService(PreparationRestService, StateServ
      * @returns {promise} The POST promise
      */
     function create(datasetId, name) {
-        var createdPreparationId;
+        let createdPreparationId;
         return PreparationRestService.create(datasetId, name)
             .then((response) => createdPreparationId = response.data)
             .then(refreshPreparations)
-            .then((preparations) => _.find(preparations, {id: createdPreparationId}));
+            .then((preparations) => _.find(preparations, { id: createdPreparationId }));
     }
 
     /**
      * @ngdoc method
-     * @name create
+     * @name copy
      * @methodOf data-prep.services.preparation.service:PreparationListService
      * @param {string} preparationId The preparation id
-     * @description Clone the preparation
-     * @returns {promise} The GET promise
+     * @param {string} folderPath The destination folder path
+     * @param {string} name The preparation name
+     * @description Copy the preparation
+     * @returns {promise} The request promise
      */
-    function clone(preparationId) {
-        return PreparationRestService.clone(preparationId)
+    function copy(preparationId, folderPath, name) {
+        return PreparationRestService.copy(preparationId, folderPath, name)
             .then((preparationCloneId) => {
                 refreshPreparations();
-                    return preparationCloneId;
+                return preparationCloneId;
             });
+    }
+
+    /**
+     * @ngdoc method
+     * @name move
+     * @methodOf data-prep.services.preparation.service:PreparationListService
+     * @param {string} preparationId The preparation id
+     * @param {string} fromPath The origin folder path
+     * @param {string} folderPath The destination folder path
+     * @param {string} name The preparation name
+     * @description Move the preparation
+     * @returns {promise} The request promise
+     */
+    function move(preparationId, fromPath, folderPath, name) {
+        return PreparationRestService.move(preparationId, fromPath, folderPath, name)
+            .then(() => refreshPreparations());
     }
 
     /**
@@ -122,11 +141,11 @@ export default function PreparationListService(PreparationRestService, StateServ
      * @returns {promise} The PUT promise
      */
     function update(preparationId, name) {
-        var updatedPreparationId;
-        return PreparationRestService.update(preparationId, {name: name})
+        let updatedPreparationId;
+        return PreparationRestService.update(preparationId, { name: name })
             .then((result) => updatedPreparationId = result)
             .then(refreshPreparations)
-            .then((preparations) => _.find(preparations, {id: updatedPreparationId}));
+            .then((preparations) => _.find(preparations, { id: updatedPreparationId }));
     }
 
     /**

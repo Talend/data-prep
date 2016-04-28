@@ -61,7 +61,7 @@ public class RemoveFolder extends GenericCommand<HttpResponse> {
     private HttpRequestBase onExecute(String path) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders");
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders");
             uriBuilder.addParameter("path", path);
             return new HttpDelete(uriBuilder.build());
         } catch (URISyntaxException e) {

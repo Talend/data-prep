@@ -21,7 +21,7 @@ import DatasetListCtrl from './dataset-list-controller';
  */
 const DatasetListComponent = {
     templateUrl: 'app/components/dataset/list/dataset-list.html',
-    controller: DatasetListCtrl
+    controller: DatasetListCtrl,
 };
 
 export default DatasetListComponent;

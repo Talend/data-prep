@@ -11,66 +11,54 @@
 
  ============================================================================*/
 
-class DatasetCopyMoveCtrl {
+class InventoryCopyMoveCtrl {
     constructor($element) {
         'ngInject';
 
         this.$element = $element;
-        this.isCloningDs = false;
-        this.isMovingDs = false;
-        this.newDsName = this.dataset.name;
+        this.isCopying = false;
+        this.isMoving = false;
+        this.newName = this.item.name;
         this.destinationFolder = this.initialFolder;
     }
 
     _focusOnNameInput() {
-        this.$element.find('#new-name-input-id').eq(0)[0].focus();
+        this.$element.find('#copy-move-name-input').eq(0)[0].focus();
     }
 
-    /**
-     * @ngdoc method
-     * @name clone
-     * @methodOf d????????????????????????????????????r:DatasetListCtrl
-     * @description perform the dataset cloning to the folder destination
-     */
-    clone() {
-        this.isCloningDs = true;
+    copy() {
+        this.isCopying = true;
         this.copyMoveForm.$commitViewValue();
 
         return this.onCopy({
-                dataset: this.dataset,
+                item: this.item,
                 destination: this.destinationFolder,
-                name: this.newDsName
+                name: this.newName
             })
             .catch(() => {
                 this._focusOnNameInput();
             })
             .finally(() => {
-                this.isCloningDs = false;
+                this.isCopying = false;
             });
     }
 
-    /**
-     * @ngdoc method
-     * @name move
-     * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-     * @description perform the dataset moving to the folder destination
-     */
     move() {
-        this.isMovingDs = true;
+        this.isMoving = true;
         this.copyMoveForm.$commitViewValue();
 
         return this.onMove({
-                dataset: this.dataset,
+                item: this.item,
                 destination: this.destinationFolder,
-                name: this.newDsName
+                name: this.newName
             })
             .catch(() => {
                 this._focusOnNameInput();
             })
             .finally(() => {
-                this.isMovingDs = false;
+                this.isMoving = false;
             });
     }
 }
 
-export default DatasetCopyMoveCtrl;
+export default InventoryCopyMoveCtrl;

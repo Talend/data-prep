@@ -44,7 +44,7 @@ public class RenameFolder
     private HttpRequestBase onExecute( String path, String newPath) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/rename");
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/rename");
             uriBuilder.addParameter("path", path);
             uriBuilder.addParameter( "newPath", newPath );
             return new HttpPut(uriBuilder.build());

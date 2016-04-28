@@ -11,8 +11,7 @@
 
  ============================================================================*/
 
-import PreparationListCtrl from './preparation-list-controller';
-import PreparationList from './preparation-list-directive';
+import PreparationListComponent from './preparation-list-component';
 
 (() => {
     'use strict';
@@ -24,6 +23,7 @@ import PreparationList from './preparation-list-directive';
      * @requires ui.router
      * @requires talend.widget
      * @requires data-prep.inventory-tile
+     * @requires data-prep.services.folder
      * @requires data-prep.services.preparation
      * @requires data-prep.services.playground
      * @requires data-prep.services.state
@@ -33,11 +33,11 @@ import PreparationList from './preparation-list-directive';
             'ui.router',
             'talend.widget',
             'data-prep.inventory-tile',
+            'data-prep.services.folder',
             'data-prep.services.preparation',
             'data-prep.services.playground',
             'data-prep.services.state',
             'data-prep.inventory-item',
         ])
-        .controller('PreparationListCtrl', PreparationListCtrl)
-        .directive('preparationList', PreparationList);
+        .component('preparationList', PreparationListComponent);
 })();

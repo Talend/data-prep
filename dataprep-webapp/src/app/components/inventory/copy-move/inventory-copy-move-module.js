@@ -11,21 +11,21 @@
 
  ============================================================================*/
 
-import DatasetCopyMove from './dataset-copy-move-component';
+import InventoryCopyMoveComponent from './inventory-copy-move-component';
 
 (() => {
     'use strict';
 
     /**
      * @ngdoc object
-     * @name data-prep.dataset-copy-move
-     * @description This module contains the entities to manage the dataset copy/move
+     * @name data-prep.inventory-copy-move
+     * @description This module contains the entities to manage the inventory copy/move wiazerd
      * @requires data-prep.folder-selection
      */
-    angular.module('data-prep.dataset-copy-move',
+    angular.module('data-prep.inventory-copy-move',
         [
             'talend.widget',
             'data-prep.folder-selection',
         ])
-        .component('datasetCopyMove', DatasetCopyMove);
+        .component('inventoryCopyMove', InventoryCopyMoveComponent);
 })();

@@ -140,7 +140,8 @@ describe('Preparation list service', () => {
         spyOn(PreparationRestService, 'create').and.returnValue($q.when({data: createdPreparationId}));
         spyOn(PreparationRestService, 'update').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'delete').and.returnValue($q.when(true));
-        spyOn(PreparationRestService, 'clone').and.returnValue($q.when(true));
+        spyOn(PreparationRestService, 'copy').and.returnValue($q.when(true));
+        spyOn(PreparationRestService, 'move').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'updateStep').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'appendStep').and.returnValue($q.when(true));
 
@@ -266,30 +267,63 @@ describe('Preparation list service', () => {
         }));
     });
 
-    describe('clone', () => {
+    describe('copy', () => {
 
         beforeEach(inject(($q, PreparationRestService) => {
             spyOn(PreparationRestService, 'getPreparations').and.returnValue($q.when({data: preparations}));
         }));
 
-        it('should clone a preparation', inject(($q, $rootScope, PreparationListService, PreparationRestService) => {
+        it('should copy a preparation', inject((PreparationListService, PreparationRestService) => {
             //given
-            stateMock.inventory.preparations = preparations.slice(0);
+            const folderPath = '/toto/tata/jso';
+            const name = 'my_prep';
 
             //when
-            PreparationListService.clone(preparations[0].id);
+            PreparationListService.copy(preparations[0].id, folderPath, name);
+
+            //then
+            expect(PreparationRestService.copy).toHaveBeenCalledWith(preparations[0].id, folderPath, name);
+        }));
+
+        it('should refresh preparations list', inject(($rootScope, PreparationListService, PreparationRestService) => {
+            //when
+            PreparationListService.copy(preparations[0].id);
             $rootScope.$digest();
 
             //then
-            expect(PreparationRestService.clone).toHaveBeenCalledWith(preparations[0].id);
+            expect(PreparationRestService.getPreparations).toHaveBeenCalled();
+        }));
+    });
+
+    describe('move', () => {
+
+        beforeEach(inject(($q, PreparationRestService) => {
+            spyOn(PreparationRestService, 'getPreparations').and.returnValue($q.when({data: preparations}));
         }));
 
-        it('should refresh preparations list on clone', inject(($rootScope, PreparationListService, PreparationRestService) => {
+        it('should move a preparation', inject((PreparationListService, PreparationRestService) => {
             //given
-            stateMock.inventory.preparations = preparations.slice(0);
+            const preparationId = '16de4f39e787932a1';
+            const originPath = '/my/folder';
+            const destinationPath = '/toto/tata/jso';
+            const name = 'my_prep';
 
             //when
-            PreparationListService.clone(preparations[0].id);
+            PreparationListService.move(preparationId, originPath, destinationPath, name);
+
+            //then
+            expect(PreparationRestService.move).toHaveBeenCalledWith(preparationId, originPath, destinationPath, name);
+        }));
+
+        it('should refresh preparations list', inject(($rootScope, PreparationListService, PreparationRestService) => {
+            //given
+            const preparationId = '16de4f39e787932a1';
+            const originPath = '/my/folder';
+            const destinationPath = '/toto/tata/jso';
+            const name = 'my_prep';
+
+            //when
+            PreparationListService.move(preparationId, originPath, destinationPath, name);
             $rootScope.$digest();
 
             //then

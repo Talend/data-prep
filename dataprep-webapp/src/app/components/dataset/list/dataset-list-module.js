@@ -21,8 +21,8 @@ import DatasetList from './dataset-list-component';
      * @name data-prep.dataset-list
      * @description This module contains the controller and directives to manage the dataset list
      * @requires talend.widget
-     * @requires data-prep.dataset-copy-move
      * @requires data-prep.dataset-xls-preview
+     * @requires data-prep.inventory-copy-move
      * @requires data-prep.inventory-item
      * @requires data-prep.services.dataset
      * @requires data-prep.services.datasetWorkflowService
@@ -35,8 +35,8 @@ import DatasetList from './dataset-list-component';
             'pascalprecht.translate',
             'talend.widget',
             'ui.router',
-            'data-prep.dataset-copy-move',
             'data-prep.dataset-xls-preview',
+            'data-prep.inventory-copy-move',
             'data-prep.inventory-item',
             'data-prep.services.dataset',
             'data-prep.services.datasetWorkflowService',

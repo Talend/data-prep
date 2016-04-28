@@ -14,27 +14,40 @@
 'use strict';
 
 const sortList = [
-    {id: 'name', name: 'NAME_SORT', property: 'name'},
-    {id: 'date', name: 'DATE_SORT', property: 'created'}
+    { id: 'name', name: 'NAME_SORT', property: 'name' },
+    { id: 'date', name: 'DATE_SORT', property: 'created' }
 ];
 
 const orderList = [
-    {id: 'asc', name: 'ASC_ORDER'},
-    {id: 'desc', name: 'DESC_ORDER'}
+    { id: 'asc', name: 'ASC_ORDER' },
+    { id: 'desc', name: 'DESC_ORDER' }
 ];
+
+const ROOT_FOLDER = {
+    path: '',
+    name: 'Home'
+};
 
 export const inventoryState = {
     preparations: null,
     datasets: null,
+
     sortList: sortList,
     orderList: orderList,
-    sort: sortList[1],
-    order: orderList[1],
+    datasetsSort: sortList[1],
+    datasetsOrder: orderList[1],
+    preparationsSort: sortList[1],
+    preparationsOrder: orderList[1],
 
-    currentFolder: {id: '', path: ''}, // currentFolder is initialized with root value
-    currentFolderContent: {},
-    foldersStack: [],
-    menuChildren: []
+    folder: {
+        metadata: ROOT_FOLDER,
+        content: {
+            folders: [],
+            preparations: [],
+        },
+    },
+    folderStack: [],
+    menuChildren: [],
 };
 
 
@@ -47,48 +60,49 @@ export function InventoryStateService() {
         removeDataset: removeDataset,
         setDatasetName: setDatasetName,
 
-        setCurrentFolder: setCurrentFolder,
-        setCurrentFolderContent: setCurrentFolderContent,
-        setFoldersStack: setFoldersStack,
+        setFolder: setFolder,
         setMenuChildren: setMenuChildren,
 
-        setSort: setSort,
-        setOrder: setOrder
+        setDatasetsSort: setDatasetsSort,
+        setDatasetsOrder: setDatasetsOrder,
+
+        setPreparationsSort: setPreparationsSort,
+        setPreparationsOrder: setPreparationsOrder,
     };
 
     /**
      * @ngdoc method
-     * @name consolidateDatasets
+     * @name _consolidateDatasets
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {array} datasets The datasets list to consolidate
      * @description Set the preparations list in each dataset to consolidate
      */
-    function consolidateDatasets(datasets) {
-        if(!datasets || !inventoryState.preparations) {
+    function _consolidateDatasets(datasets) {
+        if (!datasets || !inventoryState.preparations) {
             return;
         }
 
-        var preparationsByDataset = _.groupBy(inventoryState.preparations, 'dataSetId');
-        _.forEach(datasets, function (dataset) {
-            var preparations = preparationsByDataset[dataset.id] || [];
+        const preparationsByDataset = _.groupBy(inventoryState.preparations, 'dataSetId');
+        _.forEach(datasets, (dataset) => {
+            const preparations = preparationsByDataset[dataset.id] || [];
             dataset.preparations = _.sortByOrder(preparations, 'lastModificationDate', false);
         });
     }
 
     /**
      * @ngdoc method
-     * @name consolidatePreparations
+     * @name _consolidatePreparations
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {array} preparations The preparations list to consolidate
      * @description Set the dataset in each preparation to consolidate
      */
-    function consolidatePreparations(preparations) {
-        if(!preparations || !inventoryState.datasets) {
+    function _consolidatePreparations(preparations) {
+        if (!preparations || !inventoryState.datasets) {
             return;
         }
 
-        _.forEach(preparations, function (prep) {
-            prep.dataset = _.find(inventoryState.datasets, {id: prep.dataSetId});
+        _.forEach(preparations, (prep) => {
+            prep.dataset = _.find(inventoryState.datasets, { id: prep.dataSetId });
         });
     }
 
@@ -99,9 +113,8 @@ export function InventoryStateService() {
      * @description Consolidate preparations, datasets and the current folder datasets
      */
     function consolidate() {
-        consolidatePreparations(inventoryState.preparations);
-        consolidateDatasets(inventoryState.datasets);
-        consolidateDatasets(inventoryState.currentFolderContent.datasets);
+        _consolidatePreparations(inventoryState.preparations);
+        _consolidateDatasets(inventoryState.datasets);
     }
 
     /**
@@ -124,7 +137,7 @@ export function InventoryStateService() {
      * @description Remove a preparation
      */
     function removePreparation(preparation) {
-        inventoryState.preparations = _.reject(inventoryState.preparations, {id: preparation.id});
+        inventoryState.preparations = _.reject(inventoryState.preparations, { id: preparation.id });
     }
 
     /**
@@ -147,7 +160,7 @@ export function InventoryStateService() {
      * @description Remove a dataset
      */
     function removeDataset(dataset) {
-        inventoryState.datasets = _.reject(inventoryState.datasets, {id: dataset.id});
+        inventoryState.datasets = _.reject(inventoryState.datasets, { id: dataset.id });
     }
 
     /**
@@ -159,49 +172,30 @@ export function InventoryStateService() {
      * @description Change the dataset name in folder and datasets list
      */
     function setDatasetName(datasetId, name) {
-        if(inventoryState.datasets) {
-            const dataset = _.find(inventoryState.datasets, {id: datasetId});
-            dataset.name = name;
-        }
-
-        if(inventoryState.currentFolderContent && inventoryState.currentFolderContent.datasets) {
-            const dataset = _.find(inventoryState.currentFolderContent.datasets, {id: datasetId});
-            if(dataset) {
-                dataset.name = name;
-            }
-        }
+        const dataset = _.find(inventoryState.datasets, { id: datasetId });
+        dataset.name = name;
     }
 
     /**
      * @ngdoc method
-     * @name setCurrentFolder
+     * @name setFolder
      * @methodOf data-prep.services.state.service:InventoryStateService
-     * @param {object} folder The current folder
-     * @description Update the current folder
+     * @param {string} path The folder path
+     * @param {object} content The folder content
      */
-    function setCurrentFolder(folder) {
-        inventoryState.currentFolder = folder;
-    }
+    function setFolder(path, content) {
+        const pathParts = path
+            .split('/')
+            .filter((name) => name);
+        const metadata = pathParts.length ?
+            { name: pathParts[pathParts.length - 1], path: path } :
+            ROOT_FOLDER;
 
-    /**
-     * @ngdoc method
-     * @name setCurrentFolderContent
-     * @methodOf data-prep.services.state.service:InventoryStateService
-     * @param {object} content The content of the current folder
-     */
-    function setCurrentFolderContent(content) {
-        inventoryState.currentFolderContent = content;
-        consolidateDatasets(inventoryState.currentFolderContent.datasets);
-    }
-
-    /**
-     * @ngdoc method
-     * @name setFoldersStack
-     * @methodOf data-prep.services.state.service:InventoryStateService
-     * @param {object} stack The current folders stack
-     */
-    function setFoldersStack(stack) {
-        inventoryState.foldersStack = stack;
+        inventoryState.folder = { metadata, content };
+        inventoryState.foldersStack = pathParts.reduce((accu, name) => {
+            const path = `${accu[accu.length - 1].path}/${name}`;
+            return accu.concat([{ path, name }]);
+        }, [ROOT_FOLDER]);
     }
 
     /**
@@ -216,23 +210,45 @@ export function InventoryStateService() {
 
     /**
      * @ngdoc method
-     * @name setSort
+     * @name setDatasetsSort
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {object} sort The sort type
      * @description Set rhe sort type
      */
-    function setSort(sort) {
-        inventoryState.sort = sort;
+    function setDatasetsSort(sort) {
+        inventoryState.datasetsSort = sort;
     }
 
     /**
      * @ngdoc method
-     * @name setOrder
+     * @name setDatasetsOrder
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {object} order The order
      * @description Set the order
      */
-    function setOrder(order) {
-        inventoryState.order = order;
+    function setDatasetsOrder(order) {
+        inventoryState.datasetsOrder = order;
+    }
+
+    /**
+     * @ngdoc method
+     * @name setPreparationsSort
+     * @methodOf data-prep.services.state.service:InventoryStateService
+     * @param {object} sort The sort type
+     * @description Set rhe sort type
+     */
+    function setPreparationsSort(sort) {
+        inventoryState.preparationsSort = sort;
+    }
+
+    /**
+     * @ngdoc method
+     * @name setPreparationsOrder
+     * @methodOf data-prep.services.state.service:InventoryStateService
+     * @param {object} order The order
+     * @description Set the order
+     */
+    function setPreparationsOrder(order) {
+        inventoryState.preparationsOrder = order;
     }
 }

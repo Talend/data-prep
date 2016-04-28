@@ -251,7 +251,7 @@ public class FolderAPI extends APIService {
             throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDER_ENTRIES, e, build().put("destination", folder));
         }
 
-        LOG.info("There are {} preparation(s) in {}", preparationsProcessed, folder);
+        LOG.info("There are {} preparation(s) in '{}'", preparationsProcessed, folder);
 
     }
 

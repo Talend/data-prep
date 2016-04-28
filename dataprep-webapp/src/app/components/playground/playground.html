@@ -19,13 +19,13 @@
                        preview="playgroundCtrl.previewInProgress()"
                        lookup-visible="playgroundCtrl.state.playground.lookup.visibility"
                        parameters-visible="playgroundCtrl.state.playground.parameters.visible"
+                       preparation-picker="!playgroundCtrl.recipeService.getRecipe().length"
                        on-parameters="playgroundCtrl.toggleParameters()"
                        on-lookup="playgroundCtrl.toggleLookup()"
                        on-onboarding="playgroundCtrl.startOnBoarding('playground')"
                        on-feedback="playgroundCtrl.openFeedbackForm()"
                        on-close="playgroundCtrl.beforeClose()"
-                       on-preparation-picker="playgroundCtrl.togglePreparationPicker()"
-                       preparation-picker="!playgroundCtrl.recipeService.getRecipe().length"
+                       on-preparation-picker="playgroundCtrl.showPreparationPicker()"
     ></playground-header>
 
     <div class="playground">
@@ -94,6 +94,7 @@
 
 <talend-modal
         fullscreen="false"
+        ng-if="playgroundCtrl.showNameValidation"
         state="playgroundCtrl.showNameValidation"
         disable-enter="true"
         close-button="true">
@@ -102,16 +103,18 @@
 
     <div translate-once="SAVE_CHANGE_DESCRITION_1"></div>
     <div translate-once="SAVE_CHANGE_DESCRITION_2"></div>
-    <br/><br/>
 
     <form id="playground-save-form"
           name="playgroundCtrl.savePreparationForm"
           ng-submit="playgroundCtrl.savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
+        <folder-selection
+                ng-model="playgroundCtrl.destinationFolder"></folder-selection>
+
         <div class="modal-form-row">
             <div class="param-name" translate-once="PREPARATION_NAME"></div>
-            <input type="text"
-                   id="playground-save-name-input"
+            <input id="playground-save-name-input"
+                   type="text"
                    class="param-input"
                    translate-once-placeholder="ENTER_PREPARATION_NAME"
                    ng-model="playgroundCtrl.state.playground.preparationName"
@@ -141,5 +144,8 @@
             ng-if="playgroundCtrl.displayPreparationPicker">
     <div class="modal-title" translate-once="CHOOSE_PREPARATION_TO_APPLY"></div>
 
-    <preparation-picker></preparation-picker>
+    <preparation-picker
+        dataset="playgroundCtrl.state.playground.dataset"
+        fetch-preparations="playgroundCtrl.fetchCompatiblePreparations(datasetId)"
+        on-select="playgroundCtrl.applySteps(preparationId)"></preparation-picker>
 </talend-modal>

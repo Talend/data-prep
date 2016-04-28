@@ -13,7 +13,7 @@
 
 describe('Preparation Picker Component', () => {
 
-    let createElement, scope, element, controller, stateMock;
+    let createElement, scope, element;
 
     const datasets = [
         {id: 'de3cc32a-b624-484e-b8e7-dab9061a009c', name: 'my dataset'},
@@ -23,7 +23,7 @@ describe('Preparation Picker Component', () => {
 
     const candidatePreparations = [
         {
-            prepration: {
+            preparation: {
                 'id': 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
                 'dataSetId': 'de3cc32a-b624-484e-b8e7-dab9061a009c',
                 'author': 'anonymousUser',
@@ -33,12 +33,12 @@ describe('Preparation Picker Component', () => {
                     '4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
                     '8a1c49d1b64270482e8db8232357c6815615b7cf',
                     '599725f0e1331d5f8aae24f22cd1ec768b10348d'
-                ]
+                ],
             },
-            dataset: datasets[0]
+            dataset: datasets[0],
         },
         {
-            prepration: {
+            preparation: {
                 'id': 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
                 'dataSetId': '4d0a2718-bec6-4614-ad6c-8b3b326ff6c9',
                 'author': 'anonymousUser',
@@ -48,24 +48,17 @@ describe('Preparation Picker Component', () => {
                     'ae1aebf4b3fa9b983c895486612c02c766305410',
                     '24dcd68f2117b9f93662cb58cc31bf36d6e2867a',
                     '599725f0e1331d5f8aae24f22cd1ec768b10348d'
-                ]
+                ],
             },
-            dataset: datasets[1]
+            dataset: datasets[1],
         }
     ];
 
     beforeEach(angular.mock.module('htmlTemplates'));
 
-    beforeEach(angular.mock.module('data-prep.preparation-picker', ($provide) => {
-        stateMock = {
-            playground: {
-                dataset: datasets[0]
-            }
-        };
-        $provide.constant('state', stateMock);
-    }));
+    beforeEach(angular.mock.module('data-prep.preparation-picker'));
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
         $translateProvider.translations('en', {
             'NO_COMPATIBLE_PREPARATIONS': 'There are no compatible preparations to dataset: {{name}}'
         });
@@ -73,15 +66,19 @@ describe('Preparation Picker Component', () => {
     }));
 
     beforeEach(inject(($rootScope, $compile) => {
-        scope = $rootScope.$new();
+        scope = $rootScope.$new(true);
+        scope.dataset = datasets[0];
+        scope.fetchPreparations = jasmine.createSpy('fetchPreparations');
+        scope.onSelect = jasmine.createSpy('onSelect');
 
         createElement = () => {
             element = angular.element(
-                `<preparation-picker></preparation-picker>`);
+                `<preparation-picker
+                    dataset="dataset"
+                    fetch-preparations="fetchPreparations(datasetId)"
+                    on-select="onSelect(preparationId)"></preparation-picker>`);
             $compile(element)(scope);
             scope.$digest();
-
-            controller = element.controller('preparationPicker');
         };
     }));
 
@@ -90,33 +87,41 @@ describe('Preparation Picker Component', () => {
         element.remove();
     });
 
-    describe('display preparations list', () => {
+    it('should render preparations list', inject(($q) => {
+        // given
+        scope.fetchPreparations.and.returnValue($q.when(candidatePreparations));
 
-        it('should render preparations list', inject(($q, DatasetService) => {
-            //given
-            spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when(candidatePreparations));
+        // when
+        createElement();
+        scope.$digest();
 
-            //when
-            createElement();
-            scope.$digest();
+        // then
+        expect(element.find('inventory-tile').length).toBe(candidatePreparations.length);
+    }));
 
-            //then
-            expect(element.find('inventory-tile').length).toBe(candidatePreparations.length);
-        }));
-    });
+    it('should show "no compatible preparation" message', inject(($q) => {
+        // given
+        scope.fetchPreparations.and.returnValue($q.when([]));
 
-    describe('No preparations to display', () => {
+        // when
+        createElement();
+        scope.$digest();
 
-        it('should show message', inject(($q, DatasetService) => {
-            //given
-            spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when([]));
+        // then
+        expect(element.find('span').eq(0).text()).toBe('There are no compatible preparations to dataset: ' + datasets[0].name);
+    }));
 
-            //when
-            createElement();
-            scope.$digest();
+    it('should trigger callback on preparation click', inject(($q) => {
+        // given
+        scope.fetchPreparations.and.returnValue($q.when(candidatePreparations));
+        createElement();
 
-            //then
-            expect(element.find('span').eq(0).text()).toBe('There are no compatible preparations to dataset: ' + datasets[0].name);
-        }));
-    });
+        expect(scope.onSelect).not.toHaveBeenCalled();
+
+        // when
+        element.find('inventory-tile > *').eq(0).click();
+
+        // then
+        expect(scope.onSelect).toHaveBeenCalledWith(candidatePreparations[0].preparation.id);
+    }));
 });

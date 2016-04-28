@@ -12,17 +12,9 @@
  ============================================================================*/
 
 class PreparationPickerCtrl {
-    constructor($state, state, DatasetService, PlaygroundService) {
+    constructor() {
         'ngInject';
-
-        this.$state = $state;
-        this.datasetService = DatasetService;
-
-        this.state = state;
-        this.dataset = this.state.playground.dataset;
-
         this.candidatePreparations = [];
-        this.playgroundService = PlaygroundService;
     }
 
     /**
@@ -33,7 +25,7 @@ class PreparationPickerCtrl {
      **/
     $onInit() {
         this.isFetchingPreparations = true;
-        this.datasetService.getCompatiblePreparations(this.dataset.id)
+        this.fetchPreparations({datasetId: this.dataset.id})
             .then((compatiblePreparations) => {
                 this.candidatePreparations = compatiblePreparations;
             })
@@ -41,22 +33,6 @@ class PreparationPickerCtrl {
                 this.isFetchingPreparations = false;
             });
     }
-
-    /**
-     * @ngdoc method
-     * @name selectPreparation
-     * @methodOf data-prep.preparation-picker.controller:PreparationPickerCtrl
-     * @param {Object} selectedPrepa selected preparation
-     * @description selects the preparation to apply
-     **/
-    selectPreparation(selectedPrepa) {
-        this.selectedPreparation = selectedPrepa;
-        this.playgroundService.applyPreparationToDataset(this.selectedPreparation.id, this.dataset.id)
-            .then((updatedPreparationId) => {
-                this.$state.go('playground.preparation', {prepid: updatedPreparationId}, {reload: true});
-            });
-    }
-
 }
 
 export default PreparationPickerCtrl

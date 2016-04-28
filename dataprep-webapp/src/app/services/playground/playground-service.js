@@ -21,7 +21,6 @@
  * @requires data-prep.services.playground.service:DatagridService
  * @requires data-prep.services.playground.service:PreviewService
  * @requires data-prep.services.preparation.service:PreparationService
- * @requires data-prep.services.preparation.service:PreparationListService
  * @requires data-prep.services.recipe.service:RecipeService
  * @requires data-prep.services.transformation.service:TransformationCacheService
  * @requires data-prep.services.statistics.service:StatisticsService
@@ -29,20 +28,19 @@
  * @requires data-prep.services.onboarding.service:OnboardingService
  * @requires data-prep.services.utils.service:MessageService
  * @requires data-prep.services.export.service:ExportService
- * @requires data-prep.services.filter.service:FilterAdapterService
  */
 export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout,
                                           state, StateService,
-                                          DatasetService, DatagridService, PreviewService,
-                                          PreparationService, PreparationListService,
+                                          DatasetService, DatagridService,
+                                          PreparationService, PreviewService,
                                           RecipeService, TransformationCacheService,
-                                          StatisticsService, HistoryService, FilterAdapterService,
+                                          StatisticsService, HistoryService,
                                           OnboardingService, MessageService, ExportService) {
     'ngInject';
 
-    var INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
+    const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
 
-    function wrapInventoryName(invName) {
+    function _wrapInventoryName(invName) {
         return invName + INVENTORY_SUFFIX;
     }
 
@@ -58,9 +56,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         appendStep: appendStep,
         updateStep: updateStep,
         removeStep: removeStep,
-
-        //preparation picker
-        applyPreparationToDataset: applyPreparationToDataset,
+        copySteps: copySteps,
 
         //Preview
         updatePreview: updatePreview,
@@ -97,15 +93,8 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
     function initPlayground(dataset) {
         $rootScope.$emit('talend.loading.start');
         return DatasetService.getContent(dataset.id, true)
+            .then((data) => checkRecords(data))
             .then(function (data) {
-                //TODO : temporary fix because asked to.
-                //TODO : when error status during import and get dataset content is managed by backend,
-                //TODO : remove this controle and the 'data-prep.services.utils'/MessageService dependency
-                if (!data || !data.records) {
-                    MessageService.error('INVALID_DATASET_TITLE', 'INVALID_DATASET');
-                    throw Error('Empty data');
-                }
-
                 StateService.setPreparationName(dataset.name);
                 reset(dataset, data);
                 StateService.hideRecipe();
@@ -218,6 +207,25 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
     //------------------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
+     * @name _getCurrentPreparation
+     * @methodOf data-prep.services.playground.service:PlaygroundService
+     * @description Return the current preparation, wrapped in a promise.
+     * If there is no preparation yet, a new one is created, tagged as draft
+     * @returns {Promise} The process promise
+     */
+    function _getCurrentPreparation() {
+        //create the preparation and taf it draft if it does not exist
+        return state.playground.preparation ?
+            $q.when(state.playground.preparation) :
+            createOrUpdatePreparation(_wrapInventoryName(state.playground.dataset.name))
+                .then((preparation) => {
+                    preparation.draft = true;
+                    return preparation;
+                });
+    }
+
+    /**
+     * @ngdoc method
      * @name createOrUpdatePreparation
      * @methodOf data-prep.services.playground.service:PlaygroundService
      * @param {string} name The preparation name to create or update
@@ -316,17 +324,8 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         /*jshint camelcase: false */
         $rootScope.$emit('talend.loading.start');
 
-        //create the preparation and taf it draft if it does not exist
-        var prepCreation = state.playground.preparation ?
-            $q.when(state.playground.preparation) :
-            createOrUpdatePreparation(wrapInventoryName(state.playground.dataset.name))
-                .then(function (preparation) {
-                    preparation.draft = true;
-                    return preparation;
-                });
-
-        return prepCreation
-        //append step
+        return _getCurrentPreparation()
+            //append step
             .then(function (preparation) {
                 return PreparationService.appendStep(preparation.id, {action: action, parameters: parameters});
             })
@@ -429,53 +428,21 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             });
     }
 
-    //------------------------------------------------------------------------------------------------------
-    //---------------------------------------------PREPARATION PICKER---------------------------------------
-    //------------------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
-     * @name applyPreparationToDataset
+     * @name copySteps
      * @methodOf data-prep.services.playground.service:PlaygroundService
-     * @param {String} selectedPrepId preparation Id to Apply
-     * @param {String} datasetId The dataset id to which the preparation will be applied
-     * @description applies a preparation to a dataset
+     * @param {String} referenceId Preparation Id containing steps to copy
+     * @description Copy preparation steps and apply them on the current preparation
      * @returns {Promise} The process promise
      */
-    function applyPreparationToDataset(selectedPrepId, datasetId) {
-        let cloneId = null;
-        let updatedId = null;
-        let newPreparationName = state.playground.preparation ?
-            state.playground.preparation.name :
-            state.playground.dataset.name;
-
+    function copySteps(referenceId) {
         $rootScope.$emit('talend.loading.start');
-        return PreparationService.clone(selectedPrepId)
-            .then((preparationCloneId) => {
-                cloneId = preparationCloneId;
-                return PreparationService.update(preparationCloneId, {
-                    dataSetId: datasetId,
-                    name: newPreparationName
-                });
-            })
-            .then((updatedPreparationId) => {
-                updatedId = updatedPreparationId;
-                return PreparationListService.refreshPreparations();
-            })
-            .catch((error) => {
-                if (updatedId || cloneId) {
-                    PreparationService.delete(updatedId || cloneId);
-                }
-                return $q.reject(error);
-            })
-            .then(() => {
-                if (state.playground.preparation) {
-                    PreparationService.delete(state.playground.preparation.id);
-                }
-                return updatedId;
-            })
-            .finally(() => {
-                $rootScope.$emit('talend.loading.stop');
-            });
+
+        return _getCurrentPreparation()
+            .then((preparation) => PreparationService.copySteps(preparation.id, referenceId))
+            .then(() => $q.all([updateRecipe(), updatePreparationDatagrid()]))
+            .finally(() => { $rootScope.$emit('talend.loading.stop') });
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -567,5 +534,16 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                     $timeout(OnboardingService.startTour.bind(null, 'recipe'), 300, false);
                 }
             });
+    }
+
+    //TODO : temporary fix because asked to.
+    //TODO : when error status during import and get dataset content is managed by backend,
+    //TODO : remove this controle and the 'data-prep.services.utils'/MessageService dependency
+    function checkRecords(data) {
+        if (!data || !data.records) {
+            MessageService.error('INVALID_DATASET_TITLE', 'INVALID_DATASET');
+            throw Error('Empty data');
+        }
+        return data;
     }
 }

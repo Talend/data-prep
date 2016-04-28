@@ -45,7 +45,7 @@ public class FolderEntriesList extends GenericCommand<InputStream> {
     private HttpRequestBase onExecute(String path,  String contentType) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/entries");
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/entries");
 
             if (StringUtils.isNotEmpty(path)) {
                 uriBuilder.addParameter("path", path);

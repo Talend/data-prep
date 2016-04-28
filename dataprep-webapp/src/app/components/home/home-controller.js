@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc controller
@@ -21,14 +21,12 @@
  * @requires data-prep.services.datasetWorkflowService.service:UploadWorkflowService
  * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
  * @requires data-prep.services.dataset.service:DatasetService
- * @requires data-prep.services.folder.service:FolderService
  * @requires talend.widget.service:TalendConfirmService
  */
 export default function HomeCtrl($window, $document, $state,
                                  state, StateService,
                                  UploadWorkflowService, UpdateWorkflowService,
-                                 DatasetService, FolderService,
-                                 TalendConfirmService) {
+                                 DatasetService, TalendConfirmService) {
     'ngInject';
 
     var vm = this;
@@ -43,9 +41,9 @@ export default function HomeCtrl($window, $document, $state,
      * @type {object[]}
      */
     vm.importTypes = [
-        {id: 'local', name: 'Local file'},
-        {id: 'http', name: 'from HTTP'},
-        {id: 'hdfs', name: 'from HDFS'}
+        { id: 'local', name: 'Local file' },
+        { id: 'http', name: 'from HTTP' },
+        { id: 'hdfs', name: 'from HDFS' }
     ];
 
     /**
@@ -177,10 +175,9 @@ export default function HomeCtrl($window, $document, $state,
         var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
         StateService.startUploadingDataset(dataset);
 
-        DatasetService.import(importParameters, state.inventory.currentFolder)
+        DatasetService.import(importParameters)
             .then(function (event) {
                 DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                FolderService.getContent(state.inventory.currentFolder);
             })
             .catch(function () {
                 dataset.error = true;
@@ -206,10 +203,9 @@ export default function HomeCtrl($window, $document, $state,
         var dataset = DatasetService.createDatasetInfo(null, importParameters.name);
         StateService.startUploadingDataset(dataset);
 
-        DatasetService.import(importParameters, state.inventory.currentFolder)
+        DatasetService.import(importParameters)
             .then(function (event) {
                 DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                FolderService.getContent(state.inventory.currentFolder);
             })
             .catch(function () {
                 dataset.error = true;
@@ -258,7 +254,7 @@ export default function HomeCtrl($window, $document, $state,
         // if the name exists, ask for update or creation
         vm.existingDatasetFromName = DatasetService.getDatasetByName(name);
         if (vm.existingDatasetFromName) {
-            TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], {dataset: vm.datasetName})
+            TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], { dataset: vm.datasetName })
                 .then(vm.updateExistingDataset)
                 .catch(function (cause) {
                     if (cause !== 'dismiss') {
@@ -310,20 +306,15 @@ export default function HomeCtrl($window, $document, $state,
         var dataset = DatasetService.createDatasetInfo(file, name);
         StateService.startUploadingDataset(dataset);
 
-        DatasetService.create(dataset, state.inventory.currentFolder)
-            .progress(function (event) {
+        DatasetService.create(dataset)
+            .progress((event) => {
                 dataset.progress = parseInt(100.0 * event.loaded / event.total);
             })
-            .then(function (event) {
-                DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                FolderService.getContent(state.inventory.currentFolder);
+            .then((event) => DatasetService.getDatasetById(event.data))
+            .then((metadata) => UploadWorkflowService.openDataset(metadata))
+            .catch(() => {
+                dataset.error = true
             })
-            .catch(function () {
-                dataset.error = true;
-            })
-            .finally(function () {
-                StateService.finishUploadingDataset(dataset);
-
-            });
+            .finally(() => StateService.finishUploadingDataset(dataset));
     };
 }

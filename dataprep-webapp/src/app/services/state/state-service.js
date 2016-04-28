@@ -118,12 +118,12 @@ export function StateService(RouteStateService, routeState, //
         removePreparation: InventoryStateService.removePreparation,
         setDatasets: InventoryStateService.setDatasets,
         removeDataset: InventoryStateService.removeDataset,
-        setDatasetsSort: InventoryStateService.setSort,
-        setDatasetsOrder: InventoryStateService.setOrder,
+        setDatasetsSort: InventoryStateService.setDatasetsSort,
+        setDatasetsOrder: InventoryStateService.setDatasetsOrder,
+        setPreparationsSort: InventoryStateService.setPreparationsSort,
+        setPreparationsOrder: InventoryStateService.setPreparationsOrder,
 
-        setCurrentFolder: InventoryStateService.setCurrentFolder,
-        setCurrentFolderContent: InventoryStateService.setCurrentFolderContent,
-        setFoldersStack: InventoryStateService.setFoldersStack,
+        setFolder: InventoryStateService.setFolder,
         setMenuChildren: InventoryStateService.setMenuChildren,
 
         //feedback

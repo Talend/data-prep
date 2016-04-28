@@ -475,7 +475,7 @@ public class DataSetService {
     @Timed
     public String copy(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to clone") String dataSetId,
-            @ApiParam(value = "The name of the cloned dataset.") @RequestParam(defaultValue = "", required = false) String copyName)
+            @ApiParam(value = "The name of the cloned dataset.") @RequestParam(required = false) String copyName)
             throws IOException {
 
         HttpResponseContext.header(CONTENT_TYPE, TEXT_PLAIN_VALUE);
@@ -487,7 +487,7 @@ public class DataSetService {
 
         // use a default name if empty (original name + " Copy" )
         final String newName;
-        if (StringUtils.isEmpty(copyName)) {
+        if (StringUtils.isBlank(copyName)) {
             newName = original.getName() + " Copy";
         }
         else {
@@ -508,7 +508,7 @@ public class DataSetService {
             DataSetMetadata target = metadataBuilder.metadata() //
                     .copy(original) //
                     .id(newId) //
-                    .name(copyName) //
+                    .name(newName) //
                     .author(security.getUserId()) //
                     .location(original.getLocation()) //
                     .created(System.currentTimeMillis()) //

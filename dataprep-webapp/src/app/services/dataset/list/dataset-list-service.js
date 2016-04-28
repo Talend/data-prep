@@ -34,13 +34,12 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
         create: create,
         clone: clone,
-        move: move,
         update: update,
         delete: deleteDataset,
 
         importRemoteDataset: importRemoteDataset,
         processCertification: processCertification,
-        toggleFavorite: toggleFavorite
+        toggleFavorite: toggleFavorite,
     };
 
     /**
@@ -65,8 +64,8 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      */
     function refreshDatasets() {
         cancelPendingGetRequest();
-        var sort = state.inventory.sort.id;
-        var order = state.inventory.order.id;
+        var sort = state.inventory.datasetsSort.id;
+        var order = state.inventory.datasetsOrder.id;
 
         deferredCancel = $q.defer();
         datasetsPromise = DatasetRestService.getDatasets(sort, order, deferredCancel)
@@ -87,12 +86,11 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @name create
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @param {object} dataset The dataset to create
-     * @param {object} folder - the dataset folder
      * @description Create a dataset from backend and refresh its internal list
      * @returns {promise} The pending POST promise
      */
-    function create(dataset, folder) {
-        var promise = DatasetRestService.create(dataset, folder);
+    function create(dataset) {
+        var promise = DatasetRestService.create(dataset);
 
         //The appended promise is not returned because DatasetRestService.create return a $upload object with progress function
         //which is used by the caller
@@ -106,31 +104,11 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @name clone
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @param {object} dataset The dataset to clone
-     * @param {object} folder to clone the dataset
-     * @param {string} cloneName the name for the cloned dataset
      * @description Clone a dataset from backend and refresh its internal list
      * @returns {promise} The pending GET promise
      */
-    function clone(dataset, folder, cloneName) {
-        var promise = DatasetRestService.clone(dataset, folder, cloneName);
-        promise.then(refreshDatasets);
-
-        return promise;
-    }
-
-    /**
-     * @ngdoc method
-     * @name move
-     * @methodOf data-prep.services.dataset.service:DatasetListService
-     * @param {Object} dataset the dataset infos to move
-     * @param {Object} newFolder the folder to move the dataset
-     * @param {String} newName the name for the moved dataset (optional)
-     * @description Move a dataset from backend and refresh its internal list
-     * @returns {promise} The pending PUT promise
-     */
-    function move(dataset, newFolder, newName) {
-        var currentFolder = state.inventory.currentFolder;
-        var promise = DatasetRestService.move(dataset, currentFolder, newFolder, newName);
+    function clone(dataset) {
+        var promise = DatasetRestService.clone(dataset);
         promise.then(refreshDatasets);
 
         return promise;
@@ -141,12 +119,11 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @name importRemoteDataset
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @param {object} parameters The import parameters to import
-     * @param {object} folder - the dataset folder
      * @description Import a remote dataset from backend and refresh its internal list
      * @returns {promise} The pending POST promise
      */
-    function importRemoteDataset(parameters, folder) {
-        var promise = DatasetRestService.import(parameters, folder);
+    function importRemoteDataset(parameters) {
+        var promise = DatasetRestService.import(parameters);
 
         //The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
         //which is used by the caller
@@ -233,7 +210,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      */
     function toggleFavorite(dataset) {
         return DatasetRestService.toggleFavorite(dataset)
-            .then(() => dataset.favorite = !dataset.favorite) //update currentFolderContent.datasets
-            .then(refreshDatasets); //update inventory.datasets
+            .then(() => dataset.favorite = !dataset.favorite)
+            .then(refreshDatasets);
     }
 }

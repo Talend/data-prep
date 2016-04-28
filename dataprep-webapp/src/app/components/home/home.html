@@ -21,9 +21,9 @@
                 <div id="help-import-local">
                     <talend-button-dropdown button-icon="m"
                                             button-text="{{'IMPORT_DATASET' | translate }}"
-                                            button-action="homeCtrl.startDefaultImport()">
+                                            button-action="$ctrl.startDefaultImport()">
                         <ul>
-                            <li ng-repeat="importType in homeCtrl.importTypes" ng-click="homeCtrl.startImport(importType)">
+                            <li ng-repeat="importType in $ctrl.importTypes" ng-click="$ctrl.startImport(importType)">
                                 {{importType.name}}
                             </li>
                         </ul>
@@ -36,11 +36,11 @@
                        class="ng-hide"
                        ng-file-select
                        accept="*.csv"
-                       ng-model="homeCtrl.datasetFile"
-                       ng-file-change="homeCtrl.uploadDatasetFile()"/>
+                       ng-model="$ctrl.datasetFile"
+                       ng-file-change="$ctrl.uploadDatasetFile()"/>
             </li>
 
-            <li ng-if="homeCtrl.$state.includes('nav.index.datasets')">
+            <li ng-if="$ctrl.$state.includes('nav.index.preparations')">
                 <folder></folder>
             </li>
         </ul>
@@ -49,13 +49,13 @@
     <!-- Import dataset from local file -->
     <talend-modal fullscreen="false"
                   close-button="true"
-                  state="homeCtrl.datasetNameModal"
+                  state="$ctrl.datasetNameModal"
                   disable-enter="true">
         <span translate-once="ENTER_DATASET_NAME"></span>
-        <form name="homeCtrl.datasetNameForm"
-              ng-submit="homeCtrl.datasetNameForm.$valid && homeCtrl.uploadDatasetName()">
+        <form name="$ctrl.datasetNameForm"
+              ng-submit="$ctrl.datasetNameForm.$valid && $ctrl.uploadDatasetName()">
             <input type="text"
-                   ng-model="homeCtrl.datasetName"
+                   ng-model="$ctrl.datasetName"
                    required
                    ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
 
@@ -64,7 +64,7 @@
                         type="button"
                         translate-once="CANCEL"></button>
                 <button class="talend-modal-close btn-primary modal-primary-button"
-                        ng-disabled="homeCtrl.datasetNameForm.$invalid"
+                        ng-disabled="$ctrl.datasetNameForm.$invalid"
                         translate-once="OK"></button>
             </div>
         </form>
@@ -74,22 +74,22 @@
     <!-- Import remote HTTP dataset -->
     <talend-modal fullscreen="false"
                   close-button="true"
-                  state="homeCtrl.datasetHttpModal"
+                  state="$ctrl.datasetHttpModal"
                   disable-enter="true">
 
         <div class="modal-title" translate-once="IMPORT_HTTP_DATASET"></div>
         <span translate-once="ENTER_DATASET_NAME"></span>
-        <input type="text" ng-model="homeCtrl.datasetName" required/>
+        <input type="text" ng-model="$ctrl.datasetName" required/>
         <span translate-once="ENTER_DATASET_URL"></span>
-        <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="http://" required/>
+        <input type="text" ng-model="$ctrl.datasetUrl" placeholder="http://" required/>
 
         <div class="modal-buttons">
             <button class="talend-modal-close btn-secondary modal-secondary-button">
                 <span translate-once="CANCEL"></span>
             </button>
             <button class="talend-modal-close btn-primary modal-primary-button"
-                    ng-click="homeCtrl.importHttpDataSet()"
-                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                    ng-click="$ctrl.importHttpDataSet()"
+                    ng-disabled="$ctrl.datasetNameForm.$invalid">
                 <span translate-once="OK"></span>
             </button>
         </div>
@@ -98,23 +98,23 @@
     <!-- Import remote HDFS dataset -->
     <talend-modal fullscreen="false"
                   close-button="true"
-                  state="homeCtrl.datasetHdfsModal"
+                  state="$ctrl.datasetHdfsModal"
                   disable-enter="true">
 
         <div class="modal-title" translate-once="IMPORT_HDFS_DATASET"></div>
         <span translate-once="ENTER_DATASET_NAME"></span>
-        <input type="text" ng-model="homeCtrl.datasetName" required/>
+        <input type="text" ng-model="$ctrl.datasetName" required/>
 
         <span translate-once="ENTER_DATASET_URL"></span>
-        <input type="text" ng-model="homeCtrl.datasetUrl" placeholder="hdfs://host:port/file" required/>
+        <input type="text" ng-model="$ctrl.datasetUrl" placeholder="hdfs://host:port/file" required/>
 
         <div class="modal-buttons">
             <button class="talend-modal-close btn-secondary modal-secondary-button">
                 <span translate-once="CANCEL"></span>
             </button>
             <button class="talend-modal-close btn-primary modal-primary-button"
-                    ng-click="homeCtrl.importHdfsDataSet()"
-                    ng-disabled="homeCtrl.datasetNameForm.$invalid">
+                    ng-click="$ctrl.importHdfsDataSet()"
+                    ng-disabled="$ctrl.datasetNameForm.$invalid">
                 <span translate-once="OK"></span>
             </button>
         </div>
@@ -124,15 +124,15 @@
 <div class="home">
     <div class="side-menu">
         <ul>
-            <li id="nav_home_preparations"><a ui-sref="nav.index.preparations" ui-sref-active="selected" translate-once="ALL_PREPARATIONS"></a></li>
-            <li id="nav_home_datasets"><a ui-sref="nav.index.datasets({folderPath: homeCtrl.state.inventory.currentFolder.path})" ui-sref-active="selected" translate-once="ALL_FOLDERS"></a></li>
+            <li id="nav_home_preparations"><a ui-sref="nav.index.preparations({folderPath: $ctrl.state.inventory.folder.metadata.path})" ui-sref-active="selected" translate-once="ALL_PREPARATIONS"></a></li>
+            <li id="nav_home_datasets"><a ui-sref="nav.index.datasets" ui-sref-active="selected" translate-once="ALL_FOLDERS"></a></li>
         </ul>
     </div>
 
     <div class="home-main">
         <dataset-upload-list id="upload-list-container"
-                             ng-if="homeCtrl.uploadingDatasets.length"
-                             datasets="homeCtrl.uploadingDatasets"></dataset-upload-list>
+                             ng-if="$ctrl.uploadingDatasets.length"
+                             datasets="$ctrl.uploadingDatasets"></dataset-upload-list>
         <ui-view id="inventory-list-header"
                  name="home-content-header"></ui-view>
         <ui-view id="inventory-list-container"

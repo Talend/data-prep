@@ -315,8 +315,8 @@ public class PreparationService {
     @Timed
     public String copy(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to copy") String preparationId,
-            @ApiParam(value = "The name of the copied preparation.") @RequestParam(defaultValue = "", required = false) String name,
-            @ApiParam(value = "The folder path to create the copy.") @RequestParam(defaultValue = "", required = false) String destination)
+            @ApiParam(value = "The name of the copied preparation.") @RequestParam(required = false) String name,
+            @ApiParam(value = "The folder path to create the copy.") @RequestParam(defaultValue = "/") String destination)
             throws IOException {
     //@formatter:on
 
@@ -331,31 +331,15 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
 
-        // if the given folder is blank, let's use the original one (thanks to the preparation ids uniqueness)
-        final String targetFolder;
-        if (StringUtils.isBlank(destination)) {
-            final Iterator<FolderEntry> iterator = folderRepository.findFolderEntries(original.id(), PREPARATION).iterator();
-            if (iterator.hasNext()) {
-                targetFolder = iterator.next().getFolderId();
-            }
-            // this should not happen, but just in case, let's have a safeguard
-            else {
-                targetFolder = "/";
-            }
-        }
-        else {
-            targetFolder = destination;
-        }
-
         // use a default name if empty (original name + " Copy" )
         final String newName;
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             newName = original.getName() + " Copy";
         }
         else {
             newName = name;
         }
-        checkIfPreparationNameIsAvailable(targetFolder, newName);
+        checkIfPreparationNameIsAvailable(destination, newName);
 
 
         // copy the Preparation
@@ -369,9 +353,9 @@ public class PreparationService {
 
         // add the preparation into the folder
         FolderEntry folderEntry = new FolderEntry(PREPARATION, newId);
-        folderRepository.addFolderEntry(folderEntry, targetFolder);
+        folderRepository.addFolderEntry(folderEntry, destination);
 
-        LOGGER.info("preparation {} copied to folder {} with the name {}", preparationId, targetFolder, newName);
+        LOGGER.info("preparation {} copied to folder {} with the name {}", preparationId, destination, newName);
         return newId;
     }
 

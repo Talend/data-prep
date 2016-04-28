@@ -19,7 +19,7 @@
  * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.folder.service:FolderService
  */
-export default function FolderCtrl($state, $stateParams, state, StateService, FolderService) {
+export default function FolderCtrl($state, state, StateService, FolderService) {
     'ngInject';
 
     var vm = this;
@@ -35,6 +35,7 @@ export default function FolderCtrl($state, $stateParams, state, StateService, Fo
      */
     vm.initMenuChildren = function initMenuChildren(folder) {
         StateService.setMenuChildren([]);
-        FolderService.populateMenuChildren(folder);
+        FolderService.children(folder.path)
+            .then((children) => { StateService.setMenuChildren(children) });
     };
 }

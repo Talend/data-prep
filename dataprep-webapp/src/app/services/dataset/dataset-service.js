@@ -26,13 +26,14 @@ export default function DatasetService($q, state, StateService, DatasetListServi
     'ngInject';
 
     return {
+        init: init,
+
         //lifecycle
         import: DatasetListService.importRemoteDataset,
         create: DatasetListService.create,
         update: DatasetListService.update,
         delete: deleteDataset,
         clone: DatasetListService.clone,
-        move: DatasetListService.move,
 
         //dataset actions
         updateColumn: DatasetRestService.updateColumn,
@@ -70,16 +71,56 @@ export default function DatasetService($q, state, StateService, DatasetListServi
     //--------------------------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
+     * @methodOf data-prep.services.dataset.service:DatasetService
+     * @name _refreshDatasetsSort
+     * @description Refresh the actual sort parameter
+     * */
+    function _refreshDatasetsSort() {
+        const savedSort = StorageService.getDatasetsSort();
+        if (savedSort) {
+            StateService.setDatasetsSort(_.find(state.inventory.sortList, {id: savedSort}));
+        }
+    }
+
+    /**
+     * @ngdoc method
+     * @methodOf data-prep.services.dataset.service:DatasetService
+     * @name _refreshDatasetsOrder
+     * @description Refresh the actual order parameter
+     */
+    function _refreshDatasetsOrder() {
+        const savedSortOrder = StorageService.getDatasetsOrder();
+        if (savedSortOrder) {
+            StateService.setDatasetsOrder(_.find(state.inventory.orderList, {id: savedSortOrder}));
+        }
+    }
+
+    /**
+     * @ngdoc method
+     * @methodOf data-prep.services.dataset.service:DatasetService
+     * @name _refreshDatasetsOrder
+     * @description Init datasets sort/order and refresh datasets list
+     */
+    function init() {
+        _refreshDatasetsSort();
+        _refreshDatasetsOrder();
+        return DatasetListService.refreshDatasets();
+    }
+
+    //--------------------------------------------------------------------------------------------------------------
+    //---------------------------------------------------Lifecycle--------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------
+    /**
+     * @ngdoc method
      * @name deleteDataset
      * @methodOf data-prep.services.dataset.service:DatasetService
      * @param {object} dataset The dataset to delete
-     * @description Delete a dataset. It just call {@link data-prep.services.dataset.service:DatasetListService
-         *     DatasetListService} delete function
+     * @description Delete a dataset.
      * @returns {promise} The pending DELETE promise
      */
     function deleteDataset(dataset) {
         return DatasetListService.delete(dataset)
-            .then(function (response) {
+            .then((response) => {
                 StorageService.removeAllAggregations(dataset.id);
                 return response;
             });
@@ -111,12 +152,12 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @name getDatasetByName
      * @methodOf data-prep.services.dataset.service:DatasetService
      * @param {string} name The dataset name
-     * @description Get the dataset that has the wanted name in the current folder. The case is not important here.
+     * @description Get the dataset that has the wanted name. The case is not important here.
      * @returns {object} The dataset that has the same name (case insensitive)
      */
     function getDatasetByName(name) {
-        var lowerCaseName = name.toLowerCase();
-        return _.find(state.inventory.currentFolderContent.datasets, function (dataset) {
+        const lowerCaseName = name.toLowerCase();
+        return _.find(state.inventory.datasets, (dataset) => {
             return dataset.name.toLowerCase() === lowerCaseName;
         });
     }
@@ -130,8 +171,8 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @returns {promise} The dataset
      */
     function getDatasetById(datasetId) {
-        return DatasetListService.getDatasetsPromise().then(function (datasetList) {
-            return _.find(datasetList, function (dataset) {
+        return DatasetListService.getDatasetsPromise().then((datasetList) => {
+            return _.find(datasetList, (dataset) => {
                 return dataset.id === datasetId;
             });
         });
@@ -171,10 +212,10 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @returns {string} - the unique name
      */
     function getUniqueName(name) {
-        var cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
-        var result = cleanedName;
+        const cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
+        let result = cleanedName;
 
-        var index = 1;
+        let index = 1;
         while (getDatasetByName(result)) {
             result = cleanedName + ' (' + index + ')';
             index++;
@@ -248,15 +289,15 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @returns {Promise} The process Promise
      */
     function updateParameters(metadata, parameters) {
-        var originalParameters = _extractOriginalParameters(metadata);
+        const originalParameters = _extractOriginalParameters(metadata);
         _setParameters(metadata, parameters);
 
         return DatasetRestService.updateMetadata(metadata)
-            .then(function () {
+            .then(() => {
                 metadata.defaultPreparation = originalParameters.defaultPreparation;
                 metadata.preparations = originalParameters.preparations;
             })
-            .catch(function (error) {
+            .catch((error) => {
                 _setParameters(metadata, originalParameters);
                 return $q.reject(error);
             });
@@ -291,7 +332,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
                 return _.map(compatiblePreparations, (candidatePrepa) => {
                     return {
                         preparation: candidatePrepa,
-                        dataset: _.find(state.inventory.datasets, {id: candidatePrepa.dataSetId})
+                        dataset: _.find(state.inventory.datasets, {id: candidatePrepa.dataSetId}),
                     };
                 });
             });

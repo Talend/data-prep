@@ -39,10 +39,9 @@ export default function FolderRestService($http, RestURLs) {
      * @returns {Promise} The GET promise
      */
     function children(folderPath) {
-        var url = RestURLs.folderUrl;
-        if (folderPath) {
-            url += '?path=' + encodeURIComponent(folderPath);
-        }
+        const url = folderPath ?
+            `${RestURLs.folderUrl}?path=${encodeURIComponent(folderPath)}` :
+            RestURLs.folderUrl;
         return $http.get(url).then((res) => res.data);
     }
 
@@ -62,14 +61,14 @@ export default function FolderRestService($http, RestURLs) {
      * @ngdoc method
      * @name getContent
      * @methodOf data-prep.services.folder.service:FolderRestService
-     * @description List the children (folders and datasets) of a folder
+     * @description List the preparations and folders contained in the specified folder
      * @param {string} folderPath The folder path to list
      * @param {string} sortType Sort by specified type
      * @param {string} sortOrder Sort in specified order
      * @returns {Promise} The GET promise
      */
     function getContent(folderPath, sortType, sortOrder) {
-        var url = RestURLs.folderUrl + '/datasets?folder=' + encodeURIComponent(folderPath || '/');
+        let url = `${RestURLs.folderUrl}/preparations?folder=${encodeURIComponent(folderPath || '/')}`;
 
         if (sortType) {
             url += '&sort=' + sortType;
@@ -78,7 +77,7 @@ export default function FolderRestService($http, RestURLs) {
             url += '&order=' + sortOrder;
         }
 
-        return $http.get(url);
+        return $http.get(url).then((result) => result.data);
     }
 
     /**
@@ -115,10 +114,9 @@ export default function FolderRestService($http, RestURLs) {
      * @returns {Promise} The GET promise
      */
     function search(query) {
-        var url = RestURLs.folderUrl + '/search';
-        if (query) {
-            url += '?pathName=' + encodeURIComponent(query);
-        }
+        const url = query ?
+            `${RestURLs.folderUrl}/search?pathName=${encodeURIComponent(query)}`:
+            `${RestURLs.folderUrl}/search`;
         return $http.get(url).then((res) => res.data);
     }
 }

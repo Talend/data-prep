@@ -36,15 +36,14 @@ describe('UploadWorkflow Service', () => {
             expect($state.go).toHaveBeenCalledWith('playground.dataset', {datasetid: dataset.id});
         }));
 
-        it('should set back route before redirection when dataset is not a draft', inject(($stateParams, UploadWorkflowService, StateService) => {
+        it('should set back route before redirection when dataset is not a draft', inject((UploadWorkflowService, StateService) => {
             //given
             const dataset = {name: 'Customers (50 lines)', id: 'aA2bc348e933bc2'};
-            $stateParams.folderPath = 'test/';
             //when
             UploadWorkflowService.openDataset(dataset);
 
             //then
-            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets', {folderPath: 'test/'});
+            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets');
         }));
 
         it('should open sheet preview when dataset is a draft', inject(($rootScope, UploadWorkflowService, DatasetSheetPreviewService) => {

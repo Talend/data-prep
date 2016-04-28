@@ -1,46 +1,50 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc controller
  * @name data-prep.preparation-list.controller:PreparationListCtrl
  * @description Preparation list controller.
- * On creation, it fetch the user's preparations and load the requested one if a `prepid` is present as query param
  * @requires data-prep.services.state.constant:state
  * @requires data-prep.services.state.service:StateService
+ * @requires data-prep.services.folder.service:FolderService
  * @requires data-prep.services.preparation.service:PreparationService
  * @requires data-prep.services.utils.service:MessageService
  * @requires talend.widget.service:TalendConfirmService
  */
-export default function PreparationListCtrl($rootScope, $state, state, StateService,
-                                            PreparationService, MessageService, TalendConfirmService) {
-    'ngInject';
+export default class PreparationListCtrl {
+    constructor($state, $stateParams, state, StateService,
+                FolderService, PreparationService, MessageService, TalendConfirmService) {
+        'ngInject';
 
-    var vm = this;
-    vm.preparationService = PreparationService;
-    vm.state = state;
+        this.$state = $state;
+        this.$stateParams = $stateParams;
+        this.state = state;
+        this.StateService = StateService;
+        this.FolderService = FolderService;
+        this.PreparationService = PreparationService;
+        this.MessageService = MessageService;
+        this.TalendConfirmService = TalendConfirmService;
 
-    /**
-     * @ngdoc method
-     * @name load
-     * @methodOf data-prep.preparation.controller:PreparationListCtrl
-     * @param {object} preparation - the preparation to load
-     * @description Load a preparation in the playground
-     */
-    vm.load = function load(preparation) {
-        StateService.setPreviousRoute('nav.index.preparations');
-        $state.go('playground.preparation', {prepid: preparation.id});
-    };
+        this.remove = this.remove.bind(this);
+        this.rename = this.rename.bind(this);
+        this.openCopyMoveModal = this.openCopyMoveModal.bind(this);
+        this.copy = this.copy.bind(this);
+        this.remove = this.remove.bind(this);
+        this.goToFolder = this.goToFolder.bind(this);
+        this.renameFolder = this.renameFolder.bind(this);
+        this.removeFolder = this.removeFolder.bind(this);
+    }
 
     /**
      * @ngdoc method
@@ -49,21 +53,23 @@ export default function PreparationListCtrl($rootScope, $state, state, StateServ
      * @param {object} preparation - the preparation to delete
      * @description Delete a preparation
      */
-    vm.remove = function remove(preparation) {
-        TalendConfirmService.confirm({disableEnter: true}, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {
+    remove(preparation) {
+        this.TalendConfirmService.confirm({ disableEnter: true }, ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'], {
                 type: 'preparation',
-                name: preparation.name
+                name: preparation.name,
             })
-            .then(function () {
-                return PreparationService.delete(preparation);
+            .then(() => this.PreparationService.delete(preparation))
+            .then(() => {
+                this.FolderService.refreshContent(this.state.inventory.folder.metadata.path)
             })
-            .then(function () {
-                MessageService.success('REMOVE_SUCCESS_TITLE', 'REMOVE_SUCCESS', {
-                    type: 'preparation',
-                    name: preparation.name
-                });
+            .then(() => {
+                this.MessageService.success(
+                    'REMOVE_SUCCESS_TITLE',
+                    'REMOVE_SUCCESS',
+                    { type: 'preparation', name: preparation.name }
+                );
             });
-    };
+    }
 
     /**
      * @ngdoc method
@@ -73,35 +79,130 @@ export default function PreparationListCtrl($rootScope, $state, state, StateServ
      * @param {string} newName The new name for the given preparation
      * @description Trigger backend call to update preparation name
      */
-    vm.rename = function rename(preparation, newName) {
+    rename(preparation, newName) {
         var cleanName = newName ? newName.trim() : '';
         if (cleanName) {
-            $rootScope.$emit('talend.loading.start');
-            return PreparationService.setName(preparation.id, newName)
-                .then(function () {
-                    MessageService.success('PREPARATION_RENAME_SUCCESS_TITLE', 'PREPARATION_RENAME_SUCCESS');
+            return this.PreparationService.setName(preparation.id, newName)
+                .then(() => {
+                    this.FolderService.refreshContent(this.state.inventory.folder.metadata.path)
                 })
-                .finally(function () {
-                    $rootScope.$emit('talend.loading.stop');
+                .then(() => {
+                    this.MessageService.success(
+                        'PREPARATION_RENAME_SUCCESS_TITLE',
+                        'PREPARATION_RENAME_SUCCESS'
+                    );
                 });
         }
-    };
+    }
 
     /**
      * @ngdoc method
-     * @name clone
+     * @name openCopyMoveModal
      * @methodOf data-prep.preparation.controller:PreparationListCtrl
-     * @param {object} preparation - the preparation to clone
-     * @description trigger backend call to clone preparation
+     * @param {object} preparation The preparation to copy/move
+     * @description Trigger backend call to clone preparation
      */
-    vm.clone = function clone(preparation) {
-        $rootScope.$emit('talend.loading.start');
-        return PreparationService.clone(preparation.id)
-            .then(function () {
-                MessageService.success('PREPARATION_COPYING_SUCCESS_TITLE', 'PREPARATION_COPYING_SUCCESS');
+    openCopyMoveModal(preparation) {
+        this.preparationToCopyMove = preparation;
+        this.copyMoveModal = true;
+    }
+
+    /**
+     * @ngdoc method
+     * @name copy
+     * @methodOf data-prep.preparation.controller:PreparationListCtrl
+     * @param {object} preparation The preparation to clone
+     * @param {object} destination The destination folder
+     * @param {string} name The new preparation name
+     * @description Trigger backend call to clone preparation
+     */
+    copy(preparation, destination, name) {
+        return this.PreparationService.copy(preparation.id, destination.path, name)
+            .then(() => {
+                this.MessageService.success(
+                    'PREPARATION_COPYING_SUCCESS_TITLE',
+                    'PREPARATION_COPYING_SUCCESS'
+                );
             })
-            .finally(function () {
-                $rootScope.$emit('talend.loading.stop');
+            .then(() => {
+                this.FolderService.refreshContent(this.state.inventory.folder.metadata.path)
+            })
+            .then(() => {
+                this.copyMoveModal = false
             });
-    };
+    }
+
+    /**
+     * @ngdoc method
+     * @name move
+     * @methodOf data-prep.preparation.controller:PreparationListCtrl
+     * @param {object} preparation The preparation to clone
+     * @param {object} destination The destination folder
+     * @param {string} name The new preparation name
+     * @description Trigger backend call to clone preparation
+     */
+    move(preparation, destination, name) {
+        const currentPath = this.state.inventory.folder.metadata.path;
+        return this.PreparationService.move( preparation.id, currentPath, destination.path, name)
+            .then(() => {
+                this.MessageService.success(
+                    'PREPARATION_MOVING_SUCCESS_TITLE',
+                    'PREPARATION_MOVING_SUCCESS'
+                );
+            })
+            .then(() => {
+                this.FolderService.refreshContent(currentPath)
+            })
+            .then(() => {
+                this.copyMoveModal = false
+            });
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------FOLDER----------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    /**
+     * @ngdoc method
+     * @name goToFolder
+     * @methodOf data-prep.preparation.controller:PreparationListCtrl
+     * @description Redirect to folder
+     * @param {object} folder The target folder
+     */
+    goToFolder(folder) {
+        this.$state.go('nav.index.preparations', { folderPath: folder.path });
+    }
+
+    /**
+     * @ngdoc method
+     * @name renameFolder
+     * @methodOf data-prep.preparation.controller:PreparationListCtrl
+     * @description Rename a folder
+     * @param {object} folder the folder to rename
+     * @param {string} newName the new last part of the path
+     */
+    renameFolder(folder, newName) {
+        const path = folder.path;
+        const lastSlashIndex = path.lastIndexOf('/');
+        const parentFolder = path.substring(0, lastSlashIndex);
+        const newPath = `${parentFolder}/${newName}`;
+
+        this.FolderService.rename(path, newPath)
+            .then(() => {
+                this.FolderService.refreshContent(this.state.inventory.folder.metadata.path)
+            });
+    }
+
+    /**
+     * @ngdoc method
+     * @name removeFolder
+     * @methodOf data-prep.preparation.controller:PreparationListCtrl
+     * @description Remove a folder
+     * @param {object} folder The folder to remove
+     */
+    removeFolder(folder) {
+        this.FolderService.remove(folder.path)
+            .then(() => {
+                this.FolderService.refreshContent(this.state.inventory.folder.metadata.path)
+            });
+    }
 }

@@ -29,26 +29,23 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+/**
+ * List sub folders for the given path.
+ */
 @Component
 @Scope("prototype")
 public class FoldersList extends GenericCommand<InputStream> {
 
     public FoldersList(String path) {
-        super(GenericCommand.DATASET_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(path));
-        on(HttpStatus.OK).then(pipeStream());
-    }
-
-    public FoldersList() {
-        super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(null));
         on(HttpStatus.OK).then(pipeStream());
     }
 
     private HttpRequestBase onExecute(String path) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders" );
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders" );
 
             if (StringUtils.isNotEmpty(path)) {
                uriBuilder.addParameter("path", path);

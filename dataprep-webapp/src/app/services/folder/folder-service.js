@@ -20,126 +20,69 @@
  * @requires data-prep.services.folder.service:FolderRestService
  * @requires data-prep.services.utils.service:StorageService
  */
-export default function FolderService($state, $translate, state, StateService, FolderRestService, StorageService) {
+export default function FolderService(state, StateService, FolderRestService, StorageService) {
     'ngInject';
 
-    var ROOT_FOLDER = {
-        path: '',
-        name: '/'
-    };
-    $translate('HOME_FOLDER').then(function (homeName) {
-        ROOT_FOLDER.name = homeName;
-    });
-
     return {
-        // folder operations
+        init: init,
         children: FolderRestService.children,
         create: FolderRestService.create,
         rename: FolderRestService.rename,
         remove: FolderRestService.remove,
         search: FolderRestService.search,
-        getContent: getContent,
-
-        // shared folder ui mngt
-        populateMenuChildren: populateMenuChildren,
-
-        refreshDatasetsSort: refreshDatasetsSort,
-        refreshDatasetsOrder: refreshDatasetsOrder
+        refreshContent: refreshContent,
     };
 
     /**
      * @ngdoc method
-     * @name buildStackFromId
+     * @name init
      * @methodOf data-prep.services.folder.service:FolderService
-     * @description Build the folder stack from the the given id
-     * @param {string} folderId The folder id
-     * @returns {Array} the folder stack
+     * @param {string} path The folder to init
+     * @description Init the sort parameters and folder content
      */
-    function buildStackFromId(folderId) {
-        var foldersStack = [];
-        foldersStack.push(ROOT_FOLDER);
-
-        if (folderId) {
-            folderId = _.trim(folderId, '/'); //remove leading & ending '/' coming from the enterprise version
-            var paths = folderId.split('/');
-            for (var i = 1; i <= paths.length + 1; i++) {
-                if (paths[i - 1]) {
-                    if (i > 1) {
-                        foldersStack.push({
-                            path: foldersStack[i - 1].path + '/' + paths[i - 1],
-                            name: paths[i - 1]
-                        });
-                    } else {
-                        foldersStack.push({path: paths[i - 1], name: paths[i - 1]});
-                    }
-                }
-            }
-        }
-
-        return foldersStack;
+    function init(path) {
+        _refreshPreparationsSort();
+        _refreshPreparationsOrder();
+        return refreshContent(path);
     }
 
     /**
      * @ngdoc method
-     * @name populateMenuChildren
-     * @methodOf data-prep.folder.controller:FolderCtrl
-     * @description Init the state with the folder's children
-     * @param {object} folder The folder definition
-     */
-    function populateMenuChildren(folder) {
-        return FolderRestService.getContent(folder && folder.path)
-            .then(function (content) {
-                StateService.setMenuChildren(content.data.folders);
-            });
-    }
-
-    /**
-     * @ngdoc method
-     * @name getContent
-     * @methodOf data-prep.folder.controller:FolderCtrl
-     * @param {object} folder The folder to list
+     * @name refreshContent
+     * @methodOf data-prep.services.folder.service:FolderService
+     * @param {string} path The folder to init
      * @returns {Promise} The GET promise
      */
-    function getContent(folder) {
-        var sort = state.inventory.sort.id;
-        var order = state.inventory.order.id;
-        var promise = FolderRestService.getContent(folder && folder.path, sort, order);
-
-        promise.then(function (result) {
-            var content = result.data;
-            var foldersStack = buildStackFromId(folder ? folder.path : '');
-            var currentFolder = folder ? folder : ROOT_FOLDER;
-
-            StateService.setCurrentFolder(currentFolder);
-            StateService.setCurrentFolderContent(content);
-            StateService.setFoldersStack(foldersStack);
-        });
-        return promise;
+    function refreshContent(path) {
+        const sort = state.inventory.preparationsSort.id;
+        const order = state.inventory.preparationsOrder.id;
+        return FolderRestService.getContent(path, sort, order)
+            .then((content) => StateService.setFolder(path, content));
     }
 
     /**
      * @ngdoc method
-     * @methodOf data-prep.folder.controller:FolderCtrl
-     * @name refreshDatasetsSort
-     * @description refresh the actual sort parameter
+     * @methodOf data-prep.services.folder.service:FolderService
+     * @name _refreshPreparationsSort
+     * @description Refresh the actual sort parameter
      * */
-    function refreshDatasetsSort() {
-        var savedSort = StorageService.getDatasetsSort();
+    function _refreshPreparationsSort() {
+        const savedSort = StorageService.getPreparationsSort();
         if (savedSort) {
-            StateService.setDatasetsSort(_.find(state.inventory.sortList, {id: savedSort}));
+            StateService.setPreparationsSort(_.find(state.inventory.sortList, {id: savedSort}));
         }
     }
 
     /**
      * @ngdoc method
-     * @methodOf data-prep.folder.controller:FolderCtrl
-     * @name refreshDatasetsOrder
-     * @description refresh the actual order parameter
+     * @methodOf data-prep.services.folder.service:FolderService
+     * @name _refreshPreparationsOrder
+     * @description Refresh the actual order parameter
      */
-    function refreshDatasetsOrder() {
-        var savedSortOrder = StorageService.getDatasetsOrder();
+    function _refreshPreparationsOrder() {
+        const savedSortOrder = StorageService.getPreparationsOrder();
         if (savedSortOrder) {
-            StateService.setDatasetsOrder(_.find(state.inventory.orderList, {id: savedSortOrder}));
+            StateService.setPreparationsOrder(_.find(state.inventory.orderList, {id: savedSortOrder}));
         }
     }
 }

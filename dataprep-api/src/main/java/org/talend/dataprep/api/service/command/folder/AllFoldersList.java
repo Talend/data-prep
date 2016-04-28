@@ -45,7 +45,7 @@ public class AllFoldersList
     private HttpRequestBase onExecute() {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/all" );
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/all" );
 
             return new HttpGet(uriBuilder.build());
 

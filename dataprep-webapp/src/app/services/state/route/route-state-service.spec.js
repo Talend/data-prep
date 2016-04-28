@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('Route state service', () => {
     'use strict';
@@ -20,13 +20,13 @@ describe('Route state service', () => {
         it('should init previous route', inject((routeState) => {
             //then
             expect(routeState.previous).toBe('nav.index.preparations');
-            expect(routeState.previousOptions).toEqual(null);
+            expect(routeState.previousOptions).toEqual({ folderPath: '' });
         }));
 
         it('should set previous route', inject((routeState, RouteStateService) => {
             //given
             const previous = 'previous.route';
-            const previousOptions = {opt: 'my options'};
+            const previousOptions = { opt: 'my options' };
 
             expect(routeState.previous).not.toBe(previous);
             expect(routeState.previousOptions).not.toBe(previousOptions);
@@ -42,7 +42,7 @@ describe('Route state service', () => {
         it('should NOT change previous route if it is falsy', inject((routeState, RouteStateService) => {
             //given
             const previous = '';
-            const previousOptions = {opt: 'my options'};
+            const previousOptions = { opt: 'my options' };
 
             const originalPrevious = 'toto';
             const originalPreviousOptions = {};
@@ -61,7 +61,7 @@ describe('Route state service', () => {
         it('should reset previous route', inject((routeState, RouteStateService) => {
             //given
             const previous = 'previous.route';
-            const previousOptions = {opt: 'my options'};
+            const previousOptions = { opt: 'my options' };
 
             routeState.previous = previous;
             routeState.previousOptions = previousOptions;
@@ -71,7 +71,7 @@ describe('Route state service', () => {
 
             //then
             expect(routeState.previous).toBe('nav.index.preparations');
-            expect(routeState.previousOptions).toEqual(null);
+            expect(routeState.previousOptions).toEqual({ folderPath: '' });
         }));
     });
 
@@ -79,13 +79,13 @@ describe('Route state service', () => {
         it('should init next route', inject((routeState) => {
             //then
             expect(routeState.next).toBe('nav.index.preparations');
-            expect(routeState.nextOptions).toEqual(null);
+            expect(routeState.nextOptions).toEqual({ folderPath: '' });
         }));
 
         it('should set next route', inject((routeState, RouteStateService) => {
             //given
             const next = 'previous.route';
-            const nextOptions = {opt: 'my options'};
+            const nextOptions = { opt: 'my options' };
 
             expect(routeState.next).not.toBe(next);
             expect(routeState.nextOptions).not.toBe(nextOptions);
@@ -104,7 +104,7 @@ describe('Route state service', () => {
             const nextOptions = {};
 
             const originalNext = 'previous.route';
-            const originalNextOptions = {opt: 'my options'};
+            const originalNextOptions = { opt: 'my options' };
 
             routeState.next = originalNext;
             routeState.nextOptions = originalNextOptions;
@@ -120,7 +120,7 @@ describe('Route state service', () => {
         it('should reset next route', inject((routeState, RouteStateService) => {
             //given
             const next = 'previous.route';
-            const nextOptions = {opt: 'my options'};
+            const nextOptions = { opt: 'my options' };
 
             routeState.next = next;
             routeState.nextOptions = nextOptions;
@@ -130,7 +130,7 @@ describe('Route state service', () => {
 
             //then
             expect(routeState.next).toBe('nav.index.preparations');
-            expect(routeState.nextOptions).toEqual(null);
+            expect(routeState.nextOptions).toEqual({ folderPath: '' });
         }));
     });
 
@@ -138,10 +138,10 @@ describe('Route state service', () => {
         it('should reset all routes', inject((routeState, RouteStateService) => {
             //given
             const previous = 'previous.route';
-            const previousOptions = {opt: 'my options'};
+            const previousOptions = { opt: 'my options' };
 
             const next = 'previous.route';
-            const nextOptions = {opt: 'my options'};
+            const nextOptions = { opt: 'my options' };
 
             routeState.previous = previous;
             routeState.previousOptions = previousOptions;
@@ -154,9 +154,9 @@ describe('Route state service', () => {
 
             //then
             expect(routeState.previous).toBe('nav.index.preparations');
-            expect(routeState.previousOptions).toEqual(null);
+            expect(routeState.previousOptions).toEqual({ folderPath: '' });
             expect(routeState.next).toBe('nav.index.preparations');
-            expect(routeState.nextOptions).toEqual(null);
+            expect(routeState.nextOptions).toEqual({ folderPath: '' });
         }));
     });
 });

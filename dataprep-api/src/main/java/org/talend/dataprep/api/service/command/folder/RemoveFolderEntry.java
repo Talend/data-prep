@@ -44,7 +44,7 @@ public class RemoveFolderEntry
     private HttpRequestBase onExecute( String path, String contentId, String contentType ) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders/entries/" //
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/entries/" //
                                                        + contentType //
                                                        + '/' + contentId);
 

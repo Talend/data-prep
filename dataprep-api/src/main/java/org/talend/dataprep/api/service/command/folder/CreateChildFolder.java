@@ -44,7 +44,7 @@ public class CreateChildFolder extends GenericCommand<InputStream> {
     private HttpRequestBase onExecute( String path) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/folders");
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders");
             uriBuilder.addParameter("path", path);
             return new HttpPut(uriBuilder.build());
         } catch (URISyntaxException e) {

@@ -15,14 +15,39 @@
 
 <div id="preparation-inventory-list" class="inventory-list">
     <inventory-item
+            id="folder_{{$index}}"
+            ng-repeat="folder in $ctrl.state.inventory.folder.content.folders track by folder.path"
+            item="folder"
+            type="folder"
+            details="FOLDER_DETAILS"
+            open="$ctrl.goToFolder"
+            remove="$ctrl.removeFolder"
+            rename="$ctrl.renameFolder">
+    </inventory-item>
+
+    <inventory-item
             id="preparation_{{$index}}"
-            ng-repeat="preparation in preparationListCtrl.state.inventory.preparations track by $index"
+            ng-repeat="preparation in $ctrl.state.inventory.folder.content.preparations track by $index"
             item="preparation"
             type="preparation"
             details="PREPARATION_DETAILS"
-            open="preparationListCtrl.load"
-            remove="preparationListCtrl.remove"
-            rename="preparationListCtrl.rename"
-            copy="preparationListCtrl.clone">
+            open="$ctrl.PreparationService.open"
+            remove="$ctrl.remove"
+            rename="$ctrl.rename"
+            copy="$ctrl.openCopyMoveModal">
     </inventory-item>
 </div>
+
+<talend-modal fullscreen="false"
+              close-button="false"
+              ng-if="$ctrl.copyMoveModal"
+              state="$ctrl.copyMoveModal"
+              disable-close-on-background-click="true"
+              disable-enter="true">
+
+    <inventory-copy-move
+            initial-folder="$ctrl.state.inventory.folder.metadata"
+            item="$ctrl.preparationToCopyMove"
+            on-copy="$ctrl.copy(item, destination, name)"
+            on-move="$ctrl.move(item, destination, name)"></inventory-copy-move>
+</talend-modal>

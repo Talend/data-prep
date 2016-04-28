@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('DatasetList component', () => {
 
@@ -26,7 +26,7 @@ describe('DatasetList component', () => {
             'created': '1437020219741',
             'type': 'text/csv',
             'certificationStep': 'NONE',
-            'preparations': [{name:'US States prepa'}, {name:'US States prepa 2'}]
+            'preparations': [{ name: 'US States prepa' }, { name: 'US States prepa 2' }],
         },
         {
             'id': 'e93b9c92-e054-4f6a-a38f-ca52f22ead2b',
@@ -35,7 +35,7 @@ describe('DatasetList component', () => {
             'created': '143702021974',
             'type': 'application/vnd.ms-excel',
             'certificationStep': 'PENDING',
-            'preparations': [{name:'Customers prepa'}]
+            'preparations': [{ name: 'Customers prepa' }],
         },
         {
             'id': 'e93b9c92-e054-4f6a-a38f-ca52f22ead3a',
@@ -43,36 +43,25 @@ describe('DatasetList component', () => {
             'author': 'anonymousUser',
             'created': '14370202197',
             'certificationStep': 'CERTIFIED',
-            'preparations': []
+            'preparations': [],
         }
     ];
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
         $translateProvider.translations('en', {
             'DATASET_DETAILS': 'owned by {{author}}, created {{created | TDPMoment}}, contains {{records}} lines'
         });
         $translateProvider.preferredLanguage('en');
     }));
     beforeEach(angular.mock.module('htmlTemplates'));
-    beforeEach(angular.mock.module('data-prep.dataset-list', function ($provide) {
+    beforeEach(angular.mock.module('data-prep.dataset-list', ($provide) => {
         stateMock = {
-            inventory: {
-                datasets: [],
-                currentFolderContent: {
-                    datasets: datasets
-                },
-                currentFolder: {
-                    path:''
-                }
-            }
+            inventory: { datasets: datasets }
         };
         $provide.constant('state', stateMock);
     }));
 
-    //beforeEach(angular.mock.module('data-prep.services.onboarding'));
-    //beforeEach(angular.mock.module('data-prep.datagrid'));
-
-    beforeEach(inject(($rootScope, $compile, $q, FolderService) => {
+    beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
 
         createElement = () => {
@@ -80,8 +69,6 @@ describe('DatasetList component', () => {
             $compile(element)(scope);
             scope.$digest();
         };
-
-        spyOn(FolderService, 'getContent').and.returnValue($q.when());
     }));
 
     afterEach(() => {
@@ -89,9 +76,9 @@ describe('DatasetList component', () => {
         element.remove();
     });
 
-    it('should render dataset list', inject(function ($filter) {
+    it('should render dataset list', inject(($filter) => {
         //given
-        var momentize = $filter('TDPMoment');
+        const momentize = $filter('TDPMoment');
 
         //when
         createElement();
@@ -99,9 +86,9 @@ describe('DatasetList component', () => {
         //then
         expect(element.find('.inventory-item').length).toBe(3);
 
-        var icon = element.find('.inventory-icon').eq(0);
-        var iconSrc = icon.find('img')[0].src;
-        var certificationIcon = icon.find('.pin');
+        let icon = element.find('.inventory-icon').eq(0);
+        let iconSrc = icon.find('img')[0].src;
+        let certificationIcon = icon.find('.pin');
         expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
         expect(certificationIcon.length).toBe(0);
         expect(element.find('.inventory-title').eq(0).text().indexOf('US States')).toBe(0);
@@ -124,7 +111,7 @@ describe('DatasetList component', () => {
         expect(element.find('.inventory-description').eq(2).text()).toBe('owned by anonymousUser, created ' + momentize('14370202197') + ', contains  lines');
     }));
 
-    it('should create related preparations list', inject(function(){
+    it('should create related preparations list', inject(() => {
         expect(element.find('.inventory-item').eq(0).find('.inventory-actions-related-item-menu > li').length).toBe(3);
         expect(element.find('.inventory-item').eq(1).find('.inventory-actions-related-item-menu > li').length).toBe(2);
         expect(element.find('.inventory-item').eq(2).find('.inventory-actions-related-item-menu > li').length).toBe(0);

@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('Playground directive', () => {
     'use strict';
@@ -22,96 +22,46 @@ describe('Playground directive', () => {
         'name': 'US States',
         'author': 'anonymousUser',
         'created': '02-03-2015 14:52',
-        'records': '3'
+        'records': '3',
     };
 
-    let $httpBackend;
-    const datasetActions = [
-        {
-            'category': 'data_blending',
-            'name': 'lookup',
-            'parameters': [
-                {
-                    'name': 'column_id',
-                    'type': 'string',
-                    'default': ''
-                },
-                {
-                    'name': 'filter',
-                    'type': 'filter',
-                    'default': ''
-                },
-                {
-                    'name': 'lookup_ds_name',
-                    'type': 'string',
-                    'default': 'lookup_2'
-                },
-                {
-                    'name': 'lookup_ds_id',
-                    'type': 'string',
-                    'default': '9e739b88-5ec9-4b58-84b5-2127a7e2eac7'
-                },
-                {
-                    'name': 'lookup_ds_url',
-                    'type': 'string',
-                    'default': 'http://172.17.0.211:8080/datasets/9ee2eac7/content?metadata=true'
-                },
-                {
-                    'name': 'lookup_join_on',
-                    'type': 'string',
-                    'default': ''
-                },
-                {
-                    'name': 'lookup_join_on_name',
-                    'type': 'string',
-                    'default': ''
-                },
-                {
-                    'name': 'lookup_selected_cols',
-                    'type': 'list',
-                    'default': ''
-                }
-            ]
-        }
-    ];
-
     const sortList = [
-        {id: 'name', name: 'NAME_SORT', property: 'name'},
-        {id: 'date', name: 'DATE_SORT', property: 'created'}
+        { id: 'name', name: 'NAME_SORT', property: 'name' },
+        { id: 'date', name: 'DATE_SORT', property: 'created' },
     ];
 
     const orderList = [
-        {id: 'asc', name: 'ASC_ORDER'},
-        {id: 'desc', name: 'DESC_ORDER'}
+        { id: 'asc', name: 'ASC_ORDER' },
+        { id: 'desc', name: 'DESC_ORDER' },
     ];
 
     beforeEach(angular.mock.module('data-prep.playground', ($provide) => {
         stateMock = {
             playground: {
                 visible: true,
-                filter: {gridFilters: []},
+                filter: { gridFilters: [] },
                 lookup: {
                     visibility: false,
                     datasets: [],
                     sortList: sortList,
-                    orderList: orderList
+                    orderList: orderList,
                 },
                 grid: {
-                    selectedColumn: {'id': '0001'},
-                    selectedLine: {'0001': '1'}
-                }
+                    selectedColumn: { 'id': '0001' },
+                    selectedLine: { '0001': '1' },
+                },
             },
             inventory: {
                 datasets: [],
                 sortList: sortList,
-                orderList: orderList
+                orderList: orderList,
             }
         };
         $provide.constant('state', stateMock);
     }));
     beforeEach(angular.mock.module('htmlTemplates'));
 
-    beforeEach(inject(($rootScope, $compile, $q, $timeout, PreparationListService, PlaygroundService, ExportService) => {
+    beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
 
         createElement = () => {
@@ -122,16 +72,6 @@ describe('Playground directive', () => {
             ctrl = element.controller('playground');
             spyOn(ctrl, 'beforeClose').and.returnValue();
         };
-        spyOn(PlaygroundService, 'createOrUpdatePreparation').and.returnValue($q.when(true));
-        spyOn(ExportService, 'refreshTypes').and.returnValue($q.when([]));
-        spyOn(ExportService, 'getParameters').and.returnValue({});
-    }));
-
-    beforeEach(inject(($injector, RestURLs) => {
-        $httpBackend = $injector.get('$httpBackend');
-        $httpBackend
-            .expectGET(RestURLs.datasetActionsUrl+ '/' + metadata.id +'/actions')
-            .respond(200, datasetActions);
     }));
 
     afterEach(() => {
@@ -153,7 +93,7 @@ describe('Playground directive', () => {
         });
     });
 
-    describe('recipe header',  () => {
+    describe('recipe header', () => {
         beforeEach(inject((StateService) => {
             stateMock.playground.nameEditionMode = true;
             spyOn(StateService, 'setNameEditionMode').and.callFake((value) => {
@@ -175,7 +115,7 @@ describe('Playground directive', () => {
 
         it('should render editable text on preparation title', () => {
             //given
-            stateMock.playground.preparation = {id: '3e41168465e15d4'};
+            stateMock.playground.preparation = { id: '3e41168465e15d4' };
             stateMock.playground.dataset = metadata;
 
             //when
@@ -189,7 +129,7 @@ describe('Playground directive', () => {
 
         it('should toggle recipe on click on the On/Off switch', inject((RecipeBulletService, RecipeService) => {
             //given
-            stateMock.playground.recipe = {visible : true};
+            stateMock.playground.recipe = { visible: true };
             const step = {
                 inactive: false,
                 transformation: {

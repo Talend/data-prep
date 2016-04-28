@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
-            <artifactId>org.talend.dataquality.statistics</artifactId>
+            <artifactId>dataquality-statistics</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
@@ -158,15 +158,19 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
-            <artifactId>org.talend.dataquality.common</artifactId>
+            <artifactId>dataquality-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
-            <artifactId>org.talend.dataquality.record.linkage</artifactId>
+            <artifactId>dataquality-record-linkage</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
-            <artifactId>org.talend.dataquality.semantic</artifactId>
+            <artifactId>dataquality-sampling</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.talend.dataquality</groupId>
+            <artifactId>dataquality-semantic</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.daikon</groupId>

@@ -12,7 +12,7 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
-import static org.talend.dataprep.transformation.api.action.metadata.math.Square.SQRT_NAME;
+import static org.talend.dataprep.transformation.api.action.metadata.math.Exponential.EXPONENTIAL_NAME;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
@@ -21,23 +21,23 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**
- * Create a new column with square root value
+ * Create a new column with Exponential
  */
-@Component(ActionMetadata.ACTION_BEAN_PREFIX + SQRT_NAME)
-public class Square extends AbstractMathNoParameterAction {
+@Component(ActionMetadata.ACTION_BEAN_PREFIX + EXPONENTIAL_NAME)
+public class Exponential extends AbstractMathNoParameterAction {
 
-    protected static final String SQRT_NAME = "square_numbers";
+    protected static final String EXPONENTIAL_NAME = "exponential_numbers";
 
     @Override
     protected String calculateResult(String columnValue) {
         double value = NumberUtils.toDouble(columnValue);
 
-        return value < 0 ? ERROR_RESULT : Double.toString(FastMath.sqrt(value));
+        return Double.toString(FastMath.exp(value));
     }
 
     @Override
     protected String getColumnNameSuffix() {
-        return "square";
+        return "exponential";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Square extends AbstractMathNoParameterAction {
 
     @Override
     public String getName() {
-        return SQRT_NAME;
+        return EXPONENTIAL_NAME;
     }
 
 }

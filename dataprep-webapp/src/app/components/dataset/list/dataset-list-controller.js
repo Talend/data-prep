@@ -123,7 +123,15 @@ export default class DatasetListCtrl {
      */
     rename(dataset, name) {
         const cleanName = name ? name.trim().toLowerCase() : '';
-        if(!cleanName || this.renamingList.indexOf(dataset) > -1) {
+        if(!cleanName) {
+            return;
+        }
+
+        if(this.renamingList.indexOf(dataset) > -1) {
+            this.MessageService.warning(
+                'DATASET_CURRENTLY_RENAMING_TITLE',
+                'DATASET_CURRENTLY_RENAMING'
+            );
             return;
         }
 
@@ -136,15 +144,14 @@ export default class DatasetListCtrl {
         }
 
         this.renamingList.push(dataset);
-        const oldName = dataset.name;
-        this.StateService.setDatasetName(dataset.id, name);
 
-        return this.DatasetService.update(dataset)
-            .then(() => this.MessageService.success(
-                'DATASET_RENAME_SUCCESS_TITLE',
-                'DATASET_RENAME_SUCCESS'
-            ))
-            .catch(() => { this.StateService.setDatasetName(dataset.id, oldName) })
+        return this.DatasetService.rename(dataset, name)
+            .then(() => {
+                this.MessageService.success(
+                    'DATASET_RENAME_SUCCESS_TITLE',
+                    'DATASET_RENAME_SUCCESS'
+                )
+            })
             .finally(() => {
                 const index = this.renamingList.indexOf(dataset);
                 this.renamingList.splice(index, 1);

@@ -202,14 +202,14 @@ describe('Dataset Service', () => {
             //given
             const metadata = {id: '7c98ae64154bc', sheetName: 'my old sheet'};
             const sheetName = 'my sheet';
-            spyOn(DatasetRestService, 'setMetadata').and.returnValue($q.when({}));
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when({}));
 
             //when
             DatasetService.setDatasetSheet(metadata, sheetName);
 
             //then
             expect(metadata.sheetName).toBe(sheetName);
-            expect(DatasetRestService.setMetadata).toHaveBeenCalledWith(metadata);
+            expect(DatasetRestService.updateMetadata).toHaveBeenCalledWith(metadata);
         }));
     });
 
@@ -242,14 +242,14 @@ describe('Dataset Service', () => {
                 separator: ';',
                 encoding: 'UTF-16'
             };
-            spyOn(DatasetRestService, 'setMetadata').and.returnValue($q.when());
-            expect(DatasetRestService.setMetadata).not.toHaveBeenCalled();
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
+            expect(DatasetRestService.updateMetadata).not.toHaveBeenCalled();
 
             //when
             DatasetService.updateParameters(metadata, parameters);
 
             //then
-            expect(DatasetRestService.setMetadata).toHaveBeenCalled();
+            expect(DatasetRestService.updateMetadata).toHaveBeenCalled();
             expect(metadata.defaultPreparation).toBeFalsy();
             expect(metadata.preparations).toBeFalsy();
         }));
@@ -267,7 +267,7 @@ describe('Dataset Service', () => {
                 separator: ';',
                 encoding: 'UTF-16'
             };
-            spyOn(DatasetRestService, 'setMetadata').and.returnValue($q.when());
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
 
             //when
             DatasetService.updateParameters(metadata, parameters);
@@ -293,7 +293,7 @@ describe('Dataset Service', () => {
                 separator: ';',
                 encoding: 'UTF-16'
             };
-            spyOn(DatasetRestService, 'setMetadata').and.returnValue($q.reject());
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.reject());
 
             //when
             DatasetService.updateParameters(metadata, parameters);
@@ -308,6 +308,55 @@ describe('Dataset Service', () => {
             expect(metadata.encoding).toBe('UTF-8');
             expect(metadata.defaultPreparation).toEqual({id: '876a32bc545a846', parameters: {SEPARATOR: '|'}});
             expect(metadata.preparations).toEqual([{id: '876a32bc545a846'}, {id: '799dc6b2562a186'}]);
+        }));
+    });
+
+    describe('rename', () => {
+        it('should set new name via app state', inject(($q, DatasetService, DatasetRestService, StateService) => {
+            //given
+            const metadata = { id: '7a82d3002fc543e54', name: 'oldName' };
+            const name = 'newName';
+
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
+            spyOn(StateService, 'setDatasetName').and.returnValue(); // this update the metadata name too
+
+            //when
+            DatasetService.rename(metadata, name);
+
+            //then
+            expect(StateService.setDatasetName).toHaveBeenCalledWith(metadata.id, name);
+        }));
+
+        it('should call update metadata service', inject(($q, DatasetService, DatasetRestService, StateService) => {
+            //given
+            const metadata = { id: '7a82d3002fc543e54', name: 'oldName' };
+            const name = 'newName';
+
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
+            spyOn(StateService, 'setDatasetName').and.returnValue(); // this update the metadata name too
+
+            //when
+            DatasetService.rename(metadata, name);
+
+            //then
+            expect(DatasetRestService.updateMetadata).toHaveBeenCalledWith(metadata);
+        }));
+
+        it('should set back old name via app state on rename failure', inject(($rootScope, $q, DatasetService, DatasetRestService, StateService) => {
+            //given
+            const metadata = { id: '7a82d3002fc543e54', name: 'oldName' };
+            const name = 'newName';
+
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.reject());
+            spyOn(StateService, 'setDatasetName').and.returnValue(); // this update the metadata name too
+
+            //when
+            DatasetService.rename(metadata, name);
+            expect(StateService.setDatasetName).not.toHaveBeenCalledWith(metadata.id, 'oldName');
+            $rootScope.$digest();
+
+            //then
+            expect(StateService.setDatasetName).toHaveBeenCalledWith(metadata.id, 'oldName');
         }));
     });
 

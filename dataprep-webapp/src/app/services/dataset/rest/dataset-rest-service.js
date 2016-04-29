@@ -24,7 +24,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
     return {
         import: importRemoteDataset,
         create: create,
-        updateMetadata: updateMetadata,
+        update: update,
         delete: deleteDataset,
         clone: cloneDataset,
         move: moveDataset,
@@ -32,7 +32,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
         updateColumn: updateColumn,
 
         getDatasets: getDatasets,
-        setMetadata: setMetadata,
+        updateMetadata: updateMetadata,
         getMetadata: getMetadata,
         getContent: getContent,
         getSheetPreview: getSheetPreview,
@@ -89,18 +89,18 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 
     /**
      * @ngdoc method
-     * @name updateMetadata
+     * @name update
      * @methodOf data-prep.services.dataset.service:DatasetRestService
-     * @description Update the dataset metadata
-     * @param {dataset} dataset - the dataset infos to update
+     * @description Update the dataset
+     * @param {dataset} dataset The dataset infos to update
      * @returns {Promise} the $upload promise
      */
-    function updateMetadata(dataset) {
+    function update(dataset) {
         return $upload.http({
-            url: RestURLs.datasetUrl + '/' + dataset.id + '/metadata',
+            url: RestURLs.datasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name),
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            data: dataset
+            headers: {'Content-Type': 'text/plain'},
+            data: dataset.file
         });
     }
 
@@ -198,14 +198,14 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 
     /**
      * @ngdoc method
-     * @name setMetadata
+     * @name updateMetadata
      * @methodOf data-prep.services.dataset.service:DatasetRestService
-     * @description sets the dataset metadata
+     * @description Update the dataset metadata
      * @param {dataset} metadata The dataset infos to update
-     * @returns {Promise} The POST promise
+     * @returns {Promise} The PUT promise
      */
-    function setMetadata(metadata) {
-        return $http.post(RestURLs.datasetUrl + '/' + metadata.id, metadata);
+    function updateMetadata(metadata) {
+        return $http.put(RestURLs.datasetUrl + '/' + metadata.id + '/metadata', metadata);
     }
 
     /**

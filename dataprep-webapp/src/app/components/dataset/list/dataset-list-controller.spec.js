@@ -197,90 +197,111 @@ describe('Dataset list controller', () => {
     });
 
     describe('rename dataset', () => {
-        it('should NOT rename with falsy name', inject(($q, DatasetService) => {
-            //given
-            const ctrl = createController();
-            const name = 'dataset name';
-            const dataset = {name: name};
+        describe('invalid name', () => {
+            it('should NOT rename with falsy name', inject(($q, DatasetService) => {
+                //given
+                const ctrl = createController();
+                const name = 'dataset name';
+                const dataset = {name: name};
 
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
+                spyOn(DatasetService, 'update').and.returnValue($q.when());
 
-            //when
-            ctrl.rename(dataset, '');
-            scope.$digest();
+                //when
+                ctrl.rename(dataset, '');
+                scope.$digest();
 
-            //then
-            expect(dataset.name).toBe(name);
-            expect(DatasetService.update).not.toHaveBeenCalled();
-        }));
+                //then
+                expect(dataset.name).toBe(name);
+                expect(DatasetService.update).not.toHaveBeenCalled();
+            }));
 
-        it('should NOT rename with blank name', inject(($q, DatasetService) => {
-            //given
-            const ctrl = createController();
-            const name = 'dataset name';
-            const dataset = {name: name};
+            it('should NOT rename with blank name', inject(($q, DatasetService) => {
+                //given
+                const ctrl = createController();
+                const name = 'dataset name';
+                const dataset = {name: name};
 
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
+                spyOn(DatasetService, 'update').and.returnValue($q.when());
 
-            //when
-            ctrl.rename(dataset, ' ');
-            scope.$digest();
+                //when
+                ctrl.rename(dataset, ' ');
+                scope.$digest();
 
-            //then
-            expect(dataset.name).toBe(name);
-            expect(DatasetService.update).not.toHaveBeenCalled();
-        }));
+                //then
+                expect(dataset.name).toBe(name);
+                expect(DatasetService.update).not.toHaveBeenCalled();
+            }));
 
-        it('should NOT rename when dataset is currently being renamed', inject(($q, DatasetService) => {
-            //given
-            const ctrl = createController();
-            const dataset = {id: '461465'};
-            const name = 'new dataset name';
-            ctrl.renamingList.push(dataset);
+            it('should NOT rename with an already existing name', inject(($q, DatasetService, MessageService) => {
+                //given
+                const ctrl = createController();
+                const name = 'foo';
+                const dataset = {name: name};
 
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
+                spyOn(DatasetService, 'getDatasetByName').and.returnValue({id: 'ab45f893d8e923', name: 'Us states'});
+                spyOn(DatasetService, 'update').and.returnValue($q.when());
 
-            //when
-            ctrl.rename(dataset, name);
+                //when
+                ctrl.rename(dataset, 'Us states');
+                scope.$digest();
 
-            //then
-            expect(DatasetService.update).not.toHaveBeenCalled();
-        }));
+                //then
+                expect(dataset.name).toBe(name);
+                expect(DatasetService.update).not.toHaveBeenCalled();
+                expect(MessageService.error).toHaveBeenCalledWith('DATASET_NAME_ALREADY_USED_TITLE', 'DATASET_NAME_ALREADY_USED');
+            }));
+        });
 
-        it('should NOT rename with an already existing name', inject(($q, DatasetService, MessageService) => {
-            //given
-            const ctrl = createController();
-            const name = 'foo';
-            const dataset = {name: name};
+        describe('with current pending rename', () => {
+            it('should NOT rename', inject(($q, DatasetService) => {
+                //given
+                const ctrl = createController();
+                const dataset = {id: '461465'};
+                const name = 'new dataset name';
+                ctrl.renamingList.push(dataset);
 
-            spyOn(DatasetService, 'getDatasetByName').and.returnValue({id: 'ab45f893d8e923', name: 'Us states'});
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
+                spyOn(DatasetService, 'update').and.returnValue($q.when());
 
-            //when
-            ctrl.rename(dataset, 'Us states');
-            scope.$digest();
+                //when
+                ctrl.rename(dataset, name);
 
-            //then
-            expect(dataset.name).toBe(name);
-            expect(DatasetService.update).not.toHaveBeenCalled();
-            expect(MessageService.error).toHaveBeenCalledWith('DATASET_NAME_ALREADY_USED_TITLE', 'DATASET_NAME_ALREADY_USED');
-        }));
+                //then
+                expect(DatasetService.update).not.toHaveBeenCalled();
+            }));
 
-        it('should rename dataset', inject(($q, DatasetService, StateService) => {
+            it('should show a warning', inject(($q, MessageService) => {
+                //given
+                const ctrl = createController();
+                const dataset = {id: '461465'};
+                const name = 'new dataset name';
+                ctrl.renamingList.push(dataset);
+
+                spyOn(MessageService, 'warning').and.returnValue();
+
+                //when
+                ctrl.rename(dataset, name);
+
+                //then
+                expect(MessageService.warning).toHaveBeenCalledWith(
+                    'DATASET_CURRENTLY_RENAMING_TITLE',
+                    'DATASET_CURRENTLY_RENAMING'
+                );
+            }));
+        });
+
+        it('should rename dataset', inject(($q, DatasetService) => {
             //given
             const ctrl = createController();
             const dataset = {name: 'my old name'};
             const name = 'new dataset name';
 
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
-            expect(StateService.setDatasetName).not.toHaveBeenCalled();
+            spyOn(DatasetService, 'rename').and.returnValue($q.when());
 
             //when
             ctrl.rename(dataset, name);
 
             //then
-            expect(StateService.setDatasetName).toHaveBeenCalledWith(dataset.id, name);
-            expect(DatasetService.update).toHaveBeenCalledWith(dataset);
+            expect(DatasetService.rename).toHaveBeenCalledWith(dataset, name);
         }));
 
         it('should show confirmation message', inject(($q, DatasetService, MessageService) => {
@@ -289,7 +310,7 @@ describe('Dataset list controller', () => {
             const dataset = {name: 'my old name'};
             const name = 'new dataset name';
 
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
+            spyOn(DatasetService, 'rename').and.returnValue($q.when());
 
             //when
             ctrl.rename(dataset, name);
@@ -299,31 +320,13 @@ describe('Dataset list controller', () => {
             expect(MessageService.success).toHaveBeenCalledWith('DATASET_RENAME_SUCCESS_TITLE', 'DATASET_RENAME_SUCCESS');
         }));
 
-        it('should set back the old name when the real rename is rejected', inject(($q, StateService, DatasetService) => {
-            //given
-            const ctrl = createController();
-            const oldName = 'my old name';
-            const newName = 'new dataset name';
-            const dataset = {name: oldName};
-
-            spyOn(DatasetService, 'update').and.returnValue($q.reject());
-
-            //when
-            ctrl.rename(dataset, newName);
-            expect(StateService.setDatasetName).not.toHaveBeenCalledWith(dataset.id, oldName);
-            scope.$digest();
-
-            //then
-            expect(StateService.setDatasetName).toHaveBeenCalledWith(dataset.id, oldName);
-        }));
-
         it('should manage "renaming" list', inject(($q, DatasetService) => {
             //given
             const ctrl = createController();
             const dataset = {name: 'my old name'};
             const name = 'new dataset name';
 
-            spyOn(DatasetService, 'update').and.returnValue($q.when());
+            spyOn(DatasetService, 'rename').and.returnValue($q.when());
             expect(ctrl.renamingList.indexOf(dataset) > -1).toBe(false);
 
             //when

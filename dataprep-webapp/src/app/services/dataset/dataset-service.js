@@ -51,6 +51,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
         getSheetPreview: getSheetPreview,
 
         //dataset update
+        rename: rename,
         setDatasetSheet: setDatasetSheet,
         updateParameters: updateParameters,
         refreshSupportedEncodings: refreshSupportedEncodings,
@@ -209,7 +210,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      */
     function setDatasetSheet(metadata, sheetName) {
         metadata.sheetName = sheetName;
-        return DatasetRestService.setMetadata(metadata);
+        return DatasetRestService.updateMetadata(metadata);
     }
 
     //--------------------------------------------------------------------------------------------------------------
@@ -250,7 +251,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
         var originalParameters = extractOriginalParameters(metadata);
         setParameters(metadata, parameters);
 
-        return DatasetRestService.setMetadata(metadata)
+        return DatasetRestService.updateMetadata(metadata)
             .then(function () {
                 metadata.defaultPreparation = originalParameters.defaultPreparation;
                 metadata.preparations = originalParameters.preparations;
@@ -293,6 +294,20 @@ export default function DatasetService($q, state, StateService, DatasetListServi
                         dataset: _.find(state.inventory.datasets, {id: candidatePrepa.dataSetId})
                     };
                 });
+            });
+    }
+
+    //--------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------Rename---------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------
+    function rename(metadata, name) {
+        const oldName = metadata.name;
+        StateService.setDatasetName(metadata.id, name);
+
+        return DatasetRestService.updateMetadata(metadata)
+            .catch((error) => {
+                StateService.setDatasetName(metadata.id, oldName);
+                return $q.reject(error);
             });
     }
 }

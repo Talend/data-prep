@@ -218,16 +218,16 @@ describe('Dataset Rest Service', function () {
     });
 
     describe('update', function() {
-        it('should call dataset updateMetadata rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call dataset update rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
             //given
             var dataset = {name: 'my dataset', file: {path: '/path/to/file'}, error: false, id: 'e85afAa78556d5425bc2'};
 
             $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2/metadata')
+                .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?name=my%20dataset')
                 .respond(200);
 
             //when
-            DatasetRestService.updateMetadata(dataset);
+            DatasetRestService.update(dataset);
             $httpBackend.flush();
             $rootScope.$digest();
 
@@ -235,21 +235,21 @@ describe('Dataset Rest Service', function () {
             //expect PUT not to throw any exception
         }));
 
-        it('should call dataset setmetadata rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
+        it('should call dataset metadata update rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {
             //given
             var metadata = {id: 'e85afAa78556d5425bc2', name: 'my dataset'};
 
             $httpBackend
-                .expectPOST(RestURLs.datasetUrl + '/e85afAa78556d5425bc2', metadata)
+                .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2/metadata', metadata)
                 .respond(200);
 
             //when
-            DatasetRestService.setMetadata(metadata);
+            DatasetRestService.updateMetadata(metadata);
             $httpBackend.flush();
             $rootScope.$digest();
 
             //then
-            //expect POST not to throw any exception
+            //expect PUT not to throw any exception
         }));
 
         it('should call update column service', inject(function ($rootScope, DatasetRestService, RestURLs) {

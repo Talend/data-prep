@@ -90,7 +90,7 @@ describe('Dataset List Service', () => {
 
         spyOn(DatasetRestService, 'create').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'import').and.returnValue(restPromise);
-        spyOn(DatasetRestService, 'updateMetadata').and.returnValue(restPromise);
+        spyOn(DatasetRestService, 'update').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'clone').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'move').and.returnValue(restPromise);
         spyOn(DatasetRestService, 'delete').and.returnValue($q.when(true));
@@ -382,7 +382,7 @@ describe('Dataset List Service', () => {
             $rootScope.$apply();
 
             //then
-            expect(DatasetRestService.updateMetadata).toHaveBeenCalledWith(dataset);
+            expect(DatasetRestService.update).toHaveBeenCalledWith(dataset);
         }));
 
         it('should refresh datasets list', inject(($rootScope, DatasetListService, DatasetRestService) => {

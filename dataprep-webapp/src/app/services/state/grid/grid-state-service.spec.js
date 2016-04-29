@@ -204,6 +204,7 @@ describe('Grid state service', () => {
         it('should update column selection metadata with the first column metadata when there is no selected column yet', inject((gridState, GridStateService) => {
             //given
             gridState.selectedColumn = null;
+            gridState.lineIndex = null;
 
             //when
             GridStateService.setData(data);

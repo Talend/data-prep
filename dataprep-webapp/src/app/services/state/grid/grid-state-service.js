@@ -143,10 +143,34 @@ export function GridStateService() {
         gridState.dataView.endUpdate();
 
         updateLinesCount(data);
-        updateSelectedLine(data);
-        updateSelectedColumn(data);
+        updateSelectedColumnLine(data);
         updateFilteredRecords();
         updateNumericColumns(data);
+    }
+
+    /**
+     * @ngdoc method
+     * @name updateSelectedColumnLine
+     * @methodOf data-prep.services.state.service:GridStateService
+     * @param {object} data The data
+     * @description Determine the selected column or line
+     */
+    function updateSelectedColumnLine(data) {
+        //in preview we do not change anything
+        if (data.preview) {
+            return;
+        }
+
+        if(typeof(gridState.lineIndex) === 'undefined' || gridState.lineIndex === null) {
+            updateSelectedColumn(data);
+        } else {
+            if (gridState.selectedColumn){
+                updateSelectedColumn(data);
+                updateSelectedLine(data);
+            } else {
+                updateSelectedLine(data);
+            }
+        }
     }
 
     /**
@@ -157,11 +181,6 @@ export function GridStateService() {
      * @description Determine the selected column from the new data
      */
     function updateSelectedColumn(data) {
-        //in preview we do not change anything
-        if (data.preview) {
-            return;
-        }
-
         //if there is already a selected column, we update the column metadata to reference one of the new columns
         if (gridState.selectedColumn && data.metadata.columns) {
             gridState.selectedColumn = _.find(data.metadata.columns, {id: gridState.selectedColumn.id}) || data.metadata.columns[0];
@@ -181,11 +200,6 @@ export function GridStateService() {
      * @description Set the selected line with the new record object ref
      */
     function updateSelectedLine(data) {
-        //in preview we do not change anything
-        if (data.preview) {
-            return;
-        }
-
         //if there is already a selected line, we update it if the line still exists
         if (gridState.lineIndex !== null && data.records) {
             gridState.selectedLine = gridState.dataView.getItem(gridState.lineIndex);

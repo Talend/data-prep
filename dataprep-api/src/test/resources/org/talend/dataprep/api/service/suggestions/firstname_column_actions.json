@@ -2012,24 +2012,24 @@
         "configuration": {
           "values": [
             {
-              "value": "[a-z]",
-              "label": "[a-z] (a word in lowercase)"
+              "value": "[a-z]+",
+              "label": "[a-z]+ (a word in lowercase)"
             },
             {
-              "value": "[A-Z]",
-              "label": "[A-Z] (a word in uppercase)"
+              "value": "[A-Z]+",
+              "label": "[A-Z]+ (a word in uppercase)"
             },
             {
-              "value": "[0-9]",
-              "label": "[0-9] (number)"
+              "value": "[0-9]+",
+              "label": "[0-9]+ (number)"
             },
             {
-              "value": "[a-zA-Z]",
-              "label": "[a-zA-Z] (any word, case insensitive)"
+              "value": "[a-zA-Z]+",
+              "label": "[a-zA-Z]+ (any word, case insensitive)"
             },
             {
-              "value": "[a-zA-Z0-9]",
-              "label": "[a-zA-Z0-9] (any literal with alpha-num characters)"
+              "value": "[a-zA-Z0-9]+",
+              "label": "[a-zA-Z0-9]+ (any literal with alpha-num characters)"
             },
             {
               "value": "custom",
@@ -2051,7 +2051,7 @@
         },
         "description": "Pattern to use",
         "label": "Pattern",
-        "default": "[a-zA-Z]"
+        "default": "[a-zA-Z]+"
       }
     ],
     "dynamic": false,
@@ -2489,7 +2489,7 @@
         "configuration": {
           "values": [
             {
-              "value": ""
+              "value": "+"
             },
             {
               "value": "x"
@@ -2551,7 +2551,7 @@
       }
     ],
     "dynamic": false,
-    "description": "Perform an operation/calculation on this column with another one or with a fixed value: Add/sum (), multiply (x), subtract (-), or divide(/)",
+    "description": "Perform an operation/calculation on this column with another one or with a fixed value: Add/sum (+), multiply (x), subtract (-), or divide(/)",
     "label": "Add, Multiply, Subtract or Divide",
     "actionScope": []
   },

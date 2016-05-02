@@ -31,22 +31,22 @@ import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBa
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 
 /**
- * Unit test for the Square action.
+ * Unit test for the SquareRoot action.
  *
- * @see Square
+ * @see SquareRoot
  */
-public class SquareTest extends AbstractMetadataBaseTest {
+public class SquareRootTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
-    private Square action;
+    private SquareRoot action;
 
     /** The action parameters. */
     private Map<String, String> parameters;
 
     @Before
     public void setUp() throws Exception {
-        final InputStream parametersSource = SquareTest.class.getResourceAsStream("squareAction.json");
+        final InputStream parametersSource = SquareRootTest.class.getResourceAsStream("squareAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
@@ -90,7 +90,7 @@ public class SquareTest extends AbstractMetadataBaseTest {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_square").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_square_root").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

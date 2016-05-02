@@ -12,7 +12,7 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.math;
 
-import static org.talend.dataprep.transformation.api.action.metadata.math.Square.SQRT_NAME;
+import static org.talend.dataprep.transformation.api.action.metadata.math.SquareRoot.SQRT_NAME;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
@@ -24,9 +24,9 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetad
  * Create a new column with square root value
  */
 @Component(ActionMetadata.ACTION_BEAN_PREFIX + SQRT_NAME)
-public class Square extends AbstractMathNoParameterAction {
+public class SquareRoot extends AbstractMathNoParameterAction {
 
-    protected static final String SQRT_NAME = "square_numbers";
+    protected static final String SQRT_NAME = "square_root_numbers";
 
     @Override
     protected String calculateResult(String columnValue) {
@@ -37,7 +37,7 @@ public class Square extends AbstractMathNoParameterAction {
 
     @Override
     protected String getColumnNameSuffix() {
-        return "square";
+        return "square_root";
     }
 
     @Override

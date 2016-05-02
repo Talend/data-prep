@@ -3924,7 +3924,7 @@
     "dynamic": false
   },
   {
-    "name": "square_numbers",
+    "name": "square_root_numbers",
     "parameters": [
       {
         "name": "column_id",
@@ -3964,8 +3964,8 @@
       }
     ],
     "category": "math",
-    "description": "Square of a column number",
-    "label": "Square",
+    "description": "Square root of a column number",
+    "label": "Square root",
     "docUrl": "",
     "actionScope": [],
     "dynamic": false

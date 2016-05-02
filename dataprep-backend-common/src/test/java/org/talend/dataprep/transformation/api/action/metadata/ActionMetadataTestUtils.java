@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -80,7 +81,7 @@ public class ActionMetadataTestUtils {
      */
     public static DataSetRow getRow(String... values) {
         DecimalFormat format = new DecimalFormat("0000");
-        Map<String, String> rowValues = new HashMap<>();
+        Map<String, String> rowValues = new LinkedHashMap<>();
         int i = 0;
         for (String value : values) {
             rowValues.put(format.format(i), value);

@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "negate_numbers",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "column"
+      }
+    }
+  ]
+}

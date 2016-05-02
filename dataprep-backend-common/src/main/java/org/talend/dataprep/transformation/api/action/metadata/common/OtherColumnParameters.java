@@ -34,4 +34,6 @@ public interface OtherColumnParameters {
     String OTHER_COLUMN_MODE = "other_column_mode"; //$NON-NLS-1$
     String CONSTANT_MODE = "constant_mode"; //$NON-NLS-1$
 
+    String CONSTANT_VALUE = "constant_value";
+
 }

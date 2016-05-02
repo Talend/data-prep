@@ -18,8 +18,6 @@ package org.talend.dataprep.transformation.api.action.metadata.common;
  */
 public interface CompareAction {
 
-    String CONSTANT_VALUE = "constant_value"; //$NON-NLS-1$
-
     String COMPARE_MODE = "compare_mode"; //$NON-NLS-1$
 
     String EQ = "eq";

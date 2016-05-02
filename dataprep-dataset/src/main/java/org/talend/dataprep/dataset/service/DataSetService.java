@@ -401,8 +401,7 @@ public class DataSetService {
         try {
             DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
             if (dataSetMetadata == null) {
-                HttpResponseContext.status(HttpStatus.NO_CONTENT);
-                return DataSet.empty(); // No data set, returns empty content.
+                throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, ExceptionContext.build().put("id", dataSetId));
             }
             if (dataSetMetadata.getLifecycle().importing()) {
                 // Data set is being imported, this is an error since user should not have an id to a being-created

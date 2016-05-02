@@ -489,6 +489,12 @@ public class DataSetServiceTest extends DataSetBaseTest {
     }
 
     @Test
+    public void getNotExistingDataset() throws Exception {
+        int statusCode = when().get("/datasets/1234/content").getStatusCode();
+        assertTrue("statusCode is:" + statusCode, statusCode == HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     public void testFavorite() {
         // given
         final String datasetId = UUID.randomUUID().toString();

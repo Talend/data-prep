@@ -43,11 +43,6 @@ public class Cos extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        return false;
-    }
-
-    @Override
     public String getName() {
         return COS_NAME;
     }

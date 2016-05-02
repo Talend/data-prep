@@ -41,11 +41,6 @@ public class SquareRoot extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        return false;
-    }
-
-    @Override
     public String getName() {
         return SQRT_NAME;
     }

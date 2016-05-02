@@ -32,14 +32,9 @@ public abstract class AbstractMathAction extends ActionMetadata implements Colum
     protected static final String ERROR_RESULT = StringUtils.EMPTY;
 
     @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> parameters = super.getParameters();
-        return parameters;
-    }
-
-    @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return true;
+        Type columnType = Type.get(column.getType());
+        return Type.NUMERIC.isAssignableFrom(columnType);
     }
 
     @Override

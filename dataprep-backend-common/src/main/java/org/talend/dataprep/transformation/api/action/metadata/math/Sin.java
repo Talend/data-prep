@@ -43,11 +43,6 @@ public class Sin extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        return false;
-    }
-
-    @Override
     public String getName() {
         return SIN_NAME;
     }

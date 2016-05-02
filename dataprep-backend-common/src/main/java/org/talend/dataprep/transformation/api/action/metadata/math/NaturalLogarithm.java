@@ -43,11 +43,6 @@ public class NaturalLogarithm extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        return false;
-    }
-
-    @Override
     public String getName() {
         return NATURAL_LOGARITHM_NAME;
     }

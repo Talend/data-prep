@@ -43,11 +43,6 @@ public class Tan extends AbstractMathNoParameterAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        return false;
-    }
-
-    @Override
     public String getName() {
         return TAN_NAME;
     }

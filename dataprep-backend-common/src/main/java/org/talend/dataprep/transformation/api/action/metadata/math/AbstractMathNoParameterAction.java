@@ -25,12 +25,6 @@ import org.talend.dataprep.transformation.api.action.parameters.Parameter;
  */
 public abstract class AbstractMathNoParameterAction extends AbstractMathAction implements ColumnAction {
 
-    @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> parameters = super.getParameters();
-        return parameters;
-    }
-
     protected abstract String calculateResult(String columnValue);
 
     @Override

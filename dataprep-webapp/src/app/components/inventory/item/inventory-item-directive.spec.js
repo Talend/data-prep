@@ -30,6 +30,25 @@ describe('InventoryItem directive', () => {
         'favorite' : true
     };
 
+    const csv_dataset = {
+        'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+        'name': 'US States',
+        'type': 'text/csv'
+    };
+
+    const xls_dataset = {
+        'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+        'name': 'US States',
+        'type': 'application/vnd.ms-excel'
+    };
+
+    const job_dataset = {
+        'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
+        'name': 'US States',
+        'type': 'application/vnd.remote-ds.job'
+    };
+
+
     const preparation = {
         'id': '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
         'name': 'US States prep',
@@ -84,6 +103,67 @@ describe('InventoryItem directive', () => {
 
         beforeEach(inject(($rootScope, $compile) => {
             scope = $rootScope.$new();
+            createElement = (newDataSet) => {
+                scope.dataset = newDataSet;
+
+                element = angular.element('<inventory-item ' +
+                    'item="dataset" ' +
+                    'details="DATASET_DETAILS" ' +
+                    'type="dataset" ' +
+                    'related-inventories="preparations" ' +
+                    'related-inventories-type="preparation" ' +
+                    'open-related-inventory="openRelatedInventory" ' +
+                    'open="open" ' +
+                    'process-certification="processCertif" ' +
+                    'copy="copy" ' +
+                    'rename="rename" ' +
+                    'remove="remove" ' +
+                    'toggle-favorite="toggleFavorite" ' +
+                    'update="update" ' +
+                    '></inventory-item>');
+                $compile(element)(scope);
+                scope.$digest();
+                ctrl = element.controller('inventoryItem');
+                return element;
+            };
+        }));
+
+        describe('select correct icon', () => {
+            it('should select CSV icon', () => {
+                //when
+                createElement(csv_dataset);
+
+                //then
+                const icon = element.find('.inventory-icon').eq(0);
+                const iconSrc = icon.find('img')[0].src;
+                expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
+            });
+            it('should select XLS icon', () => {
+                //when
+                createElement(xls_dataset);
+
+                //then
+                const icon = element.find('.inventory-icon').eq(0);
+                const iconSrc = icon.find('img')[0].src;
+                expect(strEndsWith(iconSrc, '/assets/images/inventory/xls_file.png')).toBe(true);
+            });
+
+            it('should select JOB icon', () => {
+                //when
+                createElement(job_dataset);
+
+                //then
+                const icon = element.find('.inventory-icon').eq(0);
+                const iconSrc = icon.find('img')[0].src;
+                expect(strEndsWith(iconSrc, '/assets/images/inventory/job_file.png')).toBe(true);
+            });
+        })
+    });
+
+    describe('dataset', () => {
+
+        beforeEach(inject(($rootScope, $compile) => {
+            scope = $rootScope.$new();
 
             scope.dataset = dataset;
             scope.openDataset = () =>{};
@@ -129,15 +209,6 @@ describe('InventoryItem directive', () => {
                 const icon = element.find('.inventory-icon').eq(0);
                 const certificationIcon = icon.find('.pin');
                 expect(certificationIcon.length).toBe(0);
-            });
-            it('should display CSV icon', () => {
-                //when
-                createElement();
-
-                //then
-                const icon = element.find('.inventory-icon').eq(0);
-                const iconSrc = icon.find('img')[0].src;
-                expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
             });
             it('should display inventory icon with certification pin', () => {
                 //when

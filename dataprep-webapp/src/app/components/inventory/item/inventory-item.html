@@ -22,6 +22,7 @@
         <div ng-switch-when="dataset" ng-switch="inventoryItemCtrl.item.type">
             <img src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
             <img src="/assets/images/inventory/xls_file.png" ng-switch-when="application/vnd.ms-excel"/>
+            <img src="/assets/images/inventory/job_file.png" ng-switch-when="application/vnd.remote-ds.job"/>
             <img src="/assets/images/inventory/generic_file.png" ng-switch-default/>
             <img ng-src="/assets/images/certification-{{inventoryItemCtrl.item.certificationStep | lowercase}}.png"
                  class="pin"

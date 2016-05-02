@@ -110,7 +110,7 @@ public class ChangeNumberFormat extends ActionMetadata implements ColumnAction {
 
     @Override
     public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+        return ActionCategory.NUMBERS.getDisplayName();
     }
 
     @Override

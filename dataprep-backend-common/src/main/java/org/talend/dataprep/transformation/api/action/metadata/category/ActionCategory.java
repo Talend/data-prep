@@ -22,7 +22,8 @@ public enum ActionCategory {
      */
     COLUMN_METADATA("column_metadata"), //
     COLUMNS("columns"), //
-    MATH("math"), //
+    MATH("math"), // for math operations (sum, abs, ...))
+    NUMBERS("numbers"), // for numbers manipulation, but not operations (compare, format, ...)
     STRINGS("strings"), //
     STRINGS_ADVANCED("strings advanced"), //
     SPLIT("split"), //

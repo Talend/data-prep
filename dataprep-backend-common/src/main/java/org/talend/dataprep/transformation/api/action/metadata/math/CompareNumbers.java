@@ -54,7 +54,7 @@ public class CompareNumbers extends AbstractCompareAction implements ColumnActio
      */
     @Override
     public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+        return ActionCategory.NUMBERS.getDisplayName();
     }
 
 

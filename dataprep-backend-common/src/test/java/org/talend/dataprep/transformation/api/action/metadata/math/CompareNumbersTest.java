@@ -81,7 +81,7 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.MATH.getDisplayName()));
+        assertThat(action.getCategory(), is(ActionCategory.NUMBERS.getDisplayName()));
     }
 
     @Test

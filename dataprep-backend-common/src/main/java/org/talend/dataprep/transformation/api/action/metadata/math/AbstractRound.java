@@ -43,7 +43,7 @@ public abstract class AbstractRound extends ActionMetadata implements ColumnActi
      */
     @Override
     public String getCategory() {
-        return ActionCategory.MATH.getDisplayName();
+        return ActionCategory.NUMBERS.getDisplayName();
     }
 
     @Override

@@ -2250,7 +2250,7 @@
   },
   {
     "name": "floor",
-    "category": "math",
+    "category": "numbers",
     "dynamic": false,
     "description": "Round value to the largest integer (3.14 -> 4)",
     "label": "Round Value using Floor mode",
@@ -2349,7 +2349,7 @@
   },
   {
     "name": "round",
-    "category": "math",
+    "category": "numbers",
     "dynamic": false,
     "description": "Round value to the closest integer (3.14 -> 3)",
     "label": "Round Value using HalfUp mode",
@@ -2562,7 +2562,7 @@
   },
   {
     "name": "round_down",
-    "category": "math",
+    "category": "numbers",
     "dynamic": false,
     "description": "Round towards zero. (3.74 -> 3) and (-3.74 -> -3)",
     "label": "Remove Fractional Part",
@@ -2608,7 +2608,7 @@
   },
   {
     "name": "round_down_real",
-    "category": "math",
+    "category": "numbers",
     "dynamic": false,
     "description": "Round towards zero. (3.74 -> 3) and (-3.74 -> -3)",
     "label": "Round value using Down mode",
@@ -2661,7 +2661,7 @@
   },
   {
     "name": "ceil",
-    "category": "math",
+    "category": "numbers",
     "dynamic": false,
     "description": "Round value to the smallest integer (3.74 -> 3)",
     "label": "Round Value using Ceil mode",
@@ -3261,11 +3261,11 @@
     ]
   },
   {
-    "category": "math",
+    "category": "numbers",
     "name": "change_number_format"
   },
   {
-    "category": "math",
+    "category": "numbers",
     "name": "compare_numbers"
   },
   {

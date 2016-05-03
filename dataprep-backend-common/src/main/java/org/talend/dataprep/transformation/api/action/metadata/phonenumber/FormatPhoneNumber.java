@@ -50,6 +50,21 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
 	protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
 
+	private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";
+
+    @Override
+    public void compile(ActionContext context) {
+        super.compile(context);
+
+        if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
+            try {
+                context.get(PHONE_NUMBER_HANDLER_KEY, p -> new PhoneNumberHandlerBase());
+            } catch (IllegalArgumentException e) {
+                context.setActionStatus(ActionContext.ActionStatus.CANCELED);
+            }
+        }
+    }
+
 	@Override
 	public void applyOnColumn(DataSetRow row, ActionContext context) {
 		final String columnId = context.getColumnId();
@@ -63,7 +78,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 		if (!StringUtils.isEmpty(regionParam)) {
 			regionCode = regionParam;
 		}
-		PhoneNumberHandlerBase phoneNumberHanler = new PhoneNumberHandlerBase();
+		PhoneNumberHandlerBase phoneNumberHanler = context.get(PHONE_NUMBER_HANDLER_KEY);
 		if (phoneNumberHanler
 				.isValidPhoneNumber(possiblePhoneValue, regionCode)) {
 			String formatInternational = phoneNumberHanler.formatInternational(
@@ -72,7 +87,6 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 				row.set(columnId, formatInternational);
 			}
 		}
-
 	}
 
 	@Override

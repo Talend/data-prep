@@ -300,6 +300,13 @@ export default function DatasetService($q, state, StateService, DatasetListServi
     //--------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------Rename---------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
+    /**
+     * @ngdoc method
+     * @name rename
+     * @methodOf data-prep.services.dataset.service:DatasetService
+     * @description renames a dataset
+     * @returns {Promise} The process Promise
+     */
     function rename(metadata, name) {
         const oldName = metadata.name;
         StateService.setDatasetName(metadata.id, name);

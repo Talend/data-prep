@@ -73,7 +73,7 @@ export default class DatasetListCtrl {
             };
             this.FolderService
                 .getContent(folderDefinition)
-                .catch(() => this.$state.go('nav.index.datasets', { folderPath: '' }));
+                .catch(() => this.$state.go('nav.index.datasets', {folderPath: ''}));
         }
         else {
             this.FolderService.getContent();
@@ -100,15 +100,15 @@ export default class DatasetListCtrl {
      */
     remove(dataset) {
         this.TalendConfirmService.confirm(
-                { disableEnter: true },
-                ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-                { type: 'dataset', name: dataset.name }
+            {disableEnter: true},
+            ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
+            {type: 'dataset', name: dataset.name}
             )
             .then(() => this.DatasetService.delete(dataset))
             .then(() => this.MessageService.success(
                 'REMOVE_SUCCESS_TITLE',
                 'REMOVE_SUCCESS',
-                { type: 'dataset', name: dataset.name }
+                {type: 'dataset', name: dataset.name}
             ))
             .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
     }
@@ -123,11 +123,11 @@ export default class DatasetListCtrl {
      */
     rename(dataset, name) {
         const cleanName = name ? name.trim().toLowerCase() : '';
-        if(!cleanName) {
+        if (!cleanName) {
             return;
         }
 
-        if(this.renamingList.indexOf(dataset) > -1) {
+        if (this.renamingList.indexOf(dataset) > -1) {
             this.MessageService.warning(
                 'DATASET_CURRENTLY_RENAMING_TITLE',
                 'DATASET_CURRENTLY_RENAMING'
@@ -179,7 +179,7 @@ export default class DatasetListCtrl {
      * @param {object} folder The target folder
      */
     goToFolder(folder) {
-        this.$state.go('nav.index.datasets', { folderPath: folder.path });
+        this.$state.go('nav.index.datasets', {folderPath: folder.path});
     }
 
     /**
@@ -237,7 +237,9 @@ export default class DatasetListCtrl {
     clone(dataset, destinationFolder, name) {
         return this.DatasetService.clone(dataset, destinationFolder, name)
             .then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'))
-            .then(() => { this.datasetCopyVisibility = false })
+            .then(() => {
+                this.datasetCopyVisibility = false
+            })
             .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
     }
 
@@ -253,7 +255,9 @@ export default class DatasetListCtrl {
     move(dataset, destinationFolder, name) {
         return this.DatasetService.move(dataset, destinationFolder, name)
             .then(() => this.MessageService.success('MOVE_SUCCESS_TITLE', 'MOVE_SUCCESS'))
-            .then(() => { this.datasetCopyVisibility = false })
+            .then(() => {
+                this.datasetCopyVisibility = false
+            })
             .then(() => this.FolderService.getContent(this.state.inventory.currentFolder));
     }
 }

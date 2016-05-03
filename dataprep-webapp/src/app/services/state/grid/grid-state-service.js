@@ -161,7 +161,7 @@ export function GridStateService() {
             return;
         }
 
-        const hasSelectedLine = typeof gridState.lineIndex === "number";
+        const hasSelectedLine = angular.isNumber(gridState.lineIndex);
         if(!hasSelectedLine || gridState.selectedColumn) {
             updateSelectedColumn(data);
         }

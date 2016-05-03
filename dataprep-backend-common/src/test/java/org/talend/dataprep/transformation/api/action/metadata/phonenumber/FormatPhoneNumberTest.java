@@ -29,14 +29,13 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.parameters.Parameter;
 
 public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
@@ -45,21 +44,30 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
 	private Map<String, String> parameters;
 
-	private static final String[][] DATASET = new String[][] {
+	private static final String[][] DATASET_FR = new String[][] {
 			{"+33656965822", "FR Phone" }, //
 			{"+33(0)147554323", "FR Phone" },
-			{"+1-541-754-3010","US Phone"},
-			{"1-541-754-3010","US Phone"}
-			
+						
 	};
+	
+	private static final String[][] DATASET_US = new String[][] {
+	        {"+1-541-754-3010","US Phone"},
+		    {"1-541-754-3010","US Phone"}
+		
+    };
 
-	private static final String[][] EXPECTED_FORMAT_DATASET = new String[][] {
+
+	private static final String[][] EXPECTED_FORMAT_DATASET_FR = new String[][] {
 			{"+33 6 56 96 58 22", "FR Phone" }, //
 			{"+33 1 47 55 43 23", "FR Phone" },
-			{"+1 541-754-3010","US Phone"},
-			{"+1 541-754-3010","US Phone"}
 			
 	};
+	
+	private static final String[][] EXPECTED_FORMAT_DATASET_US = new String[][] {
+		{"+1 541-754-3010","US Phone"},
+		{"+1 541-754-3010","US Phone"}
+		
+};
 
 	@Before
 	public void init() throws IOException {
@@ -86,25 +94,28 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 		assertFalse(action.acceptColumn(getColumn(Type.DATE)));
 		assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
 	}
+	
+	 @Test
+	    public void testParameters() throws Exception {
+	        final List<Parameter> parameters = action.getParameters();
+	        assertEquals(5, parameters.size());
+	    }
+
 
 	@Test
 	public void should_format() {
 		// given
 		List<DataSetRow> rowList = new ArrayList<DataSetRow>();
-		for (int row = 0; row < DATASET.length; row++) {
+		parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "FR");
+		for (int row = 0; row < DATASET_FR.length; row++) {
 
 			final Map<String, String> values = new HashMap<>();
 
-			for (int col = 0; col < DATASET[0].length; col++) {
-				values.put("000" + col, DATASET[row][col]);
+			for (int col = 0; col < DATASET_FR[0].length; col++) {
+				values.put("000" + col, DATASET_FR[row][col]);
 			}
 			DataSetRow dataSetRow= new DataSetRow(values);
 
-			RowMetadata rowMetadata = dataSetRow.getRowMetadata();
-			for (int col = 0; col < DATASET[0].length; col++) {
-				ColumnMetadata meta = rowMetadata.getById("000" + col);
-				meta.setDomain(DATASET[row][1]);
-			}
 			rowList.add(dataSetRow);
 		}
 		
@@ -112,13 +123,34 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 		ActionTestWorkbench.test(rowList, factory.create(action, parameters));
 		
 		// then
-		
-		for (int row = 0; row < EXPECTED_FORMAT_DATASET[0].length; row++) {
+		for (int row = 0; row < EXPECTED_FORMAT_DATASET_FR.length; row++) {
 			DataSetRow dataSetRow = rowList.get(row);
-			assertEquals(dataSetRow.values().get("0000"),EXPECTED_FORMAT_DATASET[row][0]);
+			assertEquals(dataSetRow.values().get("0000"),EXPECTED_FORMAT_DATASET_FR[row][0]);
 		}
 
+		//US Phone
+		rowList = new ArrayList<DataSetRow>();
+		parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+		for (int row = 0; row < DATASET_US.length; row++) {
 
+			final Map<String, String> values = new HashMap<>();
+
+			for (int col = 0; col < DATASET_US[0].length; col++) {
+				values.put("000" + col, DATASET_US[row][col]);
+			}
+			DataSetRow dataSetRow= new DataSetRow(values);
+
+			rowList.add(dataSetRow);
+		}
+		
+		// when
+		ActionTestWorkbench.test(rowList, factory.create(action, parameters));
+		
+		// then
+		for (int row = 0; row < EXPECTED_FORMAT_DATASET_US.length; row++) {
+			DataSetRow dataSetRow = rowList.get(row);
+			assertEquals(dataSetRow.values().get("0000"),EXPECTED_FORMAT_DATASET_US[row][0]);
+		}
 	}
 	
 	@Test

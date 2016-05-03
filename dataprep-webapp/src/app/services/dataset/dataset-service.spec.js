@@ -14,10 +14,10 @@
 describe('Dataset Service', () => {
     'use strict';
 
-    const datasets = [{id: '11', name: 'my dataset'},
-        {id: '22', name: 'my second dataset'},
-        {id: '33', name: 'my second dataset (1)'},
-        {id: '44', name: 'my second dataset (2)'}];
+    const datasets = [{ id: '11', name: 'my dataset' },
+        { id: '22', name: 'my second dataset' },
+        { id: '33', name: 'my second dataset (1)' },
+        { id: '44', name: 'my second dataset (2)' }];
     const encodings = ['UTF-8', 'UTF-16'];
     let promiseWithProgress, stateMock;
 
@@ -188,7 +188,7 @@ describe('Dataset Service', () => {
     describe('sheet management', () => {
         it('should get sheet preview from rest service', inject((DatasetService, DatasetRestService) => {
             //given
-            const metadata = {id: '7c98ae64154bc'};
+            const metadata = { id: '7c98ae64154bc' };
             const sheetName = 'my sheet';
 
             //when
@@ -200,7 +200,7 @@ describe('Dataset Service', () => {
 
         it('should set metadata sheet', inject(($q, DatasetService, DatasetRestService) => {
             //given
-            const metadata = {id: '7c98ae64154bc', sheetName: 'my old sheet'};
+            const metadata = { id: '7c98ae64154bc', sheetName: 'my old sheet' };
             const sheetName = 'my sheet';
             spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when({}));
 
@@ -233,10 +233,10 @@ describe('Dataset Service', () => {
             //given
             const metadata = {
                 id: '543a216fc796e354',
-                defaultPreparation: {id: '876a32bc545a846'},
-                preparations: [{id: '876a32bc545a846'}, {id: '799dc6b2562a186'}],
+                defaultPreparation: { id: '876a32bc545a846' },
+                preparations: [{ id: '876a32bc545a846' }, { id: '799dc6b2562a186' }],
                 encoding: 'UTF-8',
-                parameters: {SEPARATOR: '|'}
+                parameters: { SEPARATOR: '|' }
             };
             const parameters = {
                 separator: ';',
@@ -258,10 +258,10 @@ describe('Dataset Service', () => {
             //given
             const metadata = {
                 id: '543a216fc796e354',
-                defaultPreparation: {id: '876a32bc545a846', parameters: {SEPARATOR: '|'}},
-                preparations: [{id: '876a32bc545a846'}, {id: '799dc6b2562a186'}],
+                defaultPreparation: { id: '876a32bc545a846', parameters: { SEPARATOR: '|' } },
+                preparations: [{ id: '876a32bc545a846' }, { id: '799dc6b2562a186' }],
                 encoding: 'UTF-8',
-                parameters: {SEPARATOR: '|'}
+                parameters: { SEPARATOR: '|' }
             };
             const parameters = {
                 separator: ';',
@@ -276,18 +276,18 @@ describe('Dataset Service', () => {
             $rootScope.$digest();
 
             //then
-            expect(metadata.defaultPreparation).toEqual({id: '876a32bc545a846', parameters: {SEPARATOR: '|'}});
-            expect(metadata.preparations).toEqual([{id: '876a32bc545a846'}, {id: '799dc6b2562a186'}]);
+            expect(metadata.defaultPreparation).toEqual({ id: '876a32bc545a846', parameters: { SEPARATOR: '|' } });
+            expect(metadata.preparations).toEqual([{ id: '876a32bc545a846' }, { id: '799dc6b2562a186' }]);
         }));
 
         it('should set back old parameters and preparations (waiting for TDP-1348) when update fails', inject(($rootScope, $q, DatasetService, DatasetRestService) => {
             //given
             const metadata = {
                 id: '543a216fc796e354',
-                defaultPreparation: {id: '876a32bc545a846', parameters: {SEPARATOR: '|'}},
-                preparations: [{id: '876a32bc545a846'}, {id: '799dc6b2562a186'}],
+                defaultPreparation: { id: '876a32bc545a846', parameters: { SEPARATOR: '|' } },
+                preparations: [{ id: '876a32bc545a846' }, { id: '799dc6b2562a186' }],
                 encoding: 'UTF-8',
-                parameters: {SEPARATOR: '|'}
+                parameters: { SEPARATOR: '|' }
             };
             const parameters = {
                 separator: ';',
@@ -306,8 +306,8 @@ describe('Dataset Service', () => {
             //then
             expect(metadata.parameters.SEPARATOR).toBe('|');
             expect(metadata.encoding).toBe('UTF-8');
-            expect(metadata.defaultPreparation).toEqual({id: '876a32bc545a846', parameters: {SEPARATOR: '|'}});
-            expect(metadata.preparations).toEqual([{id: '876a32bc545a846'}, {id: '799dc6b2562a186'}]);
+            expect(metadata.defaultPreparation).toEqual({ id: '876a32bc545a846', parameters: { SEPARATOR: '|' } });
+            expect(metadata.preparations).toEqual([{ id: '876a32bc545a846' }, { id: '799dc6b2562a186' }]);
         }));
     });
 
@@ -327,9 +327,17 @@ describe('Dataset Service', () => {
             expect(StateService.setDatasetName).toHaveBeenCalledWith(metadata.id, name);
         }));
 
-        it('should call update metadata service', inject(($q, DatasetService, DatasetRestService, StateService) => {
+        it('should call update metadata service (without its preparation to avoid cyclic ref: waiting for TDP-1348)', inject(($q, DatasetService, DatasetRestService, StateService) => {
             //given
-            const metadata = { id: '7a82d3002fc543e54', name: 'oldName' };
+            const metadata = {
+                id: '7a82d3002fc543e54',
+                name: 'oldName',
+                defaultPreparation: { id: '893ad6695fe42d515' },
+                preparations: [
+                    { id: '893ad6695fe42d515' },
+                    { id: '987efd121fa56898a' },
+                ]
+            };
             const name = 'newName';
 
             spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
@@ -340,6 +348,8 @@ describe('Dataset Service', () => {
 
             //then
             expect(DatasetRestService.updateMetadata).toHaveBeenCalledWith(metadata);
+            expect(metadata.defaultPreparation).toBeFalsy();
+            expect(metadata.preparations).toBeFalsy();
         }));
 
         it('should set back old name via app state on rename failure', inject(($rootScope, $q, DatasetService, DatasetRestService, StateService) => {
@@ -357,6 +367,33 @@ describe('Dataset Service', () => {
 
             //then
             expect(StateService.setDatasetName).toHaveBeenCalledWith(metadata.id, 'oldName');
+        }));
+
+        it('should set back preparations after rename (waiting for TDP-1348)', inject(($rootScope, $q, DatasetService, DatasetRestService) => {
+            //given
+            const metadata = {
+                id: '7a82d3002fc543e54',
+                name: 'oldName',
+                defaultPreparation: { id: '893ad6695fe42d515' },
+                preparations: [
+                    { id: '893ad6695fe42d515' },
+                    { id: '987efd121fa56898a' },
+                ]
+            };
+            spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
+
+            //when
+            DatasetService.rename(metadata, 'newName');
+            expect(metadata.defaultPreparation).toBeFalsy();
+            expect(metadata.preparations).toBeFalsy();
+            $rootScope.$digest();
+
+            //then
+            expect(metadata.defaultPreparation).toEqual({ id: '893ad6695fe42d515' });
+            expect(metadata.preparations).toEqual([
+                { id: '893ad6695fe42d515' },
+                { id: '987efd121fa56898a' },
+            ]);
         }));
     });
 

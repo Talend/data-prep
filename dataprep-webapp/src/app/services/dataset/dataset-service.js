@@ -216,7 +216,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
     //--------------------------------------------------------------------------------------------------------------
     //---------------------------------------------Dataset Parameters-----------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    function extractOriginalParameters(metadata) {
+    function _extractOriginalParameters(metadata) {
         return {
             //TODO remove this and review the datasets model to NOT change the original object. This is done here to
             // avoid cyclic ref
@@ -228,9 +228,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
         };
     }
 
-    function setParameters(metadata, parameters) {
+    function _setParameters(metadata, parameters) {
         //TODO remove this and review the datasets model to NOT change the original object. This is done here to avoid
-        // cyclic ref
+        // avoid cyclic ref
         metadata.defaultPreparation = parameters.defaultPreparation;
         metadata.preparations = parameters.preparations;
 
@@ -248,8 +248,8 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @returns {Promise} The process Promise
      */
     function updateParameters(metadata, parameters) {
-        var originalParameters = extractOriginalParameters(metadata);
-        setParameters(metadata, parameters);
+        var originalParameters = _extractOriginalParameters(metadata);
+        _setParameters(metadata, parameters);
 
         return DatasetRestService.updateMetadata(metadata)
             .then(function () {
@@ -257,7 +257,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
                 metadata.preparations = originalParameters.preparations;
             })
             .catch(function (error) {
-                setParameters(metadata, originalParameters);
+                _setParameters(metadata, originalParameters);
                 return $q.reject(error);
             });
     }
@@ -300,21 +300,46 @@ export default function DatasetService($q, state, StateService, DatasetListServi
     //--------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------Rename---------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
+    //TODO remove this and review the datasets model to NOT change the original object. This is done here to
+    // avoid cyclic ref
+    function _removePreparations(metadata) {
+        const preparations = {
+            defaultPreparation: metadata.defaultPreparation,
+            preparations: metadata.preparations,
+        };
+
+        metadata.defaultPreparation = null;
+        metadata.preparations = null;
+
+        return preparations;
+    }
+
+    //TODO remove this and review the datasets model to NOT change the original object. This is done here to
+    // avoid cyclic ref
+    function _injectPreparations(metadata, preparations) {
+        metadata.defaultPreparation = preparations.defaultPreparation;
+        metadata.preparations = preparations.preparations;
+    }
+
     /**
      * @ngdoc method
      * @name rename
      * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description renames a dataset
+     * @param {object} metadata The dataset metadata
+     * @param {string} name The new name
+     * @description Set the new name
      * @returns {Promise} The process Promise
      */
     function rename(metadata, name) {
         const oldName = metadata.name;
         StateService.setDatasetName(metadata.id, name);
+        const preparations = _removePreparations(metadata);
 
         return DatasetRestService.updateMetadata(metadata)
             .catch((error) => {
                 StateService.setDatasetName(metadata.id, oldName);
                 return $q.reject(error);
-            });
+            })
+            .finally(() => { _injectPreparations(metadata, preparations) });
     }
 }

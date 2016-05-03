@@ -12,7 +12,12 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.phonenumber;
 
+
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -23,7 +28,9 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
-import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+import org.talend.dataprep.transformation.api.action.parameters.Parameter;
+import org.talend.dataprep.transformation.api.action.parameters.SelectParameter;
+import org.talend.dataprep.transformation.api.action.parameters.SelectParameter.Builder;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
 /**
@@ -38,8 +45,10 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 	 * Action name.
 	 */
 	public static final String ACTION_NAME = "Format phone number"; //$NON-NLS-1$
+
+	private String regionCode = Locale.getDefault().getCountry();
 	
-	private String regionCode=Locale.getDefault().getCountry();
+	protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
 	
 
 
@@ -50,18 +59,11 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 		if (StringUtils.isEmpty(possiblePhoneValue)) {
 			return;
 		}
-		final ColumnMetadata column = row.getRowMetadata().getById(columnId);
-		String domain = column.getDomain();
-		if (domain != null
-				&& (domain.equals(SemanticCategoryEnum.DE_PHONE
-						.getDisplayName())
-						|| domain.equals(SemanticCategoryEnum.FR_PHONE
-								.getDisplayName())
-						|| domain.equals(SemanticCategoryEnum.US_PHONE
-								.getDisplayName()) || domain
-							.equals(SemanticCategoryEnum.UK_PHONE
-									.getDisplayName()))) {
-			regionCode = domain.split(" ")[0];
+
+		Map<String, String> parameters = context.getParameters();
+		String regionParam = parameters.get(REGIONS_PARAMETER);
+		if (!StringUtils.isEmpty(regionParam)) {
+			regionCode = regionParam;
 		}
 		PhoneNumberHandlerBase phoneNumberHanler = new PhoneNumberHandlerBase();
 		if (phoneNumberHanler
@@ -74,6 +76,20 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 		}
 
 	}
+	
+	 @Override
+	    @Nonnull
+	    public List<Parameter> getParameters() {
+	        final List<Parameter> parameters = super.getParameters();
+	        //@formatter:off
+	        Builder canBeBlank = SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true);
+	        for(String code:Locale.getISOCountries()){
+	        	canBeBlank.item(code);
+	        }
+	        parameters.add(canBeBlank.defaultValue("US").build());
+	        //@formatter:on
+	        return parameters;
+	    }
 
 	@Override
 	public String getName() {

@@ -31,8 +31,9 @@ public enum ActionCategory {
     BOOLEAN("boolean"), //
     DATA_CLEANSING("data cleansing"), //
     FILTERED("filtered"), //
-    DATA_BLENDING("data_blending"),//
-    DATA_MASKING("data masking");
+    DATA_BLENDING("data_blending"), //
+    DATA_MASKING("data masking"), //
+    PHONE_NUMBER("phones");
 
     /** The category display name. */
     private final String displayName;

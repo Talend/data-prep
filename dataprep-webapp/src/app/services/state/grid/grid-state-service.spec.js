@@ -139,92 +139,6 @@ describe('Grid state service', () => {
             expect(gridState.displayLinesPercentage).toBe('100');
         }));
 
-        it('should update line selection row with the new row corresponding to the selected index (not id)', inject((gridState, GridStateService) => {
-            //given
-            const oldRow = { tdpId: '0125' };
-            gridState.lineIndex = 2;
-            gridState.selectedLine = oldRow;
-
-            //when
-            GridStateService.setData(data);
-
-            //then
-            expect(gridState.selectedLine).toBe(data.records[2]);
-        }));
-
-        it('should not change selected line row when data is preview data', inject((gridState, GridStateService) => {
-            const oldRow = { tdpId: '0125' };
-            gridState.lineIndex = 2;
-            gridState.selectedLine = oldRow;
-
-            //when
-            GridStateService.setData(previewData);
-
-            //then
-            expect(gridState.selectedLine).toBe(oldRow);
-        }));
-
-        it('should not change select line row when there is no selected line yet', inject((gridState, GridStateService) => {
-            gridState.lineIndex = null;
-            gridState.selectedLine = null;
-
-            //when
-            GridStateService.setData(data);
-
-            //then
-            expect(gridState.selectedLine).toBe(null);
-        }));
-
-        it('should update column selection metadata with the new metadata corresponding to the selected id', inject((gridState, GridStateService) => {
-            //given
-            const oldMetadata = { id: '0001' };
-            gridState.selectedColumn = oldMetadata;
-
-            //when
-            GridStateService.setData(data);
-
-            //then
-            expect(gridState.selectedColumn).not.toBe(oldMetadata);
-            expect(gridState.selectedColumn).toBe(data.metadata.columns[1]);
-        }));
-
-        it('should update column selection metadata with the 1st column when actual selected column is not in the new columns', inject((gridState, GridStateService) => {
-            //given
-            const oldMetadata = { id: '0018' };
-            gridState.selectedColumn = oldMetadata;
-
-            //when
-            GridStateService.setData(data);
-
-            //then
-            expect(gridState.selectedColumn).not.toBe(oldMetadata);
-            expect(gridState.selectedColumn).toBe(data.metadata.columns[0]);
-        }));
-
-        it('should update column selection metadata with the first column metadata when there is no selected column yet', inject((gridState, GridStateService) => {
-            //given
-            gridState.selectedColumn = null;
-            gridState.lineIndex = null;
-
-            //when
-            GridStateService.setData(data);
-
-            //then
-            expect(gridState.selectedColumn).toBe(data.metadata.columns[0]);
-        }));
-
-        it('should not change selected column when data is preview data', inject((gridState, GridStateService) => {
-            //given
-            const oldMetadata = { id: '0001' };
-            gridState.selectedColumn = oldMetadata;
-
-            //when
-            GridStateService.setData(previewData);
-
-            //then
-            expect(gridState.selectedColumn).toBe(oldMetadata);
-        }));
-
         it('should update numeric columns', inject((gridState, GridStateService) => {
             //given
             gridState.numericColumns = [];
@@ -238,6 +152,106 @@ describe('Grid state service', () => {
                 { id: '0002', type: 'decimal' },
             ]);
         }));
+
+        describe('selection', () => {
+            it('should update line selection row with the new row corresponding to the selected index (not id)', inject((gridState, GridStateService) => {
+                //given
+                const oldRow = { tdpId: '0125' };
+                gridState.lineIndex = 2;
+                gridState.selectedLine = oldRow;
+
+                //when
+                GridStateService.setData(data);
+
+                //then
+                expect(gridState.selectedLine).toBe(data.records[2]);
+            }));
+
+            it('should NOT change selected line row when data is preview data', inject((gridState, GridStateService) => {
+                const oldRow = { tdpId: '0125' };
+                gridState.lineIndex = 2;
+                gridState.selectedLine = oldRow;
+
+                //when
+                GridStateService.setData(previewData);
+
+                //then
+                expect(gridState.selectedLine).toBe(oldRow);
+            }));
+
+            it('should NOT change select line row when there is no selected line yet', inject((gridState, GridStateService) => {
+                gridState.lineIndex = null;
+                gridState.selectedLine = null;
+
+                //when
+                GridStateService.setData(data);
+
+                //then
+                expect(gridState.selectedLine).toBe(null);
+            }));
+
+            it('should update column metadata with the new metadata corresponding to the selected id', inject((gridState, GridStateService) => {
+                //given
+                const oldMetadata = { id: '0001' };
+                gridState.selectedColumn = oldMetadata;
+
+                //when
+                GridStateService.setData(data);
+
+                //then
+                expect(gridState.selectedColumn).not.toBe(oldMetadata);
+                expect(gridState.selectedColumn).toBe(data.metadata.columns[1]);
+            }));
+
+            it('should update column metadata with the 1st column when actual selected column is not in the new columns', inject((gridState, GridStateService) => {
+                //given
+                const oldMetadata = { id: '0018' };
+                gridState.selectedColumn = oldMetadata;
+
+                //when
+                GridStateService.setData(data);
+
+                //then
+                expect(gridState.selectedColumn).not.toBe(oldMetadata);
+                expect(gridState.selectedColumn).toBe(data.metadata.columns[0]);
+            }));
+
+            it('should update column metadata with the first column metadata when there is no selected column yet', inject((gridState, GridStateService) => {
+                //given
+                gridState.selectedColumn = null;
+                gridState.lineIndex = null;
+
+                //when
+                GridStateService.setData(data);
+
+                //then
+                expect(gridState.selectedColumn).toBe(data.metadata.columns[0]);
+            }));
+
+            it('should NOT update column metadata when there is no selected column but a selected line', inject((gridState, GridStateService) => {
+                //given
+                gridState.selectedColumn = null;
+                gridState.lineIndex = 2;
+
+                //when
+                GridStateService.setData(data);
+
+                //then
+                expect(gridState.selectedColumn).toBe(null);
+            }));
+
+            it('should not change selected column when data is preview data', inject((gridState, GridStateService) => {
+                //given
+                const oldMetadata = { id: '0001' };
+                gridState.selectedColumn = oldMetadata;
+
+                //when
+                GridStateService.setData(previewData);
+
+                //then
+                expect(gridState.selectedColumn).toBe(oldMetadata);
+            }));
+        });
     });
 
     describe('grid event state', () => {

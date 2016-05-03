@@ -161,15 +161,12 @@ export function GridStateService() {
             return;
         }
 
-        if(typeof(gridState.lineIndex) === 'undefined' || gridState.lineIndex === null) {
+        const hasSelectedLine = typeof gridState.lineIndex === "number";
+        if(!hasSelectedLine || gridState.selectedColumn) {
             updateSelectedColumn(data);
-        } else {
-            if (gridState.selectedColumn){
-                updateSelectedColumn(data);
-                updateSelectedLine(data);
-            } else {
-                updateSelectedLine(data);
-            }
+        }
+        if(hasSelectedLine) {
+            updateSelectedLine();
         }
     }
 
@@ -182,7 +179,7 @@ export function GridStateService() {
      */
     function updateSelectedColumn(data) {
         //if there is already a selected column, we update the column metadata to reference one of the new columns
-        if (gridState.selectedColumn && data.metadata.columns) {
+        if (gridState.selectedColumn) {
             gridState.selectedColumn = _.find(data.metadata.columns, {id: gridState.selectedColumn.id}) || data.metadata.columns[0];
         }
         //the first column is selected by default
@@ -196,14 +193,10 @@ export function GridStateService() {
      * @ngdoc method
      * @name updateSelectedLine
      * @methodOf data-prep.services.state.service:GridStateService
-     * @param {object} data The new data
      * @description Set the selected line with the new record object ref
      */
-    function updateSelectedLine(data) {
-        //if there is already a selected line, we update it if the line still exists
-        if (gridState.lineIndex !== null && data.records) {
-            gridState.selectedLine = gridState.dataView.getItem(gridState.lineIndex);
-        }
+    function updateSelectedLine() {
+        gridState.selectedLine = gridState.dataView.getItem(gridState.lineIndex);
     }
 
     /**

@@ -214,8 +214,7 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
                     if (getData() && !getData().preview) {
                         externalTimeout = $timeout(
                             () => DatagridExternalService.updateSuggestionPanel(true),
-                            500,
-                            false
+                            500
                         );
                     }
                 }

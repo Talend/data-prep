@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,14 +27,13 @@ import org.talend.daikon.token.TokenGenerator;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.service.upgrade.UpgradeServerVersion;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.PublicAPI;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
-import org.talend.dataprep.security.PublicAPI;
 
-@ConditionalOnProperty(name = "upgrade.location")
 @RestController
 public class UpgradeAPI extends APIService {
 
@@ -95,6 +93,12 @@ public class UpgradeAPI extends APIService {
     @Timed
     @PublicAPI
     public List<UpgradeServerVersion> check() {
+
+        // defensive programming
+        if (StringUtils.isBlank(upgradeVersionLocation)) {
+            return Collections.emptyList();
+        }
+
         try {
             // Get current version
             final String versionId = service.version().getVersionId();

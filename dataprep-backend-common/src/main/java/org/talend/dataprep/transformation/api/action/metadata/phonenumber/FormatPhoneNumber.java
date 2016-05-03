@@ -40,17 +40,15 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
  */
 @Component(FormatPhoneNumber.ACTION_BEAN_PREFIX + FormatPhoneNumber.ACTION_NAME)
 public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
-	
+
 	/**
 	 * Action name.
 	 */
 	public static final String ACTION_NAME = "Format phone number"; //$NON-NLS-1$
 
 	private String regionCode = Locale.getDefault().getCountry();
-	
-	protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
-	
 
+	protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
 
 	@Override
 	public void applyOnColumn(DataSetRow row, ActionContext context) {
@@ -76,20 +74,21 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 		}
 
 	}
-	
-	 @Override
-	    @Nonnull
-	    public List<Parameter> getParameters() {
-	        final List<Parameter> parameters = super.getParameters();
-	        //@formatter:off
-	        Builder canBeBlank = SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true);
-	        for(String code:Locale.getISOCountries()){
-	        	canBeBlank.item(code);
-	        }
-	        parameters.add(canBeBlank.defaultValue("US").build());
-	        //@formatter:on
-	        return parameters;
-	    }
+
+	@Override
+	@Nonnull
+	public List<Parameter> getParameters() {
+		final List<Parameter> parameters = super.getParameters();
+		// @formatter:off
+		Builder canBeBlank = SelectParameter.Builder.builder()
+				.name(REGIONS_PARAMETER).canBeBlank(true);
+		for (String code : Locale.getISOCountries()) {
+			canBeBlank.item(code);
+		}
+		parameters.add(canBeBlank.defaultValue("US").build());
+		// @formatter:on
+		return parameters;
+	}
 
 	@Override
 	public String getName() {

@@ -46,7 +46,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 	 */
 	public static final String ACTION_NAME = "format_phone_number"; //$NON-NLS-1$
 
-	private String regionCode = Locale.getDefault().getCountry();
+	private static final String defaultRegionCode = Locale.getDefault().getCountry();
 
 	protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
 
@@ -75,14 +75,16 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
 		Map<String, String> parameters = context.getParameters();
 		String regionParam = parameters.get(REGIONS_PARAMETER);
-		if (!StringUtils.isEmpty(regionParam)) {
-			regionCode = regionParam;
+		if (StringUtils.isEmpty(regionParam) //
+				// we should also test here if the selected region is valid
+				) {
+			regionParam = defaultRegionCode;
 		}
 		PhoneNumberHandlerBase phoneNumberHanler = context.get(PHONE_NUMBER_HANDLER_KEY);
 		if (phoneNumberHanler
-				.isValidPhoneNumber(possiblePhoneValue, regionCode)) {
+				.isValidPhoneNumber(possiblePhoneValue, regionParam)) {
 			String formatInternational = phoneNumberHanler.formatInternational(
-					possiblePhoneValue, regionCode);
+					possiblePhoneValue, regionParam);
 			if (formatInternational != null) {
 				row.set(columnId, formatInternational);
 			}

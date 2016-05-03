@@ -2,14 +2,14 @@
   "actions": [
     
     {
-      "action": "Format phone number",
+      "action": "format_phone_number",
       "parameters": {
         "column_id": "0000",
         "scope": "column"
       }
     },
      {
-      "action": "Format phone number",
+      "action": "format_phone_number",
       "parameters": {
         "column_id": "0001",
         "scope": "column"

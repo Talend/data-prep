@@ -44,7 +44,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 	/**
 	 * Action name.
 	 */
-	public static final String ACTION_NAME = "Format phone number"; //$NON-NLS-1$
+	public static final String ACTION_NAME = "format_phone_number"; //$NON-NLS-1$
 
 	private String regionCode = Locale.getDefault().getCountry();
 

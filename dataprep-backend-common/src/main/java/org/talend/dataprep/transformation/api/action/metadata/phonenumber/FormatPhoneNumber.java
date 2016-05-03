@@ -1,17 +1,16 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.phonenumber;
-
 
 import java.util.List;
 import java.util.Locale;
@@ -41,16 +40,16 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 @Component(FormatPhoneNumber.ACTION_BEAN_PREFIX + FormatPhoneNumber.ACTION_NAME)
 public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
-	/**
-	 * Action name.
-	 */
-	public static final String ACTION_NAME = "format_phone_number"; //$NON-NLS-1$
+    /**
+     * Action name.
+     */
+    public static final String ACTION_NAME = "format_phone_number"; //$NON-NLS-1$
 
-	private static final String defaultRegionCode = Locale.getDefault().getCountry();
+    private static final String defaultRegionCode = Locale.getDefault().getCountry();
 
-	protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
+    protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
 
-	private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";
+    private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";
 
     @Override
     public void compile(ActionContext context) {
@@ -65,56 +64,54 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         }
     }
 
-	@Override
-	public void applyOnColumn(DataSetRow row, ActionContext context) {
-		final String columnId = context.getColumnId();
-		final String possiblePhoneValue = row.get(columnId);
-		if (StringUtils.isEmpty(possiblePhoneValue)) {
-			return;
-		}
+    @Override
+    public void applyOnColumn(DataSetRow row, ActionContext context) {
+        final String columnId = context.getColumnId();
+        final String possiblePhoneValue = row.get(columnId);
+        if (StringUtils.isEmpty(possiblePhoneValue)) {
+            return;
+        }
 
-		Map<String, String> parameters = context.getParameters();
-		String regionParam = parameters.get(REGIONS_PARAMETER);
-		if (StringUtils.isEmpty(regionParam) //
-				// we should also test here if the selected region is valid
-				) {
-			regionParam = defaultRegionCode;
-		}
-		PhoneNumberHandlerBase phoneNumberHanler = context.get(PHONE_NUMBER_HANDLER_KEY);
-		if (phoneNumberHanler
-				.isValidPhoneNumber(possiblePhoneValue, regionParam)) {
-			String formatInternational = phoneNumberHanler.formatInternational(
-					possiblePhoneValue, regionParam);
-			if (formatInternational != null) {
-				row.set(columnId, formatInternational);
-			}
-		}
-	}
+        Map<String, String> parameters = context.getParameters();
+        String regionParam = parameters.get(REGIONS_PARAMETER);
+        if (StringUtils.isEmpty(regionParam) //
+        // we should also test here if the selected region is valid
+        ) {
+            regionParam = defaultRegionCode;
+        }
+        PhoneNumberHandlerBase phoneNumberHanler = context.get(PHONE_NUMBER_HANDLER_KEY);
+        if (phoneNumberHanler.isValidPhoneNumber(possiblePhoneValue, regionParam)) {
+            String formatInternational = phoneNumberHanler.formatInternational(possiblePhoneValue, regionParam);
+            if (formatInternational != null) {
+                row.set(columnId, formatInternational);
+            }
+        }
+    }
 
-	@Override
-	@Nonnull
-	public List<Parameter> getParameters() {
-		final List<Parameter> parameters = super.getParameters();
-		// @formatter:off
-		Builder canBeBlank = SelectParameter.Builder.builder()
-				.name(REGIONS_PARAMETER).canBeBlank(true);
-		for (String code : Locale.getISOCountries()) {
-			canBeBlank.item(code);
-		}
-		parameters.add(canBeBlank.defaultValue("US").build());
-		// @formatter:on
-		return parameters;
-	}
+    @Override
+    @Nonnull
+    public List<Parameter> getParameters() {
+        final List<Parameter> parameters = super.getParameters();
 
-	@Override
-	public String getName() {
-		return ACTION_NAME;
-	}
+        Builder regionSelectionParam = SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true);
 
-	@Override
-	public String getCategory() {
-		return ActionCategory.PHONE_NUMBER.getDisplayName();
-	}
+        for (String code : Locale.getISOCountries()) {
+            regionSelectionParam.item(code);
+        }
+        parameters.add(regionSelectionParam.defaultValue("US").build());
+
+        return parameters;
+    }
+
+    @Override
+    public String getName() {
+        return ACTION_NAME;
+    }
+
+    @Override
+    public String getCategory() {
+        return ActionCategory.PHONE_NUMBER.getDisplayName();
+    }
 
     @Override
     public boolean acceptColumn(ColumnMetadata column) {

@@ -100,15 +100,9 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 		return ActionCategory.PHONE_NUMBER.getDisplayName();
 	}
 
-	@Override
-	public boolean acceptColumn(ColumnMetadata column) {
-		boolean validType = Type.STRING.equals(Type.get(column.getType()))
-				|| Type.INTEGER.equals(Type.get(column.getType()));
-		if (!validType) {
-			return false;
-		}
-
-		return true;
-	}
+    @Override
+    public boolean acceptColumn(ColumnMetadata column) {
+        return Type.STRING.equals(Type.get(column.getType())) || Type.INTEGER.equals(Type.get(column.getType()));
+    }
 
 }

@@ -42,6 +42,7 @@
         <org.talend.dataquality.semantic.version>1.4.4</org.talend.dataquality.semantic.version>
         <org.talend.dataquality.statistics.version>1.4.4</org.talend.dataquality.statistics.version>
         <org.talend.dataquality.record.linkage.version>3.1.0</org.talend.dataquality.record.linkage.version>
+        <org.talend.dataquality.standardization.version>3.2.0-SNAPSHOT</org.talend.dataquality.standardization.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
     </properties>
@@ -131,7 +132,18 @@
                         <artifactId>log4j</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
+            </dependency>            
+            <dependency>
+                <groupId>org.talend.dataquality</groupId>
+                <artifactId>dataquality-standardization</artifactId>
+                <version>${org.talend.dataquality.standardization.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>           
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-common</artifactId>

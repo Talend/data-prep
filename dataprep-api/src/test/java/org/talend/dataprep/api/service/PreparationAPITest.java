@@ -362,6 +362,28 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .body("code", is("TDP_PS_PREPARATION_STEP_DOES_NOT_EXIST"));
     }
 
+    @Test
+    public void shouldCopySteps() throws Exception {
+        // given
+        final String referenceId = createPreparationFromFile("dataset/dataset.csv", "reference", "text/csv");
+        applyActionFromFile(referenceId, "transformation/upper_case_firstname.json");
+        Preparation reference = preparationRepository.get(referenceId, Preparation.class);
+
+        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "prep", "text/csv");
+
+        // when
+        final Response response = given() //
+                .param("from", referenceId) //
+                .expect().statusCode(200).log().ifError() //
+                .when()//
+                .put("/api/preparations/{id}/steps/copy", preparationId);
+
+        // then
+        assertThat(response.getStatusCode(), is(200));
+        final Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
+        assertEquals(reference.getHeadId(), preparation.getHeadId());
+    }
+
     //------------------------------------------------------------------------------------------------------------------
     //----------------------------------------------------CONTENT------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------------

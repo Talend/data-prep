@@ -532,6 +532,86 @@ public class PreparationServiceTest extends BasePreparationTest{
         }
     }
 
+    @Test
+    public void shouldCopySteps() throws Exception {
+
+        // given
+        final String referenceId = createPreparation("1234", "reference");
+        applyTransformation(referenceId, "upper_case.json");
+        applyTransformation(referenceId, "lower_case.json");
+        final Preparation reference = repository.get(referenceId, Preparation.class);
+
+        final String preparationId = createPreparation("42321", "preparation");
+
+        // when
+        final Response response = given() //
+                .param("from", referenceId) //
+                .when() //
+                .expect().statusCode(200).log().ifError() //
+                .put("/preparations/{id}/steps/copy", preparationId);
+
+        // then
+        assertThat(response.getStatusCode(), is(200));
+        final Preparation preparation = repository.get(preparationId, Preparation.class);
+        assertEquals(preparation.getHeadId(), reference.getHeadId());
+    }
+
+    @Test
+    public void shouldNotCopyStepsFromPreparationNotFound() throws Exception {
+        // when
+        final Response response = given() //
+                .param("from", "reference") //
+                .when() //
+                .expect().statusCode(404).log().ifError() //
+                .put("/preparations/{id}/steps/copy", "prepNotFound");
+
+        // then
+        assertThat(response.getStatusCode(), is(404));
+    }
+
+    @Test
+    public void shouldNotCopyStepsBecausePreparationIsNotEmpty() throws Exception {
+
+        // given
+        final String referenceId = createPreparation("8436587", "reference");
+        applyTransformation(referenceId, "upper_case.json");
+        applyTransformation(referenceId, "lower_case.json");
+
+        final String preparationId = createPreparation("42321", "preparation");
+        applyTransformation(preparationId, "upper_case.json");
+
+        // when
+        final Response response = given() //
+                .param("from", referenceId) //
+                .when() //
+                //.expect().statusCode(409).log().ifError() //
+                .put("/preparations/{id}/steps/copy", preparationId);
+
+        // then
+        assertThat(response.getStatusCode(), is(409));
+    }
+
+    @Test
+    public void shouldNotCopyStepsBecauseReferencePreparationIsNotFound() throws Exception {
+
+        // given
+        final String preparationId = createPreparation("154753", "preparation");
+        Preparation expected = repository.get(preparationId, Preparation.class);
+
+        // when
+        final Response response = given() //
+                .param("from", "not to be found") //
+                .when() //
+                .expect().statusCode(200).log().ifError() //
+                .put("/preparations/{id}/steps/copy", preparationId);
+
+        // then
+        assertThat(response.getStatusCode(), is(200));
+        Preparation actual = repository.get(preparationId, Preparation.class);
+        assertEquals(expected, actual);
+    }
+
+
     // ------------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------LIFECYCLE----------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------

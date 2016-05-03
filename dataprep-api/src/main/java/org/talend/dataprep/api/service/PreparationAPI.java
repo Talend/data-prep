@@ -14,6 +14,7 @@
 package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.withBuilder;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
@@ -63,9 +64,11 @@ public class PreparationAPI extends APIService {
     public void listPreparations(
             @RequestParam(value = "format", defaultValue = "long") @ApiParam(name = "format", value = "Format of the returned document (can be 'long' or 'short'). Defaults to 'long'.") String format,
             final OutputStream output) {
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
         }
+
         PreparationList.Format listFormat = PreparationList.Format.valueOf(format.toUpperCase());
         HystrixCommand<InputStream> command = getCommand(PreparationList.class, listFormat);
         try (InputStream commandResult = command.execute()) {
@@ -79,6 +82,7 @@ public class PreparationAPI extends APIService {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
+
 
     /**
      * Returns a list containing all data sets metadata that are compatible with a preparation identified by
@@ -125,23 +129,28 @@ public class PreparationAPI extends APIService {
         }
     }
 
-    @RequestMapping(value = "/api/preparations", method = POST, consumes = APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    //@formatter:off
+    @RequestMapping(value = "/api/preparations", method = POST, consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Create a new preparation for preparation content in body.", notes = "Returns the created preparation id.")
     @Timed
     public String createPreparation(
+            @ApiParam(name = "folder", value = "Where to store the preparation.") @RequestParam(value = "folder", defaultValue = "/") String folder,
             @ApiParam(name = "body", value = "The original preparation. You may set all values, service will override values you can't write to.") @RequestBody Preparation preparation) {
+    //@formatter:on
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating preparation (pool: {} )...", getConnectionStats());
+            LOG.debug("Creating a preparation in {} (pool: {} )...", folder, getConnectionStats());
         }
-        PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation);
+
+        PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation, folder);
         final String preparationId = preparationCreate.execute();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Created preparation (pool: {} )...", getConnectionStats());
-        }
+
+        LOG.info("new preparation {} created in {}", preparationId, folder);
+
         return preparationId;
     }
 
-    @RequestMapping(value = "/api/preparations/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/preparations/{id}", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Update a preparation with content in body.", notes = "Returns the updated preparation id.")
     @Timed
     public String updatePreparation(
@@ -158,7 +167,7 @@ public class PreparationAPI extends APIService {
         return preparationId;
     }
 
-    @RequestMapping(value = "/api/preparations/{id}", method = DELETE, consumes = MediaType.ALL_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/preparations/{id}", method = DELETE, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Delete a preparation by id", notes = "Delete a preparation content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing preparation id returns empty content.")
     @Timed
     public String deletePreparation(
@@ -174,22 +183,67 @@ public class PreparationAPI extends APIService {
         return preparationId;
     }
 
-    @RequestMapping(value = "/api/preparations/clone/{id}", method = PUT, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Clone a preparation by id", notes = "Clone a preparation content based on provided id.")
-    @Timed
-    public String clonePreparation(
-            @ApiParam(name = "id", value = "The id of the preparation to clone.") @PathVariable("id") String id) {
+
+    /**
+     * Copy a preparation from the given id
+     *
+     * @param id the preparation id to copy
+     * @param destination where to copy the preparation to.
+     * @param newName optional new name for the preparation.
+     * @param output the http response.
+     * @return The copied preparation id.
+     */
+    //@formatter:off
+    @RequestMapping(value = "/api/preparations/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy a preparation", produces = TEXT_PLAIN_VALUE, notes = "Copy a preparation based the provided id.")
+    public String copy(
+            @ApiParam(value = "Id of the preparation to copy") @PathVariable(value = "id") String id,
+            @ApiParam(value = "Optional new name of the copied preparation, if not set the copy will get the original name.") @RequestParam(required = false) String newName,
+            @ApiParam(value = "The destination path to create the entry.") @RequestParam(required = false) String destination,
+            final OutputStream output) {
+    //@formatter:on
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Cloning preparation (pool: {} )...", getConnectionStats());
+            LOG.debug("Copying preparation {} to '{}' with new name '{}' (pool: {} )...", id, destination, newName, getConnectionStats());
         }
-        PreparationClone preparationClone = getCommand(PreparationClone.class, id);
-        String preparationId = preparationClone.execute();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Cloned preparation (pool: {} )...", getConnectionStats());
-        }
-        return preparationId;
+
+        HystrixCommand<String> copy = getCommand(PreparationCopy.class, id, destination, newName);
+        String copyId = copy.execute();
+
+        LOG.info("Preparation {} copied to {}/{} done --> {}", id, destination, newName, copyId);
+
+        return copyId;
     }
+
+
+    /**
+     * Move a preparation to another folder.
+     *
+     * @param id the preparation id to move.
+     * @param folder where to find the preparation.
+     * @param destination where to move the preparation.
+     * @param newName optional new preparation name.
+     */
+    //@formatter:off
+    @RequestMapping(value = "/api/preparations/{id}/move", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Move a Preparation", produces = TEXT_PLAIN_VALUE, notes = "Move a preparation to another folder.")
+    @Timed
+    public void move(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String id,
+                     @ApiParam(value = "The original folder path of the preparation.") @RequestParam(defaultValue = "", required = false) String folder,
+                     @ApiParam(value = "The new folder path of the preparation.") @RequestParam(defaultValue = "/", required = false) String destination,
+                     @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName) throws IOException {
+    //@formatter:on
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Moving preparation (pool: {} )...", getConnectionStats());
+        }
+
+        HystrixCommand<Void> move = getCommand(PreparationMove.class, id, folder, destination, newName);
+        move.execute();
+
+        LOG.info("Preparation {} moved from {} to {}/'{}'", id, folder, destination, newName);
+    }
+
 
     @RequestMapping(value = "/api/preparations/{id}/details", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
@@ -331,14 +385,13 @@ public class PreparationAPI extends APIService {
         }
     }
 
+    //@formatter:off
     @RequestMapping(value = "/api/preparations/{id}/head/{headId}", method = PUT, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Delete an action in the preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void setPreparationHead(@PathVariable(value = "id")
-    @ApiParam(name = "id", value = "Preparation id.")
-    final String preparationId, @PathVariable(value = "headId")
-    @ApiParam(name = "headId", value = "New head step id")
-    final String headId) {
+    public void setPreparationHead(@PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") final String preparationId,
+                                   @PathVariable(value = "headId") @ApiParam(name = "headId", value = "New head step id") final String headId) {
+    //@formatter:on
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Moving preparation #{} head to step '{}'...", preparationId, headId);
@@ -351,6 +404,32 @@ public class PreparationAPI extends APIService {
             LOG.debug("Moved preparation #{} head to step '{}'...", preparationId, headId);
         }
     }
+
+
+    /**
+     * Copy the steps from the another preparation to this one.
+     *
+     * This is only allowed if this preparation has no steps.
+     *
+     * @param id the preparation id to update.
+     * @param from the preparation id to copy the steps from.
+     */
+    //@formatter:off
+    @RequestMapping(value = "/api/preparations/{id}/steps/copy", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy the steps from another preparation", notes = "Copy the steps from another preparation if this one has no steps.")
+    @Timed
+    public void copyStepsFrom(@ApiParam(value="the preparation id to update") @PathVariable("id")String id,
+                              @ApiParam(value = "the preparation to copy the steps from.") @RequestParam String from) {
+    //@formatter:on
+
+        LOG.debug("copy preparations steps from {} to {}", from, id);
+
+        final HystrixCommand<Void> command = getCommand(PreparationCopyStepsFrom.class, id, from);
+        command.execute();
+
+        LOG.info("preparation's steps copied from {} to {}", from, id);
+    }
+
 
     // ---------------------------------------------------------------------------------
     // ----------------------------------------PREVIEW----------------------------------

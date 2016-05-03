@@ -20,6 +20,7 @@ import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
@@ -327,7 +328,7 @@ public class PreparationService {
 
         // if no preparation, there's nothing to copy
         if (original == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", preparationId));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
 
         // if the given folder is blank, let's use the original one (thanks to the preparation ids uniqueness)
@@ -389,7 +390,7 @@ public class PreparationService {
         entries.forEach(folderEntry -> {
             Preparation preparation = preparationRepository.get(folderEntry.getContentId(), Preparation.class);
             if (preparation != null && StringUtils.equals(name, preparation.getName())) {
-                final ExceptionContext context = ExceptionContext.build() //
+                final ExceptionContext context = build() //
                         .put("id", folderEntry.getContentId()) //
                         .put("folder", folder) //
                         .put("name", name);
@@ -425,7 +426,7 @@ public class PreparationService {
 
         // no preparation found
         if (original == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", preparationId));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
 
         // set the target name
@@ -500,6 +501,50 @@ public class PreparationService {
     }
 
     /**
+     * Copy the steps from the another preparation to this one.
+     *
+     * This is only allowed if this preparation has no steps.
+     *
+     * @param id the preparation id to update.
+     * @param from the preparation id to copy the steps from.
+     */
+    //@formatter:off
+    @RequestMapping(value = "/preparations/{id}/steps/copy", method = PUT, produces = TEXT_PLAIN_VALUE)
+    @ApiOperation(value = "Copy the steps from another preparation", notes = "Copy the steps from another preparation if this one has no steps.")
+    @Timed
+    public void copyStepsFrom(@ApiParam(value="the preparation id to update") @PathVariable("id")String id,
+                              @ApiParam(value = "the preparation to copy the steps from.") @RequestParam String from) {
+    //@formatter:on
+
+        LOGGER.debug("copy steps from {} to {}", from, id);
+
+        final Preparation preparation = preparationRepository.get(id, Preparation.class);
+        if (preparation == null) {
+            LOGGER.error("cannot update {} steps --> preparation not found in repository", id);
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
+        }
+
+        // if the preparation is not empty (head != root step) --> 409
+        if (!StringUtils.equals(preparation.getHeadId(), rootStep.id())) {
+            LOGGER.error("cannot update {} steps --> preparation has already steps.");
+            throw new TDPException(PREPARATION_NOT_EMPTY, build().put("id", id));
+        }
+
+        final Preparation reference = preparationRepository.get(from, Preparation.class);
+        if (reference == null) {
+            LOGGER.warn("cannot copy steps from {} to {} because the original preparation is not found", from, id);
+            return;
+        }
+
+        preparation.setHeadId(reference.getHeadId());
+        preparation.setLastModificationDate(new Date().getTime());
+        preparationRepository.add(preparation);
+
+        LOGGER.info("copy steps from {} to {} done --> {}", from, id, preparation);
+    }
+
+
+    /**
      * Return a preparation details.
      *
      * @param id the wanted preparation id.
@@ -531,7 +576,7 @@ public class PreparationService {
 
         final Folder folder = folderRepository.locateEntry(id, PREPARATION);
         if (folder == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", id));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
 
         LOGGER.info("found where {} is stored : {}", id, folder);
@@ -585,15 +630,14 @@ public class PreparationService {
      * <li>4. Append each action (one step is created by action) after the new preparation head</li>
      * </ul>
      */
+    //formatter:off
     @RequestMapping(value = "/preparations/{id}/actions/{stepId}", method = PUT, consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Updates an action in a preparation", notes = "Modifies an action in preparation's steps.")
     @Timed
-    public void updateAction(@PathVariable("id")
-    final String preparationId, //
-            @PathVariable("stepId")
-    final String stepToModifyId, //
-            @RequestBody
-    final AppendStep newStep) {
+    public void updateAction(@PathVariable("id") final String preparationId,
+                             @PathVariable("stepId") final String stepToModifyId,
+                             @RequestBody final AppendStep newStep) {
+    //@formatter:on
 
         checkActionStepConsistency(newStep);
 
@@ -687,7 +731,7 @@ public class PreparationService {
         final Step head = getStep(headId);
         if (head == null) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
-                    ExceptionContext.build().put("id", preparationId).put("stepId", headId));
+                    build().put("id", preparationId).put("stepId", headId));
         }
 
         final Preparation preparation = getPreparation(preparationId);
@@ -719,7 +763,7 @@ public class PreparationService {
             final Step step = getStep(stepId);
             return getActions(step);
         } else {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", id));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
     }
 
@@ -789,7 +833,7 @@ public class PreparationService {
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation == null) {
             LOGGER.error("Preparation #{} does not exist", id);
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.build().put("id", id));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         return preparation;
     }
@@ -843,7 +887,7 @@ public class PreparationService {
         final List<String> steps = preparationUtils.listStepsIds(preparation.getHeadId(), fromStepId, preparationRepository);
         if (!fromStepId.equals(steps.get(0))) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
-                    ExceptionContext.build().put("id", preparation.getId()).put("stepId", fromStepId));
+                    build().put("id", preparation.getId()).put("stepId", fromStepId));
         }
         return steps;
     }

@@ -20,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,32 +42,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 	private FormatPhoneNumber action;
 
 	private Map<String, String> parameters;
-
-	private static final String[][] DATASET_FR = new String[][] {
-			{"+33656965822", "FR Phone" }, //
-			{"+33(0)147554323", "FR Phone" },
-						
-	};
 	
-	private static final String[][] DATASET_US = new String[][] {
-	        {"+1-541-754-3010","US Phone"},
-		    {"1-541-754-3010","US Phone"}
-		
-    };
-
-
-	private static final String[][] EXPECTED_FORMAT_DATASET_FR = new String[][] {
-			{"+33 6 56 96 58 22", "FR Phone" }, //
-			{"+33 1 47 55 43 23", "FR Phone" },
-			
-	};
-	
-	private static final String[][] EXPECTED_FORMAT_DATASET_US = new String[][] {
-		{"+1 541-754-3010","US Phone"},
-		{"+1 541-754-3010","US Phone"}
-		
-};
-
 	@Before
 	public void init() throws IOException {
 		parameters = ActionMetadataTestUtils
@@ -103,54 +77,70 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
 
 	@Test
-	public void should_format() {
-		// given
-		List<DataSetRow> rowList = new ArrayList<DataSetRow>();
+	public void should_format_FR() {
 		parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "FR");
-		for (int row = 0; row < DATASET_FR.length; row++) {
-
-			final Map<String, String> values = new HashMap<>();
-
-			for (int col = 0; col < DATASET_FR[0].length; col++) {
-				values.put("000" + col, DATASET_FR[row][col]);
-			}
-			DataSetRow dataSetRow= new DataSetRow(values);
-
-			rowList.add(dataSetRow);
-		}
+		Map<String, String> values = new HashMap<>();
+		values.put("0000", "+33656965822");
 		
-		// when
-		ActionTestWorkbench.test(rowList, factory.create(action, parameters));
-		
-		// then
-		for (int row = 0; row < EXPECTED_FORMAT_DATASET_FR.length; row++) {
-			DataSetRow dataSetRow = rowList.get(row);
-			assertEquals(dataSetRow.values().get("0000"),EXPECTED_FORMAT_DATASET_FR[row][0]);
-		}
+		DataSetRow row = new DataSetRow(values);
 
-		//US Phone
-		rowList = new ArrayList<DataSetRow>();
+		Map<String, Object> expectedValues = new LinkedHashMap<>();
+		expectedValues.put("0000", "+33 6 56 96 58 22"); 
+		
+		ActionTestWorkbench.test(row, factory.create(action, parameters));
+		assertEquals(expectedValues, row.values());
+		
+		values = new HashMap<>();
+		values.put("0000", "+33(0)147554323");
+		row = new DataSetRow(values);
+		expectedValues.put("0000", "+33 1 47 55 43 23"); 
+		ActionTestWorkbench.test(row, factory.create(action, parameters));
+		assertEquals(expectedValues, row.values());
+	}
+	
+	@Test
+	public void should_format_US() {
 		parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
-		for (int row = 0; row < DATASET_US.length; row++) {
-
-			final Map<String, String> values = new HashMap<>();
-
-			for (int col = 0; col < DATASET_US[0].length; col++) {
-				values.put("000" + col, DATASET_US[row][col]);
-			}
-			DataSetRow dataSetRow= new DataSetRow(values);
-
-			rowList.add(dataSetRow);
-		}
+		Map<String, String> values = new HashMap<>();
+		values.put("0000", "+1-541-754-3010");
 		
-		// when
-		ActionTestWorkbench.test(rowList, factory.create(action, parameters));
+		DataSetRow row = new DataSetRow(values);
+
+		Map<String, Object> expectedValues = new LinkedHashMap<>();
+		expectedValues.put("0000", "+1 541-754-3010"); 
 		
-		// then
-		for (int row = 0; row < EXPECTED_FORMAT_DATASET_US.length; row++) {
-			DataSetRow dataSetRow = rowList.get(row);
-			assertEquals(dataSetRow.values().get("0000"),EXPECTED_FORMAT_DATASET_US[row][0]);
-		}
+		ActionTestWorkbench.test(row, factory.create(action, parameters));
+		assertEquals(expectedValues, row.values());
+	}
+	
+	@Test
+	public void should_format_defaut_parameter() {
+		parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
+		Map<String, String> values = new HashMap<>();
+		values.put("0000", "1-541-754-3010");
+		
+		DataSetRow row = new DataSetRow(values);
+
+		Map<String, Object> expectedValues = new LinkedHashMap<>();
+		expectedValues.put("0000", "+1 541-754-3010"); 
+		
+		ActionTestWorkbench.test(row, factory.create(action, parameters));
+		assertEquals(expectedValues, row.values());
+	}
+	
+	@Test
+	public void should_not_format_defaut_parameter() {
+		parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
+		Map<String, String> values = new HashMap<>();
+		values.put("0000", "+33(0)147554323");//it is FR phone
+		
+		DataSetRow row = new DataSetRow(values);
+
+		Map<String, Object> expectedValues = new LinkedHashMap<>();
+		expectedValues.put("0000", "+33(0)147554323"); 
+		
+		ActionTestWorkbench.test(row, factory.create(action, parameters));
+		assertEquals(expectedValues, row.values());
 	}
 	
 	@Test

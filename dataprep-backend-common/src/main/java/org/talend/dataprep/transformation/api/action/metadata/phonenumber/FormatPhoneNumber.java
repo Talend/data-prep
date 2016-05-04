@@ -12,9 +12,12 @@
 // ============================================================================
 package org.talend.dataprep.transformation.api.action.metadata.phonenumber;
 
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -47,9 +50,11 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
     private static final String defaultRegionCode = Locale.getDefault().getCountry();
 
-    protected static final String REGIONS_PARAMETER = "region"; //$NON-NLS-1$
+    protected static final String REGIONS_PARAMETER = "region_code"; //$NON-NLS-1$
 
-    private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";
+    private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";//$NON-NLS-1$
+    
+    private Set<String> supportedRegions=new HashSet<String>();
 
     @Override
     public void compile(ActionContext context) {
@@ -57,7 +62,9 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
-                context.get(PHONE_NUMBER_HANDLER_KEY, p -> new PhoneNumberHandlerBase());
+                PhoneNumberHandlerBase phoneNumberHandlerBase = context.get(PHONE_NUMBER_HANDLER_KEY, p -> new PhoneNumberHandlerBase());
+                supportedRegions=phoneNumberHandlerBase.getSupportedRegions();
+                
             } catch (IllegalArgumentException e) {
                 context.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
@@ -94,11 +101,8 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         final List<Parameter> parameters = super.getParameters();
 
         Builder regionSelectionParam = SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true);
-
-        for (String code : Locale.getISOCountries()) {
-            regionSelectionParam.item(code);
-        }
-        parameters.add(regionSelectionParam.defaultValue("US").build());
+        supportedRegions.forEach(region->regionSelectionParam.item(region));
+        parameters.add(regionSelectionParam.defaultValue(defaultRegionCode).build());//$NON-NLS-1$
 
         return parameters;
     }
@@ -116,6 +120,11 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType())) || Type.INTEGER.equals(Type.get(column.getType()));
+    }
+    
+    @Override
+    public Set<Behavior> getBehavior() {
+        return EnumSet.of(Behavior.VALUES_COLUMN);
     }
 
 }

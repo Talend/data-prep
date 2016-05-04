@@ -24,7 +24,7 @@ export default function TalendSearchInput() {
         require: 'ngModel',
         link: function (scope, iElement, iAttrs, ngModel) {
             //var margin = 5;
-            var wrapper = angular.element('<div style="position:relative;"></div>');
+            var wrapper = angular.element('<div class="search-input"></div>');
             iElement.wrap(wrapper);
 
             var clearButton = angular.element('<div class="search-input-icon clear-icon"><span class="icon" data-icon="d"></span></div>');

@@ -11,16 +11,24 @@
 
   ============================================================================*/
 
-.search-input-icon {
-  position: absolute;
-  color: gray;
-  display: none;
-  font-size: 0.5em;
-  right: 0;
-  top: 50%;
-  @include transform(translateY(-50%) translateX(-100%));
+.search-input {
+  position:relative;
 
-  &.clear-icon {
-    cursor: pointer;
+  > input {
+    margin: 0;
+  }
+
+  .search-input-icon {
+    position: absolute;
+    color: gray;
+    display: none;
+    font-size: 0.5em;
+    right: 0;
+    top: 50%;
+    @include transform(translateY(-50%) translateX(-100%));
+
+    &.clear-icon {
+      cursor: pointer;
+    }
   }
 }

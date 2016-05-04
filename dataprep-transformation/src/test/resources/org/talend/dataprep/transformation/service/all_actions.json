@@ -3655,6 +3655,9 @@
     "dynamic": false
   },
   {
+    "name": "format_phone_number"
+  },
+  {
     "name": "max_numbers",
     "category": "math",
     "parameters": [

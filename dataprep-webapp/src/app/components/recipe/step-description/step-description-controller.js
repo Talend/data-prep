@@ -17,14 +17,13 @@ class StepDescriptionCtrl {
         'ngInject';
 
         this.$translate = $translate;
-
         this.stepDescription = '';
     }
 
     $onChanges() {
         switch (this.step.actionParameters.parameters.scope) {
             case 'column':
-                this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {columnName: this.step.column.name.toUpperCase()});
+                this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', { columnName: this.step.column.name.toUpperCase() });
                 break;
 
             case 'cell':
@@ -32,7 +31,7 @@ class StepDescriptionCtrl {
                 break;
 
             case 'line':
-                this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_LINE', {rowId: this.step.row.id});
+                this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_LINE', { rowId: this.step.row.id });
                 break;
 
             case 'dataset':
@@ -52,33 +51,23 @@ class StepDescriptionCtrl {
      * @description creates the lookup step description
      */
     _updateLookupDescription(lookupStepDetails) {
-        if (lookupStepDetails) {
-            this.stepDescription = this.$translate.instant('LOOKUP_STEP_DESCRIPTION', {
-                lookupDsName: this.step.actionParameters.parameters.lookup_ds_name,
-                mainColName: this.step.column.name,
-                lookupColName: this.step.actionParameters.parameters.lookup_join_on_name,
-            });
+        this.stepDescription = this.$translate.instant('LOOKUP_STEP_DESCRIPTION', {
+            lookupDsName: this.step.actionParameters.parameters.lookup_ds_name,
+            mainColName: this.step.column.name,
+            lookupColName: this.step.actionParameters.parameters.lookup_join_on_name,
+        });
 
-            switch (lookupStepDetails.initialColsNbr) {
-                case 1:
-                    this.stepDescription += this.$translate.instant('ONLY_1_ADDED_COL', {firstCol: lookupStepDetails.firstCol});
-                    break;
+        switch (lookupStepDetails.initialColsNbr) {
+            case 1:
+                this.stepDescription += this.$translate.instant('ONLY_1_ADDED_COL', lookupStepDetails);
+                break;
 
-                case 2:
-                    this.stepDescription += this.$translate.instant('ONLY_2_ADDED_COLS', {
-                        firstCol: lookupStepDetails.firstCol,
-                        secondCol: lookupStepDetails.secondCol,
-                    });
-                    break;
+            case 2:
+                this.stepDescription += this.$translate.instant('ONLY_2_ADDED_COLS', lookupStepDetails);
+                break;
 
-                default:
-                    this.stepDescription += this.$translate.instant('MORE_THEN_2_ADDED_COLS', {
-                        firstCol: lookupStepDetails.firstCol,
-                        secondCol: lookupStepDetails.secondCol,
-                        restOfColsNbr: lookupStepDetails.restOfColsNbr,
-                        restOfCols: lookupStepDetails.restOfCols,
-                    });
-            }
+            default:
+                this.stepDescription += this.$translate.instant('MORE_THEN_2_ADDED_COLS', lookupStepDetails);
         }
     }
 
@@ -88,18 +77,17 @@ class StepDescriptionCtrl {
      * @methodOf data-prep.step-description.controller:StepDescriptionCtrl
      * @param {object} step The current step
      * @description having the Ids of the added columns, it collects the responding names
-     * @returns {Object} 2 arrays of the added columns names
+     * @returns {Object} The lookup added columns arguments
      */
     _getAddedColumnsInLookup(step) {
         const allAddedCols = _.map(step.actionParameters.parameters.lookup_selected_cols, 'name');
-        const addedColsDetails = {
+        return {
             initialColsNbr: allAddedCols.length,
             firstCol: allAddedCols.splice(0, 1).join(),//tab = []; tab[0]==>undefined, tab.join()==>''
             secondCol: allAddedCols.splice(0, 1).join(),
             restOfColsNbr: allAddedCols.length,
             restOfCols: allAddedCols.join(', '),
         };
-        return addedColsDetails;
     }
 }
 

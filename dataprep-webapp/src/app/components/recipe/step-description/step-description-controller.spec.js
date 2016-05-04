@@ -11,12 +11,12 @@
 
  ============================================================================*/
 
-describe('Step Description,', () => {
-    let createController, scope, $element;
+describe('Step Description controller', () => {
+    let createController, scope;
 
     beforeEach(angular.mock.module('data-prep.step-description'));
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
         $translateProvider.translations('en', {
             'RECIPE_ITEM_ON_COL': 'on column <b>{{columnName}}</b>',
             'RECIPE_ITEM_ON_CELL': 'on cell',
@@ -32,35 +32,33 @@ describe('Step Description,', () => {
 
     beforeEach(inject(($rootScope, $componentController) => {
         scope = $rootScope.$new();
-        $element = {};
-        createController = () => {
-            return $componentController('stepDescription');
-        };
+
+        createController = () => $componentController('stepDescription');
     }));
 
-    describe('translation', () => {
-        it('should translate step description on scope: column', () => {
+    describe('update description', () => {
+        it('should translate description on scope: column', () => {
             //given
-            let ctrl = createController();
+            const ctrl = createController();
 
             ctrl.step = {
-                column: {id: '0', name: 'col1'},
+                column: { id: '0', name: 'col1' },
                 transformation: {
                     stepId: '13a24e8765ef4',
                     name: 'split',
                     label: 'Split',
                     category: 'split',
-                    parameters: [{name: 'pattern', type: 'string'}],
-                    items: []
+                    parameters: [{ name: 'pattern', type: 'string' }],
+                    items: [],
                 },
                 actionParameters: {
                     action: 'split',
                     parameters: {
                         scope: 'column',
                         column_id: '0',
-                        pattern: '/'
+                        pattern: '/',
                     }
-                }
+                },
             };
 
             //when
@@ -72,31 +70,31 @@ describe('Step Description,', () => {
 
         });
 
-        it('should translate step description on scope: cell', () => {
+        it('should translate description on scope: cell', () => {
             //given
-            let ctrl = createController();
+            const ctrl = createController();
 
             ctrl.step = {
-                column: {id: '1', name: 'col2'},
+                column: { id: '1', name: 'col2' },
                 transformation: {
                     stepId: '456bb784a9674e532fc446',
                     name: 'replace_on_value',
                     label: 'Replace value',
                     category: 'quickfix',
                     parameters: [
-                        {name: 'cell_value', type: 'string'},
-                        {name: 'replace_value', type: 'string'}
-                    ]
+                        { name: 'cell_value', type: 'string' },
+                        { name: 'replace_value', type: 'string' }
+                    ],
                 },
                 actionParameters: {
                     action: 'quickfix',
                     parameters: {
                         scope: 'cell',
                         column_id: '1',
-                        row_id: 56
-                    }
+                        row_id: 56,
+                    },
                 },
-                inactive: true
+                inactive: true,
             };
 
             //when
@@ -108,29 +106,29 @@ describe('Step Description,', () => {
 
         });
 
-        it('should translate step description on scope: line', () => {
+        it('should translate description on scope: line', () => {
             //given
-            let ctrl = createController();
+            const ctrl = createController();
 
             ctrl.step = {
-                column: {id: undefined, name: undefined},
-                row: {id: 125},
+                column: { id: undefined, name: undefined },
+                row: { id: 125 },
                 transformation: {
                     stepId: '3213ca58454a58d436',
                     name: 'delete',
                     label: 'Delete Line',
                     category: 'clean',
-                    parameters: null
+                    parameters: null,
                 },
                 actionParameters: {
                     action: 'delete',
                     parameters: {
                         scope: 'line',
                         column_id: undefined,
-                        row_id: 125
+                        row_id: 125,
                     }
                 },
-                inactive: true
+                inactive: true,
             };
 
             //when
@@ -142,20 +140,20 @@ describe('Step Description,', () => {
 
         });
 
-        describe('on scope: "dataset" ', () => {
-            it('should translate when 1 column is added', () => {
+        describe('on lookup ', () => {
+            it('should translate description with 1 column', () => {
                 //given
-                let ctrl = createController();
+                const ctrl = createController();
 
                 ctrl.step = {
                     'column': {
                         'id': '0000',
-                        'name': 'id'
+                        'name': 'id',
                     },
                     transformation: {
                         parameters: [],
                         label: 'Lookup',
-                        name: 'lookup'
+                        name: 'lookup',
                     },
                     'actionParameters': {
                         'action': 'lookup',
@@ -174,9 +172,9 @@ describe('Step Description,', () => {
                                 }
                             ],
                             'column_name': 'id',
-                            'scope': 'dataset'
-                        }
-                    }
+                            'scope': 'dataset',
+                        },
+                    },
                 };
 
                 //when
@@ -187,19 +185,19 @@ describe('Step Description,', () => {
                 expect(ctrl.stepDescription).toBe('done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">id</span> and <span class="recipe-column-name">id. </span>The column <span class="recipe-column-name">firstname</span> has been added.');
             });
 
-            it('should translate when 2 columns are added', () => {
+            it('should translate description with 2 columns', () => {
                 //given
-                let ctrl = createController();
+                const ctrl = createController();
 
                 ctrl.step = {
                     'column': {
                         'id': '0000',
-                        'name': 'id'
+                        'name': 'id',
                     },
                     transformation: {
                         parameters: [],
                         label: 'Lookup',
-                        name: 'lookup'
+                        name: 'lookup',
                     },
                     'actionParameters': {
                         'action': 'lookup',
@@ -222,9 +220,9 @@ describe('Step Description,', () => {
                                 }
                             ],
                             'column_name': 'id',
-                            'scope': 'dataset'
-                        }
-                    }
+                            'scope': 'dataset',
+                        },
+                    },
                 };
 
                 //when
@@ -235,19 +233,19 @@ describe('Step Description,', () => {
                 expect(ctrl.stepDescription).toBe('done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">id</span> and <span class="recipe-column-name">id. </span>The columns <span class="recipe-column-name">firstname</span> and <span class="recipe-column-name">lastname</span> have been added.');
             });
 
-            it('should translate when more than 2 columns areadded', () => {
+            it('should translate description with more than 2 columns', () => {
                 //given
-                let ctrl = createController();
+                const ctrl = createController();
 
                 ctrl.step = {
                     'column': {
                         'id': '0000',
-                        'name': 'id'
+                        'name': 'id',
                     },
                     transformation: {
                         parameters: [],
                         label: 'Lookup',
-                        name: 'lookup'
+                        name: 'lookup',
                     },
                     'actionParameters': {
                         'action': 'lookup',
@@ -278,9 +276,9 @@ describe('Step Description,', () => {
                                 }
                             ],
                             'column_name': 'id',
-                            'scope': 'dataset'
-                        }
-                    }
+                            'scope': 'dataset',
+                        },
+                    },
                 };
 
                 //when
@@ -292,89 +290,5 @@ describe('Step Description,', () => {
             })
         });
     });
-
-    describe('construct lookup action details data', () => {
-
-            it('should return 3 added columns names given the ids', function () {
-                //given
-                let ctrl = createController();
-                let step = {
-                    actionParameters: {
-                        parameters: {
-                            lookup_selected_cols: [
-                                {id: '0001', name: 'firstname'},
-                                {id: '0002', name: 'lastname'},
-                                {id: '0003', name: 'city'}
-                            ]
-                        }
-                    }
-                };
-
-                //when
-                let namesString = ctrl._getAddedColumnsInLookup(step);
-
-                //then
-                expect(namesString).toEqual({
-                    initialColsNbr: 3,
-                    firstCol: 'firstname',
-                    secondCol: 'lastname',
-                    restOfColsNbr: 1,
-                    restOfCols: 'city'
-                });
-            });
-
-            it('should return 2 added columns names given the ids', function () {
-                //given
-                let ctrl = createController();
-                let step = {
-                    actionParameters: {
-                        parameters: {
-                            lookup_selected_cols: [
-                                {id: '0001', name: 'firstname'},
-                                {id: '0002', name: 'lastname'}
-                            ]
-                        }
-                    }
-                };
-
-                //when
-                let namesString = ctrl._getAddedColumnsInLookup(step);
-
-                //then
-                expect(namesString).toEqual({
-                    initialColsNbr: 2,
-                    firstCol: 'firstname',
-                    secondCol: 'lastname',
-                    restOfColsNbr: 0,
-                    restOfCols: ''
-                });
-            });
-
-            it('should return 1 added column names given the ids', function () {
-                //given
-                let ctrl = createController();
-                let step = {
-                    actionParameters: {
-                        parameters: {
-                            lookup_selected_cols: [
-                                {id: '0001', name: 'firstname'}
-                            ]
-                        }
-                    }
-                };
-
-                //when
-                let namesString = ctrl._getAddedColumnsInLookup(step);
-
-                //then
-                expect(namesString).toEqual({
-                    initialColsNbr: 1,
-                    firstCol: 'firstname',
-                    secondCol: '',
-                    restOfColsNbr: 0,
-                    restOfCols: ''
-                });
-            });
-        });
 });
 

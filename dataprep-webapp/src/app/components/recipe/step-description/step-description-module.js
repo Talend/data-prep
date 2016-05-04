@@ -11,7 +11,6 @@
 
  ============================================================================*/
 
-
 import StepDescription from './step-description-component';
 
 (() => {
@@ -19,12 +18,12 @@ import StepDescription from './step-description-component';
 
     /**
      * @ngdoc object
-     * @name data-prep.dataset-copy-move
-     * @description This module creates the step details in the recipe
+     * @name data-prep.step-description
+     * @description This module creates the recipe step details
      */
     angular.module('data-prep.step-description', [
             'pascalprecht.translate',
-            'ngSanitize'
+            'ngSanitize',
         ])
         .component('stepDescription', StepDescription);
 })();

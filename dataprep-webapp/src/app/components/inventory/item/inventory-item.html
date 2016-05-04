@@ -88,16 +88,16 @@
         </talend-button-dropdown>
 
         <talend-file-selector
-                ng-if="inventoryItemCtrl.update"
+                ng-if="inventoryItemCtrl.update && inventoryItemCtrl.item.type !== 'application/vnd.remote-ds.job'"
                 button-data-icon="E"
                 button-title="REPLACE_FILE_CONTENT"
                 file-model="inventoryItemCtrl.fileModel"
                 on-file-change="inventoryItemCtrl.update(inventoryItemCtrl.item)">
         </talend-file-selector>
 
-        <div ng-if="(inventoryItemCtrl.update || (inventoryItemCtrl.relatedInventories)) && (inventoryItemCtrl.copy || inventoryItemCtrl.remove)"
+        <div ng-if="((inventoryItemCtrl.update && inventoryItemCtrl.item.type !== 'application/vnd.remote-ds.job') ||
+                    (inventoryItemCtrl.relatedInventories)) && (inventoryItemCtrl.copy || inventoryItemCtrl.remove)"
              class="divider">
-
         </div>
 
         <a ng-if="inventoryItemCtrl.copy"

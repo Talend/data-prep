@@ -157,6 +157,14 @@ describe('InventoryItem directive', () => {
                 const iconSrc = icon.find('img')[0].src;
                 expect(strEndsWith(iconSrc, '/assets/images/inventory/job_file.png')).toBe(true);
             });
+
+            it('should not display update for job dattaset', () => {
+                //when
+                createElement(job_dataset);
+
+                //then
+                expect(element.find('talend-file-selector').length).toBe(0);
+            });
         })
     });
 

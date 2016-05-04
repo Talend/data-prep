@@ -28,9 +28,6 @@ public class Preparation extends Identifiable implements Serializable {
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
-    /** The preparation id. */
-    private String id;
-
     /** The dataset id. */
     private String dataSetId;
 

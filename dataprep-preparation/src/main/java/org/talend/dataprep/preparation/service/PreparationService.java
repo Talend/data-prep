@@ -212,12 +212,12 @@ public class PreparationService {
     @ApiOperation(value = "Search for preparations details", notes = "Returns the list of preparations details that match the search criteria.")
     @Timed
     public Iterable<PreparationDetails> searchPreparations(
-            @RequestParam(value="dataSetId", required=false) @ApiParam("dataSetId") String dataSetId,
-            @RequestParam(value = "folder", required=false) @ApiParam(value="path of the folder where to look for preparations") String folder,
-            @RequestParam(value="name", required=false) @ApiParam("name") String name,
-            @RequestParam(value = "exactMatch", defaultValue = "true") @ApiParam("exactMatch") boolean exactMatch,
-            @RequestParam(defaultValue = "MODIF", required = false) @ApiParam(value = "Sort key (by name or date).") String sort,
-            @RequestParam(defaultValue = "DESC", required = false) @ApiParam(value = "Order for sort key (desc or asc).") String order) {
+            @RequestParam(required=false) @ApiParam("dataSetId") String dataSetId,
+            @RequestParam(required=false) @ApiParam(value="path of the folder where to look for preparations") String folder,
+            @RequestParam(required=false) @ApiParam("name") String name,
+            @RequestParam(defaultValue = "true") @ApiParam("exactMatch") boolean exactMatch,
+            @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
+            @RequestParam(defaultValue = "DESC") @ApiParam(value = "Order for sort key (desc or asc).") String order) {
     //@formatter:on
 
         //TODO should stream the response à la DataSetRowIterator & DataSetRowStreamSerializer

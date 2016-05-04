@@ -15,11 +15,13 @@ package org.talend.dataprep.util;
 
 import static java.lang.String.valueOf;
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
 
 import java.util.Comparator;
 
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -123,7 +125,7 @@ public class SortAndOrderHelper {
      *
      * @param sortKey the sort key.
      * @param orderKey the order comparator to use.
-     * @return a dataset metadata comparator from the given parameters.
+     * @return a preparation comparator from the given parameters.
      */
     public static Comparator<Preparation> getPreparationComparator(String sortKey, String orderKey) {
 
@@ -150,8 +152,46 @@ public class SortAndOrderHelper {
                 comparator = Comparator.comparing(p -> String.valueOf(p.getLastModificationDate()), comparisonOrder);
                 break;
             default:
-                throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, ExceptionContext.build().put("sort", sort));
+                throw new TDPException(ILLEGAL_SORT_FOR_LIST, ExceptionContext.build().put("sort", sort));
         }
         return comparator;
+    }
+
+
+    /**
+     * Return a Folder comparator from the given parameters.
+     *
+     * @param sortKey the sort key.
+     * @param orderKey the order comparator to use.
+     * @return a folder comparator from the given parameters.
+     */
+    public static Comparator<Folder> getFolderComparator(String sortKey, String orderKey) {
+
+        Comparator<String> order = getOrderComparator(orderKey);
+
+        Sort sort;
+        try {
+            sort = Sort.valueOf(sortKey.toUpperCase());
+        }
+        catch (IllegalArgumentException e) {
+            throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, build().put("sort", sortKey));
+        }
+
+        // Select comparator for sort (either by name or date)
+        final Comparator<Folder> comp;
+        switch (sort) {
+            case NAME:
+                comp = Comparator.comparing(Folder::getName, order);
+                break;
+            case DATE:
+                comp = Comparator.comparing(folder -> String.valueOf(folder.getCreationDate()), order);
+                break;
+            case MODIF:
+                comp = Comparator.comparing(folder -> String.valueOf(folder.getLastModificationDate()), order);
+                break;
+            default:
+                throw new TDPException(ILLEGAL_SORT_FOR_LIST, ExceptionContext.build().put("sort", sort));
+        }
+        return comp;
     }
 }

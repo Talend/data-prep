@@ -36,20 +36,45 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("prototype")
 public class FoldersList extends GenericCommand<InputStream> {
 
-    public FoldersList(String path) {
+    /**
+     * List child folders for the given path.
+     *
+     * @param path the path to list the folder from.
+     * @param sort the sort key.
+     * @param order how to use the sort key.
+     */
+    // private constructor to ensure IoC
+    private FoldersList(String path, String sort, String order) {
         super(GenericCommand.PREPARATION_GROUP);
-        execute(() -> onExecute(path));
+        execute(() -> onExecute(path, sort, order));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private HttpRequestBase onExecute(String path) {
+    /**
+     * List child folders for the given path.
+     *
+     * @param path the path to list the folder from.
+     */
+    // private constructor to ensure IoC
+    private FoldersList(String path) {
+        this(path, null, null);
+    }
+
+    private HttpRequestBase onExecute(String path, String sort, String order) {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders" );
 
-            if (StringUtils.isNotEmpty(path)) {
+            if (StringUtils.isNotBlank(path)) {
                uriBuilder.addParameter("path", path);
             }
+            if (StringUtils.isNotBlank(sort)) {
+                uriBuilder.addParameter("sort", sort);
+            }
+            if (StringUtils.isNotBlank(order)) {
+                uriBuilder.addParameter("order", order);
+            }
+
             return new HttpGet(uriBuilder.build());
 
         } catch (URISyntaxException e) {

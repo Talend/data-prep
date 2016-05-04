@@ -102,7 +102,7 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = DELETE)
     @ApiOperation(value = "Remove a Folder")
     @Timed
-    public void removeFolder(@RequestParam(required = true) String path, final OutputStream output) {
+    public void removeFolder(@RequestParam String path, final OutputStream output) {
         try {
             final HystrixCommand<HttpResponse> removeFolder = getCommand(RemoveFolder.class, path);
             HttpResponse result = removeFolder.execute();
@@ -226,6 +226,8 @@ public class FolderAPI extends APIService {
     @Timed
     public void listPreparationsByFolder(
             @RequestParam(value = "folder", defaultValue = "/") @ApiParam(name = "folder", value = "The destination to search preparations from.") String folder,
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE") String sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC") String order,
             final OutputStream output) {
     //@formatter:on
 
@@ -238,8 +240,8 @@ public class FolderAPI extends APIService {
 
             generator.writeStartObject();
 
-            listAndWriteFoldersToJson(folder, generator);
-            preparationsProcessed = listAndWritePreparationsToJson(folder, generator);
+            listAndWriteFoldersToJson(folder, sort, order, generator);
+            preparationsProcessed = listAndWritePreparationsToJson(folder, sort, order, generator);
 
             generator.writeEndObject();
 
@@ -255,13 +257,15 @@ public class FolderAPI extends APIService {
      * List preparations from a destination and write them straight in json to the output.
      *
      * @param folder the destination to list the preparations.
+     * @param sort how to sort the preparations.
+     * @param order the order to apply to the sort.
      * @param output where to write the json.
      * @throws IOException if an error occurs.
      */
-    private int listAndWritePreparationsToJson(String folder, JsonGenerator output) throws IOException {
+    private int listAndWritePreparationsToJson(String folder, String sort, String order, JsonGenerator output) throws IOException {
 
         output.writeRaw(",");
-        final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, folder);
+        final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, folder, sort, order);
         try (InputStream input = listPreparations.execute()) {
 
             output.writeArrayFieldStart("preparations");
@@ -300,11 +304,13 @@ public class FolderAPI extends APIService {
      * Get and write, in json, the list of folders directly to the output.
      *
      * @param folderPath the destination to list.
+     * @param sort how to sort the preparations.
+     * @param order the order to apply to the sort.
      * @param output where to write the json.
      * @throws IOException if an error occurs.
      */
-    private void listAndWriteFoldersToJson(String folderPath, JsonGenerator output) throws IOException {
-        final FoldersList commandListFolders = getCommand(FoldersList.class, folderPath);
+    private void listAndWriteFoldersToJson(String folderPath, String sort, String order, JsonGenerator output) throws IOException {
+        final FoldersList commandListFolders = getCommand(FoldersList.class, folderPath, sort, order);
         output.writeRaw("\"folders\":");
         try (InputStream folders = commandListFolders.execute()) {
             output.writeRaw(IOUtils.toString(folders));

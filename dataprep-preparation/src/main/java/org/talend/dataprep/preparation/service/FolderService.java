@@ -20,6 +20,10 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_EMPTY;
 import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
+import static org.talend.dataprep.util.SortAndOrderHelper.getFolderComparator;
+
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +44,7 @@ import org.talend.dataprep.security.Security;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "folders", basePath = "/folders", description = "Operations on folders")
@@ -63,20 +68,31 @@ public class FolderService {
      * @param path the current folder where to look for children.
      * @return direct sub folders for the given path.
      */
+    //@formatter:off
     @RequestMapping(value = "/folders", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Folder children", produces = APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
     @Timed
-    public Iterable<Folder> children(@RequestParam(required = false, defaultValue = "") String path) {
+    public Iterable<Folder> children(@RequestParam(defaultValue = "/") String path,
+                                     @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
+                                     @RequestParam(defaultValue = "DESC") @ApiParam(value = "Order for sort key (desc or asc).") String order) {
+    //@formatter:on/
+
         if (!folderRepository.exists(path)) {
             throw new TDPException(FOLDER_NOT_FOUND, build().put("path", path));
         }
-        final Iterable<Folder> children = folderRepository.children(path);
+
+        Iterable<Folder> children = folderRepository.children(path);
 
         // update the number of preparations in each children
         children.forEach(f -> {
             final long count = stream(folderRepository.entries(f.getPath(), PREPARATION).spliterator(), false).count();
             f.setNbPreparations(count);
         });
+
+        // sort the folders
+        children = StreamSupport.stream(children.spliterator(), false) //
+                .sorted(getFolderComparator(sort, order)) //
+                .collect(Collectors.toList());
 
         LOGGER.info("found {} children for {}", stream(children.spliterator(), false).count(), path);
         return children;

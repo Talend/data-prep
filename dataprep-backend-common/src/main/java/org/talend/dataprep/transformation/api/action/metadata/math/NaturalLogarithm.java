@@ -17,6 +17,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.math.Natura
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
@@ -30,7 +31,7 @@ public class NaturalLogarithm extends AbstractMathNoParameterAction {
 
     @Override
     protected String calculateResult(String columnValue) {
-        double value = NumberUtils.toDouble(columnValue);
+        double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
 
         double result = FastMath.log(value);
 

@@ -15,11 +15,9 @@ package org.talend.dataprep.transformation.api.action.metadata.math;
 import static org.talend.dataprep.transformation.api.action.metadata.math.Max.MAX_NAME;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**
@@ -42,11 +40,11 @@ public class Max extends AbstractMathOneParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, String parameter) {
-        String max = Double.toString(NumberUtils.toDouble(columnValue, 0));
+        String max = Double.toString(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
 
         if (StringUtils.isNotBlank(parameter)) {
-            max = Double.toString(FastMath.max(NumberUtils.toDouble(columnValue, Double.MIN_VALUE), //
-                    NumberUtils.toDouble(parameter, Double.MIN_VALUE)));
+            max = Double.toString(FastMath.max(BigDecimalParser.toBigDecimal(columnValue).doubleValue(), //
+                    BigDecimalParser.toBigDecimal(parameter).doubleValue()));
         }
         return max;
     }

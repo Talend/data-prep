@@ -16,6 +16,7 @@ import static org.talend.dataprep.transformation.api.action.metadata.math.Negate
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
@@ -29,7 +30,7 @@ public class Negate extends AbstractMathNoParameterAction {
 
     @Override
     protected String calculateResult(String columnValue) {
-        return Double.toString( - NumberUtils.toDouble( columnValue ));
+        return Double.toString( - BigDecimalParser.toBigDecimal(columnValue ).doubleValue());
     }
 
     @Override

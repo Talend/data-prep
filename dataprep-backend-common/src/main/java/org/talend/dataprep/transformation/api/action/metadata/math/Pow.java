@@ -15,9 +15,9 @@ package org.talend.dataprep.transformation.api.action.metadata.math;
 import static org.talend.dataprep.transformation.api.action.metadata.math.Pow.POW_NAME;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
@@ -42,11 +42,12 @@ public class Pow extends AbstractMathOneParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, String parameter) {
-        String pow = Double.toString(NumberUtils.toDouble(columnValue, 0));
+        
+        String pow = Double.toString(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
 
         if (StringUtils.isNotBlank(parameter)) {
-            pow = Double.toString(FastMath.pow(NumberUtils.toDouble(columnValue, 0), //
-                    NumberUtils.toDouble(parameter, 1)));
+            pow = Double.toString(FastMath.pow(BigDecimalParser.toBigDecimal(columnValue).doubleValue(), //
+                    BigDecimalParser.toBigDecimal(parameter).doubleValue()));
         }
         return pow;
     }

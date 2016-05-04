@@ -15,9 +15,9 @@ package org.talend.dataprep.transformation.api.action.metadata.math;
 import static org.talend.dataprep.transformation.api.action.metadata.math.Min.MIN_NAME;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
@@ -42,11 +42,11 @@ public class Min extends AbstractMathOneParameterAction {
 
     @Override
     protected String calculateResult(String columnValue, String parameter) {
-        String min = Double.toString(NumberUtils.toDouble(columnValue, 0));
+        String min = Double.toString(BigDecimalParser.toBigDecimal(columnValue).doubleValue());
 
         if (StringUtils.isNotBlank(parameter)) {
-            min = Double.toString(FastMath.min(NumberUtils.toDouble(columnValue, Double.MAX_VALUE), //
-                    NumberUtils.toDouble(parameter, Double.MAX_VALUE)));
+            min = Double.toString(FastMath.min(BigDecimalParser.toBigDecimal(columnValue).doubleValue(), //
+                    BigDecimalParser.toBigDecimal(parameter).doubleValue()));
         }
         return min;
     }

@@ -15,18 +15,9 @@
  * @ngdoc controller
  * @name data-prep.home.controller:HomeCtrl
  * @description Home controller.
- * @requires data-prep.services.dataset.service:DatasetService
  * @requires data-prep.services.state.constant:state
- * @requires data-prep.services.state.service:StateService
- * @requires data-prep.services.datasetWorkflowService.service:UploadWorkflowService
- * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
- * @requires data-prep.services.dataset.service:DatasetService
- * @requires talend.widget.service:TalendConfirmService
  */
-export default function HomeCtrl($window, $document, $state,
-                                 state, StateService,
-                                 UploadWorkflowService, UpdateWorkflowService,
-                                 DatasetService, TalendConfirmService) {
+export default function HomeCtrl($window, $document, $state, state) {
     'ngInject';
 
     var vm = this;

@@ -51,7 +51,6 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @methodOf data-prep.services.dataset.service:DatasetRestService
      * @description Import the remote dataset
      * @param {parameters} parameters The import parameters
-     * @param {object} folder The dataset folder
      * @param {object} file The file imported from local
      * @param {string} contentType The request Content-Type
      * @returns {Promise} The POST promise

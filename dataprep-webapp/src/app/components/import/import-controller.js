@@ -20,13 +20,12 @@
  * @requires data-prep.services.datasetWorkflowService.service:UploadWorkflowService
  * @requires data-prep.services.datasetWorkflowService.service:UpdateWorkflowService
  * @requires data-prep.services.dataset.service:DatasetService
- * @requires data-prep.services.folder.service:FolderService
  * @requires talend.widget.service:TalendConfirmService
  */
 export default function ImportCtrl($document,
                                    state, StateService,
                                    UploadWorkflowService, UpdateWorkflowService,
-                                   DatasetService, FolderService,
+                                   DatasetService,
                                    TalendConfirmService) {
     'ngInject';
     var vm = this;
@@ -124,13 +123,12 @@ export default function ImportCtrl($document,
         let dataset = DatasetService.createDatasetInfo(file, params.name);
         StateService.startUploadingDataset(dataset);
 
-        DatasetService.create(state.inventory.currentFolder, params, importType.contentType, file)
+        DatasetService.create(params, importType.contentType, file)
             .progress((event) => {
                 dataset.progress = parseInt(100.0 * event.loaded / event.total);
             })
             .then((event) => {
                 DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
-                FolderService.getContent(state.inventory.currentFolder);
             })
             .catch(() => {
                 dataset.error = true;

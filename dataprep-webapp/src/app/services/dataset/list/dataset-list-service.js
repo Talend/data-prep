@@ -106,7 +106,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @returns {promise} The pending POST promise
      */
     function create(parameters, contentType, file) {
-        var promise = DatasetRestService.create(folder, parameters, contentType, file);
+        var promise = DatasetRestService.create(parameters, contentType, file);
 
         //The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
         //which is used by the caller

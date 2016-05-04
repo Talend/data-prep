@@ -242,8 +242,6 @@ describe('Import controller', function () {
             spyOn(StateService, 'startUploadingDataset').and.returnValue();
             spyOn(StateService, 'finishUploadingDataset').and.returnValue();
 
-            spyOn(FolderService, 'getContent').and.returnValue();
-
             ctrl.currentInputType = StateMock.import.importTypes[0];
         }));
 
@@ -306,7 +304,6 @@ describe('Import controller', function () {
             spyOn(StateService, 'startUploadingDataset').and.returnValue();
             spyOn(StateService, 'finishUploadingDataset').and.returnValue();
 
-            spyOn(FolderService, 'getContent').and.returnValue();
         }));
         describe('with unique name', function () {
 
@@ -330,7 +327,6 @@ describe('Import controller', function () {
                 var paramsExpected = { name: 'my cool dataset', url: '', type: 'hdfs' };
                 //then
                 expect(DatasetService.create).toHaveBeenCalledWith(StateMock.inventory.currentFolder, paramsExpected, 'application/vnd.remote-ds.hdfs', {name: 'my dataset.csv'});
-                expect(FolderService.getContent).toHaveBeenCalled();
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
                 expect(StateService.finishUploadingDataset).toHaveBeenCalled();
@@ -419,7 +415,6 @@ describe('Import controller', function () {
 
                 //then
                 expect(DatasetService.createDatasetInfo).toHaveBeenCalledWith({name: 'my dataset.csv'}, 'my cool dataset (1)');
-                expect(FolderService.getContent).toHaveBeenCalled();
 
                 expect(ctrl.datasetFile).toBe(null);
                 expect(ctrl.datasetName).toBe('');

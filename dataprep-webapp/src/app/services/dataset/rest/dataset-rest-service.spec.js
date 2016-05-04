@@ -151,7 +151,7 @@ describe('Dataset Rest Service', () => {
                 .respond(200, 'e85afAa78556d5425bc2');
 
             //when
-            DatasetRestService.create(folder, dataset).then(function (res) {
+            DatasetRestService.create(dataset).then(function (res) {
                 datasetId = res.data;
             });
             $httpBackend.flush();
@@ -217,9 +217,6 @@ describe('Dataset Rest Service', () => {
             //then
             expect(datasetId).toBe('e85afAa78556d5425bc2');
         }));
-
-
-    });
 
     describe('update', function() {
         it('should call dataset update rest service', inject(function ($rootScope, DatasetRestService, RestURLs) {

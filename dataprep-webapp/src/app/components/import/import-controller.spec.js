@@ -219,7 +219,7 @@ describe('Import controller', function () {
 
     describe('import', function () {
         var uploadDefer;
-        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService, FolderService) {
+        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService) {
 
             ctrl = createController();
             ctrl.datasetFile = [{name: 'my dataset.csv'}];
@@ -273,7 +273,7 @@ describe('Import controller', function () {
             expect(ctrl.datasetNameModal).toBeFalsy();
 
             var paramsExpected = { name: 'my dataset', url: '', type: 'hdfs' };
-            expect(DatasetService.create).toHaveBeenCalledWith(StateMock.inventory.currentFolder, paramsExpected, 'application/vnd.remote-ds.hdfs', {name: 'my dataset.csv'});
+            expect(DatasetService.create).toHaveBeenCalledWith(paramsExpected, 'application/vnd.remote-ds.hdfs', {name: 'my dataset.csv'});
 
         }));
     });
@@ -281,7 +281,7 @@ describe('Import controller', function () {
     describe('upload dataset name', function () {
         var uploadDefer;
 
-        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService, FolderService) {
+        beforeEach(inject(function (StateService, $q, DatasetService, UploadWorkflowService) {
 
             ctrl = createController();
             ctrl.datasetFile = [{name: 'my dataset.csv'}];
@@ -315,7 +315,7 @@ describe('Import controller', function () {
                 ctrl.currentInputType = StateMock.import.importTypes[0];
             }));
 
-            it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService, FolderService) {
+            it('should create dataset if name is unique', inject(function (StateService, $q, $rootScope, DatasetService, UploadWorkflowService) {
                 //given
                 ctrl.uploadDatasetName();
                 expect(StateService.startUploadingDataset).toHaveBeenCalled();
@@ -326,7 +326,7 @@ describe('Import controller', function () {
 
                 var paramsExpected = { name: 'my cool dataset', url: '', type: 'hdfs' };
                 //then
-                expect(DatasetService.create).toHaveBeenCalledWith(StateMock.inventory.currentFolder, paramsExpected, 'application/vnd.remote-ds.hdfs', {name: 'my dataset.csv'});
+                expect(DatasetService.create).toHaveBeenCalledWith(paramsExpected, 'application/vnd.remote-ds.hdfs', {name: 'my dataset.csv'});
                 expect(DatasetService.getDatasetById).toHaveBeenCalledWith(dataset.id);
                 expect(UploadWorkflowService.openDataset).toHaveBeenCalled();
                 expect(StateService.finishUploadingDataset).toHaveBeenCalled();
@@ -403,7 +403,7 @@ describe('Import controller', function () {
                 expect(DatasetService.update).not.toHaveBeenCalled();
             }));
 
-            it('should create dataset with modified name', inject(function ($rootScope, TalendConfirmService, DatasetService, FolderService) {
+            it('should create dataset with modified name', inject(function ($rootScope, TalendConfirmService, DatasetService) {
                 //given
                 ctrl.uploadDatasetName();
 

@@ -439,7 +439,7 @@ describe('Dataset Service', () => {
             expect(StateService.setDatasetName).toHaveBeenCalledWith(metadata.id, 'oldName');
         }));
 
-        it('should set back preparations after rename (waiting for TDP-1348)', inject(($rootScope, $q, DatasetService, DatasetRestService) => {
+        it('should set back preparations after rename (waiting for TDP-1348)', inject(($rootScope, $q, DatasetService, DatasetRestService, StateService) => {
             //given
             const metadata = {
                 id: '7a82d3002fc543e54',
@@ -451,6 +451,7 @@ describe('Dataset Service', () => {
                 ]
             };
             spyOn(DatasetRestService, 'updateMetadata').and.returnValue($q.when());
+            spyOn(StateService, 'setDatasetName').and.returnValue(); // this update the metadata name too
 
             //when
             DatasetService.rename(metadata, 'newName');

@@ -14,7 +14,6 @@
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
@@ -28,12 +27,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.Preparation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 

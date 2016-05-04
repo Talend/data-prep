@@ -687,7 +687,7 @@ public class DataSetService {
 
             String theSheetName = dataSetMetadata.getSheetName();
 
-            Optional<SchemaParserResult.SheetContent> sheetContentFound = dataSetMetadata.getSchemaParserResult()
+            Optional<Schema.SheetContent> sheetContentFound = dataSetMetadata.getSchemaParserResult()
                     .getSheetContents().stream().filter(sheetContent -> theSheetName.equals(sheetContent.getName())).findFirst();
 
             if (!sheetContentFound.isPresent()) {

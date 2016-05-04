@@ -240,8 +240,8 @@ public class TransformAPITest extends ApiServiceTestBase {
                 .get("/api/preparations/{id}/content?version=head", preparationId)
                 .asString();
 
-        final JsonNode rootNode = builder.build().readTree(datasetContent);
-        final DataSetMetadata metadata = builder.build().readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
+        final JsonNode rootNode = mapper.readTree(datasetContent);
+        final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
 
         assertThat(metadata.getRowMetadata().getColumns().isEmpty(), is(false));
         final ColumnMetadata column = metadata.getRowMetadata().getColumns().get(0);
@@ -269,8 +269,8 @@ public class TransformAPITest extends ApiServiceTestBase {
                 .get("/api/preparations/{id}/content?version=head", preparationId)
                 .asString();
 
-        final JsonNode rootNode = builder.build().readTree(datasetContent);
-        final DataSetMetadata metadata = builder.build().readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
+        final JsonNode rootNode = mapper.readTree(datasetContent);
+        final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(rootNode.path("metadata"));
 
         assertThat(metadata.getRowMetadata().getColumns().isEmpty(), is(false));
         final ColumnMetadata column = metadata.getRowMetadata().getColumns().get(0);

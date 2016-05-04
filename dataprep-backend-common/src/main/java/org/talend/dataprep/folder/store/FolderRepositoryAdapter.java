@@ -46,8 +46,8 @@ public abstract class FolderRepositoryAdapter implements FolderRepository {
      */
     protected String cleanPath(String givenPath) {
         String path = givenPath;
-        if (StringUtils.isEmpty(path) || StringUtils.equals(path, String.valueOf(PATH_SEPARATOR))) {
-            return String.valueOf(PATH_SEPARATOR);
+        if (StringUtils.isEmpty(path) || StringUtils.equals(path, PATH_SEPARATOR.toString())) {
+            return PATH_SEPARATOR.toString();
         }
         path = StringUtils.strip(path, PATH_SEPARATOR.toString());
         return path;

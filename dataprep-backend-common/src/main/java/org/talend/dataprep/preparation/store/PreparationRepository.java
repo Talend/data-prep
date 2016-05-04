@@ -31,8 +31,19 @@ import org.talend.dataprep.api.preparation.Step;
  */
 public interface PreparationRepository {
 
+    /**
+     * Save or update an identifiable object.
+     * @param object the identifiable to save.
+     */
     void add(Identifiable object);
 
+    /**
+     * Returns the Identifiable that matches the id and the class or null if none match.
+     * @param id the wanted Identifiable id.
+     * @param clazz the wanted Identifiable class.
+     * @param <T> the type of Identifiable.
+     * @return the Identifiable that matches the id and the class or null if none match.
+     */
     <T extends Identifiable> T get(String id, Class<T> clazz);
 
     /**
@@ -56,7 +67,7 @@ public interface PreparationRepository {
      * @see PreparationRepository#getByMatchingName(String, boolean)
      */
     default Collection<Preparation> getByMatchingName(String name, boolean exactMatch) {
-        Collection<Preparation> result = null;
+        Collection<Preparation> result;
         if (StringUtils.isEmpty(name)) {
             result = listAll(Preparation.class);
         } else {

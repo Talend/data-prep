@@ -42,7 +42,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
 
         // when
         final Response response = given().contentType(ContentType.JSON)//
-                .body(builder.build().writer().writeValueAsString(params))//
+                .body(mapper.writer().writeValueAsString(params))//
                 .when()//
                 .post("/api/aggregate");
 
@@ -63,7 +63,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
 
         // when
         final String response = given().contentType(ContentType.JSON)//
-                .body(builder.build().writer().writeValueAsString(params))//
+                .body(mapper.writer().writeValueAsString(params))//
                 .when()//
                 .post("/api/aggregate").asString();
 
@@ -84,7 +84,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
 
         // when
         final String response = given().contentType(ContentType.JSON)//
-                .body(builder.build().writer().writeValueAsString(params))//
+                .body(mapper.writer().writeValueAsString(params))//
                 .when()//
                 .post("/api/aggregate").asString();
 
@@ -101,7 +101,7 @@ public class AggregationAPITest extends ApiServiceTestBase {
 
         // when
         final Response response = given().contentType(ContentType.JSON)//
-                .body(builder.build().writer().writeValueAsString(params))//
+                .body(mapper.writer().writeValueAsString(params))//
                 .when()//
                 .post("/api/aggregate");
 

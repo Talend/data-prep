@@ -304,7 +304,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         dataSetMetadataRepository.add(metadata2);
         // Ensure order by name (most recent first)
         String actual = when().get("/datasets?sort=name").asString();
-        final Iterator<JsonNode> elements = builder.build().readTree(actual).elements();
+        final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
         String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
@@ -871,7 +871,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         parameters.remove(CSVFormatFamily.HEADER_COLUMNS_PARAMETER);
         final int statusCode = given() //
                 .contentType(JSON) //
-                .body(builder.build().writer().writeValueAsString(metadata)) //
+                .body(mapper.writer().writeValueAsString(metadata)) //
                 .expect().statusCode(200).log().ifError() //
                 .when().put("/datasets/{id}", dataSetId).getStatusCode();
 

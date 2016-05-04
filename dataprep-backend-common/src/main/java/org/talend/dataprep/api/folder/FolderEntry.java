@@ -14,17 +14,16 @@
 package org.talend.dataprep.api.folder;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
-public class FolderEntry implements Serializable {
+public class
+FolderEntry implements Serializable {
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
     /** Type of this folder entry (dataset / preparation...). */
-    private ContentType contentType;
+    private FolderContentType contentType;
 
     /** Content id of this entry (datasetId or PerparationId). */
     private String contentId;
@@ -32,20 +31,28 @@ public class FolderEntry implements Serializable {
     /** Id of the folder for this entry. It is set by the FolderRepository implementation. */
     private String folderId;
 
+    /**
+     * Default empty constructor.
+     */
     public FolderEntry() {
         // no op only to help Jackson
     }
 
-    public FolderEntry(ContentType contentType, String contentId) {
+    /**
+     * Constructor.
+     * @param contentType the content type.
+     * @param contentId the content id.
+     */
+    public FolderEntry(FolderContentType contentType, String contentId) {
         this.contentType = contentType;
         this.contentId = contentId;
     }
 
-    public ContentType getContentType() {
+    public FolderContentType getContentType() {
         return contentType;
     }
 
-    public void setContentType(ContentType contentType) {
+    public void setContentType(FolderContentType contentType) {
         this.contentType = contentType;
     }
 
@@ -102,45 +109,4 @@ public class FolderEntry implements Serializable {
         return Objects.hash(contentType, contentId, folderId);
     }
 
-    /**
-     * Content type dataset / preparation...
-     */
-    public enum ContentType {
-                             DATASET("dataset"),
-                             PREPARATION("preparation");
-
-        private final String name;
-
-        ContentType(String name) {
-            this.name = name;
-        }
-
-        /**
-         * Returns the content type corresponding to a
-         * 
-         * @param name
-         * @return
-         */
-
-        public static ContentType get(String name) {
-            if (name == null) {
-                throw new IllegalArgumentException("null is not permitted as a valid content type for Folder entry");
-            }
-
-            Optional<ContentType> type = Arrays.stream(ContentType.values()).filter(type1 -> type1.name().equalsIgnoreCase(name))
-                    .findFirst();
-
-            if (type.isPresent()) {
-                return type.get();
-            } else {
-                throw new IllegalArgumentException("Unknown Folder entry content type.");
-            }
-
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
 }

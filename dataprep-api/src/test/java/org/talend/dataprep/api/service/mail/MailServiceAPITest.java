@@ -26,7 +26,7 @@ import com.jayway.restassured.response.Response;
 
 public class MailServiceAPITest extends ApiServiceTestBase {
 
-    @Autowired()
+    @Autowired
     private AbstractFeedbackSender mailFeedbackSender;
 
     @Test public void shouldReturnInternalSeverError500() throws Exception {
@@ -35,7 +35,7 @@ public class MailServiceAPITest extends ApiServiceTestBase {
 
         // send with bad recipients
         Response response = RestAssured.given() //
-                .body(builder.build().writer().writeValueAsBytes(mailDetails))//
+                .body(mapper.writer().writeValueAsBytes(mailDetails))//
                 .contentType(ContentType.JSON) //
                 .when() //
                 .put("/api/mail");

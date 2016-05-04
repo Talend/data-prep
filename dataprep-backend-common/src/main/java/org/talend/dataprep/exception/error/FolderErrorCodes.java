@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.exception.error;
 
+import static org.springframework.http.HttpStatus.CONFLICT;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +30,8 @@ public enum FolderErrorCodes implements ErrorCode {
     UNABLE_TO_DELETE_FOLDER(400, "folderId"),
     UNABLE_TO_LIST_FOLDER_ENTRIES(400, "folderId"),
     UNABLE_TO_DELETE_FOLDER_ENTRY(400, "contentId"),
-    FOLDER_DOES_NOT_EXIST(400, "folderId");
+    FOLDER_NOT_FOUND(404, "path"),
+    FOLDER_NOT_EMPTY(CONFLICT.value());
 
     /** The http status to use. */
     private int httpStatus;

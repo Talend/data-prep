@@ -29,9 +29,13 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 @Component
-@Scope("request")
+@Scope("prototype")
 public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
+    /**
+     * Private constructor to ensure the use of IoC
+     * @param dataSetId the dataset id to get.
+     */
     private DataSetGetMetadata(String dataSetId) {
         super(GenericCommand.DATASET_GROUP);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/metadata"));

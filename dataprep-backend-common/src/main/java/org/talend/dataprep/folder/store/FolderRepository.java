@@ -14,6 +14,7 @@
 package org.talend.dataprep.folder.store;
 
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 
 
@@ -59,7 +60,10 @@ public interface FolderRepository {
     void renameFolder(String path, String newPath);
 
     /**
-     * add or replace (if already exists) the entry.
+     * Add or replace (if already exists) the entry.
+     *
+     * If the path does not exist, it is automatically created.
+     *
      * @param folderEntry the {@link FolderEntry} to add.
      * @param path where to add this folder entry.
      */
@@ -72,7 +76,7 @@ public interface FolderRepository {
      * @param contentId the id
      * @param contentType  the type dataset, preparation
      */
-    void removeFolderEntry(String folderPath, String contentId, FolderEntry.ContentType contentType);
+    void removeFolderEntry(String folderPath, String contentId, FolderContentType contentType);
 
     /**
      * List the {@link FolderEntry} of the wanted type within the given path.
@@ -80,7 +84,7 @@ public interface FolderRepository {
      * @param contentType the contentClass to filter folder entries
      * @return A {@link java.lang.Iterable iterable} of {@link FolderEntry} content filtered for the given type
      */
-    Iterable<FolderEntry> entries(String path, FolderEntry.ContentType contentType);
+    Iterable<FolderEntry> entries(String path, FolderContentType contentType);
 
     /**
      * Look for all the {@link FolderEntry} that points to an existing content.
@@ -91,7 +95,7 @@ public interface FolderRepository {
      * @param contentType  the type dataset, preparation
      * @return A {@link Iterable} of the {@link FolderEntry} containing the folderEntry as described by contentType and contentId.
      */
-    Iterable<FolderEntry> findFolderEntries(String contentId, FolderEntry.ContentType contentType);
+    Iterable<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType);
 
     /**
      * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>

@@ -167,7 +167,7 @@ describe('Dataset list controller', () => {
             it('should NOT rename', inject(($q, DatasetService) => {
                 //given
                 const ctrl = createController();
-                const dataset = { id: '461465' ;
+                const dataset = { id: '461465' };
                 const name = 'new dataset name';
                 ctrl.renamingList.push(dataset);
 

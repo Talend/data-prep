@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
@@ -22,12 +21,10 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_WRI
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -45,7 +42,6 @@ import org.talend.dataprep.metrics.VolumeMetered;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;

@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Identifiable;
@@ -45,6 +44,8 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.util.FilesHelper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -59,7 +60,7 @@ public class FileSystemPreparationRepository implements PreparationRepository {
 
     /** The dataprep ready jackson builder. */
     @Autowired
-    private Jackson2ObjectMapperBuilder builder;
+    private ObjectMapper mapper;
 
     /** The root step. */
     @Resource(name = "rootStep")
@@ -98,7 +99,7 @@ public class FileSystemPreparationRepository implements PreparationRepository {
         final File outputFile = getIdentifiableFile(object);
 
         try (GZIPOutputStream output = new GZIPOutputStream(new FileOutputStream(outputFile))) {
-            builder.build().writer().writeValue(output, object);
+            mapper.writer().writeValue(output, object);
         } catch (IOException e) {
             LOG.error("Error saving {}", object, e);
             throw new TDPException(CommonErrorCodes.UNABLE_TO_SAVE_PREPARATION, e,
@@ -125,7 +126,7 @@ public class FileSystemPreparationRepository implements PreparationRepository {
 
         T result;
         try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(from))) {
-            result = builder.build().readerFor(clazz).readValue(input);
+            result = mapper.readerFor(clazz).readValue(input);
         } catch (IOException e) {
             LOG.error("error reading preparation file {}", from.getAbsolutePath(), e);
             return null;

@@ -61,6 +61,7 @@ public enum APIErrorCodes implements ErrorCode {
                                                 UNABLE_TO_DELETE_FOLDER_ENTRY(400),
                                                 UNABLE_TO_LIST_FOLDER_ENTRIES(400),
                                                 UNABLE_TO_LIST_FOLDER_INVENTORY(400),
+                                                UNABLE_TO_SEARCH_DATAPREP(500),
                                                 DATASET_REDIRECT(301);
 
     /**

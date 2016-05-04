@@ -40,7 +40,7 @@ public class PreparationListForDataSet extends GenericCommand<InputStream> {
      */
     private PreparationListForDataSet(String dataSetId) {
         super(GenericCommand.PREPARATION_GROUP);
-        execute(() -> new HttpGet(preparationServiceUrl + "/preparations?dataSetId=" + dataSetId));
+        execute(() -> new HttpGet(preparationServiceUrl + "/preparations/search?dataSetId=" + dataSetId));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_LIST, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());

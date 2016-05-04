@@ -455,36 +455,36 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "default": "",
         "description": "The column to which you want to apply this action",
-        "label": "Column",
-        "default": ""
+        "label": "Column"
       },
       {
         "name": "row_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "default": "",
         "description": "The row to which you want to apply this action",
-        "label": "Row",
-        "default": ""
+        "label": "Row"
       },
       {
         "name": "scope",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "default": "",
         "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
-        "label": "Scope",
-        "default": ""
+        "label": "Scope"
       },
       {
         "name": "filter",
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "default": "",
         "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter",
-        "default": ""
+        "label": "Filter"
       },
       {
         "name": "time_unit",
@@ -494,30 +494,81 @@
         "configuration": {
           "values": [
             {
-              "value": "YEARS"
+              "value": "YEARS",
+              "label": "Years"
             },
             {
-              "value": "MONTHS"
+              "value": "MONTHS",
+              "label": "Months"
             },
             {
-              "value": "DAYS"
+              "value": "DAYS",
+              "label": "Days"
             },
             {
-              "value": "HOURS"
+              "value": "HOURS",
+              "label": "Hours"
             }
           ],
           "multiple": false
         },
+        "default": "HOURS",
         "description": "The unit in which you want the result",
-        "label": "Time Unit",
-        "default": "HOURS"
+        "label": "Time Unit"
+      },
+      {
+        "name": "since_when",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "configuration": {
+          "values": [
+            {
+              "value": "now_server_side",
+              "label": "Now"
+            },
+            {
+              "value": "specific_date",
+              "label": "Specific date",
+              "parameters": [
+                {
+                  "name": "specific_date",
+                  "type": "date",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "default": "",
+                  "label": "This date"
+                }
+              ]
+            },
+            {
+              "value": "other_column_mode",
+              "label": "Another column",
+              "parameters": [
+                {
+                  "name": "selected_column",
+                  "type": "column",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "default": "",
+                  "description": "Combine the current column with this one",
+                  "label": "Column"
+                }
+              ]
+            }
+          ],
+          "multiple": false
+        },
+        "default": "now_server_side",
+        "label": "Since"
       }
     ],
     "category": "dates",
     "description": "Calculate elapsed time since a date, in the desired unit (year, month, day, hour)",
-    "dynamic": false,
+    "docUrl": "",
     "label": "Calculate Time since",
-    "actionScope": []
+    "actionScope": [],
+    "dynamic": false
   },
   {
     "name": "extract_date_tokens",

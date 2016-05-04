@@ -51,7 +51,8 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
     private static final String DEFAULT_DATE_VALUE = DEFAULT_FORMATTER.format(LocalDateTime.of(1970, Month.JANUARY, 1, 10, 0));
-    public static final Logger LOGGER = LoggerFactory.getLogger(AbstractFillWith.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFillWith.class);
 
     /**
      * Component that parses dates.

@@ -32,7 +32,7 @@ export default function TransformFormCtrl() {
         if (parameters) {
             _.forEach(parameters, function (paramItem) {
                 paramsAccu[paramItem.name] = typeof (paramItem.value) !== 'undefined' ? paramItem.value : paramItem.default;
-
+                
                 // deal with select inline parameters
                 if (paramItem.type === 'select') {
                     var selectedValue = _.find(paramItem.configuration.values, {value: paramItem.value});

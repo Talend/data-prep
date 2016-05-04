@@ -22,8 +22,8 @@
     "d3-tip": "~0.6.7",
     "lodash": "3.9.3",
     "modernizr": "2.8.3",
-    "moment": "~2.10.6",
-    "moment-jdateformatparser": "~1.0.0",
+    "moment": "~2.13.0",
+    "moment-jdateformatparser": "~1.0.2",
     "parallel.js": "paralleljs#*",
 
     "angular": "^1.5.3",

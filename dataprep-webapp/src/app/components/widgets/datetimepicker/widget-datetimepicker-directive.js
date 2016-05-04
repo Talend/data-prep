@@ -29,6 +29,7 @@ export default function TalendDatetimePicker() {
         controller: () => {},
         controllerAs: 'ctrl',
         link: function (scope, iElement, iAttrs) {
+            
             Date.parseDate = function (input, format) {
                 return moment(input, format).toDate();
             };
@@ -36,8 +37,8 @@ export default function TalendDatetimePicker() {
                 return moment(this).format(format);
             };
 
-            var format = iAttrs.format ? iAttrs.format : 'DD/MM/YYYY hh:mm:ss';
-            var formatTime = iAttrs.formatTime ? iAttrs.formatTime : 'hh:mm:ss';
+            var format = iAttrs.format ? iAttrs.format : 'DD/MM/YYYY HH:mm:ss';
+            var formatTime = iAttrs.formatTime ? iAttrs.formatTime : 'HH:mm:ss';
             var formatDate = iAttrs.formatDate ? iAttrs.formatDate : 'DD/MM/YYYY';
 
             var input = iElement.find('.datetimepicker');

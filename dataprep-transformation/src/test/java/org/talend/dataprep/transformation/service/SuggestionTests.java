@@ -198,7 +198,7 @@ public class SuggestionTests extends TransformationServiceBaseTests {
         // given
         final String columnMetadata = IOUtils
                 .toString(Application.class.getResourceAsStream("suggestions/date_column_string_type.json"));
-        final String expectedSuggestions = IOUtils
+        String expectedSuggestions = IOUtils
                 .toString(Application.class.getResourceAsStream("suggestions/date_column_string_type_suggestions.json"));
 
         // when

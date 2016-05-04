@@ -17,7 +17,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.api.action.metadata.date.ComputeTimeSince.TIME_UNIT_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.MODE_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.metadata.date.ComputeTimeSince.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +31,9 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -303,9 +309,6 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         assertEquals(expected, row.getRowMetadata().getColumns());
     }
 
-    /**
-     * @see Action#getRowAction()
-     */
     @Test
     public void should_update_metadata_twice() throws IOException {
         //given
@@ -364,6 +367,110 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
     }
 
+    @Test
+    public void should_compute_days_since_other_column() throws IOException {
+        //given
+        String date = "07/16/2015 13:00";
+        String compare = "07/26/2015 13:00";
+
+        DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy_HH_mm.json");
+        row.set("0001", date);
+        row.set("0002", compare);
+
+        parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
+        parameters.put(SINCE_WHEN_PARAMETER, OTHER_COLUMN_MODE);
+        parameters.put(SELECTED_COLUMN_PARAMETER, "0002");
+
+        //when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        //then
+        Assertions.assertThat(row.values()).contains(
+            MapEntry.entry( "0000", "lorem bacon" ), //
+            MapEntry.entry( "0001", date ), //
+            MapEntry.entry( "0003", "10" ), //
+            MapEntry.entry( "0002", compare )
+        );
+    }
+
+    @Test
+    public void should_not_fail_computing_days_since_other_column_not_date() throws IOException {
+        //given
+        String date = "07/16/2015 13:00";
+        String compare = "beer";
+
+        DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy_HH_mm.json");
+        row.set("0001", date);
+        row.set("0002", compare);
+
+        parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
+        parameters.put(SINCE_WHEN_PARAMETER, OTHER_COLUMN_MODE);
+        parameters.put(SELECTED_COLUMN_PARAMETER, "0002");
+
+        //when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        //then
+        Assertions.assertThat(row.values()).contains(
+            MapEntry.entry( "0000", "lorem bacon" ), //
+            MapEntry.entry( "0001", date ), //
+            MapEntry.entry( "0003", StringUtils.EMPTY ), //
+            MapEntry.entry( "0002", compare )
+        );
+    }
+
+
+    @Test
+    public void should_compute_days_since_value() throws IOException {
+        //given
+        String date = "16/07/2015 13:00:00";
+        String compare = "06/07/2015 13:00:00";
+        String result = computeTimeSince(date, "dd/MM/yyyy HH:mm:ss", ChronoUnit.DAYS, compare);
+
+        DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy_HH_mm.json");
+        row.set("0001", date);
+
+        parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
+        parameters.put(SINCE_WHEN_PARAMETER, SPECIFIC_DATE_MODE);
+        parameters.put(SPECIFIC_DATE_PARAMETER, compare );
+
+        //when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        //then
+        Assertions.assertThat(row.values()).contains(
+            MapEntry.entry( "0000", "lorem bacon" ), //
+            MapEntry.entry( "0001", date ), //
+            MapEntry.entry( "0003", result ), //
+            MapEntry.entry( "0002", "Bacon" )
+        );
+    }
+
+    @Test
+    public void should_not_fail_computing_days_since_value_not_date() throws IOException {
+        //given
+        String date = "16/07/2015 13:00:00";
+        String compare = "foo";
+
+        DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy_HH_mm.json");
+        row.set("0001", date);
+
+        parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
+        parameters.put(SINCE_WHEN_PARAMETER, SPECIFIC_DATE_MODE);
+        parameters.put(SPECIFIC_DATE_PARAMETER, compare );
+
+        //when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        //then
+        Assertions.assertThat(row.values()).contains(
+            MapEntry.entry( "0000", "lorem bacon" ), //
+            MapEntry.entry( "0001", date ), //
+            MapEntry.entry( "0003", StringUtils.EMPTY ), //
+            MapEntry.entry( "0002", "Bacon" )
+        );
+    }
+
     /**
      * Compute time since now.
      *
@@ -373,10 +480,28 @@ public class ComputeTimeSinceTest extends BaseDateTests {
      * @return time since now in the wanted unit.
      */
     String computeTimeSince(String date, String pattern, ChronoUnit unit) {
+        return computeTimeSince( date, pattern, unit, null );
+    }
 
-        Temporal now = LocalDateTime.now();
+    /**
+     * Compute time since .
+     *
+     * @param date the date to compute from.
+     * @param pattern the pattern to use.
+     * @param unit the unit for the result.
+     * @param sinceWhen the date to calculate since when
+     * @return time since now in the wanted unit.
+     */
+    String computeTimeSince(String date, String pattern, ChronoUnit unit, String sinceWhen) {
 
         DateTimeFormatter format = DateTimeFormatter.ofPattern(pattern);
+        Temporal since;
+        if (sinceWhen == null){
+            since = LocalDateTime.now();
+        } else {
+            since = LocalDateTime.parse(sinceWhen, format);
+        }
+
         LocalDateTime start;
         try {
             start = LocalDateTime.parse(date, format);
@@ -390,7 +515,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         }
 
         Temporal result = LocalDateTime.from(start);
-        return String.valueOf(unit.between(result, now));
+        return String.valueOf(unit.between(result, since));
     }
 
 }

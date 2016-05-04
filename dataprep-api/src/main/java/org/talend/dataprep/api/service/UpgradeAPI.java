@@ -45,7 +45,7 @@ public class UpgradeAPI extends APIService {
     @Autowired
     ObjectMapper mapper;
 
-    @Value("${upgrade.location}")
+    @Value("${upgrade.location:}")
     String upgradeVersionLocation;
 
     private String token;

@@ -1,21 +1,21 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('Recipe controller', function () {
     'use strict';
 
     var createController, scope;
-    var lastActiveStep = {inactive: false};
+    var lastActiveStep = { inactive: false };
     var stateMock;
 
     beforeEach(angular.mock.module('data-prep.recipe', function ($provide) {
@@ -38,6 +38,9 @@ describe('Recipe controller', function () {
                 },
                 lookup: {
                     visibility: false
+                },
+                data: {
+                    metadata: {}
                 }
             }
         };
@@ -70,7 +73,7 @@ describe('Recipe controller', function () {
         var ctrl = createController();
         expect(ctrl.recipe).toEqual([]);
 
-        var column = {id: 'colId'};
+        var column = { id: 'colId' };
         var transformation = {
             name: 'split',
             category: 'split',
@@ -99,17 +102,17 @@ describe('Recipe controller', function () {
             //given
             var ctrl = createController();
             var step = {
-                column: {id: 'state'},
+                column: { id: 'state' },
                 transformation: {
                     stepId: 'a598bc83fc894578a8b823',
                     name: 'cut'
                 },
                 actionParameters: {
                     action: 'cut',
-                    parameters: {pattern: '.', column_name: 'state'}
+                    parameters: { pattern: '.', column_name: 'state' }
                 }
             };
-            var parameters = {pattern: '-'};
+            var parameters = { pattern: '-' };
 
             //when
             var updateClosure = ctrl.stepUpdateClosure(step);
@@ -124,17 +127,17 @@ describe('Recipe controller', function () {
             //given
             var ctrl = createController();
             var step = {
-                column: {id: 'state'},
+                column: { id: 'state' },
                 transformation: {
                     stepId: 'a598bc83fc894578a8b823',
                     name: 'cut'
                 },
                 actionParameters: {
                     action: 'cut',
-                    parameters: {pattern: '.', column_name: 'state', column_id: '0001', scope: 'column'}
+                    parameters: { pattern: '.', column_name: 'state', column_id: '0001', scope: 'column' }
                 }
             };
-            var parameters = {pattern: '-'};
+            var parameters = { pattern: '-' };
 
             //when
             ctrl.updateStep(step, parameters);
@@ -143,23 +146,23 @@ describe('Recipe controller', function () {
             expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
         }));
 
-        describe('preview', function() {
+        describe('preview', function () {
             it('should do nothing on update preview if the step is inactive', inject(function ($rootScope, PreviewService) {
                 //given
                 var ctrl = createController();
                 var step = {
-                    column: {id: 'state'},
+                    column: { id: 'state' },
                     transformation: {
                         stepId: 'a598bc83fc894578a8b823',
                         name: 'cut'
                     },
                     actionParameters: {
                         action: 'cut',
-                        parameters: {pattern: '.', column_name: 'state'}
+                        parameters: { pattern: '.', column_name: 'state' }
                     },
                     inactive: true
                 };
-                var parameters = {pattern: '--'};
+                var parameters = { pattern: '--' };
                 var closure = ctrl.previewUpdateClosure(step);
 
                 //when
@@ -174,17 +177,17 @@ describe('Recipe controller', function () {
                 //given
                 var ctrl = createController();
                 var step = {
-                    column: {id: '0', name: 'state'},
+                    column: { id: '0', name: 'state' },
                     transformation: {
                         stepId: 'a598bc83fc894578a8b823',
                         name: 'cut'
                     },
                     actionParameters: {
                         action: 'cut',
-                        parameters: {pattern: '.', column_id: '0', column_name: 'state'}
+                        parameters: { pattern: '.', column_id: '0', column_name: 'state' }
                     }
                 };
-                var parameters = {pattern: '.'};
+                var parameters = { pattern: '.' };
                 var closure = ctrl.previewUpdateClosure(step);
 
                 //when
@@ -202,17 +205,17 @@ describe('Recipe controller', function () {
 
                 var ctrl = createController();
                 var step = {
-                    column: {id: '0', name: 'state'},
+                    column: { id: '0', name: 'state' },
                     transformation: {
                         stepId: 'a598bc83fc894578a8b823',
                         name: 'cut'
                     },
                     actionParameters: {
                         action: 'cut',
-                        parameters: {pattern: '.', column_id: '0', column_name: 'state', scope: 'column'}
+                        parameters: { pattern: '.', column_id: '0', column_name: 'state', scope: 'column' }
                     }
                 };
-                var parameters = {pattern: '--'};
+                var parameters = { pattern: '--' };
                 var closure = ctrl.previewUpdateClosure(step);
 
                 //when
@@ -224,7 +227,7 @@ describe('Recipe controller', function () {
                     stateMock.playground.preparation.id,
                     lastActiveStep,
                     step,
-                    {pattern: '--', column_id: '0', column_name: 'state', scope: 'column'});
+                    { pattern: '--', column_id: '0', column_name: 'state', scope: 'column' });
             }));
         });
     });
@@ -356,8 +359,8 @@ describe('Recipe controller', function () {
 
     describe('remove step', function () {
         var step = {
-            transformation: {label: 'Replace empty value ...', name: 'lookup', stepId: '0001'},
-            actionParameters: {parameters: {column_name: 'firstname'}}
+            transformation: { label: 'Replace empty value ...', name: 'lookup', stepId: '0001' },
+            actionParameters: { parameters: { column_name: 'firstname' } }
         };
 
         beforeEach(inject(function ($q, PlaygroundService, StateService) {
@@ -445,16 +448,16 @@ describe('Recipe controller', function () {
 
     describe('select step', function () {
         var lookupStep = {
-            transformation: {label: 'Replace empty value ...', name: 'lookup', stepId: '0001'},
-            actionParameters: {parameters: {column_name: 'firstname'}}
+            transformation: { label: 'Replace empty value ...', name: 'lookup', stepId: '0001' },
+            actionParameters: { parameters: { column_name: 'firstname' } }
         };
         var notLookupStep = {
-            transformation: {label: 'Change case to UPPER ...', name: 'uppercase', stepId: '0002'},
-            actionParameters: {parameters: {column_name: 'firstname'}}
+            transformation: { label: 'Change case to UPPER ...', name: 'uppercase', stepId: '0002' },
+            actionParameters: { parameters: { column_name: 'firstname' } }
         };
         var clusterStep = {
-            transformation: {label: 'Cluster ...', name: 'cluster', stepId: '0003', cluster: {}},
-            actionParameters: {parameters: {column_name: 'firstname'}}
+            transformation: { label: 'Cluster ...', name: 'cluster', stepId: '0003', cluster: {} },
+            actionParameters: { parameters: { column_name: 'firstname' } }
         };
 
         beforeEach(inject(function ($q, StateService, LookupService) {
@@ -503,7 +506,7 @@ describe('Recipe controller', function () {
             expect(StateService.setLookupVisibility).not.toHaveBeenCalled();
         }));
 
-        it('should show dynamic params modal',function () {
+        it('should show dynamic params modal', function () {
             //given
             var ctrl = createController();
             ctrl.showModal[clusterStep.transformation.stepId] = false;
@@ -515,6 +518,64 @@ describe('Recipe controller', function () {
             //then
             expect(ctrl.showModal[clusterStep.transformation.stepId]).toBe(true);
         });
+    });
+
+    describe('update step filter', () => {
+        const multiValuedFilter = {
+            type: 'contains',
+            colId: '0002',
+            colName: '0002',
+            editable: false,
+            args: {
+                phrase: [
+                    { value: 'toto' },
+                    { value: 'tata' }
+                ]
+            },
+            filterFn: null,
+            removeFilterFn: null,
+            value: [
+                { value: 'toto' },
+                { value: 'tata' }
+            ]
+        };
+        const stepWithMultipleFilters = {
+            transformation: {
+                label: 'Replace empty value ...'
+            },
+            actionParameters: {
+                parameters: {
+                    column_name: 'firstname',
+                    filter: {
+                        or: [
+                            { contains: { field: '0002', value: 'toto' } },
+                            { contains: { field: '0002', value: 'tata' } }
+                        ]
+                    },
+                    scope: 'column'
+                }
+            },
+            filters: [multiValuedFilter]
+        };
+
+        it('should update step filters', inject(($q, PlaygroundService) => {
+            //given
+            const ctrl = createController();
+            const newFilterValue = [{ value: ['toto'] }];
+
+            spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when());
+
+            //when
+            ctrl.updateStepFilter(stepWithMultipleFilters, multiValuedFilter, newFilterValue);
+            scope.$digest();
+
+            //then
+            expect(PlaygroundService.updateStep).toHaveBeenCalled();
+            const callArgs = PlaygroundService.updateStep.calls.argsFor(0); 
+            expect(callArgs[0]).toBe(stepWithMultipleFilters);
+            expect(callArgs[1].filter).toEqual({ contains: { field: '0002', value: ['toto'] } });
+            
+        }));
     });
 
     describe('remove step filter', function () {
@@ -532,7 +593,7 @@ describe('Recipe controller', function () {
             type: 'contains',
             colId: '0002',
             args: {
-                phrase: 'toto'
+                phrase: ['toto']
             }
         };
         var stepDeleteLinesWithSingleFilter, stepWithMultipleFilters;
@@ -540,27 +601,28 @@ describe('Recipe controller', function () {
         beforeEach(inject(function (FilterAdapterService) {
             spyOn(FilterAdapterService, 'toTree').and.returnValue({
                 filter: {
-                    valid: {
-                        field: '0001'
+                    contains: {
+                        field: '0002',
+                        value: ['toto']
                     }
                 }
             });
             stepDeleteLinesWithSingleFilter = {
-                transformation: {label: 'Delete lines'},
+                transformation: { label: 'Delete lines' },
                 actionParameters: {
                     action: 'delete_lines',
-                    parameters: {column_name: 'firstname', scope: 'column'}
+                    parameters: { column_name: 'firstname', scope: 'column' }
                 },
                 filters: [filter1]
             };
             stepWithMultipleFilters = {
-                transformation: {label: 'Replace empty value ...'},
-                actionParameters: {parameters: {column_name: 'firstname', scope: 'column'}},
+                transformation: { label: 'Replace empty value ...' },
+                actionParameters: { parameters: { column_name: 'firstname', scope: 'column' } },
                 filters: [filter1, filter2]
             };
         }));
 
-        it('should remove step filter', inject(function ($q, PlaygroundService, FilterAdapterService) {
+        it('should remove step filter', inject(function ($q, PlaygroundService) {
             //given
             spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
             var ctrl = createController();
@@ -570,17 +632,10 @@ describe('Recipe controller', function () {
             scope.$digest();
 
             //then
-            expect(FilterAdapterService.toTree).toHaveBeenCalledWith([filter2]);
-            expect(PlaygroundService.updateStep).toHaveBeenCalledWith(stepWithMultipleFilters, {
-                column_name: 'firstname',
-                filter: {
-                    valid: {
-                        field: '0001'
-                    }
-                },
-                scope: 'column'
-            });
-            expect(stepWithMultipleFilters.filters.length).toBe(1);
+            expect(PlaygroundService.updateStep).toHaveBeenCalled();
+            const callArgs = PlaygroundService.updateStep.calls.argsFor(0);
+            expect(callArgs[0]).toBe(stepWithMultipleFilters);
+            expect(callArgs[1].filter).toEqual({ contains: { field: '0002', value: ['toto'] } });
         }));
 
         it('should show warning message on delete lines step with last filter removal', inject(function ($q, PlaygroundService, MessageService) {
@@ -597,19 +652,6 @@ describe('Recipe controller', function () {
             expect(MessageService.warning).toHaveBeenCalled();
             expect(PlaygroundService.updateStep).not.toHaveBeenCalled();
             expect(stepDeleteLinesWithSingleFilter.filters.length).toBe(1);
-        }));
-
-        it('should insert the filter back when the update fails', inject(function ($q, PlaygroundService) {
-            //given
-            spyOn(PlaygroundService, 'updateStep').and.returnValue($q.reject());
-            var ctrl = createController();
-
-            //when
-            ctrl.removeStepFilter(stepWithMultipleFilters, filter1);
-            scope.$digest();
-
-            //then
-            expect(stepWithMultipleFilters.filters.length).toBe(2);
         }));
     });
 

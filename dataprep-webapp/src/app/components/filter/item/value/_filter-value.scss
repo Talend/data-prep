@@ -11,14 +11,15 @@
 
   ============================================================================*/
 
-export default function FilterListCtrl() {
-    var vm = this;
+.filter-value {
+  @include ellipsis(180px);
+  display: inline;
+  padding: 0 5px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
 
-    vm.changeFilter = function changeFilter(filter, value) {
-        vm.onFilterChange({filter, value});
-    };
-
-    vm.removeFilter = function removeFilter(filter) {
-        vm.onFilterRemove({filter});
-    };
+  &-btn-remove {
+    margin-left: 5px;
+    color: $white;
+  }
 }

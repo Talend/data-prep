@@ -59,9 +59,13 @@ describe('ColumnProfile controller', () => {
 
             //then
             expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('exact', '0001', 'firstname', {
-                phrase: 'Ulysse',
+                phrase: [
+                    {
+                        value: 'Ulysse'
+                    }
+                ],
                 caseSensitive: true
-            });
+            }, null, null);
         }));
 
         it('should add a number "range" filter with closed intervals', inject((StatisticsService, FilterService) => {
@@ -89,12 +93,17 @@ describe('ColumnProfile controller', () => {
                 '0001',
                 'firstname',
                 {
-                    interval: [5, 15],
-                    label: '[5 .. 15]',
-                    type: 'integer',
-                    isMaxReached: true
+                    intervals: [
+                        {
+                            label: '[5 .. 15]',
+                            value: [5, 15],
+                            isMaxReached: true
+                        }
+                    ],
+                    type: 'integer'
                 },
-                removeFilterFn);
+                removeFilterFn,
+                null);
         }));
 
         it('should add a number "range" filter with mixed intervals', inject((StatisticsService, FilterService) => {
@@ -122,12 +131,17 @@ describe('ColumnProfile controller', () => {
                 '0001',
                 'firstname',
                 {
-                    interval: [5, 15],
-                    label: '[5 .. 15[',
-                    type: 'integer',
-                    isMaxReached: false
+                    intervals: [
+                        {
+                            label: '[5 .. 15[', 
+                            value: [5, 15],
+                            isMaxReached: false
+                        }
+                    ],
+                    type: 'integer'
                 },
-                removeFilterFn);
+                removeFilterFn,
+                null);
         }));
 
         it('should add a number "range" filter with only one value', inject((StatisticsService, FilterService) => {
@@ -155,12 +169,17 @@ describe('ColumnProfile controller', () => {
                 '0001',
                 'firstname',
                 {
-                    interval: [15, 15],
-                    label: '[15]',
-                    type: 'integer',
-                    isMaxReached: true
+                    intervals: [
+                        {
+                            label: '[15]',
+                            value: [15, 15],
+                            isMaxReached: true
+                        }
+                    ],
+                    type: 'integer'
                 },
-                removeFilterFn);
+                removeFilterFn,
+                null);
         }));
 
         it('should add a date "range" filter', inject((StatisticsService, FilterService) => {
@@ -189,12 +208,16 @@ describe('ColumnProfile controller', () => {
                 '0001',
                 'firstname',
                 {
-                    interval: ['01-06-2015', '30-06-2015'],
-                    label: 'Jun 2015',
-                    type: 'date',
-                    isMaxReached: undefined
+                    intervals: [
+                        {
+                            label: 'Jun 2015',
+                            value: ['01-06-2015', '30-06-2015'],
+                            isMaxReached: undefined
+                        }],
+                    type: 'date'
                 },
-                removeFilterFn);
+                removeFilterFn,
+                null);
         }));
 
         it('should add a date "range" filter from time', inject((StatisticsService, FilterService) => {
@@ -228,12 +251,17 @@ describe('ColumnProfile controller', () => {
                 '0001',
                 'CreationDate',
                 {
-                    interval: [minDateTime, maxDateTime],
-                    label: '[01-01-2016 .. 12-01-2016[',
-                    type: 'date',
-                    isMaxReached: undefined
+                    intervals: [
+                        {
+                            label: '[01-01-2016 .. 12-01-2016[',
+                            value: [minDateTime, maxDateTime],
+                            isMaxReached: undefined
+                        }
+                    ],
+                    type: 'date'
                 },
-                removeFilterFn);
+                removeFilterFn,
+                null);
         }));
 
         it('should add a "empty_records" filter from exact_filter on barchart click callback', inject((StatisticsService, FilterService) => {
@@ -250,7 +278,7 @@ describe('ColumnProfile controller', () => {
             ctrl.addBarchartFilter(obj);
 
             //then
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname');
+            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
         }));
     });
 

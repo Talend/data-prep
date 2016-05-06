@@ -16,7 +16,7 @@
   @include display(flex);
   @include flex-wrap(wrap);
 
-  >li {
-    margin: 0 3px;
+  > li {
+    margin: 0 3px 2px;
   }
 }

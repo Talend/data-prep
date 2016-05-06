@@ -68,7 +68,13 @@ export default function FilterSearchCtrl(FilterService) {
      * @description [PRIVATE] Action when user select a suggestion : create the filter and reset the input
      */
     var suggestionSelect = function (item) {
-        FilterService.addFilter('contains', item.columnId, item.columnName, {phrase: item.value});
+        FilterService.addFilter('contains', item.columnId, item.columnName, {
+            phrase: [
+                {
+                    value: item.value
+                }
+            ]
+        });
         vm.filterSearch = '';
     };
 

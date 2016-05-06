@@ -38,6 +38,8 @@
  * @param {number}      width The chart width
  * @param {number}      height The chart height
  * @param {function}    onClick The callback on chart bar click. The item in argument is the element in primaryData that is selected.
+ * @param {function}    onCtrlClick The callback on chart bar ctrl + click. The item in argument is the element in primaryData that is selected.
+ * @param {function}    onShiftClick The callback on chart bar shift + click. The item in argument is the element in primaryData that is selected.
  * @param {string}      keyField The key property name in primaryData elements
  * @param {string}      keyLabel The label property name in primaryData elements used in tooltip
  * @param {array}       primaryData The primary value array to render
@@ -56,6 +58,8 @@ export default function HorizontalBarchart($timeout) {
         restrict: 'E',
         scope: {
             onClick: '&',
+            onCtrlClick: '&',
+            onShiftClick: '&',
             keyField: '@',
             keyLabel: '@',
             primaryData: '=',
@@ -74,6 +78,10 @@ export default function HorizontalBarchart($timeout) {
             // Define chart sizes and margin
             var margin = {top: 15, right: 20, bottom: 10, left: 10};
             var containerWidth = +attrs.width;
+
+            let selectedValues, min, max;
+            selectedValues = [];
+            min = max = -1;
 
             //------------------------------------------------------------------------------------------------------
             //----------------------------------------------- Tooltip ----------------------------------------------
@@ -271,8 +279,43 @@ export default function HorizontalBarchart($timeout) {
                         tooltip.hide(d);
                     })
                     .on('click', function (d) {
-                        //create a new reference as the data object could be modified outside the component
-                        scope.onClick({item: _.extend({}, d)});
+                        let item = _.extend({}, d);
+                        let index = _.findIndex(statData, d);
+                        if (d3.event.ctrlKey || d3.event.metaKey) {
+                            _.find(selectedValues, item) ? _.remove(selectedValues, item) : selectedValues.push(item);
+                            scope.onCtrlClick({item});
+                        } else if (d3.event.shiftKey) {
+                            if (min > -1 && max > -1 && index > min && index < max) {
+                                let previousMax = max;
+                                max = index;
+                                for (let i = (index + 1); i <= previousMax; i++) {
+                                    let currentItem = _.extend({}, statData[i]);
+                                    _.remove(selectedValues, currentItem);
+                                    scope.onCtrlClick({item: currentItem});
+                                }
+                            } else {
+                                min < 0 ? (min = index) : (min = index < min ? index : min);
+                                max < 0 ? (max = index) : (max = index > max ? index : max);
+                                for (let i = min; i <= max; i++) {
+                                    let currentItem = _.extend({}, statData[i]);
+                                    if (!_.find(selectedValues, currentItem)) {
+                                        selectedValues.push(currentItem);
+                                        scope.onCtrlClick({item: currentItem});
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            selectedValues = [];
+                            if (_.find(selectedValues, item)) {
+                                min = max = -1;
+                            } else {
+                                selectedValues.push(item);
+                                min = max = index;
+                            }
+                            //create a new reference as the data object could be modified outside the component
+                            scope.onClick({item});
+                        }
                     });
             }
 

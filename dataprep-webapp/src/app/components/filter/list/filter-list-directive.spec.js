@@ -23,10 +23,18 @@ describe('Filter list directive', function() {
             'colName': 'name',
             'editable': true,
             'args': {
-                'phrase': 'AMC Gremlin',
+                'phrase': [
+                    {
+                        'value': 'AMC Gremlin'
+                    }
+                ],
                 'caseSensitive': true
             },
-            'value': 'AMC Gremlin'
+            'value': [
+                {
+                    'value': 'AMC Gremlin'
+                }
+            ]
         },
         {
             'type': 'exact',
@@ -34,10 +42,18 @@ describe('Filter list directive', function() {
             'colName': 'name',
             'editable': true,
             'args': {
-                'phrase': 'Chevrolet Caprice Classic',
+                'phrase': [
+                    {
+                        'value': 'Chevrolet Caprice Classic'
+                    }
+                ],
                 'caseSensitive': true
             },
-            'value': 'Chevrolet Caprice Classic'
+            'value': [
+                {
+                    'value': 'Chevrolet Caprice Classic'
+                }
+            ]
         },
         {
             'type': 'exact',
@@ -45,10 +61,18 @@ describe('Filter list directive', function() {
             'colName': 'lastname',
             'editable': true,
             'args': {
-                'phrase': 'Audi 100 LS',
+                'phrase': [
+                    {
+                        'value': 'Audi 100 LS'
+                    }
+                ],
                 'caseSensitive': true
             },
-            'value': 'Audi 100 LS'
+            'value': [
+                {
+                    'value': 'Audi 100 LS'
+                }
+            ]
         },
         {
             'type': 'inside_range',
@@ -56,12 +80,17 @@ describe('Filter list directive', function() {
             'colName': 'displacement (cc)',
             'editable': false,
             'args': {
-                'interval': [
-                    214,
-                    233
+                'intervals': [
+                    {
+                        'value': [214, 233]
+                    }
                 ]
             },
-            'value': '[214 .. 233]'
+            'value': [
+                {
+                    'value': '[214 .. 233]'
+                }
+            ]
         }
     ];
 
@@ -90,14 +119,6 @@ describe('Filter list directive', function() {
         createElement();
 
         //then
-        expect(element.find('.badge-notice').length).toBe(4);
-        expect(element.find('.badge-notice').eq(0).find('.badge-item').eq(0).text()).toBe('name = ');
-        expect(element.find('.badge-notice').eq(0).find('.editable-input').val()).toBe('AMC Gremlin');
-        expect(element.find('.badge-notice').eq(1).find('.badge-item').eq(0).text()).toBe('name = ');
-        expect(element.find('.badge-notice').eq(1).find('.editable-input').val()).toBe('Chevrolet Caprice Classic');
-        expect(element.find('.badge-notice').eq(2).find('.badge-item').eq(0).text()).toBe('lastname = ');
-        expect(element.find('.badge-notice').eq(2).find('.editable-input').val()).toBe('Audi 100 LS');
-        expect(element.find('.badge-notice').eq(3).find('.badge-item').eq(0).text()).toBe('displacement (cc) in ');
-        expect(element.find('.badge-notice').eq(3).find('.description').eq(0).text()).toBe('[214 .. 233]');
+        expect(element.find('filter-item').length).toBe(4);
     });
 });

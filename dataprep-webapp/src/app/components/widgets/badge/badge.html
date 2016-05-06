@@ -13,25 +13,12 @@
   ~ ============================================================================
   -->
 
-<span class="badge-notice"
-      ng-class="badgeCtrl.type">
-    <span ng-if="!badgeCtrl.obj.value" class="badge-item text">{{badgeCtrl.text}}</span>
-    <span ng-if="badgeCtrl.obj.value">
-        <span class="badge-item">{{badgeCtrl.text}}{{badgeCtrl.sign}}</span>
-        <span class="badge-item">
-            <form name="badgeCtrl.editBadgeValueForm">
-                <input ng-show="badgeCtrl.editable === true"
-                       class="editable-input textEllipsis"
-                       type="text"
-                       ng-model="badgeCtrl.value"
-                       ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
-                       ng-blur="badgeCtrl.manageChange()"
-                       title="{{badgeCtrl.value}}"
-                       ng-trim="false"/>
-            </form>
-            <span class="description textEllipsis" ng-show="badgeCtrl.editable === false">{{badgeCtrl.value}}</span>
-        </span>
-    </span>
+<span class="badge">
 
-    <a ng-if="badgeCtrl.removable === true" class="badge-close badge-item" ng-click="badgeCtrl.close()">&times;</a>
+    <ng-transclude></ng-transclude>
+
+    <a class="badge-btn-close"
+       role="button"
+       ng-if="$ctrl.removable"
+       ng-click="$ctrl.onRemove()">&times;</a>
 </span>

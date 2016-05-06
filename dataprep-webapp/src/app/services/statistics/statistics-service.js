@@ -249,8 +249,17 @@ export default function StatisticsService($log, $filter, state, StateService,
         rangeLimits.type = state.playground.grid.selectedColumn.type;
 
         if (currentRangeFilter) {
-            var filterMin = currentRangeFilter.args.interval[0];
-            var filterMax = currentRangeFilter.args.interval[1];
+            const currentRangeFilterIntervals = currentRangeFilter.args.intervals;
+            const { filterMin, filterMax } = currentRangeFilterIntervals.reduce(
+                (accu, interval) => {
+                    const [intervalMin, intervalMax] = interval.value;
+                    return {
+                        filterMin: Math.min(accu.filterMin, intervalMin),
+                        filterMax: Math.max(accu.filterMax, intervalMax),
+                    };
+                },
+                { filterMin: Infinity, filterMax: -Infinity }
+            );
 
             rangeLimits.minFilterVal = filterMin;
             rangeLimits.maxFilterVal = filterMax;
@@ -334,12 +343,12 @@ export default function StatisticsService($log, $filter, state, StateService,
             filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null
         };
 
-        dateFilteredWorkerWrapper = WorkerService.create(parameters, {evalPath: '/worker/eval.js'});
+        dateFilteredWorkerWrapper = WorkerService.create(parameters, { evalPath: '/worker/eval.js' });
         return dateFilteredWorkerWrapper
             .importScripts('/worker/moment.js')
             .importScripts('/worker/lodash.js')
             .importScripts('/worker/moment-jdateformatparser.js')
-            .require({fn: workerFn2, name: 'workerFn2'})
+            .require({ fn: workerFn2, name: 'workerFn2' })
             .run(dateFilteredOccurrenceWorker)
             .then(function (filteredRangeData) {
                 return initVerticalHistogram('data', 'filteredOccurrences', 'Filtered Occurrences', filteredRangeData);
@@ -618,13 +627,13 @@ export default function StatisticsService($log, $filter, state, StateService,
             patternFrequencyTable: column.statistics.patternFrequencyTable,
             filteredRecords: state.playground.filter.gridFilters.length ? state.playground.grid.filteredRecords : null
         };
-        datePatternWorkerWrapper = WorkerService.create(parameters, {evalPath: '/worker/eval.js'});
+        datePatternWorkerWrapper = WorkerService.create(parameters, { evalPath: '/worker/eval.js' });
         return datePatternWorkerWrapper
             .importScripts('/worker/moment.js')
             .importScripts('/worker/lodash.js')
             .importScripts('/worker/moment-jdateformatparser.js')
-            .require({fn: workerFn0, name: 'workerFn0'})
-            .require({fn: workerFn1, name: 'workerFn1'})
+            .require({ fn: workerFn0, name: 'workerFn0' })
+            .require({ fn: workerFn1, name: 'workerFn1' })
             .require(TextFormatService.escapeRegex)
             .require(valueMatchPatternFn)
             .require(isDatePattern)
@@ -692,10 +701,8 @@ export default function StatisticsService($log, $filter, state, StateService,
      * @param {string} pattern The date pattern to match
      */
     function valueMatchDatePatternFn(pattern) {
-        var datePattern = workerFn0(pattern);
-        return function (value) {
-            return value && moment(value, datePattern, true).isValid();
-        };
+        const datePattern = workerFn0(pattern);
+        return value => value && moment(value, datePattern, true).isValid();
     }
 
     /**
@@ -948,7 +955,7 @@ export default function StatisticsService($log, $filter, state, StateService,
             }
         }
         else {
-            var aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, {id: columnAggregation.aggregationColumnId});
+            var aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
             if (aggregatedColumn) {
                 processAggregation(aggregatedColumn, aggregationName);
             }
@@ -977,7 +984,7 @@ export default function StatisticsService($log, $filter, state, StateService,
         initPatternsFrequency();
 
         var columnAggregation = getSavedColumnAggregation();
-        var aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, {id: columnAggregation.aggregationColumnId});
+        var aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
         var aggregation = columnAggregation && columnAggregation.aggregation;
         if (aggregatedColumn && aggregation) {
             processAggregation(aggregatedColumn, aggregation);

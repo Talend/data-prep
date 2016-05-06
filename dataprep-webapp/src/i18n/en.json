@@ -122,6 +122,7 @@
   "PREPARATION": "Preparation",
   "REMOVE_ALL_FILTERS": "Remove all filters",
   "TOOGLE_ALL_FILTERS": "Enable/Disable all filters",
+  "FILTER_VALUES_SEPARATOR": "OR",
 
   "_comment": "Buttons",
   "CANCEL": "Cancel",

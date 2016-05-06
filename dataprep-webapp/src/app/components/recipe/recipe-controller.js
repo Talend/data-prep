@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc controller
@@ -75,6 +75,32 @@ export default function RecipeCtrl(state, RecipeService, PlaygroundService, Prev
 
     /**
      * @ngdoc method
+     * @name updateStepFilter
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @description update a step
+     * @param {Object} step The step to update
+     * @param {Object} filter The filter to update
+     * @param {Object} value The new filter value
+     */
+    vm.updateStepFilter = function updateStepFilter(step, filter, value) {
+        const adaptedFilter = FilterAdapterService.createFilter(filter.type, filter.colId, filter.colName, filter.editable, filter.args);
+        adaptedFilter.args = { ... filter.args };
+        adaptedFilter.value = value;
+
+        const adaptedFilterList = step.filters.map((nextFilter) => {
+            return nextFilter === filter ? adaptedFilter : nextFilter;
+        });
+        const stepFiltersTree = FilterAdapterService.toTree(adaptedFilterList);
+
+        const updatedParameters = {
+            ...step.actionParameters.parameters,
+            filter: stepFiltersTree.filter
+        };
+        vm.updateStep(step, updatedParameters);
+    };
+
+    /**
+     * @ngdoc method
      * @name removeStepFilter
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @param {string} step The step id to update
@@ -86,16 +112,15 @@ export default function RecipeCtrl(state, RecipeService, PlaygroundService, Prev
             MessageService.warning('REMOVE_LAST_STEP_FILTER_TITLE', 'REMOVE_LAST_STEP_FILTER_CONTENT', null);
         }
         else {
-            var filterPos = step.filters.indexOf(filter);
-            var removedFilter = step.filters.splice(filterPos, 1);
-            var stepFiltersTree = FilterAdapterService.toTree(step.filters);
+            const updatedFilters = step.filters.filter((nextFilter) => nextFilter !== filter);
+            const stepFiltersTree = FilterAdapterService.toTree(updatedFilters);
 
             //get step parameters and replace filter field (it is removed when there is no filter anymore)
-            var updatedParameters = _.extend({}, _.omit(step.actionParameters.parameters, 'filter'), stepFiltersTree);
-            vm.updateStep(step, updatedParameters)
-                .catch(function () {
-                    step.filters.push(removedFilter[0]);
-                });
+            const updatedParameters = {
+                ...step.actionParameters.parameters,
+                filter: stepFiltersTree.filter
+            };
+            vm.updateStep(step, updatedParameters);
         }
     };
 

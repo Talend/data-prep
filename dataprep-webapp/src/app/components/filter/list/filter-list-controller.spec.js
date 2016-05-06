@@ -41,19 +41,20 @@ describe('filter list controller', function () {
             column: '0001',
             type: 'contains',
             args: {
-                value: 'toto'
+                phrase: [
+                    {
+                        value: 'toto'
+                    }
+                ]
+
             }
         };
-        var value = 'tata';
 
         //when
-        ctrl.changeFilter(filter, value);
+        ctrl.changeFilter(filter);
 
         //then
-        expect(onFilterChange).toHaveBeenCalledWith({
-            filter: filter,
-            value: value
-        });
+        expect(onFilterChange).toHaveBeenCalledWith({filter, value: undefined});
     });
 
     it('should call filter change callback', function () {

@@ -1458,7 +1458,13 @@ describe('Statistics service', function () {
                 stateMock.playground.filter.gridFilters = [{
                     colId: '0001',
                     type: 'inside_range',
-                    args: { interval: [5, 10] }
+                    args: {
+                        intervals: [
+                            {
+                                value: [5, 10]
+                            }
+                        ]
+                    }
                 }];
 
                 //when
@@ -1482,7 +1488,13 @@ describe('Statistics service', function () {
                 stateMock.playground.filter.gridFilters = [{
                     colId: '0001',
                     type: 'inside_range',
-                    args: { interval: [-15, -10] }
+                    args: {
+                        intervals: [
+                            {
+                                value: [-15, -10]
+                            }
+                        ]
+                    }
                 }];
 
                 //when
@@ -1505,7 +1517,13 @@ describe('Statistics service', function () {
                 stateMock.playground.filter.gridFilters = [{
                     colId: '0001',
                     type: 'inside_range',
-                    args: { interval: [-15, 20] }
+                    args: {
+                        intervals: [
+                            {
+                                value: [-15, 20]
+                            }
+                        ]
+                    }
                 }];
 
                 //when
@@ -1528,7 +1546,13 @@ describe('Statistics service', function () {
                 stateMock.playground.filter.gridFilters = [{
                     colId: '0001',
                     type: 'inside_range',
-                    args: { interval: [25, 30] }
+                    args: {
+                        intervals: [
+                            {
+                                value: [25, 30]
+                            }
+                        ]
+                    }
                 }];
 
                 //when
@@ -1551,7 +1575,13 @@ describe('Statistics service', function () {
                 stateMock.playground.filter.gridFilters = [{
                     colId: '0001',
                     type: 'inside_range',
-                    args: { interval: [5, 30] }
+                    args: {
+                        intervals: [
+                            {
+                                value: [5, 30]
+                            }
+                        ]
+                    }
                 }];
 
                 //when
@@ -1574,7 +1604,13 @@ describe('Statistics service', function () {
                 stateMock.playground.filter.gridFilters = [{
                     colId: '0001',
                     type: 'inside_range',
-                    args: { interval: [-25, 10] }
+                    args: {
+                        intervals: [
+                            {
+                                value: [-25, 10]
+                            }
+                        ]
+                    }
                 }];
 
                 //when
@@ -2602,7 +2638,13 @@ describe('Statistics service', function () {
             stateMock.playground.filter.gridFilters = [{
                 colId: '0000',
                 type: 'inside_range',
-                args: { interval: [5, 10] }
+                args: {
+                    intervals: [
+                        {
+                            value: [5, 10]
+                        }
+                    ]
+                }
             }];
             stateMock.playground.statistics.histogram = {};
             stateMock.playground.grid.filteredOccurences = {

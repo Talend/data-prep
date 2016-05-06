@@ -1,0 +1,42 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<talend-badge class="filter-item {{$ctrl.filter.type}}"
+              removable="$ctrl.removable"
+              on-remove="$ctrl.onRemove()">
+    <span ng-if="!$ctrl.filter.value"
+          class="filter-item-label">
+        {{$ctrl.filter.colName}}
+    </span>
+    <span ng-if="$ctrl.filter.value">
+        <span class="filter-item-label">
+            {{$ctrl.filter.colName}}{{$ctrl.sign}}
+        </span>
+        <form ng-submit="$ctrl.submit()">
+
+            <ul class="filter-item-value"
+                ng-class="{'multi': $ctrl.filterValues.length > 1}">
+
+                <li ng-repeat="filterValue in $ctrl.filterValues track by $index">
+                    <filter-value value="(filterValue.label || filterValue.value)"
+                                  editable="$ctrl.editable && !filterValue.isEmpty"
+                                  on-edit="$ctrl.edit($index, value)"
+                                  removable="!($first && $last)"
+                                  on-remove="$ctrl.remove($index)"></filter-value>
+                </li>
+            </ul>
+        </form>
+    </span>
+</talend-badge>

@@ -43,6 +43,7 @@
             <div class="step-filters-list" ng-if="step.filters.length">
                 <filter-list class="list"
                              filters="step.filters"
+                             on-filter-change="recipeCtrl.updateStepFilter(step, filter, value)"
                              on-filter-remove="recipeCtrl.removeStepFilter(step, filter)"
                              enabled="true"></filter-list>
 

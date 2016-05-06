@@ -37,6 +37,8 @@
                                  width="300"
                                  height="400"
                                  on-click="columnProfileCtrl.addBarchartFilter(item)"
+                                 on-ctrl-click="columnProfileCtrl.addBarchartFilter(item, 'ctrl')"
+                                 on-shift-click="columnProfileCtrl.addBarchartFilter(item, 'shift')"
 
                                  key-field="{{columnProfileCtrl.state.playground.statistics.histogram.keyField}}"
                                  key-label="{{columnProfileCtrl.state.playground.statistics.histogram.label}}"
@@ -58,6 +60,8 @@
                                height="150"
                                show-x-axis="columnProfileCtrl.state.playground.statistics.histogram.column.type === 'date'"
                                on-click="columnProfileCtrl.addRangeFilter(interval)"
+                               on-ctrl-click="columnProfileCtrl.addRangeFilter(interval, 'ctrl')"
+                               on-shift-click="columnProfileCtrl.addRangeFilter(interval, 'shift')"
 
                                key-field="{{columnProfileCtrl.state.playground.statistics.histogram.keyField}}"
                                key-label="{{columnProfileCtrl.state.playground.statistics.histogram.label}}"

@@ -221,6 +221,12 @@ describe('filter search controller', function() {
         });
 
         //then
-        expect(FilterService.addFilter).toHaveBeenCalledWith('contains', '0002', 'State', { phrase: 'ala' });
+        expect(FilterService.addFilter).toHaveBeenCalledWith('contains', '0002', 'State', {
+            phrase: [
+                {
+                    value: 'ala'
+                }
+            ]
+        });
     }));
 });

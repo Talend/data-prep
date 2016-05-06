@@ -44,6 +44,8 @@
                                  width="300"
                                  height="400"
                                  on-click="statsDetailsCtrl.addPatternFilter(item)"
+                                 on-ctrl-click="statsDetailsCtrl.addPatternFilter(item, 'ctrl')"
+                                 on-shift-click="statsDetailsCtrl.addPatternFilter(item, 'shift')"
 
                                  key-field="pattern"
                                  key-label="Occurrences"

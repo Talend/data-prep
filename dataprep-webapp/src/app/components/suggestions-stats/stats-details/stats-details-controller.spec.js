@@ -50,7 +50,13 @@ describe('Stats-details controller', function () {
         ctrl.addPatternFilter (obj);
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('matches', '0001', 'firstname', {pattern: 'Aa9'});
+        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('matches', '0001', 'firstname', {
+            patterns: [
+                {
+                    value: 'Aa9'
+                }
+            ]
+        }, null, null);
     }));
 
     it('should add a new "empty" filter if pattern is empty', inject(function (FilterService) {
@@ -67,7 +73,7 @@ describe('Stats-details controller', function () {
         ctrl.addPatternFilter (obj);
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname');
+        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
     }));
 
 });

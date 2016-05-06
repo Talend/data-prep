@@ -23,10 +23,11 @@
 export default function StatsDetailsCtrl(state, FilterService, StatisticsService, StatisticsTooltipService) {
     'ngInject';
 
-    var vm = this;
+    const vm = this;
     vm.state = state;
     vm.statisticsService = StatisticsService;
     vm.statisticsTooltipService = StatisticsTooltipService;
+    vm.addPatternFilter = addPatternFilter;
 
     /**
      * @ngdoc method
@@ -35,10 +36,17 @@ export default function StatsDetailsCtrl(state, FilterService, StatisticsService
      * @param {object} item Pattern object (ex : {'pattern':'aaa','occurrences':8})
      * @description Add a pattern filter from selected pattern item
      */
-    vm.addPatternFilter = function addPatternFilter(item) {
-        var column = state.playground.grid.selectedColumn;
-        return item.pattern ?
-            FilterService.addFilterAndDigest('matches', column.id, column.name, {pattern: item.pattern}) :
-            FilterService.addFilterAndDigest('empty_records', column.id, column.name);
-    };
+    function addPatternFilter(item, keyName = null) {
+        const column = state.playground.grid.selectedColumn;
+        const args = {
+            patterns: [
+                {
+                    value: item.pattern
+                }
+            ]
+        };
+        return item.pattern || keyName === FilterService.CTRL_KEY_NAME ?
+            FilterService.addFilterAndDigest('matches', column.id, column.name, args, null, keyName) :
+            FilterService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
+    }
 }

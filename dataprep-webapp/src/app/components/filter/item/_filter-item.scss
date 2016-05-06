@@ -1,0 +1,109 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+
+@import '../../widgets/badge/badge';
+
+$contains-color: $dark-blue;
+$inside_range-color: $blue;
+$empty_records-color: $white;
+$valid_records-color: $color-ok;
+$invalid_records-color: $orange;
+$matches-color: $brown;
+
+%badge-colors {
+  &.valid_records {
+    .badge {
+      @include badge($valid_records-color);
+    }
+  }
+
+  &.invalid_records {
+    .badge {
+      @include badge($invalid_records-color);
+    }
+  }
+
+  &.empty_records {
+    .badge {
+      @include badge($empty_records-color);
+      color: $black;
+      border-color: #8C8C8C;
+
+      &-btn-close {
+        color: $black;
+      }
+    }
+  }
+
+  &.contains {
+    .badge {
+      @include badge($contains-color);
+    }
+  }
+
+  &.exact {
+    .badge {
+      @include badge($contains-color);
+    }
+  }
+
+  &.inside_range {
+    .badge {
+      @include badge($inside_range-color);
+    }
+  }
+
+  &.matches {
+    .badge {
+      @include badge($matches-color);
+    }
+  }
+}
+
+.filter-item {
+  @extend %badge-colors;
+
+  &-label {
+    font-family: $inconsolota;
+    font-weight: 500;
+  }
+
+  &-value {
+    padding: 3px 2px;
+    font-family: $base-font-family;
+    text-transform: uppercase;
+
+    li > * {
+      display: inline-block;
+    }
+
+    input[type="text"] {
+      margin: 0;
+      padding: 2px;
+      width: 30px;
+      font-weight: 500;
+      font-family: $inconsolota;
+      background: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    &.multi {
+      input[type="text"] {
+        margin-right: -20px;
+        padding-right: 15px;
+        transition: .2s width;
+      }
+    }
+  }
+}

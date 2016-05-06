@@ -62,25 +62,45 @@ describe('Filter Adapter Service', function () {
             it('should return value on CONTAINS filter', inject(function (FilterAdapterService) {
                 //given
                 var type = 'contains';
-                var args = {phrase: 'Jimmy'};
+                var args = {
+                    phrase: [
+                        {
+                            value: 'Jimmy'
+                        }
+                    ]
+                };
 
                 //when
                 var filter = FilterAdapterService.createFilter(type, null, null, null, args, null, null);
 
                 //then
-                expect(filter.value).toBe('Jimmy');
+                expect(filter.value).toEqual([
+                    {
+                        value: 'Jimmy'
+                    }
+                ]);
             }));
 
             it('should return value on EXACT filter', inject(function (FilterAdapterService) {
                 //given
                 var type = 'exact';
-                var args = {phrase: 'Jimmy'};
+                var args = {
+                    phrase: [
+                        {
+                            value: 'Jimmy'
+                        }
+                    ]
+                };
 
                 //when
                 var filter = FilterAdapterService.createFilter(type, null, null, null, args, null, null);
 
                 //then
-                expect(filter.value).toBe('Jimmy');
+                expect(filter.value).toEqual([
+                    {
+                        value: 'Jimmy'
+                    }
+                ]);
             }));
 
             it('should return value on INVALID_RECORDS filter', inject(function (FilterAdapterService) {
@@ -91,7 +111,11 @@ describe('Filter Adapter Service', function () {
                 var filter = FilterAdapterService.createFilter(type, null, null, null, null, null, null);
 
                 //then
-                expect(filter.value).toBe('invalid records');
+                expect(filter.value).toEqual([
+                    {
+                        label: 'invalid records'
+                    }
+                ]);
             }));
 
             it('should return value on EMPTY_RECORDS filter', inject(function (FilterAdapterService) {
@@ -102,7 +126,12 @@ describe('Filter Adapter Service', function () {
                 var filter = FilterAdapterService.createFilter(type, null, null, null, null, null, null);
 
                 //then
-                expect(filter.value).toBe('empty records');
+                expect(filter.value).toEqual([
+                    {
+                        label: 'empty records',
+                        isEmpty: true
+                    }
+                ]);
             }));
 
             it('should return value on VALID_RECORDS filter', inject(function (FilterAdapterService) {
@@ -113,35 +142,58 @@ describe('Filter Adapter Service', function () {
                 var filter = FilterAdapterService.createFilter(type, null, null, null, null, null, null);
 
                 //then
-                expect(filter.value).toBe('valid records');
+                expect(filter.value).toEqual([
+                    {
+                        label: 'valid records'
+                    }
+                ]);
             }));
 
             it('should return value on INSIDE_RANGE filter', inject(function (FilterAdapterService) {
                 //given
                 var type = 'inside_range';
                 var args = {
-                    interval: [1000, 2000],
-                    type: 'integer',
-                    label: '[1,000 .. 2,000['
+                    intervals: [
+                        {
+                            label: '[1,000 .. 2,000[',
+                            value: [1000, 2000]
+                        }
+                    ],
+                    type: 'integer'
                 };
 
                 //when
                 var filter = FilterAdapterService.createFilter(type, null, null, null, args, null, null);
 
                 //then
-                expect(filter.value).toBe('[1,000 .. 2,000[');
+                expect(filter.value).toEqual([
+                    {
+                        label: '[1,000 .. 2,000[',
+                        value: [1000, 2000]
+                    }
+                ]);
             }));
 
             it('should return value on MATCHES filter', inject(function (FilterAdapterService) {
                 //given
                 var type = 'matches';
-                var args = {pattern: 'Aa9'};
+                var args = {
+                    patterns: [
+                        {
+                            value: 'Aa9'
+                        }
+                    ]
+                };
 
                 //when
                 var filter = FilterAdapterService.createFilter(type, null, null, null, args, null, null);
 
                 //then
-                expect(filter.value).toBe('Aa9');
+                expect(filter.value).toEqual([
+                    {
+                        value: 'Aa9'
+                    }
+                ]);
             }));
         });
 
@@ -150,7 +202,13 @@ describe('Filter Adapter Service', function () {
                 //given
                 var type = 'contains';
                 var colId = '0001';
-                var args = {phrase: 'Jimmy'};
+                var args = {
+                    phrase: [
+                        {
+                            value: 'Jimmy'
+                        }
+                    ]
+                };
 
                 var filter = FilterAdapterService.createFilter(type, colId, null, null, args, null, null);
 
@@ -170,7 +228,13 @@ describe('Filter Adapter Service', function () {
                 //given
                 var type = 'exact';
                 var colId = '0001';
-                var args = {phrase: 'Jimmy'};
+                var args = {
+                    phrase: [
+                        {
+                            value: 'Jimmy'
+                        }
+                    ]
+                };
 
                 var filter = FilterAdapterService.createFilter(type, colId, null, null, args, null, null);
 
@@ -183,6 +247,58 @@ describe('Filter Adapter Service', function () {
                         field: '0001',
                         value: 'Jimmy'
                     }
+                });
+            }));
+
+            it('should return tree corresponding to EXACT multi-valued filter', inject(function (FilterAdapterService) {
+                //given
+                var type = 'exact';
+                var colId = '0001';
+                var args = {
+                    phrase: [
+                        {
+                            value: 'Jimmy'
+                        },
+                        {
+                            value: 'François'
+                        },
+                        {
+                            value: 'Vincent'
+                        }
+                    ]
+                };
+
+                var filter = FilterAdapterService.createFilter(type, colId, null, null, args, null, null);
+
+                //when
+                var tree = filter.toTree();
+
+                //then
+                expect(tree).toEqual({
+                    or: [
+                        {
+                            or: [
+                                {
+                                    eq: {
+                                        field: '0001',
+                                        value: 'Jimmy'
+                                    }
+                                },
+                                {
+                                    eq: {
+                                        field: '0001',
+                                        value: 'François'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            eq: {
+                                field: '0001',
+                                value: 'Vincent'
+                            }
+                        }
+                    ]
                 });
             }));
 
@@ -245,8 +361,12 @@ describe('Filter Adapter Service', function () {
                 var type = 'inside_range';
                 var colId = '0001';
                 var args = {
-                    interval: [1000, 2000],
-                    label: '[1000 .. 2000[',
+                    intervals: [
+                        {
+                            label: '[1000 .. 2000[',
+                            value: [1000, 2000]
+                        }
+                    ],
                     type: 'integer'
                 };
 
@@ -271,7 +391,13 @@ describe('Filter Adapter Service', function () {
                 //given
                 var type = 'matches';
                 var colId = '0001';
-                var args = {pattern: 'Aa9'};
+                var args = {
+                    patterns: [
+                        {
+                            value:'Aa9'
+                        }
+                    ]
+                };
 
                 var filter = FilterAdapterService.createFilter(type, colId, null, null, args, null, null);
 
@@ -303,9 +429,13 @@ describe('Filter Adapter Service', function () {
             var type = 'inside_range';
             var colId = '0001';
             var args = {
-                interval: [1000, 2000],
-                type: 'integer',
-                label: '[1,000 .. 2,000['
+                intervals: [
+                    {
+                        label: '[1,000 .. 2,000[',
+                        value: [1000, 2000]
+                    }
+                ],
+                type: 'integer'
             };
 
             var filter = FilterAdapterService.createFilter(type, colId, null, null, args, null, null);
@@ -330,16 +460,45 @@ describe('Filter Adapter Service', function () {
         it('should create multiple filters tree', inject(function (FilterAdapterService) {
             //given
             var rangeArgs = {
-                interval: [1000, 2000],
-                type: 'integer',
-                label: '[1,000 .. 2,000['
+                intervals: [
+                    {
+                        label: '[1,000 .. 2,000[',
+                        value: [1000, 2000]
+                    }
+                ],
+                type: 'integer'
             };
-            var containsArgs = {phrase: 'Jimmy'};
-            var exactArgs = {phrase: 'Toto'};
+            var containsArgs = {
+                phrase: [
+                    {
+                        value: 'Jimmy'
+                    }
+                ]
+            };
+            var exactArgs = {
+                phrase: [
+                    {
+                        value: 'Jimmy'
+                    },
+                    {
+                        value: 'François'
+                    },
+                    {
+                        value: 'Vincent'
+                    }
+                ]
+            };
             var dateRangeOffset = new Date(-631152000000).getTimezoneOffset() * 60 * 1000;
             var dateRangeArgs = {
-                interval: [-631152000000 + dateRangeOffset, -315619200000 + dateRangeOffset],
-                label: '[1950, 1960[',
+                intervals: [
+                    {
+                        label: '[1950, 1960[',
+                        value: [
+                            -631152000000 + dateRangeOffset,
+                            -315619200000 + dateRangeOffset
+                        ]
+                    }
+                ],
                 type: 'date'
             };
 
@@ -377,10 +536,30 @@ describe('Filter Adapter Service', function () {
                                     ]
                                 },
                                 {
-                                    eq: {
-                                        field: '0003',
-                                        value: 'Toto'
-                                    }
+                                    or: [
+                                        {
+                                            or: [
+                                                {
+                                                    eq: {
+                                                        field: '0003',
+                                                        value: 'Jimmy'
+                                                    }
+                                                },
+                                                {
+                                                    eq: {
+                                                        field: '0003',
+                                                        value: 'François'
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            eq: {
+                                                field: '0003',
+                                                value: 'Vincent'
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         },
@@ -428,7 +607,13 @@ describe('Filter Adapter Service', function () {
             expect(singleFilter.colId).toBe('0001');
             expect(singleFilter.colName).toBe('lastname');
             expect(singleFilter.editable).toBe(false);
-            expect(singleFilter.args).toEqual({phrase: 'Jimmy'});
+            expect(singleFilter.args).toEqual({
+                phrase: [
+                    {
+                        value: 'Jimmy'
+                    }
+                ]
+            });
         }));
 
         it('should create single EXACT filter from leaf', inject(function (FilterAdapterService) {
@@ -451,7 +636,13 @@ describe('Filter Adapter Service', function () {
             expect(singleFilter.colId).toBe('0001');
             expect(singleFilter.colName).toBe('lastname');
             expect(singleFilter.editable).toBe(false);
-            expect(singleFilter.args).toEqual({phrase: 'Jimmy'});
+            expect(singleFilter.args).toEqual({
+                phrase: [
+                    {
+                        value: 'Jimmy'
+                    }
+                ]
+            });
         }));
 
         it('should create single number INSIDE_RANGE filter from leaf', inject(function (FilterAdapterService) {
@@ -477,7 +668,15 @@ describe('Filter Adapter Service', function () {
             expect(singleFilter.colId).toBe('0001');
             expect(singleFilter.colName).toBe('lastname');
             expect(singleFilter.editable).toBe(false);
-            expect(singleFilter.args).toEqual({interval: [1000, 2000], label: '[1,000 .. 2,000[', type: 'integer'});
+            expect(singleFilter.args).toEqual({
+                intervals: [
+                    {
+                        label: '[1,000 .. 2,000[',
+                        value: [1000, 2000]
+                    }
+                ],
+                type: 'integer'
+            });
         }));
 
         it('should create single date INSIDE_RANGE filter from leaf', inject(function (FilterAdapterService) {
@@ -504,8 +703,16 @@ describe('Filter Adapter Service', function () {
             expect(singleFilter.colName).toBe('lastname');
             expect(singleFilter.editable).toBe(false);
             expect(singleFilter.args).toEqual({
-                interval: [new Date(1950, 0, 1).getTime(), new Date(1960, 0, 1).getTime()], //timestamps are in the client timezone
-                label: '[1950, 1960[',
+                intervals: [
+                    {
+                        label: '[1950, 1960[',
+                        value:[
+                            //timestamps are in the client timezone
+                            new Date(1950, 0, 1).getTime(),
+                            new Date(1960, 0, 1).getTime()
+                        ]
+                    }
+                ],
                 type: 'date'
             });
         }));
@@ -596,7 +803,13 @@ describe('Filter Adapter Service', function () {
             expect(singleFilter.colId).toBe('0001');
             expect(singleFilter.colName).toBe('lastname');
             expect(singleFilter.editable).toBe(false);
-            expect(singleFilter.args).toEqual({pattern: 'Aa9'});
+            expect(singleFilter.args).toEqual({
+                patterns: [
+                    {
+                        value: 'Aa9'
+                    }
+                ]
+            });
         }));
 
         it('should create multiple filters from tree', inject(function (FilterAdapterService) {
@@ -652,28 +865,54 @@ describe('Filter Adapter Service', function () {
             expect(rangeFilter.colId).toBe('0001');
             expect(rangeFilter.colName).toBe('lastname');
             expect(rangeFilter.editable).toBe(false);
-            expect(rangeFilter.args).toEqual({interval: [1000, 2000], label: '[1,000 .. 2,000[', type: 'integer'});
+            expect(rangeFilter.args).toEqual({
+                intervals:[
+                    {
+                        label: '[1,000 .. 2,000[',
+                        value: [1000, 2000]
+                    }
+                ],
+                type: 'integer'
+            });
 
             var containsFilter = filters[1];
             expect(containsFilter.type).toBe('contains');
             expect(containsFilter.colId).toBe('0002');
             expect(containsFilter.colName).toBe('birthdate');
             expect(containsFilter.editable).toBe(false);
-            expect(containsFilter.args).toEqual({phrase: 'Jimmy'});
+            expect(containsFilter.args).toEqual({
+                phrase: [
+                    {
+                        value: 'Jimmy'
+                    }
+                ]
+            });
 
             var exactFilter = filters[2];
             expect(exactFilter.type).toBe('exact');
             expect(exactFilter.colId).toBe('0003');
             expect(exactFilter.colName).toBe('address');
             expect(exactFilter.editable).toBe(false);
-            expect(exactFilter.args).toEqual({phrase: 'Toto'});
+            expect(exactFilter.args).toEqual({
+                phrase: [
+                    {
+                        value: 'Toto'
+                    }
+                ]
+            });
 
             var matchesFilter = filters[3];
             expect(matchesFilter.type).toBe('matches');
             expect(matchesFilter.colId).toBe('0004');
             expect(matchesFilter.colName).toBe('gender');
             expect(matchesFilter.editable).toBe(false);
-            expect(matchesFilter.args).toEqual({pattern: 'Aa9'});
+            expect(matchesFilter.args).toEqual({
+                patterns: [
+                    {
+                        value: 'Aa9'
+                    }
+                ]
+            });
         }));
     });
 });

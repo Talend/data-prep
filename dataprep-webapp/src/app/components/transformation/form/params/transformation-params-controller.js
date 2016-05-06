@@ -34,6 +34,7 @@ export default function TransformParamsCtrl() {
             case 'date':
             case 'column':
             case 'regex':
+            case 'hidden':
                 return type;
             default:
                 return 'simple';

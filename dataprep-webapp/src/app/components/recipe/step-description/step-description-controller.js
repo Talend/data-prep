@@ -39,6 +39,9 @@ class StepDescriptionCtrl {
                     const lookupStepDetails = this._getAddedColumnsInLookup(this.step);
                     this._updateLookupDescription(lookupStepDetails);
                 }
+                if (this.step.transformation.name === 'reorder') {
+                    this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', { columnName: this.step.column.name.toUpperCase() });
+                }
                 break;
         }
     }

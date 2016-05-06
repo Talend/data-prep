@@ -22,9 +22,16 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 public interface DataSetAction {
 
     /**
+     * such action can have very different display mode in recipe ui part
+     * so we use a parameter as flag
+     */
+    static final String DISPLAY_TYPE_PARAMETER = "dataset_action_display_type";
+
+    /**
      * Apply action on the whole dataset.
      * @param row the dataset row.
      * @param context the transformation context.
      */
     void applyOnDataSet(final DataSetRow row, final ActionContext context);
+
 }

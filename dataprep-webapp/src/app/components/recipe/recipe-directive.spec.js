@@ -191,6 +191,7 @@ describe('Recipe directive', function () {
                     'lookup_ds_url': 'http://172.17.0.30:8080/datasets/14d116a0-b180-4c5f-ba25-46807fc61e42/content?metadata=true',
                     'lookup_join_on': '0000',
                     'lookup_join_on_name': 'id',
+                    'dataset_action_display_type': 'lookup',
                     'lookup_selected_cols': [
                         {
                             'name': 'firstname',

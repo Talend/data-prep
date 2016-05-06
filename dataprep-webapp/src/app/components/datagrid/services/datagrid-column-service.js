@@ -25,13 +25,20 @@
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.transformation.service:TransformationApplicationService
  */
-export default function DatagridColumnService($rootScope, $compile, $translate, DatagridStyleService, ConverterService, TransformationApplicationService) {
+export default function DatagridColumnService($rootScope, $compile, $log, $translate, DatagridStyleService, ConverterService,
+                                              TransformationApplicationService, PlaygroundService) {
     'ngInject';
 
     var grid;
     var availableHeaders = [];
     var renewAllFlag;
     var colIndexName = 'tdpId';
+
+    /**
+    * contains a backup of the columnsMetadata to find which has been moved after a reorder
+    * @type {Array}
+    */
+    var originalColumns = [];
 
     var gridHeaderPreviewTemplate =
         '<div class="grid-header <%= diffClass %>">' +
@@ -43,7 +50,9 @@ export default function DatagridColumnService($rootScope, $compile, $translate, 
     return {
         init: init,
         renewAllColumns: renewAllColumns,
-        createColumns: createColumns
+        createColumns: createColumns,
+        columnsOrderChanged: columnsOrderChanged,
+        _findMoveCols: _findMoveCols
     };
 
     //------------------------------------------------------------------------------------------------------
@@ -97,7 +106,6 @@ export default function DatagridColumnService($rootScope, $compile, $translate, 
      * the same as before, or a new created one otherwise.</li>
      * </ul>
      */
-
     function createColumns(columnsMetadata, preview) {
         //create new SlickGrid columns
         var colIndexArray = [];
@@ -116,9 +124,85 @@ export default function DatagridColumnService($rootScope, $compile, $translate, 
             selectable: false
         });
 
-        return _.union(colIndexArray, _.map(columnsMetadata, function (col) {
+        var columns = _.union(colIndexArray, _.map(columnsMetadata, function (col) {
             return createColumnDefinition(col, preview);
         }));
+
+        originalColumns = columns;
+        return columns;
+    }
+
+    /**
+     * @ngdoc method
+     * @name columnsOrderChanged
+     * @methodOf data-prep.datagrid.service:DatagridColumnService
+     * @param {object[]} columnsMetadata Columns details
+     * @param {object[]} originals the optional original columns if null the field will be used originalColumns
+     * @description method trigger on columns reorder
+     */
+    function columnsOrderChanged(columnsMetadata, originals){
+        let result = _findMoveCols(originals?originals:originalColumns, columnsMetadata);
+        
+        PlaygroundService.appendStep('reorder',
+                                          {
+                                              selected_column:result.target,
+                                              scope:'dataset',
+                                              column_id:result.selected,
+                                              column_name:result.name,
+                                              dataset_action_display_type: 'column'
+                                          });
+
+    }
+
+    /**
+     *
+     * @param originalCols
+     * @param newCols
+     * @returns Object with fields :
+     *  <ul>
+     *    <li>selected: containing the column id to move</li>
+     *    <li>target: containing the column id where to move</li>
+     *    <li>name: the name of the moved field</li>
+     * @private
+     * @description find which columnMetadata has been moved between the two arrays during a reorder columsn.
+     * We iterate on array and so some comparaisons.
+     */
+    function _findMoveCols(originalCols, newCols){
+        let result = {};
+        let index = 0;
+        let movedIndex = 0;
+        let movedCol = null;
+        _.forEach(originalCols, (col) => {
+            if (!movedCol && col.id){
+                // move forward case
+                if (col.id != newCols[index].id && originalCols[index+1].id==newCols[index].id){
+                    movedCol=col;
+                    movedIndex = index;
+                    // find new index of movedCol
+                    result.selected = movedCol.id;
+                    result.name = _.get(movedCol, 'tdpColMetadata.name');
+                    index = 0;
+                    _.forEach(newCols, (col) => {
+                        if (col.id && col.id==movedCol.id){
+                        result.target = originalCols[index].id;
+                        }
+                        index++;
+                    });
+                    return result;
+                // move backward case    
+                } else if (col.id != newCols[index].id && col.id==newCols[index+1].id ) {
+                    movedCol=col;
+                    movedIndex = index;
+                    result.selected = newCols[movedIndex].id;
+                    result.name = _.get(newCols[movedIndex], 'tdpColMetadata.name');
+                    result.target = originalCols[movedIndex].id;
+                    return result;
+                }
+
+            }
+           index++;
+        });
+        return result;
     }
 
     //------------------------------------------------------------------------------------------------------

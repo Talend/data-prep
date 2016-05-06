@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "action": "reorder",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "dataset",
+        "selected_column": "0001"
+      }
+    }
+  ]
+}

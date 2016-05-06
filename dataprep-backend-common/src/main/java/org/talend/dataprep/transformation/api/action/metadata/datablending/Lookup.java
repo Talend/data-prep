@@ -20,7 +20,12 @@ import static org.talend.dataprep.parameters.ParameterType.LIST;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

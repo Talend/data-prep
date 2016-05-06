@@ -182,7 +182,7 @@ public class DataSetRowTest {
             assertThat(keys.hasNext(), is(true));
             assertThat(keys.next(), is(expectedKey));
         }
-        // Reorder
+        // ReorderColumn
         List<ColumnMetadata> newOrder = new ArrayList<ColumnMetadata>() {
 
             {
@@ -204,7 +204,7 @@ public class DataSetRowTest {
     @Test
     public void testNoOrder() throws Exception {
         DataSetRow row = createRow(defaultValues(), false);
-        // Reorder with 0 column is equivalent to clone().
+        // ReorderColumn with 0 column is equivalent to clone().
         final DataSetRow order = row.order(Collections.emptyList());
         assertTrue(row == order);
         assertThat(row.values(), is(order.values()));
@@ -213,7 +213,7 @@ public class DataSetRowTest {
     @Test
     public void testIncorrectOrder() throws Exception {
         DataSetRow row = createRow(defaultValues(), false);
-        // Reorder with 1 column should fail (not enough column, expected 4 columns).
+        // ReorderColumn with 1 column should fail (not enough column, expected 4 columns).
         List<ColumnMetadata> newOrder = new ArrayList<ColumnMetadata>() {
 
             {
@@ -226,7 +226,7 @@ public class DataSetRowTest {
         } catch (IllegalArgumentException e) {
             // Expected
         }
-        // Reorder with null column should fail
+        // ReorderColumn with null column should fail
         try {
             row.order(null);
             fail();

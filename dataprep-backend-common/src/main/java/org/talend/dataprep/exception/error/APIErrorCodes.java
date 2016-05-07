@@ -21,6 +21,7 @@ import java.util.List;
 import org.talend.daikon.exception.error.ErrorCode;
 
 public enum APIErrorCodes implements ErrorCode {
+
                                                 UNABLE_TO_DELETE_PREPARATION(400),
                                                 UNABLE_TO_CREATE_DATASET(400),
                                                 UNABLE_TO_CREATE_OR_UPDATE_DATASET(400),
@@ -63,7 +64,10 @@ public enum APIErrorCodes implements ErrorCode {
                                                 UNABLE_TO_LIST_FOLDER_ENTRIES(400),
                                                 UNABLE_TO_LIST_FOLDER_INVENTORY(400),
                                                 UNABLE_TO_SEARCH_DATAPREP(500),
+                                                UNABLE_TO_LIST_DATEPATTERNS(400),
+                                                UNABLE_TO_CREATE_DATEPATTERN(400),
                                                 DATASET_REDIRECT(301);
+
 
     /**
      * The http status to use.

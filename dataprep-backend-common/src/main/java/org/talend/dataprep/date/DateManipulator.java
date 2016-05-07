@@ -28,7 +28,14 @@ public class DateManipulator {
      * Supported pace for date ranges
      */
     public enum Pace {
-        DAY(86400000L), WEEK(604800000L), MONTH(2678400000L), QUARTER(7884000000L), HALF_YEAR(15768000000L), YEAR(31536000000L), DECADE(315360000000L), CENTURY(3153600000000L);
+        DAY(86400000L), //
+        WEEK(604800000L), //
+        MONTH(2678400000L), //
+        QUARTER(7884000000L), //
+        HALF_YEAR(15768000000L), //
+        YEAR(31536000000L), //
+        DECADE(315360000000L), //
+        CENTURY(3153600000000L);
 
         /**
          * Number of milliseconds that represents the pace

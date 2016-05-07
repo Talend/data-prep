@@ -1,0 +1,29 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<typeahead id="search-datepattern"
+           class="datepattern-search"
+           search="$ctrl.search(value)"
+           submit="$ctrl.onSubmit(value)"
+           placeholder="{{'DATEPATTERN_FORCE' | translate}}"
+           searching-text="{{'SEARCHING' | translate}}"
+           custom-render="true">
+  <div ng-if="$ctrl.items && $ctrl.items.length === 0" class="no-results" translate-once="NO_RESULTS"></div>
+  <ul>
+    <li ng-repeat="item in $ctrl.items track by $index">
+      <span ng-click="$ctrl.onChoose(item.pattern)">{{item.pattern}}</span>
+    </li>
+  </ul>
+</typeahead>

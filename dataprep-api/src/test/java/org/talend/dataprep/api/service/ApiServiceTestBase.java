@@ -42,6 +42,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
+import org.talend.dataprep.datepattern.DatePatternRepository;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
@@ -86,6 +87,9 @@ public abstract class ApiServiceTestBase {
 
     @Autowired
     protected FolderRepository folderRepository;
+
+    @Autowired
+    protected DatePatternRepository datePatternRepository;
 
     @Autowired
     TransformationServiceUrlRuntimeUpdater transformationUrlUpdater;

@@ -27,6 +27,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
@@ -124,7 +125,7 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
         final String newColumn = context.column(column.getName() + APPENDIX);
         
         final String value = row.get(columnId);
-        row.set(newColumn, getTimeStamp(value, context.<DatePattern>get(COMPILED_DATE_PATTERN).getFormatter()));
+        row.set(newColumn, getTimeStamp(value, context.<DatePattern>get( COMPILED_DATE_PATTERN).getFormatter()));
     }
 
     protected String getTimeStamp(String from, DateTimeFormatter dateTimeFormatter) {

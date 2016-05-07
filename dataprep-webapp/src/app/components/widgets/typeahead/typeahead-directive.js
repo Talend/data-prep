@@ -33,7 +33,8 @@ export default function Typeahead($timeout, $window) {
             search: '&',
             placeholder: '@',
             searchingText: '@',
-            customRender: '@'
+            customRender: '@',
+            submit: '&'
         },
         bindToController: true,
         controller: TypeaheadCtrl,
@@ -110,7 +111,6 @@ export default function Typeahead($timeout, $window) {
                                 showResults();
                                 break;
                             }
-
                             current = getCurrentItem();
                             if (current.length) {
                                 if (current.children().eq(0).is('a')) {
@@ -119,6 +119,10 @@ export default function Typeahead($timeout, $window) {
                                 else {
                                     current.children().click();
                                 }
+                            } else {
+                                ctrl.submit({value: ctrl.searchString});
+                                //clean the value
+                                ctrl.searchString = '';
                             }
                             break;
                     }

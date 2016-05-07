@@ -18,6 +18,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -81,7 +82,7 @@ public interface DatePatternParamModel {
      * @param parameters the parameters map
      * @return a DatePattern object representing the pattern
      */
-    default DatePattern getDateFormat(Map<String, String> parameters) {
+    default DatePattern getDateFormat( Map<String, String> parameters) {
         String pattern = "custom".equals(parameters.get(NEW_PATTERN)) ? parameters.get(CUSTOM_PATTERN) : parameters.get(NEW_PATTERN);
         try {
             if (StringUtils.isEmpty(pattern)) {

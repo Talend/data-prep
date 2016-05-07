@@ -11,7 +11,9 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.transformation.api.action.metadata.date;
+package org.talend.dataprep.datepattern;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -30,12 +32,17 @@ public class DatePattern implements Comparable {
     /**
      * The date pattern as String.
      */
-    private final String pattern;
+    private String pattern;
 
     /**
      * The date pattern formatter.
      */
+    @JsonIgnore
     private DateTimeFormatter formatter;
+
+    public DatePattern() {
+        // no op only to help jackson
+    }
 
     /**
      * Constructor with the pattern.

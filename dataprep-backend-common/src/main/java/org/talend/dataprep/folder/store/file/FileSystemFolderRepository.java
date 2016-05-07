@@ -81,7 +81,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
     }
 
     /**
-     * Return the root folder where the preparations are stored.
+     * Return the root folder where the folders are stored.
      *
      * @return the root folder.
      */

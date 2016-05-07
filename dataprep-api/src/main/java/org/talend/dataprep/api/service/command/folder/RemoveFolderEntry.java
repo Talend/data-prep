@@ -48,8 +48,8 @@ public class RemoveFolderEntry
     private HttpRequestBase onExecute(final String folderId, final String contentType, final String contentId) {
         try {
             final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/entries/" //
-                                                       + contentType //
-                                                       + '/' + contentId);
+                                                             + contentType //
+                                                             + '/' + contentId);
             uriBuilder.addParameter("folderId", folderId);
             return new HttpDelete(uriBuilder.build());
 

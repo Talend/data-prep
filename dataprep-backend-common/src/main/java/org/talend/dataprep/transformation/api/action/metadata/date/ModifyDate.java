@@ -33,6 +33,7 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
@@ -163,7 +164,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
         }
 
         try {
-            final DatePattern outputPattern = context.get(PATTERN_CONTEXT_KEY);
+            final DatePattern outputPattern = context.get( PATTERN_CONTEXT_KEY);
 
             LocalDateTime date = dateParser.parse(value, context.getRowMetadata().getById(columnId));
 

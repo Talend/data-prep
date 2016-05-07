@@ -28,5 +28,11 @@
                    ng-checked="typeMenuCtrl.shouldBeChecked(type)"/>
             <span translate-once="COLUMN_TYPE_SET"></span><span>&nbsp;</span>{{::type.labelKey | translate }}
         </li>
+        <li ng-show="typeMenuCtrl.displayChangeDatePattern()" class="divider"></li>
+        <li ng-show="typeMenuCtrl.displayChangeDatePattern()">
+          <datepattern-search choose="typeMenuCtrl.chooseDatePattern(datepattern)"
+                              submit="typeMenuCtrl.chooseDatePattern(datepattern)">
+          </datepattern-search>
+        </li>
     </ul>
 </li>

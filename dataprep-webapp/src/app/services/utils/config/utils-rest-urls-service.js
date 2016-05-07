@@ -36,5 +36,6 @@ export default function RestURLs() {
         this.mailUrl = serverUrl + '/api/mail';
         this.searchUrl = serverUrl + '/api/search';
         this.upgradeVersion = serverUrl + '/api/upgrade/check';
+        this.datepatternsUrl = serverUrl + '/api/datepatterns';
     }
 }

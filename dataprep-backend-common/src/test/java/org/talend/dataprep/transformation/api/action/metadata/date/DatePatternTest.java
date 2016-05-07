@@ -26,6 +26,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import org.talend.dataprep.datepattern.DatePattern;
 
 public class DatePatternTest {
 
@@ -33,7 +34,7 @@ public class DatePatternTest {
     public void datePattern_should_store_occurrences() {
         //given
         final String pattern = "d/MM/yyyy";
-        final DatePattern dp = new DatePattern(pattern, 5);
+        final DatePattern dp = new DatePattern( pattern, 5);
 
         //when
         final long occurrences = dp.getOccurrences();

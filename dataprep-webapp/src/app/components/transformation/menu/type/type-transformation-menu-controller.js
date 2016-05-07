@@ -115,6 +115,28 @@ export default function TypeTransformMenuCtrl($scope, PlaygroundService, ColumnT
 
     /**
      * @ngdoc method
+     * @name chooseDatePattern
+     * @methodOf data-prep.transformation-menu.controller:TransformMenuCtrl
+     * @param {string} value the date pattern to apply
+     * @description Create an action to force a date pattern for a column
+     */    
+    vm.chooseDatePattern =  function chooseDatePattern(value){
+
+        PlaygroundService.appendStep('force_date_pattern',
+                                     {
+                                         scope: 'dataset',
+                                         column_id: vm.column.id,
+                                         column_name: vm.column.name,
+                                         new_pattern: value
+                                     });
+    };
+    
+    vm.displayChangeDatePattern = function displayChangeDatePattern(){
+        return vm.column.type === 'string';  
+    }; 
+
+    /**
+     * @ngdoc method
      * @name refreshCurrentDomain
      * @methodOf data-prep.transformation-menu.controller:TransformMenuCtrl
      * @description Refresh current domain and simplified domain variables

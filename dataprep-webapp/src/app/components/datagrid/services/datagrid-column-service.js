@@ -155,7 +155,7 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
                 scope: 'dataset',
                 column_id: result.selected,
                 column_name: result.name,
-                dataset_action_display_type: 'column',
+                dataset_action_display_type: 'column'
             });
 
     }

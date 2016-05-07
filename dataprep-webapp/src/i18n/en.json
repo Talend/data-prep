@@ -345,6 +345,9 @@
   "NAME": "Name :",
   "SIZE": "Size :",
 
+  "_comment": "Dateapttern",
+  "DATEPATTERN_FORCE": "Add a new date pattern or force using an other one",
+
   "_comment": "Upgrade version parameters",
   "UPGRADE_VERSION_NEW_VERSION_AVAILABLE": "New Version Available",
   "UPGRADE_VERSION_NEW_VERSION": "There is a new version of Talend Data Preparation Free Desktop available: {{version}}.",

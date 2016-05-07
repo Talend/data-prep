@@ -32,6 +32,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.datepattern.DatePattern;
 
 /**
  * Unit test for the DateParser class.
@@ -56,7 +57,7 @@ public class DateParserTest extends BaseDateTests {
         final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
 
         // when
-        final List<DatePattern> actual = action.getPatterns(patternFrequencies);
+        final List<DatePattern> actual = action.getPatterns( patternFrequencies);
 
         // then
         final List<DatePattern> expected = new ArrayList<>();

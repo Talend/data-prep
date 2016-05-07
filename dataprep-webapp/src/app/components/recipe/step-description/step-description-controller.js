@@ -49,13 +49,13 @@ class StepDescriptionCtrl {
                 if (this.step.transformation.name === 'lookup') {
                     this.stepDescription = this._getLookupDetails(this.step);
                 }
-                if (this.step.transformation.name === 'reorder') {
+                if (this.step.transformation.name === 'reorder' || this.step.transformation.name === 'force_date_pattern') {
                     this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COL', {
                         index: (this.index + 1),
                         label: this.step.transformation.label,
-                        columnName: this.step.column.name.toUpperCase(),
+                        columnName: this.step.column.name.toUpperCase()
                     });
-                }
+                } 
                 break;
         }
     }

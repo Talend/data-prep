@@ -40,6 +40,9 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
      */
     public static final String ACTION_NAME = "mask_data_by_domain"; //$NON-NLS-1$
 
+    /**
+     * Key for storing in ActionContext:
+     */
     private static final String MASKER = "masker"; //$NON-NLS-1$
 
     /**
@@ -68,7 +71,7 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
             return false;
         }
         final String domain = column.getDomain();
-        LOGGER.info(">>> column: " + column.getName() + " domain: " + domain + " type: " + type);
+        LOGGER.trace(">>> column: " + column.getName() + " domain: " + domain + " type: " + type);
         try {
             new ValueDataMasker(domain, type);
         } catch (Exception e) {
@@ -103,16 +106,13 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
             final ColumnMetadata column = rowMetadata.getById(columnId);
             final String domain = column.getDomain();
             final String type = column.getType();
-            LOGGER.info(">>> type: " + type + " metadata: " + column);
+            LOGGER.trace(">>> type: " + type + " metadata: " + column);
             try {
-                actionContext.get(MASKER, (p) -> {
-                    return new ValueDataMasker(domain, type);
-                });
+                actionContext.get(MASKER, (p) -> new ValueDataMasker(domain, type));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 actionContext.setActionStatus(ActionStatus.CANCELED);
             }
-
         }
     }
 

@@ -84,6 +84,49 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
     }
 
     @Test
+    public void testShouldIgnoreEmpty() {
+
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", " ");
+        final DataSetRow row = new DataSetRow(values);
+        final RowMetadata rowMeta = row.getRowMetadata();
+        ColumnMetadata colMeta = rowMeta.getById("0000");
+        colMeta.setDomain(MaskableCategoryEnum.EMAIL.name());
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", " ");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+
+    @Test
+    public void testShouldUseDefaultMaskingForInvalid() {
+
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "bla bla");
+        final DataSetRow row = new DataSetRow(values);
+        final RowMetadata rowMeta = row.getRowMetadata();
+        ColumnMetadata colMeta = rowMeta.getById("0000");
+        colMeta.setDomain(MaskableCategoryEnum.EMAIL.name());
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "bla bla");
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void testShouldNotMaskUnsupportedDataType() {
 
         // given

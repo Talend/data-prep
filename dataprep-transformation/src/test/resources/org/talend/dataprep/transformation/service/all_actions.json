@@ -4305,6 +4305,6 @@
   },
   {
     "name": "mask_data_by_domain",
-    "category": "data_masking",
+    "category": "data masking"
   }
 ]

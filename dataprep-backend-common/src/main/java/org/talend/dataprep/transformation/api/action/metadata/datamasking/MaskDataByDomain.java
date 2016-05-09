@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.action.metadata.datamasking;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -88,7 +89,7 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
-        if (value != null) {
+        if (StringUtils.isNotBlank(value)) {
             final ValueDataMasker masker = context.get(MASKER);
             row.set(columnId, masker.maskValue(value));
         }

@@ -35,7 +35,7 @@ import au.com.bytecode.opencsv.CSVReader;
  */
 public class CSVFastHeaderAndTypeAnalyzer {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CSVFastHeaderAndTypeAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CSVFastHeaderAndTypeAnalyzer.class);
 
     /**
      * Used to mark a field as absent in a record (line).

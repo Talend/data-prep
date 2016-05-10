@@ -61,7 +61,7 @@ public class Lookup extends ActionMetadata implements DataSetAction {
     public static final String LOOKUP_ACTION_NAME = "lookup"; //$NON-NLS-1$
 
     /** This class' logger. */
-    public static final Logger LOGGER = LoggerFactory.getLogger(Lookup.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Lookup.class);
 
     /** DataSet service url. */
     @Value("${dataset.service.url}")

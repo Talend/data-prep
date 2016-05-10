@@ -204,7 +204,7 @@ public class ColumnMetadata implements Serializable {
      */
     public boolean compatible(ColumnMetadata columnMetadata){
         if (columnMetadata != null){
-            return (StringUtils.equals(typeName, columnMetadata.getType()));
+            return StringUtils.equals(typeName, columnMetadata.getType());
         }
         return false;
     }

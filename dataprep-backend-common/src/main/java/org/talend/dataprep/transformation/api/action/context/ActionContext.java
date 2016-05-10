@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitPar
 public class ActionContext {
 
     /** This class' logger. */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ActionContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionContext.class);
 
     public enum ActionStatus {
         /**

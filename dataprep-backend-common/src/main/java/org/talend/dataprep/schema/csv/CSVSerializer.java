@@ -38,7 +38,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 @Service("serializer#csv")
 public class CSVSerializer implements Serializer {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CSVSerializer.class);
 
     @Resource(name = "serializer#csv#executor")
     TaskExecutor executor;

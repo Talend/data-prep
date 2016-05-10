@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class FilesHelper {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(FilesHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilesHelper.class);
 
     private FilesHelper() {
     }

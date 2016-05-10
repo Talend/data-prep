@@ -44,7 +44,8 @@ public class ExtractUrlTokens extends ActionMetadata implements ColumnAction {
      * The action name.
      */
     public static final String EXTRACT_URL_TOKENS_ACTION_NAME = "extract_url_tokens"; //$NON-NLS-1$
-    public static final Logger LOGGER = LoggerFactory.getLogger(ExtractUrlTokens.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtractUrlTokens.class);
 
     /**
      * Private constructor to ensure IoC use.

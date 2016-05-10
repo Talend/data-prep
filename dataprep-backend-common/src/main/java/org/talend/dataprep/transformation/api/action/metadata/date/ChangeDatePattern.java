@@ -41,7 +41,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
 
     /** Action name. */
     public static final String ACTION_NAME = "change_date_pattern"; //$NON-NLS-1$
-    public static final Logger LOGGER = LoggerFactory.getLogger(ChangeDatePattern.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeDatePattern.class);
 
     /**
      * @see ActionMetadata#getName()

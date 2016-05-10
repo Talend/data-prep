@@ -36,7 +36,6 @@ import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTest
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.text.LowerCase;
 import org.talend.dataquality.datamasking.semantic.MaskableCategoryEnum;
-import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 /**
  * Test class for LowerCase action. Creates one consumer, and test it.
@@ -63,7 +62,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void testShouldMask() {
+    public void testShouldMaskEmail() {
 
         // given
         final Map<String, String> values = new HashMap<>();
@@ -81,6 +80,25 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
 
         // then
         assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void testShouldMaskInteger() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "12");
+        final DataSetRow row = new DataSetRow(values);
+        final RowMetadata rowMeta = row.getRowMetadata();
+        ColumnMetadata colMeta = rowMeta.getById("0000");
+        colMeta.setType(Type.INTEGER.getName());
+
+        // when
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+
+        // then
+        int realValueAsInteger = Integer.parseInt((String) row.values().get("0000"));
+        System.out.println(realValueAsInteger);
+        assertTrue(realValueAsInteger >= 10 && realValueAsInteger <= 14);
     }
 
     @Test
@@ -149,17 +167,14 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        for (MaskableCategoryEnum maskableCat : MaskableCategoryEnum.values()) {
-            SemanticCategoryEnum semanticCat = SemanticCategoryEnum.getCategoryById(maskableCat.name());
-            if (semanticCat != null) {
-                assertTrue(action.acceptColumn(getColumn(Type.STRING, semanticCat)));
-            }
-        }
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
+        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
+        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptColumn(getColumn(Type.INTEGER)));
         assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
         assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
         assertFalse(action.acceptColumn(getColumn(Type.ANY)));

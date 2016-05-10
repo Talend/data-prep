@@ -67,19 +67,7 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
      */
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        final String type = column.getType();
-        if (Type.FLOAT.getName().equals(type) || Type.BOOLEAN.getName().equals(type)) {
-            return false;
-        }
-        final String domain = column.getDomain();
-        LOGGER.trace(">>> column: " + column.getName() + " domain: " + domain + " type: " + type);
-        try {
-            new ValueDataMasker(domain, type);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return false;
-        }
-        return true;
+        return Type.STRING.equals(Type.get(column.getType()));
     }
 
     /**

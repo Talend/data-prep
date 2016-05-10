@@ -14,11 +14,9 @@ package org.talend.dataprep.transformation.api.action.metadata.math;
 
 import static org.talend.dataprep.transformation.api.action.metadata.math.Logarithm.LOGARITHM_NAME;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 
 /**

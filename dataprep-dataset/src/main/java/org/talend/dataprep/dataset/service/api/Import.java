@@ -2,8 +2,6 @@ package org.talend.dataprep.dataset.service.api;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.util.MessagesBundleContext;
 

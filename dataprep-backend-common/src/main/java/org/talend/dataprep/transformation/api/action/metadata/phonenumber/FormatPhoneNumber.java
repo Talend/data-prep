@@ -32,14 +32,12 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
-import org.talend.dataprep.parameters.SelectParameter.Builder;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 /**
  * format a validated phone number to a specified form.
@@ -154,10 +152,6 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
     @Nonnull
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        final Set<String> supportedRegions = PhoneNumberUtil.getInstance().getSupportedRegions();
-
-        Builder regionSelectionParam = SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true);
-        supportedRegions.forEach(region -> regionSelectionParam.item(region));
         parameters
                 .add(SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true) //
                         .item(US_REGION_CODE) //

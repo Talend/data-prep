@@ -140,8 +140,8 @@
                 <version>${org.talend.dataquality.standardization.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>           

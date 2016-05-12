@@ -147,25 +147,57 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
         assertEquals(expectedValues, row.values());
 
     }
-
+   
     @Test
-    public void should_format_defaut_parameter() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
-        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "");
+    public void should_format_region_is_manual() {
+    	parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "other (region)");
+        parameters.put(FormatPhoneNumber.MANUAL_REGION_PARAMETER_STRING, "CN");
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
         Map<String, String> values = new HashMap<>();
-        values.put("0000", PHONE_US2);
+        values.put("0000", "18611281111");// it is CN phone
 
         DataSetRow row = new DataSetRow(values);
 
         Map<String, Object> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "+1 541-754-3010");
+        expectedValues.put("0000", "+86 186 1128 1111");
+
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+    }
+    
+    @Test
+    public void should_not_format_phone_is_null() {
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", null);// it is FR phone
+
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", null);
+
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+    }
+    
+    @Test
+    public void should_not_format_formattype_is_null() {
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, null);
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_US2);
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", PHONE_US2);
 
         ActionTestWorkbench.test(row, factory.create(action, parameters));
         assertEquals(expectedValues, row.values());
     }
 
     @Test
-    public void should_not_format_defaut_parameter() {
+    public void should_not_format_defaut_region() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
         Map<String, String> values = new HashMap<>();
@@ -195,5 +227,22 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
         // then
         assertEquals(expectedValues, row1.values());
     }
+    
+    @Test
+    public void should_not_format_parameters_are_empty() {
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_US2);
+
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", PHONE_US2);
+
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+    }
+    
 
 }

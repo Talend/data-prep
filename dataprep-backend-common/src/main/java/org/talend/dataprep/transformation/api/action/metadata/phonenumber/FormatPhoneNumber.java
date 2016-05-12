@@ -185,11 +185,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
     private String getFormatType(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
-        String formatTypeParamm = parameters.get(FORMAT_TYPE_PARAMETER);
-        if (StringUtils.isEmpty(formatTypeParamm)) {
-            return TYPE_INTERNATIONAL;
-        }
-        return formatTypeParamm;
+        return parameters.get(FORMAT_TYPE_PARAMETER);
     }
 
     @Override

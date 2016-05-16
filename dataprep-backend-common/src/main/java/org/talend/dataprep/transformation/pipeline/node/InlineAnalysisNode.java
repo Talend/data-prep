@@ -18,8 +18,8 @@ import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
-import org.talend.datascience.common.inference.Analyzer;
-import org.talend.datascience.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 
 public class InlineAnalysisNode extends AnalysisNode implements Monitored {
 

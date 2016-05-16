@@ -23,9 +23,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.datascience.common.inference.Analyzer;
-import org.talend.datascience.common.inference.Analyzers;
-import org.talend.datascience.common.inference.ValueQualityStatistics;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 /**
  * Utility class for the ActionsMetadata

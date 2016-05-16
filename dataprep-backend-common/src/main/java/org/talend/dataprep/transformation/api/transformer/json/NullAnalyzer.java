@@ -3,8 +3,8 @@ package org.talend.dataprep.transformation.api.transformer.json;
 import java.util.Collections;
 import java.util.List;
 
-import org.talend.datascience.common.inference.Analyzer;
-import org.talend.datascience.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 
 public class NullAnalyzer implements Analyzer<Analyzers.Result> {
 

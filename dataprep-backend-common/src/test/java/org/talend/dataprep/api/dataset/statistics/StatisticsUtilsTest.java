@@ -34,8 +34,8 @@ import org.talend.dataquality.statistics.numeric.summary.SummaryStatistics;
 import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
-import org.talend.datascience.common.inference.Analyzers;
-import org.talend.datascience.common.inference.ValueQualityStatistics;
+import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 public class StatisticsUtilsTest {
 

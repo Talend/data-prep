@@ -26,8 +26,8 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.api.action.metadata.date.DateParser;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.TypeInferenceUtils;
-import org.talend.datascience.common.inference.Analyzer;
-import org.talend.datascience.common.inference.ResizableList;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.ResizableList;
 
 /**
  * Date histogram analyzer

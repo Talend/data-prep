@@ -33,9 +33,9 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.datascience.common.inference.Analyzer;
-import org.talend.datascience.common.inference.Analyzers;
-import org.talend.datascience.common.inference.ValueQualityStatistics;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 @Component
 public class QualityAnalysis implements SynchronousDataSetAnalyzer {

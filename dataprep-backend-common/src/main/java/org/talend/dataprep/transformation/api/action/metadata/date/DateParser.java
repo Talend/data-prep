@@ -31,8 +31,8 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
-import org.talend.datascience.common.inference.Analyzer;
-import org.talend.datascience.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 
 /**
  * Component in charge of parsing dates.

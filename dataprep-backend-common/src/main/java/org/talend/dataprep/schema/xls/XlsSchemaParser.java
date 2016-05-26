@@ -165,9 +165,8 @@ public class XlsSchemaParser implements SchemaParser {
                         sheetInputStream.mark(1);
                     }
 
-                    String dimension = XlsUtils.getDimension(sheetInputStream);
                     // the parsing may not find all columns so we complete using the found dimension from metadata
-                    int colNum = XlsUtils.getColumnsNumberFromDimension(dimension);
+                    int colNum = XlsUtils.getColumnsNumber(sheetInputStream);
 
                     // reset as read from metadata parsing
                     sheetInputStream.reset();

@@ -71,12 +71,15 @@ public class XlsUtilsTest {
     }
 
     @Test
-    public void get_dimension() throws Exception {
-        Assertions.assertThat(XlsUtils.getDimension(getClass().getResourceAsStream("data_xls.xml"))) //
-                .isEqualTo("B1:AG142");
+    public void get_ColumnsNumber() throws Exception {
+        Assertions.assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("data_xls.xml"))) //
+                .isEqualTo(33);
 
-        Assertions.assertThat(XlsUtils.getDimension(getClass().getResourceAsStream("simple_data.xml"))) //
-                .isEqualTo("A1:D5");
+        Assertions.assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("simple_data.xml"))) //
+                .isEqualTo(4);
+
+        Assertions.assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("TDP-1781.xml"))) //
+            .isEqualTo(6);
     }
 
     @Test

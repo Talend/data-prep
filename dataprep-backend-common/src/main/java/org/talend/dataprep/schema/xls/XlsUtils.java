@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.schema.xls;
 
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.io.ByteArrayInputStream;
@@ -251,31 +252,43 @@ public class XlsUtils {
     }
 
     /**
-     * return the value of attribute ref of excel sheet <dimension ref="B1:AG142"/>
-     * 
-     * @param inputStream
-     * @return
+     *
+     * @param inputStream xls sheet inputStream
+     * @return the column number from reading sheet metadata or -1 if unknown
+     * @throws XMLStreamException
+     * @throws IOException
      */
-    public static String getDimension(InputStream inputStream) throws XMLStreamException, IOException {
+    public static int getColumnsNumber(InputStream inputStream) throws XMLStreamException, IOException {
         // If doesn't support mark, wrap up
         if (!inputStream.markSupported()) {
             inputStream = new PushbackInputStream(inputStream, 8);
         }
 
+        int colNumber = 0;
+
+        // TDP-1781 xlsx files may not containing dimension so we fallback to col element number
+
         XMLStreamReader streamReader = XML_INPUT_FACTORY.createXMLStreamReader(inputStream);
         try {
             while (streamReader.hasNext()) {
                 switch (streamReader.next()) {
-                case START_ELEMENT:
-                    if (StringUtils.equals(streamReader.getLocalName(), "dimension")) {
-                        Map<String, String> attributesValues = getAttributesNameValue(streamReader);
-                        if (!attributesValues.isEmpty()) {
-                            return attributesValues.get("ref");
+                    case START_ELEMENT:
+                        if (StringUtils.equals(streamReader.getLocalName(), "dimension")) {
+                            Map<String, String> attributesValues = getAttributesNameValue(streamReader);
+                            if (!attributesValues.isEmpty()) {
+                                return getColumnsNumberFromDimension( attributesValues.get("ref"));
+                            }
                         }
-                    }
-                    break;
-                default:
-                    // no op
+                        if (StringUtils.equals(streamReader.getLocalName(), "col")) {
+                            colNumber++;
+                        }
+                        break;
+                    case END_ELEMENT:
+                        if (StringUtils.equals(streamReader.getLocalName(), "cols")) {
+                            return colNumber;
+                        }
+                    default:
+                        // no op
                 }
             }
         } finally {
@@ -283,7 +296,7 @@ public class XlsUtils {
                 streamReader.close();
             }
         }
-        return null;
+        return -1;
     }
 
     /**

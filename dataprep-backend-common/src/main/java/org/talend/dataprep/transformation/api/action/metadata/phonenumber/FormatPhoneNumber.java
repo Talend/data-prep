@@ -41,7 +41,7 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
 
 /**
- * format a validated phone number to a specified form.
+ * Format a validated phone number to a specified format.
  */
 @Component(FormatPhoneNumber.ACTION_BEAN_PREFIX + FormatPhoneNumber.ACTION_NAME)
 public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
@@ -69,9 +69,6 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
     private static final String OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
 
-    /** user selected the format type */
-    private static final String SELECTED_FORMAT_TYPE_KEY = "selected_format_type";//$NON-NLS-1$
-
     /** a parameter of format type */
     protected static final String FORMAT_TYPE_PARAMETER = "format_type"; //$NON-NLS-1$
 
@@ -92,7 +89,6 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
                 context.get(PHONE_NUMBER_HANDLER_KEY, p -> new PhoneNumberHandlerBase());
-                context.get(SELECTED_FORMAT_TYPE_KEY, r -> getFormatType(context));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 context.setActionStatus(ActionContext.ActionStatus.CANCELED);
@@ -108,29 +104,22 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
             return;
         }
 
-        String regionCode=getRegionCode(context,row);
-        //if it is an invalid phone number, nothing to do.
-        String formatedStr = formatIfValid(context, possiblePhoneValue,regionCode);
-        if (!StringUtils.isEmpty(formatedStr)) {
-            row.set(columnId, formatedStr);
-        }
+        String regionCode = getRegionCode(context, row);
+
+        String formatedStr = formatIfValid(regionCode, context.get(PHONE_NUMBER_HANDLER_KEY),
+                context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
+        row.set(columnId, formatedStr);
     }
 
     /**
-     * when the phone is a valid phone number,format it as the specified form.
+     * When the phone is a valid phone number,format it as the specified form.
      * 
-     * @param phone
-     * @param regionParam
-     * @param formatType
-     * @param phoneNumberHandler
-     * @return
+     * @return the formatted phone number or the original value if cannot be formatted
      */
-    private String formatIfValid(ActionContext context, String phone,String regionParam) {
-        PhoneNumberHandlerBase phoneNumberHandler = context.get(PHONE_NUMBER_HANDLER_KEY);
+    private String formatIfValid(String regionParam, PhoneNumberHandlerBase phoneNumberHandler, String formatType, String phone) {
         if (!phoneNumberHandler.isValidPhoneNumber(phone, regionParam)) {
-            return null;
+            return phone;
         }
-        String formatType = context.get(SELECTED_FORMAT_TYPE_KEY, r -> getFormatType(context));
         switch (formatType) {
         case TYPE_INTERNATIONAL:
             return phoneNumberHandler.formatInternational(phone, regionParam);
@@ -141,10 +130,8 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         case TYPE_RFC396:
             return phoneNumberHandler.formatRFC396(phone, regionParam);
         default:
-            // nothing to do here
+            return phone;
         }
-
-        return null;
     }
 
     @Override
@@ -197,11 +184,6 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
 		return regionParam;
 	}
-
-    private String getFormatType(ActionContext context) {
-        final Map<String, String> parameters = context.getParameters();
-        return parameters.get(FORMAT_TYPE_PARAMETER);
-    }
 
     @Override
     public String getName() {

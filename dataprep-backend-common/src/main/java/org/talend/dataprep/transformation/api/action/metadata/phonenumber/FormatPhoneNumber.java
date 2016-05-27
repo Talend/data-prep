@@ -36,6 +36,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
+import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 
 
@@ -51,14 +52,12 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
     public static final String ACTION_NAME = "format_phone_number"; //$NON-NLS-1$
 
     /** a region code parameter */
-    protected static final String REGIONS_PARAMETER = "region_code"; //$NON-NLS-1$
+    protected static final String REGIONS_PARAMETER_CONSTANT_MODE = "region_code"; //$NON-NLS-1$
 
     private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";//$NON-NLS-1$
 
     /** a manually input parameter of region code */
     protected static final String MANUAL_REGION_PARAMETER_STRING = "manual_region_string"; //$NON-NLS-1$
-
-    private static final String SELECTED_REGION_KEY = "selected_region";//$NON-NLS-1$
 
     private static final String US_REGION_CODE = "US";
 
@@ -93,7 +92,6 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         if (context.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
                 context.get(PHONE_NUMBER_HANDLER_KEY, p -> new PhoneNumberHandlerBase());
-                context.get(SELECTED_REGION_KEY, r -> getRegionCode(context));
                 context.get(SELECTED_FORMAT_TYPE_KEY, r -> getFormatType(context));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -110,7 +108,8 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
             return;
         }
 
-        String formatedStr = formatIfValid(context, possiblePhoneValue);
+        String regionCode=getRegionCode(context,row);
+        String formatedStr = formatIfValid(context, possiblePhoneValue,regionCode);
         if (!StringUtils.isEmpty(formatedStr)) {
             row.set(columnId, formatedStr);
         }
@@ -125,8 +124,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
      * @param phoneNumberHandler
      * @return
      */
-    private String formatIfValid(ActionContext context, String phone) {
-        String regionParam = context.get(SELECTED_REGION_KEY);
+    private String formatIfValid(ActionContext context, String phone,String regionParam) {
         PhoneNumberHandlerBase phoneNumberHandler = context.get(PHONE_NUMBER_HANDLER_KEY);
         if (!phoneNumberHandler.isValidPhoneNumber(phone, regionParam)) {
             return null;
@@ -152,15 +150,24 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
     @Nonnull
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
-        parameters
-                .add(SelectParameter.Builder.builder().name(REGIONS_PARAMETER).canBeBlank(true) //
+        parameters.add(SelectParameter.Builder.builder() //
+                .name(OtherColumnParameters.MODE_PARAMETER) //
+                .item(OtherColumnParameters.OTHER_COLUMN_MODE, //
+                        new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
+                                ParameterType.COLUMN, //
+                                StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle())) //
+                .item(OtherColumnParameters.CONSTANT_MODE, //
+                		SelectParameter.Builder.builder().name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
                         .item(US_REGION_CODE) //
                         .item(FR_REGION_CODE) //
                         .item(UK_REGION_CODE) //
                         .item(DE_REGION_CODE) //
                         .item(OTHER_REGION_TO_BE_SPECIFIED,
                                 new Parameter(MANUAL_REGION_PARAMETER_STRING, ParameterType.STRING, EMPTY))
-                        .defaultValue(US_REGION_CODE).build());
+                        .defaultValue(US_REGION_CODE).build()) //
+                
+                .defaultValue(OtherColumnParameters.OTHER_COLUMN_MODE).build());
+
         parameters.add(SelectParameter.Builder.builder().name(FORMAT_TYPE_PARAMETER) //
                 .item(TYPE_INTERNATIONAL) //
                 .item(TYPE_NATIONAL) //
@@ -170,18 +177,25 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         return parameters;
     }
 
-    private String getRegionCode(ActionContext context) {
-        final Map<String, String> parameters = context.getParameters();
-        String regionParam = parameters.get(REGIONS_PARAMETER);
-        if (StringUtils.isEmpty(regionParam)) {
-            return Locale.getDefault().getCountry();
-        }
+	private String getRegionCode(ActionContext context, DataSetRow row) {
+		final Map<String, String> parameters = context.getParameters();
+		String regionParam = null;
+		if (parameters.get(OtherColumnParameters.MODE_PARAMETER).equals(OtherColumnParameters.CONSTANT_MODE)) {
+			regionParam = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
+			if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, regionParam)) {
+				regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
+			}
+		} else {
+			final ColumnMetadata selectedColumn = context.getRowMetadata().getById(parameters
+									.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
+			regionParam = row.get(selectedColumn.getId());
+		}
+		if (StringUtils.isEmpty(regionParam)) {
+			return Locale.getDefault().getCountry();
+		}
 
-        if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, regionParam)) {
-            return parameters.get(MANUAL_REGION_PARAMETER_STRING);
-        }
-        return regionParam;
-    }
+		return regionParam;
+	}
 
     private String getFormatType(ActionContext context) {
         final Map<String, String> parameters = context.getParameters();

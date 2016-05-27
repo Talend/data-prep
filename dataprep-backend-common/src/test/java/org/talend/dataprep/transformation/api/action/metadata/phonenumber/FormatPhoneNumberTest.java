@@ -34,6 +34,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
+import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 
 import static org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils.getColumn;
 
@@ -87,8 +88,9 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_format_FR_International() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "FR");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "FR");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR1);
 
@@ -104,7 +106,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_format_FR_E164() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "FR");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "FR");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "E164");
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR2);
@@ -118,7 +120,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_format_US_National() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
 
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "National");
         Map<String, String> values = new HashMap<>();
@@ -133,7 +135,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_format_US_RFC396() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "RFC396");
 
         Map<String, String> values = new HashMap<>();
@@ -150,7 +152,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
    
     @Test
     public void should_format_region_is_manual() {
-    	parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "other (region)");
+    	parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "other (region)");
         parameters.put(FormatPhoneNumber.MANUAL_REGION_PARAMETER_STRING, "CN");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
         Map<String, String> values = new HashMap<>();
@@ -167,7 +169,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     
     @Test
     public void should_not_format_phone_is_null() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
         Map<String, String> values = new HashMap<>();
         values.put("0000", null);// it is FR phone
@@ -183,7 +185,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     
     @Test
     public void should_not_format_formattype_is_null() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "US");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, null);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_US2);
@@ -198,7 +200,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_format_defaut_region() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR2);// it is FR phone
@@ -214,7 +216,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_format_invalid_phone() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "FR");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "FR");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR3);
@@ -230,7 +232,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     
     @Test
     public void should_not_format_parameters_are_empty() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER, "");
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "");
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_US2);

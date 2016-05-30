@@ -82,7 +82,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 
     private final String TYPE_E164 = "E164"; //$NON-NLS-1$
 
-    private final String TYPE_RFC396 = "RFC396"; //$NON-NLS-1$
+    private final String TYPE_RFC396 = "RFC3966"; //$NON-NLS-1$
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FormatPhoneNumber.class);
 
@@ -109,6 +109,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         }
 
         String regionCode=getRegionCode(context,row);
+        //if it is an invalid phone number, nothing to do.
         String formatedStr = formatIfValid(context, possiblePhoneValue,regionCode);
         if (!StringUtils.isEmpty(formatedStr)) {
             row.set(columnId, formatedStr);
@@ -180,12 +181,12 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
 	private String getRegionCode(ActionContext context, DataSetRow row) {
 		final Map<String, String> parameters = context.getParameters();
 		String regionParam = null;
-		if (parameters.get(OtherColumnParameters.MODE_PARAMETER).equals(OtherColumnParameters.CONSTANT_MODE)) {
+		if (OtherColumnParameters.CONSTANT_MODE.equals(parameters.get(OtherColumnParameters.MODE_PARAMETER))) {
 			regionParam = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
 			if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, regionParam)) {
 				regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
 			}
-		} else {
+		} else if(OtherColumnParameters.SELECTED_COLUMN_PARAMETER.equals(parameters.get(OtherColumnParameters.MODE_PARAMETER))){
 			final ColumnMetadata selectedColumn = context.getRowMetadata().getById(parameters
 									.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
 			regionParam = row.get(selectedColumn.getId());

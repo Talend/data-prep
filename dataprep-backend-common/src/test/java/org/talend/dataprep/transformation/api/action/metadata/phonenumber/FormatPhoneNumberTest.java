@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -108,6 +109,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     public void should_format_FR_E164() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "FR");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "E164");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR2);
         DataSetRow row = new DataSetRow(values);
@@ -121,8 +123,8 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     @Test
     public void should_format_US_National() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
-
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "National");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_US2);
         DataSetRow row = new DataSetRow(values);
@@ -136,7 +138,8 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     @Test
     public void should_format_US_RFC396() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
-        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "RFC396");
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "RFC3966");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
 
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_US1);
@@ -155,6 +158,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     	parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "other (region)");
         parameters.put(FormatPhoneNumber.MANUAL_REGION_PARAMETER_STRING, "CN");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", "18611281111");// it is CN phone
 
@@ -168,9 +172,101 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     }
     
     @Test
+    public void should_format_FR_International_with_column() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_FR1);
+        values.put("0001", "FR");
+
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "+33 6 56 96 58 22");
+        expectedValues.put("0001", "FR");
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
+    }
+    
+    @Test
+    public void should_format_FR_E164_with_column() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "E164");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_FR2);
+        values.put("0001", "FR");
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "+33147554323");
+        expectedValues.put("0001", "FR");
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+    }
+    
+    @Test
+    public void should_format_US_National_with_column() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "National");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_US2);
+        values.put("0001", "US");
+        DataSetRow row = new DataSetRow(values);
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "(541) 754-3010");
+        expectedValues.put("0001", "US");
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
+    }
+    @Test
+    public void should_format_US_RFC396_with_column() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "RFC3966");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_US1);
+        values.put("0001", "US");
+        DataSetRow row = new DataSetRow(values);
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "tel:+1-541-754-3010");
+        expectedValues.put("0001", "US");
+
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
+    }
+    
+    @Test
+    //without column and without CONSTANT_MODE
+    public void should_format_US_RFC396_defualt() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "RFC3966");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_US2);
+        DataSetRow row = new DataSetRow(values);
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues = new LinkedHashMap<>();
+        if(Locale.getDefault()==Locale.US){
+        	expectedValues.put("0000", "tel:+1-541-754-3010");
+        }else{
+        	expectedValues.put("0000", PHONE_US2);
+        }
+
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
+    }
+    
+    @Test
     public void should_not_format_phone_is_null() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", null);// it is FR phone
 
@@ -187,6 +283,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     public void should_not_format_formattype_is_null() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "US");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, null);
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_US2);
         DataSetRow row = new DataSetRow(values);
@@ -202,6 +299,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     public void should_not_format_defaut_region() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR2);// it is FR phone
 
@@ -218,6 +316,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     public void should_not_format_invalid_phone() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "FR");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_FR3);
         final DataSetRow row1 = new DataSetRow(values);
@@ -234,6 +333,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
     public void should_not_format_parameters_are_empty() {
         parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, "");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);
         Map<String, String> values = new HashMap<>();
         values.put("0000", PHONE_US2);
 
@@ -244,6 +344,79 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
         ActionTestWorkbench.test(row, factory.create(action, parameters));
         assertEquals(expectedValues, row.values());
+    }
+    
+    @Test
+    public void should_not_format_FR_E164_with_column_US() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "E164");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_FR2);
+        values.put("0001", "US");
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", PHONE_FR2);
+        expectedValues.put("0001", "US");
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+    }
+    
+    
+    @Test
+    public void should_not_format_FR_International_with_column_CN() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "International");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_FR1);
+        values.put("0001", "CN");
+
+        DataSetRow row = new DataSetRow(values);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", PHONE_FR1);
+        expectedValues.put("0001", "CN");
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
+    }
+    
+    
+    @Test
+    public void should_notformat_US_National_with_column() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "National");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_US2);
+        values.put("0001", "FR");
+        DataSetRow row = new DataSetRow(values);
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", PHONE_US2);
+        expectedValues.put("0001", "FR");
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
+    }
+    @Test
+    public void should_not_format_FR_RFC396_with_column() {
+        parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, "RFC3966");
+        parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.SELECTED_COLUMN_PARAMETER);
+        parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", PHONE_FR2);
+        values.put("0001", null);
+        DataSetRow row = new DataSetRow(values);
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", PHONE_FR2);
+        expectedValues.put("0001", null);
+
+        ActionTestWorkbench.test(row, factory.create(action, parameters));
+        assertEquals(expectedValues, row.values());
+
     }
     
 

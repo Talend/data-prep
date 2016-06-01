@@ -13,12 +13,23 @@
 
 package org.talend.dataprep.schema.xls;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class XlsUtilsTest {

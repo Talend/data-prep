@@ -136,7 +136,7 @@ class XlsxContentHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
      * @param size the wanted list size.
      * @return a list of empty string from the given size.
      */
-    private List<String> createListWithEmpty(int size) {
+    public static List<String> createListWithEmpty(int size) {
         List<String> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             list.add(EMPTY);

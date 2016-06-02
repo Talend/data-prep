@@ -66,6 +66,8 @@ public class StreamingSheetReader implements Iterable<Row> {
     // we need to track empty rows
     private int firstRowIndex = -1;
 
+    private boolean parsingCols = false;
+
     public StreamingSheetReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
         this.sst = sst;
         this.stylesTable = stylesTable;
@@ -93,7 +95,8 @@ public class StreamingSheetReader implements Iterable<Row> {
     }
 
     public int getColNumber() {
-        return colNumber;
+        // the last col element is the aggregation of end of columns so it's not a real one
+        return colNumber - 1;
     }
 
     public int getFirstRowIndex() {
@@ -120,8 +123,10 @@ public class StreamingSheetReader implements Iterable<Row> {
                     firstRowIndex = Integer.parseInt(rowIndex.getValue());
                 }
                 currentRow = new StreamingRow(Integer.parseInt(rowIndex.getValue()) - 1);
-            } else if ("col".equals(tagLocalName)) {
-                colNumber++;
+            } else if ("cols".equals(tagLocalName)) {
+                parsingCols = true;
+            } else if ("col".equals(tagLocalName) && parsingCols) {
+                colNumber = colNumber +1;
             } else if ("c".equals(tagLocalName)) {
                 Attribute ref = startElement.getAttributeByName(new QName("r"));
 
@@ -161,6 +166,8 @@ public class StreamingSheetReader implements Iterable<Row> {
                 rowCache.add(currentRow);
             } else if ("c".equals(tagLocalName)) {
                 currentRow.getCellMap().put(currentCell.getColumnIndex(), currentCell);
+            } else if ("cols".equals(tagLocalName)) {
+                parsingCols = false;
             }
 
         }
@@ -211,10 +218,10 @@ public class StreamingSheetReader implements Iterable<Row> {
             return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
         case "inlineStr": // inline string (not in sst)
             return new XSSFRichTextString(lastContents).toString();
-        case "str": // forumla type
-            return '"' + lastContents + '"';
+        case "str": //
+            return lastContents;
         case "e": // error type
-            return "ERROR:  " + lastContents;
+            return StringUtils.EMPTY;// "ERROR:  " + lastContents;
         case "n": // numeric type
             if (currentCell.getNumericFormat() != null && lastContents.length() > 0) {
                 return dataFormatter.formatRawCellContents(Double.parseDouble(lastContents), currentCell.getNumericFormatIndex(),

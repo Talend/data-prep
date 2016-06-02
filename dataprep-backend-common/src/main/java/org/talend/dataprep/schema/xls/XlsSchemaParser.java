@@ -191,7 +191,8 @@ public class XlsSchemaParser implements SchemaParser {
             int maxColNumber = (( StreamingSheet)sheet).getReader().getColNumber();
             // if less columns found than the metadata we complete
             if (columnsMetadata.size() < maxColNumber) {
-                for (int j = 0; j < maxColNumber; j++) {
+                int size = maxColNumber - columnsMetadata.size();
+                for (int j = 0; j <= size; j++) {
                     columnsMetadata.add(ColumnMetadata.Builder //
                                             .column() //
                                             .name("col_" + j) //

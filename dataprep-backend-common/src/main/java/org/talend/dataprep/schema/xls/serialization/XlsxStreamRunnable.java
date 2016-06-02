@@ -94,20 +94,13 @@ public class XlsxStreamRunnable
 
             generator.writeStartArray();
 
-            int rowNumber = 1;
             for ( Row row : sheet){
-                // we need to track empty rows and generate those
-                //((StreamingSheet) sheet).getReader().getFirstRowIndex()
-                //row.getRowNum()
 
-                if (!XlsSerializer.isHeaderLine(rowNumber, metadata.getRowMetadata().getColumns())) {
+                if (!XlsSerializer.isHeaderLine(row.getRowNum(), metadata.getRowMetadata().getColumns())) {
                     
                     generator.writeStartObject();
                     for (Cell cell : row) {
-                        System.out.print( "|" + cell.getStringCellValue() + "|" );
-                        /*
-                        for (int j = 0; j < metadata.getRowMetadata().getColumns().size(); j++) {
-                            ColumnMetadata columnMetadata = metadata.getRowMetadata().getColumns().get(j);
+                            ColumnMetadata columnMetadata = metadata.getRowMetadata().getColumns().get(cell.getColumnIndex());
                             String cellValue = cell.getStringCellValue();
                             generator.writeFieldName(columnMetadata.getId());
                             if (cellValue != null) {
@@ -115,14 +108,10 @@ public class XlsxStreamRunnable
                             } else {
                                 generator.writeNull();
                             }
-                        }
-                        */
 
                     }
-                    System.out.println( "" );
                     generator.writeEndObject();
                 }
-                rowNumber++;
             }
 
 

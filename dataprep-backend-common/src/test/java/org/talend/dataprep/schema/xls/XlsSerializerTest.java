@@ -430,7 +430,7 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
                     .filter(sheetContent -> sheetName.equals(sheetContent.getName())).findFirst().get().getColumnMetadatas();
             logger.debug("columnMetadatas: {}", columnMetadatas);
 
-            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(33);
+            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(34);
 
             dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
         }

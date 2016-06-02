@@ -112,6 +112,8 @@ public class XlsxStreamRunnable
                     }
                     generator.writeEndObject();
                 }
+
+                generator.flush();
             }
 
 

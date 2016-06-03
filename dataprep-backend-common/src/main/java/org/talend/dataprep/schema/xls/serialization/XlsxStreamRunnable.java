@@ -80,9 +80,6 @@ public class XlsxStreamRunnable
         try {
             JsonGenerator generator = jsonFactory.createGenerator(jsonOutput);
 
-            int columnsNumber = metadata.getRowMetadata().getColumns().size();
-
-
             Workbook workbook = StreamingReader.builder() //
                 .bufferSize(4096) //
                 .rowCacheSize( 1 ) //

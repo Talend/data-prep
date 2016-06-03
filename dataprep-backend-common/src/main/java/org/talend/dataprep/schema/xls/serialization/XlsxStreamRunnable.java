@@ -92,25 +92,25 @@ public class XlsxStreamRunnable
             generator.writeStartArray();
 
             for ( Row row : sheet){
-
                 if (!XlsSerializer.isHeaderLine(row.getRowNum(), metadata.getRowMetadata().getColumns())) {
                     
                     generator.writeStartObject();
-                    for (Cell cell : row) {
-                            ColumnMetadata columnMetadata = metadata.getRowMetadata().getColumns().get(cell.getColumnIndex());
-                            String cellValue = cell.getStringCellValue();
-                            generator.writeFieldName(columnMetadata.getId());
-                            if (cellValue != null) {
-                                generator.writeString(cellValue);
-                            } else {
-                                generator.writeNull();
-                            }
-
+                    // data quality Analyzer doesn't like to not have all columms even if we don't have any values
+                    // so create so field with empty value otherwise we get exceptions
+                    int i = 0;
+                    for (ColumnMetadata columnMetadata : metadata.getRowMetadata().getColumns()){
+                        Cell cell = row.getCell( i );
+                        String cellValue = cell == null ? null : cell.getStringCellValue(); //StringUtils.EMPTY
+                        generator.writeFieldName(columnMetadata.getId());
+                        if (cellValue != null) {
+                            generator.writeString(cellValue);
+                        } else {
+                            generator.writeNull();
+                        }
+                        i++;
                     }
                     generator.writeEndObject();
                 }
-
-                generator.flush();
             }
 
 

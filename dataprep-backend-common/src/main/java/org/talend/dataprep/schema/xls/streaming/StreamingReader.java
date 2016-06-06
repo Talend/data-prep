@@ -68,8 +68,6 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
      * memory, and any particular iteration may trigger a load from disk to read in new data.
      *
      * @return the streaming iterator
-     * @deprecated StreamingReader is equivalent to the POI Workbook object rather than the Sheet object. This method
-     * will be removed in a future release.
      */
     @Override
     public Iterator<Row> iterator() {
@@ -90,20 +88,6 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
                 LOGGER.debug( "Deleting tmp file [" + tmp.getAbsolutePath() + "]");
                 tmp.delete();
             }
-        }
-    }
-
-    static File writeInputStreamToFile(InputStream is, int bufferSize) throws IOException {
-        File f = Files.createTempFile("tmp-", ".xlsx").toFile();
-        try (FileOutputStream fos = new FileOutputStream(f)) {
-            int read;
-            byte[] bytes = new byte[bufferSize];
-            while ((read = is.read(bytes)) != -1) {
-                fos.write(bytes, 0, read);
-            }
-            is.close();
-            fos.close();
-            return f;
         }
     }
 
@@ -129,22 +113,6 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
         public int getBufferSize() {
             return bufferSize;
-        }
-
-        /**
-         * @return The sheet index
-         * @deprecated This method will be removed in a future release.
-         */
-        public int getSheetIndex() {
-            return sheetIndex;
-        }
-
-        /**
-         * @return The sheet name
-         * @deprecated This method will be removed in a future release.
-         */
-        public String getSheetName() {
-            return sheetName;
         }
 
         public String getPassword() {
@@ -176,37 +144,6 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
          */
         public Builder bufferSize(int bufferSize) {
             this.bufferSize = bufferSize;
-            return this;
-        }
-
-        /**
-         * Which sheet to open. There can only be one sheet open for a single instance of {@code StreamingReader}. If
-         * more sheets need to be read, a new instance must be created.
-         * <p>
-         * Defaults to 0
-         * </p>
-         *
-         * @param sheetIndex index of sheet
-         * @return reference to current {@code Builder}
-         * @deprecated This method will be removed in a future release. Use {@link StreamingWorkbook#getSheetAt(int)}
-         * instead.
-         */
-        public Builder sheetIndex(int sheetIndex) {
-            this.sheetIndex = sheetIndex;
-            return this;
-        }
-
-        /**
-         * Which sheet to open. There can only be one sheet open for a single instance of {@code StreamingReader}. If
-         * more sheets need to be read, a new instance must be created.
-         *
-         * @param sheetName name of sheet
-         * @return reference to current {@code Builder}
-         * @deprecated This method will be removed in a future release. Use {@link StreamingWorkbook#getSheet(String)}
-         * instead.
-         */
-        public Builder sheetName(String sheetName) {
-            this.sheetName = sheetName;
             return this;
         }
 
@@ -252,111 +189,6 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
             StreamingWorkbookReader workbook = new StreamingWorkbookReader(this);
             workbook.init(file);
             return new StreamingWorkbook(workbook);
-        }
-
-        /**
-         * Reads a given {@code InputStream} and returns a new instance of {@code StreamingReader}. Due to Apache POI
-         * limitations, a temporary file must be written in order to create a streaming iterator. This process will use
-         * the same buffer size as specified in {@link #bufferSize(int)}.
-         *
-         * @param is input stream to read in
-         * @return built streaming reader instance
-         * @throws ReadException if there is an issue reading the stream
-         * @deprecated This method will be removed in a future release. Use {@link Builder#open(InputStream)} instead
-         */
-        public StreamingReader read(InputStream is) {
-            File f = null;
-            try {
-                f = writeInputStreamToFile(is, bufferSize);
-                LOGGER.debug( "Created temp file [" + f.getAbsolutePath() + "]");
-
-                StreamingReader r = read(f);
-                r.tmp = f;
-                return r;
-            } catch (IOException e) {
-                throw new ReadException("Unable to read input stream", e);
-            } catch (RuntimeException e) {
-                f.delete();
-                throw e;
-            }
-        }
-
-        /**
-         * Reads a given {@code File} and returns a new instance of {@code StreamingReader}.
-         *
-         * @param f file to read in
-         * @return built streaming reader instance
-         * @throws OpenException if there is an issue opening the file
-         * @throws ReadException if there is an issue reading the file
-         * @deprecated This method will be removed in a future release. Use {@link Builder#open(File)} instead
-         */
-        public StreamingReader read(File f) {
-            try {
-                OPCPackage pkg;
-                if (password != null) {
-                    // Based on: https://poi.apache.org/encryption.html
-                    POIFSFileSystem poifs = new POIFSFileSystem(f);
-                    EncryptionInfo info = new EncryptionInfo(poifs);
-                    Decryptor d = Decryptor.getInstance(info);
-                    d.verifyPassword(password);
-                    pkg = OPCPackage.open(d.getDataStream(poifs));
-                } else {
-                    pkg = OPCPackage.open(f);
-                }
-
-                XSSFReader reader = new XSSFReader(pkg);
-                SharedStringsTable sst = reader.getSharedStringsTable();
-                StylesTable styles = reader.getStylesTable();
-
-                InputStream sheet = findSheet(reader);
-                if (sheet == null) {
-                    throw new MissingSheetException("Unable to find sheet at index [" + sheetIndex + "]");
-                }
-
-                XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(sheet);
-
-                return new StreamingReader(
-                        new StreamingWorkbookReader(pkg, new StreamingSheetReader(sst, styles, parser, rowCacheSize), this));
-            } catch (IOException e) {
-                throw new OpenException("Failed to open file", e);
-            } catch (OpenXML4JException | XMLStreamException e) {
-                throw new ReadException("Unable to read workbook", e);
-            } catch (GeneralSecurityException e) {
-                throw new ReadException("Unable to read workbook - Decryption failed", e);
-            }
-        }
-
-        /**
-         * @deprecated This will be removed when the transition to the 1.x API is complete
-         */
-        private InputStream findSheet(XSSFReader reader) throws IOException, InvalidFormatException {
-            int index = sheetIndex;
-            if (sheetName != null) {
-                index = -1;
-                // This file is separate from the worksheet data, and should be fairly small
-                NodeList nl = searchForNodeList(document(reader.getWorkbookData()), "/workbook/sheets/sheet");
-                for (int i = 0; i < nl.getLength(); i++) {
-                    if (Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
-                        index = i;
-                    }
-                }
-                if (index < 0) {
-                    return null;
-                }
-            }
-            Iterator<InputStream> iter = reader.getSheetsData();
-            InputStream sheet = null;
-
-            int i = 0;
-            while (iter.hasNext()) {
-                InputStream is = iter.next();
-                if (i++ == index) {
-                    sheet = is;
-                    LOGGER.debug( "Found sheet at index [" + sheetIndex + "]");
-                    break;
-                }
-            }
-            return sheet;
         }
     }
 

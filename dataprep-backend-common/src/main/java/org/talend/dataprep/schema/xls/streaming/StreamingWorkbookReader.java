@@ -179,7 +179,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         }
     }
 
-    static File writeInputStreamToFile(InputStream is, int bufferSize) throws IOException {
+    private static File writeInputStreamToFile(InputStream is, int bufferSize) throws IOException {
         File f = Files.createTempFile("tmp-", ".xlsx").toFile();
         try (FileOutputStream fos = new FileOutputStream(f)) {
             int read;

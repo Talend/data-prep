@@ -179,10 +179,6 @@ public class XlsSchemaParser implements SchemaParser {
                 rowNumber++;
             }
 
-
-
-
-
             String sheetName = sheet.getSheetName();
             Schema.SheetContent sheetContent = //
                 new Schema.SheetContent(StringUtils.isEmpty(sheetName) ? "sheet-" + sheetNumber : sheetName, //

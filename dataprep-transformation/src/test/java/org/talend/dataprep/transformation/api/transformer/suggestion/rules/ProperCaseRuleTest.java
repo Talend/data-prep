@@ -56,7 +56,7 @@ public class ProperCaseRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(trailingSpaceRule.apply(new ProperCase(), stringColumn), is(POSITIVE));
+        assertThat(trailingSpaceRule.apply(new ProperCase(), stringColumn), is(LOW));
     }
 
     @Test

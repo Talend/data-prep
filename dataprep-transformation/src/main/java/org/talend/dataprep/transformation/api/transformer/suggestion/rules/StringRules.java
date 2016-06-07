@@ -13,8 +13,7 @@
 
 package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.NEGATIVE;
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.POSITIVE;
+import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.*;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.rules.GenericRule.GenericRuleBuilder.forActions;
 
 import java.util.List;
@@ -23,10 +22,7 @@ import java.util.StringTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.transformation.api.action.metadata.text.LowerCase;
-import org.talend.dataprep.transformation.api.action.metadata.text.ProperCase;
-import org.talend.dataprep.transformation.api.action.metadata.text.Trim;
-import org.talend.dataprep.transformation.api.action.metadata.text.UpperCase;
+import org.talend.dataprep.transformation.api.action.metadata.text.*;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
 @Component
@@ -48,7 +44,7 @@ public class StringRules extends BasicRules {
                         if (!patternAsString.isEmpty() && //
                                 (patternAsString.charAt(0) == ' '
                                         || patternAsString.charAt(patternAsString.length() - 1) == ' ')) {
-                            return POSITIVE;
+                            return HIGH;
                         }
                     }
                     return NEGATIVE;
@@ -69,7 +65,7 @@ public class StringRules extends BasicRules {
                         final String patternAsString = pattern.getPattern();
                         // At least a pattern has a lower case in it, Upper case should be suggested.
                         if (!patternAsString.isEmpty() && patternAsString.indexOf('a') >= 0) {
-                            return POSITIVE;
+                            return LOW;
                         }
                     }
                     return NEGATIVE;
@@ -90,7 +86,7 @@ public class StringRules extends BasicRules {
                         final String patternAsString = pattern.getPattern();
                         // At least a pattern has a upper case in it, Lower case should be suggested.
                         if (!patternAsString.isEmpty() && patternAsString.indexOf('A') >= 0) {
-                            return POSITIVE;
+                            return LOW;
                         }
                     }
                     return NEGATIVE;
@@ -115,13 +111,13 @@ public class StringRules extends BasicRules {
                             if (!token.isEmpty()) {
                                 if (token.charAt(0) != 'A') {
                                     // First character of word is not proper case, Proper Case should be suggested.
-                                    return POSITIVE;
+                                    return LOW;
                                 }
                                 for (int i = 1; i < token.length(); i++) {
                                     if (token.charAt(i) != 'a') {
                                         // A remaining character of word is not proper case, Proper Case should be
                                         // suggested.
-                                        return POSITIVE;
+                                        return LOW;
                                     }
                                 }
                             }
@@ -131,4 +127,16 @@ public class StringRules extends BasicRules {
                 }) //
                 .build();
     }
+
+    /**
+     * @return A {@link SuggestionEngineRule rule} that suggests 'Replace' on text columns
+     */
+    @Bean
+    public static SuggestionEngineRule replaceRule() {
+        return forActions(ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME) //
+                .when(IS_STRING) //
+                .then(columnMetadata -> LOW) //
+                .build();
+    }
+
 }

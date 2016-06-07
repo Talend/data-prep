@@ -56,7 +56,7 @@ public class TrailingSpaceRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(trailingSpaceRule.apply(new Trim(), stringWithSpacesColumn), is(POSITIVE));
+        assertThat(trailingSpaceRule.apply(new Trim(), stringWithSpacesColumn), is(HIGH));
     }
 
     @Test

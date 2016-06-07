@@ -22,14 +22,18 @@ public interface SuggestionEngineRule extends BiFunction<ActionMetadata, ColumnM
 
     int HOP = 10;
 
-    int POSITIVE = HOP;
+    int LOW = HOP;
+
+    int MEDIUM = HOP * 2;
+
+    int HIGH = HOP * 3;
+
+    int EMPTY_MGT = HOP * 4;
+
+    int INVALID_MGT = HOP * 5;
 
     int NEGATIVE = -1 * HOP;
 
     int NON_APPLICABLE = 0;
-
-    int INVALID_MGT = 50;
-
-    int EMPTY_MGT = 40;
 
 }

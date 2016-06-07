@@ -56,7 +56,7 @@ public class LowerCaseRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(lowerCaseRule.apply(new LowerCase(), stringColumn), is(POSITIVE));
+        assertThat(lowerCaseRule.apply(new LowerCase(), stringColumn), is(LOW));
     }
 
     @Test

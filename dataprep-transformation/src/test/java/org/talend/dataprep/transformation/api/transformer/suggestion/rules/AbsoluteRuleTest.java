@@ -63,10 +63,10 @@ public class AbsoluteRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(absoluteRule.apply(new Absolute(), negativeIntColumn), is(POSITIVE));
-        assertThat(absoluteRule.apply(new Absolute(), negativeFloatColumn), is(POSITIVE));
-        assertThat(absoluteRule.apply(new Absolute(), negativeIntColumn), is(POSITIVE));
-        assertThat(absoluteRule.apply(new Absolute(), negativeFloatColumn), is(POSITIVE));
+        assertThat(absoluteRule.apply(new Absolute(), negativeIntColumn), is(MEDIUM));
+        assertThat(absoluteRule.apply(new Absolute(), negativeFloatColumn), is(MEDIUM));
+        assertThat(absoluteRule.apply(new Absolute(), negativeIntColumn), is(MEDIUM));
+        assertThat(absoluteRule.apply(new Absolute(), negativeFloatColumn), is(MEDIUM));
     }
 
     @Test

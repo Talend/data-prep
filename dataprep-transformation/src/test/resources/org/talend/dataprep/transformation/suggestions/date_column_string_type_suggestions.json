@@ -714,5 +714,9 @@
     "dynamic": false,
     "label": "Extract Date Parts",
     "actionScope": []
+  },
+  {
+    "category":"strings",
+    "name":"replace_on_value"
   }
 ]

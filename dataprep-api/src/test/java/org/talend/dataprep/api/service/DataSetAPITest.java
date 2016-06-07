@@ -375,7 +375,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String content = given().body(columnDescription).when().post("/api/transform/suggest/column").asString();
 
         // then
-        assertThat(content, sameJSONAs("[]")); // All values in column are valid, no corrective action proposed.
+        final InputStream expected = PreparationAPITest.class.getResourceAsStream("suggestions/expected_all_line_scope_actions.json");
+        assertThat(content, sameJSONAsFile(expected));
     }
 
     @Test

@@ -13,17 +13,24 @@
 
 package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.POSITIVE;
+import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.HIGH;
+import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.MEDIUM;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.rules.GenericRule.GenericRuleBuilder.forActions;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.transformation.api.action.metadata.datamasking.MaskDataByDomain;
 import org.talend.dataprep.transformation.api.action.metadata.date.ChangeDatePattern;
 import org.talend.dataprep.transformation.api.action.metadata.date.ComputeTimeSince;
 import org.talend.dataprep.transformation.api.action.metadata.date.ExtractDateTokens;
 import org.talend.dataprep.transformation.api.action.metadata.net.ExtractEmailDomain;
 import org.talend.dataprep.transformation.api.action.metadata.net.ExtractUrlTokens;
+import org.talend.dataprep.transformation.api.action.metadata.phonenumber.FormatPhoneNumber;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class TypeDomainRules extends BasicRules {
@@ -35,7 +42,7 @@ public class TypeDomainRules extends BasicRules {
     public static SuggestionEngineRule dateRule() {
         return forActions(ExtractDateTokens.ACTION_NAME, ChangeDatePattern.ACTION_NAME, ComputeTimeSince.TIME_SINCE_ACTION_NAME) //
                 .when(IS_DATE) //
-                .then(columnMetadata -> POSITIVE) //
+                .then(columnMetadata -> MEDIUM) //
                 .build();
     }
 
@@ -46,7 +53,7 @@ public class TypeDomainRules extends BasicRules {
     public static SuggestionEngineRule emailRule() {
         return forActions(ExtractEmailDomain.EXTRACT_DOMAIN_ACTION_NAME) //
                 .when(IS_EMAIL) //
-                .then(columnMetadata -> POSITIVE) //
+                .then(columnMetadata -> HIGH) //
                 .build();
     }
 
@@ -57,7 +64,38 @@ public class TypeDomainRules extends BasicRules {
     public static SuggestionEngineRule urlRule() {
         return forActions(ExtractUrlTokens.EXTRACT_URL_TOKENS_ACTION_NAME) //
                 .when(IS_URL) //
-                .then(columnMetadata -> POSITIVE) //
+                .then(columnMetadata -> HIGH) //
+                .build();
+    }
+
+    /**
+     * @return A {@link SuggestionEngineRule rule} that shows date actions if column is a phone column.
+     */
+    @Bean
+    public static SuggestionEngineRule phoneRule() {
+        return forActions(FormatPhoneNumber.ACTION_NAME) //
+                .when(IS_PHONE) //
+                .then(columnMetadata -> MEDIUM) //
+                .build();
+    }
+
+    /**
+     * @return A {@link SuggestionEngineRule rule} that shows date actions if column is a phone column.
+     */
+    @Bean
+    public static SuggestionEngineRule dataMaskingRule() {
+        Set<String> domainsToMask = new HashSet<>();
+        domainsToMask.add(SemanticCategoryEnum.EMAIL.getId());
+        domainsToMask.add(SemanticCategoryEnum.LAST_NAME.getId());
+        domainsToMask.add(SemanticCategoryEnum.FIRST_NAME.getId());
+        domainsToMask.add(SemanticCategoryEnum.DE_PHONE.getId());
+        domainsToMask.add(SemanticCategoryEnum.FR_PHONE.getId());
+        domainsToMask.add(SemanticCategoryEnum.UK_PHONE.getId());
+        domainsToMask.add(SemanticCategoryEnum.US_PHONE.getId());
+
+        return forActions(MaskDataByDomain.ACTION_NAME) //
+                .when(columnMetadata -> (domainsToMask.contains(columnMetadata.getDomain()))) //
+                .then(columnMetadata -> MEDIUM) //
                 .build();
     }
 

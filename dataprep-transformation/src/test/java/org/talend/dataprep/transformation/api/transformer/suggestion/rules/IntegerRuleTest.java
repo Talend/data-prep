@@ -61,8 +61,8 @@ public class IntegerRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(integerRule.apply(new RemoveFractionalPart(), mostIntColumn), is(POSITIVE));
-        assertThat(integerRule.apply(new RoundHalfUp(), mostIntColumn), is(POSITIVE));
+        assertThat(integerRule.apply(new RemoveFractionalPart(), mostIntColumn), is(LOW));
+        assertThat(integerRule.apply(new RoundHalfUp(), mostIntColumn), is(LOW));
     }
 
     @Test

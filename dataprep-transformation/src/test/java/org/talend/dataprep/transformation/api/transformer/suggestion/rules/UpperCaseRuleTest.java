@@ -56,7 +56,7 @@ public class UpperCaseRuleTest {
 
     @Test
     public void testPositiveMatch() throws Exception {
-        assertThat(upperCaseRule.apply(new UpperCase(), stringColumn), is(POSITIVE));
+        assertThat(upperCaseRule.apply(new UpperCase(), stringColumn), is(LOW));
     }
 
     @Test

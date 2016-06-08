@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.schema.xls.streaming;
 
-import static com.monitorjbl.xlsx.XmlUtils.document;
-import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
 import static java.util.Arrays.asList;
 
 import java.io.File;
@@ -26,9 +24,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -42,14 +45,13 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.NodeList;
 
 import com.monitorjbl.xlsx.exceptions.OpenException;
 import com.monitorjbl.xlsx.exceptions.ReadException;
 
 public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
 
-    private static final Logger log = LoggerFactory.getLogger(StreamingWorkbookReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger( StreamingWorkbookReader.class);
 
     private final List<StreamingSheet> sheets;
 
@@ -60,6 +62,8 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
     private File tmp;
 
     private OPCPackage pkg;
+
+    private static final QName SHEET_NAME_ATT_QNAME = new QName( "name" );
 
     /**
      * This constructor exists only so the StreamingReader can instantiate a StreamingWorkbook using its own reader
@@ -89,7 +93,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         File f = null;
         try {
             f = writeInputStreamToFile(is, builder.getBufferSize());
-            log.debug("Created temp file [" + f.getAbsolutePath() + "]");
+            LOGGER.debug( "Created temp file [{}", f.getAbsolutePath() );
 
             init(f);
             tmp = f;
@@ -128,6 +132,8 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         }
     }
 
+    // to override https://bz.apache.org/bugzilla/show_bug.cgi?id=57699
+
     void loadSheets(XSSFReader reader, SharedStringsTable sst, StylesTable stylesTable, int rowCacheSize)
             throws IOException, InvalidFormatException, XMLStreamException {
         lookupSheetNames(reader);
@@ -139,11 +145,34 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         }
     }
 
-    void lookupSheetNames(XSSFReader reader) throws IOException, InvalidFormatException {
+    void lookupSheetNames(XSSFReader reader) throws IOException, InvalidFormatException, XMLStreamException {
         sheetNames.clear();
-        NodeList nl = searchForNodeList(document(reader.getWorkbookData()), "/workbook/sheets/sheet");
-        for (int i = 0; i < nl.getLength(); i++) {
-            sheetNames.add(nl.item(i).getAttributes().getNamedItem("name").getTextContent());
+
+        XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(reader.getWorkbookData());
+        boolean parsingsSheets = false;
+        while ( parser.hasNext() ){
+            XMLEvent event = parser.nextEvent();
+            switch ( event.getEventType() ){
+                case XMLStreamConstants.START_ELEMENT:
+                    StartElement startElement = event.asStartElement();
+                    String tagLocalName = startElement.getName().getLocalPart();
+                    if ("sheets".equals( tagLocalName )){
+                        parsingsSheets = true;
+                        continue;
+                    }
+                    if (parsingsSheets && "sheet".equals( tagLocalName )) {
+                        Attribute attribute = startElement.getAttributeByName( SHEET_NAME_ATT_QNAME );
+                        if (attribute != null) {
+                            sheetNames.add(attribute.getValue());
+                        }
+                    }
+
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    if ("sheets".equals( event.asEndElement().getName().getLocalPart() )){
+                        return;
+                    }
+            }
         }
     }
 
@@ -173,7 +202,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
             pkg.revert();
         } finally {
             if (tmp != null) {
-                log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
+                LOGGER.debug( "Deleting tmp file [{}]", tmp.getAbsolutePath());
                 tmp.delete();
             }
         }

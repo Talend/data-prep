@@ -85,7 +85,7 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
             workbook.close();
         } finally {
             if (tmp != null) {
-                LOGGER.debug( "Deleting tmp file [" + tmp.getAbsolutePath() + "]");
+                LOGGER.debug( "Deleting tmp file [{}]", tmp.getAbsolutePath());
                 tmp.delete();
             }
         }

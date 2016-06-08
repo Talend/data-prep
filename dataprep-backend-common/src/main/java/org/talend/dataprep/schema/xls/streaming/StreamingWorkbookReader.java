@@ -119,6 +119,9 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
             }
 
             XSSFReader reader = new XSSFReader(pkg);
+
+
+
             SharedStringsTable sst = reader.getSharedStringsTable();
             StylesTable styles = reader.getStylesTable();
 
@@ -136,7 +139,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
 
     void loadSheets(XSSFReader reader, SharedStringsTable sst, StylesTable stylesTable, int rowCacheSize)
             throws IOException, InvalidFormatException, XMLStreamException {
-        lookupSheetNames(reader);
+        lookupSheetNames(reader.getWorkbookData());
         Iterator<InputStream> iter = reader.getSheetsData();
         int i = 0;
         while (iter.hasNext()) {
@@ -145,10 +148,10 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         }
     }
 
-    void lookupSheetNames(XSSFReader reader) throws IOException, InvalidFormatException, XMLStreamException {
+    void lookupSheetNames(InputStream workBookData) throws IOException, InvalidFormatException, XMLStreamException {
         sheetNames.clear();
 
-        XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(reader.getWorkbookData());
+        XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(workBookData);
         boolean parsingsSheets = false;
         while ( parser.hasNext() ){
             XMLEvent event = parser.nextEvent();

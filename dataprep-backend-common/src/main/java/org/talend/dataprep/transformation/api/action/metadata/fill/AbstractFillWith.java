@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.fill;
 
@@ -31,16 +31,16 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.metadata.date.DateParser;
-import org.talend.dataprep.datepattern.DatePattern;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
 
 public abstract class AbstractFillWith extends ActionMetadata implements OtherColumnParameters {
 
@@ -62,7 +62,7 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
 
     protected Type type;
 
-    public abstract boolean shouldBeProcessed (String value, ColumnMetadata colMetadata);
+    public abstract boolean shouldBeProcessed(String value, ColumnMetadata colMetadata);
 
     @Override
     public void compile(ActionContext actionContext) {
@@ -96,8 +96,8 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
                 try {
                     final LocalDateTime date = dateParser.parse(newValue, columnMetadata);
                     final DatePattern mostFrequentPattern = dateParser.getMostFrequentPattern(columnMetadata);
-                    DateTimeFormatter ourNiceFormatter = (mostFrequentPattern == null ? DEFAULT_FORMATTER : mostFrequentPattern
-                            .getFormatter());
+                    DateTimeFormatter ourNiceFormatter = (mostFrequentPattern == null ? DEFAULT_FORMATTER
+                            : mostFrequentPattern.getFormatter());
                     newValue = ourNiceFormatter.format(date);
                 } catch (DateTimeException e) {
                     // Nothing to do, if we can't get a valid pattern, keep the raw value
@@ -117,39 +117,39 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
         Parameter constantParameter = null;
 
         switch (type) {
-            case NUMERIC:
-            case DOUBLE:
-            case FLOAT:
-            case STRING:
-                constantParameter=new Parameter(DEFAULT_VALUE_PARAMETER, //
-                        ParameterType.STRING, //
-                        StringUtils.EMPTY);
-                break;
-            case INTEGER:
-                constantParameter=new Parameter(DEFAULT_VALUE_PARAMETER, //
-                        ParameterType.INTEGER, //
-                        "0");
-                break;
-            case BOOLEAN:
-                constantParameter= SelectParameter.Builder.builder() //
-                        .name(DEFAULT_VALUE_PARAMETER) //
-                        .item("True") //
-                        .item("False") //
-                        .defaultValue("True") //
-                        .build();
-                break;
-            case DATE:
-                constantParameter=new Parameter(DEFAULT_VALUE_PARAMETER, //
-                        ParameterType.DATE, //
-                        DEFAULT_DATE_VALUE, //
-                        false, //
-                        false, //
-                        StringUtils.EMPTY, //
-                        getMessagesBundle());
-                break;
-            case ANY:
-            default:
-                break;
+        case NUMERIC:
+        case DOUBLE:
+        case FLOAT:
+        case STRING:
+            constantParameter = new Parameter(DEFAULT_VALUE_PARAMETER, //
+                    ParameterType.STRING, //
+                    StringUtils.EMPTY);
+            break;
+        case INTEGER:
+            constantParameter = new Parameter(DEFAULT_VALUE_PARAMETER, //
+                    ParameterType.INTEGER, //
+                    "0");
+            break;
+        case BOOLEAN:
+            constantParameter = SelectParameter.Builder.builder() //
+                    .name(DEFAULT_VALUE_PARAMETER) //
+                    .item("True") //
+                    .item("False") //
+                    .defaultValue("True") //
+                    .build();
+            break;
+        case DATE:
+            constantParameter = new Parameter(DEFAULT_VALUE_PARAMETER, //
+                    ParameterType.DATE, //
+                    DEFAULT_DATE_VALUE, //
+                    false, //
+                    false, //
+                    StringUtils.EMPTY, //
+                    getMessagesBundle());
+            break;
+        case ANY:
+        default:
+            break;
         }
 
         //@formatter:off
@@ -171,22 +171,21 @@ public abstract class AbstractFillWith extends ActionMetadata implements OtherCo
      * the parameter is invalid, an exception is thrown.
      *
      * @param parameters where to look the parameter value.
-     * @param rowMetadata        the row metadata where to look for the column.
+     * @param rowMetadata the row metadata where to look for the column.
      */
     private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (!parameters.containsKey(MODE_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                    MODE_PARAMETER));
+            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName", MODE_PARAMETER));
         }
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DEFAULT_VALUE_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                    DEFAULT_VALUE_PARAMETER));
-        }
-        else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) &&
-                (!parameters.containsKey(SELECTED_COLUMN_PARAMETER) || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                    SELECTED_COLUMN_PARAMETER));
+            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName", DEFAULT_VALUE_PARAMETER));
+        } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
+                || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
     }
 

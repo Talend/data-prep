@@ -31,9 +31,9 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 
 /**
  * Component in charge of parsing dates.
@@ -52,7 +52,7 @@ public class DateParser {
      * @param column the column to analyse.
      * @return the most frequent pattern or null if no pattern at all.
      */
-    public DatePattern getMostFrequentPattern( ColumnMetadata column) {
+    public DatePattern getMostFrequentPattern(ColumnMetadata column) {
         List<DatePattern> patterns = getPatterns(column.getStatistics().getPatternFrequencies());
         if (!patterns.isEmpty()) {
             return patterns.get(0);

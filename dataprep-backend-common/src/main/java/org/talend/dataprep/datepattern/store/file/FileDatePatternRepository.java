@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.datepattern.store.file;
 
 import static org.talend.daikon.exception.ExceptionContext.build;
@@ -40,7 +40,7 @@ public class FileDatePatternRepository implements DatePatternRepository {
      * Where to store the datepattern.
      * file name is the pattern so we store a file per pattern (not concurrent access to a file to manage)
      */
-    @Value( "${datepattern.store.file.location}" )
+    @Value("${datepattern.store.file.location}")
     private String datepatternLocation;
 
     /**

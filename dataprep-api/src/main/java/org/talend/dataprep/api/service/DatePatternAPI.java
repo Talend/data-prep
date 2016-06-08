@@ -20,12 +20,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.service.command.datepattern.AllDatePatternsList;
 import org.talend.dataprep.api.service.command.datepattern.CreateDatepattern;
+import org.talend.dataprep.command.CommandHelper;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -36,30 +38,21 @@ import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 
-import javax.ws.rs.QueryParam;
-
 @RestController
 public class DatePatternAPI extends APIService {
 
     @RequestMapping(value = "/api/datepatterns", method = GET)
     @ApiOperation(value = "List all datepattern.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public void allDatepattern( OutputStream output, @RequestParam(required = false) String keyword) {
-        HystrixCommand<InputStream> foldersList = getCommand( AllDatePatternsList.class, keyword);
-        try (InputStream commandResult = foldersList.execute()){
-            HttpResponseContext.header( "Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-            IOUtils.copyLarge( commandResult, output);
-            output.flush();
-        } catch (Exception e) {
-            throw new TDPException( APIErrorCodes.UNABLE_TO_LIST_DATEPATTERNS, e);
-        }
+    public StreamingResponseBody allDatePattern(@RequestParam(required = false) String keyword) {
+        GenericCommand<InputStream> foldersList = getCommand(AllDatePatternsList.class, keyword);
+        return CommandHelper.toStreaming(foldersList);
     }
 
     @RequestMapping(value = "/api/datepatterns", method = PUT)
     @ApiOperation(value = "create datepattern.", consumes = APPLICATION_JSON_VALUE)
     @Timed
-    public void createDatepattern(@RequestParam String pattern) {
-
+    public void createDatePattern(@RequestParam String pattern) {
         HystrixCommand<Void> createCommand = getCommand(CreateDatepattern.class, new DatePattern(pattern));
         try {
             createCommand.execute();

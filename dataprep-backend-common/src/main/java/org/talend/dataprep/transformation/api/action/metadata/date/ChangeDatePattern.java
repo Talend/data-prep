@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
@@ -35,8 +35,6 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
     /** Action name. */
     public static final String ACTION_NAME = "change_date_pattern"; //$NON-NLS-1$
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeDatePattern.class);
-
     /**
      * @see ActionMetadata#getName()
      */
@@ -60,7 +58,6 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             compileDatePattern(actionContext);
-
             changeDatePattern(actionContext);
         }
     }
@@ -72,7 +69,6 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         changeDateValue(context, row);
     }
-
 
     @Override
     public Set<Behavior> getBehavior() {

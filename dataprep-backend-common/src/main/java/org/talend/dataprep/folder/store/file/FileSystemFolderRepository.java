@@ -104,7 +104,6 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         return home;
     }
 
-
     /**
      * @see FolderRepository#exists(String)
      */
@@ -357,8 +356,8 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                                 Properties properties = new Properties();
                                 properties.load(inputStream);
                                 if (contentType.equals(FolderContentType.fromName(properties.getProperty(CONTENT_TYPE))) && //
-                                        StringUtils.equalsIgnoreCase(properties.getProperty(CONTENT_ID), //
-                                                contentId)) {
+                                StringUtils.equalsIgnoreCase(properties.getProperty(CONTENT_ID), //
+                                        contentId)) {
                                     Files.delete(pathFile);
                                 }
                             } catch (IOException e) {
@@ -497,7 +496,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                         Properties properties = new Properties();
                         properties.load(inputStream);
                         if (StringUtils.equals(properties.getProperty(CONTENT_ID), contentId) && //
-                                contentType.equals(FolderContentType.fromName(properties.getProperty(CONTENT_TYPE)))) {
+                        contentType.equals(FolderContentType.fromName(properties.getProperty(CONTENT_TYPE)))) {
                             final FolderEntry entry = new FolderEntry(contentType, contentId);
                             Path parent = file.getParent();
                             String folderPath = parent.equals(getRootFolder()) ? "/" : pathAsString(parent);
@@ -538,7 +537,6 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         }
     }
 
-
     /**
      * @see FolderRepository#searchFolders(String, boolean)
      */
@@ -566,8 +564,11 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
                     if (StringsHelper.match(pathName, queryString, strict)) {
                         FolderInfo folderInfo = FolderInfo.create(path);
                         Folder folder = folderInfo != null
-                                ? folder().path(pathStr).id(pathToId(pathStr)).name(pathName).ownerId(security.getUserId()).creationDate(folderInfo.getCreationDate()).lastModificationDate(folderInfo.getLastModificationDate()).build()
-                                : folder().path(pathStr).id(pathToId(pathStr)).name(pathName).ownerId(security.getUserId()).build();
+                                ? folder().path(pathStr).id(pathToId(pathStr)).name(pathName).ownerId(security.getUserId())
+                                        .creationDate(folderInfo.getCreationDate())
+                                        .lastModificationDate(folderInfo.getLastModificationDate()).build()
+                                : folder().path(pathStr).id(pathToId(pathStr)).name(pathName).ownerId(security.getUserId())
+                                        .build();
                         folders.add(folder);
                     }
                 }
@@ -677,7 +678,6 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
         return locator.getResult();
     }
 
-
     /**
      * @see FolderRepository#size()
      */
@@ -685,7 +685,6 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
     public long size() {
         return foldersNumber(getRootFolder());
     }
-
 
     /**
      * @param path the path to number folders from.
@@ -721,10 +720,12 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
          * This class' logger.
          */
         private static final Logger LOG = getLogger(FolderInfo.class);
+
         /**
          * Folder last modification date.
          */
         private final long lastModificationDate;
+
         /**
          * Folder creation date.
          */
@@ -734,7 +735,7 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
          * Constructor.
          *
          * @param lastModificationDate the folder last modification date.
-         * @param creationDate         the folder creation date.
+         * @param creationDate the folder creation date.
          */
         FolderInfo(long lastModificationDate, long creationDate) {
             this.lastModificationDate = lastModificationDate;
@@ -767,17 +768,16 @@ public class FileSystemFolderRepository extends FolderRepositoryAdapter {
 
         @Override
         public String toString() {
-            return "FolderInfo{" +
-                    "lastModificationDate=" + lastModificationDate +
-                    ", creationDate=" + creationDate +
-                    '}';
+            return "FolderInfo{" + "lastModificationDate=" + lastModificationDate + ", creationDate=" + creationDate + '}';
         }
     }
 
     private class FolderLocator implements FileVisitor<Path> {
 
         private String wantedContentId;
+
         private FolderContentType wantedContentType;
+
         private Folder result;
 
         FolderLocator(String wantedContentId, FolderContentType wantedContentType) {

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
@@ -24,119 +24,119 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.talend.dataprep.datepattern.DatePattern;
 
 import com.google.common.collect.Lists;
-import org.talend.dataprep.datepattern.DatePattern;
 
 public class DatePatternTest {
 
     @Test
     public void datePattern_should_store_occurrences() {
-        //given
+        // given
         final String pattern = "d/MM/yyyy";
-        final DatePattern dp = new DatePattern( pattern, 5);
+        final DatePattern dp = new DatePattern(pattern, 5);
 
-        //when
+        // when
         final long occurrences = dp.getOccurrences();
 
-        //then
+        // then
         assertThat(occurrences, is(5L));
     }
 
     @Test
     public void datePattern_should_store_pattern() {
-        //given
+        // given
         final String pattern = "d/MM/yyyy";
         final DatePattern dp = new DatePattern(pattern, 5);
 
-        //when
+        // when
         final String storedPattern = dp.getPattern();
 
-        //then
+        // then
         assertThat(storedPattern, is(pattern));
     }
 
     @Test
     public void datePattern_should_create_DateFormatter() {
-        //given
+        // given
         final String pattern = "d/MM/yyyy";
         final DatePattern dp = new DatePattern(pattern);
 
         final LocalDateTime date = LocalDateTime.of(2016, JANUARY, 25, 0, 0);
 
-        //when
+        // when
         final String formattedDate = date.format(dp.getFormatter());
 
-        //then
+        // then
         assertThat(formattedDate, is("25/01/2016"));
     }
 
     @Test
     public void datePattern_should_set_DateFormatter_local_to_ENGLISH() {
-        //given
+        // given
         final String pattern = "d-MMM-yyyy";
         final DatePattern dp = new DatePattern(pattern);
 
         final LocalDateTime date = LocalDateTime.of(2016, JULY, 25, 0, 0);
 
-        //when
+        // when
         final String formattedDate = date.format(dp.getFormatter());
 
-        //then
+        // then
         assertThat(formattedDate, is("25-Jul-2016"));
     }
 
     @Test
     public void datePattern_natural_equals_compare_should_return_0() {
-        //given
+        // given
         final String pattern = "d-MMM-yyyy";
         final DatePattern dp1 = new DatePattern(pattern, 25);
         final DatePattern dp2 = new DatePattern(pattern, 25);
 
-        //when
+        // when
         final int compareResult = dp1.compareTo(dp2);
 
-        //then
+        // then
         assertThat(compareResult, is(0));
     }
 
     @Test
     public void datePattern_compare_on_same_occurrences_should_return_1() {
-        //given
+        // given
         final DatePattern dp1 = new DatePattern("d-MMM-yyyy", 25);
         final DatePattern dp2 = new DatePattern("d/MM/yyyy", 25);
 
-        //when
+        // when
         final int compareResult = dp1.compareTo(dp2);
 
-        //then
+        // then
         assertThat(compareResult, is(1));
     }
 
     @Test
     public void datePattern_natural_order_should_be_desc_occurrences() {
-        //given
+        // given
         final DatePattern dp1 = new DatePattern("d-MMM-yyyy", 5);
         final DatePattern dp2 = new DatePattern("d/MM/yyyy", 25);
         final DatePattern dp3 = new DatePattern("d/MM/yyyy", 1);
         final List<DatePattern> patterns = Lists.newArrayList(dp1, dp2, dp3);
 
-        //when
+        // when
         Collections.sort(patterns);
 
-        //then
+        // then
         assertThat(patterns, contains(dp2, dp1, dp3));
     }
 
     @Test
     public void toString_should_return_a_readable_description() {
-        //given
+        // given
         final DatePattern dp = new DatePattern("d-MMM-yyyy", 5);
 
-        //when
+        // when
         final String description = dp.toString();
 
-        //then
+        // then
         assertThat(description, is("DatePattern{occurrences=5, pattern='d-MMM-yyyy'}"));
     }
 }

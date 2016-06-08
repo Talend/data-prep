@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
@@ -28,12 +28,12 @@ import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.datepattern.DatePattern;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.ImplicitParameters;
-import org.talend.dataprep.parameters.Parameter;
 
 @Component(TimestampToDate.ACTION_BEAN_PREFIX + TimestampToDate.ACTION_NAME)
 public class TimestampToDate extends ActionMetadata implements ColumnAction, DatePatternParamModel {
@@ -47,7 +47,6 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
      * The column appendix.
      */
     public static final String APPENDIX = "_as_date"; //$NON-NLS-1$
-
 
     /**
      * @see ActionMetadata#getName()
@@ -123,9 +122,9 @@ public class TimestampToDate extends ActionMetadata implements ColumnAction, Dat
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);
         final String newColumn = context.column(column.getName() + APPENDIX);
-        
+
         final String value = row.get(columnId);
-        row.set(newColumn, getTimeStamp(value, context.<DatePattern>get( COMPILED_DATE_PATTERN).getFormatter()));
+        row.set(newColumn, getTimeStamp(value, context.<DatePattern> get(COMPILED_DATE_PATTERN).getFormatter()));
     }
 
     protected String getTimeStamp(String from, DateTimeFormatter dateTimeFormatter) {

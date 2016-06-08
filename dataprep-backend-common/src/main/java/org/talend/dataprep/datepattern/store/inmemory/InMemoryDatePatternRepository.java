@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.datepattern.store.inmemory;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class InMemoryDatePatternRepository implements DatePatternRepository {
 
     @Override
     public List<DatePattern> all() {
-        return new ArrayList<>( allDatePatterns);
+        return new ArrayList<>(allDatePatterns);
     }
 
     @Override
@@ -44,8 +44,7 @@ public class InMemoryDatePatternRepository implements DatePatternRepository {
     }
 
     @Override
-    public void clear()
-    {
+    public void clear() {
         allDatePatterns.clear();
     }
 }

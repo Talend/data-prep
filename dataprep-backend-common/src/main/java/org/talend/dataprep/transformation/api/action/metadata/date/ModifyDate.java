@@ -1,22 +1,23 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
+
+import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.*;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.number.BigDecimalParser;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.datepattern.DatePattern;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -43,10 +40,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.metadata.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters;
-
-import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.*;
-import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.CONSTANT_MODE;
-import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
 
 /**
  * Change the date pattern on a 'date' column.
@@ -94,7 +87,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
                 .defaultValue(ChronoUnit.YEARS.name()) //
                 .build());
 
-        parameters.add( SelectParameter.Builder.builder() //
+        parameters.add(SelectParameter.Builder.builder() //
                 .name(MODE_PARAMETER) //
                 .item(CONSTANT_MODE, new Parameter(CONSTANT_VALUE, ParameterType.INTEGER, "1")) //
                 .item(OTHER_COLUMN_MODE,
@@ -112,15 +105,14 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
-                actionContext.get(PATTERN_CONTEXT_KEY, p ->
-                        dateParser.getMostFrequentPattern(actionContext.getRowMetadata().getById(actionContext.getColumnId())));
+                actionContext.get(PATTERN_CONTEXT_KEY, p -> dateParser
+                        .getMostFrequentPattern(actionContext.getRowMetadata().getById(actionContext.getColumnId())));
 
-                actionContext.get(UNIT_CONTEXT_KEY, p ->
-                        ChronoUnit.valueOf(actionContext.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase()));
+                actionContext.get(UNIT_CONTEXT_KEY,
+                        p -> ChronoUnit.valueOf(actionContext.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase()));
 
                 if (actionContext.getParameters().get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
-                    actionContext.get(AMOUNT_CONTEXT_KEY, p ->
-                            computeAmount(actionContext.getParameters().get(CONSTANT_VALUE)));
+                    actionContext.get(AMOUNT_CONTEXT_KEY, p -> computeAmount(actionContext.getParameters().get(CONSTANT_VALUE)));
                 }
 
             } catch (IllegalArgumentException e) {
@@ -164,7 +156,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
         }
 
         try {
-            final DatePattern outputPattern = context.get( PATTERN_CONTEXT_KEY);
+            final DatePattern outputPattern = context.get(PATTERN_CONTEXT_KEY);
 
             LocalDateTime date = dateParser.parse(value, context.getRowMetadata().getById(columnId));
 

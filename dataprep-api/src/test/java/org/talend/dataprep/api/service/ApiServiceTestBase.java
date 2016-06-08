@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
@@ -119,25 +119,22 @@ public abstract class ApiServiceTestBase {
         folderRepository.clear();
     }
 
-
     protected AggregationParameters getAggregationParameters(String input) throws IOException {
         InputStream parametersInput = this.getClass().getResourceAsStream(input);
         return mapper.readValue(parametersInput, AggregationParameters.class);
     }
 
-
-
     protected String createDataset(final String file, final String name, final String type) throws IOException {
         final String datasetContent = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(file));
         final Response post = given() //
-            .contentType(ContentType.JSON) //
-            .body(datasetContent) //
-            .queryParam("Content-Type", type) //
-            .when() //
-            .post("/api/datasets?name={name}", name);
+                .contentType(ContentType.JSON) //
+                .body(datasetContent) //
+                .queryParam("Content-Type", type) //
+                .when() //
+                .post("/api/datasets?name={name}", name);
 
         final int statusCode = post.getStatusCode();
-        if(statusCode != 200) {
+        if (statusCode != 200) {
             LOGGER.error("Unable to create dataset (HTTP " + statusCode + "). Error: {}", post.asString());
         }
         assertThat(statusCode, is(200));
@@ -149,22 +146,22 @@ public abstract class ApiServiceTestBase {
     }
 
     protected String createPreparationFromFile(final String file, final String name, final String type) throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-"+ System.currentTimeMillis(), type);
+        final String dataSetId = createDataset(file, "testDataset-" + System.currentTimeMillis(), type);
         return createPreparationFromDataset(dataSetId, name);
     }
 
-
-    protected String createPreparationFromFile(final String file, final String name, final String type, final String folderId) throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-"+ System.currentTimeMillis(), type);
+    protected String createPreparationFromFile(final String file, final String name, final String type, final String folderId)
+            throws IOException {
+        final String dataSetId = createDataset(file, "testDataset-" + System.currentTimeMillis(), type);
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
-
 
     protected String createPreparationFromDataset(final String dataSetId, final String name) throws IOException {
         return createPreparationFromDataset(dataSetId, name, home.getId());
     }
 
-    protected String createPreparationFromDataset(final String dataSetId, final String name, final String folderId) throws IOException {
+    protected String createPreparationFromDataset(final String dataSetId, final String name, final String folderId)
+            throws IOException {
 
         RequestSpecification request = given() //
                 .contentType(ContentType.JSON) //

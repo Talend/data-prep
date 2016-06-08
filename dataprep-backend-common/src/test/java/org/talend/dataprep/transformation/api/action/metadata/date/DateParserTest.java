@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
@@ -36,6 +36,7 @@ import org.talend.dataprep.datepattern.DatePattern;
 
 /**
  * Unit test for the DateParser class.
+ * 
  * @see DateParser
  */
 public class DateParserTest extends BaseDateTests {
@@ -53,11 +54,16 @@ public class DateParserTest extends BaseDateTests {
     public void getPatterns_should_remove_invalid_or_empty_then_sort_patterns() throws IOException {
         // given
         final DataSetRow row = getRow("toto", "04/25/1999", "tata");
-        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_with_different_test_cases.json")); //contains valid, invalid, empty patterns
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
+        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_with_different_test_cases.json")); // contains
+                                                                                                                                  // valid,
+                                                                                                                                  // invalid,
+                                                                                                                                  // empty
+                                                                                                                                  // patterns
+        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics()
+                .getPatternFrequencies();
 
         // when
-        final List<DatePattern> actual = action.getPatterns( patternFrequencies);
+        final List<DatePattern> actual = action.getPatterns(patternFrequencies);
 
         // then
         final List<DatePattern> expected = new ArrayList<>();
@@ -69,7 +75,7 @@ public class DateParserTest extends BaseDateTests {
 
     @Test
     public void parseDateFromPatterns_should_parse_from_multiple_patterns() throws ParseException {
-        //given
+        // given
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         final TemporalAccessor date = LocalDate.of(2015, 8, 17);
         final String expected = dtf.format(date);
@@ -79,7 +85,7 @@ public class DateParserTest extends BaseDateTests {
         patterns.add(new DatePattern("MM-dd-yy", 1));
         patterns.add(new DatePattern("yy/dd/MM", 1));
 
-        //when/then
+        // when/then
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("08-17-15", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", patterns)));
@@ -87,7 +93,7 @@ public class DateParserTest extends BaseDateTests {
 
     @Test
     public void parseDateFromPatterns_should_parse_independently_of_empty_patterns() throws ParseException {
-        //given
+        // given
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         final TemporalAccessor date = LocalDate.of(2015, 8, 17);
         final String expected = dtf.format(date);
@@ -96,10 +102,10 @@ public class DateParserTest extends BaseDateTests {
         patterns.add(new DatePattern("", 1));
         patterns.add(new DatePattern("yyyy/MM/dd", 2));
 
-        //when
+        // when
         final String actual = dtf.format(action.parseDateFromPatterns("2015/08/17", patterns));
 
-        //then
+        // then
         assertEquals(expected, actual);
     }
 

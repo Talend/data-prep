@@ -1,20 +1,24 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.metadata.date;
 
 import static org.talend.dataprep.api.type.Type.DATE;
 import static org.talend.dataprep.transformation.api.action.metadata.date.DatePatternParamModel.COMPILED_DATE_PATTERN;
+
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,17 +36,13 @@ import org.talend.dataprep.transformation.api.action.metadata.category.ActionCat
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionMetadata;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.util.List;
-
 public abstract class AbstractDate extends ActionMetadata {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDate.class);
 
     /** Component that parses dates. */
     @Autowired
     protected DateParser dateParser;
-
-    private Logger logger = LoggerFactory.getLogger( getClass() );
 
     /**
      * @see ActionMetadata#getCategory()
@@ -63,14 +63,13 @@ public abstract class AbstractDate extends ActionMetadata {
         return DATE.equals(Type.get(column.getType())) || SemanticCategoryEnum.DATE.name().equals(domain);
     }
 
-
     /**
      * Return the count of the most used pattern.
      *
      * @param column the column to work on.
      * @return the count of the most used pattern.
      */
-    long getMostUsedPatternCount(ColumnMetadata column) {
+    private long getMostUsedPatternCount(ColumnMetadata column) {
         final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
         if (patternFrequencies.isEmpty()) {
             return 1;
@@ -79,28 +78,26 @@ public abstract class AbstractDate extends ActionMetadata {
         return patternFrequencies.get(0).getOccurrences();
     }
 
-    void changeDatePattern( ActionContext actionContext) {
-        //register the new pattern in column stats as most used pattern, to be able to process date action more efficiently later
-        final DatePattern newPattern = actionContext.get( COMPILED_DATE_PATTERN);
+    void changeDatePattern(ActionContext actionContext) {
+        // register the new pattern in column stats as most used pattern, to be able to process date action more efficiently later
+        final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
         final RowMetadata rowMetadata = actionContext.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
         final Statistics statistics = column.getStatistics();
 
-        final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies()
-            .stream()
-            .filter(patternFrequency -> StringUtils.equals( patternFrequency.getPattern(), newPattern.getPattern()))
-            .findFirst()
-            .orElseGet(() -> {
-                final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
-                statistics.getPatternFrequencies().add(newPatternFreq);
-                return newPatternFreq;
-            });
+        final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
+                .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
+                .findFirst().orElseGet(() -> {
+                    final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
+                    statistics.getPatternFrequencies().add(newPatternFreq);
+                    return newPatternFreq;
+                });
 
         long mostUsedPatternCount = getMostUsedPatternCount(column);
         newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
     }
 
-    void changeDateValue( ActionContext context, DataSetRow row) {
+    void changeDateValue(ActionContext context, DataSetRow row) {
         final String columnId = context.getColumnId();
         final DatePattern newPattern = context.get(COMPILED_DATE_PATTERN);
 
@@ -110,11 +107,11 @@ public abstract class AbstractDate extends ActionMetadata {
             return;
         }
         try {
-            final LocalDateTime date = dateParser.parse( value, context.getRowMetadata().getById( columnId));
+            final LocalDateTime date = dateParser.parse(value, context.getRowMetadata().getById(columnId));
             row.set(columnId, newPattern.getFormatter().format(date));
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
-            logger.debug("Unable to parse date {}.", value, e);
+            LOGGER.debug("Unable to parse date {}.", value, e);
         }
     }
 

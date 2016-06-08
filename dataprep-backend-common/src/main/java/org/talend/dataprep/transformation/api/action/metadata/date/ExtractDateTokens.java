@@ -138,7 +138,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             final ColumnMetadata column = rowMetadata.getById(columnId);
             for (DateFieldMappingBean date_field : DATE_FIELDS) {
                 if (Boolean.valueOf(parameters.get(date_field.key))) {
-                    context.column(column.getName() + SEPARATOR + date_field.key, (r) -> {
+                    context.column(column.getName() + SEPARATOR + date_field.key, r -> {
                         final ColumnMetadata c = ColumnMetadata.Builder //
                                 .column() //
                                 .name(column.getName() + SEPARATOR + date_field.key) //

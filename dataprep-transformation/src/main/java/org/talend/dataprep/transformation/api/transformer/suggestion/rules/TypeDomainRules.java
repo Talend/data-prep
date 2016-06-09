@@ -17,6 +17,9 @@ import static org.talend.dataprep.transformation.api.transformer.suggestion.Sugg
 import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.MEDIUM;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.rules.GenericRule.GenericRuleBuilder.forActions;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.transformation.api.action.metadata.datamasking.MaskDataByDomain;
@@ -28,9 +31,6 @@ import org.talend.dataprep.transformation.api.action.metadata.net.ExtractUrlToke
 import org.talend.dataprep.transformation.api.action.metadata.phonenumber.FormatPhoneNumber;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class TypeDomainRules extends BasicRules {
@@ -94,7 +94,7 @@ public class TypeDomainRules extends BasicRules {
         domainsToMask.add(SemanticCategoryEnum.US_PHONE.getId());
 
         return forActions(MaskDataByDomain.ACTION_NAME) //
-                .when(columnMetadata -> (domainsToMask.contains(columnMetadata.getDomain()))) //
+                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain())) //
                 .then(columnMetadata -> MEDIUM) //
                 .build();
     }

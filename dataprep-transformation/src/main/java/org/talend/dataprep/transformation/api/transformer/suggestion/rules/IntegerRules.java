@@ -13,9 +13,7 @@
 
 package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.LOW;
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.MEDIUM;
-import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.NEGATIVE;
+import static org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule.*;
 import static org.talend.dataprep.transformation.api.transformer.suggestion.rules.GenericRule.GenericRuleBuilder.forActions;
 
 import java.util.List;
@@ -56,7 +54,7 @@ public class IntegerRules extends BasicRules {
                 .then(columnMetadata -> {
                     final List<PatternFrequency> patterns = columnMetadata.getStatistics().getPatternFrequencies();
                     for (PatternFrequency pattern : patterns) {
-                        if (patterns.get(0).getPattern().indexOf('.') > 0) {
+                        if (pattern.getPattern().indexOf('.') > 0) {
                             return LOW;
                         }
                     }

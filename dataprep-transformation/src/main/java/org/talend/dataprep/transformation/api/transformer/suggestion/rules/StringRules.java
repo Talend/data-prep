@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.transformation.api.action.metadata.text.*;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
@@ -101,31 +102,40 @@ public class StringRules extends BasicRules {
     public static SuggestionEngineRule properCaseRule() {
         return forActions(ProperCase.PROPER_CASE_ACTION_NAME) //
                 .when(IS_STRING) //
-                .then(columnMetadata -> {
-                    final List<PatternFrequency> patterns = columnMetadata.getStatistics().getPatternFrequencies();
-                    for (PatternFrequency pattern : patterns) {
-                        final String patternAsString = pattern.getPattern();
-                        StringTokenizer tokenizer = new StringTokenizer(patternAsString, " ");
-                        while (tokenizer.hasMoreTokens()) {
-                            final String token = tokenizer.nextToken();
-                            if (!token.isEmpty()) {
-                                if (token.charAt(0) != 'A') {
-                                    // First character of word is not proper case, Proper Case should be suggested.
-                                    return LOW;
-                                }
-                                for (int i = 1; i < token.length(); i++) {
-                                    if (token.charAt(i) != 'a') {
-                                        // A remaining character of word is not proper case, Proper Case should be
-                                        // suggested.
-                                        return LOW;
-                                    }
-                                }
-                            }
+                .then(StringRules::computeScoreForProperCaseAction) //
+                .build();
+    }
+
+    /**
+     * Compute score for case actions.
+     * 
+     * @param columnMetadata the column metadata to analyze.
+     * @return the score for case actions.
+     */
+    private static Integer computeScoreForProperCaseAction(ColumnMetadata columnMetadata) {
+        final List<PatternFrequency> patterns = columnMetadata.getStatistics().getPatternFrequencies();
+        for (PatternFrequency pattern : patterns) {
+            final String patternAsString = pattern.getPattern();
+            // split words
+            StringTokenizer tokenizer = new StringTokenizer(patternAsString, " ");
+            while (tokenizer.hasMoreTokens()) {
+                final String token = tokenizer.nextToken();
+                if (!token.isEmpty()) {
+                    // First character of word is not proper case, Proper Case should be suggested.
+                    if (token.charAt(0) != 'A') {
+                        return LOW;
+                    }
+                    // A remaining character of word is not proper case, Proper Case should be
+                    // suggested.
+                    for (int i = 1; i < token.length(); i++) {
+                        if (token.charAt(i) != 'a') {
+                            return LOW;
                         }
                     }
-                    return NEGATIVE;
-                }) //
-                .build();
+                }
+            }
+        }
+        return NEGATIVE;
     }
 
     /**

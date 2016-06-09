@@ -126,8 +126,6 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
 
         String fileName = "state_table.xls";
 
-        FormatFamily format;
-
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
             List<ColumnMetadata> columnMetadatas = parser.parse(getRequest(inputStream, "#852"))
                     .getSheetContents().get(0).getColumnMetadatas();
@@ -135,6 +133,21 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         }
 
     }
+
+
+    @Test
+    public void read_xls_TDP_1957() throws Exception {
+
+        String fileName = "email_with_empty_rows.xlsx";
+
+        try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
+            List<ColumnMetadata> columnMetadatas = parser.parse(getRequest(inputStream, "#852"))
+                .getSheetContents().get(0).getColumnMetadatas();
+            Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(2);
+        }
+
+    }
+
 
     @Test
     public void parse_should_extract_single_sheet_xls() throws Exception {
@@ -189,7 +202,6 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
         assertFalse(parser.accept(metadata));
     }
-
 
 
     @Test

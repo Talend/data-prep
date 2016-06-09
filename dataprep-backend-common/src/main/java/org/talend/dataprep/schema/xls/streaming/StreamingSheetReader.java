@@ -12,11 +12,6 @@
 // ============================================================================
 package org.talend.dataprep.schema.xls.streaming;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -80,6 +75,10 @@ public class StreamingSheetReader implements Iterable<Row> {
 
     private boolean parsingCols = false;
 
+    // sheet dimension
+    // <dimension ref="A1:B60"/>
+    private String dimension = StringUtils.EMPTY;
+
     public StreamingSheetReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
         this.sst = sst;
         this.stylesTable = stylesTable;
@@ -115,8 +114,12 @@ public class StreamingSheetReader implements Iterable<Row> {
         return firstRowIndex;
     }
 
+    public String getDimension() {
+        return dimension;
+    }
+
     /**
-     * Handles a SAX event.
+     * Handles a Stream event.
      *
      * @param event
      * @throws SAXException
@@ -128,6 +131,7 @@ public class StreamingSheetReader implements Iterable<Row> {
         } else if (event.getEventType() == XMLStreamConstants.START_ELEMENT) {
             StartElement startElement = event.asStartElement();
             String tagLocalName = startElement.getName().getLocalPart();
+
 
             if ("row".equals(tagLocalName)) {
                 Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
@@ -162,6 +166,14 @@ public class StreamingSheetReader implements Iterable<Row> {
                     } catch (NumberFormatException nfe) {
                         LOGGER.warn( "Ignoring invalid style index {}", indexStr);
                     }
+                }
+            // we store the dimension as well to revert with this method when cols not found
+            // can happen see xlsx attached here https://jira.talendforge.org/browse/TDP-1957
+            // <dimension ref="A1:B60"/>
+            } else if ("dimension".equals( tagLocalName )) {
+                Attribute attribute = startElement.getAttributeByName( new QName( "ref" ) );
+                if (attribute != null){
+                    this.dimension = attribute.getValue();
                 }
             }
 

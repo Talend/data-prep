@@ -185,10 +185,20 @@ public class XlsSchemaParser implements SchemaParser {
                                         columnsMetadata);
 
             int maxColNumber = (( StreamingSheet)sheet).getReader().getColNumber();
+            String dimension =  (( StreamingSheet)sheet).getReader().getDimension();
+
+            if (StringUtils.isNotEmpty(dimension)){
+                int maxColNumberFromDimension = XlsUtils.getColumnsNumberFromDimension(dimension);
+                // well for some files they can disagree so we use the biggest one
+                if( maxColNumberFromDimension > maxColNumber) {
+                    maxColNumber = maxColNumberFromDimension;
+                }
+            }
+
             // if less columns found than the metadata we complete
             if (columnsMetadata.size() < maxColNumber) {
                 int size = maxColNumber - columnsMetadata.size();
-                for (int j = 0; j <= size; j++) {
+                for (int j = 0; j < size; j++) {
                     columnsMetadata.add(ColumnMetadata.Builder //
                                             .column() //
                                             .name("col_" + j) //

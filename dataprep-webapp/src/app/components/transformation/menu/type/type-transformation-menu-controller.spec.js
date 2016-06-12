@@ -243,4 +243,27 @@ describe('Type transform menu controller', function () {
         //then
         expect(result).toBe(true);
     });
+
+
+    it('should call playground service to apply a force date pattern action', inject(function ($q, PlaygroundService) {
+        //given
+        spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
+        var ctrl = createController();
+        var pattern = 'yyyy MMM dd';
+
+        //when
+        ctrl.chooseDatePattern(pattern);
+        scope.$digest();
+
+        //then
+        var actionDef =
+            {
+                scope: 'dataset',
+                column_id: ctrl.column.id,
+                column_name: ctrl.column.name,
+                new_pattern: pattern
+            };
+
+        expect(PlaygroundService.appendStep).toHaveBeenCalledWith('force_date_pattern', actionDef);
+    }));
 });

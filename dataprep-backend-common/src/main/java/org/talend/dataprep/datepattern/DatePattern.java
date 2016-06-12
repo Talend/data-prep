@@ -1,21 +1,23 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
-package org.talend.dataprep.transformation.api.action.metadata.date;
+package org.talend.dataprep.datepattern;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Bean that model a date pattern.
@@ -30,12 +32,17 @@ public class DatePattern implements Comparable {
     /**
      * The date pattern as String.
      */
-    private final String pattern;
+    private String pattern;
 
     /**
      * The date pattern formatter.
      */
+    @JsonIgnore
     private DateTimeFormatter formatter;
+
+    public DatePattern() {
+        // no op only to help jackson
+    }
 
     /**
      * Constructor with the pattern.
@@ -50,7 +57,7 @@ public class DatePattern implements Comparable {
     /**
      * Constructor from the pattern and occurrence.
      *
-     * @param pattern     the date pattern.
+     * @param pattern the date pattern.
      * @param occurrences the number of occurrences.
      */
     public DatePattern(final String pattern, final long occurrences) {

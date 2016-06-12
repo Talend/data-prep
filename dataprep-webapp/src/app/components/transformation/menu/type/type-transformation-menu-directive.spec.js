@@ -98,7 +98,7 @@ describe('Transformation menu directive', function () {
 
         //then
         var items = element.find('ul.submenu >li');
-        expect(items.length).toBe(9);
+        expect(items.length).toBe(11);
 
         expect(items.eq(0).text().trim()).toBe('CITY 18 %');
         expect(items.eq(1).text().trim()).toBe('COUNTRY 17 %');
@@ -113,7 +113,7 @@ describe('Transformation menu directive', function () {
 
         //then
         var items = element.find('ul.submenu >li');
-        expect(items.length).toBe(9);
+        expect(items.length).toBe(11);
 
         expect(items.eq(3).hasClass('divider')).toBe(true);
 

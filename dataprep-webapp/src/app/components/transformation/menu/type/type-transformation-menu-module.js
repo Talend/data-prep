@@ -30,6 +30,7 @@ import TypeTransformMenu from './type-transformation-menu-directive';
         [
             'data-prep.services.dataset',
             'data-prep.services.playground',
+            'data-prep.datepattern-search',
             'data-prep.services.utils'
         ])
         .controller('TypeTransformMenuCtrl', TypeTransformMenuCtrl)

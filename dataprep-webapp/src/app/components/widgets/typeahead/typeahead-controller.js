@@ -36,7 +36,7 @@ class TypeaheadCtrl {
                 }
             });
     }
-
+    
     hideResults() {
         this.visible = false;
     }

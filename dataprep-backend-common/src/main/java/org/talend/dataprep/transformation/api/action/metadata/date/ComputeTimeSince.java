@@ -81,11 +81,6 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     protected static final String SPECIFIC_DATE_PARAMETER = "specific_date"; //$NON-NLS-1$
 
     /**
-     * This class' logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComputeTimeSince.class);
-
-    /**
      * @see ActionMetadata#getName()
      */
     @Override

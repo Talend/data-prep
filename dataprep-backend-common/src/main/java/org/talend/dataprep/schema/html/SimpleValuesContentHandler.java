@@ -84,7 +84,7 @@ class SimpleValuesContentHandler extends DefaultHandler {
             String value = new String(thechars);
             LOGGER.debug("value: {}", value);
             List<String> currentRowValues = getLastRow();
-            currentRowValues.set(index, currentRowValues.get(index) + value);
+            currentRowValues.set(index, StringUtils.trim(currentRowValues.get(index) + value));
         }
     }
 

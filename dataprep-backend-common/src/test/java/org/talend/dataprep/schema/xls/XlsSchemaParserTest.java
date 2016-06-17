@@ -34,8 +34,6 @@ import org.talend.dataprep.schema.Schema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.talend.dataprep.schema.SchemaParser;
 

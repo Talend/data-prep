@@ -80,6 +80,10 @@ public class XlsxStreamRunnable
         try {
             JsonGenerator generator = jsonFactory.createGenerator(jsonOutput);
 
+            // is there any limit?
+            long maxRow = this.metadata.getContent().getLimit().isPresent() ? //
+                 this.metadata.getContent().getLimit().get() : Long.MAX_VALUE;
+
             Workbook workbook = StreamingReader.builder() //
                 .bufferSize(4096) //
                 .rowCacheSize( 1 ) //
@@ -110,6 +114,9 @@ public class XlsxStreamRunnable
                         i++;
                     }
                     generator.writeEndObject();
+                }
+                if (row.getRowNum()>maxRow) {
+                    break;
                 }
             }
 

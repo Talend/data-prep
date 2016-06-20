@@ -43,7 +43,6 @@ import org.talend.dataprep.api.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.test.MockTestApplication;
-import org.talend.dataprep.test.ServerConfiguration;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataprep.transformation.api.action.metadata.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.metadata.common.ActionFactory;
@@ -55,7 +54,7 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
  * @see Lookup
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = { MockTestApplication.class, ServerConfiguration.class })
+@SpringApplicationConfiguration(classes = { MockTestApplication.class})
 @WebAppConfiguration
 @IntegrationTest({ "server.port=0" })
 public class LookupTest {

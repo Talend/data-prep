@@ -45,12 +45,11 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.test.MockTestApplication;
-import org.talend.dataprep.test.ServerConfiguration;
 
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = { MockTestApplication.class, ServerConfiguration.class })
+@SpringApplicationConfiguration(classes = { MockTestApplication.class})
 @TestPropertySource(properties = {"security.mode=genericCommandTest", "transformation.service.url=", "preparation.service.url=", "dataset.service.url="})
 @WebAppConfiguration
 @IntegrationTest({ "server.port=0" })

@@ -14,11 +14,13 @@
 package org.talend.dataprep.dataset.store.content;
 
 import java.io.InputStream;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.DataSetRow;
 
 /**
  * Routes the requests to the targeted content store.
@@ -75,6 +77,13 @@ public class ContentStoreRouter extends DataSetContentStore {
     public void delete(DataSetMetadata dataSetMetadata) {
         DataSetContentStore target = wrapStore(dataSetMetadata);
         target.delete(dataSetMetadata);
+    }
+
+    @Override
+    public Stream<DataSetRow> stream( DataSetMetadata dataSetMetadata )
+    {
+        DataSetContentStore target = wrapStore(dataSetMetadata);
+        return target.stream(dataSetMetadata);
     }
 
     /**

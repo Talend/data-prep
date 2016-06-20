@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -405,26 +406,32 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Get a data set by id", notes = "Get a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
-    public DataSet get(
+    public Callable<DataSet> get(
             @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata, //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId) {
-        HttpResponseContext.header(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-        final Marker marker = Markers.dataset(dataSetId);
-        LOG.debug(marker, "Get data set #{}", dataSetId);
-        try {
-            DataSetMetadata dataSetMetadata = dataSetMetadataRepository.getForContent(dataSetId);
-            assertDataSetMetadata(dataSetMetadata, dataSetId);
-            // Build the result
-            DataSet dataSet = new DataSet();
-            if (metadata) {
-                completeWithUserData(dataSetMetadata);
-                dataSet.setMetadata(dataSetMetadata);
+        HttpResponseContext.header( CONTENT_TYPE, APPLICATION_JSON_VALUE );
+        return  () -> {
+            final Marker marker = Markers.dataset( dataSetId );
+            LOG.debug( marker, "Get data set #{}", dataSetId );
+            try
+            {
+                DataSetMetadata dataSetMetadata = dataSetMetadataRepository.getForContent( dataSetId );
+                assertDataSetMetadata( dataSetMetadata, dataSetId );
+                // Build the result
+                DataSet dataSet = new DataSet();
+                if ( metadata )
+                {
+                    completeWithUserData( dataSetMetadata );
+                    dataSet.setMetadata( dataSetMetadata );
+                }
+                dataSet.setRecords( contentStore.stream( dataSetMetadata ) );
+                return dataSet;
             }
-            dataSet.setRecords(contentStore.stream(dataSetMetadata));
-            return dataSet;
-        } finally {
-            LOG.debug(marker, "Get done.");
-        }
+            finally
+            {
+                LOG.debug( marker, "Get done." );
+            }
+        };
     }
 
     /**

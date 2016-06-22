@@ -460,10 +460,11 @@ describe('InventoryItem directive', () => {
                 const title = element.find('.inventory-title');
 
                 // when
-                title.click();
+                const click = angular.element.Event('click');
+                title.trigger(click);
 
                 // then
-                expect(ctrl.open).toHaveBeenCalledWith(dataset);
+                expect(ctrl.open).toHaveBeenCalledWith(dataset, click);
             });
             it('should open the related inventory item on inventory title click', () => {
                 // given
@@ -473,10 +474,11 @@ describe('InventoryItem directive', () => {
                 const title = element.find('.inventory-title');
 
                 // when
-                title.click();
+                const click = angular.element.Event('click');
+                title.trigger(click);
 
                 // then
-                expect(ctrl.open).toHaveBeenCalledWith(scope.dataset);
+                expect(ctrl.open).toHaveBeenCalledWith(scope.dataset, click);
             });
 
             it('should open inventory item on element dblclick', () => {

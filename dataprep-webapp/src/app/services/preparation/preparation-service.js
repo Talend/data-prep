@@ -21,7 +21,7 @@
  * @requires data-prep.services.preparation.service:PreparationListService
  * @requires data-prep.services.preparation.service:PreparationRestService
  */
-export default function PreparationService($q, $state, $stateParams, state, StateService, StorageService, PreparationListService, PreparationRestService) {
+export default function PreparationService($q, $state, $window, $stateParams, state, StateService, StorageService, PreparationListService, PreparationRestService) {
     'ngInject';
 
     return {
@@ -199,10 +199,19 @@ export default function PreparationService($q, $state, $stateParams, state, Stat
      * @name open
      * @methodOf data-prep.services.preparation.service:PreparationService
      * @param {object} preparation
+     * @param {object} $event click, middle click, or ctrl + click
      * @description open a preparation
      */
-    function open(preparation) {
-        StateService.setPreviousRoute('nav.index.preparations', {folderId: $stateParams.folderId});
-        $state.go('playground.preparation', {prepid: preparation.id});
+    function open(preparation, $event) {
+        let shouldBeBlankTab;
+        if ($event && ($event.which === 2 || ($event.which === 1 && ($event.metaKey || $event.ctrlKey)))) {
+            shouldBeBlankTab = true;
+        }
+        if (shouldBeBlankTab) {
+            $window.open($state.href('playground.preparation', {prepid: preparation.id}, {absolute: true}), '_blank');
+        } else {
+            StateService.setPreviousRoute('nav.index.preparations', {folderId: $stateParams.folderId});
+            $state.go('playground.preparation', {prepid: preparation.id});
+        }
     }
 }

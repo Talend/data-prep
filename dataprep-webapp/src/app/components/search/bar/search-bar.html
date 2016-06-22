@@ -41,14 +41,14 @@
                             item="item"
                             type="preparation"
                             details="SEARCH_PREPARATION_DETAILS"
-                            ng-click="$ctrl.preparationService.open(item)">
+                            ng-click="$ctrl.preparationService.open(item, $event)">
             </inventory-item>
 
             <inventory-item ng-if="item.inventoryType==='dataset'"
                             details="SEARCH_DATASET_DETAILS"
                             item="item"
                             type="dataset"
-                            ng-click="$ctrl.uploadWorkflowService.openDataset(item.originalItem)">
+                            ng-click="$ctrl.uploadWorkflowService.openDataset(item.originalItem, $event)">
             </inventory-item>
         </li>
     </ul>

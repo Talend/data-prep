@@ -17,7 +17,7 @@
     <div ng-show="!editableTextCtrl.editionMode" class="editable-text-container">
         <span class="editable-text-text {{::editableTextCtrl.textClass}}"
               title="{{editableTextCtrl.textTitle}}"
-              ng-click="editableTextCtrl.onTextClick()"
+              ng-click="editableTextCtrl.onTextClick({event: $event})"
               ng-bind="editableTextCtrl.text"></span>
         <button class="edit-btn" data-icon="a" ng-click="editableTextCtrl.edit()"></button>
     </div>

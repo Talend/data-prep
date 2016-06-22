@@ -20,7 +20,7 @@
  * @requires data-prep.services.dataset.service:DatasetService
  * @requires data-prep.services.utils.service:MessageService
  */
-export default function UploadWorkflowService($state, StateService, DatasetSheetPreviewService, DatasetService, MessageService) {
+export default function UploadWorkflowService($state, $window, StateService, DatasetSheetPreviewService, DatasetService, MessageService) {
     'ngInject';
 
     var self = this;
@@ -60,13 +60,22 @@ export default function UploadWorkflowService($state, StateService, DatasetSheet
      * @description Try to open a dataset. If it is a draft, we open the draft import wizard instead.
      * @param {object} dataset The dataset to open
      */
-    this.openDataset = function openDataset(dataset) {
+    this.openDataset = function openDataset(dataset, $event) {
+        let shouldBeBlankTab;
+        if ($event && ($event.which === 2 || ($event.which === 1 && ($event.metaKey || $event.ctrlKey)))) {
+            shouldBeBlankTab = true;
+        }
         if (dataset.draft) {
             self.openDraft(dataset, false, '');
         }
         else {
-            StateService.setPreviousRoute('nav.index.datasets');
-            $state.go('playground.dataset', {datasetid: dataset.id});
+            if (shouldBeBlankTab) {
+                $window.open($state.href('playground.dataset', {datasetid: dataset.id}, {absolute: true}), '_blank');
+            }
+            else {
+                StateService.setPreviousRoute('nav.index.datasets');
+                $state.go('playground.dataset', {datasetid: dataset.id});
+            }
         }
     };
 }

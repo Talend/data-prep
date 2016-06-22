@@ -30,7 +30,7 @@ export default class TalendEditableTextCtrl {
     /**
      * @ngdoc method
      * @name reset
-     * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+     * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Set the edition text with the original value
      */
     reset() {
@@ -40,7 +40,7 @@ export default class TalendEditableTextCtrl {
     /**
      * @ngdoc method
      * @name edit
-     * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+     * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Reset the edition text and set edition mode flag
      */
     edit() {
@@ -51,7 +51,7 @@ export default class TalendEditableTextCtrl {
     /**
      * @ngdoc method
      * @name validate
-     * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+     * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Execute the validation callback
      * when value has changed
      * then switch to non the edition mode
@@ -66,7 +66,7 @@ export default class TalendEditableTextCtrl {
     /**
      * @ngdoc method
      * @name cancel
-     * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+     * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Execute the cancel callback and set the edition mode to false
      */
     cancel() {

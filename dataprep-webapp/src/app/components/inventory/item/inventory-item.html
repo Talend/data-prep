@@ -41,7 +41,7 @@
                               text="$ctrl.item.name"
                               text-class="inventory-title"
                               text-title="{{'OPEN_ACTION' | translate: $ctrl.getTooltipContent(false)}}"
-                              on-text-click="$ctrl.open($ctrl.item)"
+                              on-text-click="$ctrl.open($ctrl.item, event)"
                               on-validate="$ctrl.rename($ctrl.item, text)"
                               validate-only-on-change>
         </talend-editable-text>

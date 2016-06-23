@@ -27,9 +27,9 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.schema.Serializer;
 import org.talend.dataprep.schema.xls.serialization.XlsRunnable;
-import org.talend.dataprep.schema.xls.serialization.XlsxRunnable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.talend.dataprep.schema.xls.serialization.XlsxStreamRunnable;
 
 @Service("serializer#xls")
 public class XlsSerializer implements Serializer {
@@ -89,7 +89,7 @@ public class XlsSerializer implements Serializer {
 
 
     private Runnable serializeNew(InputStream rawContent, DataSetMetadata metadata, PipedOutputStream jsonOutput) {
-        return new XlsxRunnable(jsonOutput, rawContent, metadata, mapper.getFactory());
+        return new XlsxStreamRunnable( jsonOutput, rawContent, metadata, mapper.getFactory());
     }
 
     private Runnable serializeOld(InputStream rawContent, DataSetMetadata metadata, PipedOutputStream jsonOutput)

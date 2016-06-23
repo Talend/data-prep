@@ -18,18 +18,24 @@ import static org.talend.dataprep.api.type.Type.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalLong;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -42,11 +48,8 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.schema.SchemaParser;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
-import com.ctc.wstx.sax.WstxSAXParserFactory;
+import org.talend.dataprep.schema.xls.streaming.StreamingReader;
+import org.talend.dataprep.schema.xls.streaming.StreamingSheet;
 
 /**
  * This class is in charge of parsing excel file (note apache poi is used for reading .xls)
@@ -127,89 +130,86 @@ public class XlsSchemaParser implements SchemaParser {
 
         // parse the xls input stream using the correct format
         if (newExcelFormat) {
-            return parseAllSheetsNew(new Request(inputStream, request.getMetadata()));
+            return parseAllSheetsStream(new Request(inputStream, request.getMetadata()));
+            //return parseAllSheetsNew(new Request(inputStream, request.getMetadata()));
         } else {
             return parseAllSheetsOldFormat(new Request(inputStream, request.getMetadata()));
         }
     }
 
-    /**
-     * parse excel document using SAX like technology (only available for modern excel documents)
-     * 
-     * @param request
-     * @return
-     */
-    private List<Schema.SheetContent> parseAllSheetsNew(Request request) {
 
-        final Marker marker = Markers.dataset(request.getMetadata().getId());
+    private List<Schema.SheetContent> parseAllSheetsStream(Request request) {
+        Workbook workbook = StreamingReader.builder() //
+                .bufferSize(4096) //
+                .rowCacheSize( 1 ) //
+                .open(request.getContent());
+
         List<Schema.SheetContent> schemas = new ArrayList<>();
 
-        try {
-            OPCPackage container = OPCPackage.open(request.getContent());
+        int sheetNumber = 0;
+        for (Sheet sheet : workbook) {
+            List<ColumnMetadata> columnsMetadata = new ArrayList<>();
+            int rowNumber = 0;
 
-            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container);
-            XSSFReader xssfReader = new XSSFReader(container);
-            List<String> activeSheetNames = XlsUtils.getActiveSheetsFromWorkbookSpec(xssfReader.getWorkbookData());
-            StylesTable styles = xssfReader.getStylesTable();
-            XSSFReader.SheetIterator iterator = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
+            for (Row r : sheet) {
 
-            int i = 0;
-            while (iterator.hasNext()) {
-                try (InputStream sheetInputStream = iterator.next()) {
-                    String sheetName = iterator.getSheetName();
-                    if (!activeSheetNames.contains(sheetName)) {
-                        // we ignore non active sheets
-                        continue;
-                    }
+                if (rowNumber < 1) {
 
-                    if (sheetInputStream.markSupported()) {
-                        sheetInputStream.mark(1);
-                    }
+                    if (((StreamingSheet) sheet).getReader().getFirstRowIndex() == 1) {
+                        for (Cell c : r) {
 
-                    // the parsing may not find all columns so we complete using the found dimension from metadata
-                    int colNum = XlsUtils.getColumnsNumber(sheetInputStream);
-
-                    // reset as read from metadata parsing
-                    sheetInputStream.reset();
-                    InputSource sheetSource = new InputSource(sheetInputStream);
-
-                    DefaultSheetContentsHandler defaultSheetContentsHandler = new DefaultSheetContentsHandler(true);
-
-                    XMLReader sheetParser = new WstxSAXParserFactory().newSAXParser().getXMLReader();
-                    ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, defaultSheetContentsHandler, true);
-
-                    sheetParser.setContentHandler(handler);
-                    try {
-                        sheetParser.parse(sheetSource);
-                    } catch (FastStopParsingException e) {
-                        // expected here as we stop after the first row
-                        LOGGER.debug(marker, "FastStopParsingException", e);
-                    }
-                    Schema.SheetContent sheetContent = //
-                    new Schema.SheetContent(StringUtils.isEmpty(sheetName) ? "sheet-" + i : sheetName, //
-                            defaultSheetContentsHandler.columnsMetadata);
-
-                    List<ColumnMetadata> columnsMetadata = sheetContent.getColumnMetadatas();
-
-                    // if less columns found than the metadata we complete
-                    if (columnsMetadata.size() < colNum) {
-                        for (int j = 0; j < colNum; j++) {
+                            String headerText = StringUtils.trim(c.getStringCellValue());
+                            // header text cannot be null so use a default one
+                            if (StringUtils.isEmpty(headerText)) {
+                                headerText = "col_" + (columnsMetadata.size() + 1); // +1 because it starts from 0
+                            }
                             columnsMetadata.add(ColumnMetadata.Builder //
                                     .column() //
-                                    .name("col_" + j) //
+                                    .name(headerText) //
                                     .type(Type.STRING) //
                                     .headerSize(1) //
                                     .build());
+
                         }
                     }
-                    schemas.add(sheetContent);
-                    i++;
+                } else {
+                    break;
+                }
 
+                rowNumber++;
+            }
+
+            String sheetName = sheet.getSheetName();
+            Schema.SheetContent sheetContent = //
+                new Schema.SheetContent(StringUtils.isEmpty(sheetName) ? "sheet-" + sheetNumber : sheetName, //
+                                        columnsMetadata);
+
+            int maxColNumber = (( StreamingSheet)sheet).getReader().getColNumber();
+            String dimension =  (( StreamingSheet)sheet).getReader().getDimension();
+
+            if (StringUtils.isNotEmpty(dimension)){
+                int maxColNumberFromDimension = XlsUtils.getColumnsNumberFromDimension(dimension);
+                // well for some files they can disagree so we use the biggest one
+                if( maxColNumberFromDimension > maxColNumber) {
+                    maxColNumber = maxColNumberFromDimension;
                 }
             }
-        } catch (Exception e) {
-            LOGGER.debug(marker, "IOException during parsing xls request :" + e.getMessage(), e);
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+
+            // if less columns found than the metadata we complete
+            if (columnsMetadata.size() < maxColNumber) {
+                int size = maxColNumber - columnsMetadata.size();
+                for (int j = 0; j < size; j++) {
+                    columnsMetadata.add(ColumnMetadata.Builder //
+                                            .column() //
+                                            .name("col_" + j) //
+                                            .type(Type.STRING) //
+                                            .headerSize(1) //
+                                            .build());
+                }
+            }
+            schemas.add(sheetContent);
+
+
         }
 
         return schemas;
@@ -489,110 +489,6 @@ public class XlsSchemaParser implements SchemaParser {
         int averageHeaderSize = 1;
         LOGGER.debug("averageHeaderSize (forced to): {}, cellTypeChange: {}", averageHeaderSize, cellTypeChange);
         return averageHeaderSize;
-    }
-
-    private static class FastStopParsingException extends RuntimeException {
-
-        private static final long serialVersionUID = 1L;
-
-        public FastStopParsingException() {
-            // no op
-        }
-    }
-
-    /**
-     * Class used to read Xls sheet with a SAX parser (low memory footprint). Throws a {@link FastStopParsingException}
-     * when parsing is finished even if the sheet is not finished.
-     */
-    static class DefaultSheetContentsHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
-
-        /** This class' logger. */
-        private Logger logger = LoggerFactory.getLogger(getClass());
-
-        /** The columns metadata. */
-        private List<ColumnMetadata> columnsMetadata = new ArrayList<>();
-
-        /**
-         * True if this content handler should throw a {@link FastStopParsingException} when finished to stop the
-         * processing.
-         */
-        private boolean fastStop;
-
-        private int lastColumnNumber = 0;
-
-        /**
-         * Constructor.
-         *
-         * @param fastStop if this content handler should throw a {@link FastStopParsingException} as soon as it's
-         * finished.
-         */
-        public DefaultSheetContentsHandler(boolean fastStop) {
-            this.fastStop = fastStop;
-        }
-
-        /**
-         * @see XSSFSheetXMLHandler.SheetContentsHandler#cell(String, String, XSSFComment)
-         */
-        @Override
-        public void cell(String cellReference, String formattedValue, XSSFComment comment) {
-            logger.debug("cell {}", cellReference);
-
-            int colNumber = XlsUtils.getColumnNumberFromCellRef(cellReference);
-
-            // here we need to populate empty columns as we need to have same number for columns meta and values
-            // so we check the difference with the last column number
-            int colNumberDiff = colNumber - lastColumnNumber;
-            if (colNumberDiff > 1) {
-                // so populate here empty columns
-                for (int i = colNumberDiff; i > 1; i--) {
-                    addColumn(null);
-                }
-            }
-            addColumn(formattedValue);
-            lastColumnNumber = colNumber;
-        }
-
-        private void addColumn(String formattedValue) {
-            String headerText = StringUtils.trim(formattedValue);
-            // header text cannot be null so use a default one
-            if (StringUtils.isEmpty(headerText)) {
-                headerText = "col_" + (columnsMetadata.size() + 1); // +1 because it starts from 0
-            }
-
-            columnsMetadata.add(ColumnMetadata.Builder //
-                    .column() //
-                    .name(headerText) //
-                    .type(Type.STRING) //
-                    .headerSize(1) //
-                    .build());
-        }
-
-        /**
-         * @see XSSFSheetXMLHandler.SheetContentsHandler#startRow(int)
-         */
-        @Override
-        public void startRow(int rowNum) {
-            logger.debug("startRow {}", rowNum);
-            if (rowNum > 0 && fastStop) {
-                throw new FastStopParsingException();
-            }
-        }
-
-        /**
-         * @see XSSFSheetXMLHandler.SheetContentsHandler#endRow(int)
-         */
-        @Override
-        public void endRow(int rowNum) {
-            logger.debug("endRow {}", rowNum);
-        }
-
-        /**
-         * @see XSSFSheetXMLHandler.SheetContentsHandler#headerFooter(String, boolean, String)
-         */
-        @Override
-        public void headerFooter(String text, boolean isHeader, String tagName) {
-            logger.debug("headerFooter");
-        }
     }
 
 }

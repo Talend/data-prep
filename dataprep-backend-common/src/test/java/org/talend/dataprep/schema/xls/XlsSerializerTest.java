@@ -21,6 +21,9 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
@@ -83,27 +86,38 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
 
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
 
-            InputStream jsonStream = xlsSerializer.serialize(inputStream, dataSetMetadata);
-            String json = IOUtils.toString(jsonStream);
-
-            logger.debug("json: {}", json);
-
-            CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, TreeMap.class);
-            List<Map<String, String>> values = mapper.readValue(json, collectionType);
-            logger.debug("values: {}", values);
-
-            return values;
+            return getValuesFromInputStream( inputStream, dataSetMetadata );
         }
     }
 
+    private List<Map<String, String>> getValuesFromInputStream(InputStream inputStream, DataSetMetadata dataSetMetadata) throws Exception {
+
+        InputStream jsonStream = xlsSerializer.serialize(inputStream, dataSetMetadata);
+        //String json = IOUtils.toString(jsonStream);
+
+        //logger.debug("json: {}", json);
+
+        CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, TreeMap.class);
+        List<Map<String, String>> values = mapper.readValue(jsonStream, collectionType);
+        logger.debug("values: {}", values);
+
+        return values;
+
+    }
+
     private Format assertFormat(String fileName) throws Exception {
-        final Format format;
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
-            format = formatDetector.detect(inputStream);
-            Assert.assertNotNull(format);
-            Assert.assertTrue(format.getFormatFamily() instanceof XlsFormatFamily);
-            Assert.assertEquals(XlsFormatFamily.MEDIA_TYPE, format.getFormatFamily().getMediaType());
+            return assertFormat( inputStream );
         }
+
+    }
+
+    private Format assertFormat(InputStream inputStream) throws Exception {
+        Format format = formatDetector.detect(inputStream);
+        Assert.assertNotNull(format);
+        Assert.assertTrue(format.getFormatFamily() instanceof XlsFormatFamily);
+        Assert.assertEquals(XlsFormatFamily.MEDIA_TYPE, format.getFormatFamily().getMediaType());
+
         return format;
     }
 
@@ -580,6 +594,41 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
             Assert.assertTrue(format.getFormatFamily() instanceof XlsFormatFamily);
             Assert.assertEquals(XlsFormatFamily.MEDIA_TYPE, format.getFormatFamily().getMediaType());
         }
+    }
+
+
+    @Test
+    public void read_huge_xls_file_then_serialize() throws Exception {
+
+        String fileName = "veryhuge.xlsx";
+        Path path = Paths.get( fileName);
+
+        if (!Files.exists( path )){
+            logger.info( "file {} not available so skip the test" );
+            return;
+        }
+
+        DataSetMetadata dataSetMetadata = metadataBuilder.metadata().id("beer").build();
+
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            assertFormat( inputStream );
+        }
+
+        try (InputStream inputStream = Files.newInputStream(path)) {
+
+            List<ColumnMetadata> columnMetadatas = xlsSchemaParser //
+                .parse(getRequest(inputStream, "#123")) //
+                .getSheetContents().get(0).getColumnMetadatas();
+
+            dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
+
+        }
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            List<Map<String, String>> values = getValuesFromInputStream( inputStream, dataSetMetadata );
+            logger.debug("values: {}", values);
+            System.out.println( "values:" + values.size() + ";" + values.get( 0 ).size() );
+        }
+
     }
 
 }

@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.api.action.metadata.phonenumber;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.metadata.common.OtherColumnParameters.*;
 
 import java.util.*;
 
@@ -99,9 +100,9 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
             return;
         }
 
-        String regionCode = getRegionCode(context, row);
+        final String regionCode = getRegionCode(context, row);
 
-        String formatedStr = formatIfValid(regionCode, context.get(PHONE_NUMBER_HANDLER_KEY),
+        final String formatedStr = formatIfValid(regionCode, context.get(PHONE_NUMBER_HANDLER_KEY),
                 context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
         row.set(columnId, formatedStr);
     }
@@ -135,11 +136,11 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
         final List<Parameter> parameters = super.getParameters();
         parameters.add(SelectParameter.Builder.builder() //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
-                .item(OtherColumnParameters.OTHER_COLUMN_MODE, //
+                .item(OTHER_COLUMN_MODE, //
                         new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
                                 ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle())) //
-                .item(OtherColumnParameters.CONSTANT_MODE, //
+                .item(CONSTANT_MODE, //
                         SelectParameter.Builder.builder().name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
                                 .item(US_REGION_CODE) //
                                 .item(FR_REGION_CODE) //
@@ -149,7 +150,7 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
                                         new Parameter(MANUAL_REGION_PARAMETER_STRING, ParameterType.STRING, EMPTY))
                                 .defaultValue(US_REGION_CODE).build()) //
 
-                .defaultValue(OtherColumnParameters.CONSTANT_MODE).build());
+                .defaultValue(CONSTANT_MODE).build());
 
         parameters.add(SelectParameter.Builder.builder().name(FORMAT_TYPE_PARAMETER) //
                 .item(TYPE_INTERNATIONAL) //
@@ -163,20 +164,22 @@ public class FormatPhoneNumber extends ActionMetadata implements ColumnAction {
     private String getRegionCode(ActionContext context, DataSetRow row) {
         final Map<String, String> parameters = context.getParameters();
         String regionParam = null;
-        if (OtherColumnParameters.CONSTANT_MODE.equals(parameters.get(OtherColumnParameters.MODE_PARAMETER))) {
+        switch (parameters.get(OtherColumnParameters.MODE_PARAMETER)) {
+        case CONSTANT_MODE:
             regionParam = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
             if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, regionParam)) {
                 regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
             }
-        } else if (OtherColumnParameters.SELECTED_COLUMN_PARAMETER.equals(parameters.get(OtherColumnParameters.MODE_PARAMETER))) {
+            break;
+        case OTHER_COLUMN_MODE:
             final ColumnMetadata selectedColumn = context.getRowMetadata()
                     .getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
             regionParam = row.get(selectedColumn.getId());
+            break;
+        default:
+            regionParam = Locale.getDefault().getCountry();
+            break;
         }
-        if (StringUtils.isEmpty(regionParam)) {
-            return Locale.getDefault().getCountry();
-        }
-
         return regionParam;
     }
 

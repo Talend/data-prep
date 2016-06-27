@@ -32,6 +32,11 @@
     @include flex-grow(1);
     text-transform: uppercase;
     padding-left: 10px;
+
+    span {
+      color: grey;
+      font-size: 0.75em;
+    }
   }
 
   .caret-down:before,

@@ -35,5 +35,9 @@
         <img class="icon-img" ng-switch-when="false" src="assets/images/folder/folder_close_small-icon.png"/>
     </div>
 
-    <div class="folder-name" ng-click="$ctrl.onSelect()">{{$ctrl.name}}</div>
+    <div class="folder-name" ng-click="$ctrl.onSelect()">{{$ctrl.name}} <span ng-if="$ctrl.path"
+                                                                              translate-once="FOLDER_PATH"
+                                                                              translate-values="{path: $ctrl.path}"
+    ></span>
+    </div>
 </div>

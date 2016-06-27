@@ -21,7 +21,8 @@
  *                  is-opened="false"
  *                  is-selected="node.folder.selected"
  *                  level="0"
- *                  name="node.folder.path"
+ *                  name="node.folder.name"
+ *                  path="node.folder.path"
  *                  on-toggle="$ctrl.toggle(node)"
  *                  on-select="$ctrl.chooseFolder(node.folder)">
  *</folder-tree-node>
@@ -31,6 +32,7 @@
  * @param {boolean}     isSelected whether a node is selected or not
  * @param {integer}     level the level of the node
  * @param {string}      name the name of the tree node
+ * @param {string}      path the path of the tree node
  * @param {function}    onSelect function to call when selecting a node
  * @param {function}    onToggle function to call when opening/closing a node
  */
@@ -42,6 +44,7 @@ const FolderTreeNodeComponent = {
         isSelected: '<',
         level: '<',
         name: '<',
+        path: '<',
         onSelect: '&',
         onToggle: '&',
     },

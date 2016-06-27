@@ -20,6 +20,12 @@ describe('folder selection component', () => {
 
     beforeEach(angular.mock.module('data-prep.folder-selection'));
     beforeEach(angular.mock.module('htmlTemplates'));
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+        $translateProvider.translations('en', {
+            "FOLDER_PATH": "(Path: {{path}})"
+        });
+        $translateProvider.preferredLanguage('en');
+    }));
 
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new(true);
@@ -130,7 +136,7 @@ describe('folder selection component', () => {
 
         //then
         expect(element.find('.folder-tree-node').length).toBe(2);
-        expect(element.find('.folder-tree-node').eq(0).text().trim()).toBe('/folder1');
-        expect(element.find('.folder-tree-node').eq(1).text().trim()).toBe('/folder1/subfolder1');
+        expect(element.find('.folder-tree-node').eq(0).text().trim()).toBe('folder1 (Path: /folder1)');
+        expect(element.find('.folder-tree-node').eq(1).text().trim()).toBe('subfolder1 (Path: /folder1/subfolder1)');
     });
 });

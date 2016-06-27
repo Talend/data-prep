@@ -341,6 +341,7 @@
 
   "_comment": "Folders",
   "FIND_FOLDER": "Find a Folder",
+  "FOLDER_PATH": "(Path: {{path}})",
 
   "_comment": "Dataset parameters",
   "DATASET_PARAMETERS": "Dataset parameters",

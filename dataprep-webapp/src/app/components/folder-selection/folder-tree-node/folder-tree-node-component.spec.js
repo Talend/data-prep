@@ -19,6 +19,12 @@ describe('Folder Tree Node Component', () => {
     
     beforeEach(angular.mock.module('data-prep.folder-selection'));
     beforeEach(angular.mock.module('htmlTemplates'));
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+        $translateProvider.translations('en', {
+            "FOLDER_PATH": "(Path: {{path}})"
+        });
+        $translateProvider.preferredLanguage('en');
+    }));
 
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
@@ -27,6 +33,7 @@ describe('Folder Tree Node Component', () => {
             element = angular.element(
                 `<folder-tree-node
                     name="name"
+                    path="path"
                     level="level"
                     is-opened="isOpened"
                     has-children="hasChildren"
@@ -55,6 +62,18 @@ describe('Folder Tree Node Component', () => {
 
         //then
         expect(element.text().trim()).toBe('toto');
+    });
+
+    it('should display the path next to the name if provided', () => {
+        //given
+        scope.name = 'toto';
+        scope.path = '/a/b/c';
+
+        //when
+        createElement();
+
+        //then
+        expect(element.text().trim()).toEqual('toto (Path: /a/b/c)');
     });
 
     describe('selected', () => {

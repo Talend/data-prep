@@ -226,6 +226,26 @@ public class ChangeDatePatternTest extends BaseDateTests {
     }
 
     @Test
+    public void test_TDP_2255() throws Exception {
+        // given
+        DataSetRow row = getRow("toto", "Apr-25-09", "tata");
+        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_MM_dd_yyyy.json"));
+
+        parameters.put(ChangeDatePattern.FROM_MODE, ChangeDatePattern.FROM_MODE_CUSTOM);
+        parameters.put(ChangeDatePattern.FROM_CUSTOM_PATTERN, "MMM-dd-yy");
+
+        parameters.put(ChangeDatePattern.NEW_PATTERN, "custom");
+        parameters.put(ChangeDatePattern.CUSTOM_PATTERN, "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "25 - Apr - 2009", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
     public void should_process_row_when_value_is_empty() throws Exception {
         // given
         DataSetRow row = getRow("toto", "", "tata");

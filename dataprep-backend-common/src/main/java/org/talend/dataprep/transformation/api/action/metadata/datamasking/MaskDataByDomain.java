@@ -73,7 +73,7 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
      */
     @Override
     public boolean acceptColumn(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType()));
+        return Type.STRING.isAssignableFrom(Type.get(column.getType()));
     }
 
     /**
@@ -105,17 +105,17 @@ public class MaskDataByDomain extends ActionMetadata implements ColumnAction {
             final String columnId = actionContext.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
             final String domain = column.getDomain();
-            final String type = column.getType();
+            final Type type = Type.get(column.getType());
             LOGGER.trace(">>> type: " + type + " metadata: " + column);
             try {
-                if (Type.DATE.getName().equals(type)) {
+                if (Type.DATE.equals(type)) {
                     final List<PatternFrequency> patternFreqList = column.getStatistics().getPatternFrequencies();
                     final List<String> dateTimePatternList = patternFreqList.stream() //
                             .map(PatternFrequency::getPattern) //
                             .collect(Collectors.toList());
-                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type, dateTimePatternList));
+                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName(), dateTimePatternList));
                 } else {
-                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type));
+                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName()));
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

@@ -1,20 +1,21 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -211,6 +212,37 @@ public class SuggestionTests extends TransformationServiceBaseTests {
 
         // then
         assertEquals(expectedSuggestions, response, false);
+    }
+
+    /**
+     * @see <a href="https://jira.talendforge.org/browse/TDP-2091">TDP-2091_improve_new_actions_suggestions</a>
+     * @throws Exception
+     */
+    @Test
+    public void ensureThatDataMaskingAndPhoneFormatAreSuggestedOnPhoneColumns() throws Exception {
+        // given
+        // @formatter:off
+        final String columnMetadata = "{\n" +
+                "  \"id\": \"id\",\n" +
+                "  \"quality\": {\n" +
+                "    \"empty\": 5,\n" +
+                "    \"invalid\": 10,\n" +
+                "    \"valid\": 72\n" +
+                "  },\n" +
+                "  \"type\": \"integer\",\n" +
+                "  \"domain\": \"FR_PHONE\"\n" +
+                "}";
+
+        given() //
+            .contentType(JSON) //
+            .body(columnMetadata) //
+        .when() //
+            .post("/suggest/column?limit=100") // 100 just to make sure that we get all the suggestions
+        .then()
+            .statusCode(200)
+            .body("name", hasItems("mask_data_by_domain", "format_phone_number"));
+        // @formatter:on
+
     }
 
 }

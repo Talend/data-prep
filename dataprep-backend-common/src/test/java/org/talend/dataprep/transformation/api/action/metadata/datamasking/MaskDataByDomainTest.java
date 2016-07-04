@@ -260,15 +260,15 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest {
     @Test
     public void should_accept_column() {
         assertTrue(maskDataByDomain.acceptColumn(getColumn(Type.STRING)));
+        assertTrue(maskDataByDomain.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(maskDataByDomain.acceptColumn(getColumn(Type.NUMERIC)));
+        assertTrue(maskDataByDomain.acceptColumn(getColumn(Type.INTEGER)));
+        assertTrue(maskDataByDomain.acceptColumn(getColumn(Type.FLOAT)));
+        assertTrue(maskDataByDomain.acceptColumn(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(maskDataByDomain.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(maskDataByDomain.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(maskDataByDomain.acceptColumn(getColumn(Type.INTEGER)));
-        assertFalse(maskDataByDomain.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(maskDataByDomain.acceptColumn(getColumn(Type.BOOLEAN)));
         assertFalse(maskDataByDomain.acceptColumn(getColumn(Type.ANY)));
     }
 }

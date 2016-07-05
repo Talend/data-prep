@@ -10,6 +10,11 @@ function isOnlyChange(event) {
     return event.type === 'changed';
 }
 
+gulp.task('watch:ee', ['replace-mine', 'worker-libs:dev'], function () {
+    gulp.start('scripts:watch');
+    gulp.watch(path.join(conf.paths.src, '/app/**/*.{css,scss}'), ['styles']);
+});
+
 gulp.task('watch', ['scripts:watch', 'inject'], function () {
 
     gulp.watch([path.join(conf.paths.src, '/*.html'), 'bower.json'], ['inject-reload']);

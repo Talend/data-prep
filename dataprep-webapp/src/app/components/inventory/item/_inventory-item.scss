@@ -14,6 +14,7 @@
 .inventory-list {
   @include flex-column();
   overflow: auto;
+  max-width: 940px;
 }
 
 .inventory-item {
@@ -74,19 +75,20 @@
     }
 
     .inventory-text {
+
       .inventory-title {
         @include ellipsis(300px);
       }
+
       .edit-btn {
         display: block;
       }
     }
 
     .inventory-actions {
-      @include flex-grow(1);
-      @include flex-shrink(0);
-
       @include display(flex);
+      @include flex-grow(0);
+      @include flex-shrink(0);
       @include align-items(center);
       @include justify-content(flex-end);
 
@@ -183,6 +185,9 @@
 
   .inventory-icon {
     @include display(flex);
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include flex-basis(50px);
     @include align-items(center);
 
     padding: 0 3px;
@@ -213,6 +218,7 @@
   .inventory-text {
     @include flex-column();
     @include justify-content(center);
+    min-width: 0; /* For ellipsis only */
     padding-left: 10px;
 
     .inventory-title {
@@ -229,10 +235,10 @@
       color: $medium-gray;
       font-weight: 300;
       font-size: .8em;
-
-      overflow: hidden;
-      white-space: normal;
       max-height: 2.8em;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .edition-text-input {

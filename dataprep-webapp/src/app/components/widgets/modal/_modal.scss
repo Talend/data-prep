@@ -70,7 +70,7 @@
     opacity: 0;
     text-align: left;
     visibility: hidden;
-    z-index: 10;
+    z-index: 30;
 
     @include media($medium-screen) {
       padding-top: 2em;

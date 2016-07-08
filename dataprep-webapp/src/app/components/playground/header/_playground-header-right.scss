@@ -1,5 +1,23 @@
 $navigation-height: 50px;
 
+@include keyframes(fadeIn) {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@include keyframes(slide) {
+  from {
+    right: -100vw;
+  }
+  to {
+    right: 0;
+  }
+}
+
 #playground-right-header {
   #playground-lookup-icon {
     > img {
@@ -10,6 +28,18 @@ $navigation-height: 50px;
 
     &.pressed {
       @include background(linear-gradient(#4D4D50, #6E6D71) left repeat);
+    }
+  }
+
+  #search-documentation {
+    typeahead {
+      .typeahead-result {
+        width: 500px;
+
+        &.ng-enter {
+          @include animation(fadeIn 0.25s ease-in, slide 0.25s ease);
+        }
+      }
     }
   }
 

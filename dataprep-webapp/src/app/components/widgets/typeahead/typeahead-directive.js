@@ -121,6 +121,7 @@ export default function Typeahead($timeout, $window) {
                         if (current.length) {
                             if (current.children().eq(0).is('a')) {
                                 $window.open(current.children().eq(0).attr('href'), current.children().eq(0).attr('target'));
+                                ctrl.hideResults();
                             }
                             else {
                                 current.children().click();

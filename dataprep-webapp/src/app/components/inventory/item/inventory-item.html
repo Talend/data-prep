@@ -16,9 +16,9 @@
 <div class="inventory-item" ng-dblclick="$ctrl.open($ctrl.item)">
     <!-- Type icon -->
     <div class="inventory-icon"
-         title="{{$ctrl.open ? ('OPEN_ACTION' | translate: $ctrl.getTooltipContent(false)) : ''}}"
+         title="{{$ctrl.openEnabled ? ('OPEN_ACTION' | translate: $ctrl.getTooltipContent(false)) : ''}}"
          ng-switch="$ctrl.type"
-         ng-click="$ctrl.open($ctrl.item, $event)">
+         ng-click="$ctrl.open($ctrl.item)">
 
         <div ng-switch-when="dataset" ng-switch="$ctrl.itemType($ctrl.item)">
             <img ng-src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
@@ -32,31 +32,43 @@
         </div>
         <div class="preparation-icon-div" ng-switch-when="preparation" data-icon="c"></div>
         <div class="documentation-icon-div" ng-switch-when="documentation" data-icon="l"></div>
-        <div ng-switch-when="folder" class="folder-icon" insertion-folder-icon folder="$ctrl.item"><img ng-src="assets/images/folder/folder-icon.png"/></div>
+        <div ng-switch-when="folder" class="folder-icon" insertion-folder-icon folder="$ctrl.item"><img
+                ng-src="assets/images/folder/folder-icon.png"/></div>
     </div>
 
     <!-- Descriptions -->
     <div class="inventory-text">
-        <talend-editable-text ng-if="$ctrl.renameEnabled"
+        <talend-editable-text ng-if="$ctrl.openEnabled && $ctrl.renameEnabled"
                               text="$ctrl.item.name"
                               text-class="inventory-title"
                               text-title="{{'OPEN_ACTION' | translate: $ctrl.getTooltipContent(false)}}"
-                              on-text-click="$ctrl.open($ctrl.item, event)"
+                              on-text-click="$ctrl.open($ctrl.item)"
+                              link="{{$ctrl.item.draft ? '' : $ctrl.getItemHrefLink()}}"
                               on-validate="$ctrl.rename($ctrl.item, text)"
                               validate-only-on-change>
         </talend-editable-text>
-        <span ng-if="!$ctrl.renameEnabled"
+        <a ng-if="$ctrl.openEnabled && !$ctrl.renameEnabled && !$ctrl.item.draft"
+           class="inventory-title"
+           ng-bind-html="$ctrl.item.name"
+           title="{{$ctrl.item.tooltipName}}"
+           ng-href="{{$ctrl.getItemHrefLink()}}"></a>
+        <span ng-if="$ctrl.openEnabled && !$ctrl.renameEnabled && $ctrl.item.draft"
+               class="inventory-title"
+               ng-bind-html="$ctrl.item.name"
+               title="{{$ctrl.item.tooltipName}}"
+               ng-click="$ctrl.open($ctrl.item)"></span>
+        <span ng-if="!$ctrl.openEnabled && !$ctrl.renameEnabled"
               class="inventory-title"
               ng-bind-html="$ctrl.item.name"
-              title="{{$ctrl.item.tooltipName}}"
-              ng-click="$ctrl.open($ctrl.item, $event)"></span>
+              title="{{$ctrl.item.tooltipName}}"></span>
         <div class="inventory-description"
              ng-bind-html="$ctrl.details | translate:$ctrl.item">
         </div>
     </div>
 
     <!-- Action Icons -->
-    <div class="inventory-actions" insertion-inventory-actions item="$ctrl.item" type="$ctrl.type" visible="$ctrl.open && $ctrl.rename">
+    <div class="inventory-actions" insertion-inventory-actions item="$ctrl.item" type="$ctrl.type"
+         visible="$ctrl.openEnabled && $ctrl.renameEnabled">
         <talend-button-dropdown ng-if="!$ctrl.item.draft && $ctrl.relatedInventories.length"
                                 class="inventory-actions-related-item btn-icon"
                                 button-action="$ctrl.openRelatedInventoryItem($ctrl.relatedInventories[0])"
@@ -66,16 +78,16 @@
             <ul class="inventory-actions-related-item-menu"
                 ng-if="$ctrl.relatedInventories.length">
                 <li ng-click="$ctrl.open($ctrl.item)">
-                    <span data-icon="K" >&nbsp;</span>
+                    <span data-icon="K">&nbsp;</span>
                     <span class="dropdown-container-middle" translate-once="CREATE_NEW_PREP"></span>
                 </li>
                 <li ng-repeat="relatedItem in $ctrl.relatedInventories track by $index"
                     ng-click="$ctrl.openRelatedInventoryItem(relatedItem)">
                         <span class="inventory-actions-related-item-name" title="{{relatedItem.name}}">{{relatedItem.name}}</span>
-                        <span >&nbsp;-&nbsp;</span>
+                        <span>&nbsp;-&nbsp;</span>
                         <span translate-once="REL_INV_MODIFIED"></span>
                         <span>&nbsp;{{'PREPARATION_DETAILS_SINCE' | translate : {since : relatedItem.lastModificationDate} }}</span>
-                        <span >&nbsp;-&nbsp;</span>
+                        <span>&nbsp;-&nbsp;</span>
                         <span>{{'PREPARATION_DETAILS_STEPS' | translate : {nbsteps: relatedItem.nbSteps} }}</span>
                 </li>
             </ul>

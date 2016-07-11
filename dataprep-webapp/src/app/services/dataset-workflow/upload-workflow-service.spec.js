@@ -24,6 +24,10 @@ describe('UploadWorkflow Service', () => {
         spyOn(DatasetService, 'refreshDatasets').and.returnValue();
     }));
 
+    afterEach(inject((StateService) => {
+        StateService.resetRoute();
+    }));
+
     describe('open dataset', () => {
         beforeEach(inject(($state) => {
             spyOn($state, 'href').and.returnValue('absoluetUrl');
@@ -38,16 +42,6 @@ describe('UploadWorkflow Service', () => {
 
             //then
             expect($state.go).toHaveBeenCalledWith('playground.dataset', { datasetid: dataset.id });
-        }));
-
-        it('should set back route before redirection when dataset is not a draft', inject((UploadWorkflowService, StateService) => {
-            //given
-            const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
-            //when
-            UploadWorkflowService.openDataset(dataset);
-
-            //then
-            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets');
         }));
 
         it('should open sheet preview when dataset is a draft', inject(($rootScope, UploadWorkflowService, DatasetSheetPreviewService) => {
@@ -66,65 +60,6 @@ describe('UploadWorkflow Service', () => {
             //then
             expect(DatasetSheetPreviewService.loadPreview).toHaveBeenCalledWith(dataset, false, '');
             expect(DatasetSheetPreviewService.display).toHaveBeenCalled();
-        }));
-
-        it('should open a dataset in a new tab on scroll click', inject(($stateParams, $rootScope, $state, $window, StateService, UploadWorkflowService) => {
-            //given
-            const event = {
-                which: 2,
-            };
-            spyOn($window, 'open').and.returnValue();
-            const dataset = {
-                id: 'de618c62ef97b3a95b5c171bc077ffe22e1d6f79',
-            };
-
-            //when
-            UploadWorkflowService.openDataset(dataset, event);
-
-            //then
-            expect($state.go).not.toHaveBeenCalled();
-            expect($state.href).toHaveBeenCalledWith('playground.dataset', { datasetid: dataset.id }, { absolute: true });
-            expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
-        }));
-
-        it('should open a preparation in a new tab on ctrl + click combination', inject(($stateParams, $rootScope, $state, $window, StateService, UploadWorkflowService) => {
-            //given
-            const event = {
-                which: 1,
-                ctrlKey: true,
-            };
-            spyOn($window, 'open').and.returnValue();
-            const dataset = {
-                id: 'de618c62ef97b3a95b5c171bc077ffe22e1d6f79',
-            };
-
-            //when
-            UploadWorkflowService.openDataset(dataset, event);
-
-            //then
-            expect($state.go).not.toHaveBeenCalled();
-            expect($state.href).toHaveBeenCalledWith('playground.dataset', { datasetid: dataset.id }, { absolute: true });
-            expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
-        }));
-
-        it('should open a preparation in a new tab on metakey + click combination', inject(($stateParams, $rootScope, $state, $window, StateService, UploadWorkflowService) => {
-            //given
-            const event = {
-                which: 1,
-                metaKey: true,
-            };
-            spyOn($window, 'open').and.returnValue();
-            const dataset = {
-                id: 'de618c62ef97b3a95b5c171bc077ffe22e1d6f79',
-            };
-
-            //when
-            UploadWorkflowService.openDataset(dataset, event);
-
-            //then
-            expect($state.go).not.toHaveBeenCalled();
-            expect($state.href).toHaveBeenCalledWith('playground.dataset', { datasetid: dataset.id }, { absolute: true });
-            expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
         }));
     });
 

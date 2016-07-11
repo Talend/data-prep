@@ -231,6 +231,7 @@ describe('InventoryItem component', () => {
                     'related-inventories-type="preparation" ' +
                     'open-related-inventory="openRelatedInventory" ' +
                     'open="open" ' +
+                    'open-enabled="open" ' +
                     'process-certification="processCertif" ' +
                     'copy="copy" ' +
                     'rename="rename" ' +
@@ -347,32 +348,27 @@ describe('InventoryItem component', () => {
                 expect(element.find('.divider').length).toBe(2);
             });
 
+            it('should display inventory-title when only open is enabled', () => {
+                // given
+                scope.rename = null;
+
+                // when
+                createElement();
+
+                // then
+                const icon = element.find('a');
+                expect(icon.hasClass('inventory-title')).toBe(true);
+            });
+
             it('should display copy icon', () => {
                 // when
                 createElement();
 
                 // then
-                const icon = element.find('a').eq(0).attr('data-icon');
+                const icon = element.find('a').eq(1).attr('data-icon');
                 expect(icon).toBe('B');
             });
             it('should display copy icon tooltip', () => {
-                // when
-                createElement();
-
-                // then
-                const title = element.find('a').eq(0).attr('title');
-                expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
-            });
-
-            it('should display remove icon', () => {
-                // when
-                createElement();
-
-                // then
-                const icon = element.find('a').eq(1).attr('data-icon');
-                expect(icon).toBe('e');
-            });
-            it('should display remove icon tooltip', () => {
                 // when
                 createElement();
 
@@ -381,15 +377,15 @@ describe('InventoryItem component', () => {
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
 
-            it('should display certify icon', () => {
+            it('should display remove icon', () => {
                 // when
                 createElement();
 
                 // then
                 const icon = element.find('a').eq(2).attr('data-icon');
-                expect(icon).toBe('n');
+                expect(icon).toBe('e');
             });
-            it('should display certify icon tooltip', () => {
+            it('should display remove icon tooltip', () => {
                 // when
                 createElement();
 
@@ -398,12 +394,29 @@ describe('InventoryItem component', () => {
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
 
-            it('should display favorite icon', () => {
+            it('should display certify icon', () => {
                 // when
                 createElement();
 
                 // then
                 const icon = element.find('a').eq(3).attr('data-icon');
+                expect(icon).toBe('n');
+            });
+            it('should display certify icon tooltip', () => {
+                // when
+                createElement();
+
+                // then
+                const title = element.find('a').eq(3).attr('title');
+                expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
+            });
+
+            it('should display favorite icon', () => {
+                // when
+                createElement();
+
+                // then
+                const icon = element.find('a').eq(4).attr('data-icon');
                 expect(icon).toBe('f');
             });
 
@@ -421,13 +434,14 @@ describe('InventoryItem component', () => {
                 createElement();
 
                 // then
-                const title = element.find('a').eq(3).attr('title');
+                const title = element.find('a').eq(4).attr('title');
                 expect(title.indexOf(dataset.name) >= 0).toBeTruthy();
             });
 
             it('should display READONLY title', () => {
                 // given
                 scope.rename = null;
+                scope.open = null;
 
                 // when
                 createElement();
@@ -464,6 +478,8 @@ describe('InventoryItem component', () => {
                 scope.remove = jasmine.createSpy('remove');
                 scope.processCertif = jasmine.createSpy('processCertif');
                 scope.toggleFavorite = jasmine.createSpy('toggleFavorite');
+
+                dataset.draft = false;
             }));
 
             it('should open inventory item on file icon click', () => {
@@ -476,24 +492,12 @@ describe('InventoryItem component', () => {
                 icon.eq(0).trigger(event);
 
                 // then
-                expect(ctrl.open).toHaveBeenCalledWith(dataset, event);
+                expect(ctrl.open).toHaveBeenCalledWith(dataset);
             });
 
-            it('should open inventory item on inventory title click', () => {
-                // given
-                createElement();
-                const title = element.find('.inventory-title');
-                const click = angular.element.Event('click');
-
-                // when
-                title.trigger(click);
-
-                // then
-                expect(ctrl.open).toHaveBeenCalledWith(dataset, click);
-            });
-
-            it('should open inventory item on readonly inventory title click', () => {
+            it('should open draft dataset on inventory title click', () => {
                 scope.rename = null;
+                dataset.draft = true;
 
                 // given
                 createElement();
@@ -504,7 +508,7 @@ describe('InventoryItem component', () => {
                 title.trigger(click);
 
                 // then
-                expect(ctrl.open).toHaveBeenCalledWith(dataset, click);
+                expect(ctrl.open).toHaveBeenCalledWith(dataset);
             });
 
             it('should open inventory item on element dblclick', () => {
@@ -559,7 +563,7 @@ describe('InventoryItem component', () => {
             it('should copy/clone inventory item on clone button click', () => {
                 // given
                 createElement();
-                const cloneBtn = element.find('a').eq(0);
+                const cloneBtn = element.find('a').eq(1);
 
                 // when
                 cloneBtn.click();
@@ -570,7 +574,7 @@ describe('InventoryItem component', () => {
             it('should remove inventory item on basket button click', () => {
                 // given
                 createElement();
-                const basketBtn = element.find('a').eq(1);
+                const basketBtn = element.find('a').eq(2);
 
                 // when
                 basketBtn.click();
@@ -581,7 +585,7 @@ describe('InventoryItem component', () => {
             it('should certify inventory item on certification button click', () => {
                 // given
                 createElement();
-                const certificationBtn = element.find('a').eq(2);
+                const certificationBtn = element.find('a').eq(3);
 
                 // when
                 certificationBtn.click();
@@ -592,7 +596,7 @@ describe('InventoryItem component', () => {
             it('should favorite inventory item on favorite button click', () => {
                 // given
                 createElement();
-                const favoriteBtn = element.find('a').eq(3);
+                const favoriteBtn = element.find('a').eq(4);
 
                 // when
                 favoriteBtn.click();

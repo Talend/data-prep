@@ -100,4 +100,43 @@ describe('Inventory Item controller', function () {
             });
         }));
     });
+
+    describe('Href Link', function() {
+        beforeEach(inject(function() {
+            ctrl = createController();
+        }));
+
+        it('should return dataset Href link', inject(function () {
+            //given
+            ctrl.type = 'dataset';
+            ctrl.item = {
+                id: '0001'
+            };
+
+            //then
+            expect(ctrl.getItemHrefLink()).toEqual('#/playground/dataset?datasetid=0001');
+        }));
+
+        it('should return folder Href link', inject(function () {
+            //given
+            ctrl.type = 'folder';
+            ctrl.item = {
+                id: '0001'
+            };
+
+            //then
+            expect(ctrl.getItemHrefLink()).toEqual('#/index/preparations/0001');
+        }));
+
+        it('should return preparation Href link', inject(function () {
+            //given
+            ctrl.type = 'preparation';
+            ctrl.item = {
+                id: '0001'
+            };
+
+            //then
+            expect(ctrl.getItemHrefLink()).toEqual('#/playground/preparation?prepid=0001');
+        }));
+    });
 });

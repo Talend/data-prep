@@ -47,6 +47,7 @@ export default class PreparationListCtrl {
     }
 
     $onInit() {
+        this.StateService.setPreviousRoute('nav.index.preparations', {folderId: this.$stateParams.folderId});
         this.StateService.setFetchingInventoryPreparations(true);
         this.FolderService.init(this.$stateParams.folderId)
             .then(() => {

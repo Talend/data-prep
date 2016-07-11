@@ -49,6 +49,7 @@ export default function TalendEditableText() {
             textTitle: '@',
             textClass: '@',
             editionMode: '=?',
+            link: '@',
             onTextClick: '&',
             onValidate: '&',
             onCancel: '&',

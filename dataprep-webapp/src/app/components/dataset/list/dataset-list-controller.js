@@ -54,6 +54,7 @@ export default class DatasetListCtrl {
     }
 
     $onInit() {
+        this.StateService.setPreviousRoute('nav.index.datasets');
         this.StateService.setFetchingInventoryDatasets(true);
         this.DatasetService.init().then(() => {
             this.StateService.setFetchingInventoryDatasets(false);

@@ -16,8 +16,24 @@
  * @name data-prep.inventory-item.controller:InventoryItemCtrl
  * @description InventoryItemCtrl controller.
  */
-export default function InventoryItemCtrl() {
-    const vm = this;
+export default class InventoryItemCtrl {
+
+    /**
+     * @ngdoc method
+     * @name getItemHrefLink
+     * @methodOf data-prep.inventory-item:InventoryItemCtrl
+     * @description return the href link of the item
+     */
+    getItemHrefLink () {
+        switch(this.type) {
+            case 'dataset':
+                return '#/playground/dataset?datasetid=' + this.item.id;
+            case 'preparation':
+                return '#/playground/preparation?prepid=' + this.item.id;
+            case 'folder':
+                return '#/index/preparations/' + this.item.id;
+        }
+    }
 
     /**
      * @ngdoc method
@@ -26,9 +42,9 @@ export default function InventoryItemCtrl() {
      * @params item the inventory item
      * @description return the item type (MIME type) or the tag (if present).
      */
-    vm.itemType = function itemType(item) {
+    itemType (item) {
         return item.tag ? item.tag : item.type;
-    };
+    }
 
     /**
      * @ngdoc method
@@ -37,11 +53,11 @@ export default function InventoryItemCtrl() {
      * @params {Object} relatedInventory the related inventory item
      * @description opens the inventory related to the current inventory item
      */
-    vm.openRelatedInventoryItem = function openRelatedInventoryItem(relatedInventory) {
-        if (vm.openRelatedInventory) {
-            vm.openRelatedInventory(relatedInventory);
+    openRelatedInventoryItem (relatedInventory) {
+        if (this.openRelatedInventory) {
+            this.openRelatedInventory(relatedInventory);
         }
-    };
+    }
 
     /**
      * @ngdoc method
@@ -51,15 +67,15 @@ export default function InventoryItemCtrl() {
      * @params {Object} isRelatedInventory if the related inventory item
      * @returns {Object} the object to construct the tooltip with
      */
-    vm.getTooltipContent = function getTooltipContent(isRelatedInventory) {
-        return isRelatedInventory && vm.relatedInventories && vm.relatedInventories.length ?
-            {
-                type: vm.relatedInventoriesType,
-                name: vm.relatedInventories[0].name,
-            } :
-            {
-                type: vm.type,
-                name: vm.item.tooltipName ? vm.item.tooltipName : vm.item.name,
-            };
-    };
+    getTooltipContent (isRelatedInventory) {
+        return isRelatedInventory && this.relatedInventories && this.relatedInventories.length ?
+        {
+            type: this.relatedInventoriesType,
+            name: this.relatedInventories[0].name
+        } :
+        {
+            type: this.type,
+            name: this.item.tooltipName ? this.item.tooltipName : this.item.name
+        };
+    }
 }

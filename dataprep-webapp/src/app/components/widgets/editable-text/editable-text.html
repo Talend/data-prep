@@ -15,7 +15,11 @@
 
 <div class="editable-text" ng-switch="editableTextCtrl.editionMode">
     <div ng-show="!editableTextCtrl.editionMode" class="editable-text-container">
-        <span class="editable-text-text {{::editableTextCtrl.textClass}}"
+        <a ng-if="editableTextCtrl.link" class="editable-text-text {{::editableTextCtrl.textClass}}"
+           title="{{editableTextCtrl.textTitle}}"
+           ng-href="{{editableTextCtrl.link}}"
+           ng-bind="editableTextCtrl.text"></a>
+        <span ng-if="!editableTextCtrl.link" class="editable-text-text {{::editableTextCtrl.textClass}}"
               title="{{editableTextCtrl.textTitle}}"
               ng-click="editableTextCtrl.onTextClick({event: $event})"
               ng-bind="editableTextCtrl.text"></span>

@@ -30,27 +30,32 @@
                                 class="documentation">
                 </inventory-item>
             </a>
+            <a ng-href="#/index/preparations/{{item.id}}"
+               target="_self"
+               ng-if="item.inventoryType === 'folder'">
+                <inventory-item item="item"
+                                type="folder"
+                                details="SEARCH_FOLDER_DETAILS">
+                </inventory-item>
+            </a>
 
-            <inventory-item ng-if="item.inventoryType === 'folder'"
-                            ui-sref="nav.index.preparations({folderId: item.id})"
-                            item="item"
-                            type="folder"
-                            details="SEARCH_FOLDER_DETAILS">
-            </inventory-item>
+            <a ng-href="#/playground/preparation?prepid={{item.id}}"
+               target="_self"
+               ng-if="item.inventoryType === 'preparation'">
+                <inventory-item item="item"
+                                type="preparation"
+                                details="SEARCH_PREPARATION_DETAILS">
+                </inventory-item>
+            </a>
 
-            <inventory-item ng-if="item.inventoryType==='preparation'"
-                            item="item"
-                            type="preparation"
-                            details="SEARCH_PREPARATION_DETAILS"
-                            ng-click="$ctrl.preparationService.open(item, $event)">
-            </inventory-item>
-
-            <inventory-item ng-if="item.inventoryType==='dataset'"
-                            details="SEARCH_DATASET_DETAILS"
-                            item="item"
-                            type="dataset"
-                            ng-click="$ctrl.uploadWorkflowService.openDataset(item.originalItem, $event)">
-            </inventory-item>
+            <a ng-href="#/playground/dataset?datasetid={{item.originalItem.id}}"
+               target="_self"
+               ng-if="item.inventoryType === 'dataset'">
+                <inventory-item details="SEARCH_DATASET_DETAILS"
+                                item="item"
+                                type="dataset">
+                </inventory-item>
+            </a>
         </li>
     </ul>
 </typeahead>

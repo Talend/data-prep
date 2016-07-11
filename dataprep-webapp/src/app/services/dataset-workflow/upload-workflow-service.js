@@ -60,23 +60,12 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
      * @description Try to open a dataset. If it is a draft, we open the draft import wizard instead.
      * @param {object} dataset The dataset to open
      */
-    this.openDataset = function openDataset(dataset, $event) {
-        let shouldBeBlankTab;
-        if ($event && ($event.which === 2 || ($event.which === 1 && ($event.metaKey || $event.ctrlKey)))) {
-            shouldBeBlankTab = true;
-        }
-
+    this.openDataset = function openDataset(dataset) {
         if (dataset.draft) {
             self.openDraft(dataset, false, '');
         }
         else {
-            if (shouldBeBlankTab) {
-                $window.open($state.href('playground.dataset', { datasetid: dataset.id }, { absolute: true }), '_blank');
-            }
-            else {
-                StateService.setPreviousRoute('nav.index.datasets');
-                $state.go('playground.dataset', { datasetid: dataset.id });
-            }
+            $state.go('playground.dataset', {datasetid: dataset.id});
         }
     };
 }

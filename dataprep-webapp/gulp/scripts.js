@@ -21,7 +21,7 @@ function webpackWrapper(watch, callback) {
             loaders: [{test: /\.js$/, exclude: /node_modules/, loaders: ['ng-annotate', 'babel-loader']}]
         },
         output: {filename: 'index.module.js'},
-        devtool : 'source-map'
+        devtool : watch ? 'eval' : 'source-map'
     };
 
     var webpackChangeHandler = function (err, stats) {

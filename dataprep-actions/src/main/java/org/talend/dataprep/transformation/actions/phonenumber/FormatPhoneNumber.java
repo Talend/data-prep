@@ -49,13 +49,13 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     public static final String ACTION_NAME = "format_phone_number"; //$NON-NLS-1$
 
     /** a region code parameter */
-    protected static final String REGIONS_PARAMETER_CONSTANT_MODE = "region_code"; //$NON-NLS-1$
+    static final String REGIONS_PARAMETER_CONSTANT_MODE = "region_code"; //$NON-NLS-1$
 
     /** a manually input parameter of region code */
-    protected static final String MANUAL_REGION_PARAMETER_STRING = "manual_region_string"; //$NON-NLS-1$
+    static final String MANUAL_REGION_PARAMETER_STRING = "manual_region_string"; //$NON-NLS-1$
 
     /** a parameter of format type */
-    protected static final String FORMAT_TYPE_PARAMETER = "format_type"; //$NON-NLS-1$
+    static final String FORMAT_TYPE_PARAMETER = "format_type"; //$NON-NLS-1$
 
     private static final String PHONE_NUMBER_HANDLER_KEY = "phone_number_handler_helper";//$NON-NLS-1$
 
@@ -67,18 +67,18 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     private static final String DE_REGION_CODE = "DE";
 
-    private static final String OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
+    static final String OTHER_REGION_TO_BE_SPECIFIED = "other (region)";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FormatPhoneNumber.class);
 
     /** the follow 4 types is provided to user selection on UI */
-    private static final String TYPE_INTERNATIONAL = "International"; //$NON-NLS-1$
+    static final String TYPE_INTERNATIONAL = "International"; //$NON-NLS-1$
 
-    private static final String TYPE_NATIONAL = "National"; //$NON-NLS-1$
+    static final String TYPE_NATIONAL = "National"; //$NON-NLS-1$
 
-    private static final String TYPE_E164 = "E164"; //$NON-NLS-1$
+    static final String TYPE_E164 = "E164"; //$NON-NLS-1$
 
-    private static final String TYPE_RFC396 = "RFC3966"; //$NON-NLS-1$
+    static final String TYPE_RFC3966 = "RFC3966"; //$NON-NLS-1$
 
     @Override
     public void compile(ActionContext context) {
@@ -103,7 +103,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
         final String regionCode = getRegionCode(context, row);
 
-        final String formatedStr = formatIfValid(regionCode, context.get(PHONE_NUMBER_HANDLER_KEY),
+        final String formatedStr = formatIfPossible(regionCode, context.get(PHONE_NUMBER_HANDLER_KEY),
                 context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
         row.set(columnId, formatedStr);
     }
@@ -113,19 +113,20 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
      * 
      * @return the formatted phone number or the original value if cannot be formatted
      */
-    private String formatIfValid(String regionParam, PhoneNumberHandlerBase phoneNumberHandler, String formatType, String phone) {
-        if (!phoneNumberHandler.isValidPhoneNumber(phone, regionParam)) {
+    private String formatIfPossible(String regionParam, PhoneNumberHandlerBase phoneNumberHandler, String formatType,
+            String phone) {
+        if (formatType == null || !PhoneNumberHandlerBase.isPossiblePhoneNumber(phone, regionParam)) {
             return phone;
         }
         switch (formatType) {
         case TYPE_INTERNATIONAL:
-            return phoneNumberHandler.formatInternational(phone, regionParam);
+            return PhoneNumberHandlerBase.formatInternational(phone, regionParam);
         case TYPE_NATIONAL:
-            return phoneNumberHandler.formatNational(phone, regionParam);
+            return PhoneNumberHandlerBase.formatNational(phone, regionParam);
         case TYPE_E164:
-            return phoneNumberHandler.formatE164(phone, regionParam);
-        case TYPE_RFC396:
-            return phoneNumberHandler.formatRFC396(phone, regionParam);
+            return PhoneNumberHandlerBase.formatE164(phone, regionParam);
+        case TYPE_RFC3966:
+            return PhoneNumberHandlerBase.formatRFC396(phone, regionParam);
         default:
             return phone;
         }
@@ -151,13 +152,13 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
                                         new Parameter(MANUAL_REGION_PARAMETER_STRING, ParameterType.STRING, EMPTY))
                                 .defaultValue(US_REGION_CODE).build()) //
 
-        .defaultValue(CONSTANT_MODE).build());
+                .defaultValue(CONSTANT_MODE).build());
 
         parameters.add(SelectParameter.Builder.builder().name(FORMAT_TYPE_PARAMETER) //
                 .item(TYPE_INTERNATIONAL) //
                 .item(TYPE_NATIONAL) //
                 .item(TYPE_E164) //
-                .item(TYPE_RFC396) //
+                .item(TYPE_RFC3966) //
                 .defaultValue(TYPE_INTERNATIONAL).build());
         return parameters;
     }

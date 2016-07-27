@@ -66,9 +66,13 @@ export default class ExportCtrl {
      * @ngdoc method
      * @name launchExport
      * @methodOf data-prep.export.controller:ExportCtrl
+     * @param {boolean} shouldResetName If reset name is needed
      * @description Save the current parameters and launch an export
      */
-    launchExport() {
+    launchExport(shouldResetName) {
+        if (shouldResetName) {
+            this._initExportParameters(this.selectedType);
+        }
         this.exportParams = this._extractParameters(this.selectedType);
 
         this.$timeout(() => {
@@ -85,6 +89,9 @@ export default class ExportCtrl {
      * @description Change the fileName of the type parameters to fit the current prep/dataset
      */
     _initExportParameters(exportType) {
+        if (!exportType) {
+            return;
+        }
         _.chain(exportType.parameters)
             .filter({ name: 'fileName' })
             .forEach((param) => {

@@ -13,7 +13,7 @@
   ~ ============================================================================
   -->
 
-<talend-button-dropdown button-text="{{'EXPORT' | translate }}" button-action="exportCtrl.launchExport()">
+<talend-button-dropdown button-text="{{'EXPORT' | translate }}" button-action="exportCtrl.launchExport(true)">
     <ul>
         <li ng-repeat="exportType in exportCtrl.ExportService.exportTypes track by exportType.id"
             ng-class="{'disabled' : !exportType.enabled}"

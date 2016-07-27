@@ -14,9 +14,9 @@
 describe('Preparation Creator Controller', () => {
     let createController;
     let scope;
-    let ctrl;
     let stateMock;
     let uploadDefer;
+    let filters;
 
     const urlQueries = {
         RECENT_DATASETS: '/api/datasets/summary?sort=MODIF&limit=true&name=',
@@ -63,7 +63,7 @@ describe('Preparation Creator Controller', () => {
         };
     }));
 
-    beforeEach(inject(($q, RestURLs) => {
+    beforeEach(inject(($q, DatasetService, RestURLs) => {
         RestURLs.setServerUrl('');
 
         uploadDefer = $q.defer();
@@ -71,98 +71,96 @@ describe('Preparation Creator Controller', () => {
             uploadDefer.progressCb = callback;
             return uploadDefer.promise;
         };
+
+        filters = DatasetService.filters;
     }));
 
     describe('init', () => {
         it('should load recent datasets by default', inject(($q, DatasetService) => {
             //given
-            spyOn(DatasetService, 'loadFilteredDatasets').and.returnValue($q.when());
-            ctrl = createController();
+            spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.when());
+            const ctrl = createController();
+
+            expect(DatasetService.getFilteredDatasets).not.toHaveBeenCalled();
+            expect(ctrl.selectedFilter).toBeFalsy();
 
             //when
             ctrl.$onInit();
 
             //then
-            expect(DatasetService.loadFilteredDatasets).toHaveBeenCalledWith(urlQueries.RECENT_DATASETS);
+            expect(ctrl.selectedFilter).toBe(filters[0]);
+            expect(DatasetService.getFilteredDatasets).not.toHaveBeenCalledWith(filters[0]);
         }));
     });
 
     describe('load filtered datasets', () => {
-        let filteredDs = [
+        const filteredDs = [
             { id: 'def12535-212', name: 'datasetName1' },
             { id: 'abc15455-212', name: 'datasetName1' },
         ];
 
-        beforeEach(inject(($q, DatasetService) => {
-            spyOn(DatasetService, 'loadFilteredDatasets').and.returnValue($q.when(filteredDs));
-        }));
-
-        it('should query the recent datasets without Name filter', inject((DatasetService) => {
+        it('should get filtered datasets', inject(($q, DatasetService) => {
             //given
-            ctrl = createController();
+            spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.when(filteredDs));
+            const ctrl = createController();
+            ctrl.enteredFilterText = 'toto';
 
             //when
-            ctrl.loadDatasets(FILTERS_TYPES.RECENT);
-
-            //then
-            expect(DatasetService.loadFilteredDatasets).toHaveBeenCalledWith(urlQueries.RECENT_DATASETS);
-        }));
-
-        it('should query the favorite datasets without Name filter', inject((DatasetService) => {
-            //given
-            ctrl = createController();
-
-            //when
-            ctrl.loadDatasets(FILTERS_TYPES.FAVORITE);
-
-            //then
-            expect(DatasetService.loadFilteredDatasets).toHaveBeenCalledWith(urlQueries.FAVORITE_DATASETS);
-        }));
-
-        it('should query all the datasets without Name filter', inject((DatasetService) => {
-            //given
-            ctrl = createController();
-
-            //when
-            ctrl.loadDatasets(FILTERS_TYPES.ALL);
-
-            //then
-            expect(DatasetService.loadFilteredDatasets).toHaveBeenCalledWith(urlQueries.ALL_DATASETS);
-        }));
-
-        it('should fetch the filtered datasets', () => {
-            //given
-            ctrl = createController();
-            expect(ctrl.filteredDatasets).toEqual([]);
-            expect(ctrl.isFetchingDatasets).toBe(false);
-
-            //when
-            ctrl.loadDatasets(FILTERS_TYPES.ALL);
-            expect(ctrl.isFetchingDatasets).toBe(true);
+            ctrl.loadDatasets(filters[2]);
             scope.$digest();
 
             //then
-            expect(ctrl.isFetchingDatasets).toBe(false);
+            expect(DatasetService.getFilteredDatasets).toHaveBeenCalledWith(filters[2], 'toto');
             expect(ctrl.filteredDatasets).toBe(filteredDs);
-        });
-    });
+        }));
 
-    describe('loading datasets failure', () => {
-        it('should fail while loading the filtered datasets', inject(($q, DatasetService) => {
+        it('should manage datasets fetch flag', inject(($q, DatasetService) => {
             //given
-            spyOn(DatasetService, 'loadFilteredDatasets').and.returnValue($q.reject());
-            ctrl = createController();
+            spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.when(filteredDs));
+            const ctrl = createController();
+            ctrl.enteredFilterText = 'toto';
+            expect(ctrl.isFetchingDatasets).toBe(false);
+
+            //when
+            ctrl.loadDatasets(filters[2]);
+            expect(ctrl.isFetchingDatasets).toBe(true);
+            scope.$digest();
+
+            //then
+            expect(ctrl.isFetchingDatasets).toBe(false);
+        }));
+
+        it('should NOT change datasets and manage flags when get fails', inject(($q, DatasetService) => {
+            //given
+            spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.reject());
+            const ctrl = createController();
             expect(ctrl.filteredDatasets).toEqual([]);
             expect(ctrl.isFetchingDatasets).toBe(false);
 
             //when
-            ctrl.loadDatasets(FILTERS_TYPES.ALL);
+            ctrl.loadDatasets(filters[2]);
             expect(ctrl.isFetchingDatasets).toBe(true);
             scope.$digest();
 
             //then
             expect(ctrl.isFetchingDatasets).toBe(false);
             expect(ctrl.filteredDatasets).toEqual([]);
+        }));
+
+        it('should call load datasets', inject(($q, DatasetService) => {
+            //given
+            spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.when(filteredDs));
+            const ctrl = createController();
+            ctrl.selectedFilter = filters[2];
+            ctrl.enteredFilterText = 'toto';
+
+            //when
+            ctrl.applyNameFilter();
+            scope.$digest();
+
+            //then
+            expect(DatasetService.getFilteredDatasets).toHaveBeenCalledWith(filters[2], 'toto');
+            expect(ctrl.filteredDatasets).toBe(filteredDs);
         }));
     });
 
@@ -181,7 +179,7 @@ describe('Preparation Creator Controller', () => {
             it('should call create dataset function', inject(($q, DatasetService) => {
                 //given
                 const file = { name: 'my Dataset name (1).csv' };
-                ctrl = createController();
+                const ctrl = createController();
                 ctrl.datasetFile = [file];
 
                 //when
@@ -210,7 +208,7 @@ describe('Preparation Creator Controller', () => {
 
             it('should check the dataset name availability', inject(($q, DatasetService) => {
                 //given
-                ctrl = createController();
+                const ctrl = createController();
                 ctrl.datasetFile = [{ name: 'my Dataset name (1).csv' }];
 
                 //when
@@ -223,7 +221,7 @@ describe('Preparation Creator Controller', () => {
             it('should call create dataset function', inject(($q, DatasetService) => {
                 //given
                 const file = { name: 'my Dataset name (1).csv' };
-                ctrl = createController();
+                const ctrl = createController();
                 ctrl.datasetFile = [file];
 
                 //when
@@ -247,8 +245,8 @@ describe('Preparation Creator Controller', () => {
 
     describe('dataset creation', () => {
         let dataset;
-        beforeEach(inject(($q, DatasetService) => {
-            spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.when(true));
+        let ctrl;
+        beforeEach(inject(($q, $state, DatasetService) => {
             dataset = {
                 name: 'name',
                 progress: 0,
@@ -257,16 +255,15 @@ describe('Preparation Creator Controller', () => {
                 id: 'abc-deff',
                 type: 'file',
             };
+
+            spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.when());
+            spyOn($state, 'go').and.returnValue();
             spyOn(DatasetService, 'createDatasetInfo').and.returnValue(dataset);
 
             ctrl = createController();
+            ctrl.addPreparationForm = { $commitViewValue: jasmine.createSpy('$commitViewValue').and.returnValue() };
             ctrl.datasetFile = [{ name: 'my Dataset name (1).csv' }];
             scope.$digest();
-        }));
-
-        beforeEach(inject(($q, $state) => {
-            spyOn($state, 'go').and.returnValue();
-            ctrl.addPreparationForm = { $commitViewValue: jasmine.createSpy('$commitViewValue').and.returnValue() };
         }));
 
         describe('succeeds', () => {
@@ -382,7 +379,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should call create preparation service', inject(($state, PreparationService) => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.baseDataset = { id: 'abc-54' };
             ctrl.enteredName = 'prep name';
             stateMock.inventory.folder.metadata = { path: '/amaa' };
@@ -400,7 +397,7 @@ describe('Preparation Creator Controller', () => {
         it('should call UploadWorkflowService openDraft for multisheet dataset', inject((UploadWorkflowService) => {
             //given
             stateMock.inventory.folder.metadata = { id: '15b68a46' };
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.baseDataset = { draft: true, id: 'abc-54', name: 'test' };
             ctrl.enteredName = 'test';
 
@@ -420,7 +417,7 @@ describe('Preparation Creator Controller', () => {
     describe('Preparation Name availability', () => {
         it('should update userHasTypedName flag', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             expect(ctrl.userHasTypedName).toBe(false);
 
             //when
@@ -432,7 +429,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should not update userHasTypedName flag', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             expect(ctrl.userHasTypedName).toBe(false);
 
             //when
@@ -444,7 +441,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should set alreadyExistingName flag to true', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.enteredName = 'my dataset Preparation';
 
             //when
@@ -456,7 +453,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should set alreadyExistingName flag to false', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.enteredName = 'unique name';
 
             //when
@@ -464,21 +461,6 @@ describe('Preparation Creator Controller', () => {
 
             //then
             expect(ctrl.userHasTypedName).toBe(false);
-        });
-    });
-
-    describe('Dataset Name Filter', () => {
-        it('should call load datasets', () => {
-            //given
-            ctrl = createController();
-            ctrl.lastFilterValue = 'my';
-            spyOn(ctrl, 'loadDatasets').and.returnValue();
-
-            //when
-            ctrl.applyNameFilter();
-
-            //then
-            expect(ctrl.loadDatasets).toHaveBeenCalledWith(ctrl.lastFilterValue);
         });
     });
 
@@ -490,7 +472,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should update selection flag', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             expect(ctrl.baseDataset).not.toBe(dataset);
 
             //when
@@ -502,7 +484,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should generate a unique preparation Name given the selected dataset', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.userHasTypedName = false;
             ctrl.enteredName = '';
 
@@ -515,7 +497,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should NOT change the entered preparation Name by the user', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.userHasTypedName = true;
             ctrl.enteredName = 'prep name';
 
@@ -530,7 +512,7 @@ describe('Preparation Creator Controller', () => {
     describe('Form submission', () => {
         it('should disable form submission when entered name is empty', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.enteredName = '';
             ctrl.baseDataset = {};
             ctrl.alreadyExistingName = false;
@@ -544,7 +526,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should disable form submission when there is no selected dataset', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.enteredName = 'prep Name';
             ctrl.baseDataset = null;
             ctrl.alreadyExistingName = false;
@@ -558,7 +540,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should disable form submission when entered name already exists', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.enteredName = 'prep Name';
             ctrl.baseDataset = {};
             ctrl.alreadyExistingName = true;
@@ -574,7 +556,7 @@ describe('Preparation Creator Controller', () => {
     describe('Import button title generation', () => {
         it('should return while import title', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.importDisabled = true;
 
             //when
@@ -586,7 +568,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should return already existing name title', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.alreadyExistingName = true;
 
             //when
@@ -598,7 +580,7 @@ describe('Preparation Creator Controller', () => {
 
         it('should return import file description', () => {
             //given
-            ctrl = createController();
+            const ctrl = createController();
             ctrl.alreadyExistingName = false;
 
             //when

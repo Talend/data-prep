@@ -35,7 +35,12 @@
 <div class="panels">
     <div class="filters-left-panel"
          ng-class="{'disabled-import': $ctrl.importDisabled}">
-        <datasets-filters disable-selection="$ctrl.importDisabled" on-select="$ctrl.loadDatasets(filter)"></datasets-filters>
+        <theme-filters
+                filters="::$ctrl.datasetService.filters"
+                selected-filter="$ctrl.selectedFilter"
+                disable-selection="$ctrl.importDisabled"
+                on-select="$ctrl.loadDatasets(filter)"></theme-filters>
+
         <input type="file"
                id="localFileImport"
                name="datasetFile"
@@ -46,8 +51,8 @@
                ng-file-change="$ctrl.import()"/>
 
         <div class="import-button-panel"
-             title="{{$ctrl.getImportTitle() | translate}}"
-             ng-class="{'disabled-import' : $ctrl.alreadyExistingName || $ctrl.importDisabled}"
+             title="{{ $ctrl.getImportTitle() | translate }}"
+             ng-class="{ 'disabled-import' : $ctrl.alreadyExistingName || $ctrl.importDisabled }"
              ng-click="$ctrl.importFile()">
             <div class="import-icon">
                 <div><img ng-src="assets/images/folder/folder_open_small-icon.png"/></div>

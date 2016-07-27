@@ -125,54 +125,92 @@ describe('Dataset Service', () => {
         }));
     });
 
-    describe('get all datasets', () => {
-        it('should get a promise that resolve the existing datasets if already fetched', inject(($q, $rootScope, DatasetService, DatasetListService) => {
-            // given
-            spyOn(DatasetListService, 'hasDatasetsPromise').and.returnValue(true);
-            spyOn(DatasetListService, 'getDatasetsPromise').and.returnValue($q.when(true));
-            // when
-            DatasetService.getDatasets();
-
-            // then
-            expect(DatasetListService.getDatasetsPromise).toHaveBeenCalled();
-        }));
-
-        it('should refresh datasets if datasets are not fetched', inject(($q, $rootScope, DatasetService, DatasetListService) => {
-            // given
-            spyOn(DatasetListService, 'hasDatasetsPromise').and.returnValue(false);
-            let results = null;
-
-            // when
-            DatasetService.getDatasets()
-                .then((response) => {
-                    results = response;
-                });
-
-            $rootScope.$digest();
-
-            // then
-            expect(results).toBe(datasets);
-        }));
-
-        it('should get a promise that fetch datasets', inject(($rootScope, DatasetService, DatasetListService) => {
-            // given
-            let results = null;
-            stateMock.inventory.datasets = null;
-
-            // when
-            DatasetService.getDatasets()
-                .then((response) => {
-                    results = response;
-                });
-            $rootScope.$digest();
-
-            // then
-            expect(results).toBe(datasets);
-            expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
-        }));
-    });
-
     describe('get', () => {
+        describe('all', () => {
+            it('should get a promise that resolve the existing datasets if already fetched', inject(($q, $rootScope, DatasetService, DatasetListService) => {
+                // given
+                spyOn(DatasetListService, 'hasDatasetsPromise').and.returnValue(true);
+                spyOn(DatasetListService, 'getDatasetsPromise').and.returnValue($q.when(true));
+                // when
+                DatasetService.getDatasets();
+
+                // then
+                expect(DatasetListService.getDatasetsPromise).toHaveBeenCalled();
+            }));
+
+            it('should refresh datasets if datasets are not fetched', inject(($q, $rootScope, DatasetService, DatasetListService) => {
+                // given
+                spyOn(DatasetListService, 'hasDatasetsPromise').and.returnValue(false);
+                let results = null;
+
+                // when
+                DatasetService.getDatasets()
+                    .then((response) => {
+                        results = response;
+                    });
+
+                $rootScope.$digest();
+
+                // then
+                expect(results).toBe(datasets);
+            }));
+
+            it('should get a promise that fetch datasets', inject(($rootScope, DatasetService, DatasetListService) => {
+                // given
+                let results = null;
+                stateMock.inventory.datasets = null;
+
+                // when
+                DatasetService.getDatasets()
+                    .then((response) => {
+                        results = response;
+                    });
+                $rootScope.$digest();
+
+                // then
+                expect(results).toBe(datasets);
+                expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
+            }));
+        });
+
+        describe('filtered', () => {
+            it('should fetch most recent datasets', inject((DatasetService, DatasetRestService) => {
+                // given
+                spyOn(DatasetRestService, 'getFilteredDatasets').and.returnValue();
+                const filter = DatasetService.filters[0];
+
+                // when
+                DatasetService.getFilteredDatasets(filter, 'toto');
+
+                // then
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('sort=MODIF&limit=true&name=toto' );
+            }));
+
+            it('should fetch favorite datasets', inject((DatasetService, DatasetRestService) => {
+                // given
+                spyOn(DatasetRestService, 'getFilteredDatasets').and.returnValue();
+                const filter = DatasetService.filters[1];
+
+                // when
+                DatasetService.getFilteredDatasets(filter, 'toto');
+
+                // then
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('favorite=true&name=toto');
+            }));
+
+            it('should fetch all datasets', inject((DatasetService, DatasetRestService) => {
+                // given
+                spyOn(DatasetRestService, 'getFilteredDatasets').and.returnValue();
+                const filter = DatasetService.filters[2];
+
+                // when
+                DatasetService.getFilteredDatasets(filter, 'toto');
+
+                // then
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('name=toto');
+            }));
+        });
+
         describe('by name', () => {
             it('should find dataset', inject((DatasetService) => {
                 // when

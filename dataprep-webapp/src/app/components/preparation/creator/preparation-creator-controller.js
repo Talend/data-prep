@@ -23,20 +23,20 @@ export default class PreparationCreatorCtrl {
         this.datasetService = DatasetService;
         this.uploadWorkflowService = UploadWorkflowService;
         this.restURLs = RestURLs;
+
         this.enteredFilterText = '';
         this.filteredDatasets = [];
-        this.lastFilterValue = '';
         this.baseDataset = null;
         this.userHasTypedName = false;
         this.uploadingDatasets = [];
         this.importDisabled = false;
         this.isFetchingDatasets = false;
-
         this.preparationSuffix = $translate.instant('PREPARATION');
     }
 
     $onInit() {
-        this.loadDatasets('RECENT_DATASETS');
+        this.selectedFilter = this.datasetService.filters[0];
+        this.loadDatasets(this.selectedFilter);
     }
 
     /**
@@ -44,25 +44,13 @@ export default class PreparationCreatorCtrl {
      * @name loadDatasets
      * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
      * @description loads the filtered datasets
-     * @params {String} filterValue the chosen filter value
+     * @params {Object} filter the chosen filter
      */
-    loadDatasets(filterValue) {
-        this.lastFilterValue = filterValue;
-        let url = this.restURLs.datasetUrl + '/summary';
-        switch (filterValue) {
-        case 'RECENT_DATASETS':
-            url += '?sort=MODIF&limit=true&name=';
-            break;
-        case 'FAVORITE_DATASETS':
-            url += '?favorite=true&name=';
-            break;
-        case 'ALL_DATASETS':
-            url += '?name=';
-            break;
-        }
-        url += this.enteredFilterText;
+    loadDatasets(filter) {
+        this.selectedFilter = filter;
+
         this.isFetchingDatasets = true;
-        this.datasetService.loadFilteredDatasets(url)
+        this.datasetService.getFilteredDatasets(filter, this.enteredFilterText)
             .then((filteredDatasets) => {
                 this.filteredDatasets = filteredDatasets;
             })
@@ -222,9 +210,7 @@ export default class PreparationCreatorCtrl {
      * @description generates a unique preparation name
      */
     applyNameFilter() {
-        if (this.lastFilterValue) {
-            this.loadDatasets(this.lastFilterValue);
-        }
+        this.loadDatasets(this.selectedFilter);
     }
 
     /**

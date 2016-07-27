@@ -11,6 +11,34 @@
 
  ============================================================================*/
 
+
+const filters = [
+    {
+        id: 'RECENT',
+        order: 1,
+        imageUrl: '/assets/images/inventory/recent-datasets.png',
+        title: 'RECENT_DATASETS',
+        description: 'RECENT_DATASETS_DESCRIPTION',
+        getParameters: (name) => `sort=MODIF&limit=true&name=${name}`,
+    },
+    {
+        id: 'FAVORITE',
+        order: 2,
+        icon: 'f',
+        title: 'FAVORITE_DATASETS',
+        description: 'FAVORITE_DATASETS_DESCRIPTION',
+        getParameters: (name) => `favorite=true&name=${name}`,
+    },
+    {
+        id: 'ALL',
+        order: 3,
+        imageUrl: '/assets/images/inventory/all-datasets.png',
+        title: 'ALL_DATASETS',
+        description: 'ALL_DATASETS_DESCRIPTION',
+        getParameters: (name) => `name=${name}`,
+    }
+];
+
 /**
  * @ngdoc service
  * @name data-prep.services.dataset.service:DatasetService
@@ -25,6 +53,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
     'ngInject';
 
     return {
+        filters,
         init,
 
         // lifecycle
@@ -48,6 +77,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
         // dataset getters, refresher
         refreshDatasets: DatasetListService.refreshDatasets,
         getDatasets,           // promise that resolves datasets list
+        getFilteredDatasets, // retrieve datasets given a set of filters
         getDatasetById,     // retrieve dataset by id
         getDatasetByName, // retrieve dataset by name
         getSheetPreview,
@@ -178,6 +208,19 @@ export default function DatasetService($q, state, StateService, DatasetListServi
                 $q.when(state.inventory.datasets) :
                 DatasetListService.refreshDatasets();
         }
+    }
+
+    /**
+     * @ngdoc method
+     * @name getFilteredDatasets
+     * @methodOf data-prep.services.dataset.service:DatasetService
+     * @param {object} filter The filter definition
+     * @param {string} name The dataset name (or part of it)
+     * @description Return a promise that resolves the datasets list.
+     * @returns {promise} The GET promise
+     */
+    function getFilteredDatasets(filter, name) {
+        return DatasetRestService.getFilteredDatasets(filter.getParameters(name));
     }
 
     /**

@@ -13,17 +13,16 @@
 
 import angular from 'angular';
 
-import DatasetsFiltersComponent from './datasets-filters-component';
+import ThemeFiltersComponent from './theme-filters-component';
 
-const MODULE_NAME = 'data-prep.datasets-filters';
+const MODULE_NAME = 'data-prep.theme-filters';
 
 /**
  * @ngdoc object
- * @name data-prep.inventory-copy-move
- * @description This module contains the entities to manage the inventory copy/move wiazerd
- * @requires data-prep.folder-selection
+ * @name data-prep.theme-filter
+ * @description Theme filter component module
  */
 angular.module(MODULE_NAME, [])
-    .component('datasetsFilters', DatasetsFiltersComponent);
+    .component('themeFilters', ThemeFiltersComponent);
 
 export default MODULE_NAME;

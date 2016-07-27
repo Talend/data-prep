@@ -30,7 +30,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
         updateColumn,
 
         getDatasets,
-        loadFilteredDatasets,
+        getFilteredDatasets,
         updateMetadata,
         getMetadata,
         getContent,
@@ -158,18 +158,15 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 
     /**
      * @ngdoc method
-     * @name loadFilteredDatasets
+     * @name getFilteredDatasets
      * @methodOf data-prep.services.dataset.service:DatasetRestService
-     * @param {string} urlWithParams
+     * @param {string} filterParameters The url parameters
      * @description Get the dataset list respecting a filter passed in the params
      * @returns {Promise} The GET call promise
      */
-    function loadFilteredDatasets(urlWithParams) {
-        return $http({
-            method: 'GET',
-            url: urlWithParams,
-        })
-            .then((resp) => resp.data);
+    function getFilteredDatasets(filterParameters) {
+        const url = `${RestURLs.datasetUrl}?${filterParameters}`;
+        return $http.get(url).then((resp) => resp.data);
     }
 
     /**

@@ -11,7 +11,7 @@
 
   ============================================================================*/
 
-.dataset-filter {
+.theme-filter {
     @include flex-grow(0);
     @include flex-shrink(0);
     @include flex-row();
@@ -20,43 +20,35 @@
     padding: 10px;
     cursor: pointer;
 
-    &:hover, &.selected-filter{
+    &:hover,
+    &.selected {
         background-color: tint($pale-blue, 30%);
     }
 
-    .dataset-filter-icon {
+    .theme-filter-icon {
         @include display(flex);
+        @include justify-content(center);
         @include align-items(center);
 
-        padding: 0 3px;
-        position: relative;
         width: 40px;
-
-        .favorite {
-            opacity: 1;
-            color: orange;
-            margin-left: 4px;
-        }
+        color: orange;
     }
 
-    .dataset-filter-text {
+    .theme-filter-text {
         @include flex-column();
         @include justify-content(center);
         padding-left: 10px;
 
-        .dataset-filter-title {
+        .theme-filter-title {
             @include ellipsis(200px);
-            padding: 3px 0;
-            color: $black;
         }
 
-        .dataset-filter-description {
-            color: $medium-gray;
+        .theme-filter-description {
+            opacity: 0.5;
             font-weight: 300;
-            font-size: .8em;
+            font-size: 0.8em;
             overflow: hidden;
-            white-space: normal;
-            max-height: 2.8em;
+            max-height: 2em;
         }
     }
 }

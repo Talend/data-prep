@@ -170,9 +170,10 @@ describe('Dataset Rest Service', () => {
                 .respond(200, datasets);
 
             //when
-            DatasetRestService.loadFilteredDatasets(RestURLs.datasetUrl + '?name=Cust').then((response) => {
-                result = response;
-            });
+            DatasetRestService.getFilteredDatasets('name=Cust')
+                .then((response) => {
+                    result = response;
+                });
             $httpBackend.flush();
             $rootScope.$digest();
 

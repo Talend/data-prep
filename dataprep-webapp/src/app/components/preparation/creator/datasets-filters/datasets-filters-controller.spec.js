@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import angular from 'angular';
+
 describe('Datasets Filters Controller', () => {
     let createController;
     let scope;
@@ -24,7 +26,7 @@ describe('Datasets Filters Controller', () => {
         createController = () => {
             return $componentController('datasetsFilters',
                 { $scope: scope },
-                { onFilterSelect: jasmine.createSpy() });
+                { onSelect: jasmine.createSpy('onSelect') });
         };
     }));
 
@@ -40,15 +42,15 @@ describe('Datasets Filters Controller', () => {
             //then
             expect(ctrl.selectedFilter).toBe(filter);
             expect(ctrl.selectedFilter.isSelected).toBe(true);
-            expect(ctrl.onFilterSelect).toHaveBeenCalledWith({ filter: filter.value });
+            expect(ctrl.onSelect).toHaveBeenCalledWith({ filter: filter.value });
         });
 
         it('should NOT select a datasets filter while import', () => {
             //given
             ctrl = createController();
             let filter = { value: 'RECENT_DATASETS' };
-            ctrl.importing = true;
-            expect(ctrl.onFilterSelect).not.toHaveBeenCalled();
+            ctrl.disableSelection = true;
+            expect(ctrl.onSelect).not.toHaveBeenCalled();
 
             //when
             ctrl.selectFilter(filter);
@@ -56,7 +58,7 @@ describe('Datasets Filters Controller', () => {
             //then
             expect(ctrl.selectedFilter).not.toBe(filter);
             expect(ctrl.selectedFilter.isSelected).toBe(true);
-            expect(ctrl.onFilterSelect).not.toHaveBeenCalled();
+            expect(ctrl.onSelect).not.toHaveBeenCalled();
         });
     });
 });

@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import angular from 'angular';
+
 describe('Datasets filters component', () => {
     let scope;
     let createElement;
@@ -35,7 +37,7 @@ describe('Datasets filters component', () => {
         scope = $rootScope.$new();
 
         createElement = () => {
-            element = angular.element(`<datasets-filters on-filter-select="loadDatasets(filter)"></datasets-filters>`);
+            element = angular.element(`<datasets-filters on-select="loadDatasets(filter)"></datasets-filters>`);
 
             $compile(element)(scope);
             scope.$digest();
@@ -105,23 +107,23 @@ describe('Datasets filters component', () => {
     });
 
     describe('events', () => {
-        it('should call onFilterSelect function on click', () => {
+        it('should call onSelect function on click', () => {
             //given
             createElement();
-            controller.onFilterSelect = jasmine.createSpy('onFilterSelect');
+            controller.onSelect = jasmine.createSpy('onSelect');
 
             //when
             element.find('.dataset-filter').eq(1).click();
             scope.$digest();
 
             //then
-            expect(controller.onFilterSelect).toHaveBeenCalledWith({ filter: 'FAVORITE_DATASETS' });
+            expect(controller.onSelect).toHaveBeenCalledWith({ filter: 'FAVORITE_DATASETS' });
         });
 
         it('should update the filter background on click', () => {
             //given
             createElement();
-            controller.onFilterSelect = jasmine.createSpy('onFilterSelect');
+            controller.onSelect = jasmine.createSpy('onSelect');
 
             //when
             element.find('.dataset-filter').eq(1).click();

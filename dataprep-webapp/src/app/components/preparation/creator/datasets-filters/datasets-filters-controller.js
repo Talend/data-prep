@@ -39,14 +39,14 @@ class DatasetsFiltersCtrl {
     }
 
     selectFilter(filter) {
-        if (this.importing) {
+        if (this.disableSelection) {
             return;
         }
 
         this.selectedFilter.isSelected = false;
         this.selectedFilter = filter;
         this.selectedFilter.isSelected = true;
-        this.onFilterSelect({ filter: filter.value });
+        this.onSelect({ filter: filter.value });
     }
 }
 

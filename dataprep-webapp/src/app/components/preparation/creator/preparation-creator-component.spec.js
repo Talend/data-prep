@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import angular from 'angular';
+
 describe('Datasets filters component', () => {
     let scope;
     let createElement;
@@ -30,10 +32,10 @@ describe('Datasets filters component', () => {
 
     beforeEach(inject(($rootScope, $compile, $q, DatasetService) => {
         scope = $rootScope.$new();
-        scope.showAddPrepModal = true;
+        scope.onCreation = jasmine.createSpy('onCreation');
 
         createElement = () => {
-            element = angular.element(`<preparation-creator show-add-prep-modal="showAddPrepModal"></preparation-creator>`);
+            element = angular.element(`<preparation-creator on-creation="onCreation()"></preparation-creator>`);
 
             $compile(element)(scope);
             scope.$digest();
@@ -89,7 +91,7 @@ describe('Datasets filters component', () => {
             it('should disable header input while import', () => {
                 //when
                 createElement();
-                controller.whileImport = true;
+                controller.importDisabled = true;
                 scope.$digest();
 
                 //then
@@ -122,7 +124,7 @@ describe('Datasets filters component', () => {
             it('should disable all left panel while import', () => {
                 //when
                 createElement();
-                controller.whileImport = true;
+                controller.importDisabled = true;
                 expect(element.find('.filters-left-panel').hasClass('disabled-import')).toBe(false);
                 scope.$digest();
 
@@ -176,7 +178,7 @@ describe('Datasets filters component', () => {
             it('should disable right panel while import', () => {
                 //when
                 createElement();
-                controller.whileImport = true;
+                controller.importDisabled = true;
                 expect(element.find('.inventory-list').hasClass('disabled-import')).toBe(false);
                 scope.$digest();
 
@@ -232,7 +234,7 @@ describe('Datasets filters component', () => {
             it('should disable form input while import', () => {
                 //when
                 createElement();
-                controller.whileImport = true;
+                controller.importDisabled = true;
                 scope.$digest();
 
                 //then
@@ -262,7 +264,7 @@ describe('Datasets filters component', () => {
             it('should disable cancel while import', () => {
                 //when
                 createElement();
-                controller.whileImport = true;
+                controller.importDisabled = true;
                 scope.$digest();
 
                 //then

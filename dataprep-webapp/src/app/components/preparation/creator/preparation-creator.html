@@ -28,14 +28,14 @@
            ng-model="$ctrl.enteredFilterText"
            ng-model-options="{debounce: { default: 300, blur: 0 }}"
            ng-change="$ctrl.applyNameFilter()"
-           ng-disabled="$ctrl.whileImport"
+           ng-disabled="$ctrl.importDisabled"
            talend-search-input/>
 </div>
 
 <div class="panels">
     <div class="filters-left-panel"
-         ng-class="{'disabled-import': $ctrl.whileImport}">
-        <datasets-filters importing="$ctrl.whileImport" on-filter-select="$ctrl.loadDatasets(filter)"></datasets-filters>
+         ng-class="{'disabled-import': $ctrl.importDisabled}">
+        <datasets-filters disable-selection="$ctrl.importDisabled" on-select="$ctrl.loadDatasets(filter)"></datasets-filters>
         <input type="file"
                id="localFileImport"
                name="datasetFile"
@@ -47,7 +47,7 @@
 
         <div class="import-button-panel"
              title="{{$ctrl.getImportTitle() | translate}}"
-             ng-class="{'disabled-import' : $ctrl.alreadyExistingName || $ctrl.whileImport}"
+             ng-class="{'disabled-import' : $ctrl.alreadyExistingName || $ctrl.importDisabled}"
              ng-click="$ctrl.importFile()">
             <div class="import-icon">
                 <div><img ng-src="assets/images/folder/folder_open_small-icon.png"/></div>
@@ -60,15 +60,15 @@
         </div>
     </div>
 
-    <div class="inventory-list" ng-class="{'disabled-import': $ctrl.whileImport}">
+    <div class="inventory-list" ng-class="{'disabled-import': $ctrl.importDisabled}">
             <span ng-if="$ctrl.isFetchingDatasets" class="fetching-spinner">
                 <i data-icon="c" class="continuous-rotate icon"></i>
             </span>
         <div ng-if="!$ctrl.isFetchingDatasets"
              class="inventory-item-row"
              ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id"
-             ng-click="$ctrl.whileImport ? angular.noop(): $ctrl.selectBaseDataset(dataset)"
-             ng-class="{'selected-dataset': dataset.isSelected}">
+             ng-click="$ctrl.importDisabled ? angular.noop(): $ctrl.selectBaseDataset(dataset)"
+             ng-class="{'selected-dataset': dataset.id === $ctrl.baseDataset.id}">
             <inventory-item
                     type="dataset"
                     item="dataset"
@@ -84,7 +84,7 @@
     <span class="name-error" translate-once="NAME_ALREADY_EXISTS" ng-if="$ctrl.alreadyExistingName"></span>
     <input type="text"
            ng-model="$ctrl.enteredName"
-           ng-disabled="$ctrl.whileImport"
+           ng-disabled="$ctrl.importDisabled"
            ng-change="$ctrl.checkExistingPrepName('user')"
            required/>
 </form>
@@ -92,10 +92,10 @@
 <div class="modal-buttons">
     <button type="button"
             class="talend-modal-close btn-secondary modal-secondary-button"
-            ng-disabled="$ctrl.whileImport"
+            ng-disabled="$ctrl.importDisabled"
             translate-once="CANCEL"></button>
     <button class="btn-primary modal-primary-button"
             translate-once="CONFIRM"
             ng-click="$ctrl.createPreparation()"
-            ng-disabled="!$ctrl.anyMissingEntries()"></button>
+            ng-disabled="$ctrl.anyMissingEntries()"></button>
 </div>

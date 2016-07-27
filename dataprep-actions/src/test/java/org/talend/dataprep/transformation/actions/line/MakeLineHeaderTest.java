@@ -13,15 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.line;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -32,6 +23,15 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.actions.text.UpperCase;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
 public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
 
@@ -237,6 +237,53 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
 
         assertEquals("John", row2.getRowMetadata().getById("0000").getName());
         assertEquals("Lennon", row2.getRowMetadata().getById("0001").getName());
+    }
+
+
+    @Test
+    public void should_use_mask_on_empty_cell() {
+        // given
+        long rowId = 120;
+
+        // row 1
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "Bowie");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(rowId++);
+
+        // row 2
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "");
+        final DataSetRow row2 = new DataSetRow(rowContent);
+        row2.setTdpId(rowId++);
+
+        // row 3
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "Lennon");
+        final DataSetRow row3 = new DataSetRow(rowContent);
+        row3.setTdpId(rowId++);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "line");
+        parameters.put("row_id", row2.getTdpId().toString());
+
+        assertFalse(row1.isDeleted());
+        assertFalse(row2.isDeleted());
+        assertFalse(row3.isDeleted());
+
+        //when
+        ActionTestWorkbench.test(Arrays.asList( row1,row2, row3 ), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertTrue(row1.isDeleted());
+        assertTrue(row2.isDeleted());
+        assertFalse(row3.isDeleted());
+
+        assertEquals("John", row2.getRowMetadata().getById("0000").getName());
+        assertEquals("Col 2", row2.getRowMetadata().getById("0001").getName());
     }
 
 }

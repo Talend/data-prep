@@ -13,11 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.line;
 
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-
-import java.util.*;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -31,6 +26,12 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import java.text.MessageFormat;
+import java.util.*;
+
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
 /**
  * This action does two things:
@@ -47,6 +48,10 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
     public static final String SKIP_UNTIL = "make_line_header_skip_until";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MakeLineHeader.class);
+
+    private static final String DEFAULT_TITLE_KEY = "DEFAULT_TITLE_KEY";
+
+    private static final String DEFAULT_TITLE_VALUE_MASK = "Col {0}";
 
     @Override
     public String getName() {
@@ -85,26 +90,42 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
 
         if (skipPreviousRows && (tdpId < rowId)) {
             row.setDeleted(true);
-            return;
-        }
-
-        if (context.getFilter().test(row)) {
-            LOGGER.debug("Make line header for rowId {} with parameters {} ", context.getRowId(), context.getParameters());
-            for (ColumnMetadata column : context.getRowMetadata().getColumns()) {
-                String newColumnName = context.get(column.getId(), p -> row.get(column.getId()));
-                column.setName(newColumnName);
-            }
-            row.setDeleted(true);
+        } else if (context.getFilter().test(row)) {
+            setHeadersFromRow(row, context);
         } else {
-            for (ColumnMetadata column : context.getRowMetadata().getColumns()) {
-                if (!context.has(column.getId())) {
-                    // Action hasn't yet found new headers
-                    break;
-                }
-                String newColumnName = context.get(column.getId());
-                column.setName(newColumnName);
-            }
+            setRemainingRowColumnsNames(context);
         }
+    }
+
+    private void setRemainingRowColumnsNames(ActionContext context) {
+        for (ColumnMetadata column : context.getRowMetadata().getColumns()) {
+            if (!context.has(column.getId())) {
+                // Action hasn't yet found new headers
+                break;
+            }
+            String newColumnName = context.get(column.getId());
+            column.setName(newColumnName);
+        }
+    }
+
+    private void setHeadersFromRow(DataSetRow row, ActionContext context) {
+        LOGGER.debug("Make line header for rowId {} with parameters {} ", context.getRowId(), context.getParameters());
+        List<ColumnMetadata> columns = context.getRowMetadata().getColumns();
+        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+            ColumnMetadata column = columns.get(columnIndex);
+            // get new column name keyed on column id from context or use the row value
+            final int columnViewIndex = columnIndex + 1;
+            String newColumnName = context.get(column.getId(), p -> {
+                String name = row.get(column.getId());
+                if (StringUtils.isBlank(name)) {
+                    MessageFormat pattern = context.get(DEFAULT_TITLE_KEY, q -> new MessageFormat(DEFAULT_TITLE_VALUE_MASK));
+                    name = pattern.format(new Object[]{columnViewIndex});
+                }
+                return name;
+            });
+            column.setName(newColumnName);
+        }
+        row.setDeleted(true);
     }
 
     @Override

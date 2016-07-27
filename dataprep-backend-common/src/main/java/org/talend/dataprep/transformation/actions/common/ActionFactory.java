@@ -1,12 +1,5 @@
 package org.talend.dataprep.transformation.actions.common;
 
-import static org.talend.dataprep.api.preparation.Action.Builder.builder;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
-
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +14,13 @@ import org.talend.dataprep.transformation.api.action.DataSetMetadataAction;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import static org.talend.dataprep.api.preparation.Action.Builder.builder;
 
 @Component
 public class ActionFactory {
@@ -96,7 +96,7 @@ public class ActionFactory {
             } else {
                 rowId = null;
             }
-            final Predicate<DataSetRow> rowFilter = r -> ObjectUtils.equals(r.getTdpId(), rowId);
+            final Predicate<DataSetRow> rowFilter = r -> Objects.equals(r.getTdpId(), rowId);
             return predicate.and(rowFilter);
         } else {
             return predicate;

@@ -180,13 +180,12 @@ public class ActionContext {
      * @return the object (stored in the context).
      */
     public <T> T get(String key, Function<Map<String, String>, T> supplier) {
-        if (context.containsKey(key)) {
-            return (T) context.get(key);
+        T value = (T) context.get(key);
+        if (value == null) {
+            value = supplier.apply(parameters);
+            context.put(key, value);
+            LOGGER.debug("adding {}->{} in this context {}", key, value, this);
         }
-
-        final T value = supplier.apply(parameters);
-        context.put(key, value);
-        LOGGER.debug("adding {}->{} in this context {}", key, value, this);
         return value;
     }
 

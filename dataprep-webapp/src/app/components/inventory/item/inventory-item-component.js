@@ -89,7 +89,7 @@ const InventoryItemcomponent = {
         toggleFavoriteEnabled: '<',
         renameEnabled: '<',
         openEnabled: '<',
-    }
+    },
 };
 
 export default InventoryItemcomponent;

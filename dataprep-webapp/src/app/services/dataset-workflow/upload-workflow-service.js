@@ -65,7 +65,7 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
             self.openDraft(dataset, false, '');
         }
         else {
-            $state.go('playground.dataset', {datasetid: dataset.id});
+            $state.go('playground.dataset', { datasetid: dataset.id });
         }
     };
 }

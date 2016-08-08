@@ -176,6 +176,6 @@ export default function PreparationService($q, $state, $window, $stateParams, st
      * @description open a preparation
      */
     function open(preparation) {
-        $state.go('playground.preparation', {prepid: preparation.id});
+        $state.go('playground.preparation', { prepid: preparation.id });
     }
 }

@@ -50,59 +50,6 @@ describe('Preparation Service', () => {
         StateService.resetRoute();
     }));
 
-    describe('getter/refresher', () => {
-        it('should return the pending refresh promise when it is defined', inject(($q, $rootScope, PreparationService, PreparationListService) => {
-            //given
-            const fetchPromise = $q.when(preparations);
-            spyOn(PreparationListService, 'getPreparationsPromise').and.returnValue(fetchPromise);
-            spyOn(PreparationListService, 'hasPreparationsPromise').and.returnValue(true);
-            expect(PreparationListService.refreshPreparations).not.toHaveBeenCalled();
-
-            let result = null;
-
-            //when
-            PreparationService.getPreparations().then((promiseResult) => result = promiseResult);
-            $rootScope.$digest();
-
-            //then
-            expect(result).toBe(preparations);
-            expect(PreparationListService.refreshPreparations).not.toHaveBeenCalled();
-        }));
-
-        it('should return preparations from state when there are already fetched', inject((state, $rootScope, PreparationService, PreparationListService) => {
-            //given
-            stateMock.inventory.preparations = preparations;
-            spyOn(PreparationListService, 'hasPreparationsPromise').and.returnValue(false);
-            expect(PreparationListService.refreshPreparations).not.toHaveBeenCalled();
-
-            let result = null;
-
-            //when
-            PreparationService.getPreparations().then((promiseResult) => result = promiseResult);
-            $rootScope.$digest();
-
-            //then
-            expect(result).toBe(preparations);
-            expect(PreparationListService.refreshPreparations).not.toHaveBeenCalled();
-        }));
-
-        it('should fetch preparations when they are not already fetched', inject(($rootScope, PreparationService, PreparationListService) => {
-            //given
-            spyOn(PreparationListService, 'hasPreparationsPromise').and.returnValue(null);
-            stateMock.inventory.preparations = null;
-            expect(PreparationListService.refreshPreparations).not.toHaveBeenCalled();
-            let result = null;
-
-            //when
-            PreparationService.getPreparations().then((promiseResult) => result = promiseResult);
-            $rootScope.$digest();
-
-            //then
-            expect(result).toBe(preparations);
-            expect(PreparationListService.refreshPreparations).toHaveBeenCalled();
-        }));
-    });
-
     describe('lifecycle', () => {
         describe('create', () => {
             beforeEach(inject((StateService) => {

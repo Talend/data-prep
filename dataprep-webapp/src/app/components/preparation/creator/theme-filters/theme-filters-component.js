@@ -33,7 +33,7 @@ export default {
         filters: '<',
         selectedFilter: '<',
         onSelect: '&',
-        disableSelection: '<'
+        disableSelection: '<',
     },
     template: `
         <div class="theme-filter"
@@ -50,5 +50,5 @@ export default {
                 <div class="theme-filter-description" translate-once="{{filter.description}}"></div>
             </div>
         </div>
-    `
+    `,
 };

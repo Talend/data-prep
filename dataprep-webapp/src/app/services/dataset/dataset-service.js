@@ -36,7 +36,7 @@ const filters = [
         title: 'ALL_DATASETS',
         description: 'ALL_DATASETS_DESCRIPTION',
         getParameters: (name) => `name=${name}`,
-    }
+    },
 ];
 
 /**

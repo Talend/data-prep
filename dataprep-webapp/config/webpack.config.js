@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SassLintPlugin = require('sasslint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 const extractCSS = new ExtractTextPlugin('styles/[name]-[hash].css');
 
@@ -143,7 +144,15 @@ function addPlugins(config, options) {
          *
          * See: https://github.com/webpack/docs/wiki/optimization
          */
-        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' })
+        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' }),
+
+        /*
+         * Plugin: DashboardPlugin
+         * Description: CLI dashboard for webpack dev server
+         *
+         * See: https://www.npmjs.com/package/webpack-dashboard
+         */
+        new DashboardPlugin()
     );
 }
 

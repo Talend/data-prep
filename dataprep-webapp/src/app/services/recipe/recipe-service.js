@@ -152,15 +152,6 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
             new: newRecipeSteps,
         });
 
-        // TODO : Move this in a recipe-bullet-directive
-        // remove "single-maillon-cables-disabled" class of bullet cables when refreshing recipe
-        const allDisabledCables = angular.element('.recipe').eq(0)
-            .find('.single-maillon-cables-disabled')
-            .toArray();
-        _.each(allDisabledCables, (cable) => {
-            cable.setAttribute('class', '');
-        });
-
         return details;
     }
 

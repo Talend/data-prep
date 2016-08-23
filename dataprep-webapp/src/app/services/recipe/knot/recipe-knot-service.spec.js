@@ -11,7 +11,7 @@
 
   ============================================================================*/
 
-describe('Recipe Bullet service', function () {
+describe('Recipe Knot service', function () {
     'use strict';
 
     var previousStep = { column: { id: '0003' } };
@@ -35,7 +35,7 @@ describe('Recipe Bullet service', function () {
     }));
 
     beforeEach(inject(function ($rootScope, $q, $timeout,
-                                StepUtilsService, RecipeBulletService, RecipeService, PreparationService, PreviewService) {
+                                StepUtilsService, RecipeKnotService, RecipeService, PreparationService, PreviewService) {
         spyOn($rootScope, '$emit').and.returnValue();
         spyOn(StepUtilsService, 'getActiveThresholdStepIndex').and.returnValue(3);
         spyOn(StepUtilsService, 'getPreviousStep').and.returnValue(previousStep);
@@ -50,7 +50,7 @@ describe('Recipe Bullet service', function () {
         spyOn($timeout, 'cancel').and.returnValue();
     }));
 
-    it('should trigger append preview on inactive step hover after a delay of 300ms', inject(($timeout, PreviewService, RecipeBulletService) => {
+    it('should trigger append preview on inactive step hover after a delay of 300ms', inject(($timeout, PreviewService, RecipeKnotService) => {
         //given
         const steps = [
             { id: '1', column: { id: '0002' } },
@@ -64,7 +64,7 @@ describe('Recipe Bullet service', function () {
         };
 
         //when
-        RecipeBulletService.stepHoverStart(steps[2]);
+        RecipeKnotService.stepHoverStart(steps[2]);
         $timeout.flush(299);
         expect(PreviewService.getPreviewDiffRecords).not.toHaveBeenCalled();
         $timeout.flush(1);
@@ -73,7 +73,7 @@ describe('Recipe Bullet service', function () {
         expect(PreviewService.getPreviewDiffRecords).toHaveBeenCalledWith(preparationId, steps[0], steps[2], '0004');
     }));
 
-    it('should cancel pending preview action on step hover', inject(($timeout, RecipeBulletService, PreviewService) => {
+    it('should cancel pending preview action on step hover', inject(($timeout, RecipeKnotService, PreviewService) => {
         //given
         const steps = [
             { id: '1', column: { id: '0002' } },
@@ -87,13 +87,13 @@ describe('Recipe Bullet service', function () {
         };
 
         //when
-        RecipeBulletService.stepHoverStart(steps[2]);
+        RecipeKnotService.stepHoverStart(steps[2]);
 
         //then
         expect(PreviewService.stopPendingPreview).toHaveBeenCalled();
     }));
 
-    it('should trigger diff preview after a 300ms', inject(($timeout, PreviewService, RecipeBulletService) => {
+    it('should trigger diff preview after a 300ms', inject(($timeout, PreviewService, RecipeKnotService) => {
         //given
         const steps = [
             { id: '0', column: { id: '0005' } },
@@ -107,7 +107,7 @@ describe('Recipe Bullet service', function () {
         };
 
         //when
-        RecipeBulletService.stepHoverStart(steps[2]);
+        RecipeKnotService.stepHoverStart(steps[2]);
         $timeout.flush(299);
         expect(PreviewService.getPreviewDiffRecords).not.toHaveBeenCalled();
         $timeout.flush(1);
@@ -116,12 +116,12 @@ describe('Recipe Bullet service', function () {
         expect(PreviewService.getPreviewDiffRecords).toHaveBeenCalledWith(preparationId, steps[3], previousStep, '0000');
     }));
 
-    it('should cancel current preview on mouse hover end after a delay of 100ms', inject(function ($timeout, PreviewService, RecipeBulletService) {
+    it('should cancel current preview on mouse hover end after a delay of 100ms', inject(function ($timeout, PreviewService, RecipeKnotService) {
         //given
         var step = { column: { id: '0001' } };
 
         //when
-        RecipeBulletService.stepHoverEnd(step);
+        RecipeKnotService.stepHoverEnd(step);
         expect(PreviewService.cancelPreview).not.toHaveBeenCalled();
         $timeout.flush(100);
 
@@ -129,12 +129,12 @@ describe('Recipe Bullet service', function () {
         expect(PreviewService.cancelPreview).toHaveBeenCalled();
     }));
 
-    it('should cancel pending preview action on mouse hover end', inject(function ($timeout, PreviewService, RecipeBulletService) {
+    it('should cancel pending preview action on mouse hover end', inject(function ($timeout, PreviewService, RecipeKnotService) {
         //given
         var step = { column: { id: '0001' } };
 
         //when
-        RecipeBulletService.stepHoverEnd(step);
+        RecipeKnotService.stepHoverEnd(step);
         $timeout.flush(100);
 
         //then

@@ -66,6 +66,7 @@ export function StateService(RouteStateService, routeState,
         // playground - recipe
         hideRecipe: PlaygroundStateService.hideRecipe,
         showRecipe: PlaygroundStateService.showRecipe,
+        setHoveredStep: PlaygroundStateService.setHoveredStep,
         setRecipeSteps: PlaygroundStateService.setRecipeSteps,
         setRecipePreviewSteps: PlaygroundStateService.setRecipePreviewSteps,
         restoreRecipeBeforePreview: PlaygroundStateService.restoreRecipeBeforePreview,

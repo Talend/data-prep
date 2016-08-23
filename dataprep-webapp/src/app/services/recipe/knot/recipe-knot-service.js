@@ -13,12 +13,12 @@
 
 /**
  * @ngdoc service
- * @name data-prep.services.recipe.service:RecipeBulletService
- * @description Recipe Bullet service. This service provides the action services triggered by bullets
+ * @name data-prep.services.recipe.service:RecipeKnotService
+ * @description Recipe knot service. This service provides the action services triggered by knots
  * @requires data-prep.services.utils.service:StepUtilsService
  * @requires data-prep.services.playground.service:PreviewService
  */
-export default function RecipeBulletService($timeout, state, StepUtilsService, PreviewService) {
+export default function RecipeKnotService($timeout, state, StepUtilsService, PreviewService) {
     'ngInject';
 
     let previewTimeout;
@@ -34,7 +34,7 @@ export default function RecipeBulletService($timeout, state, StepUtilsService, P
     /**
      * @ngdoc method
      * @name cancelPendingPreview
-     * @methodOf data-prep.services.recipe.service:RecipeBulletService
+     * @methodOf data-prep.services.recipe.service:RecipeKnotService
      * @description Cancel the pending preview. If the REST call is pending, this call is canceled too.
      */
     function cancelPendingPreview() {
@@ -45,7 +45,7 @@ export default function RecipeBulletService($timeout, state, StepUtilsService, P
     /**
      * @ngdoc method
      * @name stepHoverStart
-     * @methodOf data-prep.services.recipe.service:RecipeBulletService
+     * @methodOf data-prep.services.recipe.service:RecipeKnotService
      * @param {object} step The hovered step
      * @description Cancel pending preview and trigger a new one with a 200ms delay
      */
@@ -60,7 +60,7 @@ export default function RecipeBulletService($timeout, state, StepUtilsService, P
     /**
      * @ngdoc method
      * @name stepHoverEnd
-     * @methodOf data-prep.services.recipe.service:RecipeBulletService
+     * @methodOf data-prep.services.recipe.service:RecipeKnotService
      * @param {object} step The hovered end step
      * @description Cancel any pending preview and cancel the current preview with a 100ms delay
      */
@@ -75,7 +75,7 @@ export default function RecipeBulletService($timeout, state, StepUtilsService, P
     /**
      * @ngdoc method
      * @name previewAppend
-     * @methodOf data-prep.services.recipe.service:RecipeBulletService
+     * @methodOf data-prep.services.recipe.service:RecipeKnotService
      * @param {object} previewStep The step to preview
      * @description Call the preview service to display the diff between the current active step and the preview step to activate
      */
@@ -89,7 +89,7 @@ export default function RecipeBulletService($timeout, state, StepUtilsService, P
     /**
      * @ngdoc method
      * @name previewDisable
-     * @methodOf data-prep.services.recipe.service:RecipeBulletService
+     * @methodOf data-prep.services.recipe.service:RecipeKnotService
      * @param {object} disabledStep The step to disable for the preview
      * @description Call the preview service to display the diff between the current active step and the step before the one to deactivate
      */

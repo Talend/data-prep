@@ -21,12 +21,14 @@ export const recipeState = {
         lastActiveStep: null,
     },
     beforePreview: null,
+    hoveredStep: null,
 };
 
 export function RecipeStateService() {
     return {
         show,
         hide,
+        setHoveredStep,
         setSteps,
         setPreviewSteps,
         restoreBeforePreview,
@@ -52,6 +54,16 @@ export function RecipeStateService() {
      */
     function hide() {
         recipeState.visible = false;
+    }
+
+    /**
+     * @ngdoc method
+     * @name setHoveredStep
+     * @methodOf data-prep.services.state.service:RecipeStateService
+     * @description set the currently hovered step
+     */
+    function setHoveredStep(step) {
+        recipeState.hoveredStep = step;
     }
 
     /**

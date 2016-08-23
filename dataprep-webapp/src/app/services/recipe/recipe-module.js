@@ -20,7 +20,7 @@ import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_TRANSFORMATION_MODULE from '../transformation/transformation-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
-import RecipeBulletService from './bullet/recipe-bullet-service';
+import RecipeKnotService from './knot/recipe-knot-service';
 import RecipeService from './recipe-service';
 
 const MODULE_NAME = 'data-prep.services.recipe';
@@ -46,7 +46,7 @@ angular.module(MODULE_NAME,
         SERVICES_TRANSFORMATION_MODULE,
         SERVICES_UTILS_MODULE,
     ])
-    .service('RecipeBulletService', RecipeBulletService)
+    .service('RecipeKnotService', RecipeKnotService)
     .service('RecipeService', RecipeService);
 
 export default MODULE_NAME;

@@ -51,5 +51,4 @@ export default class LookupDatasetListCtrl {
             dataset.addedToLookup = !dataset.addedToLookup;
         }
     }
-
 }

@@ -11,7 +11,7 @@
 
   ============================================================================*/
 
-describe('Recipe directive', function () {
+describe('Recipe component', function () {
     'use strict';
     let scope;
     let element;
@@ -773,10 +773,10 @@ describe('Recipe directive', function () {
         scope.$digest();
 
         //then
-        expect(element.find('>.recipe >ul sc-accordion-item').length).toBe(3);
-        expect(element.find('>.recipe >ul sc-accordion-item').eq(0).hasClass('preview')).toBe(false);
-        expect(element.find('>.recipe >ul sc-accordion-item').eq(1).hasClass('preview')).toBe(false);
-        expect(element.find('>.recipe >ul sc-accordion-item').eq(2).hasClass('preview')).toBe(true);
+        expect(element.find('>.recipe .step-container').length).toBe(3);
+        expect(element.find('>.recipe .step-container').eq(0).hasClass('preview')).toBe(false);
+        expect(element.find('>.recipe .step-container').eq(1).hasClass('preview')).toBe(false);
+        expect(element.find('>.recipe .step-container').eq(2).hasClass('preview')).toBe(true);
     });
 
     it('should render recipe params', () => {
@@ -802,6 +802,33 @@ describe('Recipe directive', function () {
         expect(body.find('.modal-inner').find('.cluster').length).toBe(1);
     });
 
+    it('should render knots', () => {
+        //when
+        stateMock.playground.recipe.current.steps = [
+            steps[0],
+            steps[1],
+            steps[2],
+            steps[4],
+        ];
+        scope.$digest();
+
+        //then
+        expect(element.find('>.recipe >ul recipe-knot').length).toBe(4);
+    });
+
+    it('should render inactive style', () => {
+        //when
+        stateMock.playground.recipe.current.steps = steps;
+        scope.$digest();
+
+        //then
+        expect(element.find('>.recipe >ul .disabled-step').length).toBe(4);
+        expect(element.find('>.recipe .step-container').eq(1).hasClass('disabled-step')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(2).hasClass('disabled-step')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(3).hasClass('disabled-step')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(4).hasClass('disabled-step')).toBe(true);
+    });
+
     it('should highlight steps that will be deleted on remove icon mouse over', inject(($timeout) => {
         //given
         stateMock.playground.recipe.current.steps = stepsWithDiff;
@@ -812,9 +839,9 @@ describe('Recipe directive', function () {
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();
 
         //then
-        expect(element.find('#step-260a4b7a3d1f2c03509d865a7961a481e594142e').hasClass('remove')).toBe(true);
-        expect(element.find('#step-8113ae52f8f34d0cbb595c30d07ba4db80a1aec7').hasClass('remove')).toBe(true);
-        expect(element.find('#step-2f749665763cffe0382ab581ac1a7c4bffb5afbc').hasClass('remove')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(true);
     }));
 
     it('should remove highlight class on remove icon mouse out', inject(($timeout) => {
@@ -824,16 +851,17 @@ describe('Recipe directive', function () {
         $timeout.flush(1);
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();
 
-        expect(element.find('#step-260a4b7a3d1f2c03509d865a7961a481e594142e').hasClass('remove')).toBe(true);
-        expect(element.find('#step-8113ae52f8f34d0cbb595c30d07ba4db80a1aec7').hasClass('remove')).toBe(true);
-        expect(element.find('#step-2f749665763cffe0382ab581ac1a7c4bffb5afbc').hasClass('remove')).toBe(true);
+        //then
+        expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(true);
+        expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(true);
 
         //when
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseout();
 
         //then
-        expect(element.find('#step-260a4b7a3d1f2c03509d865a7961a481e594142e').hasClass('remove')).toBe(false);
-        expect(element.find('#step-8113ae52f8f34d0cbb595c30d07ba4db80a1aec7').hasClass('remove')).toBe(false);
-        expect(element.find('#step-2f749665763cffe0382ab581ac1a7c4bffb5afbc').hasClass('remove')).toBe(false);
+        expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(false);
+        expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(false);
+        expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(false);
     }));
 });

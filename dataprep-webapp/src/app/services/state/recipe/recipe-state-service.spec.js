@@ -38,6 +38,20 @@ describe('Recipe state service', () => {
         }));
     });
 
+    describe('current hovered step', () => {
+        it('should set the currently hovered step', inject((recipeState, RecipeStateService) => {
+            //given
+            const step = {};
+            recipeState.hoveredStep = null;
+
+            //when
+            RecipeStateService.setHoveredStep(step);
+
+            //then
+            expect(recipeState.hoveredStep).toBe(step);
+        }));
+    });
+
     describe('reset', () => {
         it('should reset recipe state', inject((recipeState, RecipeStateService) => {
             //given

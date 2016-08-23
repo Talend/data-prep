@@ -309,30 +309,6 @@ describe('Lookup controller', function () {
             expect(LookupService.loadFromAction).toHaveBeenCalledWith({ name: 'toto' });
         }));
 
-        it('should toogle dataset selection', inject(function () {
-            //given
-            var dataset = { enableToAddToLookup: true, addedToLookup: true };
-            var ctrl = createController();
-
-            //when
-            ctrl.toogleSelect(dataset);
-
-            //then
-            expect(dataset.addedToLookup).toBe(false);
-        }));
-
-        it('should not toogle dataset selection if dataset is disabled', inject(function () {
-            //given
-            var dataset = { enableToAddToLookup: false, addedToLookup: true };
-            var ctrl = createController();
-
-            //when
-            ctrl.toogleSelect(dataset);
-
-            //then
-            expect(dataset.addedToLookup).toBe(true);
-        }));
-
         it('should update sort by', inject(function ($timeout, StorageService, StateService) {
             //given
             var sortBy = { id: 'date', name: 'DATE_SORT', property: 'created' };

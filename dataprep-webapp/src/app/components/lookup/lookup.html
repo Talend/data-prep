@@ -96,21 +96,18 @@
                     </talend-button-switch>
                 </div>
                 <div translate-once="SORT_ORDER"></div>
+                <input type="search"
+                       class="dataset-search"
+                       id="lookup-dataset-search"
+                       translate-once-placeholder="FIND_DATASETS"
+                       ng-model="lookupCtrl.state.playground.lookup.searchDatasetString"
+                       ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                       talend-search-input>
             </div>
-
             <div class="inventory-list">
-                <div class="inventory-item-row"
-                     ng-repeat="dataset in lookupCtrl.state.playground.lookup.datasets track by $index">
-                    <input class="add-dataset-input" type="checkbox" ng-model="dataset.addedToLookup"
-                           ng-disabled="!dataset.enableToAddToLookup"/>
-                    <inventory-item
-                            ng-click="lookupCtrl.toogleSelect(dataset)"
-                            type="dataset"
-                            item="dataset"
-                            details="DATASET_DETAILS"
-                            toggle-favorite-enabled="true">
-                    </inventory-item>
-                </div>
+                <lookup-dataset-list datasets="lookupCtrl.state.playground.lookup.datasets"
+                                     search-text="lookupCtrl.state.playground.lookup.searchDatasetString">
+                </lookup-dataset-list>
             </div>
         </div>
         <div class="modal-buttons">

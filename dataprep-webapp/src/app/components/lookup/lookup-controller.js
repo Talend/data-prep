@@ -36,7 +36,7 @@ export default function LookupCtrl($timeout, state, StateService,
 
     /**
      * @ngdoc method
-     * @methodOf data-prep.services.lookup.service:LookupService
+     * @methodOf data-prep.lookup.controller:LookupCtrl
      * @name refreshLookupDatasetsSort
      * @description refresh the actual sort parameter
      * */
@@ -49,7 +49,7 @@ export default function LookupCtrl($timeout, state, StateService,
 
     /**
      * @ngdoc method
-     * @methodOf data-prep.services.lookup.service:LookupService
+     * @methodOf data-prep.lookup.controller:LookupCtrl
      * @name refreshLookupDatasetsOrder
      * @description refresh the actual order parameter
      */
@@ -168,18 +168,6 @@ export default function LookupCtrl($timeout, state, StateService,
         // refresh lookup panel by selecting the first action
         if (state.playground.lookup.addedActions.length > 0) {
             LookupService.loadFromAction(state.playground.lookup.addedActions[0]);
-        }
-    };
-
-    /**
-     * @ngdoc method
-     * @name toogleSelect
-     * @methodOf data-prep.lookup.controller:LookupCtrl
-     * @description Select/Deselect a dataset
-     */
-    vm.toogleSelect = function toogleSelect(dataset) {
-        if (dataset.enableToAddToLookup) {
-            dataset.addedToLookup = !dataset.addedToLookup;
         }
     };
 

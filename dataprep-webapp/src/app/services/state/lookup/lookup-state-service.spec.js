@@ -134,6 +134,7 @@ describe('Lookup state service', function () {
             lookupState.selectedColumn = '0001';
             lookupState.visibility = true;
             lookupState.step = {};
+            lookupState.searchDatasetString = 'charles';
 
             //when
             LookupStateService.reset();
@@ -147,6 +148,7 @@ describe('Lookup state service', function () {
             expect(lookupState.selectedColumn).toBe(null);
             expect(lookupState.visibility).toBe(false);
             expect(lookupState.step).toBe(null);
+            expect(lookupState.searchDatasetString).toBe('');
         }));
     });
 

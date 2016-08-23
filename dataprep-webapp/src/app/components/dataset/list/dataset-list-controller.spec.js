@@ -29,7 +29,7 @@ describe('Dataset list controller', () => {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(($q, $rootScope, $componentController, StateService, MessageService, DatasetService, PreparationService) => {
+    beforeEach(inject(($q, $rootScope, $componentController, StateService, MessageService, DatasetService) => {
         scope = $rootScope.$new();
 
         createController = () => $componentController('datasetList', { $scope: scope });

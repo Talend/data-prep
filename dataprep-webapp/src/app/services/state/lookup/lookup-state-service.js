@@ -37,6 +37,7 @@ export const lookupState = {
     order: orderList[1],
     sortList,
     orderList,
+    searchDatasetString: '',
 };
 
 /**
@@ -57,12 +58,12 @@ export function LookupStateService() {
         setActions,
         setAddedActions,
         setDatasets,
+
         setAddMode,
         setUpdateMode,
         setSort,
         setOrder,
     };
-
 
     /**
      * @ngdoc method
@@ -275,5 +276,6 @@ export function LookupStateService() {
         lookupState.selectedColumn = null;
         lookupState.visibility = false;
         lookupState.step = null;
+        lookupState.searchDatasetString = '';
     }
 }

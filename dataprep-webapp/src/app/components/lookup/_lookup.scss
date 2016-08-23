@@ -101,7 +101,7 @@
 
     .button-switch {
       color: $black;
-      padding: 0 5px 0 5px;
+      padding: 0 10px;
       font-weight: bold;
       cursor: pointer;
 
@@ -110,11 +110,39 @@
         text-decoration: underline;
       }
     }
+
+    .dataset-search {
+      width: 150px;
+      height: 25px;
+      font-size: 0.8em;
+      padding: 0 20px 0 5px;
+      margin: 5px 10px 5px 50px;
+      border-top: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-left: 1px solid transparent;
+      box-shadow: none;
+
+      &::-ms-clear {
+          display: none;
+        }
+    }
   }
 
   .inventory-list {
     height: 60vh;
+    position: relative;
 
+    .inventory-item-empty {
+      @include display(flex);
+      @include flex-row();
+      @include justify-content(center);
+
+      position: absolute;
+      top: 50%;
+      right: 0;
+      left: 0;
+      font-weight: bold;
+    }
     .inventory-item-row {
       @include display(flex);
       @include flex-direction(row);
@@ -127,7 +155,7 @@
         @include flex-basis(30px);
         @include flex-grow(0);
         @include flex-shrink(0);
-        outline:none;
+        outline: none;
       }
 
       inventory-item {

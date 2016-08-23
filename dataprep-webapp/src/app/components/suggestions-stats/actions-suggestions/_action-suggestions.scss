@@ -43,12 +43,16 @@
         width: 94%;
         height: 25px;
         font-size: 0.8em;
-        padding: 0 0 0 5px;
+        padding: 0 20px 0 5px;
         margin: 5px 10px 5px 10px;
         border-top: 1px solid transparent;
         border-right: 1px solid transparent;
         border-left: 1px solid transparent;
         box-shadow: none;
+
+        &::-ms-clear {
+          display: none;
+        }
       };
 
       .action-suggestion-tab-items {

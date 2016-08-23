@@ -33,6 +33,13 @@ export default function TalendSearchInput() {
             iElement.parent().append(clearButton);
             iElement.parent().append(searchIcon);
 
+            iElement.bind('keydown', function (e) {
+                // hide modal on 'ESC' keydown
+                if (e.keyCode === 27) {
+                    e.stopPropagation();
+                }
+            });
+
             scope.$watch(
                 function () {
                     return ngModel.$modelValue;

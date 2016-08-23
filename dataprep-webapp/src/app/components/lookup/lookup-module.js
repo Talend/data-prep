@@ -32,6 +32,7 @@ import LookupDatagridStyleService from './grid/services/lookup-datagrid-style-se
 import LookupDatagridTooltipService from './grid/services/lookup-datagrid-tooltip-service';
 import LookupDatagridCtrl from './grid/lookup-datagrid-controller';
 import LookupDatagrid from './grid/lookup-datagrid-directive';
+import LookupDatasetList from './dataset/list/lookup-dataset-list-component';
 
 const MODULE_NAME = 'data-prep.lookup';
 
@@ -71,6 +72,7 @@ angular.module(MODULE_NAME,
     .service('LookupDatagridStyleService', LookupDatagridStyleService)
     .service('LookupDatagridTooltipService', LookupDatagridTooltipService)
     .controller('LookupDatagridCtrl', LookupDatagridCtrl)
-    .directive('lookupDatagrid', LookupDatagrid);
+    .directive('lookupDatagrid', LookupDatagrid)
+    .component('lookupDatasetList', LookupDatasetList);
 
 export default MODULE_NAME;

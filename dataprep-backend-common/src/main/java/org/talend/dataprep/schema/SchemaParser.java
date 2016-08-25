@@ -25,12 +25,12 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 public interface SchemaParser {
 
     /**
-     * Returns true if this parser can  update the specified metadata and false otherwise.
+     * Returns true if this parser can update the specified metadata and false otherwise.
      *
      * @param metadata the metadata to update
      * @return true if this schema updater can be updated the given metadata
      */
-    default boolean accept(DataSetMetadata metadata){
+    default boolean accept(DataSetMetadata metadata) {
         return false;
     }
 
@@ -54,10 +54,10 @@ public interface SchemaParser {
     class Request {
 
         /** The data set content as input stream. */
-        InputStream content;
+        final InputStream content;
 
         /** The dataset metadata. */
-        DataSetMetadata metadata;
+        final DataSetMetadata metadata;
 
         /**
          * Constructor.

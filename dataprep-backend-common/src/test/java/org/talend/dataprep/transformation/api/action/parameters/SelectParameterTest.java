@@ -28,7 +28,7 @@ import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * Unit test for the SelectParameter bean. Mostly test the json serialization.
- * 
+ *
  * @see SelectParameter
  */
 public class SelectParameterTest extends ParameterBaseTest {
@@ -41,7 +41,7 @@ public class SelectParameterTest extends ParameterBaseTest {
                 .defaultValue("") //
                 .implicit(false) //
                 .canBeBlank(false) //
-                .item("first choice", "first value") //
+                .item("first value") //
                 .item("2") //
                 .item("your choice", new Parameter("limit", ParameterType.INTEGER, StringUtils.EMPTY, false, false)) //
                 .build();

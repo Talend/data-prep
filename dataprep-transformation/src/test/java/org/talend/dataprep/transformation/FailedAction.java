@@ -44,7 +44,7 @@ public class FailedAction extends AbstractActionMetadata implements ColumnAction
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 

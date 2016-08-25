@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 
 public class DataSetMetadataRepositoryTestUtils {
 

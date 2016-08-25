@@ -15,13 +15,12 @@ package org.talend.dataprep.parameters;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.i18n.MessagesBundle;
-import org.talend.dataprep.util.MessagesBundleContext;
+import org.talend.dataprep.i18n.ActionsBundle;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -52,10 +51,7 @@ public class Parameter implements Serializable {
 
     /** The configuration. */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, Object> configuration;
-
-    @JsonIgnore
-    private MessagesBundle messagesBundle;
+    private final Map<String, Object> configuration;
 
     /**
      * Minimal default constructor.
@@ -101,16 +97,11 @@ public class Parameter implements Serializable {
      */
     public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
             final boolean canBeBlank) {
-        this(name, type, defaultValue, implicit, canBeBlank, StringUtils.EMPTY, null);
+        this(name, type, defaultValue, implicit, canBeBlank, StringUtils.EMPTY);
     }
 
     public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
-                     final boolean canBeBlank, String placeHolder) {
-        this(name, type, defaultValue, implicit, canBeBlank, placeHolder, null);
-    }
-
-    public Parameter(final String name, final ParameterType type, final String defaultValue, final boolean implicit,
-                     final boolean canBeBlank, String placeHolder, MessagesBundle messagesBundle) {
+            final boolean canBeBlank, String placeHolder) {
         this.name = name;
         this.placeHolder = placeHolder;
         this.type = type.asString();
@@ -118,58 +109,36 @@ public class Parameter implements Serializable {
         this.implicit = implicit;
         this.canBeBlank = canBeBlank;
         this.configuration = new HashMap<>();
-        this.messagesBundle = messagesBundle;
     }
 
-    protected void addConfiguration(String name, Object configuration) {
+    void addConfiguration(String name, Object configuration) {
         this.configuration.put(name, configuration);
     }
 
-    /**
-     * the unique identifier of the parameter
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * the label of the parameter, translated in the user locale.
-     */
     public String getLabel() {
-        return getMessagesBundle().getString("parameter." + getName() + ".label"); //$NON-NLS-1$ //$NON-NLS-2$
+        return ActionsBundle.INSTANCE.parameterLabel(Locale.ENGLISH, getName());
     }
 
-    /**
-     * the description of the parameter, translated in the user locale.
-     */
     public String getDescription() {
-        return getMessagesBundle().getString("parameter." + getName() + ".desc"); //$NON-NLS-1$ //$NON-NLS-2$
+        return ActionsBundle.INSTANCE.parameterDescription(Locale.ENGLISH, getName());
     }
 
-    /**
-     * the type of the parameter
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * the parameter's default value
-     */
     public String getDefault() {
         return defaultValue;
     }
 
-    /**
-     * indicates if the parameter is implicit (not to ask to user directly)
-     */
     public boolean isImplicit() {
         return implicit;
     }
 
-    /**
-     * indicates if the parameter value can be blank
-     */
     public boolean isCanBeBlank() {
         return canBeBlank;
     }
@@ -178,18 +147,8 @@ public class Parameter implements Serializable {
         return placeHolder;
     }
 
-    /**
-     * @return the parameter configuration
-     */
     public Map<String, Object> getConfiguration() {
         return configuration;
     }
 
-    @JsonIgnore
-    protected MessagesBundle getMessagesBundle() {
-        if (this.messagesBundle == null) {
-            this.messagesBundle = MessagesBundleContext.get();
-        }
-        return this.messagesBundle;
-    }
 }

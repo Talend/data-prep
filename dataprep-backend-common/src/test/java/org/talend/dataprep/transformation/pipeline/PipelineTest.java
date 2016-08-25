@@ -13,7 +13,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.DisposableBean;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -348,11 +347,18 @@ public class PipelineTest {
         final TransformationContext transformationContext = new TransformationContext();
         final ActionContext actionContext = transformationContext.create((r, ac) -> r);
         final AtomicInteger wasDestroyed = new AtomicInteger(0);
-        actionContext.get("test1", p -> (DisposableBean) wasDestroyed::incrementAndGet);
-        actionContext.get("test2", p -> (DisposableBean) wasDestroyed::incrementAndGet);
+
+        Destroyable destroyable = new Destroyable() {
+            @Override
+            public void destroy() {
+                wasDestroyed.incrementAndGet();
+            }
+        };
+        actionContext.get("test1", p -> destroyable);
+        actionContext.get("test2", p -> destroyable);
         final Node node = NodeBuilder.source() //
                 .to(new BasicNode()) //
-                .to(new CleanUpNode(transformationContext))
+                .to(new CleanUpNode(transformationContext)) //
                 .to(output) //
                 .build();
 
@@ -380,6 +386,12 @@ public class PipelineTest {
         pipeline.receive(rows, metadatas);
 
         // then : should throw UnsupportedOperationException
+    }
+
+    // Equivalent for a DisposableBean (has a public destroy() method).
+    public interface Destroyable { //NOSONAR
+
+        void destroy();
     }
 
     private static class TestOutput extends BasicNode {

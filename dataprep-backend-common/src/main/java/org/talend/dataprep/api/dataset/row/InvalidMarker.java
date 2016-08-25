@@ -10,6 +10,7 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 public class InvalidMarker implements Function<DataSetRow, DataSetRow> {
+
     /**
      * The invalid values number from the beginning of the records
      */

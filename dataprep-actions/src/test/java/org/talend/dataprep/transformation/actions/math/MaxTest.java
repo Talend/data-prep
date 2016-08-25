@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -39,8 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class MaxTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private Max action;
+    private Max action = new Max();
 
     /** The action parameters. */
     private Map<String, String> parameters;

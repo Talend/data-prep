@@ -17,13 +17,12 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -32,53 +31,41 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  *
  * @see Negate
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Negate.NEGATE_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Negate.NEGATE_ACTION_NAME)
 public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     /**
      * Action name.
      */
-    public static final String NEGATE_ACTION_NAME = "negate"; //$NON-NLS-1$
+    static final String NEGATE_ACTION_NAME = "negate";
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return NEGATE_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.BOOLEAN.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.BOOLEAN.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String value = row.get(columnId);
         if (isBoolean(value)) {
             final Boolean boolValue = Boolean.valueOf(value);
-            row.set(columnId, WordUtils.capitalizeFully("" + !boolValue)); //$NON-NLS-1$
+            row.set(columnId, WordUtils.capitalizeFully("" + !boolValue));
         }
     }
 
     private boolean isBoolean(final String value) {
-        return value != null && ("true".equalsIgnoreCase(value.trim()) || "false".equalsIgnoreCase(value.trim())); //$NON-NLS-1$ //$NON-NLS-2$
+        return value != null && ("true".equalsIgnoreCase(value.trim()) || "false".equalsIgnoreCase(value.trim()));
     }
 
     @Override

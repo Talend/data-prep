@@ -2,7 +2,9 @@ package org.talend.dataprep.transformation.pipeline;
 
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
-import org.talend.dataprep.transformation.pipeline.node.*;
+import org.talend.dataprep.transformation.pipeline.node.ActionNode;
+import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 
 public class PipelineConsoleDump extends Visitor {
 

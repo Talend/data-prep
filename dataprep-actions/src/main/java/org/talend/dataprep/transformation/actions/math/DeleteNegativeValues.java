@@ -17,20 +17,19 @@ import static org.talend.dataprep.api.type.Type.NUMERIC;
 
 import java.math.BigDecimal;
 
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.delete.AbstractDelete;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Delete row on a given value.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteNegativeValues.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteNegativeValues.ACTION_NAME)
 public class DeleteNegativeValues extends AbstractDelete {
 
     /**
@@ -38,19 +37,13 @@ public class DeleteNegativeValues extends AbstractDelete {
      */
     public static final String ACTION_NAME = "delete_negative_values"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return NUMERIC.isAssignableFrom(Type.get(column.getType()));
     }
 

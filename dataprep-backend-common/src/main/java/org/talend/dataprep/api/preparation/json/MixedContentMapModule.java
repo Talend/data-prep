@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.preparation.json;
 
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -32,7 +31,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
  * 
  * @see MixedContentMap
  */
-@Component
 public class MixedContentMapModule extends SimpleModule {
 
     /**
@@ -53,7 +51,8 @@ public class MixedContentMapModule extends SimpleModule {
          * @see JsonSerializer#serialize(Object, JsonGenerator, SerializerProvider)
          */
         @Override
-        public void serialize(MixedContentMap map, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        public void serialize(MixedContentMap map, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+                throws IOException {
             jsonGenerator.writeStartObject();
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 jsonGenerator.writeFieldName(entry.getKey());

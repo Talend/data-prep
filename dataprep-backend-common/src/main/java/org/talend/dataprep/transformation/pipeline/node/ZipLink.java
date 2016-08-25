@@ -1,6 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
-
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -16,33 +15,33 @@ import org.talend.dataprep.transformation.pipeline.link.BasicLink;
  * It waits to receive all the inputs entry, and emit an array of all the inputs to the output
  */
 public class ZipLink extends BasicLink {
+
     private final int numberOfSource;
+
     private final Stack[] stacks;
+
     private final List<Signal> signalStack;
 
-    public ZipLink(final Node[] sources, final Node target) {
+    private ZipLink(final Node[] sources, final Node target) {
         super(target);
 
         this.numberOfSource = sources.length;
         this.signalStack = new ArrayList<>(this.numberOfSource);
-        this.stacks = IntStream.range(0, this.numberOfSource)
-                .mapToObj(n -> new Stack())
-                .toArray(Stack[]::new);
+        this.stacks = IntStream.range(0, this.numberOfSource).mapToObj(n -> new Stack()).toArray(Stack[]::new);
 
         // attach to each source a zipper that will notify to this ZipNode which source and values it receive
-        IntStream.range(0, this.numberOfSource)
-                .forEach(index -> {
-                    final Node source = sources[index];
-                    final Link zipper = new Zipper(this, target, index);
-                    source.setLink(zipper);
-                });
+        IntStream.range(0, this.numberOfSource).forEach(index -> {
+            final Node source = sources[index];
+            final Link zipper = new Zipper(this, target, index);
+            source.setLink(zipper);
+        });
     }
 
     @Override
     public void signal(final Signal signal) {
         signalStack.add(signal);
 
-        if(signalStack.size() == numberOfSource) {
+        if (signalStack.size() == numberOfSource) {
             super.signal(signal);
             signalStack.clear();
         }
@@ -51,7 +50,7 @@ public class ZipLink extends BasicLink {
     private void emit(final DataSetRow row, final RowMetadata metadata, final int index) {
         stacks[index].push(row.clone(), metadata);
 
-        if(allStacksHaveNext()) {
+        if (allStacksHaveNext()) {
             final DataSetRow[] rows = popAllStacksNextRow();
             final RowMetadata[] metadatas = popAllStacksNextMetadata();
             super.emit(rows, metadatas);
@@ -63,15 +62,11 @@ public class ZipLink extends BasicLink {
     }
 
     private RowMetadata[] popAllStacksNextMetadata() {
-        return Arrays.stream(stacks)
-                .map(Stack::popMetadata)
-                .toArray(RowMetadata[]::new);
+        return Arrays.stream(stacks).map(Stack::popMetadata).toArray(RowMetadata[]::new);
     }
 
     private DataSetRow[] popAllStacksNextRow() {
-        return Arrays.stream(stacks)
-                .map(Stack::popRow)
-                .toArray(DataSetRow[]::new);
+        return Arrays.stream(stacks).map(Stack::popRow).toArray(DataSetRow[]::new);
     }
 
     private boolean allStacksHaveNext() {
@@ -79,8 +74,10 @@ public class ZipLink extends BasicLink {
     }
 
     public class Zipper extends BasicLink {
-        private ZipLink proxy;
-        private int index;
+
+        private final ZipLink proxy;
+
+        private final int index;
 
         Zipper(final ZipLink proxy, final Node target, final int index) {
             super(target);
@@ -100,7 +97,9 @@ public class ZipLink extends BasicLink {
     }
 
     private class Stack {
+
         private final Deque<DataSetRow> rowStack = new ArrayDeque<>();
+
         private final Deque<RowMetadata> metadataStack = new ArrayDeque<>();
 
         public boolean hasNext() {

@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -42,9 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  */
 public class DeleteTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private Delete action;
-
+    private Delete action = new Delete();
 
     @Test
     public void should_be_in_data_cleansing_category() {
@@ -68,7 +65,7 @@ public class DeleteTest extends AbstractMetadataBaseTest {
     public void should_adapt_to_line_scope() {
 
         //when
-        final ActionMetadata adaptedAction = action.adapt(LINE);
+        final ActionDefinition adaptedAction = action.adapt(LINE);
 
         //then
         assertThat(adaptedAction.getDescription(), is("Delete this row"));
@@ -80,7 +77,7 @@ public class DeleteTest extends AbstractMetadataBaseTest {
     @Test
     public void should_adapt_to_column_scope() {
         //when
-        final ActionMetadata adaptedAction = action.adapt(COLUMN);
+        final ActionDefinition adaptedAction = action.adapt(COLUMN);
 
         //then
         assertThat(adaptedAction.getDescription(), is("Delete this column"));

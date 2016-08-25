@@ -1,0 +1,44 @@
+{
+  "mimeType": "text/toto",
+  "extension": ".toto",
+  "id": "TOTO",
+  "needParameters": "true",
+  "defaultExport": "false",
+  "enabled": true,
+  "disableReason": "",
+  "title": "export.TOTO.title",
+  "parameters": [
+    {
+      "name": "Name",
+      "type": "select",
+      "implicit": false,
+      "canBeBlank": false,
+      "placeHolder": "",
+      "configuration": {
+        "values": [
+          {
+            "value": "|",
+            "label": "SEPARATOR_PIPE"
+          },
+          {
+            "value": "\t",
+            "label": "SEPARATOR_TAB"
+          },
+          {
+            "value": ":",
+            "label": "SEPARATOR_COLUMN"
+          },
+          {
+            "value": ".",
+            "label": "SEPARATOR_DOT"
+          }
+        ],
+        "multiple": false
+      },
+      "radio": false,
+      "description": "totoSeparator",
+      "label": "totoSeparator",
+      "default": "|"
+    }
+  ]
+}

@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -42,8 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private CreateNewColumn action;
+    private CreateNewColumn action = new CreateNewColumn();
 
     private Map<String, String> parameters;
 
@@ -66,7 +64,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testAdapt() throws Exception {
-        assertThat(action.adapt((ColumnMetadata) null), is(action));
+        assertThat(action.adapt(((ColumnMetadata) null)), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
         assertThat(action.adapt(column), is(action));
     }
@@ -221,7 +219,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.ANY)));
+        assertTrue(action.acceptField(getColumn(Type.ANY)));
     }
 
 }

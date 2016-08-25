@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -41,8 +40,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class DeleteOnValueTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private DeleteOnValue action;
+    private DeleteOnValue action = new DeleteOnValue();
 
     private Map<String, String> parameters;
 
@@ -247,17 +245,17 @@ public class DeleteOnValueTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
-        assertTrue(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(action.acceptColumn(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
-        assertFalse(action.acceptColumn(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
-    
+
 }

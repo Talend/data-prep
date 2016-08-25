@@ -1,10 +1,10 @@
 package org.talend.dataprep.transformation.pipeline.link;
 
+import java.util.Arrays;
+
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.*;
-
-import java.util.Arrays;
 
 public class CloneLink implements Link, RuntimeLink {
 
@@ -31,9 +31,7 @@ public class CloneLink implements Link, RuntimeLink {
         initClonedMetadata(metadatas);
 
         for (int i = 0; i < nodes.length; ++i) {
-            final DataSetRow[] clonedRows = Arrays.stream(rows)
-                    .map(DataSetRow::clone)
-                    .toArray(DataSetRow[]::new);
+            final DataSetRow[] clonedRows = Arrays.stream(rows).map(DataSetRow::clone).toArray(DataSetRow[]::new);
             nodes[i].exec().receive(clonedRows, multiClonedMetadata[i]);
         }
     }
@@ -72,10 +70,7 @@ public class CloneLink implements Link, RuntimeLink {
             return;
         }
 
-        clonedMetadata = Arrays
-                .stream(nodes)
-                .map((node) -> metadata.clone())
-                .toArray(RowMetadata[]::new);
+        clonedMetadata = Arrays.stream(nodes).map((node) -> metadata.clone()).toArray(RowMetadata[]::new);
     }
 
     /**
@@ -91,11 +86,8 @@ public class CloneLink implements Link, RuntimeLink {
             return;
         }
 
-        multiClonedMetadata = Arrays
-                .stream(nodes)
-                .map((node) -> Arrays.stream(multiMetadata)
-                        .map(RowMetadata::clone)
-                        .toArray(RowMetadata[]::new))
+        multiClonedMetadata = Arrays.stream(nodes)
+                .map((node) -> Arrays.stream(multiMetadata).map(RowMetadata::clone).toArray(RowMetadata[]::new))
                 .toArray(RowMetadata[][]::new);
     }
 }

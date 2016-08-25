@@ -16,6 +16,8 @@ package org.talend.dataprep.transformation.actions.date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.setStatistics;
 
@@ -27,7 +29,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -42,8 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ExtractDateTokensTest extends BaseDateTests {
 
     /** The action to test. */
-    @Autowired
-    private ExtractDateTokens action;
+    private ExtractDateTokens action = new ExtractDateTokens();
 
     private Map<String, String> parameters;
 
@@ -68,13 +68,11 @@ public class ExtractDateTokensTest extends BaseDateTests {
     @Test
     public void should_process_row() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "toto");
-        values.put("0001", "04/25/1999");
-        values.put("0002", "tata");
-
-        final DataSetRow row = new DataSetRow(values);
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("04/25/1999").type(Type.DATE).statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING)) //
+                .build();
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
@@ -95,13 +93,11 @@ public class ExtractDateTokensTest extends BaseDateTests {
     @Test
     public void test_TDP_2480() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "toto");
-        values.put("0001", "Apr-25-1999");
-        values.put("0002", "tata");
-
-        final DataSetRow row = new DataSetRow(values);
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("Apr-25-1999").type(Type.DATE).statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING)) //
+                .build();
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
@@ -122,12 +118,11 @@ public class ExtractDateTokensTest extends BaseDateTests {
     @Test
     public void should_process_row_with_time() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "toto");
-        values.put("0001", "04/25/1999 15:45");
-        values.put("0002", "tata");
-        final DataSetRow row = new DataSetRow(values);
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("04/25/1999 15:45").type(Type.DATE).statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
+                .with(value("tata").type(Type.STRING)) //
+                .build();
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
@@ -151,12 +146,11 @@ public class ExtractDateTokensTest extends BaseDateTests {
     @Test
     public void should_process_row_wrong_pattern() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "toto");
-        values.put("0001", "04-25-09");
-        values.put("0002", "tata");
-        final DataSetRow row = new DataSetRow(values);
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("04-25-09").type(Type.DATE).statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING)) //
+                .build();
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "toto");
@@ -212,7 +206,7 @@ public class ExtractDateTokensTest extends BaseDateTests {
         input.add(createMetadata("0002"));
         final RowMetadata rowMetadata = new RowMetadata(input);
         ObjectMapper mapper = new ObjectMapper();
-        final Statistics statistics = mapper.readerFor(Statistics.class).readValue(getDateTestJsonAsStream("statistics_yyyy-MM-dd.json"));
+        final Statistics statistics = mapper.reader(Statistics.class).readValue(getDateTestJsonAsStream("statistics_yyyy-MM-dd.json"));
         input.get(1).setStatistics(statistics);
 
         // when
@@ -237,14 +231,14 @@ public class ExtractDateTokensTest extends BaseDateTests {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 }

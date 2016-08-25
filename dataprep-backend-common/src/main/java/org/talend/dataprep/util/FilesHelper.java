@@ -17,6 +17,7 @@ public class FilesHelper {
 
     /**
      * Similarly to {@link #delete(File)} but will catch all exceptions related to the delete operation.
+     * 
      * @param file The file to be deleted, <code>null</code> returns immediately.
      */
     public static void deleteQuietly(File file) {

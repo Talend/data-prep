@@ -22,7 +22,6 @@ import java.util.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -32,8 +31,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class TextClusteringTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private TextClustering textClustering;
+    private TextClustering textClustering = new TextClustering();
 
     @Test
     public void create_should_build_textclustering_consumer() {
@@ -104,16 +102,16 @@ public class TextClusteringTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(textClustering.acceptColumn(getColumn(Type.STRING)));
+        assertTrue(textClustering.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(textClustering.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(textClustering.acceptColumn(getColumn(Type.DOUBLE)));
-        assertFalse(textClustering.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(textClustering.acceptColumn(getColumn(Type.INTEGER)));
-        assertFalse(textClustering.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(textClustering.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(textClustering.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(textClustering.acceptField(getColumn(Type.DOUBLE)));
+        assertFalse(textClustering.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(textClustering.acceptField(getColumn(Type.INTEGER)));
+        assertFalse(textClustering.acceptField(getColumn(Type.DATE)));
+        assertFalse(textClustering.acceptField(getColumn(Type.BOOLEAN)));
     }
 }

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset;
 
@@ -20,15 +20,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
 import org.talend.dataprep.api.dataset.row.Flag;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Models metadata information for a row of a data set.
@@ -207,7 +211,7 @@ public class RowMetadata implements Serializable {
     /**
      * Change detection between column and its reference (before the transformation)
      *
-     * @param column    The column metadata
+     * @param column The column metadata
      * @param reference The column reference
      * @return True if the name, domain or type has changed
      */
@@ -221,7 +225,7 @@ public class RowMetadata implements Serializable {
      * Return the column position within the given columns.
      *
      * @param columns the list of columns to search the column from.
-     * @param colId   the wanted column id.
+     * @param colId the wanted column id.
      * @return the column position within the given columns.
      */
     private int findColumnPosition(List<ColumnMetadata> columns, String colId) {
@@ -242,7 +246,7 @@ public class RowMetadata implements Serializable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !getClass().isInstance(o))
             return false;
         RowMetadata that = (RowMetadata) o;
         return Objects.equals(columns, that.columns);
@@ -253,13 +257,27 @@ public class RowMetadata implements Serializable {
         return Objects.hash(columns);
     }
 
+    public void update(@Nonnull String columnId, @Nonnull ColumnMetadata column) {
+        if (getById(columnId) == null) {
+            return;
+        }
+        int updatePos = 0;
+        for (ColumnMetadata columnMetadata : columns) {
+            if (columnId.equals(columnMetadata.getId())) {
+                break;
+            }
+            updatePos++;
+        }
+        columns.set(updatePos, column);
+    }
+
     /**
      * Insert a new column in this metadata right after the existing <code>columnId</code>. If no column with
      * <code>columnId</code> is to be found, append new column at the end of this row's columns.
      *
      * @param columnId A non null column id. Empty string is allowed, in this case, column will be appended at the end
-     *                 of existing columns.
-     * @param column   A non null column to insert in this row's metadata.
+     * of existing columns.
+     * @param column A non null column to insert in this row's metadata.
      * @return The column id of the newly inserted column.
      */
     public String insertAfter(@Nonnull String columnId, @Nonnull ColumnMetadata column) {
@@ -282,5 +300,9 @@ public class RowMetadata implements Serializable {
         final RowMetadata clone = new RowMetadata(new ArrayList<>(copyColumns));
         clone.nextId = nextId;
         return clone;
+    }
+
+    public Schema toSchema() {
+        return RowMetadataUtils.toSchema(this);
     }
 }

@@ -143,7 +143,7 @@ public class XlsWriter implements TransformerWriter {
     public void write(DataSetRow row) throws IOException {
         LOGGER.trace("Buffering DataSetRow (metadata not ready): {}", row);
         // values need to be written in the same order as the columns
-        recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID));
+        recordsWriter.writeNext(row.toArray(DataSetRow.SKIP_TDP_ID));
     }
 
     @Override

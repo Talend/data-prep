@@ -12,20 +12,20 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.talend.dataprep.transformation.actions.math.SquareRoot.SQRT_NAME;
+
 import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import static org.talend.dataprep.transformation.actions.math.SquareRoot.SQRT_NAME;
 
 /**
  * Create a new column with square root value
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + SQRT_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + SQRT_NAME)
 public class SquareRoot extends AbstractMathNoParameterAction {
 
     protected static final String SQRT_NAME = "square_root_numbers";

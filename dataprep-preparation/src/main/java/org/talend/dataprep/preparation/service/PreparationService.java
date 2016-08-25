@@ -13,6 +13,17 @@
 
 package org.talend.dataprep.preparation.service;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
+import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -21,6 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
@@ -45,26 +58,18 @@ import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
-import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
-
 @Component
 public class PreparationService {
 
     private static final Logger log = LoggerFactory.getLogger(PreparationService.class);
+
+    private final ActionFactory factory = new ActionFactory();
 
     /**
      * Where preparation are stored.
@@ -564,12 +569,29 @@ public class PreparationService {
         log.debug("Adding action to preparation...");
         Preparation preparation = get(preparationId).getPreparation();
         List<Action> actions = getVersionedAction(preparationId, "head");
-        step.setActions(actionParser.buildActions(step.getActions()));
+        step.setActions(buildActions(step.getActions()));
         StepDiff actionCreatedColumns = stepDiffDelegate.getActionCreatedColumns(preparation.getRowMetadata(), actions, step.getActions());
         step.setDiff(actionCreatedColumns);
         appendSteps(preparationId, Collections.singletonList(step));
         log.debug("Added action to preparation.");
     }
+
+    /**
+     * Given a list of actions recreate but with the Spring Context {@link ActionDefinition}. It is mandatory to use any
+     * action parsed from JSON.
+     */
+    private List<Action> buildActions(List<Action> allActions) {
+        final List<Action> builtActions = new ArrayList<>(allActions.size() + 1);
+        for (Action parsedAction : allActions) {
+            if (parsedAction != null && parsedAction.getName() != null) {
+                String actionNameLowerCase = parsedAction.getName().toLowerCase();
+                final ActionDefinition metadata = actionRegistry.get(actionNameLowerCase);
+                builtActions.add(factory.create(metadata, parsedAction.getParameters()));
+            }
+        }
+        return builtActions;
+    }
+
 
     /**
      * Append step(s) in a preparation.

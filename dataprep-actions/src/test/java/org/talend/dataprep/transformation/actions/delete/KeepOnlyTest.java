@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -35,8 +34,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class KeepOnlyTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private KeepOnly action;
+    private KeepOnly action = new KeepOnly();
 
     private Map<String, String> parameters;
 
@@ -49,7 +47,7 @@ public class KeepOnlyTest extends AbstractMetadataBaseTest {
     public void should_accept_column() {
         final List<Type> allTypes = Type.ANY.list();
         for (Type type : allTypes) {
-            assertTrue(action.acceptColumn(getColumn(type)));
+            assertTrue(action.acceptField(getColumn(type)));
         }
     }
 

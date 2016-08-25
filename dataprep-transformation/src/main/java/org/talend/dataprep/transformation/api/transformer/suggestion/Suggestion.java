@@ -13,24 +13,24 @@
 
 package org.talend.dataprep.transformation.api.transformer.suggestion;
 
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
+import org.talend.dataprep.api.action.ActionDefinition;
 
 public class Suggestion {
 
-    private ActionMetadata action;
+    private ActionDefinition action;
 
     private int score;
 
-    public Suggestion(ActionMetadata action, int score) {
+    public Suggestion(ActionDefinition action, int score) {
         this.action = action;
         this.score = score;
     }
 
-    public ActionMetadata getAction() {
+    public ActionDefinition getAction() {
         return action;
     }
 
-    public void setAction(ActionMetadata action) {
+    public void setAction(ActionDefinition action) {
         this.action = action;
     }
 

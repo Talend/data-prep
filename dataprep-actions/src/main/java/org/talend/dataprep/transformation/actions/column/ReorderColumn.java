@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.VALUES_COLUMN;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
 
 import java.util.*;
 
@@ -21,25 +21,28 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.Quality;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.*;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.DataSetAction;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * This action reorder columns. The column will be move to the selected column. All other columns will be moved as well.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReorderColumn.REORDER_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReorderColumn.REORDER_ACTION_NAME)
 public class ReorderColumn extends AbstractActionMetadata implements DataSetAction {
 
     /**
@@ -49,25 +52,16 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReorderColumn.class);
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return REORDER_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.COLUMNS.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = super.getParameters();
@@ -81,11 +75,8 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
         return Collections.emptyList();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         // accept all types of columns
         return true;
     }
@@ -138,7 +129,7 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
             }
         } catch (Exception e) {
             LOGGER.debug("cannot swap columns: {}", e.getMessage());
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+            throw new TalendRuntimeException(ActionErrorCodes.UNEXPECTED_EXCEPTION,
                     ExceptionContext.build().put("message", e.getMessage()));
         }
     }

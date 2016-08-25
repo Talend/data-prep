@@ -12,20 +12,20 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.talend.dataprep.transformation.actions.math.Pow.POW_NAME;
+
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.util.FastMath;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-
-import static org.talend.dataprep.transformation.actions.math.Pow.POW_NAME;
 
 /**
  * Calculate Pow with a constant or an other column
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + POW_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + POW_NAME)
 public class Pow extends AbstractMathOneParameterAction {
 
     protected static final String POW_NAME = "pow_numbers";

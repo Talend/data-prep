@@ -33,7 +33,7 @@ public interface Detector {
      * @param metadata the specified TIKA {@link Metadata}
      * @param inputStream the specified input stream
      * @return either the detected format or null
-     * @throws IOException
+     * @throws IOException In case of input stream related errors.
      */
     Format detect(Metadata metadata, TikaInputStream inputStream) throws IOException;
 
@@ -44,7 +44,7 @@ public interface Detector {
      * 
      * @param inputStream the specified input stream
      * @return either null or the detected format
-     * @throws IOException
+     * @throws IOException In case of input stream related errors.
      */
     default Format detect(InputStream inputStream) throws IOException {
         if (inputStream == null) {

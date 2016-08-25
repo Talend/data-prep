@@ -14,8 +14,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.TEXAS.desc",
-            "label": "parameter.TEXAS.label",
+            "description": "TEXAS",
+            "label": "TEXAS",
             "default": null
           },
           {
@@ -24,8 +24,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.TIXASS.desc",
-            "label": "parameter.TIXASS.label",
+            "description": "TIXASS",
+            "label": "TIXASS",
             "default": null
           }
         ],
@@ -35,9 +35,9 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "parameter.replaceValue.desc",
-          "label": "parameter.replaceValue.label",
-          "default": "TIXASS"
+          "default": "TIXASS",
+          "description": "Replace value",
+          "label": "Replace value"
         }
       },
       {
@@ -48,8 +48,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.MASSACHUSSETTS.desc",
-            "label": "parameter.MASSACHUSSETTS.label",
+            "description": "MASSACHUSSETTS",
+            "label": "MASSACHUSSETTS",
             "default": null
           },
           {
@@ -58,8 +58,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.MASACHUSSETS.desc",
-            "label": "parameter.MASACHUSSETS.label",
+            "description": "MASACHUSSETS",
+            "label": "MASACHUSSETS",
             "default": null
           },
           {
@@ -68,8 +68,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.MASSACHUSETTS.desc",
-            "label": "parameter.MASSACHUSETTS.label",
+            "description": "MASSACHUSETTS",
+            "label": "MASSACHUSETTS",
             "default": null
           },
           {
@@ -78,8 +78,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.MASSACHUSETS.desc",
-            "label": "parameter.MASSACHUSETS.label",
+            "description": "MASSACHUSETS",
+            "label": "MASSACHUSETS",
             "default": null
           },
           {
@@ -88,8 +88,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.MASACHUSETTS.desc",
-            "label": "parameter.MASACHUSETTS.label",
+            "description": "MASACHUSETTS",
+            "label": "MASACHUSETTS",
             "default": null
           }
         ],
@@ -99,9 +99,9 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "parameter.replaceValue.desc",
-          "label": "parameter.replaceValue.label",
-          "default": "MASACHUSETTS"
+          "default": "MASACHUSETTS",
+          "description": "Replace value",
+          "label": "Replace value"
         }
       }
     ]

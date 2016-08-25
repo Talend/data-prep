@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset;
 
@@ -18,8 +18,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.api.share.SharedResource;
 import org.talend.dataprep.schema.Schema;
@@ -37,8 +35,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
  * <li>Metadata information: see {@link #getRowMetadata()}</li>
  * <li>Current progress on content processing:: see {@link #getLifecycle()}</li>
  * </ul>
- * 
- * @see DataSetMetadataBuilder
+ *
  */
 public class DataSetMetadata implements Serializable, SharedResource {
 
@@ -46,13 +43,12 @@ public class DataSetMetadata implements Serializable, SharedResource {
     private static final long serialVersionUID = 1L;
 
     /** The dataset id. */
-    @Id
     private String id;
 
     /** Row description. */
     @JsonUnwrapped
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @JsonProperty(value = "columns", required = false)
+    @JsonProperty(value = "columns")
     private RowMetadata rowMetadata;
 
     /** Dataset life cycle status. */
@@ -123,19 +119,19 @@ public class DataSetMetadata implements Serializable, SharedResource {
     private String encoding = "UTF-8";
 
     /** True if this dataset metadata is shared by another user. */
-    @Transient // no saved in the database but computed when needed
+    // no saved in the database but computed when needed
     private boolean sharedDataSet = false;
 
     /** True if this dataset metadata is shared by current user. */
-    @Transient // no saved in the database but computed when needed
+    // no saved in the database but computed when needed
     private boolean sharedByMe = false;
 
     /** This dataset metadata owner. */
-    @Transient // no saved in the database but computed when needed
+    // no saved in the database but computed when needed
     private Owner owner;
 
     /** What role has the current user on this folder. */
-    @Transient // no saved in the database but computed when needed
+    // no saved in the database but computed when needed
     private Set<String> roles = new HashSet<>();
 
     /** A arbitrary tag for the data set (used by studio on creation for a visual distinction). */
@@ -150,7 +146,7 @@ public class DataSetMetadata implements Serializable, SharedResource {
 
     /**
      * Protected constructor to make user users use the DataSetMetadataBuilder.
-     * 
+     *
      * @param id dataset id.
      * @param name dataset name.
      * @param author dataset author.
@@ -158,8 +154,8 @@ public class DataSetMetadata implements Serializable, SharedResource {
      * @param rowMetadata row metadata.
      * @param appVersion the application version.
      */
-    protected DataSetMetadata(String id, String name, String author, long creationDate, long lastModificationDate, RowMetadata rowMetadata,
-            String appVersion) {
+    public DataSetMetadata(String id, String name, String author, long creationDate, long lastModificationDate,
+            RowMetadata rowMetadata, String appVersion) {
         this.id = id;
         this.name = name;
         this.author = author;
@@ -322,7 +318,7 @@ public class DataSetMetadata implements Serializable, SharedResource {
 
     /**
      * Getter for favorite.
-     * 
+     *
      * @return the favorite
      */
     public boolean isFavorite() {
@@ -441,6 +437,7 @@ public class DataSetMetadata implements Serializable, SharedResource {
     /**
      * Set a "tag" value on the data set metadata. This tag is for example used to distinguish data sets created by a job
      * from one created through UI.
+     * 
      * @param tag The tag value for the data set metadata.
      */
     public void setTag(String tag) {
@@ -458,9 +455,7 @@ public class DataSetMetadata implements Serializable, SharedResource {
         if (other == null) {
             return false;
         }
-        boolean result = rowMetadata != null ? rowMetadata.compatible(other.getRowMetadata())
-                : rowMetadata == other.getRowMetadata();
-        return result;
+        return rowMetadata != null ? rowMetadata.compatible(other.getRowMetadata()) : rowMetadata == other.getRowMetadata();
     }
 
     /**
@@ -524,7 +519,7 @@ public class DataSetMetadata implements Serializable, SharedResource {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id, rowMetadata, lifecycle, content, governance, location, name, author, creationDate,lastModificationDate, sheetName,
-                draft, schemaParserResult, favorite, sharedDataSet, owner, roles, appVersion);
+        return Objects.hash(id, rowMetadata, lifecycle, content, governance, location, name, author, creationDate,
+                lastModificationDate, sheetName, draft, schemaParserResult, favorite, sharedDataSet, owner, roles, appVersion);
     }
 }

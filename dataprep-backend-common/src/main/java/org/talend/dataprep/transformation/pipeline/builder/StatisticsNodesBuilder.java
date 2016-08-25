@@ -1,5 +1,9 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -8,11 +12,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
@@ -22,23 +26,25 @@ import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.NEED_STATISTICS_INVALID;
-import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.NEED_STATISTICS_PATTERN;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-
 public class StatisticsNodesBuilder {
 
     private static final Predicate<ColumnMetadata> ALL_COLUMNS = c -> true;
 
     private AnalyzerService analyzerService;
+
     private ActionRegistry actionRegistry;
+
     private StatisticsAdapter statisticsAdapter;
+
     private List<Action> actions;
+
     private List<ColumnMetadata> columns;
+
     private boolean allowSchemaAnalysis = true;
 
     private ActionsProfile actionsProfile;
-    private Map<Action, ActionMetadata> actionToMetadata;
+
+    private Map<Action, ActionDefinition> actionToMetadata;
 
     private StatisticsNodesBuilder() {
     }
@@ -78,8 +84,8 @@ public class StatisticsNodesBuilder {
     }
 
     public Node buildPreStatistics() {
-        //TODO remove this and fix tests
-        if(analyzerService == null) {
+        // TODO remove this and fix tests
+        if (analyzerService == null) {
             return new BasicNode();
         }
 
@@ -88,25 +94,21 @@ public class StatisticsNodesBuilder {
     }
 
     public Node buildPostStatistics() {
-        //TODO remove this and fix tests
-        if(analyzerService == null) {
+        // TODO remove this and fix tests
+        if (analyzerService == null) {
             return new BasicNode();
         }
 
         performActionsProfiling();
         if (actionsProfile.needFullAnalysis()) {
-            return NodeBuilder
-                    .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+            return NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
                     .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .to(getFullStatisticsNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .build();
+                    .to(getFullStatisticsNode(actionsProfile.getFilterForInvalidAnalysis())).build();
         }
 
         if (actionsProfile.needOnlyInvalidAnalysis()) {
-            return NodeBuilder
-                    .from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis()))
-                    .build();
+            return NodeBuilder.from(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
+                    .to(getQualityStatisticsNode(actionsProfile.getFilterForInvalidAnalysis())).build();
         }
         return new BasicNode();
     }
@@ -126,10 +128,10 @@ public class StatisticsNodesBuilder {
             performActionsProfiling();
 
             if (needIntermediateStatistics(nextAction)) {
-                final Set<ActionMetadata.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+                final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
                     node = NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
-                } else if (behavior.contains(ActionMetadata.Behavior.NEED_STATISTICS_INVALID)) {
+                } else if (behavior.contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID)) {
                     node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
                             .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
                             .build();
@@ -141,7 +143,7 @@ public class StatisticsNodesBuilder {
 
     private boolean needIntermediateStatistics(final Action nextAction) {
         // next action indicates that it need fresh statistics
-        final Set<ActionMetadata.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+        final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
         if (behavior.contains(NEED_STATISTICS_PATTERN) || behavior.contains(NEED_STATISTICS_INVALID)) {
             return true;
         }
@@ -197,9 +199,8 @@ public class StatisticsNodesBuilder {
     }
 
     private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
-        return allowSchemaAnalysis ?
-                new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis) :
-                new BasicNode();
+        return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis)
+                : new BasicNode();
     }
 
     private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter) {

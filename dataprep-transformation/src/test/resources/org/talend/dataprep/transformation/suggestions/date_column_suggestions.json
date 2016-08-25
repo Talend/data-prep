@@ -14,6 +14,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -23,6 +24,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -32,6 +34,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -41,11 +44,13 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
       }
-    ]
+    ],
+    "docUrl": ""
   },
   {
     "actionScope": [
@@ -62,6 +67,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -71,6 +77,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -80,6 +87,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -89,11 +97,13 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
       }
-    ]
+    ],
+    "docUrl": ""
   },
   {
     "description": "Fill invalid cells from this column with a given value",
@@ -106,6 +116,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -115,6 +126,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -124,6 +136,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -133,6 +146,7 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
@@ -142,6 +156,7 @@
         "type": "select",
         "implicit": false,
         "canBeBlank": false,
+        "placeHolder": "",
         "configuration": {
           "values": [
             {
@@ -152,11 +167,13 @@
                   "type": "date",
                   "implicit": false,
                   "canBeBlank": false,
+                  "placeHolder": "",
                   "description": "The value to set in cells",
                   "label": "Value",
                   "default": "01/01/1970 10:00:00"
                 }
-              ]
+              ],
+              "label": "constant_mode"
             },
             {
               "value": "other_column_mode",
@@ -166,22 +183,26 @@
                   "type": "column",
                   "implicit": false,
                   "canBeBlank": false,
+                  "placeHolder": "",
                   "description": "Combine the current column with this one",
                   "label": "Column",
                   "default": ""
                 }
-              ]
+              ],
+              "label": "other_column_mode"
             }
           ],
           "multiple": false
         },
+        "radio": false,
         "description": "Select if you want to use a constant value or another column",
         "label": "Use with",
         "default": "constant_mode"
       }
     ],
     "dynamic": false,
-    "actionScope": []
+    "actionScope": [],
+    "docUrl": ""
   },
   {
     "actionScope": [
@@ -198,6 +219,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -207,6 +229,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -216,6 +239,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -225,11 +249,13 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
       }
-    ]
+    ],
+    "docUrl": ""
   },
   {
     "description": "Fill empty cells from this column with a given value",
@@ -242,6 +268,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -251,6 +278,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -260,6 +288,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -269,6 +298,7 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
@@ -278,6 +308,7 @@
         "type": "select",
         "implicit": false,
         "canBeBlank": false,
+        "placeHolder": "",
         "configuration": {
           "values": [
             {
@@ -288,11 +319,13 @@
                   "type": "date",
                   "implicit": false,
                   "canBeBlank": false,
+                  "placeHolder": "",
                   "description": "The value to set in cells",
                   "label": "Value",
                   "default": "01/01/1970 10:00:00"
                 }
-              ]
+              ],
+              "label": "constant_mode"
             },
             {
               "value": "other_column_mode",
@@ -302,22 +335,26 @@
                   "type": "column",
                   "implicit": false,
                   "canBeBlank": false,
+                  "placeHolder": "",
                   "description": "Combine the current column with this one",
                   "label": "Column",
                   "default": ""
                 }
-              ]
+              ],
+              "label": "other_column_mode"
             }
           ],
           "multiple": false
         },
+        "radio": false,
         "description": "Select if you want to use a constant value or another column",
         "label": "Use with",
         "default": "constant_mode"
       }
     ],
     "dynamic": false,
-    "actionScope": []
+    "actionScope": [],
+    "docUrl": ""
   },
   {
     "name": "change_date_pattern",
@@ -327,6 +364,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -336,6 +374,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -345,6 +384,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -354,55 +394,102 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
       },
       {
-        "name": "from_pattern_mode"
+        "name": "from_pattern_mode",
+        "type": "select",
+        "implicit": false,
+        "canBeBlank": false,
+        "placeHolder": "",
+        "configuration": {
+          "values": [
+            {
+              "value": "unknown_separators",
+              "label": "unknown_separators"
+            },
+            {
+              "value": "from_custom_mode",
+              "parameters": [
+                {
+                  "name": "from_custom_pattern",
+                  "type": "string",
+                  "implicit": false,
+                  "canBeBlank": false,
+                  "placeHolder": "",
+                  "description": "e.g. dd/MM/yyyy for day/month/year",
+                  "label": "Your format",
+                  "default": ""
+                }
+              ],
+              "label": "from_custom_mode"
+            }
+          ],
+          "multiple": false
+        },
+        "radio": false,
+        "description": "Select your current date format",
+        "label": "Current format",
+        "default": "unknown_separators"
       },
       {
         "name": "new_pattern",
         "type": "select",
         "implicit": false,
         "canBeBlank": false,
+        "placeHolder": "",
         "configuration": {
           "values": [
             {
-              "value": "yyyy-MM-dd"
+              "value": "M/d/yy",
+              "label": "M/d/yy"
             },
             {
-              "value": "M/d/yy"
+              "value": "M/d/yy h:mm a",
+              "label": "M/d/yy h:mm a"
             },
             {
-              "value": "dd/MM/yy"
+              "value": "dd.MM.yy",
+              "label": "dd.MM.yy"
             },
             {
-              "value": "dd.MM.yy"
+              "value": "dd.MM.yy HH:mm",
+              "label": "dd.MM.yy HH:mm"
             },
             {
-              "value": "dd/MM/yy"
+              "value": "dd/MM/yy",
+              "label": "dd/MM/yy"
             },
             {
-              "value": "yy/MM/dd"
+              "value": "dd/MM/yy",
+              "label": "dd/MM/yy"
             },
             {
-              "value": "yyyy-MM-dd'T'HH:mm:ss.SSS"
+              "value": "dd/MM/yy HH:mm",
+              "label": "dd/MM/yy HH:mm"
             },
             {
-              "value": "M/d/yy h:mm a"
+              "value": "dd/MM/yy HH:mm",
+              "label": "dd/MM/yy HH:mm"
             },
             {
-              "value": "dd/MM/yy HH:mm"
+              "value": "yy/MM/dd",
+              "label": "yy/MM/dd"
             },
             {
-              "value": "dd.MM.yy HH:mm"
+              "value": "yy/MM/dd H:mm",
+              "label": "yy/MM/dd H:mm"
             },
             {
-              "value": "dd/MM/yy HH:mm"
+              "value": "yyyy-MM-dd",
+              "label": "yyyy-MM-dd"
             },
             {
-              "value": "yy/MM/dd H:mm"
+              "value": "yyyy-MM-dd'T'HH:mm:ss.SSS",
+              "label": "yyyy-MM-dd'T'HH:mm:ss.SSS"
             },
             {
               "value": "custom",
@@ -412,15 +499,18 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": false,
+                  "placeHolder": "",
                   "description": "e.g. dd/MM/yyyy for day/month/year",
                   "label": "Your Format",
                   "default": ""
                 }
-              ]
+              ],
+              "label": "custom"
             }
           ],
           "multiple": false
         },
+        "radio": false,
         "description": "Choose the date format to use in the list or make your own",
         "label": "New Format",
         "default": "yyyy-MM-dd"
@@ -432,43 +522,56 @@
         "type": "select",
         "implicit": false,
         "canBeBlank": false,
+        "placeHolder": "",
         "configuration": {
           "values": [
             {
-              "value": "yyyy-MM-dd"
+              "value": "M/d/yy",
+              "label": "M/d/yy"
             },
             {
-              "value": "M/d/yy"
+              "value": "M/d/yy h:mm a",
+              "label": "M/d/yy h:mm a"
             },
             {
-              "value": "dd/MM/yy"
+              "value": "dd.MM.yy",
+              "label": "dd.MM.yy"
             },
             {
-              "value": "dd.MM.yy"
+              "value": "dd.MM.yy HH:mm",
+              "label": "dd.MM.yy HH:mm"
             },
             {
-              "value": "dd/MM/yy"
+              "value": "dd/MM/yy",
+              "label": "dd/MM/yy"
             },
             {
-              "value": "yy/MM/dd"
+              "value": "dd/MM/yy",
+              "label": "dd/MM/yy"
             },
             {
-              "value": "yyyy-MM-dd'T'HH:mm:ss.SSS"
+              "value": "dd/MM/yy HH:mm",
+              "label": "dd/MM/yy HH:mm"
             },
             {
-              "value": "M/d/yy h:mm a"
+              "value": "dd/MM/yy HH:mm",
+              "label": "dd/MM/yy HH:mm"
             },
             {
-              "value": "dd/MM/yy HH:mm"
+              "value": "yy/MM/dd",
+              "label": "yy/MM/dd"
             },
             {
-              "value": "dd.MM.yy HH:mm"
+              "value": "yy/MM/dd H:mm",
+              "label": "yy/MM/dd H:mm"
             },
             {
-              "value": "dd/MM/yy HH:mm"
+              "value": "yyyy-MM-dd",
+              "label": "yyyy-MM-dd"
             },
             {
-              "value": "yy/MM/dd H:mm"
+              "value": "yyyy-MM-dd'T'HH:mm:ss.SSS",
+              "label": "yyyy-MM-dd'T'HH:mm:ss.SSS"
             },
             {
               "value": "custom",
@@ -478,15 +581,18 @@
                   "type": "string",
                   "implicit": false,
                   "canBeBlank": false,
+                  "placeHolder": "",
                   "description": "e.g. dd/MM/yyyy for day/month/year",
                   "label": "Your Format",
                   "default": ""
                 }
-              ]
+              ],
+              "label": "custom"
             }
           ],
           "multiple": false
         },
+        "radio": false,
         "description": "Choose the date format to use in the list or make your own",
         "label": "New Format",
         "default": "yyyy-MM-dd"
@@ -496,7 +602,8 @@
     "dynamic": false,
     "description": "Change the date format to use in a date column",
     "label": "Change Date Format",
-    "actionScope": []
+    "actionScope": [],
+    "docUrl": ""
   },
   {
     "name": "compute_time_since",
@@ -506,42 +613,47 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "default": "",
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
-        "label": "Column"
+        "label": "Column",
+        "default": ""
       },
       {
         "name": "row_id",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "default": "",
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
-        "label": "Row"
+        "label": "Row",
+        "default": ""
       },
       {
         "name": "scope",
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "default": "",
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "label": "Scope"
+        "label": "Scope",
+        "default": ""
       },
       {
         "name": "filter",
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
-        "default": "",
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
-        "label": "Filter"
+        "label": "Filter",
+        "default": ""
       },
       {
         "name": "time_unit",
         "type": "select",
         "implicit": false,
         "canBeBlank": false,
+        "placeHolder": "",
         "configuration": {
           "values": [
             {
@@ -563,62 +675,70 @@
           ],
           "multiple": false
         },
-        "default": "HOURS",
+        "radio": false,
         "description": "The unit in which you want the result",
-        "label": "Time Unit"
+        "label": "Time Unit",
+        "default": "HOURS"
       },
       {
         "name": "since_when",
         "type": "select",
         "implicit": false,
         "canBeBlank": false,
+        "placeHolder": "",
         "configuration": {
           "values": [
             {
               "value": "now_server_side",
-              "label": "Now"
+              "label": "now_server_side"
             },
             {
               "value": "specific_date",
-              "label": "Specific date",
               "parameters": [
                 {
                   "name": "specific_date",
                   "type": "date",
                   "implicit": false,
                   "canBeBlank": false,
-                  "default": "",
-                  "label": "This date"
+                  "placeHolder": "",
+                  "description": "Set here the date to compare to",
+                  "label": "This date",
+                  "default": ""
                 }
-              ]
+              ],
+              "label": "specific_date"
             },
             {
               "value": "other_column_mode",
-              "label": "Another column",
               "parameters": [
                 {
                   "name": "selected_column",
                   "type": "column",
                   "implicit": false,
                   "canBeBlank": false,
-                  "default": "",
+                  "placeHolder": "",
                   "description": "Combine the current column with this one",
-                  "label": "Column"
+                  "label": "Column",
+                  "default": ""
                 }
-              ]
+              ],
+              "label": "other_column_mode"
             }
           ],
           "multiple": false
         },
-        "default": "now_server_side",
-        "label": "Until"
+        "radio": false,
+        "description": "Specify the date to compare to",
+        "label": "Until",
+        "default": "now_server_side"
       }
     ],
     "category": "dates",
-    "docUrl": "",
+    "dynamic": false,
+    "description": "Calculate elapsed time until a date, in the desired unit (year, month, day, hour)",
     "label": "Calculate Time until",
     "actionScope": [],
-    "dynamic": false
+    "docUrl": ""
   },
   {
     "name": "extract_date_tokens",
@@ -628,6 +748,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The column to which you want to apply this action",
         "label": "Column",
         "default": ""
@@ -637,6 +758,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The row to which you want to apply this action",
         "label": "Row",
         "default": ""
@@ -646,6 +768,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
@@ -655,6 +778,7 @@
         "type": "filter",
         "implicit": true,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "An optional filter to apply action on matching values only.",
         "label": "Filter",
         "default": ""
@@ -664,6 +788,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract year from date (24/08/2015 -> 2015)",
         "label": "Year",
         "default": "true"
@@ -673,6 +798,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract month of year from date (24/08/2015 -> 8)",
         "label": "Month of year",
         "default": "true"
@@ -682,6 +808,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract day of month from date (24/08/2015 -> 24)",
         "label": "Day of month",
         "default": "true"
@@ -691,6 +818,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract the hour of the day (from an AM/PM format), from 0 to 11",
         "label": "Hour of am-pm",
         "default": "false"
@@ -700,6 +828,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract the AM/PM information of the day, from 0 (AM) to 1 (PM)",
         "label": "The am-pm of the day",
         "default": "false"
@@ -709,6 +838,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract the hour of the day, from 0 to 23",
         "label": "Hour of the day",
         "default": "true"
@@ -718,6 +848,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract minute from hour",
         "label": "Minute",
         "default": "true"
@@ -727,6 +858,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract second from minute",
         "label": "Second",
         "default": "false"
@@ -736,6 +868,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract the day of week, (1, 2, ... , 7)",
         "label": "Day of the week",
         "default": "false"
@@ -745,6 +878,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract the day of year. This has values from 1 to 365 in standard years and 1 to 366 in leap years",
         "label": "Day of the year",
         "default": "false"
@@ -754,6 +888,7 @@
         "type": "boolean",
         "implicit": false,
         "canBeBlank": true,
+        "placeHolder": "",
         "description": "Extract the week number of the year",
         "label": "Week of the year",
         "default": "false"
@@ -763,6 +898,7 @@
     "dynamic": false,
     "description": "Create columns with year, month, day, hour, minute, second, etc...",
     "label": "Extract Date Parts",
-    "actionScope": []
+    "actionScope": [],
+    "docUrl": ""
   }
 ]

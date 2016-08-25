@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -30,25 +30,32 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Substring.SUBSTRING_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Substring.SUBSTRING_ACTION_NAME)
 public class Substring extends AbstractActionMetadata implements ColumnAction {
 
     /**
      * The action name.
      */
     public static final String SUBSTRING_ACTION_NAME = "substring"; //$NON-NLS-1$
+
     protected static final String FROM_MODE_PARAMETER = "from_mode"; //$NON-NLS-1$
+
     protected static final String FROM_BEGINNING = "from_beginning"; //$NON-NLS-1$
+
     protected static final String FROM_INDEX_PARAMETER = "from_index"; //$NON-NLS-1$
+
     protected static final String FROM_N_BEFORE_END_PARAMETER = "from_n_before_end"; //$NON-NLS-1$
+
     protected static final String TO_MODE_PARAMETER = "to_mode"; //$NON-NLS-1$
+
     protected static final String TO_END = "to_end"; //$NON-NLS-1$
+
     protected static final String TO_INDEX_PARAMETER = "to_index"; //$NON-NLS-1$
+
     protected static final String TO_N_BEFORE_END_PARAMETER = "to_n_before_end"; //$NON-NLS-1$
 
     /**
@@ -56,25 +63,16 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
      */
     private static final String APPENDIX = "_substring"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return SUBSTRING_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return STRINGS.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         final Parameter fromIndexParameters = new Parameter(FROM_INDEX_PARAMETER, ParameterType.INTEGER, "0");
@@ -117,11 +115,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
@@ -133,7 +128,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
             final RowMetadata rowMetadata = context.getRowMetadata();
             final String columnId = context.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
-            context.column(column.getName() + APPENDIX, (r) -> {
+            context.column(column.getName() + APPENDIX, r -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
                         .name(column.getName() + APPENDIX) //
@@ -149,9 +144,6 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         // create the new column

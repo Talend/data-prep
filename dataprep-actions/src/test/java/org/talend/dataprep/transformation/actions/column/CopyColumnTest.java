@@ -12,6 +12,7 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.actions.column;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -20,14 +21,13 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import java.io.IOException;
 import java.util.*;
 
-import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
@@ -44,8 +44,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class CopyColumnTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private CopyColumnMetadata action;
+    private CopyColumnMetadata action = new CopyColumnMetadata();
 
     private Map<String, String> parameters;
 
@@ -56,14 +55,14 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testAdapt() throws Exception {
-        assertThat(action.adapt((ColumnMetadata) null), is(action));
+        Assert.assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(action.adapt(column), is(action));
+        Assert.assertThat(action.adapt(column), is(action));
     }
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
+        Assert.assertThat(action.getCategory(), is(ActionCategory.COLUMN_METADATA.getDisplayName()));
     }
 
     @Test
@@ -97,20 +96,22 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
         final List<ColumnMetadata> input = new ArrayList<>();
         input.add(createMetadata("0000", "recipe"));
         input.add(createMetadata("0001", "steps"));
-        input.add(createMetadata("0002", "last update"));
+        input.add(createMetadata("0002", "last_update"));
         final RowMetadata rowMetadata = new RowMetadata(input);
 
-        final List<ColumnMetadata> expected = new ArrayList<>();
-        expected.add(createMetadata("0000", "recipe"));
-        expected.add(createMetadata("0001", "steps"));
-        expected.add(createMetadata("0003", "steps_copy"));
-        expected.add(createMetadata("0002", "last update"));
+        final List<ColumnMetadata> expectedColumns = new ArrayList<>();
+        expectedColumns.add(createMetadata("0000", "recipe"));
+        expectedColumns.add(createMetadata("0001", "steps"));
+        expectedColumns.add(createMetadata("0003", "steps_copy"));
+        expectedColumns.add(createMetadata("0002", "last_update"));
+        final RowMetadata expected = new RowMetadata(expectedColumns);
 
         // when
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
+        final DataSetRow row = new DataSetRow(rowMetadata);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expected, rowMetadata.getColumns());
+        assertEquals(expected, row.getRowMetadata());
     }
 
     /**
@@ -128,12 +129,13 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
 
         // when
         rowMetadata.deleteColumnById("0003");
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
+        final DataSetRow row = new DataSetRow(rowMetadata);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final List<ColumnMetadata> columns = rowMetadata.getColumns();
-        assertEquals(columns.size(), 4);
-        final ColumnMetadata copiedColumn = rowMetadata.getById("0004");
+        final List<ColumnMetadata> actual = row.getRowMetadata().getColumns();
+        assertEquals(actual.size(), 4);
+        final ColumnMetadata copiedColumn = row.getRowMetadata().getById("0004");
         assertNotNull(copiedColumn);
         assertEquals(copiedColumn.getName(), "steps_copy");
     }
@@ -176,20 +178,21 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
         input.add(original);
         RowMetadata rowMetadata = new RowMetadata(input);
 
-        Assertions.assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
 
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
+        final DataSetRow row = new DataSetRow(rowMetadata);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
-        List<ColumnMetadata> expected = rowMetadata.getColumns();
+        List<ColumnMetadata> actual = row.getRowMetadata().getColumns();
 
-        Assertions.assertThat(expected).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(actual).isNotNull().isNotEmpty().hasSize(2);
 
-        assertEquals(expected.get(1).getStatistics(), original.getStatistics());
+        assertEquals(actual.get(1).getStatistics(), original.getStatistics());
 
-        Assertions.assertThat(expected.get(1)) //
+        assertThat(actual.get(1)) //
                 .isEqualToComparingOnlyGivenFields(original, "domain", "domainLabel", "domainFrequency");
 
-        Assertions.assertThat(expected.get(1).getSemanticDomains()).isNotNull() //
+        assertThat(actual.get(1).getSemanticDomains()).isNotNull() //
                 .isNotEmpty().contains(semanticDomain);
     }
 
@@ -211,21 +214,22 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
         input.add(original);
         RowMetadata rowMetadata = new RowMetadata(input);
 
-        Assertions.assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
 
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
+        final DataSetRow row = new DataSetRow(rowMetadata);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
-        List<ColumnMetadata> expected = rowMetadata.getColumns();
+        List<ColumnMetadata> actual = row.getRowMetadata().getColumns();
 
-        Assertions.assertThat(expected).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(actual).isNotNull().isNotEmpty().hasSize(2);
 
-        assertEquals(expected.get(1).getStatistics(), original.getStatistics());
+        assertEquals(actual.get(1).getStatistics(), original.getStatistics());
 
-        Assertions.assertThat(expected.get(1)) //
+        assertThat(actual.get(1)) //
                 .isEqualToComparingOnlyGivenFields(original, "domain", "domainLabel", "domainFrequency", "domainForced",
                         "typeForced");
 
-        Assertions.assertThat(expected.get(1).getSemanticDomains()).isNotNull() //
+        assertThat(actual.get(1).getSemanticDomains()).isNotNull() //
                 .isNotEmpty().contains(semanticDomain);
     }
 
@@ -247,27 +251,28 @@ public class CopyColumnTest extends AbstractMetadataBaseTest {
         input.add(original);
         RowMetadata rowMetadata = new RowMetadata(input);
 
-        Assertions.assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(rowMetadata.getColumns()).isNotNull().isNotEmpty().hasSize(1);
 
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
+        final DataSetRow row = new DataSetRow(rowMetadata);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
-        List<ColumnMetadata> expected = rowMetadata.getColumns();
+        List<ColumnMetadata> actual = row.getRowMetadata().getColumns();
 
-        Assertions.assertThat(expected).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(actual).isNotNull().isNotEmpty().hasSize(2);
 
-        assertEquals(expected.get(1).getStatistics(), original.getStatistics());
+        assertEquals(actual.get(1).getStatistics(), original.getStatistics());
 
-        Assertions.assertThat(expected.get(1)) //
+        assertThat(actual.get(1)) //
                 .isEqualToComparingOnlyGivenFields(original, "domain", "domainLabel", "domainFrequency", "domainForced",
                         "typeForced");
 
-        Assertions.assertThat(expected.get(1).getSemanticDomains()).isNotNull() //
+        assertThat(actual.get(1).getSemanticDomains()).isNotNull() //
                 .isNotEmpty().contains(semanticDomain);
     }
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.ANY)));
+        assertTrue(action.acceptField(getColumn(Type.ANY)));
     }
 
     @Override

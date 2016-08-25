@@ -18,22 +18,14 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramAnalyzer;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramStatistics;
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramAnalyzer;
-import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.type.TypeUtils;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
@@ -72,69 +64,41 @@ import org.talend.dataquality.statistics.type.DataTypeOccurences;
 /**
  * Service in charge of analyzing dataset quality.
  */
-@Service
-public class AnalyzerService implements DisposableBean {
+public class AnalyzerService {
 
     /**
      * This class' logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzerService.class);
 
-    @Autowired
-    private DateParser dateParser;
+    private final DateParser dateParser;
 
-    @Value("#{'${luceneIndexStrategy:singleton}'}")
-    private String luceneIndexStrategy;
-
-    /** Where the data quality indexes are extracted (default to ${java.io.tmpdir}/org.talend.dataquality.semantic). */
-    @Value("${dataquality.indexes.file.location:${java.io.tmpdir}/org.talend.dataquality.semantic}")
-    private String dataqualityIndexesLocation;
-
-    private Set<Analyzer> openedAnalyzers = new HashSet<>();
+    private final Set<Analyzer> openedAnalyzers = new HashSet<>();
 
     private CategoryRecognizerBuilder builder;
 
-    /**
-     * Initialize the AnalyzerService.
-     */
-    @PostConstruct
-    public void init() {
+    public AnalyzerService() {
+        this(System.getProperty("java.io.tmpdir") + "/org.talend.dataquality.semantic", "singleton");
+    }
 
-        LOGGER.info("DataQuality indexes location : '{}'", dataqualityIndexesLocation);
-        ClassPathDirectory.setLocalIndexFolder(dataqualityIndexesLocation);
+    public AnalyzerService(String indexesLocation, String indexStrategy) {
+        LOGGER.info("DataQuality indexes location : '{}'", indexesLocation);
+        ClassPathDirectory.setLocalIndexFolder(indexesLocation);
 
         // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
-        LOGGER.info("Analyzer service lucene index strategy set to '{}'", luceneIndexStrategy);
-        if ("basic".equals(luceneIndexStrategy)) {
+        LOGGER.info("Analyzer service lucene index strategy set to '{}'", indexStrategy);
+        if ("basic".equalsIgnoreCase(indexStrategy)) {
             ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
-        } else if ("singleton".equals(luceneIndexStrategy)) {
+        } else if ("singleton".equalsIgnoreCase(indexStrategy)) {
             ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
         } else {
             // Default
-            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", luceneIndexStrategy);
+            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", "singleton");
             ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
         }
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
         builder = CategoryRecognizerBuilder.newBuilder().lucene();
-    }
-
-    /**
-     * In case of a date column, return the most used pattern.
-     *
-     * @param column the column to inspect.
-     * @return the most used pattern or null if there's none.
-     */
-    public static String getMostUsedDatePattern(ColumnMetadata column) {
-        // only filter out non date columns
-        if (Type.get(column.getType()) != Type.DATE) {
-            return null;
-        }
-        final List<PatternFrequency> patternFrequencies = column.getStatistics().getPatternFrequencies();
-        if (!patternFrequencies.isEmpty()) {
-            patternFrequencies.sort((p1, p2) -> Long.compare(p2.getOccurrences(), p1.getOccurrences()));
-            return patternFrequencies.get(0).getPattern();
-        }
-        return null;
+        dateParser = new DateParser(this);
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
@@ -142,7 +106,7 @@ public class AnalyzerService implements DisposableBean {
         final DateTimePatternRecognizer dateTimePatternFrequencyAnalyzer = new DateTimePatternRecognizer();
         List<String> patterns = new ArrayList<>(columns.size());
         for (ColumnMetadata column : columns) {
-            final String pattern = getMostUsedDatePattern(column);
+            final String pattern = RowMetadataUtils.getMostUsedDatePattern(column);
             if (StringUtils.isNotBlank(pattern)) {
                 patterns.add(pattern);
             }
@@ -168,7 +132,7 @@ public class AnalyzerService implements DisposableBean {
 
         List<String> patterns = new ArrayList<>(columns.size());
         for (ColumnMetadata column : columns) {
-            final String pattern = getMostUsedDatePattern(column);
+            final String pattern = RowMetadataUtils.getMostUsedDatePattern(column);
             if (StringUtils.isNotBlank(pattern)) {
                 patterns.add(pattern);
             }
@@ -244,8 +208,10 @@ public class AnalyzerService implements DisposableBean {
                 break;
             case QUALITY:
                 final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
-                columns.forEach(c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(getMostUsedDatePattern(c)));
-                analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer, new SemanticQualityAnalyzer(builder, domains, false), true)); // NOSONAR
+                columns.forEach(
+                        c -> dataTypeQualityAnalyzer.addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
+                analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
+                        new SemanticQualityAnalyzer(builder, domains, false), true)); // NOSONAR
                 break;
             case CARDINALITY:
                 analyzers.add(new CardinalityAnalyzer());
@@ -331,27 +297,6 @@ public class AnalyzerService implements DisposableBean {
         return build(columns, Analysis.SEMANTIC, Analysis.TYPE);
     }
 
-    /**
-     * @see DisposableBean#destroy()
-     */
-    @Override
-    public void destroy() throws Exception {
-        LOGGER.info("Clean up analyzers...");
-        ClassPathDirectory.destroy();
-        LOGGER.info("Clean up analyzers done.");
-    }
-
-    @Scheduled(fixedDelay = 60000)
-    public void resourceMonitor() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Opened analyzers: " + openedAnalyzers.size());
-            final Iterator<Analyzer> iterator = openedAnalyzers.iterator();
-            for (int i = 0; i < openedAnalyzers.size(); i++) {
-                LOGGER.debug("Analyzer #{}: {}", i, iterator.next());
-            }
-        }
-    }
-
     public enum Analysis {
         /**
          * Basic type discovery (integer, string...).
@@ -412,7 +357,8 @@ public class AnalyzerService implements DisposableBean {
 
         private final Analyzer<Analyzers.Result> analyzer;
 
-        private Exception caller;
+        private final Exception caller;
+
         private long lastCall;
 
         private ResourceMonitoredAnalyzer(Analyzer<Analyzers.Result> analyzer) {
@@ -467,6 +413,5 @@ public class AnalyzerService implements DisposableBean {
             return toStringBuilder.toString();
         }
     }
-
 
 }

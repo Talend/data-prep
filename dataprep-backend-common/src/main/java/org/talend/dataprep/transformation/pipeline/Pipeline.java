@@ -2,6 +2,7 @@ package org.talend.dataprep.transformation.pipeline;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,16 +16,15 @@ import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.pipeline.builder.ActionNodesBuilder;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.FilteredNode;
-import org.talend.dataprep.transformation.pipeline.node.NullNode;
 
-public class Pipeline implements Node, RuntimeNode {
+public class Pipeline implements Node, RuntimeNode, Serializable {
 
     /** This class' logger. */
     private static final Logger LOG = getLogger(Pipeline.class);
@@ -37,10 +37,10 @@ public class Pipeline implements Node, RuntimeNode {
     /**
      * Boolean used as semaphore to make the pipeline#signal(Stop) method wait for the pipeline to be finished before
      * returning.
-     * 
+     *
      * @see Pipeline#signal(Signal)
      */
-    private final Object isFinished = new Object();
+    private final transient Object isFinished = new Object();
 
     /**
      * Default empty constructor.
@@ -56,7 +56,6 @@ public class Pipeline implements Node, RuntimeNode {
     public Pipeline(Node node) {
         this.node = node;
     }
-
 
     public void execute(DataSet dataSet) {
         final RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata().clone();
@@ -154,6 +153,7 @@ public class Pipeline implements Node, RuntimeNode {
     }
 
     public static class Builder {
+
         private final List<Action> actions = new ArrayList<>();
 
         private RowMetadata rowMetadata;
@@ -166,7 +166,7 @@ public class Pipeline implements Node, RuntimeNode {
 
         private Supplier<Node> monitorSupplier = BasicNode::new;
 
-        private Supplier<Node> outputSupplier = () -> NullNode.INSTANCE;
+        private Supplier<Node> outputSupplier = null;
 
         private boolean allowMetadataChange = true;
 
@@ -247,18 +247,12 @@ public class Pipeline implements Node, RuntimeNode {
             }
 
             // Apply actions
-            final Node actionsNode = ActionNodesBuilder.builder()
-                    .initialMetadata(rowMetadata)
-                    .actions(actions)
+            final Node actionsNode = ActionNodesBuilder.builder().initialMetadata(rowMetadata).actions(actions)
                     // statistics requests
-                    .needStatisticsBefore(!completeMetadata)
-                    .needStatisticsAfter(needGlobalStatistics)
+                    .needStatisticsBefore(!completeMetadata).needStatisticsAfter(needGlobalStatistics)
                     .allowSchemaAnalysis(allowMetadataChange)
                     // statistics dependencies/arguments
-                    .actionRegistry(actionRegistry)
-                    .analyzerService(analyzerService)
-                    .statisticsAdapter(adapter)
-                    .build();
+                    .actionRegistry(actionRegistry).analyzerService(analyzerService).statisticsAdapter(adapter).build();
             current.to(actionsNode);
 
             // Output

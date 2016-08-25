@@ -26,7 +26,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -36,44 +36,41 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Change the date pattern on a 'date' column.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeDatePattern.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeDatePattern.ACTION_NAME)
 public class ChangeDatePattern extends AbstractDate implements ColumnAction, DatePatternParamModel {
 
     /** Action name. */
     public static final String ACTION_NAME = "change_date_pattern"; //$NON-NLS-1$
+
     /**
      * Action parameters:
      */
     protected static final String FROM_MODE = "from_pattern_mode"; //$NON-NLS-1$
+
     protected static final String FROM_MODE_CUSTOM = "from_custom_mode"; //$NON-NLS-1$
+
     protected static final String FROM_CUSTOM_PATTERN = "from_custom_pattern"; //$NON-NLS-1$
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeDatePattern.class);
 
     protected static final String FROM_MODE_BEST_GUESS = "unknown_separators"; //$NON-NLS-1$
+
     /**
      * Keys for action context:
      */
     private static final String FROM_DATE_PATTERNS = "from_date_patterns";
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = super.getParameters();
@@ -81,8 +78,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
         // @formatter:off
         parameters.add(SelectParameter.Builder.builder()
                 .name(FROM_MODE)
-                .item(FROM_MODE_BEST_GUESS)
-                .item(FROM_MODE_CUSTOM, new Parameter(FROM_CUSTOM_PATTERN, ParameterType.STRING, EMPTY, false, false))
+                .item(FROM_MODE_BEST_GUESS, FROM_MODE_BEST_GUESS)
+                .item(FROM_MODE_CUSTOM, FROM_MODE_CUSTOM, new Parameter(FROM_CUSTOM_PATTERN, ParameterType.STRING, EMPTY, false, false))
                 .defaultValue(FROM_MODE_BEST_GUESS)
                 .build());
         // @formatter:on
@@ -101,7 +98,8 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
             // efficiently later
             final DatePattern newPattern = actionContext.get(COMPILED_DATE_PATTERN);
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
-            final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
+            final String columnId = actionContext.getColumnId();
+            final ColumnMetadata column = rowMetadata.getById(columnId);
             final Statistics statistics = column.getStatistics();
 
             actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
@@ -116,6 +114,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
 
             long mostUsedPatternCount = getMostUsedPatternCount(column);
             newPatternFrequency.setOccurrences(mostUsedPatternCount + 1);
+            rowMetadata.update(columnId, column);
         }
     }
 
@@ -127,7 +126,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
         case FROM_MODE_BEST_GUESS:
             final RowMetadata rowMetadata = actionContext.getRowMetadata();
             final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
-            return dateParser.getPatterns(column.getStatistics().getPatternFrequencies());
+            return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
         case FROM_MODE_CUSTOM:
             List<DatePattern> fromPatterns = new ArrayList<>();
             fromPatterns.add(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
@@ -151,7 +150,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
             return;
         }
         try {
-            LocalDateTime date = dateParser.parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS));
+            LocalDateTime date = Providers.get().parseDateFromPatterns(value, context.get(FROM_DATE_PATTERNS));
 
             if (date != null) {
                 row.set(columnId, newPattern.getFormatter().format(date));

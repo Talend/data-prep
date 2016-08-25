@@ -31,7 +31,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeTimeSince.TIME_SINCE_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeTimeSince.TIME_SINCE_ACTION_NAME)
 public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
     /**
@@ -97,10 +97,10 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
 
         parameters.add(SelectParameter.Builder.builder() //
                 .name(TIME_UNIT_PARAMETER) //
-                .item(ChronoUnit.YEARS.name()) //
-                .item(ChronoUnit.MONTHS.name()) //
-                .item(ChronoUnit.DAYS.name()) //
-                .item(ChronoUnit.HOURS.name()) //
+                .item(ChronoUnit.YEARS.name(), "years") //
+                .item(ChronoUnit.MONTHS.name(), "months") //
+                .item(ChronoUnit.DAYS.name(), "days") //
+                .item(ChronoUnit.HOURS.name(), "hours") //
                 .defaultValue(ChronoUnit.HOURS.name()) //
                 .build());
 
@@ -170,7 +170,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
             case OTHER_COLUMN_MODE:
                 ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
                 String dateToCompare = row.get(selectedColumn.getId());
-                since = dateParser.parse(dateToCompare, selectedColumn);
+                since = Providers.get().parse(dateToCompare, selectedColumn);
                 break;
             case SPECIFIC_DATE_MODE:
             case NOW_SERVER_SIDE_MODE:
@@ -184,7 +184,7 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 newValue = StringUtils.EMPTY;
             } else {
                 String value = row.get(columnId);
-                LocalDateTime temporalAccessor = dateParser.parse(value, context.getRowMetadata().getById(columnId));
+                LocalDateTime temporalAccessor = Providers.get().parse(value, context.getRowMetadata().getById(columnId));
                 Temporal valueAsDate = LocalDateTime.from(temporalAccessor);
                 newValue = String.valueOf(unit.between(valueAsDate, since));
             }

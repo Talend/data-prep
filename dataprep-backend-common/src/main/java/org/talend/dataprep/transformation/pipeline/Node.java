@@ -1,15 +1,16 @@
 package org.talend.dataprep.transformation.pipeline;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
-import org.talend.dataprep.transformation.pipeline.link.NullLink;
 
 /**
  * A node is a processing unit inside the transformation pipeline.
  */
-public interface Node {
+public interface Node extends Serializable {
 
     /**
-     * @return The {@link Link} to another Node. Never returns <code>null</code>, use {@link NullLink} instead.
+     * @return The {@link Link} to another Node. Never returns <code>null</code>.
      */
     Link getLink();
 
@@ -31,6 +32,7 @@ public interface Node {
 
     /**
      * Log pipeline to DEBUG level using provided message
+     *
      * @param logger The logger to log into
      * @param message The message to append to the pipeline dump
      */

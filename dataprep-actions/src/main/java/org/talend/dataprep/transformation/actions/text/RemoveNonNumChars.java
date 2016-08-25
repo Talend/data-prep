@@ -17,17 +17,16 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveNonNumChars.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RemoveNonNumChars.ACTION_NAME)
 public class RemoveNonNumChars extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -35,33 +34,21 @@ public class RemoveNonNumChars extends AbstractActionMetadata implements ColumnA
      */
     public static final String ACTION_NAME = "remove_non_num_chars"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.STRINGS_ADVANCED.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();

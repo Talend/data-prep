@@ -21,11 +21,13 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.netflix.hystrix.Hystrix;
 
 @SpringBootApplication
+@Configuration("org.talend.dataprep.api.Application")
 @Profile("standalone")
 @ComponentScan(basePackages = "org.talend.dataprep")
 public class Application implements DisposableBean {

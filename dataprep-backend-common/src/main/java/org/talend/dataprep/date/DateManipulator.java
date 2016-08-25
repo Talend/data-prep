@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.date;
 
@@ -18,17 +18,26 @@ import static java.time.Month.*;
 import static java.time.ZoneId.systemDefault;
 import static java.time.temporal.IsoFields.QUARTER_OF_YEAR;
 
+import java.io.Serializable;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 
-public class DateManipulator {
+public class DateManipulator implements Serializable {
+
     /**
      * Supported pace for date ranges
      */
     public enum Pace {
-        DAY(86400000L), WEEK(604800000L), MONTH(2678400000L), QUARTER(7884000000L), HALF_YEAR(15768000000L), YEAR(31536000000L), DECADE(315360000000L), CENTURY(3153600000000L);
+        DAY(86400000L),
+        WEEK(604800000L),
+        MONTH(2678400000L),
+        QUARTER(7884000000L),
+        HALF_YEAR(15768000000L),
+        YEAR(31536000000L),
+        DECADE(315360000000L),
+        CENTURY(3153600000000L);
 
         /**
          * Number of milliseconds that represents the pace
@@ -57,17 +66,15 @@ public class DateManipulator {
     /**
      * It determine the right pace to use. It depends on the range limit and the maximum number of parts that is allowed
      *
-     * @param min              The minimum date limit
-     * @param max              The maximum date limit
+     * @param min The minimum date limit
+     * @param max The maximum date limit
      * @param maxNumberOfParts The maximum number of parts
      * @return The suitable pace to use in the range
      */
     public DateManipulator.Pace getSuitablePace(final LocalDateTime min, final LocalDateTime max, final int maxNumberOfParts) {
         final long allRangeTimetamp = Duration.between(min, max).toMillis();
-        return Arrays.stream(Pace.values())
-                .filter(pace -> (allRangeTimetamp / pace.getTime()) < (maxNumberOfParts - 1))
-                .findFirst()
-                .orElse(null);
+        return Arrays.stream(Pace.values()).filter(pace -> (allRangeTimetamp / pace.getTime()) < (maxNumberOfParts - 1))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -92,22 +99,22 @@ public class DateManipulator {
      */
     public LocalDateTime getSuitableStartingDate(final LocalDateTime date, final DateManipulator.Pace pace) {
         switch (pace) {
-            case CENTURY:
-                return getFirstDayOfCentury(date);
-            case DECADE:
-                return getFirstDayOfDecade(date);
-            case YEAR:
-                return getFirstDayOfYear(date);
-            case HALF_YEAR:
-                return getFirstDayOfHalfYear(date);
-            case QUARTER:
-                return getFirstDayOfQuarter(date);
-            case MONTH:
-                return getFirstDayOfMonth(date);
-            case WEEK:
-                return getFirstDayOfWeek(date);
-            default:
-                return getStartOfDay(date);
+        case CENTURY:
+            return getFirstDayOfCentury(date);
+        case DECADE:
+            return getFirstDayOfDecade(date);
+        case YEAR:
+            return getFirstDayOfYear(date);
+        case HALF_YEAR:
+            return getFirstDayOfHalfYear(date);
+        case QUARTER:
+            return getFirstDayOfQuarter(date);
+        case MONTH:
+            return getFirstDayOfMonth(date);
+        case WEEK:
+            return getFirstDayOfWeek(date);
+        default:
+            return getStartOfDay(date);
         }
     }
 
@@ -115,7 +122,7 @@ public class DateManipulator {
      * Compute the day after the given pace.
      *
      * @param localDate The starting date
-     * @param pace      The pace to add
+     * @param pace The pace to add
      * @return The day = localDate + pace
      */
     public LocalDateTime getNext(final LocalDateTime localDate, final Pace pace) {
@@ -136,8 +143,8 @@ public class DateManipulator {
                 return localDate.plus(1, ChronoUnit.WEEKS);
             case DAY:
                 return localDate.plus(1, ChronoUnit.DAYS);
-        default:
-            return localDate;
+            default:
+                return localDate;
         }
     }
 
@@ -150,10 +157,7 @@ public class DateManipulator {
     private LocalDateTime getFirstDayOfCentury(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final int year = localDate.getYear() / 100 * 100;
-            return LocalDate.from(temporal)
-                    .withYear(year)
-                    .atStartOfDay()
-                    .with(TemporalAdjusters.firstDayOfYear());
+            return LocalDate.from(temporal).withYear(year).atStartOfDay().with(TemporalAdjusters.firstDayOfYear());
         });
     }
 
@@ -166,10 +170,7 @@ public class DateManipulator {
     private LocalDateTime getFirstDayOfDecade(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final int year = localDate.getYear() / 10 * 10;
-            return LocalDate.from(temporal)
-                    .withYear(year)
-                    .atStartOfDay()
-                    .with(TemporalAdjusters.firstDayOfYear());
+            return LocalDate.from(temporal).withYear(year).atStartOfDay().with(TemporalAdjusters.firstDayOfYear());
         });
     }
 
@@ -180,9 +181,7 @@ public class DateManipulator {
      * @return The first day of the date year
      */
     private LocalDateTime getFirstDayOfYear(final LocalDateTime localDate) {
-        return localDate.with(temporal -> LocalDate.from(temporal)
-                .atStartOfDay()
-                .with(TemporalAdjusters.firstDayOfYear()));
+        return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfYear()));
     }
 
     /**
@@ -194,9 +193,7 @@ public class DateManipulator {
     private LocalDateTime getFirstDayOfHalfYear(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final Month semesterMonth = localDate.getMonth().getValue() < JULY.getValue() ? JANUARY : JULY;
-            return LocalDate.from(temporal)
-                    .withMonth(semesterMonth.getValue())
-                    .atStartOfDay()
+            return LocalDate.from(temporal).withMonth(semesterMonth.getValue()).atStartOfDay()
                     .with(TemporalAdjusters.firstDayOfMonth());
         });
     }
@@ -211,25 +208,17 @@ public class DateManipulator {
         return localDate.with(temporal -> {
             int currentQuarter = YearMonth.from(temporal).get(QUARTER_OF_YEAR);
             switch (currentQuarter) {
-                case 1:
-                    return LocalDate.from(temporal)
-                            .atStartOfDay()
-                            .with(TemporalAdjusters.firstDayOfYear());
-                case 2:
-                    return LocalDate.from(temporal)
-                            .atStartOfDay()
-                            .withMonth(APRIL.getValue())
-                            .with(TemporalAdjusters.firstDayOfMonth());
-                case 3:
-                    return LocalDate.from(temporal)
-                            .atStartOfDay()
-                            .withMonth(JULY.getValue())
-                            .with(TemporalAdjusters.firstDayOfMonth());
-                default:
-                    return LocalDate.from(temporal)
-                            .atStartOfDay()
-                            .withMonth(OCTOBER.getValue())
-                            .with(TemporalAdjusters.firstDayOfMonth());
+            case 1:
+                return LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfYear());
+            case 2:
+                return LocalDate.from(temporal).atStartOfDay().withMonth(APRIL.getValue())
+                        .with(TemporalAdjusters.firstDayOfMonth());
+            case 3:
+                return LocalDate.from(temporal).atStartOfDay().withMonth(JULY.getValue())
+                        .with(TemporalAdjusters.firstDayOfMonth());
+            default:
+                return LocalDate.from(temporal).atStartOfDay().withMonth(OCTOBER.getValue())
+                        .with(TemporalAdjusters.firstDayOfMonth());
             }
         });
     }
@@ -241,9 +230,7 @@ public class DateManipulator {
      * @return The first day of the date month
      */
     private LocalDateTime getFirstDayOfMonth(final LocalDateTime localDate) {
-        return localDate.with(temporal -> LocalDate.from(temporal)
-                .atStartOfDay()
-                .with(TemporalAdjusters.firstDayOfMonth()));
+        return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfMonth()));
     }
 
     /**
@@ -253,9 +240,7 @@ public class DateManipulator {
      * @return The first day of the date week
      */
     private LocalDateTime getFirstDayOfWeek(final LocalDateTime localDate) {
-        return localDate.with(temporal -> LocalDate.from(temporal)
-                .atStartOfDay()
-                .with(DayOfWeek.MONDAY));
+        return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(DayOfWeek.MONDAY));
     }
 
     /**
@@ -286,11 +271,11 @@ public class DateManipulator {
      * @return The local date that correspond to the epoch milliseconds minus the system offset
      */
     public LocalDateTime fromEpochMillisecondsWithSystemOffset(final long epochMillis) {
-        //get the offset at the time
+        // get the offset at the time
         final ZonedDateTime referenceUTC = ZonedDateTime.ofInstant(ofEpochMilli(epochMillis), systemDefault());
         final long offsetMillis = referenceUTC.getOffset().getTotalSeconds() * 1000;
 
-        //create LocalDateTime from epochMillis with the offset
+        // create LocalDateTime from epochMillis with the offset
         return LocalDateTime.ofInstant(ofEpochMilli(epochMillis - offsetMillis), systemDefault());
     }
 }

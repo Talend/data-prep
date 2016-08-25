@@ -45,7 +45,8 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
                 this.configuredAnalyzer = analyzer.apply(filteredColumns);
                 this.invalidMarker = new InvalidMarker(filteredColumns, configuredAnalyzer);
             }
-            configuredAnalyzer.analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
+            configuredAnalyzer.analyze(
+                    row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
             super.receive(invalidMarker.apply(row), metadata);
         } finally {
             totalTime += System.currentTimeMillis() - start;

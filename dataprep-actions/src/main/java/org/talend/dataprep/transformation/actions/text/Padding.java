@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -28,13 +28,10 @@ import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import com.google.common.base.Strings;
-
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Padding.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Padding.ACTION_NAME)
 public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -61,33 +58,21 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     public static final String RIGHT_POSITION = "right";
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.STRINGS_ADVANCED.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType())) || Type.NUMERIC.isAssignableFrom(Type.get(column.getType()));
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -107,9 +92,6 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         return parameters;
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
@@ -129,9 +111,9 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         }
 
         if (position.equals(LEFT_POSITION)) {
-            return Strings.padStart(from, size, paddingChar);
+            return StringUtils.leftPad(from, size, paddingChar);
         } else {
-            return Strings.padEnd(from, size, paddingChar);
+            return StringUtils.rightPad(from, size, paddingChar);
         }
     }
 

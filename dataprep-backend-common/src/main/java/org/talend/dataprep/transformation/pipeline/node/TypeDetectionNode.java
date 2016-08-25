@@ -15,14 +15,14 @@ import java.util.zip.GZIPOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.FlagNames;
-import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
@@ -69,7 +69,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
             generator.writeFieldName("records");
             generator.writeStartArray();
         } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
@@ -89,7 +89,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                 try {
                     generator.writeStringField(column.getId(), row.get(column.getId()));
                 } catch (IOException e) {
-                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                    throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
                 }
             });
             if (row.isDeleted()) {
@@ -104,7 +104,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
             }
             generator.writeEndObject();
         } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
@@ -152,7 +152,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                 }
                 // Continue process
                 try (JsonParser parser = mapper.getFactory().createParser(new GZIPInputStream(new FileInputStream(reservoir)))) {
-                    final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+                    final DataSet dataSet = mapper.reader(DataSet.class).readValue(parser);
                     dataSet.getRecords().forEach(r -> link.exec().emit(r, rowMetadata));
                 }
             }

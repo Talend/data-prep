@@ -22,9 +22,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -36,9 +36,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Abstract Action for basic math action with one parameter (constant or an other column)
  */
 public abstract class AbstractMathOneParameterAction extends AbstractMathAction implements ColumnAction {
-
-    // olamy I would prefer to know which class is currently used but not sure checkstyle like that :P
-    // private Logger logger = LoggerFactory.getLogger( getClass() );
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMathOneParameterAction.class);
 
@@ -54,7 +51,7 @@ public abstract class AbstractMathOneParameterAction extends AbstractMathAction 
                 .item(OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, //
-                                StringUtils.EMPTY, getMessagesBundle())) //
+                                StringUtils.EMPTY)) //
                 .defaultValue(CONSTANT_MODE) //
                 .build());
 
@@ -82,7 +79,7 @@ public abstract class AbstractMathOneParameterAction extends AbstractMathAction 
             parameterValue = row.get(otherColId);
             break;
         default:
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, //
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //
                     ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
         }
 

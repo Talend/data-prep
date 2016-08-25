@@ -24,42 +24,30 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 
 /**
  * Component in charge of parsing dates.
  */
-@Component
 public class DateParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateParser.class);
 
-    @Autowired
-    private AnalyzerService analyzerService;
+    private final AnalyzerService analyzerService;
 
-    /**
-     * Returns the most frequent pattern. If few patterns are equally frequent, no guaranty of which one is returned.
-     *
-     * @param column the column to analyse.
-     * @return the most frequent pattern or null if no pattern at all.
-     */
-    public DatePattern getMostFrequentPattern(ColumnMetadata column) {
-        List<DatePattern> patterns = getPatterns(column.getStatistics().getPatternFrequencies());
-        if (!patterns.isEmpty()) {
-            return patterns.get(0);
-        } else {
-            return null;
-        }
+    public DateParser() {
+        this(Providers.get(AnalyzerService.class));
+    }
+
+    public DateParser(AnalyzerService analyzerService) {
+        this.analyzerService = analyzerService;
     }
 
     /**
@@ -157,10 +145,8 @@ public class DateParser {
         }
 
         for (DatePattern pattern : patterns) {
-                final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                    .parseCaseInsensitive()
-                    .append(pattern.getFormatter())
-                    .toFormatter(Locale.ENGLISH);
+            final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                    .append(pattern.getFormatter()).toFormatter(Locale.ENGLISH);
 
             // first try to parse directly as LocalDateTime
             try {

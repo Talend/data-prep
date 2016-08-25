@@ -13,32 +13,6 @@
 
 package org.talend.dataprep.preparation.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.*;
-import org.talend.dataprep.lock.store.LockedResource;
-import org.talend.dataprep.preparation.BasePreparationTest;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-import org.talend.dataprep.util.SortAndOrderHelper;
-
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static java.util.Arrays.asList;
@@ -53,6 +27,33 @@ import static org.talend.dataprep.preparation.service.EntityBuilder.*;
 import static org.talend.dataprep.preparation.service.PreparationControllerTestClient.appendStepsToPrep;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.lock.store.LockedResource;
+import org.talend.dataprep.preparation.BasePreparationTest;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.util.SortAndOrderHelper;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 /**
  * Unit test for the preparation service.
@@ -1068,7 +1069,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         request.then()//
                 .statusCode(400)//
                 .assertThat()//
-                .body("code", is("TDP_ALL_MISSING_ACTION_SCOPE"));
+                .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -1192,7 +1193,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         request.then()//
                 .statusCode(400)//
                 .assertThat()//
-                .body("code", is("TDP_ALL_MISSING_ACTION_SCOPE"));
+                .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

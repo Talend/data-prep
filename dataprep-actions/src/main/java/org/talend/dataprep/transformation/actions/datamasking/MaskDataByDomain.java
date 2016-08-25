@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -29,7 +29,6 @@ import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus;
@@ -38,7 +37,7 @@ import org.talend.dataquality.datamasking.semantic.ValueDataMasker;
 /**
  * Mask sensitive data according to the semantic category.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + MaskDataByDomain.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MaskDataByDomain.ACTION_NAME)
 public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -52,33 +51,21 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
      */
     private static final String MASKER = "masker"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.DATA_MASKING.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.isAssignableFrom(Type.get(column.getType()));
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
@@ -94,9 +81,6 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
         }
     }
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);

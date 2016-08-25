@@ -15,10 +15,10 @@ package org.talend.dataprep.transformation.api.transformer.suggestion;
 
 import java.util.function.BiFunction;
 
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 
-public interface SuggestionEngineRule extends BiFunction<ActionMetadata, ColumnMetadata, Integer> {
+public interface SuggestionEngineRule extends BiFunction<ActionDefinition, ColumnMetadata, Integer> {
 
     int HOP = 10;
 

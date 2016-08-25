@@ -17,14 +17,14 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.RowAction;
@@ -33,8 +33,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Delete the line which id matches TdpId in context. This id/filtering is managed by ActionMetadata.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Delete.DELETE_ACTION_NAME)
-@Scope(value = "prototype")
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Delete.DELETE_ACTION_NAME)
 public class Delete extends AbstractActionMetadata implements RowAction {
 
     public static final String DELETE_ACTION_NAME = "delete";
@@ -44,9 +43,6 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     public static final String DELETE_COLUMN = "delete_column";
 
     private final ScopeCategory scope;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public Delete() {
         this(LINE);
@@ -65,9 +61,9 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     public String getDescription() {
         switch (scope) {
         case LINE:
-            return getMessagesBundle().getString("action." + DELETE_SINGLE_LINE + ".desc");
+            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, DELETE_SINGLE_LINE);
         case COLUMN:
-            return getMessagesBundle().getString("action." + DELETE_COLUMN + ".desc");
+            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, DELETE_COLUMN);
         default:
             return null;
         }
@@ -77,9 +73,9 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     public String getLabel() {
         switch (scope) {
         case LINE:
-            return getMessagesBundle().getString("action." + DELETE_SINGLE_LINE + ".label");
+            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, DELETE_SINGLE_LINE);
         case COLUMN:
-            return getMessagesBundle().getString("action." + DELETE_COLUMN + ".label");
+            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, DELETE_COLUMN);
         default:
             return null;
         }
@@ -91,7 +87,7 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
@@ -101,8 +97,8 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     }
 
     @Override
-    public Delete adapt(ScopeCategory scope) {
-        return applicationContext.getBean(getClass(), scope);
+    public ActionDefinition adapt(ScopeCategory scope) {
+        return new Delete(scope);
     }
 
     @Override

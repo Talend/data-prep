@@ -29,20 +29,20 @@ public class StatisticsTest {
     @Before
     public void setUp() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        statistics = mapper.readerFor(Statistics.class).readValue(StatisticsTest.class.getResourceAsStream("statistics.json"));
+        statistics = mapper.reader(Statistics.class).readValue(StatisticsTest.class.getResourceAsStream("statistics.json"));
     }
 
     @Test
     public void testEquals() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        final Statistics other = mapper.readerFor(Statistics.class).readValue(StatisticsTest.class.getResourceAsStream("statistics.json"));
+        final Statistics other = mapper.reader(Statistics.class).readValue(StatisticsTest.class.getResourceAsStream("statistics.json"));
         assertEquals(true, statistics.equals(other));
     }
 
     @Test
     public void testHashCode() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        final Statistics other = mapper.readerFor(Statistics.class).readValue(StatisticsTest.class.getResourceAsStream("statistics.json"));
+        final Statistics other = mapper.reader(Statistics.class).readValue(StatisticsTest.class.getResourceAsStream("statistics.json"));
         assertEquals(statistics.hashCode(), other.hashCode());
     }
 

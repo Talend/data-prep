@@ -16,11 +16,9 @@ import java.math.BigDecimal;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -32,16 +30,12 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * This will compute the absolute value for numerical columns.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Absolute.ABSOLUTE_ACTION_NAME)
-@Scope(value = "prototype")
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Absolute.ABSOLUTE_ACTION_NAME)
 public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ABSOLUTE_ACTION_NAME = "absolute"; //$NON-NLS-1$
 
     private final Type type;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public Absolute() {
         type = Type.INTEGER;
@@ -92,7 +86,7 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.FLOAT.equals(Type.get(column.getType())) //
                 || Type.DOUBLE.equals(Type.get(column.getType())) //
                 || Type.INTEGER.equals(Type.get(column.getType()));
@@ -127,11 +121,11 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public Absolute adapt(ColumnMetadata column) {
-        if (column == null || !acceptColumn(column)) {
+    public ActionDefinition adapt(ColumnMetadata column) {
+        if (column == null || !acceptField(column)) {
             return this;
         }
-        return applicationContext.getBean(getClass(), type);
+        return new Absolute(type);
     }
 
     @Override

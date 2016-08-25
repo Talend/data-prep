@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.fillinvalid;
 
@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -37,18 +36,17 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 
 /**
  * Unit test for the FillWithNumericIfInvalid action.
- * 
+ *
  * @see FillInvalid
  */
 public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private FillInvalid fillInvalid;
+    private FillInvalid fillInvalid = new FillInvalid();
 
     @PostConstruct
     public void init() {
-        fillInvalid = fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
+        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.INTEGER).build());
     }
 
     @Test
@@ -106,10 +104,10 @@ public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.DOUBLE)));
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.FLOAT)));
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.INTEGER)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.INTEGER)));
     }
 
     @Test
@@ -119,7 +117,7 @@ public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptColumn(getColumn(Type.ANY)));
+        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
     }
 
 }

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -40,7 +40,7 @@ import org.talend.dataquality.standardization.phone.PhoneNumberHandlerBase;
 /**
  * Format a validated phone number to a specified format.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + FormatPhoneNumber.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FormatPhoneNumber.ACTION_NAME)
 public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -103,17 +103,17 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
         final String regionCode = getRegionCode(context, row);
 
-        final String formatedStr = formatIfValid(regionCode, context.get(PHONE_NUMBER_HANDLER_KEY),
+        final String formatedStr = formatIfValid(regionCode,
                 context.getParameters().get(FORMAT_TYPE_PARAMETER), possiblePhoneValue);
         row.set(columnId, formatedStr);
     }
 
     /**
      * When the phone is a valid phone number,format it as the specified form.
-     * 
+     *
      * @return the formatted phone number or the original value if cannot be formatted
      */
-    private String formatIfValid(String regionParam, PhoneNumberHandlerBase phoneNumberHandler, String formatType, String phone) {
+    private String formatIfValid(String regionParam, String formatType, String phone) {
         if (formatType == null || !PhoneNumberHandlerBase.isPossiblePhoneNumber(phone, regionParam)) {
             return phone;
         }
@@ -140,7 +140,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
                 .item(OTHER_COLUMN_MODE, //
                         new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
                                 ParameterType.COLUMN, //
-                                StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle())) //
+                                StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //
                 .item(CONSTANT_MODE, //
                         SelectParameter.Builder.builder().name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
                                 .item(US_REGION_CODE) //
@@ -164,12 +164,13 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
 
     private String getRegionCode(ActionContext context, DataSetRow row) {
         final Map<String, String> parameters = context.getParameters();
-        String regionParam = null;
+        final String regionParam;
         switch (parameters.get(OtherColumnParameters.MODE_PARAMETER)) {
         case CONSTANT_MODE:
-            regionParam = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
-            if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, regionParam)) {
+            if (StringUtils.equals(OTHER_REGION_TO_BE_SPECIFIED, parameters.get(REGIONS_PARAMETER_CONSTANT_MODE))) {
                 regionParam = parameters.get(MANUAL_REGION_PARAMETER_STRING);
+            } else {
+                regionParam = parameters.get(REGIONS_PARAMETER_CONSTANT_MODE);
             }
             break;
         case OTHER_COLUMN_MODE:
@@ -195,7 +196,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType())) || Type.INTEGER.equals(Type.get(column.getType()));
     }
 

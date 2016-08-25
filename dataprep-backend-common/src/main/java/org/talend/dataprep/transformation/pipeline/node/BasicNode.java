@@ -5,7 +5,8 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.*;
 
 public class BasicNode implements Node, RuntimeNode {
-    protected Link link;
+
+    Link link;
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {

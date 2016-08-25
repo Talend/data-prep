@@ -26,17 +26,17 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -44,7 +44,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Change the date pattern on a 'date' column.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ModifyDate.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ModifyDate.ACTION_NAME)
 public class ModifyDate extends AbstractDate implements ColumnAction, DatePatternParamModel {
 
     /** Action name. */
@@ -54,22 +54,20 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
      * The unit of the amount to subtract.
      */
     protected static final String TIME_UNIT_PARAMETER = "time_unit"; //$NON-NLS-1$
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ModifyDate.class);
+
     private static final String PATTERN_CONTEXT_KEY = "pattern"; //$NON-NLS-1$
+
     private static final String UNIT_CONTEXT_KEY = "time_unit"; //$NON-NLS-1$
+
     private static final String AMOUNT_CONTEXT_KEY = "amount"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> parameters = super.getParameters();
@@ -89,7 +87,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
                 .item(OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, //
-                                StringUtils.EMPTY, getMessagesBundle())) //
+                                StringUtils.EMPTY)) //
                 .defaultValue(CONSTANT_MODE) //
                 .build());
 
@@ -101,8 +99,8 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             try {
-                actionContext.get(PATTERN_CONTEXT_KEY, p -> dateParser
-                        .getMostFrequentPattern(actionContext.getRowMetadata().getById(actionContext.getColumnId())));
+                actionContext.get(PATTERN_CONTEXT_KEY, p -> RowMetadataUtils
+                        .getMostUsedDatePattern((actionContext.getRowMetadata().getById(actionContext.getColumnId()))));
 
                 actionContext.get(UNIT_CONTEXT_KEY,
                         p -> ChronoUnit.valueOf(actionContext.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase()));
@@ -147,14 +145,14 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
             }
             break;
         default:
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER, //
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //
                     ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
         }
 
         try {
-            final DatePattern outputPattern = context.get(PATTERN_CONTEXT_KEY);
+            final DatePattern outputPattern = new DatePattern(context.get(PATTERN_CONTEXT_KEY));
 
-            LocalDateTime date = dateParser.parse(value, context.getRowMetadata().getById(columnId));
+            LocalDateTime date = Providers.get().parse(value, context.getRowMetadata().getById(columnId));
 
             date = date.plus(amount, context.get(UNIT_CONTEXT_KEY));
 

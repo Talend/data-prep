@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.pipeline.Link;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
@@ -63,14 +63,14 @@ public class NodeBuilder {
      * Append a new node at the end, with a custom link
      *
      * @param linkFunction A function that create the link from the previous nodes
-     * @param node         The new node to append
+     * @param node The new node to append
      */
     public NodeBuilder to(final Function<Node[], Link> linkFunction, final Node node) {
         try {
             state = state.next(linkFunction);
             state = state.next(node);
         } catch (IllegalStateException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION,
                     new Exception("Each to() must be followed by node().", e));
         }
         return this;
@@ -81,8 +81,8 @@ public class NodeBuilder {
      * The previous node will dispatch its input to all the provided nodes via a CloneLink
      */
     public NodeBuilder dispatchTo(final Node... nodes) {
-        if(nodes == null || nodes.length == 0) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+        if (nodes == null || nodes.length == 0) {
+            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION,
                     new IllegalArgumentException("Each dispatchTo() must be followed by nodes()."));
         }
 
@@ -95,8 +95,8 @@ public class NodeBuilder {
      * Create a multi pipeline and zip them
      */
     public NodeBuilder zipTo(final Node target) {
-        if(target == null) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+        if (target == null) {
+            throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION,
                     new IllegalArgumentException("Each zipTo() must be followed by nodes()."));
         }
 
@@ -146,7 +146,7 @@ public class NodeBuilder {
             try {
                 previousNodes[0].setLink(linkFunction.apply(nodes));
             } catch (UnsupportedOperationException e) {
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+                throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION,
                         new Exception("Unable to specify a new output after a terminal node.", e));
             }
 
@@ -165,15 +165,13 @@ public class NodeBuilder {
 
         private NodeState(Node... nodes) {
             // get last node of a sub-pipeline if entry is not a simple node
-            this.nodes = Arrays.stream(nodes)
-                    .map((nextNode) -> {
-                        Node last = nextNode;
-                        while(last.getLink() != null && last.getLink().getTarget() != null) {
-                            last = last.getLink().getTarget();
-                        }
-                        return last;
-                    })
-                    .toArray(Node[]::new);
+            this.nodes = Arrays.stream(nodes).map(nextNode -> {
+                Node last = nextNode;
+                while (last.getLink() != null && last.getLink().getTarget() != null) {
+                    last = last.getLink().getTarget();
+                }
+                return last;
+            }).toArray(Node[]::new);
         }
 
         @Override

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.parameters;
 
@@ -22,7 +22,7 @@ public class ClusterItem {
 
     private final Parameter replace;
 
-    public ClusterItem(final List<Parameter> parameters, final Parameter replace) {
+    private ClusterItem(final List<Parameter> parameters, final Parameter replace) {
         this.parameters.addAll(parameters);
         this.replace = replace;
     }
@@ -41,7 +41,7 @@ public class ClusterItem {
 
     public static class Builder {
 
-        private List<Parameter> parameters = new ArrayList<>();
+        private final List<Parameter> parameters = new ArrayList<>();
 
         private Parameter replace;
 

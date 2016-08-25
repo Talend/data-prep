@@ -1,26 +1,26 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.ResizableList;
 import org.talend.dataquality.statistics.numeric.NumericalStatisticsAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.TypeInferenceUtils;
-import org.talend.dataquality.common.inference.Analyzer;
-import org.talend.dataquality.common.inference.ResizableList;
 
 /**
  * Number histogram analyzer. It processes all the records and compute the statistics for each.
@@ -29,7 +29,8 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
 
     private static final long serialVersionUID = -3756520692420812485L;
 
-    private ResizableList<StreamNumberHistogramStatistics> stats = new ResizableList<>(StreamNumberHistogramStatistics.class);
+    private final ResizableList<StreamNumberHistogramStatistics> stats = new ResizableList<>(
+            StreamNumberHistogramStatistics.class);
 
     /**
      * Constructor

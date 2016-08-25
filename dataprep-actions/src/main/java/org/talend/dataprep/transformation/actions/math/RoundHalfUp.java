@@ -14,16 +14,15 @@ package org.talend.dataprep.transformation.actions.math;
 
 import java.math.RoundingMode;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 
 /**
  * Returns the closest long to the argument, with ties rounding to positive infinity.
  *
  * @see RoundingMode#HALF_UP
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundHalfUp.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundHalfUp.ACTION_NAME)
 public class RoundHalfUp extends AbstractRound {
 
     /**
@@ -31,9 +30,6 @@ public class RoundHalfUp extends AbstractRound {
      */
     public static final String ACTION_NAME = "round"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;

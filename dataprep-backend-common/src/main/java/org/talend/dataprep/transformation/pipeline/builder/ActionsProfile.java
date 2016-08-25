@@ -7,8 +7,11 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 public class ActionsProfile {
 
     private final boolean needFullAnalysis;
+
     private final boolean needOnlyInvalidAnalysis;
+
     private final Predicate<ColumnMetadata> filterForFullAnalysis;
+
     private final Predicate<ColumnMetadata> filterForInvalidAnalysis;
 
     private final Predicate<ColumnMetadata> filterForPatternAnalysis;

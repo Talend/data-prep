@@ -23,54 +23,48 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.*;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.CellAction;
+import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Replace the content or part of a cell by a value.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
 public class ReplaceOnValue extends AbstractActionMetadata implements ColumnAction, CellAction {
 
     public static final String REGEX_HELPER_KEY = "regex_helper";
+
     /** The action name. */
     public static final String REPLACE_ON_VALUE_ACTION_NAME = "replace_on_value"; //$NON-NLS-1$
+
     /** Value to match. */
     public static final String CELL_VALUE_PARAMETER = "cell_value"; //$NON-NLS-1$
+
     /** Replace Value. */
     public static final String REPLACE_VALUE_PARAMETER = "replace_value"; //$NON-NLS-1$
+
     /** Scope Value (replace the entire cell or only the part that matches). */
     public static final String REPLACE_ENTIRE_CELL_PARAMETER = "replace_entire_cell"; //$NON-NLS-1$
 
-    @Autowired
-    private ReplaceOnValueHelper regexParametersHelper;
-
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return REPLACE_ON_VALUE_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.STRINGS.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -80,17 +74,11 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
@@ -99,7 +87,8 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
             String rawParam = parameters.get(CELL_VALUE_PARAMETER);
 
             try {
-                actionContext.get(REGEX_HELPER_KEY, (p) -> regexParametersHelper.build(rawParam, false));
+                final ReplaceOnValueHelper regexParametersHelper = new ReplaceOnValueHelper();
+                actionContext.get(REGEX_HELPER_KEY, p -> regexParametersHelper.build(rawParam, false));
             } catch (IllegalArgumentException e) {
                 actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
@@ -142,7 +131,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
 
     /**
      * Compute the new action based on the current action context.
-     * 
+     *
      * @param context the action context.
      * @param originalValue the original value.
      * @return the new value to set based on the parameters within the action context.

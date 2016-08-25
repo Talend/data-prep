@@ -3,6 +3,7 @@ package org.talend.dataprep.transformation.actions.clear;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -32,8 +32,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class ClearMatchingTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private ClearMatching action;
+    private ClearMatching action = new ClearMatching();
 
     private Map<String, String> parameters;
 
@@ -154,15 +153,11 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_clear_because_not_equals() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "N");
-        values.put("0002", "Something");
-
-        final DataSetRow row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0002").setType(Type.STRING.getName());
-
+        final DataSetRow row = builder() //
+                .value("David Bowie", Type.STRING) //
+                .value("N", Type.STRING) //
+                .value("Something", Type.STRING) //
+                .build();
         parameters.put(ClearMatching.VALUE_PARAMETER, generateJson("Badibada", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
@@ -180,15 +175,11 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
     @Test
     public void should_clear_boolean_because_equals() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Something");
-        values.put("0002", "True");
-
-        final DataSetRow row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0002").setType(Type.BOOLEAN.getName());
-
+        final DataSetRow row = builder() //
+                .value("David Bowie", Type.STRING) //
+                .value("Something", Type.STRING) //
+                .value("True", Type.BOOLEAN) //
+                .build();
         parameters.put(ClearMatching.VALUE_PARAMETER, Boolean.TRUE.toString());
 
         // when
@@ -206,15 +197,11 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
     @Test
     public void should_clear_boolean_because_equals_ignore_case() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Something");
-        values.put("0002", "False");
-
-        final DataSetRow row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0002").setType(Type.BOOLEAN.getName());
-
+        final DataSetRow row = builder() //
+                .value("David Bowie", Type.STRING) //
+                .value("Something", Type.STRING) //
+                .value("False", Type.BOOLEAN) //
+                .build();
         parameters.put(ClearMatching.VALUE_PARAMETER, Boolean.FALSE.toString());
 
         // when
@@ -232,16 +219,11 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_clear_boolean_because_not_equals() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "True");
-        values.put("0002", "Something");
-
-
-        final DataSetRow row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0002").setType(Type.BOOLEAN.getName());
-
+        final DataSetRow row = builder() //
+                .value("David Bowie", Type.STRING) //
+                .value("True", Type.STRING) //
+                .value("Something", Type.BOOLEAN) //
+                .build();
         parameters.put(ClearMatching.VALUE_PARAMETER, "tchoubidoo");
 
         // when
@@ -259,30 +241,25 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
     @Test
     public void should_clear_because_pattern_match_integer() throws Exception {
         // given
-        final Map<String, String> firstRowValues = new HashMap<>();
-        firstRowValues.put("0000", "David Bowie");
-        firstRowValues.put("0001", "N");
-        firstRowValues.put("0002", "123");
+        final DataSetRow row1 = builder() //
+                .value("David Bowie", Type.STRING) //
+                .value("N", Type.STRING) //
+                .value("123", Type.INTEGER) //
+                .build();
 
-        final Map<String, String> secondRowValues = new HashMap<>();
-        secondRowValues.put("0000", "Beer");
-        secondRowValues.put("0001", "T");
-        secondRowValues.put("0002", "1234");
+        final DataSetRow row2 = builder() //
+                .value("Beer", Type.STRING) //
+                .value("T", Type.STRING) //
+                .value("1234", Type.INTEGER) //
+                .build();
 
-        final Map<String, String> thirdRowValues = new HashMap<>();
-        thirdRowValues.put("0000", "Wine");
-        thirdRowValues.put("0001", "True");
-        thirdRowValues.put("0002", "01234");
-
-        List<DataSetRow> rows = Arrays.asList(new DataSetRow(firstRowValues), //
-                new DataSetRow(secondRowValues), //
-                new DataSetRow(thirdRowValues));
-        for (DataSetRow row : rows) {
-            final RowMetadata rowMetadata = row.getRowMetadata();
-            rowMetadata.getById("0002").setType(Type.INTEGER.getName());
-        }
-
+        final DataSetRow row3 = builder() //
+                .value("Wine", Type.STRING) //
+                .value("True", Type.STRING) //
+                .value("01234", Type.INTEGER) //
+                .build();
         parameters.put(ClearMatching.VALUE_PARAMETER, generateJson(".*1234", ReplaceOnValueHelper.REGEX_MODE));
+        List<DataSetRow> rows = Arrays.asList(row1, row2, row3);
 
         // when
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
@@ -314,7 +291,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest {
     @Test
     public void should_accept_column() {
         for (Type type : Type.values()) {
-            assertTrue(action.acceptColumn(getColumn(type)));
+            assertTrue(action.acceptField(getColumn(type)));
         }
     }
 

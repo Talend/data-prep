@@ -18,18 +18,17 @@ import static org.talend.dataprep.transformation.actions.category.ActionScope.EM
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Delete row when value is empty.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteEmpty.DELETE_EMPTY_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteEmpty.DELETE_EMPTY_ACTION_NAME)
 public class DeleteEmpty extends AbstractDelete implements ColumnAction {
 
     /**
@@ -37,27 +36,18 @@ public class DeleteEmpty extends AbstractDelete implements ColumnAction {
      */
     public static final String DELETE_EMPTY_ACTION_NAME = "delete_empty"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return DELETE_EMPTY_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getActionScope()
-     */
     @Override
     public List<String> getActionScope() {
         return Collections.singletonList(EMPTY.getDisplayName());
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 

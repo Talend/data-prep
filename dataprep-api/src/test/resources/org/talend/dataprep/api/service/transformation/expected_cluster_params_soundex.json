@@ -9,23 +9,53 @@
       {
         "parameters": [
           {
-            "name": "t@t@",
+            "name": "Massachussetts",
             "type": "boolean",
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.t@t@.desc",
-            "label": "parameter.t@t@.label",
+            "description": "Massachussetts",
+            "label": "Massachussetts",
             "default": null
           },
           {
-            "name": "T@T@",
+            "name": "Masachussets",
             "type": "boolean",
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.T@T@.desc",
-            "label": "parameter.T@T@.label",
+            "description": "Masachussets",
+            "label": "Masachussets",
+            "default": null
+          },
+          {
+            "name": "Massachusetts",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "Massachusetts",
+            "label": "Massachusetts",
+            "default": null
+          },
+          {
+            "name": "Masachusetts",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "Masachusetts",
+            "label": "Masachusetts",
+            "default": null
+          },
+          {
+            "name": "Massachusets",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "Massachusets",
+            "label": "Massachusets",
             "default": null
           }
         ],
@@ -35,8 +65,42 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "parameter.replaceValue.desc",
-          "label": "parameter.replaceValue.label",
+          "description": "Replace value",
+          "label": "Replace value",
+          "default": "Masachusetts"
+        }
+      },
+      {
+        "parameters": [
+          {
+            "name": "t@t@",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "t@t@",
+            "label": "t@t@",
+            "default": null
+          },
+          {
+            "name": "T@T@",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "T@T@",
+            "label": "T@T@",
+            "default": null
+          }
+        ],
+        "replace": {
+          "name": "replaceValue",
+          "type": "string",
+          "implicit": false,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "Replace value",
+          "label": "Replace value",
           "default": "T@T@"
         }
       },
@@ -48,8 +112,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.tata.desc",
-            "label": "parameter.tata.label",
+            "description": "tata",
+            "label": "tata",
             "default": null
           },
           {
@@ -58,8 +122,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.Tata.desc",
-            "label": "parameter.Tata.label",
+            "description": "Tata",
+            "label": "Tata",
             "default": null
           }
         ],
@@ -69,73 +133,9 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "parameter.replaceValue.desc",
-          "label": "parameter.replaceValue.label",
+          "description": "Replace value",
+          "label": "Replace value",
           "default": "tata"
-        }
-      },
-      {
-        "parameters": [
-          {
-            "name": "Massachussetts",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "parameter.Massachussetts.desc",
-            "label": "parameter.Massachussetts.label",
-            "default": null
-          },
-          {
-            "name": "Masachussets",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "parameter.Masachussets.desc",
-            "label": "parameter.Masachussets.label",
-            "default": null
-          },
-          {
-            "name": "Massachusetts",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "parameter.Massachusetts.desc",
-            "label": "parameter.Massachusetts.label",
-            "default": null
-          },
-          {
-            "name": "Masachusetts",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "parameter.Masachusetts.desc",
-            "label": "parameter.Masachusetts.label",
-            "default": null
-          },
-          {
-            "name": "Massachusets",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "parameter.Massachusets.desc",
-            "label": "parameter.Massachusets.label",
-            "default": null
-          }
-        ],
-        "replace": {
-          "name": "replaceValue",
-          "type": "string",
-          "implicit": false,
-          "canBeBlank": true,
-          "placeHolder": "",
-          "description": "parameter.replaceValue.desc",
-          "label": "parameter.replaceValue.label",
-          "default": "Masachusetts"
         }
       },
       {
@@ -146,8 +146,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.Texas.desc",
-            "label": "parameter.Texas.label",
+            "description": "Texas",
+            "label": "Texas",
             "default": null
           },
           {
@@ -156,8 +156,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "parameter.Tixass.desc",
-            "label": "parameter.Tixass.label",
+            "description": "Tixass",
+            "label": "Tixass",
             "default": null
           }
         ],
@@ -167,8 +167,8 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "parameter.replaceValue.desc",
-          "label": "parameter.replaceValue.label",
+          "description": "Replace value",
+          "label": "Replace value",
           "default": "Tixass"
         }
       }

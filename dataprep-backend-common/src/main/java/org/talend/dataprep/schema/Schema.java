@@ -1,21 +1,22 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 
@@ -52,8 +53,7 @@ public class Schema implements Serializable {
         return draft;
     }
 
-    public List<SheetContent> getSheetContents()
-    {
+    public List<SheetContent> getSheetContents() {
         return sheetContents;
     }
 
@@ -130,13 +130,9 @@ public class Schema implements Serializable {
     }
 
     @Override
-    public String toString()
-    {
-        return "SchemaParserResult{" +
-            "draft=" + draft +
-            ", sheetContents=" + sheetContents +
-            ", sheetName='" + sheetName + '\'' +
-            '}';
+    public String toString() {
+        return "SchemaParserResult{" + "draft=" + draft + ", sheetContents=" + sheetContents + ", sheetName='" + sheetName + '\''
+                + '}';
     }
 
     public static class Builder {
@@ -161,9 +157,7 @@ public class Schema implements Serializable {
                 return this;
             }
             this.sheetContents = new ArrayList<>();
-            for (SheetContent content : sheetContents) {
-                this.sheetContents.add(content.clone());
-            }
+            this.sheetContents.addAll(sheetContents.stream().map(SheetContent::clone).collect(Collectors.toList()));
             return this;
         }
 

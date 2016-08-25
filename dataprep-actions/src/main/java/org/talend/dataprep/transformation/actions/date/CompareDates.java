@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
@@ -27,7 +26,7 @@ import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.*;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + CompareDates.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CompareDates.ACTION_NAME)
 public class CompareDates extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {
 
     /**
@@ -51,30 +50,18 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
 
     public static final String LE = "date.le";
 
-    @Autowired
-    protected DateParser dateParser;
-
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.DATE.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         Type columnType = Type.get(column.getType());
         return Type.DATE.isAssignableFrom(columnType);
     }
@@ -91,11 +78,6 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
         return new Parameter(CONSTANT_VALUE, ParameterType.DATE, StringUtils.EMPTY);
     }
 
-    /**
-     * see constants
-     * 
-     * @return
-     */
     @Override
     protected SelectParameter getCompareModeSelectParameter() {
 
@@ -123,6 +105,7 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
         }
 
         try {
+            final DateParser dateParser = Providers.get(DateParser.class);
             final LocalDateTime temporalAccessor1 = dateParser.parse(comparisonRequest.value1, comparisonRequest.colMetadata1);
 
             // we compare with the format of the first column when the comparison is with a CONSTANT

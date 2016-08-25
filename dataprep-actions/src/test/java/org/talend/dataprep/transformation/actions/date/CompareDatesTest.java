@@ -28,7 +28,6 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -46,8 +45,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class CompareDatesTest extends BaseDateTests {
 
     /** The action to test. */
-    @Autowired
-    private CompareDates action;
+    private CompareDates action = new CompareDates();
 
     private Map<String, String> parameters;
 
@@ -71,15 +69,15 @@ public class CompareDatesTest extends BaseDateTests {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
@@ -251,8 +249,8 @@ public class CompareDatesTest extends BaseDateTests {
     public void simple_greater_result_with_constant_with_invalid_dates_row() throws Exception {
 
         // given
-        final Map<String, String> firstRowvalues = new HashMap<>();
-        firstRowvalues.put("0000", "02/01/2012");
+        final Map<String, String> firstRowValues = new HashMap<>();
+        firstRowValues.put("0000", "02/01/2012");
 
         RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.addColumn(createMetadata("0000", "last update", Type.DATE, "statistics_MM_dd_yyyy.json"));
@@ -268,7 +266,7 @@ public class CompareDatesTest extends BaseDateTests {
         final Map<String, String> thirdRowvalues = new HashMap<>();
         thirdRowvalues.put("0000", "02/01/2001");
 
-        List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowvalues), //
+        List<DataSetRow> rows = Arrays.asList(new DataSetRow(rowMetadata, firstRowValues), //
                 new DataSetRow(rowMetadata, secondRowvalues), //
                 new DataSetRow(rowMetadata, thirdRowvalues));
 

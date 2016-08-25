@@ -41,7 +41,7 @@ public class TypeUtils {
         return types;
     }
 
-    public static DataTypeEnum convert(Type type) {
+    private static DataTypeEnum convert(Type type) {
         switch (type) {
         case ANY:
         case STRING:

@@ -13,14 +13,15 @@
 
 package org.talend.dataprep.transformation.actions.type;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -30,23 +31,16 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class ChangeTypeTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private TypeChange typeChange;
+    private TypeChange typeChange = new TypeChange();
 
     @Test
     public void should_change_type() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "");
-        values.put("0002", "Something");
-
-        final DataSetRow row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0001").setType(Type.INTEGER.getName());
-        rowMetadata.getById("0001").setDomain("FR_BEER");
-        rowMetadata.getById("0001").setDomainFrequency(1);
-        rowMetadata.getById("0001").setDomainLabel("French Beer");
+        final DataSetRow row = builder() //
+                .with(value("David Bowie").type(Type.STRING)) //
+                .with(value("").type(Type.INTEGER).domain("FR_BEER")) //
+                .with(value("Something").type(Type.STRING)) //
+                .build();
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put(TypeChange.NEW_TYPE_PARAMETER_KEY, "STRING");
@@ -58,14 +52,14 @@ public class ChangeTypeTest extends AbstractMetadataBaseTest {
 
         // then
         final ColumnMetadata columnMetadata = row.getRowMetadata().getById("0001");
-        Assertions.assertThat(columnMetadata.getDomain()).isEmpty();
-        Assertions.assertThat(columnMetadata.getDomainLabel()).isEmpty();
-        Assertions.assertThat(columnMetadata.getDomainFrequency()).isEqualTo(0);
+        assertThat(columnMetadata.getDomain()).isEmpty();
+        assertThat(columnMetadata.getDomainLabel()).isEmpty();
+        assertThat(columnMetadata.getDomainFrequency()).isEqualTo(0);
 
-        Assertions.assertThat(columnMetadata.isTypeForced()).isTrue();
+        assertThat(columnMetadata.isTypeForced()).isTrue();
 
         // Check for TDP-838:
-        Assertions.assertThat(columnMetadata.isDomainForced()).isTrue();
+        assertThat(columnMetadata.isDomainForced()).isTrue();
     }
 
     @Test
@@ -81,7 +75,7 @@ public class ChangeTypeTest extends AbstractMetadataBaseTest {
                     .domainLabel("French Beer") //
                     .build();
 
-            Assertions.assertThat(typeChange.acceptColumn(columnMetadata)).isTrue();
+            assertThat(typeChange.acceptField(columnMetadata)).isTrue();
         }
     }
 }

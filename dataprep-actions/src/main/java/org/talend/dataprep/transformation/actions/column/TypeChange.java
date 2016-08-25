@@ -20,12 +20,12 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Change the type of a column <b>This action is not displayed in the UI it's here to ease recording it as a Step It's
  * available from column headers</b>
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + TypeChange.TYPE_CHANGE_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + TypeChange.TYPE_CHANGE_ACTION_NAME)
 public class TypeChange extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -45,25 +45,16 @@ public class TypeChange extends AbstractActionMetadata implements ColumnAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TypeChange.class);
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return TYPE_CHANGE_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.COLUMN_METADATA.getDisplayName();
@@ -76,7 +67,8 @@ public class TypeChange extends AbstractActionMetadata implements ColumnAction {
             final String columnId = context.getColumnId();
             final Map<String, String> parameters = context.getParameters();
             LOGGER.debug("TypeChange for columnId {} with parameters {} ", columnId, parameters);
-            final ColumnMetadata columnMetadata = context.getRowMetadata().getById(columnId);
+            final RowMetadata rowMetadata = context.getRowMetadata();
+            final ColumnMetadata columnMetadata = rowMetadata.getById(columnId);
             final String newType = parameters.get(NEW_TYPE_PARAMETER_KEY);
             if (StringUtils.isNotEmpty(newType)) {
                 columnMetadata.setType(newType);
@@ -88,6 +80,7 @@ public class TypeChange extends AbstractActionMetadata implements ColumnAction {
                 // We must set this to fix TDP-838: we force the domain to empty
                 columnMetadata.setDomainForced(true);
             }
+            rowMetadata.update(columnId, columnMetadata);
             context.setActionStatus(ActionContext.ActionStatus.DONE);
         }
     }

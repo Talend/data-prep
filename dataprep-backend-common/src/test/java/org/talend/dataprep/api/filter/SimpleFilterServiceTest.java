@@ -28,10 +28,10 @@ import java.util.function.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 
 public class SimpleFilterServiceTest {
@@ -69,7 +69,7 @@ public class SimpleFilterServiceTest {
         assertThat(filter.test(datasetRowFromValues), is(true));
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_throw_exception_on_empty_object_definition() throws Exception {
         //given
         final String filtersDefinition = "{}";
@@ -80,7 +80,7 @@ public class SimpleFilterServiceTest {
         //then
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_throw_exception_on_invalid_definition() throws Exception {
         //given
         final String filtersDefinition = "}";
@@ -91,7 +91,7 @@ public class SimpleFilterServiceTest {
         //then
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_create_unknown_filter() throws Exception {
         //given
         final String filtersDefinition = "{" +
@@ -1003,7 +1003,7 @@ public class SimpleFilterServiceTest {
         assertThat(filter.test(datasetRowFromValues), is(true));
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid1() throws Exception {
         //given
         final String filtersDefinition = "{" +
@@ -1028,7 +1028,7 @@ public class SimpleFilterServiceTest {
         //then
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_create_NOT_predicate_invalid2() throws Exception {
         //given
         final String filtersDefinition = "{" +

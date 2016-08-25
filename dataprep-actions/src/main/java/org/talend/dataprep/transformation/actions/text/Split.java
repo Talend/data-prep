@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -33,14 +33,13 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Split a cell value on a separator.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Split.SPLIT_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Split.SPLIT_ACTION_NAME)
 public class Split extends AbstractActionMetadata implements ColumnAction {
 
     /** The action name. */
@@ -50,28 +49,27 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
     public static final String SPLIT_APPENDIX = "_split_"; //$NON-NLS-1$
 
     public static final String NEW_COLUMNS_CONTEXT = "newColumns";
+
     /** The selected separator within the provided list. */
     protected static final String SEPARATOR_PARAMETER = "separator"; //$NON-NLS-1$
+
     /** The string separator specified by the user. Should be used only if SEPARATOR_PARAMETER value is 'other'. */
     protected static final String MANUAL_SEPARATOR_PARAMETER_STRING = "manual_separator_string"; //$NON-NLS-1$
+
     /** The regex separator specified by the user. Should be used only if SEPARATOR_PARAMETER value is 'other'. */
     protected static final String MANUAL_SEPARATOR_PARAMETER_REGEX = "manual_separator_regex"; //$NON-NLS-1$
+
     /** Number of items produces by the split. */
     protected static final String LIMIT = "limit"; //$NON-NLS-1$
+
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(Split.class);
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return SPLIT_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return SPLIT.getDisplayName();
@@ -92,8 +90,8 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
                         .item("@")
                         .item("-")
                         .item("_")
-                        .item(" ", "<space>")
-                        .item("\t", "<tab>")
+                        .item(" ", "space")
+                        .item("\t", "tab")
                         .item("other (string)", new Parameter(MANUAL_SEPARATOR_PARAMETER_STRING, STRING, EMPTY))
                         .item("other (regex)", new Parameter(MANUAL_SEPARATOR_PARAMETER_REGEX, STRING, EMPTY))
                         .defaultValue(":")
@@ -103,17 +101,11 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
@@ -148,9 +140,6 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final Map<String, String> parameters = context.getParameters();

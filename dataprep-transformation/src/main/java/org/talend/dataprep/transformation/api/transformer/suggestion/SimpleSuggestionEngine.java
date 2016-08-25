@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 
 /**
  * Simple suggestion engine implementation.
@@ -39,7 +39,7 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
      * @see SuggestionEngine#score(Collection, ColumnMetadata)
      */
     @Override
-    public List<Suggestion> score(Collection<ActionMetadata> actions, ColumnMetadata column) {
+    public List<Suggestion> score(Collection<ActionDefinition> actions, ColumnMetadata column) {
         return actions.stream() //
                 .map(actionMetadata -> {
                     int score = 0;
@@ -56,7 +56,7 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
      * @see SuggestionEngine#suggest(DataSet)
      */
     @Override
-    public List<ActionMetadata> suggest(DataSet dataSet) {
+    public List<ActionDefinition> suggest(DataSet dataSet) {
         // really simple implementation here :-)
         return Collections.emptyList();
     }

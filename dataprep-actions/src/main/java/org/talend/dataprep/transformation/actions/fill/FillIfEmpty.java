@@ -15,18 +15,18 @@ package org.talend.dataprep.transformation.actions.fill;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import java.util.Locale;
+
+import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillIfEmpty.FILL_EMPTY_ACTION_NAME)
-@Scope(value = "prototype")
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillIfEmpty.FILL_EMPTY_ACTION_NAME)
 public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
 
     public static final String FILL_EMPTY_ACTION_NAME = "fillemptywithdefault";
@@ -38,9 +38,6 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     public static final String FILL_EMPTY_INTEGER = "fillemptywithdefaultinteger"; //$NON-NLS-1$
 
     public static final String FILL_EMPTY_STRING = "fillemptywithdefault"; //$NON-NLS-1$
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public FillIfEmpty() {
         this(Type.STRING);
@@ -59,16 +56,16 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     public String getDescription() {
         switch (type) {
         case STRING:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_STRING + ".desc");
+            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, FILL_EMPTY_STRING);
         case NUMERIC:
         case DOUBLE:
         case FLOAT:
         case INTEGER:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_INTEGER + ".desc");
+            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, FILL_EMPTY_INTEGER);
         case BOOLEAN:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_BOOLEAN + ".desc");
+            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, FILL_EMPTY_BOOLEAN);
         case DATE:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_DATE + ".desc");
+            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, FILL_EMPTY_DATE);
         default:
             throw new UnsupportedOperationException("Type '" + type + "' is not supported.");
         }
@@ -78,16 +75,16 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     public String getLabel() {
         switch (type) {
         case STRING:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_STRING + ".label");
+            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, FILL_EMPTY_STRING);
         case NUMERIC:
         case DOUBLE:
         case FLOAT:
         case INTEGER:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_INTEGER + ".label");
+            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, FILL_EMPTY_INTEGER);
         case BOOLEAN:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_BOOLEAN + ".label");
+            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, FILL_EMPTY_BOOLEAN);
         case DATE:
-            return getMessagesBundle().getString("action." + FILL_EMPTY_DATE + ".label");
+            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, FILL_EMPTY_DATE);
         default:
             throw new UnsupportedOperationException("Type '" + type + "' is not supported.");
         }
@@ -106,7 +103,7 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.BOOLEAN.equals(Type.get(column.getType())) //
                 || Type.DATE.equals(Type.get(column.getType())) //
                 || Type.INTEGER.equals(Type.get(column.getType())) //
@@ -116,10 +113,10 @@ public class FillIfEmpty extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public FillIfEmpty adapt(ColumnMetadata column) {
-        if (column == null || !acceptColumn(column)) {
+    public ActionDefinition adapt(ColumnMetadata column) {
+        if (column == null || !acceptField(column)) {
             return this;
         }
-        return applicationContext.getBean(getClass(), Type.valueOf(column.getType().toUpperCase()));
+        return new FillIfEmpty(Type.valueOf(column.getType().toUpperCase()));
     }
 }

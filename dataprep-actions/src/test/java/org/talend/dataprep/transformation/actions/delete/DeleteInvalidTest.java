@@ -22,12 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -41,11 +39,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 public class DeleteInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private DeleteInvalid deleteInvalid;
-
-    @Autowired
-    private AnalyzerService analyzerService;
+    private DeleteInvalid deleteInvalid = new DeleteInvalid();
 
     private Map<String, String> parameters;
 
@@ -90,7 +84,7 @@ public class DeleteInvalidTest extends AbstractMetadataBaseTest {
     @Test
     public void should_accept_column() {
         for (Type type : Type.values()) {
-            assertTrue(deleteInvalid.acceptColumn(getColumn(type)));
+            assertTrue(deleteInvalid.acceptField(getColumn(type)));
         }
     }
 

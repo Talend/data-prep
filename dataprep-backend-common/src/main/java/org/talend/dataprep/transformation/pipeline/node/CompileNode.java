@@ -29,6 +29,7 @@ public class CompileNode extends BasicNode {
         }
         if (needCompile) {
             action.getRowAction().compile(actionContext);
+            row.setRowMetadata(actionContext.getRowMetadata());
         }
         link.exec().emit(row, actionContext.getRowMetadata());
     }

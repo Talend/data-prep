@@ -23,7 +23,8 @@ import java.time.LocalDateTime;
 import org.junit.Test;
 
 public class DateManipulatorTest {
-    final DateManipulator dateManipulator = new DateManipulator();
+
+    private final DateManipulator dateManipulator = new DateManipulator();
 
     //------------------------------------------------------------------------------------------------------------------
     //---------------------------------------------------getSuitablePace------------------------------------------------
@@ -64,7 +65,7 @@ public class DateManipulatorTest {
         testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), CENTURY,      LocalDateTime.of(2000, 1, 1, 0, 0));
     }
 
-    public void testGetSuitableStartingDateWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
+    private void testGetSuitableStartingDateWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
         //when
         final LocalDateTime computedDate = dateManipulator.getSuitableStartingDate(date, pace);
 
@@ -87,7 +88,7 @@ public class DateManipulatorTest {
         testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), CENTURY,      LocalDateTime.of(2115, 1, 1, 0, 0));
     }
 
-    public void testGetNextWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
+    private void testGetNextWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
         //when
         final LocalDateTime computedDate = dateManipulator.getNext(date, pace);
 

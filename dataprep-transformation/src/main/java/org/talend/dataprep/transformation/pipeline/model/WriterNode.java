@@ -84,7 +84,6 @@ public class WriterNode extends BasicNode implements Monitored {
             }
             lastRowMetadata = metadata;
             if (row.shouldWrite()) {
-                row.setRowMetadata(metadata);
                 writer.write(row);
                 super.receive(row, metadata);
             }

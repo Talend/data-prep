@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
@@ -39,8 +38,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 public class RoundHalfUpTest extends AbstractRoundTest {
 
     /** The action ton test. */
-    @Autowired
-    private RoundHalfUp action;
+    private RoundHalfUp action = new RoundHalfUp();
 
     private Map<String, String> parameters;
 
@@ -114,17 +112,17 @@ public class RoundHalfUpTest extends AbstractRoundTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(action.acceptColumn(getColumn(Type.INTEGER)));
-        assertTrue(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertTrue(action.acceptColumn(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
 

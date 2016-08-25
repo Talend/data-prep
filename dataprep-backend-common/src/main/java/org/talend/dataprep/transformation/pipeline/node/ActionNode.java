@@ -42,6 +42,7 @@ public class ActionNode extends BasicNode implements Monitored {
             totalTime += System.currentTimeMillis() - start;
             count++;
         }
+        row.setRowMetadata(actionContext.getRowMetadata());
         link.exec().emit(actionRow, actionContext.getRowMetadata());
     }
 

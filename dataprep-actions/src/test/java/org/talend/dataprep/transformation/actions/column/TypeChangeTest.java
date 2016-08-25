@@ -14,6 +14,8 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.column.TypeChange.NEW_TYPE_PARAMETER_KEY;
 
 import java.util.HashMap;
@@ -21,9 +23,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -32,8 +32,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class TypeChangeTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private TypeChange typeChange;
+    private TypeChange typeChange = new TypeChange();
 
     private Map<String, String> parameters;
 
@@ -41,18 +40,11 @@ public class TypeChangeTest extends AbstractMetadataBaseTest {
 
     @Before
     public void init() {
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "");
-        values.put("0002", "Something");
-
-        row = new DataSetRow(values);
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        ColumnMetadata columnMetadata = rowMetadata.getById("0002");
-        columnMetadata.setType(Type.INTEGER.getName());
-        columnMetadata.setDomain("FR_BEER");
-        columnMetadata.setDomainFrequency(1);
-        columnMetadata.setDomainLabel("French Beer");
+        row = builder() //
+                .with(value("David Bowie").type(Type.STRING)) //
+                .with(value("").type(Type.INTEGER).domain("FR_BEER")) //
+                .with(value("Something").type(Type.STRING)) //
+                .build();
 
         parameters = new HashMap<>();
         parameters.put(NEW_TYPE_PARAMETER_KEY, "string");
@@ -106,7 +98,7 @@ public class TypeChangeTest extends AbstractMetadataBaseTest {
                     .build();
 
             // when
-            final boolean accepted = domainChange.acceptColumn(columnMetadata);
+            final boolean accepted = domainChange.acceptField(columnMetadata);
 
             // then
             assertThat(accepted).isTrue();

@@ -9,7 +9,6 @@ import org.talend.dataprep.api.dataset.DataSetLocation;
  *
  * This is used for JSON marshalling / unmarshalling of {@link DataSetLocation} implementations
  *
- * See {@link DataSetLocationModule}
  */
 public interface DataSetLocationMapping extends Serializable {
 
@@ -22,6 +21,5 @@ public interface DataSetLocationMapping extends Serializable {
      * @return the corresponding {@link DataSetLocation} implementation.
      */
     Class<? extends DataSetLocation> getLocationClass();
-
 
 }

@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -50,8 +49,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class ExtractNumberTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private ExtractNumber action;
+    private ExtractNumber action = new ExtractNumber();
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -78,7 +76,7 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest {
     @Test
     public void shouldAcceptAllColumns() throws Exception {
         for (Type type : Type.values()) {
-            Assert.assertTrue(action.acceptColumn(getColumn(type)));
+            Assert.assertTrue(action.acceptField(getColumn(type)));
         }
     }
 

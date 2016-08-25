@@ -435,7 +435,7 @@ public class DataSetRow implements Cloneable {
 
     /**
      * Check if a column has an invalid value in this row.
-     * 
+     *
      * @param columnId A column id in the line.
      * @return <code>true</code> if column is marked as invalid in row, <code>false</code> otherwise or if column does not exist.
      */
@@ -446,7 +446,7 @@ public class DataSetRow implements Cloneable {
 
     /**
      * Mark column <code>columnId</code> as invalid.
-     * 
+     *
      * @param columnId A column id in the line.
      * @see #unsetInvalid(String)
      */
@@ -456,7 +456,7 @@ public class DataSetRow implements Cloneable {
 
     /**
      * Unmark column <code>columnId</code> as invalid.
-     * 
+     *
      * @param columnId A column id in the line.
      * @see #setInvalid(String)
      */
@@ -477,7 +477,7 @@ public class DataSetRow implements Cloneable {
     /**
      * A wrapper implementation of {@link DataSetRow} that prevents changes on previous values and set empty string for
      * all new columns. This implementation allows modification on {@link RowMetadata}.
-     * 
+     *
      * @see #set(String, String)
      */
     private static class UnmodifiableDataSetRow extends DataSetRow {
@@ -499,7 +499,7 @@ public class DataSetRow implements Cloneable {
 
         /**
          * This method prevents changes on previous values and set empty string for all new columns.
-         * 
+         *
          * @param id - the key A column name.
          * @param value - the value The value to be set for column name.
          * @return This data set row for chaining calls.

@@ -16,6 +16,8 @@ package org.talend.dataprep.transformation.actions.column;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
@@ -26,7 +28,6 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -37,14 +38,13 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
  * Unit test for the Concat action.
- * 
+ *
  * @see Concat
  */
 public class ConcatTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private Concat action;
+    private Concat action = new Concat();
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -84,9 +84,11 @@ public class ConcatTest extends AbstractMetadataBaseTest {
     @Test
     public void should_set_new_column_name() {
         // given
-        DataSetRow row = getRow("first", "second", "Done !");
-        row.getRowMetadata().getById("0000").setName("source");
-        row.getRowMetadata().getById("0001").setName("selected");
+        final DataSetRow row = builder() //
+                .with(value("first").type(Type.STRING).name("source")) //
+                .with(value("second").type(Type.STRING).name("selected")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -100,9 +102,11 @@ public class ConcatTest extends AbstractMetadataBaseTest {
     @Test
     public void should_set_new_column_name_without_other_column() {
         // given
-        DataSetRow row = getRow("first", "second", "Done !");
-        row.getRowMetadata().getById("0000").setName("source");
-        row.getRowMetadata().getById("0001").setName("selected");
+        final DataSetRow row = builder() //
+                .with(value("first").type(Type.STRING).name("source")) //
+                .with(value("second").type(Type.STRING).name("selected")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
 
         parameters.put(Concat.MODE_PARAMETER, Concat.CONSTANT_MODE);
         parameters.remove(Concat.SELECTED_COLUMN_PARAMETER);
@@ -422,13 +426,13 @@ public class ConcatTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
-        assertTrue(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertTrue(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertTrue(action.acceptColumn(getColumn(Type.INTEGER)));
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
-        assertTrue(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
 }

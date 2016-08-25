@@ -25,21 +25,21 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataprep.transformation.actions.date.DatePattern;
+import org.talend.dataprep.transformation.actions.date.Providers;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 public abstract class AbstractFillWith extends AbstractActionMetadata implements OtherColumnParameters {
@@ -53,12 +53,6 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
     private static final String DEFAULT_DATE_VALUE = DEFAULT_FORMATTER.format(LocalDateTime.of(1970, Month.JANUARY, 1, 10, 0));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFillWith.class);
-
-    /**
-     * Component that parses dates.
-     */
-    @Autowired
-    protected DateParser dateParser;
 
     protected Type type;
 
@@ -90,13 +84,13 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
             }
 
             // Second: if we're on a date column, format new value with the most frequent pattern of the column:
-            Type type = ((columnMetadata == null) ? Type.ANY : Type.get(columnMetadata.getType()));
+            Type type = columnMetadata == null ? Type.ANY : Type.get(columnMetadata.getType());
             if (type.equals(Type.DATE)) {
                 try {
-                    final LocalDateTime date = dateParser.parse(newValue, columnMetadata);
-                    final DatePattern mostFrequentPattern = dateParser.getMostFrequentPattern(columnMetadata);
-                    DateTimeFormatter ourNiceFormatter = (mostFrequentPattern == null ? DEFAULT_FORMATTER
-                            : mostFrequentPattern.getFormatter());
+                    final LocalDateTime date = Providers.get().parse(newValue, columnMetadata);
+                    final String mostUsedDatePattern = RowMetadataUtils.getMostUsedDatePattern(columnMetadata);
+                    DateTimeFormatter ourNiceFormatter = mostUsedDatePattern == null ? DEFAULT_FORMATTER
+                            : new DatePattern(mostUsedDatePattern).getFormatter();
                     newValue = ourNiceFormatter.format(date);
                 } catch (DateTimeException e) {
                     // Nothing to do, if we can't get a valid pattern, keep the raw value
@@ -143,8 +137,7 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
                     DEFAULT_DATE_VALUE, //
                     false, //
                     false, //
-                    StringUtils.EMPTY, //
-                    getMessagesBundle());
+                    StringUtils.EMPTY);
             break;
         case ANY:
         default:
@@ -156,7 +149,7 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
                         .name(MODE_PARAMETER)
                         .item(CONSTANT_MODE, constantParameter)
                         .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
-                                                               StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle()))
+                                                               StringUtils.EMPTY, false, false, StringUtils.EMPTY))
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );
@@ -174,16 +167,16 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
      */
     private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (!parameters.containsKey(MODE_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", MODE_PARAMETER));
         }
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DEFAULT_VALUE_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", DEFAULT_VALUE_PARAMETER));
         } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
                 || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
     }

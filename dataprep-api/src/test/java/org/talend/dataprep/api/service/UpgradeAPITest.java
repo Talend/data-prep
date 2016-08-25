@@ -1,5 +1,6 @@
 package org.talend.dataprep.api.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 import java.io.IOException;
@@ -93,13 +94,13 @@ public class UpgradeAPITest extends ApiServiceTestBase {
         String response = RestAssured.when().get("/api/upgrade/check").asString();
         final List<UpgradeServerVersion> versions = mapper.readerFor(new TypeReference<List<UpgradeServerVersion>>() {
         }).readValue(response);
-        org.junit.Assert.assertEquals(1, versions.size());
+        assertEquals(1, versions.size());
         final UpgradeServerVersion actual = versions.get(0);
 
         final String expectedVersion = versionService.version().getVersionId();
         final String expectedToken = TokenGenerator.generateMachineToken(new CryptoHelper("DataPrepIsSoCool"));
-        org.junit.Assert.assertEquals(expectedToken, actual.getTitle());
-        org.junit.Assert.assertEquals(expectedVersion, actual.getDownloadUrl());
+        assertEquals(expectedToken, actual.getTitle());
+        assertEquals(expectedVersion, actual.getDownloadUrl());
     }
 
     @RestController

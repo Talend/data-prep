@@ -116,7 +116,7 @@ public class CSVWriter implements TransformerWriter {
     @Override
     public void write(final DataSetRow row) throws IOException {
         // values need to be written in the same order as the columns
-        recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID));
+        recordsWriter.writeNext(row.toArray(DataSetRow.SKIP_TDP_ID));
     }
 
     /**

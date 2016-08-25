@@ -7,9 +7,9 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
-import org.talend.dataprep.api.type.Type;
 
 public class AnalyzerServiceTest {
 
@@ -18,7 +18,6 @@ public class AnalyzerServiceTest {
     @Before
     public void setUp() throws Exception {
         service = new AnalyzerService();
-        service.init();
     }
 
     @Test

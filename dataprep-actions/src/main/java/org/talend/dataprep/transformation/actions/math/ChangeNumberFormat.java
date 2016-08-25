@@ -25,9 +25,9 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalFormatter;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -35,43 +35,57 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Change the pattern on a 'number' column.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeNumberFormat.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ChangeNumberFormat.ACTION_NAME)
 public class ChangeNumberFormat extends AbstractActionMetadata implements ColumnAction {
 
     /** Action name. */
     public static final String ACTION_NAME = "change_number_format"; //$NON-NLS-1$
+
     /** Parameter to define original decimal & grouping separators. */
     public static final String FROM_SEPARATORS = "from_separators";
+
     /**
      * The pattern shown to the user as a list. An item in this list is the value 'custom', which allow the user to
      * manually enter his pattern.
      */
     public static final String TARGET_PATTERN = "target_pattern"; //$NON-NLS-1$
+
     /**
      * Keys used in the values of different parameters:
      */
     public static final String CUSTOM = "custom";
+
     public static final String US_SEPARATORS = "us_separators";
+
     public static final String EU_SEPARATORS = "eu_separators";
+
     public static final String CH_SEPARATORS = "ch_separators";
+
     public static final String US_PATTERN = "us_pattern";
+
     public static final String EU_PATTERN = "eu_pattern";
+
     public static final String CH_PATTERN = "ch_pattern";
+
     public static final String SCIENTIFIC = "scientific";
+
     /**
      * Constants to build parameters name by concat:
      */
     public static final String FROM = "from";
+
     public static final String TARGET = "target";
+
     public static final String GROUPING = "_grouping";
+
     public static final String DECIMAL = "_decimal";
+
     public static final String SEPARATOR = "_separator";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeNumberFormat.class);
@@ -86,9 +100,6 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     private static final DecimalFormat CH_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
             DecimalFormatSymbols.getInstance(new Locale("FR", "CH")));
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -100,14 +111,11 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         Type columnType = Type.get(column.getType());
         return Type.NUMERIC.isAssignableFrom(columnType);
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -143,32 +151,28 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     private Parameter buildDecimalSeparatorParameter(String prefix) {
         final String name = prefix + DECIMAL + SEPARATOR;
-        // @formatter:off
-        return  SelectParameter.Builder.builder()
-                .name(name)
-                .item(".")
-                .item(",")
-                .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, "."))
-                .defaultValue(".")
+        return  SelectParameter.Builder.builder() //
+                .name(name) //
+                .item(".") //
+                .item(",") //
+                .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ".")) //
+                .defaultValue(".") //
                 .build();
-        // @formatter:on
     }
 
     private Parameter buildGroupingSeparatorParameter(String prefix) {
         final String name = prefix + GROUPING + SEPARATOR;
-        // @formatter:off
-        return  SelectParameter.Builder.builder()
-                .name(name)
-                .item(",",", (comma)")
-                .item(" "," (space)")
-                .item(".",". (dot)")
-                .item("'", "' (quote)")
-                .item("", "None")
-                .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ","))
-                .canBeBlank(true)
-                .defaultValue(",")
+        return SelectParameter.Builder.builder() //
+                .name(name) //
+                .item(",", "comma") //
+                .item(" ", "space") //
+                .item(".", "dot") //
+                .item("'", "quote") //
+                .item("", "none") //
+                .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ",")) //
+                .canBeBlank(true) //
+                .defaultValue(",") //
                 .build();
-        // @formatter:on
     }
 
     private String getCustomizableParam(String pName, Map<String, String> parameters) {
@@ -204,7 +208,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     /**
      * Return the custom format out of the parameters.
-     * 
+     *
      * @param parameters the action parameters.
      * @return the custom format out of the parameters.
      */
@@ -230,9 +234,6 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         return decimalFormat;
     }
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);

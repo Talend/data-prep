@@ -13,33 +13,6 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import javax.annotation.Resource;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,6 +29,35 @@ import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -398,7 +400,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         //then
         request.then()//
                 .statusCode(400)//
-                .body("code", is("TDP_ALL_MISSING_ACTION_SCOPE"));
+                .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
     }
 
     @Test
@@ -469,7 +471,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         request.then()//
                 .statusCode(400)//
-                .body("code", is("TDP_ALL_MISSING_ACTION_SCOPE"));
+                .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
     }
 
     @Test
@@ -668,7 +670,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(preparationContent,
                 sameJSONAsFile(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv.expected.json")));
     }
-    
+
     @Test
     public void shouldGetPreparationContentWhenInvalidSample() throws IOException {
         // given

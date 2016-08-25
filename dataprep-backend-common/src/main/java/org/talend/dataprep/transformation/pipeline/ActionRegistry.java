@@ -1,9 +1,12 @@
 package org.talend.dataprep.transformation.pipeline;
 
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
+import java.util.stream.Stream;
 
-@FunctionalInterface
+import org.talend.dataprep.api.action.ActionDefinition;
+
 public interface ActionRegistry {
 
-    ActionMetadata get(String name);
+    ActionDefinition get(String name);
+
+    Stream<Class<? extends ActionDefinition>> getAll();
 }

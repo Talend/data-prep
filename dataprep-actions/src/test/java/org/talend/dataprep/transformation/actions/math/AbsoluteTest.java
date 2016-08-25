@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -45,8 +44,7 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
 
     private static final String INT_COLUMN = "0000"; //$NON-NLS-1$
 
-    @Autowired
-    private Absolute absolute;
+    private Absolute absolute = new Absolute();
 
     private Map<String, String> absFloatParameters;
 
@@ -314,15 +312,15 @@ public class AbsoluteTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(absolute.acceptColumn(getColumn(Type.INTEGER)));
-        assertTrue(absolute.acceptColumn(getColumn(Type.FLOAT)));
-        assertTrue(absolute.acceptColumn(getColumn(Type.DOUBLE)));
+        assertTrue(absolute.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(absolute.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(absolute.acceptField(getColumn(Type.DOUBLE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(absolute.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(absolute.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(absolute.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(absolute.acceptField(getColumn(Type.STRING)));
+        assertFalse(absolute.acceptField(getColumn(Type.DATE)));
+        assertFalse(absolute.acceptField(getColumn(Type.BOOLEAN)));
     }
 }

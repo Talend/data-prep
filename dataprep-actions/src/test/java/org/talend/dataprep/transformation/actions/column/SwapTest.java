@@ -19,6 +19,7 @@ import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,6 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -36,18 +36,15 @@ import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.actions.date.BaseDateTests;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-import com.google.common.collect.Lists;
-
 /**
  * Unit test for the Swap action.
- * 
+ *
  * @see Swap
  */
 public class SwapTest extends BaseDateTests {
 
     /** The action to test. */
-    @Autowired
-    private Swap action;
+    private Swap action = new Swap();
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -73,7 +70,7 @@ public class SwapTest extends BaseDateTests {
     @Test
     public void swap_columns() throws Exception {
         // given
-        List<DataSetRow> rows = Lists.newArrayList(getRow("5", "beer", "yup"), getRow("10", "wine", "cheese"));
+        List<DataSetRow> rows = Arrays.asList(getRow("5", "beer", "yup"), getRow("10", "wine", "cheese"));
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
 
         // when
@@ -100,7 +97,7 @@ public class SwapTest extends BaseDateTests {
     @Test
     public void swap_columns_with_empty() throws Exception {
         // given
-        List<DataSetRow> rows = Lists.newArrayList(getRow("5", "beer", "yup"), getRow("10", "", "cheese"));
+        List<DataSetRow> rows = Arrays.asList(getRow("5", "beer", "yup"), getRow("10", "", "cheese"));
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
 
         // when
@@ -122,7 +119,7 @@ public class SwapTest extends BaseDateTests {
     @Test
     public void swap_columns_with_blank() throws Exception {
         // given
-        List<DataSetRow> rows = Lists.newArrayList(getRow("5", "beer", "yup"), getRow("10", " ", "cheese"));
+        List<DataSetRow> rows = Arrays.asList(getRow("5", "beer", "yup"), getRow("10", " ", "cheese"));
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
 
         // when
@@ -144,7 +141,7 @@ public class SwapTest extends BaseDateTests {
     @Test
     public void swap_not_fail_unknown_target_column() throws Exception {
         // given
-        List<DataSetRow> rows = Lists.newArrayList(getRow("5", "beer", "yup"), getRow("10", "wine", "cheese"));
+        List<DataSetRow> rows = Arrays.asList(getRow("5", "beer", "yup"), getRow("10", "wine", "cheese"));
         parameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0009");
 
         // when

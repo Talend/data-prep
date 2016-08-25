@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset.statistics.date;
 
@@ -30,6 +30,7 @@ import org.talend.dataprep.date.DateManipulator;
  * The final pace is defined at the end since it is based on the min and max value.
  */
 public class StreamDateHistogramStatistics {
+
     /**
      * The default bin number which is 16.
      */
@@ -43,7 +44,7 @@ public class StreamDateHistogramStatistics {
     /**
      * The bins per pace. For each pace, a bins that match the date is created.
      */
-    private Map<DateManipulator.Pace, Map<Range, Long>> bins = new HashMap<>();
+    private final Map<DateManipulator.Pace, Map<Range, Long>> bins = new HashMap<>();
 
     /**
      * The minimum limit value.
@@ -58,15 +59,14 @@ public class StreamDateHistogramStatistics {
     /**
      * A utility class to manipulate LocalDates
      */
-    private DateManipulator dateManipulator = new DateManipulator();
+    private final DateManipulator dateManipulator = new DateManipulator();
 
     /**
      * Constructor.
      * It initialize the bins for each {@link DateManipulator.Pace}.
      */
     public StreamDateHistogramStatistics() {
-        Arrays.stream(DateManipulator.Pace.values())
-                .forEach(pace -> bins.put(pace, new HashMap<>()));
+        Arrays.stream(DateManipulator.Pace.values()).forEach(pace -> bins.put(pace, new HashMap<>()));
     }
 
     /**
@@ -92,7 +92,7 @@ public class StreamDateHistogramStatistics {
     private void add(final DateManipulator.Pace pace, final LocalDateTime date) {
         final Map<Range, Long> paceBins = bins.get(pace);
 
-        //pace has been removed, we skip the add on this pace
+        // pace has been removed, we skip the add on this pace
         if (paceBins == null) {
             return;
         }
@@ -107,7 +107,7 @@ public class StreamDateHistogramStatistics {
         final Long nbInBin = paceBins.get(range);
         paceBins.put(range, (nbInBin != null ? nbInBin : 0L) + 1);
 
-        //the bins exceed maximum number of bins, we remove this pace
+        // the bins exceed maximum number of bins, we remove this pace
         if (paceBins.size() > numberOfBins) {
             bins.remove(pace);
         }
@@ -188,7 +188,7 @@ public class StreamDateHistogramStatistics {
      *
      * @return the minimum date added to this histogram (in milliseconds since EPOCH in UTC)
      */
-    public long minUTCEpochMilliseconds() {
+    private long minUTCEpochMilliseconds() {
         return dateManipulator.getUTCEpochMilliseconds(min);
     }
 
@@ -196,7 +196,7 @@ public class StreamDateHistogramStatistics {
      *
      * @return the maximum date added to this histogram (in milliseconds since EPOCH in UTC)
      */
-    public long maxUTCEpochMilliseconds() {
+    private long maxUTCEpochMilliseconds() {
         return dateManipulator.getUTCEpochMilliseconds(max);
     }
 }

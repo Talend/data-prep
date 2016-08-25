@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -29,9 +28,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  */
 public abstract class AbstractDelete extends AbstractActionMetadata implements ColumnAction {
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return DATA_CLEANSING.getDisplayName();
@@ -40,10 +36,10 @@ public abstract class AbstractDelete extends AbstractActionMetadata implements C
     /**
      * Return true if the given value should be deleted.
      *
-     *
      * @param dataSetRow the value to delete.
-     * @param columnId
-     *@param context  @return true if the given value should be deleted.
+     * @param columnId the column to delete.
+     * @param context the current action context (holds row metadata & parameters...).
+     * @return true if the given value should be deleted.
      */
     public abstract boolean toDelete(final DataSetRow dataSetRow, String columnId, ActionContext context);
 

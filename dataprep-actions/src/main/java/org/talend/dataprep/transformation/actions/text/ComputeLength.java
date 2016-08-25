@@ -16,18 +16,17 @@ package org.talend.dataprep.transformation.actions.text;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeLength.LENGTH_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ComputeLength.LENGTH_ACTION_NAME)
 public class ComputeLength extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -40,25 +39,16 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
      */
     public static final String APPENDIX = "_length"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return LENGTH_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.STRINGS.getDisplayName();
@@ -71,7 +61,7 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
             final RowMetadata rowMetadata = context.getRowMetadata();
             final String columnId = context.getColumnId();
             final ColumnMetadata column = rowMetadata.getById(columnId);
-            context.column(column.getName() + APPENDIX, (r) -> {
+            context.column(column.getName() + APPENDIX, r -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
                         .name(column.getName() + APPENDIX) //

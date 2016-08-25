@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset.statistics;
 
@@ -23,13 +23,13 @@ public class TextLengthSummary implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("minimalLength")
-    double minimalLength = Double.NaN;
+    private double minimalLength = Double.NaN;
 
     @JsonProperty("maximalLength")
-    double maximalLength = Double.NaN;
+    private double maximalLength = Double.NaN;
 
     @JsonProperty("averageLength")
-    double averageLength = Double.NaN;
+    private double averageLength = Double.NaN;
 
     public double getMinimalLength() {
         return minimalLength;

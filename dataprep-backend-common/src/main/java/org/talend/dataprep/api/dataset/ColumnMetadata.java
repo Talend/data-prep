@@ -22,8 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.dataset.row.FlagNames;
+import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 
@@ -205,29 +205,30 @@ public class ColumnMetadata implements Serializable {
      */
     public boolean compatible(ColumnMetadata columnMetadata) {
         if (columnMetadata != null) {
-            return StringUtils.equals(typeName, columnMetadata.getType()) && StringUtils.equalsIgnoreCase(name, columnMetadata.getName());
+            return StringUtils.equals(typeName, columnMetadata.getType())
+                    && StringUtils.equalsIgnoreCase(name, columnMetadata.getName());
         }
         return false;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return Optional.ofNullable(obj) //
+        return Optional.ofNullable(obj) //Colum
                 .filter(that -> that instanceof ColumnMetadata) //
                 .map(that -> (ColumnMetadata) that) //
-                .filter(that -> Objects.equals(this.diffFlagValue, that.diffFlagValue)) //
-                .filter(that -> Objects.equals(this.id, that.id)) //
-                .filter(that -> Objects.equals(this.name, that.name)) //
-                .filter(that -> Objects.equals(this.typeName, that.typeName)) //
+                .filter(that -> Objects.equals(this.getDiffFlagValue(), that.getDiffFlagValue())) //
+                .filter(that -> Objects.equals(this.getId(), that.getId())) //
+                .filter(that -> Objects.equals(this.getName(), that.getName())) //
+                .filter(that -> Objects.equals(this.getType(), that.getType())) //
                 .isPresent();
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + typeName.hashCode();
+        int result = getId().hashCode();
+        result = 31 * result + getType().hashCode();
         if (name != null) {
-            result = 31 * result + name.hashCode();
+            result = 31 * result + getName().hashCode();
         }
         return result;
     }
@@ -321,10 +322,10 @@ public class ColumnMetadata implements Serializable {
         /** The column empty value. */
         private int empty;
 
-        /** The column invalid value. */
+        /** The column invalid value count. */
         private int invalid;
 
-        /** The columne valid value. */
+        /** The column valid value count. */
         private int valid;
 
         /** The column header size. */

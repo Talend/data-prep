@@ -22,7 +22,6 @@ import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -34,8 +33,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private DeleteColumn deleteColumn;
+    private DeleteColumn deleteColumn = new DeleteColumn();
 
     private RowMetadata rowMetadata;
 
@@ -146,11 +144,11 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(deleteColumn.acceptColumn(getColumn(Type.STRING)));
-        assertTrue(deleteColumn.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(deleteColumn.acceptColumn(getColumn(Type.FLOAT)));
-        assertTrue(deleteColumn.acceptColumn(getColumn(Type.DATE)));
-        assertTrue(deleteColumn.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertTrue(deleteColumn.acceptField(getColumn(Type.STRING)));
+        assertTrue(deleteColumn.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(deleteColumn.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(deleteColumn.acceptField(getColumn(Type.DATE)));
+        assertTrue(deleteColumn.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test

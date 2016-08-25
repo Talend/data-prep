@@ -27,22 +27,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.date.DateManipulator;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Service
 public class SimpleFilterService implements FilterService {
 
     private static final String EQ = "eq";
@@ -77,8 +75,7 @@ public class SimpleFilterService implements FilterService {
 
     private final DateManipulator dateManipulator = new DateManipulator();
 
-    @Autowired
-    private DateParser dateParser;
+    private DateParser dateParser = new DateParser(new AnalyzerService());
 
     @Override
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
@@ -95,7 +92,7 @@ public class SimpleFilterService implements FilterService {
                 return buildFilter(root, rowMetadata);
             }
         } catch (Exception e) {
-            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_FILTER, e);
+            throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e);
         }
     }
 

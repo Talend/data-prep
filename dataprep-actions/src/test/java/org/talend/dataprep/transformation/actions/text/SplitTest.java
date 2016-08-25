@@ -15,6 +15,8 @@ package org.talend.dataprep.transformation.actions.text;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
@@ -24,7 +26,6 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -48,8 +49,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
     /**
      * The action to test.
      */
-    @Autowired
-    private Split action;
+    private Split action = new Split();
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -281,13 +281,11 @@ public class SplitTest extends AbstractMetadataBaseTest {
      */
     public void test_TDP_876() {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "lorem bacon");
-        values.put("0001", "Bacon ipsum dolor amet swine leberkas pork belly");
-        values.put("0002", "01/01/2015");
-        final DataSetRow row = new DataSetRow(values);
-
-
+        final DataSetRow row = builder() //
+                .with(value("lorem bacon").type(Type.STRING)) //
+                .with(value("Bacon ipsum dolor amet swine leberkas pork belly").type(Type.STRING)) //
+                .with(value("01/01/2015").type(Type.STRING)) //
+                .build();
 
         // when
         ActionTestWorkbench.test(Collections.singletonList(row), //
@@ -296,11 +294,12 @@ public class SplitTest extends AbstractMetadataBaseTest {
                 factory.create(action, parameters));
 
         // then
-        Statistics originalStats = row.getRowMetadata().getById("0001").getStatistics();
+        final RowMetadata actual = row.getRowMetadata();
+        Statistics originalStats = actual.getById("0001").getStatistics();
         final List<PatternFrequency> originalPatterns = originalStats.getPatternFrequencies();
 
-        assertFalse(originalPatterns.equals(row.getRowMetadata().getById("0003").getStatistics().getPatternFrequencies()));
-        assertFalse(originalPatterns.equals(row.getRowMetadata().getById("0004").getStatistics().getPatternFrequencies()));
+        assertFalse(originalPatterns.equals(actual.getById("0003").getStatistics().getPatternFrequencies()));
+        assertFalse(originalPatterns.equals(actual.getById("0004").getStatistics().getPatternFrequencies()));
     }
 
     @Test
@@ -463,6 +462,7 @@ public class SplitTest extends AbstractMetadataBaseTest {
         assertEquals(values, row.values());
     }
 
+    @Test
     public void should_not_update_metadata_because_null_separator() throws IOException {
         // given
         final List<ColumnMetadata> input = new ArrayList<>();
@@ -477,20 +477,20 @@ public class SplitTest extends AbstractMetadataBaseTest {
         ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(input, rowMetadata.getColumns());
+        assertEquals(rowMetadata, rowMetadata);
     }
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test

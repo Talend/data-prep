@@ -14,16 +14,15 @@ package org.talend.dataprep.transformation.actions.math;
 
 import java.math.RoundingMode;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 
 /**
  * Round towards zero. Never increments the digit prior to a discarded fraction (i.e. truncates)
  * 
  * @see RoundingMode#DOWN
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundDownReal.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + RoundDownReal.ACTION_NAME)
 public class RoundDownReal extends AbstractRound {
 
     /**
@@ -31,9 +30,6 @@ public class RoundDownReal extends AbstractRound {
      */
     public static final String ACTION_NAME = "round_down_real"; //$NON-NLS-1$
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;

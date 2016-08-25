@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.api.dataset;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.dataset.row.Flag.*;
@@ -21,6 +20,7 @@ import static org.talend.dataprep.api.dataset.row.FlagNames.TDP_INVALID;
 
 import java.util.*;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.Flag;
@@ -181,8 +181,8 @@ public class DataSetRowTest {
         String[] expectedKeyOrder = { "age", "firstName", "id", "lastName" };
         final Iterator<String> keys = row.values().keySet().iterator();
         for (String expectedKey : expectedKeyOrder) {
-            assertThat(keys.hasNext(), is(true));
-            assertThat(keys.next(), is(expectedKey));
+            assertThat(keys.hasNext(), CoreMatchers.is(true));
+            assertThat(keys.next(), CoreMatchers.is(expectedKey));
         }
         // ReorderColumn
         List<ColumnMetadata> newOrder = new ArrayList<ColumnMetadata>() {
@@ -198,8 +198,8 @@ public class DataSetRowTest {
         String[] expectedNewKeyOrder = { "firstName", "lastName", "id", "age" };
         final Iterator<String> newOrderKeys = newRow.values().keySet().iterator();
         for (String expectedKey : expectedNewKeyOrder) {
-            assertThat(newOrderKeys.hasNext(), is(true));
-            assertThat(newOrderKeys.next(), is(expectedKey));
+            assertThat(newOrderKeys.hasNext(), CoreMatchers.is(true));
+            assertThat(newOrderKeys.next(), CoreMatchers.is(expectedKey));
         }
     }
 
@@ -209,7 +209,7 @@ public class DataSetRowTest {
         // ReorderColumn with 0 column is equivalent to clone().
         final DataSetRow order = row.order(Collections.emptyList());
         assertTrue(row == order);
-        assertThat(row.values(), is(order.values()));
+        assertThat(row.values(), CoreMatchers.is(order.values()));
     }
 
     @Test
@@ -247,7 +247,7 @@ public class DataSetRowTest {
         final Map<String, Object> values = row.valuesWithId();
 
         //then
-        assertThat(values.get("tdpId"), is(1L));
+        assertThat(values.get("tdpId"), CoreMatchers.is(1L));
     }
 
     /**
@@ -320,9 +320,9 @@ public class DataSetRowTest {
                 add(column().computedId("firstName").type(Type.STRING).build());
             }
         };
-        assertThat(row.values().size(), is(4));
+        assertThat(row.values().size(), CoreMatchers.is(4));
         final DataSetRow newRow = row.filter(filter);
-        assertThat(newRow.values().size(), is(2));
+        assertThat(newRow.values().size(), CoreMatchers.is(2));
     }
 
     @Test
@@ -336,7 +336,7 @@ public class DataSetRowTest {
         row.setInvalid("0004");
 
         // then
-        assertThat(row.values().get(TDP_INVALID), is("0004,0001"));
+        assertThat(row.values().get(TDP_INVALID), CoreMatchers.is("0004,0001"));
     }
 
     @Test
@@ -352,7 +352,7 @@ public class DataSetRowTest {
         row.unsetInvalid("0004");
 
         // then
-        assertThat(row.values().get(TDP_INVALID), is("0001"));
+        assertThat(row.values().get(TDP_INVALID), CoreMatchers.is("0001"));
     }
 
     @Test
@@ -365,6 +365,6 @@ public class DataSetRowTest {
         final DataSetRow row = new DataSetRow(values);
 
         // then
-        assertThat(row.values().get(TDP_INVALID), is("0004,0001"));
+        assertThat(row.values().get(TDP_INVALID), CoreMatchers.is("0004,0001"));
     }
 }

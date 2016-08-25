@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -39,8 +38,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private TemperaturesConverter action;
+    private TemperaturesConverter action = new TemperaturesConverter();
 
     @Test
     public void testCategory() {

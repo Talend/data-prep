@@ -16,8 +16,8 @@ package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngineRule;
 
 public class GenericRule implements SuggestionEngineRule {
@@ -35,7 +35,7 @@ public class GenericRule implements SuggestionEngineRule {
     }
 
     @Override
-    public Integer apply(ActionMetadata actionMetadata, ColumnMetadata columnMetadata) {
+    public Integer apply(ActionDefinition actionMetadata, ColumnMetadata columnMetadata) {
         if (filter.test(columnMetadata)) {
             for (String actionName : actionNames) {
                 if (actionName.equals(actionMetadata.getName())) {

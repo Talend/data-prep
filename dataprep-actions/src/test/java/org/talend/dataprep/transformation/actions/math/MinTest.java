@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -36,12 +35,10 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Min
  */
-public class MinTest
-    extends AbstractMetadataBaseTest {
+public class MinTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private Min action;
+    private Min action = new Min();
 
     /** The action parameters. */
     private Map<String, String> parameters;

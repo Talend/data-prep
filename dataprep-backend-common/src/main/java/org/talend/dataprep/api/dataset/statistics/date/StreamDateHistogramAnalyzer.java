@@ -22,12 +22,12 @@ import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.transformation.actions.date.DateParser;
-import org.talend.dataquality.statistics.type.DataTypeEnum;
-import org.talend.dataquality.statistics.type.TypeInferenceUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.ResizableList;
+import org.talend.dataquality.statistics.type.DataTypeEnum;
+import org.talend.dataquality.statistics.type.TypeInferenceUtils;
 
 /**
  * Date histogram analyzer
@@ -56,7 +56,7 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
     /**
      * The columns metadata
      */
-    private List<ColumnMetadata> columns;
+    private final List<ColumnMetadata> columns;
 
     /**
      * Constructor
@@ -87,7 +87,7 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
             final ColumnMetadata column = this.columns.get(index);
             final String value = record[index];
             if (type == DataTypeEnum.DATE) {
-                final String mostUsedDatePattern = AnalyzerService.getMostUsedDatePattern(column);
+                final String mostUsedDatePattern = RowMetadataUtils.getMostUsedDatePattern(column);
                 if (!TypeInferenceUtils.isDate(value, Collections.singletonList(mostUsedDatePattern))) {
                     LOGGER.trace("Skip date value '{}' (not valid date)", value);
                     continue;

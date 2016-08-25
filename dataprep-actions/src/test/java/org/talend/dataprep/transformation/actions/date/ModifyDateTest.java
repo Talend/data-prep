@@ -18,6 +18,8 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
 import static org.talend.dataprep.transformation.actions.date.ModifyDate.TIME_UNIT_PARAMETER;
@@ -29,11 +31,10 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -41,8 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class ModifyDateTest extends BaseDateTests {
 
     /** The action to test. */
-    @Autowired
-    private ModifyDate action;
+    private ModifyDate action = new ModifyDate();
 
     private Map<String, String> parameters;
 
@@ -74,7 +74,7 @@ public class ModifyDateTest extends BaseDateTests {
         assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_check_column_id_parameter_when_dealing_with_row_metadata() {
         //given
         Map<String, String> missingParameters = new HashMap<>();
@@ -84,7 +84,7 @@ public class ModifyDateTest extends BaseDateTests {
         ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry, factory.create(action, missingParameters));
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_check_new_pattern_parameter_when_dealing_with_row_metadata() {
         //given
         Map<String, String> missingParameters = new HashMap<>();
@@ -95,7 +95,7 @@ public class ModifyDateTest extends BaseDateTests {
         ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry, factory.create(action, missingParameters));
     }
 
-    @Test(expected = TDPException.class)
+    @Test(expected = TalendRuntimeException.class)
     public void should_check_new_pattern_parameter_when_dealing_with_row() {
         //given
         final Map<String, String> insufficientParams = new HashMap<>();
@@ -108,8 +108,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
+                .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -137,8 +140,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_alternate_unit() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
+                .build();
         parameters.put(TIME_UNIT_PARAMETER, MONTHS.name());
 
         // when
@@ -152,8 +158,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_alternate_amount() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "tata");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
+                .build();
         parameters.put(CONSTANT_VALUE, "4");
 
         // when
@@ -167,8 +176,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_other_column() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "5");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("5").type(Type.STRING).name("last update")) //
+                .build();
         parameters.remove(CONSTANT_VALUE);
         parameters.put(MODE_PARAMETER, OTHER_COLUMN_MODE);
         parameters.put(SELECTED_COLUMN_PARAMETER, "0002");
@@ -185,8 +197,12 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_other_column_bigger_number() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "162");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("162").type(Type.STRING).name("last update")) //
+                .build();
+
         parameters.put(MODE_PARAMETER, OTHER_COLUMN_MODE);
         parameters.put(SELECTED_COLUMN_PARAMETER, "0002");
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
@@ -202,8 +218,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_other_column_float_number() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "5.0");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("5.0").type(Type.STRING).name("last update")) //
+                .build();
         parameters.put(MODE_PARAMETER, OTHER_COLUMN_MODE);
         parameters.put(SELECTED_COLUMN_PARAMETER, "0002");
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
@@ -219,8 +238,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_other_column_float_number_round() throws Exception {
         // given
-        final DataSetRow row = getRow("toto", "04/25/1999", "5.2");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("5.2").type(Type.STRING).name("last update")) //
+                .build();
         parameters.put(MODE_PARAMETER, OTHER_COLUMN_MODE);
         parameters.put(SELECTED_COLUMN_PARAMETER, "0002");
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
@@ -253,8 +275,11 @@ public class ModifyDateTest extends BaseDateTests {
     @Test
     public void should_process_row_when_value_does_not_match_most_frequent_pattern() throws Exception {
         // given
-        DataSetRow row = getRow("toto", "04-25-09", "tata");
-        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING).name("recipe")) //
+                .with(value("04-25-09").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("tata").type(Type.STRING).name("last update")) //
+                .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -294,14 +319,14 @@ public class ModifyDateTest extends BaseDateTests {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 }

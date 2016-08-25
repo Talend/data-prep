@@ -21,12 +21,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.parameters.Item;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.FailedAction;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.TransformationFailureAction;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.SelectParameter;
 
 /**
  * Test that a translation exists for i18n keys label/desc for each action and each params/item.
@@ -36,7 +37,7 @@ public class TestI18nKeysForActionsTest extends TransformationBaseTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestI18nKeysForActionsTest.class);
 
     @Autowired
-    private ActionMetadata[] allActions;
+    private ActionDefinition[] allActions;
 
     private void assertI18nKeyExists(final String label) {
         if(label.startsWith("action.")
@@ -48,7 +49,11 @@ public class TestI18nKeysForActionsTest extends TransformationBaseTest {
 
     @Test
     public void test() {
-        for (ActionMetadata actionMetadata : allActions) {
+        for (ActionDefinition actionMetadata : allActions) {
+            if (!includeAction(actionMetadata)) {
+                continue;
+            }
+
             final String name = actionMetadata.getName();
             assertNotNull(name);
             assertNotEquals("", name);
@@ -86,13 +91,13 @@ public class TestI18nKeysForActionsTest extends TransformationBaseTest {
 
                 if (param instanceof SelectParameter) {
 
-                    List<SelectParameter.Item> values = (List<SelectParameter.Item>) param.getConfiguration().get("values");
+                    List<Item> values = (List<Item>) param.getConfiguration().get("values");
 
-                    for (SelectParameter.Item value : values) {
+                    for (Item value : values) {
                         LOGGER.trace("    - " + value);
 
 
-                        for (Parameter inlineParam : value.getInlineParameters()) {
+                        for (Parameter inlineParam : value.getParameters()) {
 
                             String oname = inlineParam.getName();
                             assertNotNull(oname);

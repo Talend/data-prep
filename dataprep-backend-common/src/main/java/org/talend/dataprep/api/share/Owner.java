@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.share;
 
@@ -28,11 +28,12 @@ public class Owner implements Serializable {
 
     /** The owner user id. */
     private String id;
+
     /** The owner first name. */
     private String firstName;
+
     /** The owner last name. */
     private String lastName;
-
 
     /**
      * Default empty constructor.
@@ -43,6 +44,7 @@ public class Owner implements Serializable {
 
     /**
      * Full constructor.
+     * 
      * @param id the owner id.
      * @param firstName the owner first name.
      * @param lastName the owner last name.
@@ -110,17 +112,12 @@ public class Owner implements Serializable {
         return displayName.trim();
     }
 
-
     /**
      * @see Object#toString()
      */
     @Override
     public String toString() {
-        return "Owner{" +
-                "id='" + id + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
+        return "Owner{" + "id='" + id + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + '}';
     }
 
     /**
@@ -135,9 +132,8 @@ public class Owner implements Serializable {
             return false;
         }
         Owner owner = (Owner) o;
-        return Objects.equals(id, owner.id) &&
-                Objects.equals(firstName, owner.firstName) &&
-                Objects.equals(lastName, owner.lastName);
+        return Objects.equals(id, owner.id) && Objects.equals(firstName, owner.firstName)
+                && Objects.equals(lastName, owner.lastName);
     }
 
     /**

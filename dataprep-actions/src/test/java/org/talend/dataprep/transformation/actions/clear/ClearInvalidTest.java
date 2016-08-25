@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
@@ -43,8 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 public class ClearInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private ClearInvalid clearInvalid;
+    private ClearInvalid clearInvalid = new ClearInvalid();
 
     private Map<String, String> parameters;
 
@@ -158,7 +156,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest {
     @Test
     public void should_accept_column() {
         for (Type type : Type.values()) {
-            assertTrue(clearInvalid.acceptColumn(getColumn(type)));
+            assertTrue(clearInvalid.acceptField(getColumn(type)));
         }
     }
 

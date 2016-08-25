@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -65,7 +66,6 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.SecurityProxy;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.aggregation.AggregationService;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
@@ -107,8 +107,8 @@ public class TransformationService extends BaseTransformationService {
     /**
      * All available transformation actions.
      */
-    @Autowired
-    private ActionMetadata[] allActions;
+    @Autowired(required = false)
+    private ActionDefinition[] allActions;
 
     /**
      * he aggregation service.
@@ -539,43 +539,43 @@ public class TransformationService extends BaseTransformationService {
     }
 
     /**
-     * Returns all {@link ActionMetadata actions} data prep may apply to a column. Column is optional and only needed to
+     * Returns all {@link ActionDefinition actions} data prep may apply to a column. Column is optional and only needed to
      * fill out default parameter values.
      *
-     * @return A list of {@link ActionMetadata} that can be applied to this column.
+     * @return A list of {@link ActionDefinition} that can be applied to this column.
      * @see #suggest(ColumnMetadata, int)
      */
     @RequestMapping(value = "/actions/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Return all actions for a column (regardless of column metadata)", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public List<ActionMetadata> columnActions(@RequestBody(required = false) ColumnMetadata column) {
+    public List<ActionDefinition> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return Stream.of(allActions) //
-                .filter(action -> action.acceptScope(COLUMN)) //
+                .filter(action -> !"TEST".equals(action.getCategory()) && action.acceptScope(COLUMN)) //
                 .map(am -> column != null ? am.adapt(column) : am) //
                 .collect(toList());
     }
 
     /**
-     * Suggest what {@link ActionMetadata actions} can be applied to <code>column</code>.
+     * Suggest what {@link ActionDefinition actions} can be applied to <code>column</code>.
      *
      * @param column A {@link ColumnMetadata column} definition.
      * @param limit  An optional limit parameter to return the first <code>limit</code> suggestions.
-     * @return A list of {@link ActionMetadata} that can be applied to this column.
+     * @return A list of {@link ActionDefinition} that can be applied to this column.
      * @see #suggest(DataSet)
      */
     @RequestMapping(value = "/suggest/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Suggest actions for a given column metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public List<ActionMetadata> suggest(@RequestBody(required = false) ColumnMetadata column, //
+    public List<ActionDefinition> suggest(@RequestBody(required = false) ColumnMetadata column, //
                                         @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5", required = false) int limit) {
         if (column == null) {
             return Collections.emptyList();
         }
 
         // look for all actions applicable to the column type
-        final List<ActionMetadata> actions;
-        try (Stream<ActionMetadata> stream = Stream.of(this.allActions)) {
-            actions = stream.filter(am -> am.acceptColumn(column)).collect(toList());
+        final List<ActionDefinition> actions;
+        try (Stream<ActionDefinition> stream = Stream.of(this.allActions)) {
+            actions = stream.filter(am -> am.acceptField(column)).collect(toList());
         }
         final List<Suggestion> suggestions = suggestionEngine.score(actions, column);
         return suggestions.stream() //
@@ -588,15 +588,15 @@ public class TransformationService extends BaseTransformationService {
     }
 
     /**
-     * Returns all {@link ActionMetadata actions} data prep may apply to a line.
+     * Returns all {@link ActionDefinition actions} data prep may apply to a line.
      *
-     * @return A list of {@link ActionMetadata} that can be applied to a line.
+     * @return A list of {@link ActionDefinition} that can be applied to a line.
      */
     @RequestMapping(value = "/actions/line", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Return all actions on lines", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public List<ActionMetadata> lineActions() {
-        try (Stream<ActionMetadata> stream = Stream.of(this.allActions)) {
+    public List<ActionDefinition> lineActions() {
+        try (Stream<ActionDefinition> stream = Stream.of(this.allActions)) {
             return stream //
                     .filter(action -> action.acceptScope(LINE)) //
                     .map(action -> action.adapt(LINE)) //
@@ -605,16 +605,16 @@ public class TransformationService extends BaseTransformationService {
     }
 
     /**
-     * Suggest what {@link ActionMetadata actions} can be applied to <code>dataSetMetadata</code>.
+     * Suggest what {@link ActionDefinition actions} can be applied to <code>dataSetMetadata</code>.
      *
      * @param dataSet A {@link DataSetMetadata dataset} definition.
-     * @return A list of {@link ActionMetadata} that can be applied to this data set.
+     * @return A list of {@link ActionDefinition} that can be applied to this data set.
      * @see #suggest(ColumnMetadata, int)
      */
     @RequestMapping(value = "/suggest/dataset", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Suggest actions for a given data set metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public List<ActionMetadata> suggest(DataSet dataSet) {
+    public List<ActionDefinition> suggest(DataSet dataSet) {
         return Collections.emptyList();
     }
 

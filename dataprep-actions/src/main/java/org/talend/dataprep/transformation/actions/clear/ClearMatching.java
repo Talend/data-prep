@@ -19,11 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -32,7 +29,6 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -41,8 +37,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Clear cell when value is matching.
  */
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ClearMatching.ACTION_NAME)
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ClearMatching.ACTION_NAME)
 public class ClearMatching extends AbstractClear implements ColumnAction {
 
     /** the action name. */
@@ -52,12 +47,6 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
 
     private final Type type;
 
-    @Autowired
-    private ReplaceOnValueHelper regexParametersHelper;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
     public ClearMatching() {
         this(Type.STRING);
     }
@@ -66,27 +55,18 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
         this.type = type;
     }
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return DATA_CLEANSING.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
@@ -101,18 +81,18 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
                     .build());
         } else {
             parameters.add(new Parameter(VALUE_PARAMETER, ParameterType.REGEX, //
-                    StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle()));
+                    StringUtils.EMPTY, false, false, StringUtils.EMPTY));
         }
 
         return parameters;
     }
 
     @Override
-    public ClearMatching adapt(ColumnMetadata column) {
-        if (column == null || !acceptColumn(column)) {
+    public ActionDefinition adapt(ColumnMetadata column) {
+        if (column == null || !acceptField(column)) {
             return this;
         }
-        return applicationContext.getBean(ClearMatching.class, Type.valueOf(column.getType().toUpperCase()));
+        return new ClearMatching(Type.valueOf(column.getType().toUpperCase()));
     }
 
     @Override
@@ -126,7 +106,7 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
         if (Type.get(columnMetadata.getType()) == Type.BOOLEAN) { // for boolean we can accept True equalsIgnoreCase true
             return StringUtils.equalsIgnoreCase(value, equalsValue);
         } else {
-            ReplaceOnValueHelper replaceOnValueHelper = regexParametersHelper.build(equalsValue, true);
+            ReplaceOnValueHelper replaceOnValueHelper = new ReplaceOnValueHelper().build(equalsValue, true);
             return replaceOnValueHelper.matches(value);
         }
     }

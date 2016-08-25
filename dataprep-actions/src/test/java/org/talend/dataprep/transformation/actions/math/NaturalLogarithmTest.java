@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.math;
 
@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -35,19 +34,17 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see NaturalLogarithm
  */
-public class NaturalLogarithmTest
-    extends AbstractMetadataBaseTest {
+public class NaturalLogarithmTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private NaturalLogarithm action;
+    private NaturalLogarithm action = new NaturalLogarithm();
 
     /** The action parameters. */
     private Map<String, String> parameters;
 
     @Before
     public void setUp() throws Exception {
-        final InputStream parametersSource = NaturalLogarithmTest.class.getResourceAsStream( "naturalLogarithmAction.json");
+        final InputStream parametersSource = NaturalLogarithmTest.class.getResourceAsStream("naturalLogarithmAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 

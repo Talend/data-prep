@@ -22,7 +22,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -34,9 +33,8 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
     protected static final String ERROR_RESULT = StringUtils.EMPTY;
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
-        Type columnType = Type.get(column.getType());
-        return Type.NUMERIC.isAssignableFrom(columnType);
+    public boolean acceptField(ColumnMetadata column) {
+        return Type.NUMERIC.isAssignableFrom(column.getType());
     }
 
     @Override
@@ -46,9 +44,6 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
 
     protected abstract String getColumnNameSuffix(Map<String, String> parameters);
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext context) {
         super.compile(context);

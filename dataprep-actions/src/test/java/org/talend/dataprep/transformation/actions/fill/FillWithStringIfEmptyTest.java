@@ -26,7 +26,6 @@ import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -43,8 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class FillWithStringIfEmptyTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private FillIfEmpty action;
+    private FillIfEmpty action = new FillIfEmpty();
 
     @PostConstruct
     public void init() {
@@ -180,13 +178,13 @@ public class FillWithStringIfEmptyTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.ANY)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.ANY)));
     }
 
 }

@@ -21,23 +21,23 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.*;
+import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.ColumnAction;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Swap columns values
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Swap.SWAP_COLUMN_ACTION_NAME)
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Swap.SWAP_COLUMN_ACTION_NAME)
 public class Swap extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**
@@ -47,25 +47,16 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Swap.class);
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return SWAP_COLUMN_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.COLUMNS.getDisplayName();
@@ -108,9 +99,6 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
         originColumn.setType(type);
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         RowMetadata rowMetadata = context.getRowMetadata();

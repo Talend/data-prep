@@ -13,20 +13,6 @@
 
 package org.talend.dataprep.transformation.service;
 
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
-import org.talend.dataprep.transformation.cache.TransformationCacheKey;
-
-import java.io.OutputStream;
-
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -35,6 +21,22 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+
+import java.io.OutputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
+import org.talend.dataprep.transformation.cache.TransformationCacheKey;
+
+import com.jayway.restassured.response.Response;
 
 /**
  * Integration tests on actions.
@@ -49,6 +51,9 @@ public class TransformTests extends TransformationServiceBaseTests {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
+
+    @Autowired
+    PreparationRepository preparationRepository;
 
     @Before
     public void customSetUp() throws Exception {
@@ -197,7 +202,7 @@ public class TransformTests extends TransformationServiceBaseTests {
                 .get("/apply/preparation/{prepId}/dataset/{datasetId}/{format}", prepId, dsId, "JSON");
         assertThat(response.getStatusCode(), is(200));
     }
-    
+
     @Test
     public void testEvictPreparationCache() throws Exception {
         // given
@@ -276,7 +281,7 @@ public class TransformTests extends TransformationServiceBaseTests {
         final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
                 dataSetId,
                 preparationId,
-                getPreparation(preparationId).getHeadId(),
+                preparationRepository.get(preparationId, Preparation.class).getHeadId(),
                 JSON,
                 HEAD
         );

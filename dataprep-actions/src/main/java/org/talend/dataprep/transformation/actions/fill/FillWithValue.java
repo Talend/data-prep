@@ -15,14 +15,14 @@ package org.talend.dataprep.transformation.actions.fill;
 
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillWithValue.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FillWithValue.ACTION_NAME)
 public class FillWithValue extends AbstractFillWith implements ColumnAction {
 
     public static final String ACTION_NAME = "fill_with_value";
@@ -51,7 +51,7 @@ public class FillWithValue extends AbstractFillWith implements ColumnAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.BOOLEAN.equals(Type.get(column.getType())) //
                 || Type.DATE.equals(Type.get(column.getType())) //
                 || Type.INTEGER.equals(Type.get(column.getType())) //

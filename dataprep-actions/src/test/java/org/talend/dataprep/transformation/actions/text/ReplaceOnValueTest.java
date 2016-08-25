@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.FlagNames;
@@ -45,8 +44,7 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
  */
 public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private ReplaceOnValue action;
+    private ReplaceOnValue action = new ReplaceOnValue();
 
     private ActionContext buildPatternActionContext(String regex, String replacement, boolean replace) {
         ActionContext context = new ActionContext(new TransformationContext());
@@ -94,7 +92,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         column.setType(STRING.toString());
 
         // when
-        final boolean accepted = action.acceptColumn(column);
+        final boolean accepted = action.acceptField(column);
 
         // then
         assertThat(accepted, is(true));
@@ -107,7 +105,7 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
         column.setType(BOOLEAN.toString());
 
         // when
-        final boolean accepted = action.acceptColumn(column);
+        final boolean accepted = action.acceptField(column);
 
         // then
         assertThat(accepted, is(false));

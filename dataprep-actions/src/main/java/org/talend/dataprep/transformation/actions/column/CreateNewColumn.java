@@ -18,27 +18,26 @@ import static org.talend.dataprep.transformation.actions.category.ActionScope.CO
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * duplicate a column
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + CreateNewColumn.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + CreateNewColumn.ACTION_NAME)
 public class CreateNewColumn extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -69,41 +68,26 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
 
     public static final String NEW_COLUMN = "new_column";
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.COLUMN_METADATA.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
-    /**
-     * @see ActionMetadata#getActionScope()
-     */
     @Override
     public List<String> getActionScope() {
         return Collections.singletonList(COLUMN_METADATA.getDisplayName());
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -118,8 +102,7 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
                         .item(EMPTY_MODE)
                         .item(CONSTANT_MODE, constantParameter)
                         .item(COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
-                                                         StringUtils.EMPTY, false, false, StringUtils.EMPTY,
-                                                         getMessagesBundle()))
+                                                         StringUtils.EMPTY, false, false, StringUtils.EMPTY))
                         .defaultValue(COLUMN_MODE)
                         .build()
         );
@@ -195,17 +178,17 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
      */
     private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (!parameters.containsKey(MODE_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", MODE_PARAMETER));
         }
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DEFAULT_VALUE_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", DEFAULT_VALUE_PARAMETER));
         }
         if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
                 || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
     }

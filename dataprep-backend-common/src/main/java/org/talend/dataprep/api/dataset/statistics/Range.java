@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset.statistics;
 
@@ -21,19 +21,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Class that represents a range [min, max[
  */
 public class Range implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
      * The min range value
      */
     @JsonProperty("min")
-    double min;
+    private double min;
 
     /**
      * The max range value
      */
     @JsonProperty("max")
-    double max;
+    private double max;
 
     /**
      * Constructor
@@ -44,6 +45,7 @@ public class Range implements Serializable {
 
     /**
      * Constructor
+     * 
      * @param min The minimum value
      * @param max The maximum value
      */
@@ -54,6 +56,7 @@ public class Range implements Serializable {
 
     /**
      * Minimum value getter
+     * 
      * @return The minimum value
      */
     public double getMin() {
@@ -62,6 +65,7 @@ public class Range implements Serializable {
 
     /**
      * Minimum value setter
+     * 
      * @param min The new minimum value
      */
     public void setMin(double min) {
@@ -70,6 +74,7 @@ public class Range implements Serializable {
 
     /**
      * Maximum value getter
+     * 
      * @return The maximum value
      */
     public double getMax() {
@@ -78,6 +83,7 @@ public class Range implements Serializable {
 
     /**
      * Maximum value setter
+     * 
      * @param max The new maximum value
      */
     public void setMax(double max) {

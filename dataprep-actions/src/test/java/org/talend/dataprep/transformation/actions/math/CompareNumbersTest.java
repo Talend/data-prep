@@ -16,6 +16,8 @@ package org.talend.dataprep.transformation.actions.math;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
@@ -26,7 +28,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -46,8 +47,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class CompareNumbersTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private CompareNumbers action;
+    private CompareNumbers action = new CompareNumbers();
 
     /** The action parameters. */
     private Map<String, String> parameters;
@@ -163,9 +163,11 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     @Test
     public void should_set_new_column_name() {
         // given
-        DataSetRow row = getRow("5", "3", "Done !");
-        row.getRowMetadata().getById("0000").setName("source");
-        row.getRowMetadata().getById("0001").setName("selected");
+        final DataSetRow row = builder() //
+                .with(value("5").type(Type.STRING).name("source")) //
+                .with(value("3").type(Type.STRING).name("selected")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -180,10 +182,11 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
     @Test
     public void should_set_new_column_name_constant() {
         // given
-        DataSetRow row = getRow("5", "3", "Done !");
-        row.getRowMetadata().getById("0000").setName("source");
-        row.getRowMetadata().getById("0001").setName("selected");
-
+        final DataSetRow row = builder() //
+                .with(value("5").type(Type.STRING).name("source")) //
+                .with(value("3").type(Type.STRING).name("selected")) //
+                .with(value("Done !").type(Type.STRING)) //
+                .build();
         parameters.put(CompareNumbers.MODE_PARAMETER, CompareNumbers.CONSTANT_MODE);
         parameters.put(CompareNumbers.CONSTANT_VALUE, "3");
 
@@ -261,17 +264,17 @@ public class CompareNumbersTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(action.acceptColumn(getColumn(Type.INTEGER)));
-        assertTrue(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertTrue(action.acceptColumn(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.INTEGER)));
+        assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
 }

@@ -15,8 +15,9 @@ package org.talend.dataprep.transformation.actions.fillinvalid;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.setStatistics;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,38 +27,33 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.date.ChangeDatePatternTest;
 import org.talend.dataprep.transformation.actions.fill.FillInvalid;
-import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.transformation.api.action.context.TransformationContext;
+import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit test for FillWithDateIfInvalid action.
- * 
+ *
  * @see FillInvalid
  */
 public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private FillInvalid fillInvalid;
+    private FillInvalid fillInvalid = new FillInvalid();
 
     @PostConstruct
     public void init() {
-        fillInvalid = fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.DATE).build());
+        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.DATE).build());
     }
 
     @Test
@@ -82,10 +78,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        final Action action = factory.create(fillInvalid, parameters);
-        final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
-        context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillInvalid, parameters));
 
         // then
         assertEquals("09/07/2015 13:31:36", row.get("0001"));
@@ -112,10 +105,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        final Action action = factory.create(fillInvalid, parameters);
-        final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
-        context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillInvalid, parameters));
 
         // then
         assertEquals("09/07/2015 13:31:35", row.get("0001"));
@@ -124,40 +114,32 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
     @Test
     public void test_TDP_591() throws Exception {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "N");
-        values.put("0002", "100");
-
-        final DataSetRow row = new DataSetRow(values);
+        final DataSetRow row = builder() //
+                .with(value("David Bowie").type(Type.STRING)) //
+                .with(value("N").type(Type.DATE).statistics(ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"))) //
+                .with(value("15/10/1999").type(Type.DATE)) //
+                .build();
         row.setInvalid("0001");
         row.setInvalid("0002");
-        final RowMetadata rowMetadata = row.getRowMetadata();
-        rowMetadata.getById("0001").setType(Type.DATE.getName());
-        setStatistics(row, "0001", ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"));
-
         Map<String, String> parameters = ActionMetadataTestUtils
                 .parseParameters(this.getClass().getResourceAsStream("fillInvalidDateTimeAction.json"));
 
         // when
-        final Action action = factory.create(fillInvalid, parameters);
-        final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
-        context.setParameters(parameters);
-        action.getRowAction().apply(row, context);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(fillInvalid, parameters));
 
         // then
-        Assert.assertEquals("2015-07-09", row.get("0001"));
-        Assert.assertEquals("David Bowie", row.get("0000"));
+        assertEquals("2015-07-09", row.get("0001"));
+        assertEquals("David Bowie", row.get("0000"));
     }
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.DATE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptColumn(getColumn(Type.ANY)));
+        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
     }
 
     @Test

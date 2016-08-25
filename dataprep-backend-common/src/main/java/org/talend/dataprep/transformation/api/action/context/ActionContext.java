@@ -1,17 +1,24 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.context;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +28,10 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 /**
  * Context for an action within a transformation. Hence, several instance of the same action can have their own context.
  */
-public class ActionContext {
+public class ActionContext implements Serializable {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionContext.class);
@@ -61,7 +62,7 @@ public class ActionContext {
     private final TransformationContext parent;
 
     /** A map of object (used to reuse objects across row process). */
-    protected Map<String, Object> context = new HashMap<>();
+    private transient Map<String, Object> context = new HashMap<>();
 
     private RowMetadata rowMetadata;
 
@@ -69,7 +70,7 @@ public class ActionContext {
 
     private ActionStatus actionStatus = ActionStatus.NOT_EXECUTED;
 
-    private Predicate<DataSetRow> filter = r -> true;
+    private transient Predicate<DataSetRow> filter = r -> true;
 
     /**
      * Default constructor.
@@ -86,7 +87,7 @@ public class ActionContext {
     }
 
     public Predicate<DataSetRow> getFilter() {
-        return filter;
+        return filter == null ? r -> true : filter;
     }
 
     public void setFilter(Predicate<DataSetRow> filter) {
@@ -109,22 +110,22 @@ public class ActionContext {
      * <b>Note</b>It is up to the caller to insert column in a {@link org.talend.dataprep.api.dataset.RowMetadata row}.
      * </p>
      *
-     * @param name   A column name as string. All values are accepted, no collision with other action can occur.
+     * @param name A column name as string. All values are accepted, no collision with other action can occur.
      * @param create A {@link Function function} that provides a new {@link ColumnMetadata} in case no column with
-     *               <code>name</code> was previously created. Function is <b>not</b> allowed to return <code>null</code>.
+     * <code>name</code> was previously created. Function is <b>not</b> allowed to return <code>null</code>.
      * @return A {@link ColumnMetadata column} id with name <code>name</code>.
      * @throws IllegalArgumentException In case the <code>supplier</code> returned a <code>null</code> instance.
      */
     public String column(String name, Function<RowMetadata, ColumnMetadata> create) {
         String key = getColumnKey(name);
-        if (context.containsKey(key)) {
-            return ((ColumnMetadata) context.get(key)).getId();
+        if (getContext().containsKey(key)) {
+            return ((ColumnMetadata) getContext().get(key)).getId();
         } else {
             final ColumnMetadata columnMetadata = create.apply(rowMetadata);
             if (columnMetadata == null) {
                 throw new IllegalArgumentException("Cannot use a null column for '" + name + "'");
             }
-            context.put(key, columnMetadata);
+            getContext().put(key, columnMetadata);
             return columnMetadata.getId();
         }
     }
@@ -138,8 +139,8 @@ public class ActionContext {
      */
     public String column(String name) {
         String key = getColumnKey(name);
-        if (context.containsKey(key)) {
-            return ((ColumnMetadata) context.get(key)).getId();
+        if (getContext().containsKey(key)) {
+            return ((ColumnMetadata) getContext().get(key)).getId();
         } else {
             throw new IllegalArgumentException("Column '" + name + "' does not exist in action.");
         }
@@ -151,12 +152,12 @@ public class ActionContext {
      * @param name the column original name.
      * @return the context key for the column.
      */
-    protected String getColumnKey(String name) {
+    String getColumnKey(String name) {
         return COLUMN_CONTEXT_PREFIX + name;
     }
 
     public boolean has(String key) {
-        return context.containsKey(key);
+        return getContext().containsKey(key);
     }
 
     /**
@@ -166,8 +167,8 @@ public class ActionContext {
      * @return the object (stored in the context).
      */
     public <T> T get(String key) {
-        if (context.containsKey(key)) {
-            return (T) context.get(key);
+        if (getContext().containsKey(key)) {
+            return (T) getContext().get(key);
         }
         throw new IllegalArgumentException("Key '" + key + "' does not exist.");
     }
@@ -175,15 +176,15 @@ public class ActionContext {
     /**
      * Return the object from the context or use the supplier to create it and cache it.
      *
-     * @param key      the object key.
+     * @param key the object key.
      * @param supplier the supplier to use to create the object in case it is not found in the context.
      * @return the object (stored in the context).
      */
     public <T> T get(String key, Function<Map<String, String>, T> supplier) {
-        T value = (T) context.get(key);
+        T value = (T) getContext().get(key);
         if (value == null) {
             value = supplier.apply(parameters);
-            context.put(key, value);
+            getContext().put(key, value);
             LOGGER.debug("adding {}->{} in this context {}", key, value, this);
         }
         return value;
@@ -193,7 +194,7 @@ public class ActionContext {
      * @return the context entries.
      */
     public Collection<Object> getContextEntries() {
-        return context.values();
+        return getContext().values();
     }
 
     /**
@@ -211,15 +212,19 @@ public class ActionContext {
     public void setRowMetadata(RowMetadata rowMetadata) {
         this.rowMetadata = rowMetadata;
         // Remove previous columns
-        final List<String> toRemove =
-                context.keySet()
-                        .stream()
-                        .filter(s -> s.startsWith(COLUMN_CONTEXT_PREFIX))
-                        .collect(Collectors.toList());
-        for (String column : toRemove) {
-            context.remove(column);
-        }
+        final List<String> toRemove = getContext().keySet().stream() //
+                .filter(s -> s.startsWith(COLUMN_CONTEXT_PREFIX)) //
+                .collect(Collectors.toList());
+        toRemove.forEach(getContext()::remove);
         LOGGER.debug("Removed {} when new row was set.", toRemove);
+    }
+
+    private Map<String, Object> getContext() {
+        if (context == null) {
+            context = new HashMap<>();
+        }
+
+        return context;
     }
 
     public void setParameters(Map<String, String> parameters) {
@@ -236,10 +241,6 @@ public class ActionContext {
 
     public Long getRowId() {
         return Long.parseLong(parameters.get(ImplicitParameters.ROW_ID.getKey()));
-    }
-
-    public DataSetRow getPreviousRow() {
-        return parent.getPreviousRow();
     }
 
     public ScopeCategory getScope() {
@@ -310,11 +311,6 @@ public class ActionContext {
         }
 
         @Override
-        public DataSetRow getPreviousRow() {
-            return delegate.getPreviousRow();
-        }
-
-        @Override
         public ScopeCategory getScope() {
             return delegate.getScope();
         }
@@ -336,7 +332,7 @@ public class ActionContext {
 
         @Override
         public String column(String name, Function<RowMetadata, ColumnMetadata> create) {
-            if (!delegate.context.containsKey(getColumnKey(name))) {
+            if (!delegate.getContext().containsKey(getColumnKey(name))) {
                 throw new UnsupportedOperationException();
             }
             return delegate.column(name, create);
@@ -373,11 +369,7 @@ public class ActionContext {
      */
     @Override
     public String toString() {
-        return "ActionContext{" +
-                "parent=#" + parent +
-                ", context=" + context +
-                ", parameters=" + parameters +
-                ", actionStatus=" + actionStatus +
-                '}';
+        return "ActionContext{" + "parent=#" + parent + ", context=" + getContext() + ", parameters=" + parameters + ", actionStatus="
+                + actionStatus + '}';
     }
 }

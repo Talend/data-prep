@@ -13,32 +13,33 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.ACTION_NAME;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.*;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+
 import javax.measure.quantity.Temperature;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.units.TemperatureImpl;
 
-import static org.talend.dataprep.parameters.ParameterType.INTEGER;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.ACTION_NAME;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.*;
-
 /**
  * Abstract class for conversions from Fahrenheit to Celsius and vice versa.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ACTION_NAME)
 public class TemperaturesConverter extends AbstractMathNoParameterAction {
 
     public static final String ACTION_NAME = "temperatures_converter";

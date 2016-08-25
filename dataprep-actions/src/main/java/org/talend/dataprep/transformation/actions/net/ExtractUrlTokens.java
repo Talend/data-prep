@@ -24,21 +24,20 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Split a cell value on a separator.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractUrlTokens.EXTRACT_URL_TOKENS_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractUrlTokens.EXTRACT_URL_TOKENS_ACTION_NAME)
 public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -48,33 +47,18 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractUrlTokens.class);
 
-    /**
-     * Private constructor to ensure IoC use.
-     */
-    protected ExtractUrlTokens() {
-    }
-
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return EXTRACT_URL_TOKENS_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.SPLIT.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return STRING.equals(Type.get(column.getType())) && StringUtils.equalsIgnoreCase("url", column.getDomain());
     }
 
@@ -90,7 +74,7 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
             for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
                 final String columnName = column.getName() + urlTokenExtractor.getTokenName();
                 String columnToInsertAfter = lastId;
-                lastId = context.column(columnName, (r) -> {
+                lastId = context.column(columnName, r -> {
                     final ColumnMetadata newColumn = column().name(columnName).type(urlTokenExtractor.getType()).build();
                     rowMetadata.insertAfter(columnToInsertAfter, newColumn);
                     return newColumn;
@@ -100,9 +84,6 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
@@ -122,7 +103,7 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.urlTokenExtractors) {
             final String columnName = column.getName() + urlTokenExtractor.getTokenName();
             final String id = context.column(columnName);
-            final String tokenValue = (url == null ? StringUtils.EMPTY : urlTokenExtractor.extractToken(url));
+            final String tokenValue = url == null ? StringUtils.EMPTY : urlTokenExtractor.extractToken(url);
             row.set(id, (tokenValue == null ? StringUtils.EMPTY : tokenValue));
         }
     }

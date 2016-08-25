@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -37,14 +37,13 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Extract tokens from a String cell value based on regex matching groups.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractStringTokens.EXTRACT_STRING_TOKENS_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractStringTokens.EXTRACT_STRING_TOKENS_ACTION_NAME)
 public class ExtractStringTokens extends AbstractActionMetadata implements ColumnAction {
 
     /** The action name. */
@@ -52,32 +51,33 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
 
     /** The column appendix. */
     public static final String APPENDIX = "_part_"; //$NON-NLS-1$
+
     protected static final String MODE_PARAMETER = "extract_mode";
+
     protected static final String MULTIPLE_COLUMNS_MODE = "multiple_columns";
+
     protected static final String SINGLE_COLUMN_MODE = "single_column";
+
     /** Regex action parameter. */
     protected static final String PARAMETER_REGEX = "regex"; //$NON-NLS-1$
+
     /** Number of items produces by the action. */
     protected static final String LIMIT = "limit"; //$NON-NLS-1$
+
     /** Separator for single column mode. */
     protected static final String PARAMETER_SEPARATOR = "concat_separator"; //$NON-NLS-1$
 
     /** Key to put compiled pattern in action context. */
     private static final String PATTERN = "pattern"; //$NON-NLS-1$
+
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractStringTokens.class);
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return EXTRACT_STRING_TOKENS_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return SPLIT.getDisplayName();
@@ -103,17 +103,11 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
@@ -130,7 +124,7 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
             }
             // Check 2: valid regex
             try {
-                context.get(PATTERN, (p) -> Pattern.compile(regex));
+                context.get(PATTERN, p -> Pattern.compile(regex));
             } catch (PatternSyntaxException e) {
                 LOGGER.debug("Invalid pattern {} --> {}, action canceled", regex, e.getMessage(), e);
                 context.setActionStatus(ActionContext.ActionStatus.CANCELED);
@@ -140,8 +134,8 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
             final String columnId = context.getColumnId();
 
             // create the new columns
-            int limit = (parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT))
-                    : 1);
+            int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT))
+                    : 1;
 
             final RowMetadata rowMetadata = context.getRowMetadata();
             final ColumnMetadata column = rowMetadata.getById(columnId);
@@ -150,7 +144,7 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
             lastColumnId.push(columnId);
             for (int i = 0; i < limit; i++) {
                 final int newColumnIndex = i + 1;
-                newColumns.add(context.column(column.getName() + APPENDIX + i, (r) -> {
+                newColumns.add(context.column(column.getName() + APPENDIX + i, r -> {
                     final ColumnMetadata c = ColumnMetadata.Builder //
                             .column() //
                             .type(Type.STRING) //
@@ -165,16 +159,13 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
         final String columnId = context.getColumnId();
 
         // create the new columns
-        int limit = (parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT)) : 1);
+        int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE) ? Integer.parseInt(parameters.get(LIMIT)) : 1;
 
         final RowMetadata rowMetadata = context.getRowMetadata();
         final ColumnMetadata column = rowMetadata.getById(columnId);

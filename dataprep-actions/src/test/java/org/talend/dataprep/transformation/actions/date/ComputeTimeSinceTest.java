@@ -12,6 +12,18 @@
 //  ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.time.temporal.ChronoUnit.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -22,28 +34,17 @@ import java.time.temporal.Temporal;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import static java.time.temporal.ChronoUnit.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
-import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.*;
 
 /**
  * Test class for ComputeTimeSince action. Creates one consumer, and test it.
@@ -53,8 +54,7 @@ import static org.talend.dataprep.transformation.actions.date.ComputeTimeSince.*
 public class ComputeTimeSinceTest extends BaseDateTests {
 
     /** The action to test. */
-    @Autowired
-    private ComputeTimeSince action;
+    private ComputeTimeSince action = new ComputeTimeSince();
 
     private Map<String, String> parameters;
 
@@ -67,14 +67,14 @@ public class ComputeTimeSinceTest extends BaseDateTests {
 
     @Test
     public void testAdapt() throws Exception {
-        assertThat(action.adapt((ColumnMetadata) null), is(action));
+        Assert.assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
-        assertThat(action.adapt(column), is(action));
+        Assert.assertThat(action.adapt(column), is(action));
     }
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+        Assert.assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
     }
 
     @Test
@@ -353,28 +353,27 @@ public class ComputeTimeSinceTest extends BaseDateTests {
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
     public void should_compute_days_since_other_column() throws IOException {
         //given
-        String date = "07/16/2015 13:00";
-        String compare = "07/26/2015 13:00";
-
-        DataSetRow row = getDefaultRow("statistics_MM_dd_yyyy_HH_mm.json");
-        final Statistics dateStatistics = row.getRowMetadata().getById("0001").getStatistics();
-        row.getRowMetadata().getById("0002").setStatistics(dateStatistics);
-        row.set("0001", date);
-        row.set("0002", compare);
+        final String date = "07/16/2015 13:00";
+        final String compare = "07/26/2015 13:00";
+        final DataSetRow row = builder() //
+                .with(value("lorem bacon").type(Type.STRING).name("recipe")) //
+                .with(value(date).type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
+                .with(value(compare).type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
+                .build();
 
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());
         parameters.put(SINCE_WHEN_PARAMETER, OTHER_COLUMN_MODE);
@@ -384,7 +383,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         //then
-        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
+        assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
                 MapEntry.entry("0001", date), //
                 MapEntry.entry("0003", "10"), //
                 MapEntry.entry("0002", compare));
@@ -408,7 +407,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         //then
-        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
+        assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
                 MapEntry.entry("0001", date), //
                 MapEntry.entry("0003", StringUtils.EMPTY), //
                 MapEntry.entry("0002", compare));
@@ -432,7 +431,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         //then
-        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
+        assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
                 MapEntry.entry("0001", date), //
                 MapEntry.entry("0003", result), //
                 MapEntry.entry("0002", "Bacon"));
@@ -456,7 +455,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         //then
-        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
+        assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
                 MapEntry.entry("0001", date), //
                 MapEntry.entry("0003", result), //
                 MapEntry.entry("0002", "Bacon"));
@@ -479,7 +478,7 @@ public class ComputeTimeSinceTest extends BaseDateTests {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         //then
-        Assertions.assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
+        assertThat(row.values()).contains(MapEntry.entry("0000", "lorem bacon"), //
                 MapEntry.entry("0001", date), //
                 MapEntry.entry("0003", StringUtils.EMPTY), //
                 MapEntry.entry("0002", "Bacon"));

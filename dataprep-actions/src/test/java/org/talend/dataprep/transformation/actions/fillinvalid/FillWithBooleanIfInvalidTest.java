@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -44,12 +43,11 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private FillInvalid fillInvalid;
+    private FillInvalid fillInvalid = new FillInvalid();
 
     @PostConstruct
     public void init() {
-        fillInvalid = fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
+        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.BOOLEAN).build());
     }
 
     @Test
@@ -109,7 +107,7 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.BOOLEAN)));
     }
 
     @Test
@@ -119,6 +117,6 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptColumn(getColumn(Type.ANY)));
+        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
     }
 }

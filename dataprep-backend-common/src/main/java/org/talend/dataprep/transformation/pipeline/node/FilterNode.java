@@ -1,6 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
-
 import java.util.function.BiPredicate;
 
 import org.talend.dataprep.api.dataset.RowMetadata;

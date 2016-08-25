@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -44,8 +43,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 public class ExtractEmailDomainTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private ExtractEmailDomain action;
+    private ExtractEmailDomain action = new ExtractEmailDomain();
 
     private Map<String, String> parameters;
 
@@ -170,21 +168,21 @@ public class ExtractEmailDomainTest extends AbstractMetadataBaseTest {
     public void should_accept_column() {
         ColumnMetadata column = getColumn(Type.STRING);
         column.setDomain("email");
-        assertTrue(action.acceptColumn(column));
+        assertTrue(action.acceptField(column));
     }
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(action.acceptColumn(getColumn(Type.STRING)));
-        assertFalse(action.acceptColumn(getColumn(Type.DATE)));
-        assertFalse(action.acceptColumn(getColumn(Type.BOOLEAN)));
-        assertFalse(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertFalse(action.acceptColumn(getColumn(Type.INTEGER)));
-        assertFalse(action.acceptColumn(getColumn(Type.DOUBLE)));
-        assertFalse(action.acceptColumn(getColumn(Type.FLOAT)));
+        assertFalse(action.acceptField(getColumn(Type.STRING)));
+        assertFalse(action.acceptField(getColumn(Type.DATE)));
+        assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
+        assertFalse(action.acceptField(getColumn(Type.NUMERIC)));
+        assertFalse(action.acceptField(getColumn(Type.INTEGER)));
+        assertFalse(action.acceptField(getColumn(Type.DOUBLE)));
+        assertFalse(action.acceptField(getColumn(Type.FLOAT)));
 
         ColumnMetadata column = getColumn(Type.STRING);
         column.setDomain("not an email");
-        assertFalse(action.acceptColumn(column));
+        assertFalse(action.acceptField(column));
     }
 }

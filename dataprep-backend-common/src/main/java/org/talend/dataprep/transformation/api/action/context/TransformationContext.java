@@ -1,29 +1,28 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.context;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.commons.lang.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 
 /**
@@ -31,21 +30,17 @@ import org.talend.dataprep.transformation.api.action.DataSetRowAction;
  *
  * The purpose of this class is to have a small memory footprint and not store the whole dataset. To prevent misuse of
  * this class in future / open developments, it's final.
- *
- * @see ActionMetadata#create(Map)
  */
-public final class TransformationContext {
+public final class TransformationContext implements Serializable {
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationContext.class);
 
     /** Map of action context for each action instance within a transformation. */
-    private final Map<DataSetRowAction, ActionContext> contexts = new HashMap<>();
+    private final transient Map<DataSetRowAction, ActionContext> contexts = new HashMap<>();
 
     /** The context itself. */
-    private Map<String, Object> context;
-
-    private DataSetRow previousRow = new DataSetRow(Collections.emptyMap());
+    private final transient Map<String, Object> context;
 
     /**
      * Default empty constructor.
@@ -78,7 +73,7 @@ public final class TransformationContext {
     /**
      * @return all the action contexts.
      */
-    public Collection<ActionContext> getAllActionsContexts() {
+    private Collection<ActionContext> getAllActionsContexts() {
         return contexts.values();
     }
 
@@ -99,15 +94,19 @@ public final class TransformationContext {
         final Collection<ActionContext> allActionsContexts = getAllActionsContexts();
         LOGGER.debug("cleaning up {} action context(s) ", allActionsContexts.size());
         for (ActionContext currentContext : allActionsContexts) {
-            currentContext.getContextEntries().stream().filter(contextEntry -> contextEntry instanceof DisposableBean)
-                    .forEach(contextEntry -> {
-                        try {
-                            LOGGER.debug("destroy {}", contextEntry);
-                            ((DisposableBean) contextEntry).destroy();
-                        } catch (Exception error) {
-                            LOGGER.warn("error cleaning action context {}", contextEntry, error);
-                        }
-                    });
+            currentContext.getContextEntries().forEach(contextEntry -> {
+                try {
+                    try {
+                        final Method destroy = ClassUtils.getPublicMethod(contextEntry.getClass(), "destroy", new Class[0]);
+                        LOGGER.debug("destroy {}", contextEntry);
+                        destroy.invoke(contextEntry);
+                    } catch (NoSuchMethodException e) {
+                        LOGGER.debug("Context entry {} does not need clean up.", contextEntry, e);
+                    }
+                } catch (Exception error) {
+                    LOGGER.warn("error cleaning action context {}", contextEntry, error);
+                }
+            });
         }
     }
 
@@ -140,14 +139,6 @@ public final class TransformationContext {
         } else {
             throw new IllegalStateException("No action context found for '" + action + "'.");
         }
-    }
-
-    public void setPreviousRow(DataSetRow previousRow) {
-        this.previousRow = previousRow;
-    }
-
-    public DataSetRow getPreviousRow() {
-        return previousRow;
     }
 
 }

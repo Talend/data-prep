@@ -26,8 +26,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -36,12 +35,11 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + MatchesPattern.MATCHES_PATTERN_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MatchesPattern.MATCHES_PATTERN_ACTION_NAME)
 public class MatchesPattern extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -53,6 +51,7 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
      * The column appendix.
      */
     public static final String APPENDIX = "_matching"; //$NON-NLS-1$
+
     /**
      * The pattern shown to the user as a list. An item in this list is the value 'other', which allow the user to
      * manually enter his pattern.
@@ -62,33 +61,22 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     public static final String CUSTOM = "custom";
 
     public static final String REGEX_HELPER_KEY = "regex_helper";
+
     /**
      * The pattern manually specified by the user. Should be used only if PATTERN_PARAMETER value is 'other'.
      */
     protected static final String MANUAL_PATTERN_PARAMETER = "manual_pattern"; //$NON-NLS-1$
 
-    @Autowired
-    private ReplaceOnValueHelper regexParametersHelper;
-
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return MATCHES_PATTERN_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return STRING.equals(Type.get(column.getType()));
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.STRINGS.getDisplayName();
@@ -120,6 +108,7 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
     private ReplaceOnValueHelper getPattern(Map<String, String> parameters) {
         if (CUSTOM.equals(parameters.get(PATTERN_PARAMETER))) {
             final String jsonString = parameters.get(MANUAL_PATTERN_PARAMETER);
+            final ReplaceOnValueHelper regexParametersHelper = new ReplaceOnValueHelper();
             return regexParametersHelper.build(jsonString, true);
         } else {
             return new ReplaceOnValueHelper(parameters.get(PATTERN_PARAMETER), ReplaceOnValueHelper.REGEX_MODE);
@@ -157,9 +146,6 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         // Retrieve the pattern to use

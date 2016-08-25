@@ -24,7 +24,6 @@ import javax.annotation.PostConstruct;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -40,18 +39,17 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 
 /**
  * Unit test for the FillWithStringIfInvalid action.
- * 
+ *
  * @see FillInvalid
  */
 public class FillWithStringIfInvalidTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private FillInvalid fillInvalid;
+    private FillInvalid fillInvalid = new FillInvalid();
 
     @PostConstruct
     public void init() {
-        fillInvalid = fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
+        fillInvalid = (FillInvalid) fillInvalid.adapt(ColumnMetadata.Builder.column().type(Type.STRING).build());
     }
 
     @Test
@@ -141,7 +139,7 @@ public class FillWithStringIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_accept_column() {
-        assertTrue(fillInvalid.acceptColumn(getColumn(Type.STRING)));
+        assertTrue(fillInvalid.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
@@ -151,6 +149,6 @@ public class FillWithStringIfInvalidTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_not_accept_column() {
-        assertFalse(fillInvalid.acceptColumn(getColumn(Type.ANY)));
+        assertFalse(fillInvalid.acceptField(getColumn(Type.ANY)));
     }
 }

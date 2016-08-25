@@ -21,18 +21,17 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Clear cell when value is invalid.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ClearInvalid.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ClearInvalid.ACTION_NAME)
 public class ClearInvalid extends AbstractClear implements ColumnAction {
 
     /** the action name. */
@@ -40,33 +39,21 @@ public class ClearInvalid extends AbstractClear implements ColumnAction {
 
     private static final List<String> ACTION_SCOPE = Collections.singletonList(INVALID.getDisplayName());
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return DATA_CLEANSING.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
-    /**
-     * @see ActionMetadata#getActionScope()
-     */
     @Override
     public List<String> getActionScope() {
         return ACTION_SCOPE;

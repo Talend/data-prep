@@ -13,9 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.category;
 
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.ROW_ID;
-
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -25,10 +22,10 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
  * List all scope category.
  */
 public enum ScopeCategory {
-                           CELL(ROW_ID, COLUMN_ID),
-                           COLUMN(COLUMN_ID),
-                           LINE(ROW_ID),
-                           DATASET;
+    CELL(ImplicitParameters.ROW_ID, ImplicitParameters.COLUMN_ID),
+    COLUMN(ImplicitParameters.COLUMN_ID),
+    LINE(ImplicitParameters.ROW_ID),
+    DATASET;
 
     private final Predicate<Map<String, String>> mandatoryParametersChecker;
 

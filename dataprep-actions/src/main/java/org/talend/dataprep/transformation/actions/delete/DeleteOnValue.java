@@ -23,21 +23,19 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Delete row on a given value.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteOnValue.DELETE_ON_VALUE_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + DeleteOnValue.DELETE_ON_VALUE_ACTION_NAME)
 public class DeleteOnValue extends AbstractDelete {
 
     /**
@@ -50,20 +48,11 @@ public class DeleteOnValue extends AbstractDelete {
      */
     public static final String VALUE_PARAMETER = "value"; //$NON-NLS-1$
 
-    @Autowired
-    private ReplaceOnValueHelper regexParametersHelper;
-
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return DELETE_ON_VALUE_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     @Nonnull
     public List<Parameter> getParameters() {
@@ -72,11 +61,8 @@ public class DeleteOnValue extends AbstractDelete {
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return STRING.equals(Type.get(column.getType())) || NUMERIC.isAssignableFrom(Type.get(column.getType()));
     }
 
@@ -85,6 +71,7 @@ public class DeleteOnValue extends AbstractDelete {
         super.compile(actionContext);
         if (actionContext.getActionStatus() == ActionContext.ActionStatus.OK) {
             final Map<String, String> parameters = actionContext.getParameters();
+            final ReplaceOnValueHelper regexParametersHelper = new ReplaceOnValueHelper();
             actionContext.get("replaceOnValue", p -> regexParametersHelper.build(parameters.get(VALUE_PARAMETER), true));
         }
     }

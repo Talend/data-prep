@@ -18,14 +18,14 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + KeepOnly.KEEP_ONLY_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + KeepOnly.KEEP_ONLY_ACTION_NAME)
 public class KeepOnly extends AbstractActionMetadata implements ColumnAction {
 
     static final String KEEP_ONLY_ACTION_NAME = "keep_only";
@@ -41,7 +41,7 @@ public class KeepOnly extends AbstractActionMetadata implements ColumnAction {
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 

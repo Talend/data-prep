@@ -19,20 +19,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -41,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + Concat.CONCAT_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + Concat.CONCAT_ACTION_NAME)
 public class Concat extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**
@@ -83,25 +82,16 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
 
     public static final String ALWAYS = "concat_always";
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return CONCAT_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.COLUMNS.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -111,7 +101,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         parameters.add(SelectParameter.Builder.builder().name(MODE_PARAMETER)
                 .item(OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, //
-                                false, false, StringUtils.EMPTY, getMessagesBundle()),
+                                false, false, StringUtils.EMPTY),
                         new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY), //
                         SelectParameter.Builder.builder() //
                                 .name(SEPARATOR_CONDITION) //
@@ -127,11 +117,8 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         // accept all types of columns
         return true;
     }
@@ -147,7 +134,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
             final Map<String, String> parameters = context.getParameters();
             final ColumnMetadata sourceColumn = rowMetadata.getById(columnId);
             final String newColumnName = evalNewColumnName(sourceColumn.getName(), rowMetadata, parameters);
-            context.column(CONCAT_NEW_COLUMN, (r) -> {
+            context.column(CONCAT_NEW_COLUMN, r -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
                         .name(newColumnName) //
@@ -227,7 +214,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
     private void checkSelectedColumnParameter(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
                 || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
     }

@@ -1,39 +1,37 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.talend.dataprep.api.Application;
+import org.talend.dataprep.ServiceBaseTests;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
@@ -43,31 +41,16 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 
 /**
  * Base test for all API service unit.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
-public abstract class ApiServiceTestBase {
+public abstract class ApiServiceTestBase extends ServiceBaseTests {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApiServiceTestBase.class);
-
-    @Value("${local.server.port}")
-    protected int port;
-
-    @Autowired
-    protected ConfigurableEnvironment environment;
-
-    @Autowired
-    protected ObjectMapper mapper;
 
     @Autowired
     protected DataSetMetadataRepository dataSetMetadataRepository;
@@ -85,10 +68,10 @@ public abstract class ApiServiceTestBase {
     @Autowired
     protected FolderRepository folderRepository;
 
+    protected Folder home;
+
     @Autowired
     TransformationServiceUrlRuntimeUpdater transformationUrlUpdater;
-
-    protected Folder home;
 
     @Before
     public void setUp() {
@@ -113,25 +96,22 @@ public abstract class ApiServiceTestBase {
         folderRepository.clear();
     }
 
-
     protected AggregationParameters getAggregationParameters(String input) throws IOException {
         InputStream parametersInput = this.getClass().getResourceAsStream(input);
         return mapper.readValue(parametersInput, AggregationParameters.class);
     }
 
-
-    /** @return the dataset id **/
     protected String createDataset(final String file, final String name, final String type) throws IOException {
         final String datasetContent = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(file));
         final Response post = given() //
-            .contentType(ContentType.JSON) //
-            .body(datasetContent) //
-            .queryParam("Content-Type", type) //
-            .when() //
-            .post("/api/datasets?name={name}", name);
+                .contentType(ContentType.JSON) //
+                .body(datasetContent) //
+                .queryParam("Content-Type", type) //
+                .when() //
+                .post("/api/datasets?name={name}", name);
 
         final int statusCode = post.getStatusCode();
-        if(statusCode != 200) {
+        if (statusCode != 200) {
             LOGGER.error("Unable to create dataset (HTTP " + statusCode + "). Error: {}", post.asString());
         }
         assertThat(statusCode, is(200));
@@ -143,22 +123,22 @@ public abstract class ApiServiceTestBase {
     }
 
     protected String createPreparationFromFile(final String file, final String name, final String type) throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-"+ System.currentTimeMillis(), type);
+        final String dataSetId = createDataset(file, "testDataset-" + System.currentTimeMillis(), type);
         return createPreparationFromDataset(dataSetId, name);
     }
 
-
-    protected String createPreparationFromFile(final String file, final String name, final String type, final String folderId) throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-"+ System.currentTimeMillis(), type);
+    protected String createPreparationFromFile(final String file, final String name, final String type, final String folderId)
+            throws IOException {
+        final String dataSetId = createDataset(file, "testDataset-" + System.currentTimeMillis(), type);
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
-
 
     protected String createPreparationFromDataset(final String dataSetId, final String name) throws IOException {
         return createPreparationFromDataset(dataSetId, name, home.getId());
     }
 
-    protected String createPreparationFromDataset(final String dataSetId, final String name, final String folderId) throws IOException {
+    protected String createPreparationFromDataset(final String dataSetId, final String name, final String folderId)
+            throws IOException {
 
         RequestSpecification request = given() //
                 .contentType(ContentType.JSON) //
@@ -172,6 +152,8 @@ public abstract class ApiServiceTestBase {
                 .when() //
                 .expect().statusCode(200).log().ifError() //
                 .post("/api/preparations");
+
+        assertThat(response.getStatusCode(), is(200));
 
         final String preparationId = response.asString();
         assertThat(preparationId, notNullValue());

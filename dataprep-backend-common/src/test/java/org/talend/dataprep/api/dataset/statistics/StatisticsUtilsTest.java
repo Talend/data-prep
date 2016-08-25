@@ -23,6 +23,9 @@ import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramStatistics;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.dataset.StatisticsAdapter;
+import org.talend.dataquality.common.inference.Analyzers;
+import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.semantic.classifier.custom.UserDefinedCategory;
 import org.talend.dataquality.semantic.recognizer.CategoryFrequency;
 import org.talend.dataquality.semantic.statistics.SemanticType;
@@ -34,8 +37,6 @@ import org.talend.dataquality.statistics.numeric.summary.SummaryStatistics;
 import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
-import org.talend.dataquality.common.inference.Analyzers;
-import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 public class StatisticsUtilsTest {
 
@@ -234,7 +235,7 @@ public class StatisticsUtilsTest {
         textLengthStatistics.setCount(5);
         result.add(textLengthStatistics);
 
-        StatisticsAdapter adapter = new StatisticsAdapter();
+        StatisticsAdapter adapter = new StatisticsAdapter(40);
         adapter.adapt(Collections.singletonList(integerColumn), Collections.singletonList(result));
         adapter.adapt(Collections.singletonList(stringColumn), Collections.singletonList(result));
     }

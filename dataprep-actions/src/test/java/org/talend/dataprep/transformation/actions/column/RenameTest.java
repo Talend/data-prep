@@ -26,15 +26,15 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
  * Test class for Rename action. Creates one consumer, and test it.
@@ -44,8 +44,7 @@ import org.talend.dataprep.parameters.Parameter;
 public class RenameTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
-    @Autowired
-    private Rename action;
+    private Rename action = new Rename();
 
     private Map<String, String> parameters;
 
@@ -104,19 +103,20 @@ public class RenameTest extends AbstractMetadataBaseTest {
         expected.add(renamedMetadata);
 
         //when
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters));
+        final DataSetRow row = new DataSetRow(rowMetadata);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expected, rowMetadata.getColumns());
+        assertEquals(expected, row.getRowMetadata().getColumns());
     }
 
     @Test
     public void should_accept_column() {
-        assertTrue(action.acceptColumn(getColumn(Type.STRING)));
-        assertTrue(action.acceptColumn(getColumn(Type.NUMERIC)));
-        assertTrue(action.acceptColumn(getColumn(Type.FLOAT)));
-        assertTrue(action.acceptColumn(getColumn(Type.DATE)));
-        assertTrue(action.acceptColumn(getColumn(Type.BOOLEAN)));
+        assertTrue(action.acceptField(getColumn(Type.STRING)));
+        assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
+        assertTrue(action.acceptField(getColumn(Type.FLOAT)));
+        assertTrue(action.acceptField(getColumn(Type.DATE)));
+        assertTrue(action.acceptField(getColumn(Type.BOOLEAN)));
     }
 
 }

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset.statistics;
 
@@ -23,13 +23,13 @@ public class Quantiles implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("median")
-    double median = Double.NaN;
+    private double median = Double.NaN;
 
     @JsonProperty("lowerQuantile")
-    double lowerQuantile = Double.NaN;
+    private double lowerQuantile = Double.NaN;
 
     @JsonProperty("upperQuantile")
-    double upperQuantile = Double.NaN;
+    private double upperQuantile = Double.NaN;
 
     public double getMedian() {
         return median;

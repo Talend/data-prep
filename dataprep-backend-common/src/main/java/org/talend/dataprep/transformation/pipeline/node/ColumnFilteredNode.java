@@ -11,21 +11,21 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 
-public abstract class ColumnFilteredNode extends BasicNode {
+abstract class ColumnFilteredNode extends BasicNode {
 
-    protected RowMetadata rowMetadata;
+    RowMetadata rowMetadata;
 
-    protected List<ColumnMetadata> filteredColumns;
+    List<ColumnMetadata> filteredColumns;
 
-    protected Set<String> filteredColumnNames;
+    Set<String> filteredColumnNames;
 
-    protected Predicate<? super ColumnMetadata> filter;
+    private final Predicate<? super ColumnMetadata> filter;
 
-    public ColumnFilteredNode(Predicate<? super ColumnMetadata> filter) {
+    ColumnFilteredNode(Predicate<? super ColumnMetadata> filter) {
         this.filter = filter;
     }
 
-    protected void performColumnFilter(DataSetRow row, RowMetadata metadata) {
+    void performColumnFilter(DataSetRow row, RowMetadata metadata) {
         final boolean needRefresh = rowMetadata == null || !metadata.equals(rowMetadata);
         List<ColumnMetadata> columns = metadata.getColumns();
         if (!columns.isEmpty()) {

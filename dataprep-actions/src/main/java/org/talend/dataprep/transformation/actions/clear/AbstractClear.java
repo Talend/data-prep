@@ -25,7 +25,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Abstract class used as base class for clear cells actions.
  */
-public abstract class AbstractClear extends AbstractActionMetadata implements ColumnAction {
+abstract class AbstractClear extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
@@ -37,10 +37,10 @@ public abstract class AbstractClear extends AbstractActionMetadata implements Co
 
     /**
      *
-     *
-     * @param dataSetRow @return return <code>true</code> if the column must be cleared
-     * @param columnId
-     * @param actionContext
+     * @param dataSetRow The data set row to be checked.
+     * @param columnId The column id to check in <code>dataSetRow</code>.
+     * @param actionContext The current action context.
+     * @return return <code>true</code> if the column must be cleared
      */
     protected abstract boolean toClear(DataSetRow dataSetRow, String columnId, ActionContext actionContext);
 

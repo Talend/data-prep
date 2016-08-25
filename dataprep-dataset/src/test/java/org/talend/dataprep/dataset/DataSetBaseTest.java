@@ -17,7 +17,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,35 +24,28 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.talend.dataprep.ServiceBaseTests;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
-import org.talend.dataprep.schema.FormatFamily;
+import org.talend.dataprep.schema.FormatFamilyFactory;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.user.store.UserDataRepository;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 
 /**
  * Base class for DataSet integration tests.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
-public abstract class DataSetBaseTest {
+public abstract class DataSetBaseTest extends ServiceBaseTests {
 
     protected static final String T_SHIRT_100_CSV_EXPECTED_JSON = "../t-shirt_100.csv.expected.json";
 
@@ -76,9 +68,6 @@ public abstract class DataSetBaseTest {
     /** This class" logger. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("${local.server.port}")
-    public int port;
-
     @Autowired
     protected DataSetMetadataRepository dataSetMetadataRepository;
 
@@ -90,14 +79,10 @@ public abstract class DataSetBaseTest {
     protected DataSetContentStore contentStore;
 
     @Autowired
-    protected FormatFamily.Factory factory;
+    protected FormatFamilyFactory factory;
 
     @Autowired
     protected DataSetMetadataBuilder metadataBuilder;
-
-    /** DataPrep jackson ready to use builder. */
-    @Autowired
-    protected ObjectMapper mapper;
 
     @Autowired
     protected Security security;

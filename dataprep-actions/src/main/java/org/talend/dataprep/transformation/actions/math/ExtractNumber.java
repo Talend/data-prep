@@ -21,15 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
@@ -54,7 +53,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * <li>pico p 0.000000000001</li>
  * </ul>
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractNumber.EXTRACT_NUMBER_ACTION_NAME)
 public class ExtractNumber extends AbstractActionMetadata implements ColumnAction {
 
     /** Name of the action. */
@@ -108,6 +107,9 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
 
     private static String extractNumber(String value) {
         return extractNumber(value, DEFAULT_RESULT);
+    }
+
+    public ExtractNumber() {
     }
 
     /**
@@ -180,33 +182,21 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
         return decimalFormat.format(bigDecimal.stripTrailingZeros());
     }
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return EXTRACT_NUMBER_ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.SPLIT.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 
-    /**
-     * @see ActionMetadata#compile(ActionContext)
-     */
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
@@ -229,9 +219,6 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
@@ -247,7 +234,7 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     /**
      * Internal class that models a Metric, e.g. kilo -> multiply by 1000
      */
-    static class MetricPrefix {
+    private static class MetricPrefix {
 
         private final String name;
 

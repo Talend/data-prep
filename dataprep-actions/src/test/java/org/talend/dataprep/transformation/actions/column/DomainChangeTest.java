@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -32,8 +31,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class DomainChangeTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private DomainChange domainChange;
+    private DomainChange domainChange = new DomainChange();
 
     private Map<String, String> parameters;
 
@@ -94,7 +92,7 @@ public class DomainChangeTest extends AbstractMetadataBaseTest {
                     .build();
 
             // when
-            final boolean accepted = domainChange.acceptColumn(columnMetadata);
+            final boolean accepted = domainChange.acceptField(columnMetadata);
 
             // then
             assertThat(accepted).isTrue();

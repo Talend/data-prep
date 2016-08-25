@@ -23,22 +23,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -47,8 +45,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
  * The new column content is "prefix + column_source + separator + selected_column + suffix"
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + NumericOperations.ACTION_NAME)
-@Scope("prototype")
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + NumericOperations.ACTION_NAME)
 public class NumericOperations extends AbstractActionMetadata implements ColumnAction, OtherColumnParameters {
 
     /**
@@ -79,25 +76,16 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
     private static final String DIVIDE = "/";
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
     }
 
-    /**
-     * @see ActionMetadata#getCategory()
-     */
     @Override
     public String getCategory() {
         return ActionCategory.MATH.getDisplayName();
     }
 
-    /**
-     * @see ActionMetadata#getParameters()
-     */
     @Override
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
@@ -120,7 +108,7 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
                         .item(CONSTANT_MODE, new Parameter(OPERAND_PARAMETER, ParameterType.STRING, "2"))
                         .item(OTHER_COLUMN_MODE,
                               new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
-                                            StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle())) //
+                                            StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //
                         .defaultValue(CONSTANT_MODE)
                         .build()
         );
@@ -129,11 +117,8 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#acceptColumn(ColumnMetadata)
-     */
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         Type columnType = Type.get(column.getType());
         return Type.NUMERIC.isAssignableFrom(columnType);
     }
@@ -169,9 +154,6 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(final DataSetRow row, final ActionContext context) {
         final Map<String, String> parameters = context.getParameters();
@@ -228,7 +210,7 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             // Format result:
             return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
         } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
-            return "";
+            return StringUtils.EMPTY;
         }
     }
 
@@ -241,11 +223,11 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
      */
     private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(OPERAND_PARAMETER)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", OPERAND_PARAMETER));
         } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
                 || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
-            throw new TDPException(CommonErrorCodes.BAD_ACTION_PARAMETER,
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
     }

@@ -17,14 +17,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -35,8 +34,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class DeleteLinesTest extends AbstractMetadataBaseTest {
 
-    @Autowired
-    private DeleteLines action;
+    private DeleteLines action = new DeleteLines();
 
     private Map<String, String> parameters;
 
@@ -50,7 +48,7 @@ public class DeleteLinesTest extends AbstractMetadataBaseTest {
     public void should_accept_column() {
         final List<Type> allTypes = Type.ANY.list();
         for (Type type : allTypes) {
-            assertTrue(action.acceptColumn(getColumn(type)));
+            assertTrue(action.acceptField(getColumn(type)));
         }
     }
 
@@ -69,10 +67,7 @@ public class DeleteLinesTest extends AbstractMetadataBaseTest {
     @Test
     public void should_delete() {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Berlin");
-        final DataSetRow row = new DataSetRow(values);
+        final DataSetRow row = getRow("David Bowie", "Berlin");
 
         //when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -84,10 +79,7 @@ public class DeleteLinesTest extends AbstractMetadataBaseTest {
     @Test
     public void should_not_delete() {
         // given
-        final Map<String, String> values = new HashMap<>();
-        values.put("0000", "David Bowie");
-        values.put("0001", "Paris");
-        final DataSetRow row = new DataSetRow(values);
+        final DataSetRow row = getRow("David Bowie", "Paris");
 
         //when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

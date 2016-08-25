@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Create a new column with Boolean result <code>true</code> if the Levenstein distance is less or equals the parameter
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + FuzzyMatching.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FuzzyMatching.ACTION_NAME)
 public class FuzzyMatching extends AbstractActionMetadata implements ColumnAction {
 
     /**
@@ -60,7 +60,7 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
     public static final String APPENDIX = "_matches";
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return Type.STRING.equals(Type.get(column.getType()));
     }
 
@@ -81,15 +81,14 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
         parameters.add(SelectParameter.Builder.builder() //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
                 .item(OtherColumnParameters.CONSTANT_MODE, //
-                        new Parameter(VALUE_PARAMETER, ParameterType.STRING, EMPTY, false, true, StringUtils.EMPTY,
-                                getMessagesBundle())) //
+                        new Parameter(VALUE_PARAMETER, ParameterType.STRING, EMPTY, false, true, StringUtils.EMPTY)) //
                 .item(OtherColumnParameters.OTHER_COLUMN_MODE, //
                         new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
                                 ParameterType.COLUMN, //
-                                StringUtils.EMPTY, false, false, StringUtils.EMPTY, getMessagesBundle())) //
+                                StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //
                 .defaultValue(OtherColumnParameters.CONSTANT_MODE).build());
 
-        parameters.add(new Parameter(SENSITIVITY, INTEGER, "1", false, false, StringUtils.EMPTY, getMessagesBundle()));
+        parameters.add(new Parameter(SENSITIVITY, INTEGER, "1", false, false, StringUtils.EMPTY));
         return parameters;
     }
 
@@ -102,7 +101,7 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
             RowMetadata rowMetadata = context.getRowMetadata();
             ColumnMetadata column = rowMetadata.getById(columnId);
 
-            context.column(column.getName() + APPENDIX, (r) -> {
+            context.column(column.getName() + APPENDIX, r -> {
                 final ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
                         .name(column.getName() + APPENDIX) //

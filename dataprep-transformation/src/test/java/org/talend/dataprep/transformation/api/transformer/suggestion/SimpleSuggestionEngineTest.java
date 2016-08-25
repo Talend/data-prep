@@ -24,9 +24,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.delete.DeleteEmpty;
 import org.talend.dataprep.transformation.actions.delete.DeleteInvalid;
 import org.talend.dataprep.transformation.actions.fill.FillIfEmpty;
@@ -78,7 +78,7 @@ public class SimpleSuggestionEngineTest {
         ObjectMapper mapper = new ObjectMapper();
         final ColumnMetadata columnMetadata = mapper.readValue(json, ColumnMetadata.class);
 
-        List<ActionMetadata> actions = new ArrayList<>();
+        List<ActionDefinition> actions = new ArrayList<>();
         actions.add(new FillIfEmpty());
         actions.add(new FillInvalid());
         actions.add(new DeleteInvalid());

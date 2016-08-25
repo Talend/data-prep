@@ -13,6 +13,12 @@
 
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +35,6 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.schema.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * <p>
@@ -63,7 +63,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
      * Format family factory.
      */
     @Autowired
-    private FormatFamily.Factory formatFamilyFactory;
+    private FormatFamilyFactory formatFamilyFactory;
 
     @Autowired
     private CompositeFormatDetector detector;

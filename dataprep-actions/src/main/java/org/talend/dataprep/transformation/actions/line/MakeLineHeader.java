@@ -13,12 +13,18 @@
 
 package org.talend.dataprep.transformation.actions.line;
 
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+
+import java.text.MessageFormat;
+import java.util.*;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
@@ -27,12 +33,6 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.text.MessageFormat;
-import java.util.*;
-
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-
 /**
  * This action does two things:
  * <ul>
@@ -40,7 +40,7 @@ import static org.talend.dataprep.transformation.actions.category.ActionCategory
  * <li>Delete this row</li>
  * </ul>
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + MakeLineHeader.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + MakeLineHeader.ACTION_NAME)
 public class MakeLineHeader extends AbstractActionMetadata implements RowAction {
 
     public static final String ACTION_NAME = "make_line_header";
@@ -64,7 +64,7 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
     }
 
     @Override
-    public boolean acceptColumn(ColumnMetadata column) {
+    public boolean acceptField(ColumnMetadata column) {
         return true;
     }
 

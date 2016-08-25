@@ -49,14 +49,15 @@ import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
-import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
-import org.talend.dataprep.api.dataset.location.SemanticDomain;
-import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.FlagNames;
+import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
+import org.talend.dataprep.dataset.DataSetLocatorService;
+import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.LocalStoreLocation;
 import org.talend.dataprep.dataset.event.DataSetImportedEvent;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
 import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
@@ -79,6 +80,7 @@ import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.schema.DraftValidator;
 import org.talend.dataprep.schema.FormatFamily;
+import org.talend.dataprep.schema.FormatFamilyFactory;
 import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
@@ -151,7 +153,7 @@ public class DataSetService extends BaseDataSetService {
      * Format guess factory.
      */
     @Autowired
-    private FormatFamily.Factory formatFamilyFactory;
+    private FormatFamilyFactory formatFamilyFactory;
 
     /**
      * Dataset locator (used for remote datasets).

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -31,14 +31,13 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.ActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Change the date pattern on a 'date' column.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractDateTokens.ACTION_NAME)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ExtractDateTokens.ACTION_NAME)
 public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
     /** Action name. */
@@ -120,9 +119,6 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         return parameters;
     }
 
-    /**
-     * @see ActionMetadata#getName()
-     */
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -138,7 +134,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
             final ColumnMetadata column = rowMetadata.getById(columnId);
             for (DateFieldMappingBean date_field : DATE_FIELDS) {
                 if (Boolean.valueOf(parameters.get(date_field.key))) {
-                    context.column(column.getName() + SEPARATOR + date_field.key, (r) -> {
+                    context.column(column.getName() + SEPARATOR + date_field.key, r -> {
                         final ColumnMetadata c = ColumnMetadata.Builder //
                                 .column() //
                                 .name(column.getName() + SEPARATOR + date_field.key) //
@@ -156,9 +152,6 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         }
     }
 
-    /**
-     * @see ColumnAction#applyOnColumn(DataSetRow, ActionContext)
-     */
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final RowMetadata rowMetadata = context.getRowMetadata();
@@ -182,7 +175,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         }
         TemporalAccessor temporalAccessor = null;
         try {
-            temporalAccessor = dateParser.parse(value, context.getRowMetadata().getById(columnId));
+            temporalAccessor = Providers.get().parse(value, context.getRowMetadata().getById(columnId));
         } catch (DateTimeException e) {
             // temporalAccessor is left null, this will be used bellow to set empty new value for all fields
             LOGGER.debug("Unable to parse date {}.", value, e);
@@ -212,7 +205,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
 
         private final ChronoField field;
 
-        public DateFieldMappingBean(String key, ChronoField field) {
+        private DateFieldMappingBean(String key, ChronoField field) {
             super();
             this.key = key;
             this.field = field;

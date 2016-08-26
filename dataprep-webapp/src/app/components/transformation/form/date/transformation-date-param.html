@@ -25,9 +25,10 @@
         </talend-datetime-picker>
 
         <div class="param-error error"
-             ng-if="paramsCtrl.paramForm[dateParamCtrl.parameter.name].$error.isDateTimeValidation"
-                translate-once="DATE_FORMAT_ERROR">
+             ng-if="parentForm.$error.isDateTimeValidation"
+             translate-once="DATE_FORMAT_ERROR">
         </div>
+
     </div>
 
 </div>

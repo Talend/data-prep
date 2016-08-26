@@ -40,8 +40,9 @@
         </div>
 
         <div class="param-error error"
-             ng-if="paramCtrl.paramForm[simpleParamCtrl.parameter.name].$error.isTypeValidation || paramsCtrl.paramForm[simpleParamCtrl.parameter.name].$error.number">
-            This must be a {{::simpleParamCtrl.parameter.type}}
+             ng-if="parentForm.$error.isTypeValidation || parentForm.$error.number">
+            <span translate="TYPE_FORMAT_ERROR"
+                  translate-values="{type: simpleParamCtrl.parameter.type}"></span>
         </div>
     </div>
 </div>

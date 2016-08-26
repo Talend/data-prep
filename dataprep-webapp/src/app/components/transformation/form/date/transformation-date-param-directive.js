@@ -30,8 +30,12 @@ export default function TransformDateParam() {
             parameter: '=',
             label: '@',
         },
+        require: '^?form',
         bindToController: true,
         controllerAs: 'dateParamCtrl',
         controller: 'TransformDateParamCtrl',
+        link: (scope, element, attrs, form) => {
+            scope.parentForm = form;
+        },
     };
 }

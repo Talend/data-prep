@@ -17,9 +17,9 @@ import moment from 'moment';
  * @ngdoc directive
  * @name data-prep.validation.directive:IsDateTimeValidation
  * @description This directive perform a datetime validation on input value modification. you can use format attribute
- * to set a datetime pattern to use otherwise a default is used DD/MM/YYYY HH:mm:ss
+ * to set a datetime pattern to use otherwise a default is used YYYY-MM-DD HH:mm
  * @restrict E
- * @usage <input ... is-datetime />
+ * @usage <input ... is-date-time />
  */
 export default function IsDateTimeValidation() {
     return {
@@ -29,10 +29,8 @@ export default function IsDateTimeValidation() {
                 if (ctrl.$isEmpty(modelValue)) {
                     return false;
                 }
-
-                const format = attributes.format ? attributes.format : 'DD/MM/YYYY HH:mm:ss';
-                const isValid = moment(modelValue, format, true).isValid();
-                return isValid;
+                const format = attributes.format || 'YYYY-MM-DD HH:mm';
+                return moment(modelValue, format, true).isValid();
             };
         },
     };

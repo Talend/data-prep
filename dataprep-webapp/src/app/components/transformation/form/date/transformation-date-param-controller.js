@@ -30,11 +30,7 @@ export default function TransformDateParamCtrl() {
     function initParamValue() {
         const param = vm.parameter;
         if (!param.value) {
-            param.value = param.default;
-        }
-
-        if (!param.value) {
-            param.value = moment(new Date()).format('DD/MM/YYYY HH:mm:ss');
+            param.value = param.default || moment(new Date()).format('YYYY-MM-DD HH:mm');
         }
     }
 

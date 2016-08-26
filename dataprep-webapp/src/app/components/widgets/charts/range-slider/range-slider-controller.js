@@ -13,8 +13,8 @@
 
 import d3 from 'd3';
 
-const DATE_FORMAT = 'MM-DD-YYYY';
-const D3_DATE_FORMAT = '%m-%d-%Y';
+const DATE_FORMAT = 'YYYY-MM-DD';
+const D3_DATE_FORMAT = '%Y-%m-%d';
 const D3_NUMBER_DECIMAL = ',';
 const d3DateFormatter = d3.time.format(D3_DATE_FORMAT);
 const d3NumberFormatter = d3.format(D3_NUMBER_DECIMAL);

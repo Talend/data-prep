@@ -59,7 +59,7 @@ describe('Datetime validation directive', function () {
 
     it('should validate a date with default format', function () {
         //given
-        scope.myInput = '02/01/2012 10:02:23';
+        scope.myInput = '2012-12-31 10:02';
 
         //when
         createElement();
@@ -70,7 +70,7 @@ describe('Datetime validation directive', function () {
 
     it('should validate a date with provided format', function () {
         //given
-        scope.myInput = '02/01/2012';
+        scope.myInput = '31/12/2012';
 
         //when
         createElementWithFormat();

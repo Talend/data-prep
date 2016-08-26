@@ -38,7 +38,7 @@ describe('Range slider controller', () => {
             const ctrl = createController();
 
             // then
-            expect(ctrl.dateFormat).toBe('MM-DD-YYYY');
+            expect(ctrl.dateFormat).toBe('YYYY-MM-DD');
         });
     });
 
@@ -101,8 +101,8 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(adaptedValues).toEqual({
-                    min: '06-27-2016',
-                    max: '06-27-2018',
+                    min: '2016-06-27',
+                    max: '2018-06-27',
                 });
             });
         });
@@ -133,8 +133,8 @@ describe('Range slider controller', () => {
 
                 // when
                 const adaptedValues = ctrl.adaptFromInputValue({
-                    min: '06-27-2016',
-                    max: '06-27-2018',
+                    min: '2016-06-27',
+                    max: '2018-06-27',
                 });
 
                 // then
@@ -179,8 +179,8 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(limitsTexts).toEqual({
-                    minText: '06-27-2016',
-                    maxText: '06-27-2018',
+                    minText: '2016-06-27',
+                    maxText: '2018-06-27',
                 });
             });
         });
@@ -444,8 +444,8 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(ctrl.minMaxModel).toEqual({
-                    min: '06-27-2016',
-                    max: '06-27-2018',
+                    min: '2016-06-27',
+                    max: '2018-06-27',
                 });
             });
         });
@@ -584,7 +584,7 @@ describe('Range slider controller', () => {
                 // given
                 const ctrl = createController();
                 ctrl.rangeLimits = { type: 'date' };
-                ctrl.minMaxModel = { min: '01-25-2015', max: '03-18-2016' };
+                ctrl.minMaxModel = { min: '2015-01-25', max: '2016-03-18' };
 
                 // when
                 const valid = ctrl.inputsAreValid();
@@ -597,7 +597,7 @@ describe('Range slider controller', () => {
                 // given
                 const ctrl = createController();
                 ctrl.rangeLimits = { type: 'date' };
-                ctrl.minMaxModel = { min: '01-25-2015', max: 'aze' };
+                ctrl.minMaxModel = { min: '2015-01-25', max: 'aze' };
 
                 // when
                 ctrl.hideMsgErr();

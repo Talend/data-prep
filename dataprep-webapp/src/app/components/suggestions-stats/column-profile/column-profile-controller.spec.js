@@ -252,7 +252,7 @@ describe('ColumnProfile controller', () => {
                 {
                     intervals: [
                         {
-                            label: '[01-01-2016 .. 12-01-2016[',
+                            label: '[2016-01-01 .. 2016-12-01[',
                             value: [minDateTime, maxDateTime],
                             isMaxReached: undefined,
                         },

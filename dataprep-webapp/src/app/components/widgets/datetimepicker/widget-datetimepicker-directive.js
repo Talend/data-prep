@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import moment from 'moment';
-
 /**
  * @ngdoc directive
  * @name talend.widget.directive:TalendDatetimePicker
@@ -20,41 +18,44 @@ import moment from 'moment';
  * @restrict E
  * @usage
  <talend-datetime-picker
-     ng-model="ctrl.value"
-     on-select="ctrl.onSelect"
-     on-blur="ctrl.onBlur"
-     format="DD/MM/YYYY"
-     is-date-time></talend-datetimepicker>
+ ng-model="ctrl.value"
+ on-select="ctrl.onSelect"
+ on-blur="ctrl.onBlur"
+ is-date-time></talend-datetimepicker>
  * @param {string}   value Variable to bind input ngModel
  * @param {function} onSelect Event handler when date is picked
  * @param {function} onBlur Event handler when input is blurred
- * @param {string} format MomentJS date format
+ * @param {string} datetimepickerStyle Component style
  */
 export default function TalendDatetimePicker($timeout) {
     'ngInject';
 
     return {
         restrict: 'E',
-        template: '<input class="datetimepicker" type="text" ng-blur="ctrl.onBlur()" ng-model="ctrl.value" />',
+        template: `
+            <input type="text" 
+                   class="datetimepicker" 
+                   ng-model="ctrl.value"
+                   ng-blur="ctrl.onBlur()" />
+        `,
         scope: {
             value: '=ngModel',
             onSelect: '&',
             onBlur: '&',
+            datetimepickerStyle: '@',
         },
         bindToController: true,
-        controller: () => {},
+        controller: () => {
+        },
         controllerAs: 'ctrl',
         link(scope, iElement, iAttrs, ctrl) {
-            Date.parseDate = function (input, format) {
-                return moment(input, format).toDate();
-            };
-
-            Date.prototype.dateFormat = // eslint-disable-line no-extend-native
-                (format) => moment(this).format(format);
-
-            const format = iAttrs.format ? iAttrs.format : 'DD/MM/YYYY HH:mm:ss';
-            const formatTime = iAttrs.formatTime ? iAttrs.formatTime : 'HH:mm:ss';
-            const formatDate = iAttrs.formatDate ? iAttrs.formatDate : 'DD/MM/YYYY';
+            // datetimepicker uses unix-like date format
+            // @see http://www.xaprb.com/media/2005/12/date-formatting-demo
+            const timepicker = _.has(iAttrs, 'isDateTime');
+            const formatTime = iAttrs.unixFormatTime || 'H:i';
+            const formatDate = iAttrs.unixFormatDate || 'Y-m-d';
+            const format = iAttrs.unixFormat || timepicker ? `${formatDate} ${formatTime}` : formatDate;
+            const style = ctrl.datetimepickerStyle || '';
 
             function onSelectDate() {
                 $timeout(() => {
@@ -68,7 +69,8 @@ export default function TalendDatetimePicker($timeout) {
                 format,
                 formatDate,
                 formatTime,
-                timepicker: _.has(iAttrs, 'isDateTime'),
+                timepicker,
+                style,
                 onSelectDate,
             });
 

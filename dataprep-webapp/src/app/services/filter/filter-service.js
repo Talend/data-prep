@@ -69,7 +69,7 @@ export default function FilterService($timeout, state, StateService, FilterAdapt
      */
     function getRangeLabelFor(interval, isDateRange) {
         let label;
-        const formatDate = d3.time.format('%m-%d-%Y');
+        const formatDate = d3.time.format('%Y-%m-%d');
         const formatNumber = d3.format(',');
         let min;
         let max;

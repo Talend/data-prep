@@ -36,8 +36,7 @@ describe('Datetimepicker directive', function () {
         createElement = function () {
             element = angular.element(`<html><body><div>
                             <talend-datetime-picker ng-model="minModel"
-                                format="m/d/Y"
-                                on-mouse-blur="onMouseBlur()">
+                                                    on-mouse-blur="onMouseBlur()">
                             </talend-datetime-picker>
                             </div></body></html>`);
             $compile(element)(scope);

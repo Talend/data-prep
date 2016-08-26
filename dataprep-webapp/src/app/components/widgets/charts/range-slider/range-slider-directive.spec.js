@@ -268,7 +268,7 @@ describe('Range slider directive', () => {
 
             // then
             expect(element.find('input').eq(0).length).toBe(1);
-            expect(element.find('input').eq(0).val()).toBe('06-27-2016');
+            expect(element.find('input').eq(0).val()).toBe('2016-06-27');
         });
 
         it('should render date max input', () => {
@@ -285,7 +285,7 @@ describe('Range slider directive', () => {
 
             // then
             expect(element.find('input').eq(1).length).toBe(1);
-            expect(element.find('input').eq(1).val()).toBe('06-27-2018');
+            expect(element.find('input').eq(1).val()).toBe('2018-06-27');
         });
     });
 

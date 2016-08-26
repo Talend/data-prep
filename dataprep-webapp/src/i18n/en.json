@@ -221,7 +221,7 @@
   "NO_PARAMETERS_ACTION_MSG": "No parameters found.",
   "COLUMN_TYPE_IS": "This column is a",
   "COLUMN_TYPE_SET": "Set as",
-  "DATE_FORMAT_ERROR": "This must be a date in the 'DD/MM/YYYY hh:mm:ss' format.",
+  "DATE_FORMAT_ERROR": "This must be a date in the 'YYYY-MM-DD HH:mm' format.",
   "FIT_TO_CONTENT": "Fit to Content",
   "NOT_DEFINED": "not defined",
   "SORT_IS": "Sort is ",
@@ -231,6 +231,7 @@
   "STARTS_WITH": "Starts with",
   "ENDS_WITH": "Ends with",
   "REGEX": "RegEx",
+  "TYPE_FORMAT_ERROR": "This must be a {{type}}",
 
   "_comment": "Action panel",
   "FIND_FUNCTION": "Find a Function...",

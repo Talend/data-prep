@@ -44,8 +44,12 @@ export default function TransformSimpleParam() {
             parameter: '=',
             label: '@',
         },
+        require: '^?form',
         bindToController: true,
         controllerAs: 'simpleParamCtrl',
         controller: 'TransformSimpleParamCtrl',
+        link: (scope, element, attrs, form) => {
+            scope.parentForm = form;
+        },
     };
 }

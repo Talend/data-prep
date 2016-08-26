@@ -76,12 +76,12 @@ $matches-color: $brown;
   &-label {
     font-family: $inconsolota;
     font-weight: 500;
+    text-transform: uppercase;
   }
 
   &-value {
     padding: 3px 2px;
     font-family: $base-font-family;
-    text-transform: uppercase;
 
     li > * {
       display: inline-block;

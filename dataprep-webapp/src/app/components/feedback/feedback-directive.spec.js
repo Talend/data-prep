@@ -68,7 +68,7 @@ describe('Feedback directive', function () {
         scope.$digest();
 
         //then
-        expect(body.find('button').length).toBe(2);
+        expect(body.find('a').length).toBe(2);
     });
 
     it('should render form title', function () {

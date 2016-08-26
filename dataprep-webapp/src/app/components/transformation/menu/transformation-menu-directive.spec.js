@@ -247,7 +247,7 @@ describe('Transformation menu directive', function () {
         var paramsElements = angular.element('body').find('.transformation-form');
         expect(paramsElements.length).toBe(1);
         expect(paramsElements.is(':visible')).toBe(true);
-        expect(paramsElements.find('input').length).toBe(0);
+        expect(paramsElements.find('input').length).toBe(1);
         expect(paramsElements.find('select').length).toBe(1);
 
         //when
@@ -257,7 +257,7 @@ describe('Transformation menu directive', function () {
         paramsElements = angular.element('body').find('.transformation-form');
         expect(paramsElements.length).toBe(1);
         expect(paramsElements.is(':visible')).toBe(true);
-        expect(paramsElements.find('input').length).toBe(2);
+        expect(paramsElements.find('input').length).toBe(3);
         expect(paramsElements.find('select').length).toBe(0);
     });
 });

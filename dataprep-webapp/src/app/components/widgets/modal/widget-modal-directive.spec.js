@@ -422,7 +422,7 @@ describe('Modal directive', function () {
             scope.$digest();
 
             //then
-            expect(document.activeElement.className).toBe('modal-inner'); //eslint-disable-line angular/document-service
+            expect(document.activeElement.className).toContain('modal-inner'); //eslint-disable-line angular/document-service
         });
 
         it('should focus on second input on show and select the text coz first has "no-focus" class', inject(function ($timeout, $window) {

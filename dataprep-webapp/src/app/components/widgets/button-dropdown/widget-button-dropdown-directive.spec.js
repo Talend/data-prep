@@ -34,12 +34,15 @@ describe('Button Dropdown directive', function () {
         createElementWithAction = function () {
             scope.buttonAction = jasmine.createSpy('buttonAction');
 
-            var html = '<talend-button-dropdown button-icon="m" button-text="Click Me" button-action="buttonAction()" button-title="test">' +
-                '   <ul>' +
-                '       <li>Menu 1</li>' +
-                '       <li>Menu 2</li>' +
-                '   </ul>' +
-                '</talend-button-dropdown>';
+            var html = `
+                <talend-button-dropdown button-icon="m" 
+                                        button-text="Click Me" 
+                                        button-action="buttonAction()" 
+                                        button-title="test">
+                   <li>Menu 1</li>
+                   <li>Menu 2</li>
+                </talend-button-dropdown>
+            `;
             element = $compile(html)(scope);
             $timeout.flush();
             scope.$digest();
@@ -69,68 +72,12 @@ describe('Button Dropdown directive', function () {
         expect(scope.buttonAction).toHaveBeenCalled();
     });
 
-    it('should show dropdown menu on side button click', function () {
-        //given
-        createElementWithAction();
-        var menu = element.find('.dropdown-menu').eq(0);
-        expect(menu.hasClass('show-menu')).toBe(false);
-
-        //when
-        element.find('.button-dropdown-side').eq(0).click();
-        jasmine.clock().tick(200);
-
-        //then
-        expect(menu.hasClass('show-menu')).toBe(true);
-    });
-
-    it('should call action on main button click', function () {
-        //given
-        createElementWithoutAction();
-        var menu = element.find('.dropdown-menu').eq(0);
-        expect(menu.hasClass('show-menu')).toBe(false);
-
-        //when
-        element.find('.button-dropdown-main').eq(0).click();
-        jasmine.clock().tick(200);
-
-        //then
-        expect(menu.hasClass('show-menu')).toBe(true);
-    });
-
-    it('should show dropdown menu on side button click', function () {
-        //given
-        createElementWithoutAction();
-        var menu = element.find('.dropdown-menu').eq(0);
-        expect(menu.hasClass('show-menu')).toBe(false);
-
-        //when
-        element.find('.button-dropdown-side').eq(0).click();
-        jasmine.clock().tick(200);
-
-        //then
-        expect(menu.hasClass('show-menu')).toBe(true);
-    });
-
-    it('should show dropdown menu on side button click', function () {
-        //given
-        createElementWithoutAction();
-        var menu = element.find('.dropdown-menu').eq(0);
-        expect(menu.hasClass('show-menu')).toBe(false);
-
-        //when
-        element.find('.button-dropdown-side').eq(0).click();
-        jasmine.clock().tick(200);
-
-        //then
-        expect(menu.hasClass('show-menu')).toBe(true);
-    });
-
     it('should render button title', () => {
         // when
         createElementWithAction();
 
         // then
-        const button = element.find('.button-dropdown-main').eq(0);
+        const button = element.find('.btn').eq(0);
         expect(button[0].title).toBe('test');
     });
 });

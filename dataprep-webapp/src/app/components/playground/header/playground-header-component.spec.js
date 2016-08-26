@@ -68,7 +68,7 @@ describe('Playground header component', () => {
             createElement();
 
             //then
-            expect(element.find('#preview').length).toBe(1);
+            expect(element.find('.preview').length).toBe(1);
         });
     });
 
@@ -78,7 +78,7 @@ describe('Playground header component', () => {
             createElement();
 
             //then
-            expect(element.find('#playground-left-header').eq(0)[0].hasAttribute('insertion-playground-left-header')).toBe(true);
+            expect(element.find('.playground-header-left').eq(0)[0].hasAttribute('insertion-playground-left-header')).toBe(true);
         });
 
         it('should dataset parameters toggle button looks inactive by default', () => {

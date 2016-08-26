@@ -25,11 +25,12 @@
         </transform-cluster-params>
 
         <div class="param-buttons">
-            <button ng-disabled="formCtrl.paramForm.$invalid || formCtrl.isTransformationInProgress"
-                    class="param-primary-button btn-primary"
-                    ng-mouseleave="formCtrl.submitHoverOff()"
-                    ng-mouseenter="formCtrl.submitHoverOn()"
-                    translate-once="SUBMIT"></button>
+            <input type="submit"
+                   class="param-primary-button btn btn-primary"
+                   ng-disabled="formCtrl.paramForm.$invalid || formCtrl.isTransformationInProgress"
+                   ng-mouseleave="formCtrl.submitHoverOff()"
+                   ng-mouseenter="formCtrl.submitHoverOn()"
+                   translate-once="SUBMIT">
 
             <a ng-if="formCtrl.transformation.docUrl"
                href="{{::formCtrl.transformation.docUrl}}"

@@ -13,15 +13,23 @@
   ~ ============================================================================
   -->
 
-<input type="search"
-       placeholder="{{typeaheadCtrl.placeholder}}"
-       ng-model="typeaheadCtrl.searchString"
-       ng-model-options="{debounce: { default: 300, blur: 0 }}"
-       ng-change="typeaheadCtrl.onChange()"
-       class="input-search"/>
+<form class="form-inline">
+    <div class="form-group">
+        <label class="sr-only" for="typeheadSearchInput">{{typeaheadCtrl.placeholder}}</label>
+        <input type="search"
+               id="typeheadSearchInput"
+               class="form-control input-search"
+               placeholder="{{typeaheadCtrl.placeholder}}"
+               ng-model="typeaheadCtrl.searchString"
+               ng-model-options="{debounce: { default: 300, blur: 0 }}"
+               ng-change="typeaheadCtrl.onChange()">
+    </div>
+</form>
+
 <div class="typeahead-result"
      ng-if="typeaheadCtrl.searchString && typeaheadCtrl.visible">
 
-    <div class="searching" ng-if="typeaheadCtrl.searching && typeaheadCtrl.searchingText">{{typeaheadCtrl.searchingText}}</div>
+    <div class="searching"
+         ng-if="typeaheadCtrl.searching && typeaheadCtrl.searchingText">{{typeaheadCtrl.searchingText}}</div>
     <ng-transclude ng-if="typeaheadCtrl.customRender === 'true'"></ng-transclude>
 </div>

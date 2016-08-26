@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import template from './dropdown.html';
-
 /**
  * @ngdoc directive
  * @name talend.widget.directive:TalendDropdown
@@ -49,18 +47,18 @@ import template from './dropdown.html';
 export default function TalendDropdown($window, $timeout) {
 	'ngInject';
 
-	return {
-		restrict: 'EA',
-		transclude: true,
-		templateUrl: template,
-		scope: {
-			closeOnSelect: '=',
-			onOpen: '&',
-			forceSide: '@',
-		},
-		bindToController: true,
-		controller: () => {
-		},
+    return {
+        restrict: 'EA',
+        transclude: true,
+        template: '<ng-transclude class="dropdown"></ng-transclude>',
+        scope: {
+            closeOnSelect: '=',
+            onOpen: '&',
+            forceSide: '@',
+        },
+        bindToController: true,
+        controller: () => {
+        },
 
 		controllerAs: 'ctrl',
 		link: {

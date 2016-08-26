@@ -15,6 +15,9 @@ import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import ngAnimate from 'angular-animate';
 
+import BOOTSTRAP_DROPDOWN from 'angular-ui-bootstrap/src/dropdown/index-nocss';
+import BOOTSTRAP_MODAL from 'angular-ui-bootstrap/src/modal/index-nocss';
+
 import TalendBadge from './badge/widget-badge-component';
 import ResizableInput from './resizable-input/resizable-input-directive';
 import TalendButtonDropdown from './button-dropdown/widget-button-dropdown-directive';
@@ -55,7 +58,12 @@ const MODULE_NAME = 'talend.widget';
  * @name talend.widget
  * @description This module contains all the reusable widgets
  */
-angular.module(MODULE_NAME, [ngTranslate, ngAnimate])
+angular.module(MODULE_NAME, [
+    ngTranslate,
+    ngAnimate,
+    BOOTSTRAP_DROPDOWN,
+    BOOTSTRAP_MODAL,
+])
     .component('talendBadge', TalendBadge)
     .directive('resizableInput', ResizableInput)
 

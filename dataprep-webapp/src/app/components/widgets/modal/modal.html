@@ -14,14 +14,19 @@
   -->
 
 <div class="modal" ng-class="::{fullscreen:talendModalCtrl.fullscreen}">
-    <input class="modal-state" ng-model="talendModalCtrl.state" type="checkbox"/>
+    <input type="checkbox"
+           class="modal-state"
+           ng-model="talendModalCtrl.state"/>
 
-    <div class="modal-window">
+    <div class=" modal-dialog modal-window" role="document">
 
-        <div class="modal-inner" tabindex="-1">
-                <label ng-show="::(talendModalCtrl.closeButton)"
-                       class="talend-modal-close"
-                       ng-class="::{'modal-header-close':talendModalCtrl.fullscreen, 'modal-close': !talendModalCtrl.fullscreen}"></label>
+        <div class="modal-content modal-inner" tabindex="-1">
+            <button type="button"
+                    class="btn btn-link talend-modal-close"
+                    aria-label="{{ 'CLOSE' | translate }}"
+                    ng-class="::{'modal-header-close':talendModalCtrl.fullscreen, 'modal-close': !talendModalCtrl.fullscreen}"
+                    ng-show="::(talendModalCtrl.closeButton)"
+            ></button>
 
             <ng-transclude></ng-transclude>
         </div>

@@ -25,7 +25,7 @@
   $large-screen: em(860) !default;
   $x-large-screen: em(1824) !default;
   $base-font-color: $dark-gray !default;
-  $background-transparent: rgba(0,0,0, 0.70);
+  $background-transparent: rgba(0, 0, 0, 0.70);
 
   $navigation-background-top: rgba(85, 89, 100, 0.8);
   $navigation-background-bottom: rgb(85, 89, 100);
@@ -286,8 +286,8 @@
 
         color: $navigation-color;
 
-        >ul {
-          >* {
+        > ul {
+          > * {
             display: table-cell;
             line-height: $navigation-height - $navigation-border-height;
             padding-left: $navigation-item-space;
@@ -334,6 +334,19 @@
 
 .modal-open {
   overflow: hidden;
+
+  .modal {
+    display: block;
+
+    .modal-window {
+      margin: 0;
+      padding: 0;
+    }
+
+    .modal-dialog {
+      width: auto;
+    }
+  }
 }
 
 .modal-closed {

@@ -11,6 +11,18 @@
 
   ============================================================================*/
 
+body {
+  $gray:          #F2F2F2;
+  $blue:          #607d8b;
+  $dark-blue:     #3F5159;
+  $light-green:   #D6D88F;
+  $green:         #B9BF15;
+
+  $brand-primary: $blue;
+  $brand-success: $green;
+  @import "~bootstrap-tlnd-theme/src/theme/bootstrap";
+}
+
 @import "css/vendors/customisation/sunchoke";
 
 @import "css/vendors/libs/libs";
@@ -72,9 +84,7 @@
 @import "components/suggestions-stats/stats-details/_stats-details.scss";
 @import "components/transformation/form/_transformation-form.scss";
 @import "components/widgets/badge/_badge.scss";
-@import "components/widgets/button-dropdown/_button-dropdown.scss";
 @import "components/widgets/button-loader/_button-loader.scss";
-@import "components/widgets/dropdown/_dropdown.scss";
 @import "components/widgets/editable-regex/_editable-regex.scss";
 @import "components/widgets/editable-select/_editable-select.scss";
 @import "components/widgets/editable-text/_editable-text.scss";

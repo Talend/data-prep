@@ -12,33 +12,37 @@
   ~
   ~ ============================================================================
   -->
-
-<talend-button-dropdown button-text="{{'EXPORT' | translate }}" id="export-types-dropdown" button-action="exportCtrl.launchDefaultExport()">
-    <ul>
-        <li ng-repeat="exportType in exportCtrl.state.export.exportTypes track by exportType.id"
-            ng-class="{'disabled' : !exportType.enabled}"
-            ng-click="exportCtrl.selectType(exportType)">
-            {{exportType.id}}<span ng-if="!exportType.enabled"> - {{exportType.disableReason}}</span>
-        </li>
-    </ul>
+<talend-button-dropdown
+        id="export-types-dropdown"
+        button-text="{{'EXPORT' | translate }}"
+        button-additional-class="btn btn-success"
+        button-action="exportCtrl.launchDefaultExport()"
+        button-dropdown-title="{{ 'EXPORT_DROPDOWN' | translate }}">
+    <li ng-repeat="exportType in exportCtrl.state.export.exportTypes track by exportType.id"
+        ng-class="{'disabled' : !exportType.enabled}"
+        ng-click="exportCtrl.selectType(exportType)">
+        {{exportType.id}}<span ng-if="!exportType.enabled"> - {{exportType.disableReason}}</span>
+    </li>
 </talend-button-dropdown>
 
 <talend-modal fullscreen="false"
               state="exportCtrl.showModal"
               close-button="true">
-    <div class="modal-title">{{exportCtrl.selectedType.title}}</div>
-    <br/>
-    <form name="exportCtrl.exportForm" ng-submit="exportCtrl.exportForm.$valid && exportCtrl.saveAndExport()">
-
-        <transform-params parameters="exportCtrl.selectedType.parameters"></transform-params>
-
-        <div class="modal-buttons">
-            <button class="talend-modal-close btn-secondary modal-secondary-button"
-                    type="button"
-                    translate-once="CANCEL"></button>
-            <button class="talend-modal-close btn-primary modal-primary-button"
-                    ng-disabled="exportCtrl.exportForm.$invalid"
-                    translate-once="EXPORT"></button>
+    <div class="modal-header">
+        <h3 class="modal-title">{{exportCtrl.selectedType.title}}</h3>
+    </div>
+    <form name="exportCtrl.exportForm"
+          ng-submit="exportCtrl.exportForm.$valid && exportCtrl.saveAndExport()">
+        <div class="modal-body">
+            <transform-params parameters="exportCtrl.selectedType.parameters"></transform-params>
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-default talend-modal-close btn-secondary modal-secondary-button"
+               translate-once="CANCEL"></a>
+            <input class="btn btn-primary talend-modal-close modal-primary-button"
+                   type="submit"
+                   ng-disabled="exportCtrl.exportForm.$invalid"
+                   translate-once="EXPORT">
         </div>
     </form>
 </talend-modal>

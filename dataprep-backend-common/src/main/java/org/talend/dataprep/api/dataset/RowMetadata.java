@@ -15,6 +15,7 @@ package org.talend.dataprep.api.dataset;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,8 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.diff.Flag;
 import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
 
@@ -36,6 +39,12 @@ public class RowMetadata implements Serializable {
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
+
+    /** Class logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RowMetadata.class);
+
+    /** Column ID format. */
+    private static final DecimalFormat COLUMN_ID_DECIMAL_FORMAT = new DecimalFormat("0000"); //$NON-NLS-1$
 
     /** List of row metadata. */
     @JsonProperty("columns")
@@ -120,12 +129,22 @@ public class RowMetadata implements Serializable {
     }
 
     private ColumnMetadata addColumn(ColumnMetadata columnMetadata, int index) {
-        DecimalFormat format = new DecimalFormat("0000"); //$NON-NLS-1$
-        if (StringUtils.isEmpty(columnMetadata.getId())) {
-            columnMetadata.setId(format.format(nextId));
+        String columnIdFromMetadata = columnMetadata.getId();
+        if (StringUtils.isBlank(columnIdFromMetadata)) {
+            columnMetadata.setId(COLUMN_ID_DECIMAL_FORMAT.format(nextId));
+            nextId++;
+        } else {
+            try {
+                int columnId = COLUMN_ID_DECIMAL_FORMAT.parse(columnIdFromMetadata).intValue();
+                int possibleNextId = columnId + 1;
+                if (possibleNextId > nextId) {
+                    nextId = possibleNextId;
+                }
+            } catch (ParseException e) {
+                LOGGER.error("Unable to parse column id from metadata '" + columnIdFromMetadata + "'", e);
+            }
         }
         columns.add(index, columnMetadata);
-        nextId++;
         return columnMetadata;
     }
 

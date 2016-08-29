@@ -34,6 +34,68 @@ import org.talend.dataprep.api.type.Type;
 public class RowMetadataTest {
 
     @Test
+    public void should_create_new_column_at_end() {
+
+        // given
+        List<ColumnMetadata> columns = new ArrayList<>();
+        columns.add(getColumnMetadata("toto", 0));
+        columns.add(getColumnMetadata("titi", 1));
+        columns.add(getColumnMetadata("tutu", 2));
+        RowMetadata reference = new RowMetadata(columns);
+
+        // when
+        ColumnMetadata newColumnMetadata1 = getColumnMetadata("tata"); // new column
+        reference.insertAfter("", newColumnMetadata1);
+
+        // then
+        List<ColumnMetadata> columnsReference = reference.getColumns();
+
+        ColumnMetadata col0003 = columnsReference.get(3);
+        assertEquals(col0003.getId(), "0003"); //
+        assertEquals(col0003.getName(), "tata"); // tata (new)
+    }
+
+    @Test
+    public void should_create_new_column_next_to_one_after_deleted_another() {
+
+        // given
+        List<ColumnMetadata> columns = new ArrayList<>();
+        columns.add(getColumnMetadata("toto"));
+        columns.add(getColumnMetadata("titi", 2));
+        columns.add(getColumnMetadata("tutu", 3));
+        RowMetadata reference = new RowMetadata(columns);
+
+        // when
+        ColumnMetadata newColumnMetadata1 = getColumnMetadata("tata"); // new column
+        reference.insertAfter("0000", newColumnMetadata1);
+        ColumnMetadata newColumnMetadata2 = getColumnMetadata("tete"); // new column
+        reference.insertAfter("0004", newColumnMetadata2);
+
+        // then
+        List<ColumnMetadata> columnsReference = reference.getColumns();
+
+        ColumnMetadata col0000 = columnsReference.get(0);
+        assertEquals(col0000.getId(), "0000"); //
+        assertEquals(col0000.getName(), "toto"); // toto
+
+        ColumnMetadata col0004 = columnsReference.get(1);
+        assertEquals(col0004.getId(), "0004"); //
+        assertEquals(col0004.getName(), "tata"); // tata (new)
+
+        ColumnMetadata col0005 = columnsReference.get(2);
+        assertEquals(col0005.getId(), "0005"); //
+        assertEquals(col0005.getName(), "tete"); // tete (new)
+
+        ColumnMetadata col0002 = columnsReference.get(3);
+        assertEquals(col0002.getId(), "0002"); //
+        assertEquals(col0002.getName(), "titi"); // titi
+
+        ColumnMetadata col0003 = columnsReference.get(4);
+        assertEquals(col0003.getId(), "0003"); //
+        assertEquals(col0003.getName(), "tutu"); // tutu
+    }
+
+    @Test
     public void no_diff() {
         // given
         List<ColumnMetadata> columns = new ArrayList<>();

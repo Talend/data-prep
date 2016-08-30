@@ -25,17 +25,23 @@
 }
 
 .inventory-feedback-datasets-list {
-  @include display(flex);
-  @include align-items(center);
-  @include justify-content(center);
-  min-height: 100%;
-  color: $dark-gray;
+    @include display(flex);
+    @include justify-content(space-between);
+    @include align-items(center);
 
-  .inventory-info-content {
-    @include flex-row();
+    color: $dark-gray;
+    width: 100%;
+    height: 100%;
 
-    .continuous-rotate-text {
-      padding: 0 10px;
+    .inventory-info-content {
+        @include display(flex);
+        @include flex-row();
+        @include justify-content(center);
+
+        width: 100%;
+
+        .continuous-rotate-text {
+            padding-left: 10px;
+        }
     }
-  }
 }

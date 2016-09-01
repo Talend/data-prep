@@ -10,24 +10,22 @@
 
 This will install all the dev package for dataprep as well as third party libraries required by this application.
 
-### root file structure
-The file structure is inspired by yeoman project called generator-gulp-angular : https://github.com/Swiip/generator-gulp-angular
+### Root file structure
 
 <pre>
-├── README.md                               - this file
-├── bower.json                              - javascript app external dependencies
-├── bower_components/                       - untracked generated folder where external javascript dependencies are located
+├── build/                                  - untracked generated folder where you find a non minified autonomous deployment of the app dev
 ├── config/                                 - untracked generated folder where you find build config
 ├── coverage/                               - untracked generated folder where karma istanbul plugin will put coverage files
-├── build/                                  - untracked generated folder where you find a non minified autonomous deployment of the app dev
 ├── dist/                                   - untracked generated folder where you find a minified autonomous deployment of the app dev
 ├── docker/                                 - dockefile and scripts to generate the docker image 
 ├── node_modules/                           - untracked generated folder for gulp build node modules
-├── karma.conf.js                           - unit tests configuration
-├── package.json                            - npm description for build tools dependencies
-├── pom.xml                                 - maven description file
 ├── src/                                    - sources
-└── target/                                 - untracked generated folder for maven build
+├── target/                                 - untracked generated folder for maven build
+├── karma.conf.js                           - unit testing configuration
+├── package.json                            - npm description for build dependencies
+├── pom.xml                                 - maven description file
+├── README.md                               - this file
+└── spec.bundle.js                          - entry file to load unit tests from Karma
 </pre>
 
 

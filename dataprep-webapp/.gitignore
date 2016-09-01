@@ -22,7 +22,6 @@ npm-debug.log
 .DS_Store
 .sass-cache/
 .tmp/
-dist/
 build/
 node/
 ngdoc/

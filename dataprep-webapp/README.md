@@ -13,10 +13,9 @@ This will install all the dev package for dataprep as well as third party librar
 ### Root file structure
 
 <pre>
-├── build/                                  - untracked generated folder where you find a non minified autonomous deployment of the app dev
+├── build/                                  - untracked generated folder where you find minified build in prod mode and unminified in dev mode
 ├── config/                                 - untracked generated folder where you find build config
 ├── coverage/                               - untracked generated folder where karma istanbul plugin will put coverage files
-├── dist/                                   - untracked generated folder where you find a minified autonomous deployment of the app dev
 ├── docker/                                 - dockefile and scripts to generate the docker image 
 ├── node_modules/                           - untracked generated folder for gulp build node modules
 ├── src/                                    - sources

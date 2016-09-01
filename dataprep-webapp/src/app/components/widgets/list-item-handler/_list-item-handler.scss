@@ -1,0 +1,83 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+.list-item-handler {
+
+  cursor: pointer;
+  @include display(flex);
+  @include flex-direction(column);
+  @include justify-content(space-between);
+  height: 100%;
+  width: 12px;
+
+  .top-handler {
+    height: 8px;
+    width: 8px;
+    transform: rotate(-45deg);
+    display: block;
+    border-color: $medium-gray;
+    border-style: solid;
+    border-width: 2px 2px 0px 0px;
+
+    &:hover {
+      height: 10px;
+      width: 10px;
+      border-color: #000000;
+      .list-item-handler{
+        @include justify-content(flex-start);
+      }
+    }
+  }
+
+  .middle-handler {
+    height: 6px;
+    width: 8px;
+    display: block;
+    border-color: $medium-gray;
+    border-style: solid;
+    border-width: 2px 0px 2px 0px;
+    &::before {
+      height: 1px;
+      width: 8px;
+      display: block;
+      border-color: $medium-gray;
+      border-style: solid;
+      border-width: 2px 0px 0px 0px;
+      margin: 6px 0px;
+      content: "";
+    }
+
+    &:hover {
+      border-color: #000000;
+    }
+  }
+
+  .down-handler {
+    height: 8px;
+    width: 8px;
+    transform: rotate(135deg);
+    display: block;
+    border-color: $medium-gray;
+    border-style: solid;
+    border-width: 2px 2px 0px 0px;
+    margin: 5px 0 0 0;
+
+    &:hover {
+      height: 10px;
+      width: 10px;
+      border-color: #000000;
+      .list-item-handler{
+        @include justify-content(flex-end);
+      }
+    }
+  }
+}

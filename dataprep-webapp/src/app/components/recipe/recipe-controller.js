@@ -252,6 +252,30 @@ export default class RecipeCtrl {
     }
 
     //---------------------------------------------------------------------------------------------
+    // --------------------------------------------REORDER----------------------------------------
+    //---------------------------------------------------------------------------------------------
+
+    moveUp(step) {
+        const stepPos = this.state.playground.recipe.current.steps.indexOf(step);
+        this.updateRecipeOrder(stepPos, stepPos - 1);
+    }
+
+    startDragProcess(step) {
+        alert('DnD reorder started');
+    }
+
+    moveDown(step) {
+        const stepPos = this.state.playground.recipe.current.steps.indexOf(step);
+        this.updateRecipeOrder(stepPos, stepPos + 1);
+    }
+
+    updateRecipeOrder(prevPosition, newPosition) {
+        // 1 - patch preparation with new recipe order
+        // toggle the right step OR load preparation with the last head version
+        // 2 - register reorder in the history
+        //
+    }
+    //---------------------------------------------------------------------------------------------
     // ------------------------------------------UPDATE STEP----------------------------------------
     //---------------------------------------------------------------------------------------------
     /**

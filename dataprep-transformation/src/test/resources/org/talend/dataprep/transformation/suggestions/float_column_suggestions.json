@@ -25,7 +25,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -66,7 +66,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -107,7 +107,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -147,7 +147,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -228,7 +228,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },

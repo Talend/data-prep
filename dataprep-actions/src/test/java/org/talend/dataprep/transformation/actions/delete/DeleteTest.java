@@ -71,8 +71,8 @@ public class DeleteTest extends AbstractMetadataBaseTest {
         final ActionMetadata adaptedAction = action.adapt(LINE);
 
         //then
-        assertThat(adaptedAction.getDescription(), is("Delete this line"));
-        assertThat(adaptedAction.getLabel(), is("Delete Line"));
+        assertThat(adaptedAction.getDescription(), is("Delete this row"));
+        assertThat(adaptedAction.getLabel(), is("Delete Row"));
 
         assertThat( adaptedAction, not(is(action)) );
     }

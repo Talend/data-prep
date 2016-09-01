@@ -1,8 +1,8 @@
 [
   {
-    "description":"Delete this line",
+    "description":"Delete this row",
     "category":"data cleansing",
-    "label":"Delete Line",
+    "label":"Delete Row",
     "name":"delete",
     "dynamic":false,
     "actionScope":[
@@ -32,7 +32,7 @@
         "type":"string",
         "implicit":true,
         "canBeBlank":true,
-        "description":"The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label":"Scope",
         "default":""
       },

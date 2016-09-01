@@ -32,7 +32,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -55,7 +55,7 @@
     "category": "data cleansing",
     "dynamic": false,
     "description": "Delete rows which contain an invalid cell",
-    "label": "Delete the Lines with Invalid Cell",
+    "label": "Delete the Rows with Invalid Cell",
     "parameters": [
       {
         "name": "column_id",
@@ -80,7 +80,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -124,7 +124,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -191,7 +191,7 @@
     "category": "data cleansing",
     "dynamic": false,
     "description": "Delete rows that have empty cells",
-    "label": "Delete the Lines with Empty Cell",
+    "label": "Delete the Rows with Empty Cell",
     "parameters": [
       {
         "name": "column_id",
@@ -216,7 +216,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -260,7 +260,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -345,7 +345,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },
@@ -525,7 +525,7 @@
         "implicit": true,
         "canBeBlank": true,
         "default": "",
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope"
       },
       {
@@ -646,7 +646,7 @@
         "type": "string",
         "implicit": true,
         "canBeBlank": true,
-        "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
+        "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
         "label": "Scope",
         "default": ""
       },

@@ -19,14 +19,14 @@
          translate-once="SELECT_COLUMN_TO_DISPLAY_STATS"></div>
 
     <sc-tabs ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length">
-        <sc-tabs-item class="tab-container" tab-title="Chart" default="true">
+        <sc-tabs-item class="tab-container" tab-title="{{::'STATS_TAB_CHART' | translate}}" default="true">
             <div class="watermark"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_CHART"></div>
             <column-profile class="stat-detail-tab-items"
                             ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length === 1"></column-profile>
         </sc-tabs-item>
-        <sc-tabs-item tab-title="Value">
+        <sc-tabs-item tab-title="{{::'STATS_TAB_VALUE' | translate}}">
             <div class="watermark"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_VALUE"></div>
@@ -46,7 +46,7 @@
                 </table>
             </div>
         </sc-tabs-item>
-        <sc-tabs-item tab-title="Pattern">
+        <sc-tabs-item tab-title="{{::'STATS_TAB_PATTERN' | translate}}">
             <div class="watermark"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_PATTERN"></div>
@@ -72,7 +72,7 @@
                                  tooltip-content="statsDetailsCtrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)">
             </horizontal-barchart>
         </sc-tabs-item>
-        <sc-tabs-item tab-title="Advanced">
+        <sc-tabs-item tab-title="{{::'STATS_TAB_ADVANCED' | translate}}">
             <div class="watermark"
                  ng-if="statsDetailsCtrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_ADVANCED_CHART"></div>

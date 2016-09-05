@@ -45,7 +45,8 @@
                     <transform-form transformation="transfo"
                                     on-submit="actionsListCtrl.transform(transfo)(params)"
                                     on-submit-hover-on="actionsListCtrl.earlyPreview(transfo)(params)"
-                                    on-submit-hover-off="actionsListCtrl.cancelEarlyPreview()"></transform-form>
+                                    on-submit-hover-off="actionsListCtrl.cancelEarlyPreview()"
+                                    is-transformation-in-progress="actionsListCtrl.transformationInProgress"></transform-form>
                 </content>
             </sc-accordion-item>
         </div>

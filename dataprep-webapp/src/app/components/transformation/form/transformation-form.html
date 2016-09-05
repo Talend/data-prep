@@ -25,7 +25,7 @@
         </transform-cluster-params>
 
         <div class="param-buttons">
-            <button ng-disabled="formCtrl.paramForm.$invalid"
+            <button ng-disabled="formCtrl.paramForm.$invalid || formCtrl.isTransformationInProgress"
                     class="param-primary-button btn-primary"
                     ng-mouseleave="formCtrl.submitHoverOff()"
                     ng-mouseenter="formCtrl.submitHoverOn()"

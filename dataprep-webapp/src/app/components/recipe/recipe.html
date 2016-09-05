@@ -45,7 +45,8 @@
                                         transformation="step.transformation"
                                         on-submit="$ctrl.stepUpdateClosure(step)(params)"
                                         on-submit-hover-on="$ctrl.previewUpdateClosure(step)(params)"
-                                        on-submit-hover-off="$ctrl.cancelPreview()"></transform-form>
+                                        on-submit-hover-off="$ctrl.cancelPreview()"
+                                        is-transformation-in-progress="recipeCtrl.updateStepInProgress"></transform-form>
 
                         <talend-modal ng-if="$ctrl.hasDynamicParams(step)"
                                       fullscreen="false"
@@ -55,7 +56,8 @@
                             <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
 
                             <transform-form transformation="step.transformation"
-                                            on-submit="$ctrl.stepUpdateClosure(step)(params)"></transform-form>
+                                            on-submit="$ctrl.stepUpdateClosure(step)(params)"
+                                            is-transformation-in-progress="recipeCtrl.updateStepInProgress"></transform-form>
                         </talend-modal>
                     </div>
                 </content>

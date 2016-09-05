@@ -32,6 +32,14 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
 
     /**
      * @ngdoc property
+     * @name transformationInProgress
+     * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
+     * @description Flag that indicates if a transformation is in progress
+     */
+    vm.transformationInProgress = false;
+
+    /**
+     * @ngdoc property
      * @name dynamicTransformation
      * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description The dynamic param transformation to display
@@ -147,13 +155,19 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
             EarlyPreviewService.deactivatePreview();
             EarlyPreviewService.cancelPendingPreview();
 
-            PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
-                .then(function () {
-                    vm.showDynamicModal = false;
-                })
-                .finally(function () {
-                    $timeout(EarlyPreviewService.activatePreview, 500, false);
-                });
+            if(!vm.transformationInProgress) {
+                vm.transformationInProgress = true;
+                PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
+                    .then(function () {
+                        vm.showDynamicModal = false;
+                    })
+                    .finally(function () {
+                        $timeout(() => {
+                            EarlyPreviewService.activatePreview();
+                            vm.transformationInProgress = false;
+                        }, 500, false);
+                    });
+            }
         };
     };
 }

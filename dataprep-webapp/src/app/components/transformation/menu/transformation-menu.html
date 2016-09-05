@@ -39,6 +39,7 @@
         <i data-icon="e" class="icon continuous-rotate"></i>
     </div>
     <transform-form transformation="menuCtrl.selectedMenu"
-                      on-submit="menuCtrl.appendClosure(menuCtrl.selectedMenu, menuCtrl.selectedScope)(params)"></transform-form>
+                    on-submit="menuCtrl.appendClosure(menuCtrl.selectedMenu, menuCtrl.selectedScope)(params)"
+                    is-transformation-in-progress="menuCtrl.transformationInProgress"></transform-form>
 
 </talend-modal>

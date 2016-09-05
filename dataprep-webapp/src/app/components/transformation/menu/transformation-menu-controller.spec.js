@@ -11,13 +11,13 @@
 
   ============================================================================*/
 
-describe('Transform menu controller', function () {
+describe('Transform menu controller', () => {
     'use strict';
 
-    var createController;
-    var scope;
+    let createController;
+    let scope;
 
-    var metadata = {
+    const metadata = {
         id: '44f5e4ef-96e9-4041-b86a-0bee3d50b18b',
         name: 'customers_jso_light',
         author: 'anonymousUser',
@@ -26,7 +26,7 @@ describe('Transform menu controller', function () {
         nbLinesFooter: 0,
         created: '02-16-2015 08:52',
     };
-    var column = {
+    const column = {
         id: '0001',
         name: 'MostPopulousCity',
         quality: {
@@ -67,18 +67,18 @@ describe('Transform menu controller', function () {
         ],
     };
 
-    var stateMock;
+    let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.transformation-menu', function ($provide) {
+    beforeEach(angular.mock.module('data-prep.transformation-menu', ($provide) => {
         stateMock = { playground: {} };
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function ($rootScope, $controller, $q, PlaygroundService, TransformationService, ParametersService) {
+    beforeEach(inject(($rootScope, $controller, $q, PlaygroundService, TransformationService, ParametersService) => {
         scope = $rootScope.$new();
 
-        createController = function () {
-            var ctrl = $controller('TransformMenuCtrl', {
+        createController = () => {
+            const ctrl = $controller('TransformMenuCtrl', {
                 $scope: scope,
             });
             ctrl.metadata = metadata;
@@ -93,12 +93,12 @@ describe('Transform menu controller', function () {
 
     it('should reset parameters/choices on select if items has parameters/choices', inject((ParametersService) => {
         //given
-        var ctrl = createController();
-        var menu = {
+        const ctrl = createController();
+        const menu = {
             parameters: [{ name: 'param1', type: 'text', default: '.' }],
             items: [],
         };
-        var scope = 'column';
+        const scope = 'column';
 
         expect(ParametersService.resetParamValue).not.toHaveBeenCalled();
 
@@ -110,11 +110,11 @@ describe('Transform menu controller', function () {
         expect(ParametersService.resetParamValue).toHaveBeenCalledWith(menu.items, 'CHOICE');
     }));
 
-    it('should open modal on select if item has parameters', inject(function (PlaygroundService) {
+    it('should open modal on select if item has parameters', inject((PlaygroundService) => {
         //given
-        var ctrl = createController();
-        var menu = { parameters: [{ name: 'param1', type: 'text', default: '.' }] };
-        var scope = 'column';
+        const ctrl = createController();
+        const menu = { parameters: [{ name: 'param1', type: 'text', default: '.' }] };
+        const scope = 'column';
 
         //when
         ctrl.select(menu, scope);
@@ -126,11 +126,11 @@ describe('Transform menu controller', function () {
         expect(PlaygroundService.appendStep).not.toHaveBeenCalled();
     }));
 
-    it('should open modal on select if item has choice', inject(function (PlaygroundService) {
+    it('should open modal on select if item has choice', inject((PlaygroundService) => {
         //given
-        var ctrl = createController();
-        var menu = { items: [{ name: 'choice', values: [{ name: 'choice1' }, { name: 'choice2' }] }] };
-        var scope = 'column';
+        const ctrl = createController();
+        const menu = { items: [{ name: 'choice', values: [{ name: 'choice1' }, { name: 'choice2' }] }] };
+        const scope = 'column';
 
         //when
         ctrl.select(menu, scope);
@@ -142,11 +142,11 @@ describe('Transform menu controller', function () {
         expect(PlaygroundService.appendStep).not.toHaveBeenCalled();
     }));
 
-    it('should call transform on simple menu select', inject(function (PlaygroundService) {
+    it('should call transform on simple menu select', inject((PlaygroundService) => {
         //given
-        var ctrl = createController();
-        var menu = { name: 'uppercase', category: 'case' };
-        var scope = 'column';
+        const ctrl = createController();
+        const menu = { name: 'uppercase', category: 'case' };
+        const scope = 'column';
 
         //when
         ctrl.select(menu, scope);
@@ -166,10 +166,10 @@ describe('Transform menu controller', function () {
         expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
     }));
 
-    it('should fetch dynamic parameters', inject(function (TransformationService) {
+    it('should fetch dynamic parameters', inject((TransformationService) => {
         //given
-        var ctrl = createController();
-        var menu = { name: 'textclustering', category: 'quickfix', dynamic: true };
+        const ctrl = createController();
+        const menu = { name: 'textclustering', category: 'quickfix', dynamic: true };
 
         stateMock.playground.dataset = { id: '78bae6345aef9965e22b54' };
         stateMock.playground.preparation = { id: '721cd4455fb69e89543d4' };
@@ -189,10 +189,10 @@ describe('Transform menu controller', function () {
         );
     }));
 
-    it('should display modal and set flags on dynamic params fetch', function () {
+    it('should display modal and set flags on dynamic params fetch', () => {
         //given
-        var ctrl = createController();
-        var menu = { name: 'textclustering', category: 'quickfix', dynamic: true };
+        const ctrl = createController();
+        const menu = { name: 'textclustering', category: 'quickfix', dynamic: true };
 
         stateMock.playground.dataset = { id: '78bae6345aef9965e22b54' };
         stateMock.playground.preparation = { id: '721cd4455fb69e89543d4' };
@@ -209,15 +209,15 @@ describe('Transform menu controller', function () {
         expect(ctrl.dynamicFetchInProgress).toBeFalsy();
     });
 
-    it('should call playground service to append step and hide modal', inject(function (PlaygroundService) {
+    it('should call playground service to append step and hide modal', inject((PlaygroundService) => {
         //given
-        var ctrl = createController();
-        var menu = { name: 'transfo_name', category: 'case', parameters: [{ name: 'param1', type: 'text', default: '.' }] };
-        var params = { param1: 'value' };
-        var transfoScope = 'column';
+        const ctrl = createController();
+        const menu = { name: 'transfo_name', category: 'case', parameters: [{ name: 'param1', type: 'text', default: '.' }] };
+        const params = { param1: 'value' };
+        const transfoScope = 'column';
 
         //when
-        var closure = ctrl.appendClosure(menu, transfoScope);
+        const closure = ctrl.appendClosure(menu, transfoScope);
         expect(PlaygroundService.appendStep).not.toHaveBeenCalled();
         closure(params);
 
@@ -235,12 +235,30 @@ describe('Transform menu controller', function () {
         expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
     }));
 
-    it('should hide modal after step append', function () {
+    it('should update transformationInProgress', inject(($timeout) => {
         //given
-        var ctrl = createController();
-        var menu = { name: 'transfo_name', category: 'case', parameters: [{ name: 'param1', type: 'text', default: '.' }] };
-        var params = { param1: 'value' };
-        var transfoScope = 'column';
+        const ctrl = createController();
+        const menu = { name: 'transfo_name', category: 'case', parameters: [{ name: 'param1', type: 'text', default: '.' }] };
+        const params = { param1: 'value' };
+        const transfoScope = 'column';
+
+        //when
+        ctrl.appendClosure(menu, transfoScope)(params);
+        scope.$digest();
+
+        expect(ctrl.transformationInProgress).toEqual(true);
+        $timeout.flush(500);
+
+        //then
+        expect(ctrl.transformationInProgress).toEqual(false);
+    }));
+
+    it('should hide modal after step append', () => {
+        //given
+        const ctrl = createController();
+        const menu = { name: 'transfo_name', category: 'case', parameters: [{ name: 'param1', type: 'text', default: '.' }] };
+        const params = { param1: 'value' };
+        const transfoScope = 'column';
         ctrl.showModal = true;
 
         //when

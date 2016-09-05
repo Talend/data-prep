@@ -23,12 +23,14 @@ import template from './transformation-form.html';
          transformation="transformation"
          on-submit="callback()"
          on-submit-hover-on="callbackOn()"
-         on-submit-hover-off="callbackOff()">
+         on-submit-hover-off="callbackOff()"
+         is-transformation-in-progress="true">
  </transform-form>
  * @param {object} transformation The transformation containing parameters
  * @param {function} onSubmit The callback executed on form submit
  * @param {function} onSubmitHoverOn The callback executed on mouseenter on form submit
  * @param {function} onSubmitHoverOff The callback executed on mouseleave on form submit
+ * @param {boolean} isTransformationInProgress The flag indicate whether the transformation is in progress
  */
 export default function TransformForm() {
     return {
@@ -39,6 +41,7 @@ export default function TransformForm() {
             onSubmit: '&',
             onSubmitHoverOn: '&',
             onSubmitHoverOff: '&',
+            isTransformationInProgress: '<',
         },
         bindToController: true,
         controllerAs: 'formCtrl',

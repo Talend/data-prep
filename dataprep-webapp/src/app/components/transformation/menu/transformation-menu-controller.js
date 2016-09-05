@@ -19,10 +19,18 @@
  * @requires data-prep.services.parameters.service:ParametersService
  * @requires data-prep.services.transformation.service:TransformationService
  */
-export default function TransformMenuCtrl(state, PlaygroundService, ParametersService, TransformationService) {
+export default function TransformMenuCtrl($timeout, state, PlaygroundService, ParametersService, TransformationService) {
     'ngInject';
 
     const vm = this;
+
+    /**
+     * @ngdoc property
+     * @name transformationInProgress
+     * @propertyOf data-prep.transformation-menu.controller:TransformMenuCtrl
+     * @description Flag that indicates if a transformation is in progress
+     */
+    vm.transformationInProgress = false;
 
     /**
      * @ngdoc method
@@ -92,12 +100,23 @@ export default function TransformMenuCtrl(state, PlaygroundService, ParametersSe
      */
     vm.appendClosure = function appendClosure(menu, scope) {
         return function (params) {
-            params = params || {};
-            params.scope = scope;
-            params.column_id = vm.column.id;
-            params.column_name = vm.column.name;
+            if (!vm.transformationInProgress) {
+                vm.transformationInProgress = true;
 
-            transform(menu, params);
+                params = params || {};
+                params.scope = scope;
+                params.column_id = vm.column.id;
+                params.column_name = vm.column.name;
+
+                transform(menu, params)
+                    .finally(function () {
+                        $timeout(() => {
+                            vm.transformationInProgress = false;
+                        }, 500, false);
+                    });
+            }
+
+
         };
     };
 
@@ -110,7 +129,7 @@ export default function TransformMenuCtrl(state, PlaygroundService, ParametersSe
      * @description Perform a transformation on the column
      */
     function transform(menu, params) {
-        PlaygroundService.appendStep([{ action: menu.name, parameters: params }])
+        return PlaygroundService.appendStep([{ action: menu.name, parameters: params }])
             .then(function () {
                 vm.showModal = false;
             });

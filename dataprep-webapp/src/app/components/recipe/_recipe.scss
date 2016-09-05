@@ -11,14 +11,14 @@
 
   ============================================================================*/
 
+$recipe-step-disabled-color: #9591a0 !default;
+$recipe-step-disabled-background-color: #c5c5c5 !default;
+
 .recipe {
-  $color: $black;
-  $background: $white;
   font-size: 0.95em;
   display: block;
   padding-right: 10px;
 
-  /****************************Step Container: description, knot, close**********************/
   .step-container {
     @include display(flex);
     @include flex-direction(row);
@@ -28,8 +28,8 @@
 
 
     &.disabled-step {
-      background-color: #c5c5c5;
-      color: #9591a0;
+      color: $recipe-step-disabled-color;
+      background-color: $recipe-step-disabled-background-color;
     }
 
     &.preview {
@@ -39,12 +39,15 @@
     &.remove {
       color: $medium-gray;
       background-color: $light-gray;
-      text-decoration: line-through;
+
+      .recipe-step {
+        text-decoration: line-through;
+      }
     }
 
     .remove-icon {
-      visibility: hidden;
       @include flex-shrink(0);
+      visibility: hidden;
       margin: 5px;
       cursor: pointer;
       color: $medium-gray;
@@ -58,9 +61,9 @@
     .recipe-step {
       @include flex-grow(1);
 
-      /*************************************Step text*************************************/
       .step-description {
         font-size: .85em;
+
         .filter-icon {
           color: $dark-gray;
           font-size: 0.65em;
@@ -68,20 +71,19 @@
         }
       }
 
-      /************************************Step filters and parameters ******************/
       .step-details {
         margin-bottom: 5px;
 
-        /*******************************Step Filters List******************************/
         .step-filters-list {
+          @include display(flex);
+          @include flex-direction(row);
           cursor: initial;
           background-color: $shadow-gray;
           color: $dark-gray;
           max-height: 160px;
           overflow-y: auto;
-          padding: 0 0  0 10px;
-          @include display(flex);
-          @include flex-direction(row);
+          padding: 0 0 0 10px;
+
           .list {
             @include flex-grow(1);
             @include flex-shrink(1);
@@ -97,6 +99,7 @@
 
   .content-container {
     width: 275px;
+
     > content {
       padding: 10px;
     }

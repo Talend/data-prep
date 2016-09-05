@@ -19,17 +19,19 @@ const CLUSTER_TYPE = 'CLUSTER';
  * @ngdoc controller
  * @name data-prep.recipe.controller:RecipeCtrl
  * @description Recipe controller.
- * @requires data-prep.services.state.service:StateService
- * @requires data-prep.services.playground.service:PlaygroundService
- * @requires data-prep.services.playground.service:PreviewService
- * @requires data-prep.services.utils.service:MessageService
  * @requires data-prep.services.filters.service:FilterAdapterService
  * @requires data-prep.services.lookup.service:LookupService
+ * @requires data-prep.services.utils.service:MessageService
  * @requires data-prep.services.parameters.service:ParametersService
+ * @requires data-prep.services.playground.service:PlaygroundService
+ * @requires data-prep.services.playground.service:PreviewService
+ * @requires data-prep.services.state.service:StateService
+ * @requires data-prep.services.recipe.service:RecipeKnotService
  */
 export default class RecipeCtrl {
 
-    constructor(FilterAdapterService, LookupService, MessageService, ParametersService, PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
+    constructor(FilterAdapterService, LookupService, MessageService, ParametersService,
+                PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
         'ngInject';
 
         this.FilterAdapterService = FilterAdapterService;
@@ -157,6 +159,7 @@ export default class RecipeCtrl {
      * @name toBeSwitched
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @description checks the status of the knot: inactive and will be activated or active and it will be deactivated
+     * @param {object} step The step to be switched
      * @returns {boolean} true if the knot will be activated or deactivated
      */
     toBeSwitched(step) {
@@ -177,6 +180,7 @@ export default class RecipeCtrl {
      * @ngdoc method
      * @name setStepToBeDeleted
      * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} step The step to be deleted
      * @description sets the step that will be deleted
      */
     setStepToBeDeleted(step) {
@@ -188,6 +192,7 @@ export default class RecipeCtrl {
      * @name shouldBeRemoved
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @description checks if the step should be removed
+     * @param {object} step The step to be deleted
      * @returns {boolean} true if the step will be removed from the recipe
      */
     shouldBeRemoved(step) {
@@ -199,6 +204,7 @@ export default class RecipeCtrl {
      * @ngdoc method
      * @name isHoveredStep
      * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} step The hovered step
      * @description checks if the step is beeing hovered
      * @returns {boolean} true if the step is hovered
      */
@@ -210,6 +216,7 @@ export default class RecipeCtrl {
      * @ngdoc method
      * @name stepHoverStart
      * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} step The hovered start step
      * @description Trigger actions called at mouse enter
      */
     stepHoverStart(step) {
@@ -221,6 +228,7 @@ export default class RecipeCtrl {
      * @ngdoc method
      * @name stepHoverEnd
      * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} step The hovered end step
      * @description Trigger actions called at mouse leave
      */
     stepHoverEnd(step) {
@@ -232,6 +240,7 @@ export default class RecipeCtrl {
      * @ngdoc method
      * @name toggleStep
      * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} step The step to toggle
      * @description Enable/disable step
      */
     toggleStep(step) {
@@ -323,7 +332,7 @@ export default class RecipeCtrl {
 
     /**
      * @ngdoc method
-     * @name toogleStep
+     * @name select
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @param {object} step The selected step
      * @description Action on step selection.
@@ -357,7 +366,7 @@ export default class RecipeCtrl {
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @param {object} step The step to remove
      * @param {object} $event The click event
-     * @description Show a popup to confirm the removal and remove it when user confirm
+     * @description Show a popup to confirm the removal and remove it when user confirms
      */
     remove(step, $event) {
         $event.stopPropagation();
@@ -409,7 +418,7 @@ export default class RecipeCtrl {
 
     /**
      * @ngdoc method
-     * @name isSpecificParams
+     * @name _isSpecificParams
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @param {object} step The step to test
      * @description Return if the step has parameters that will be treated specifically
@@ -427,7 +436,7 @@ export default class RecipeCtrl {
      * @name previewUpdateClosure
      * @methodOf data-prep.recipe.controller:RecipeCtrl
      * @param {object} step The step to update
-     * @description [PRIVATE] Create a closure with a target step that call the update preview on execution
+     * @description Create a closure with a target step that call the update preview on execution
      */
     previewUpdateClosure(step) {
         return (params) => {

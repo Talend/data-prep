@@ -10,24 +10,24 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-$active-color: $dark-green;
-$inactive-color: $medium-gray;
+
+$recipe-knot-active-color: $dark-green !default;
+$recipe-knot-inactive-color: $medium-gray !default;
 
 .knot {
   @include display(flex);
   @include flex-direction(column);
+  @include flex-basis(20px);
+  @include flex-grow(0);
+  @include flex-shrink(0);
   height: 100%;
   cursor: pointer;
   align-items: center;
 
-  flex-basis: 20px;
-  flex-grow: 0;
-  flex-shrink: 0;
-
   .line {
     width: 1px;
-    background: $active-color;
     height: 13px;
+    background: $recipe-knot-active-color;
 
     &.bottom-line {
       @include flex-grow(1);
@@ -39,21 +39,24 @@ $inactive-color: $medium-gray;
   }
 
   .circle {
+    position: relative;
     width: 17px;
     height: 17px;
-    background: $active-color;
-    position: relative;
+    background:  $recipe-knot-active-color;
     border-radius: 50%;
+
     &.inactive-knot {
-      background: $inactive-color;
+      background: $recipe-knot-inactive-color;
     }
+
     &.to-be-deactivated {
       background: transparent;
-      border: 3px solid $active-color;
+      border: 3px solid $recipe-knot-active-color;
     }
+
     &.to-be-activated {
       background: $white;
-      border: 3px solid $inactive-color;
+      border: 3px solid $recipe-knot-inactive-color;
     }
   }
 }

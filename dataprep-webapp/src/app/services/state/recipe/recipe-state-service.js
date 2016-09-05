@@ -60,6 +60,7 @@ export function RecipeStateService() {
      * @ngdoc method
      * @name setHoveredStep
      * @methodOf data-prep.services.state.service:RecipeStateService
+     * @param {object} step The hovered step
      * @description set the currently hovered step
      */
     function setHoveredStep(step) {

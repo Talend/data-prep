@@ -11,11 +11,20 @@
 
  ============================================================================*/
 
-describe('Recipe KNOT', () => {
+describe('Recipe knot', () => {
 
-    let createElement, element, scope;
+    let createElement;
+    let element;
+    let scope;
 
     beforeEach(angular.mock.module('data-prep.recipe-knot'));
+
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+        $translateProvider.translations('en', {
+            ENABLE_DISABLE_STEP: 'Enable or disable step',
+        });
+        $translateProvider.preferredLanguage('en');
+    }));
 
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();

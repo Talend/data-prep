@@ -62,7 +62,9 @@ $footer-height: 49px;
             }
 
             .inventory-list-container {
+                @include display(flex);
                 @include flex-flexible();
+                @include flex-column();
                 position: relative;
             }
         }

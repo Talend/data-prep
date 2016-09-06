@@ -28,9 +28,10 @@
  * @requires data-prep.services.onboarding.service:OnboardingService
  * @requires data-prep.services.utils.service:MessageService
  * @requires data-prep.services.utils.service:StepUtilsService
+ * @requires data-prep.services.utils.service:StorageService
  */
 
-import { map } from 'lodash';
+import { map, find } from 'lodash';
 
 // actions scopes
 const LINE = 'line';
@@ -45,7 +46,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                                           FilterAdapterService, PreparationService, PreviewService,
                                           RecipeService, TransformationCacheService,
                                           StatisticsService, HistoryService,
-                                          OnboardingService, MessageService) {
+                                          OnboardingService, MessageService, StorageService) {
     'ngInject';
 
     const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
@@ -92,11 +93,27 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         StateService.setCurrentDataset(dataset);
         StateService.setCurrentData(data);
         StateService.setCurrentPreparation(preparation);
+        updateGridSelection(dataset, preparation);
         this.updatePreparationDetails();
         updateFilter(dataset, preparation);
         TransformationCacheService.invalidateCache();
         HistoryService.clear();
         PreviewService.reset(false);
+    }
+
+    /**
+     * @ngdoc method
+     * @name updateGridSelection
+     * @methodOf data-prep.services.playground.service:PlaygroundService
+     * @description Update grid selection by using localstorage
+     */
+    function updateGridSelection(dataset, preparation) {
+        const selectedCols = StorageService.getSelectedColumns(preparation? preparation.id : dataset.id);
+        if(selectedCols.length) {
+            StateService.setGridSelection(state.playground.grid.columns.filter((col) => {
+                return selectedCols.indexOf(col.id) > -1;
+            }));
+        }
     }
 
     /**

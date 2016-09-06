@@ -20,10 +20,12 @@
  * @requires data-prep.services.transformation.service:TransformationService
  * @requires data-prep.services.playground.service:PreviewService
  * @requires data-prep.services.lookup.service:LookupService
+ * @requires data-prep.services.utils.service:StorageService
  *
  */
 export default class DatagridExternalService {
-    constructor($timeout, state, StateService, StatisticsService, TransformationService, PreviewService, LookupService) {
+    constructor($timeout, state, StateService, StatisticsService,
+                TransformationService, PreviewService, LookupService, StorageService) {
         'ngInject';
 
         this.grid = null;
@@ -41,6 +43,7 @@ export default class DatagridExternalService {
         this.TransformationService = TransformationService;
         this.PreviewService = PreviewService;
         this.LookupService = LookupService;
+        this.StorageService = StorageService;
     }
 
     /**
@@ -92,6 +95,12 @@ export default class DatagridExternalService {
             else {
                 this.StatisticsService.reset();
             }
+
+            const selectedCols = _.map(this.state.playground.grid.selectedColumns, 'id');
+            this.StorageService.setSelectedColumns(
+                this.state.playground.preparation ? this.state.playground.preparation.id : this.state.playground.dataset.id,
+                selectedCols
+            );
         }
     }
 

@@ -21,6 +21,7 @@ const PREPARATIONS_SORT_KEY = 'org.talend.dataprep.preparations.sort';
 const PREPARATIONS_ORDER_KEY = 'org.talend.dataprep.preparations.order';
 const FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
 const EXPORT_PARAMS_KEY = 'org.talend.dataprep.export.params';
+const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
 const PREFIX_FILTER = 'org.talend.dataprep.filter_';
 
 /**
@@ -474,5 +475,32 @@ export default class StorageService {
      */
     setPreparationsOrder(order) {
         this.setItem(PREPARATIONS_ORDER_KEY, order);
+    }
+
+
+    // --------------------------------------------------------------------------------------------
+    // ------------------------------------------Selected columns----------------------------------
+    // --------------------------------------------------------------------------------------------
+    /**
+     * @ngdoc method
+     * @name getSelectedColumns
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @param {string} id The id of the preparation or dataset
+     * @description Get the least selected columns of a preparation/detaset from localStorage
+     */
+    getSelectedColumns(id) {
+        return this.getItem(PREFIX_SELECTED_COLUMNS_KEY + id, []);
+    }
+
+    /**
+     * @ngdoc method
+     * @name setSelectedColumns
+     * @methodOf data-prep.services.utils.service:StorageService
+     * @param {string} id The id of the preparation or dataset
+     * @param {array} selectedColumns The selected columns of the preparation or dataset
+     * @description  Set the least selected columns of a preparation/detaset to localStorage
+     */
+    setSelectedColumns(id, selectedColumns) {
+        this.setItem(PREFIX_SELECTED_COLUMNS_KEY + id, selectedColumns);
     }
 }

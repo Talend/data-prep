@@ -29,13 +29,14 @@ describe('Datagrid external service', () => {
     beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
         stateMock = {
             playground: {
+                preparation : {id: 'abcd'},
                 grid: {},
             },
         };
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject((StatisticsService, StateService, TransformationService, LookupService) => {
+    beforeEach(inject((StatisticsService, StateService, TransformationService, LookupService, StorageService) => {
         gridMock = new SlickGridMock();
         gridMock.initColumnsMock(gridColumns);
 
@@ -48,6 +49,7 @@ describe('Datagrid external service', () => {
         spyOn(StatisticsService, 'updateStatistics').and.returnValue();
         spyOn(StatisticsService, 'reset').and.returnValue();
         spyOn(TransformationService, 'initTransformations').and.returnValue();
+        spyOn(StorageService, 'setSelectedColumns').and.returnValue();
 
         spyOn(LookupService, 'updateTargetColumn').and.returnValue();
     }));
@@ -170,7 +172,7 @@ describe('Datagrid external service', () => {
                 // given
                 expect(TransformationService.initTransformations).not.toHaveBeenCalled();
                 stateMock.playground.grid.selectedColumns = [];
-                
+
                 // when
                 DatagridExternalService.updateSuggestionPanel();
 
@@ -233,6 +235,19 @@ describe('Datagrid external service', () => {
 
                     // then
                     expect(TransformationService.initTransformations).toHaveBeenCalled();
+                }));
+
+                it('should save selected column in LocalStorage', inject((DatagridExternalService, StorageService) => {
+                    // given
+                    stateMock.playground.preparation = {id: 'abcd'};
+                    stateMock.playground.grid.selectedColumns = [{ id: '0001' }, { id: '0002' }];
+                    expect(StorageService.setSelectedColumns).not.toHaveBeenCalled();
+
+                    // when
+                    DatagridExternalService.updateSuggestionPanel();
+
+                    // then
+                    expect(StorageService.setSelectedColumns).toHaveBeenCalledWith('abcd', ['0001', '0002']);
                 }));
 
                 it('should NOT update when there is no selected column', inject((DatagridExternalService, TransformationService) => {

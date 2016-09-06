@@ -454,4 +454,33 @@ describe('Storage service', () => {
             expect($window.localStorage.getItem(PREPARATIONS_ORDER_KEY)).toEqual('"desc"');
         }));
     });
+
+    describe('selected columns', () => {
+
+        const SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_abcd';
+
+        it('should return the selected columns from local storage', inject(($window, StorageService) => {
+            // given
+            expect(StorageService.getSelectedColumns('abcd')).toEqual([]);
+            $window.localStorage.setItem(SELECTED_COLUMNS_KEY, '["0001"]');
+
+            // when
+            const selectedCols = StorageService.getSelectedColumns('abcd');
+
+            // then
+            expect(selectedCols).toEqual(['0001']);
+        }));
+
+        it('should save the selected columns in local storage', inject(($window, StorageService) => {
+            // given
+            const cols = ['0001', '0002'];
+
+            // when
+            StorageService.setSelectedColumns('abcd', cols);
+
+            // then
+            expect($window.localStorage.getItem(SELECTED_COLUMNS_KEY)).toEqual('["0001","0002"]');
+        }));
+    });
+
 });

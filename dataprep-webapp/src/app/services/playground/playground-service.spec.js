@@ -287,10 +287,14 @@ describe('Playground Service', () => {
         let assertDatasetLoadNotInitialized;
 
         beforeEach(inject(($rootScope, $q, StateService,
-                           PreparationService, RecipeService,
+                           PreparationService, RecipeService, StorageService,
                            TransformationCacheService, HistoryService, PreviewService) => {
             spyOn($rootScope, '$emit').and.returnValue();
             spyOn(PreparationService, 'getContent').and.returnValue($q.when(data));
+            spyOn(StorageService, 'getSelectedColumns').and.returnValue(["0001"]);
+            spyOn(StateService, 'setGridSelection').and.returnValue();
+
+            stateMock.playground.grid.columns = data.columns;
 
             assertDatasetLoadInitialized = (metadata, data) => {
                 expect(StateService.resetPlayground).toHaveBeenCalled();
@@ -300,6 +304,7 @@ describe('Playground Service', () => {
                 expect(TransformationCacheService.invalidateCache).toHaveBeenCalled();
                 expect(HistoryService.clear).toHaveBeenCalled();
                 expect(PreviewService.reset).toHaveBeenCalledWith(false);
+                expect(StateService.setGridSelection).toHaveBeenCalledWith([{ id: '0001' }]);
             };
 
             assertDatasetLoadNotInitialized = () => {
@@ -310,6 +315,7 @@ describe('Playground Service', () => {
                 expect(TransformationCacheService.invalidateCache).not.toHaveBeenCalled();
                 expect(HistoryService.clear).not.toHaveBeenCalled();
                 expect(PreviewService.reset).not.toHaveBeenCalled();
+                expect(StateService.setGridSelection).not.toHaveBeenCalled();
             };
         }));
 

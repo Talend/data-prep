@@ -18,9 +18,9 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 
 import java.net.URISyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.api.exception.error;
 
-import org.elasticsearch.common.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

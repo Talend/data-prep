@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.apache.tika.io.IOUtils;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.html.HtmlEncodingDetector;
-import org.apache.tools.ant.filters.StringInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -73,7 +73,7 @@ public class HtmlDetector implements Detector {
 
             inputStream.reset();
             String head = FormatUtils.readFromBuffer(buffer, 0, n);
-            try (InputStream stream = TikaInputStream.get(new StringInputStream(head))) {
+            try (InputStream stream = TikaInputStream.get(IOUtils.toInputStream(head))) {
                 Charset charset = htmlEncodingDetector.detect(stream, metadata);
 
                 if (charset != null) {

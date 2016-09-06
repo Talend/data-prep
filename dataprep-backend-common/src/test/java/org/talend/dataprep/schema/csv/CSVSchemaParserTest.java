@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.util.Pair;
-import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,7 +229,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         }
         chars[48] = ';';
         chars[49] = '\n';
-        try (InputStream inputStream = new StringInputStream(new String(chars))) {
+        try (InputStream inputStream = IOUtils.toInputStream(new String(chars))) {
             // We do know the format and therefore we go directly to the CSV schema guessing
             SchemaParser.Request request = getRequest(inputStream, "#8");
             request.getMetadata().setEncoding("UTF-8");
@@ -246,7 +246,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         }
         chars[48] = ';';
         chars[49] = '\n';
-        try (InputStream inputStream = new StringInputStream(new String(chars))) {
+        try (InputStream inputStream = IOUtils.toInputStream(new String(chars))) {
             // We do know the format and therefore we go directly to the CSV schema guessing
             SchemaParser.Request request = getRequest(inputStream, "#9");
             request.getMetadata().setEncoding("UTF-8");
@@ -273,7 +273,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         }
         chars[49] = ';';
         chars[50] = '\n';
-        try (InputStream inputStream = new StringInputStream(new String(chars))) {
+        try (InputStream inputStream = IOUtils.toInputStream(new String(chars))) {
             // We do know the format and therefore we go directly to the CSV schema guessing
             SchemaParser.Request request = getRequest(inputStream, "#10");
             request.getMetadata().setEncoding("UTF-8");
@@ -291,7 +291,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         }
         chars[49] = ';';
         chars[50] = '\n';
-        try (InputStream inputStream = new StringInputStream(new String(chars))) {
+        try (InputStream inputStream = IOUtils.toInputStream(new String(chars))) {
             // We do know the format and therefore we go directly to the CSV schema guessing
             SchemaParser.Request request = getRequest(inputStream, "#11");
             request.getMetadata().setEncoding("UTF-8");
@@ -315,7 +315,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         for (int i = 0; i < 5; i++) {
             chars[i] = 'A';
         }
-        try (InputStream inputStream = new StringInputStream(new String(chars))) {
+        try (InputStream inputStream = IOUtils.toInputStream(new String(chars))) {
             // We do know the format and therefore we go directly to the CSV schema guessing
             SchemaParser.Request request = getRequest(inputStream, "#12");
             request.getMetadata().setEncoding("UTF-8");

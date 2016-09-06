@@ -18,12 +18,12 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tika.io.IOUtils;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
-import org.apache.tools.ant.filters.StringInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +95,7 @@ public class CSVDetector implements Detector {
             inputStream.reset();
             String head = FormatUtils.readFromBuffer(buffer, 0, n);
 
-            try (InputStream stream = TikaInputStream.get(new StringInputStream(head))) {
+            try (InputStream stream = TikaInputStream.get(IOUtils.toInputStream(head))) {
                 result = detectText(new Metadata(), stream);
             }
         }

@@ -16,7 +16,7 @@ package org.talend.dataprep.api.preparation.json;
 import java.io.IOException;
 import java.util.Map;
 
-import org.elasticsearch.common.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 

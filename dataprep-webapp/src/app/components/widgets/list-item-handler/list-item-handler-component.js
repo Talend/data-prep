@@ -11,30 +11,29 @@
 
  ============================================================================*/
 
+import templateUrl from './list-item-handler.html';
+
+/**
+ * @ngdoc component
+ * @name talend.widget.component:ListItemHandler
+ * @usage
+ <list-item-handler show-top-button="true|false"
+                    show-bottom-button="true|false"
+                    on-top-click="onTopClick()"
+                    on-bottom-click="onBottomClick()"></list-item-handler>
+ * @param {boolean} showTopButton If we display top button
+ * @param {boolean} showBottomButton If we display bottom button
+ * @param {function} onTopClick The callback that is triggered on top button click
+ * @param {function} onBottomClick The callback that is triggered on bottom button click
+ */
 const ListItemHandler = {
     bindings: {
-        onBottomClick: '&',
-        onMiddleClick: '&',
+        showTopButton: '<',
+        showBottomButton: '<',
         onTopClick: '&',
-        showBottomArrow: '<',
-        showTopArrow: '<',
+        onBottomClick: '&',
     },
-    template: `
-        <div class="list-item-handler">
-          <div class="top-handler"
-              ng-if="$ctrl.showTopArrow"
-              ng-click="$ctrl.onTopClick()">
-          </div>
-
-          <div class="middle-handler"
-              ng-click="$ctrl.onMiddleClick()">
-          </div>
-
-          <div class="down-handler"
-              ng-if="$ctrl.showBottomArrow"
-              ng-click="$ctrl.onBottomClick()">
-          </div>
-        </div>`,
+    templateUrl,
 };
 
 export default ListItemHandler;

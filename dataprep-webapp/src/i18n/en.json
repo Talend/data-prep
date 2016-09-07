@@ -259,6 +259,8 @@
   "ENABLE_DISABLE_STEP": "Enable or disable step",
   "ENABLE_DISABLE_STEPS": "Enable or Disable all steps",
   "REMOVE_STEP": "Remove step",
+  "MOVE_UP": "Move up",
+  "MOVE_DOWN": "Move down",
 
   "_comment": "Search",
   "SEARCH": "Search Talend Data Preparation and Documentation",

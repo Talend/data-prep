@@ -41,6 +41,7 @@ export default function PreparationService($q, $state, $window, $stateParams, st
         paramsHasChanged,
         appendStep: PreparationRestService.appendStep,
         updateStep,
+        moveStep: PreparationRestService.moveStep,
         removeStep: PreparationRestService.removeStep,
         setHead: PreparationRestService.setHead,
         copySteps: PreparationRestService.copySteps,

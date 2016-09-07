@@ -255,26 +255,36 @@ export default class RecipeCtrl {
     // --------------------------------------------REORDER----------------------------------------
     //---------------------------------------------------------------------------------------------
 
-    moveUp(step) {
-        const stepPos = this.state.playground.recipe.current.steps.indexOf(step);
-        this.updateRecipeOrder(stepPos, stepPos - 1);
+    /**
+     * @ngdoc method
+     * @name moveUp
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {number} stepPosition Current position of step to move up
+     * @param {object} $event The click event
+     * @description Move step up in recipe
+     */
+    moveUp(stepPosition, $event) {
+        $event.stopPropagation();
+        const previousPosition = stepPosition;
+        const nextPosition = stepPosition - 1;
+        this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
     }
 
-    startDragProcess(step) {
-        alert('DnD reorder started');
+    /**
+     * @ngdoc method
+     * @name moveDown
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {number} stepPosition Current position of step to move down
+     * @param {object} $event The click event
+     * @description Move step down in recipe
+     */
+    moveDown(stepPosition, $event) {
+        $event.stopPropagation();
+        const previousPosition = stepPosition;
+        const nextPosition = stepPosition + 1;
+        this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
     }
 
-    moveDown(step) {
-        const stepPos = this.state.playground.recipe.current.steps.indexOf(step);
-        this.updateRecipeOrder(stepPos, stepPos + 1);
-    }
-
-    updateRecipeOrder(prevPosition, newPosition) {
-        // 1 - patch preparation with new recipe order
-        // toggle the right step OR load preparation with the last head version
-        // 2 - register reorder in the history
-        //
-    }
     //---------------------------------------------------------------------------------------------
     // ------------------------------------------UPDATE STEP----------------------------------------
     //---------------------------------------------------------------------------------------------

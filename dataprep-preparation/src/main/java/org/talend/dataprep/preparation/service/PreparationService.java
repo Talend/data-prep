@@ -751,24 +751,8 @@ public class PreparationService {
         }
         // Ensure that the preparation is not locked elsewhere
         lock(id);
-        final List<String> steps = extractSteps(preparation, stepToDeleteId); // throws an exception if stepId is not in
+        deleteAction(preparation, stepToDeleteId);
 
-        // get created columns by step to delete
-        final Step std = getStep(stepToDeleteId);
-        final List<String> deletedColumns = std.getDiff().getCreatedColumns();
-        final int columnsDiffNumber = -deletedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ? MAX_VALUE
-                : deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
-
-        LOGGER.debug("Deleting actions in preparation #{} at step #{}", id, stepToDeleteId); //$NON-NLS-1$
-
-        // get new actions to rewrite history from deleted step
-        final List<AppendStep> actions = getStepsWithShiftedColumnIds(steps, stepToDeleteId, deletedColumns,
-                maxCreatedColumnIdBeforeUpdate, columnsDiffNumber);
-
-        // rewrite history
-        final Step stepToDelete = getStep(stepToDeleteId);
-        replaceHistory(preparation, stepToDelete.getParent(), actions);
     }
 
     @RequestMapping(value = "/preparations/{id}/head/{headId}", method = PUT)
@@ -866,6 +850,37 @@ public class PreparationService {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Moves the step with specified <i>stepId</i> just after the step with <i>parentStepId</i> as identifier within the specified
+     * preparation.
+     *
+     * @param preparationId the id of the preparation containing the step to move
+     * @param stepId the id of the step to move
+     * @param parentStepId the id of the step which wanted as the parent of the step to move
+     */
+
+    // formatter:off
+    @RequestMapping(value = "/preparations/{id}/steps/{stepId}/order", method = POST)
+    @ApiOperation(value = "Moves a step within a preparation after a specified step", notes = "Moves a step within a preparation after a specified step.")
+    @Timed
+    public void moveStep(@PathVariable("id")
+    final String preparationId, @ApiParam(value = "The id of the step we want to move.") @PathVariable String stepId,
+            @ApiParam(value = "The step that will become the parent of stepId") @RequestParam String parentStepId) {
+        //@formatter:on
+
+        LOGGER.debug("Modifying actions in preparation #{}", preparationId);
+        final Preparation preparation = getPreparation(preparationId);
+
+        // no preparation found
+        if (preparation == null) {
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
+        }
+        // Ensure that the preparation is not locked elsewhere
+        lock(preparationId);
+
+        reorderSteps(preparation, stepId, parentStepId);
+    }
+
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------GETTERS/EXTRACTORS------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
@@ -955,6 +970,15 @@ public class PreparationService {
                 return appendStep;
             }).collect(toList());
         }
+    }
+
+    private List<Action> extractActionsAtStep(final Step step) {
+
+        Step parentStep = getStep(step.getParent());
+        List<Action> current = getActions(step);
+        int numberOfActionsBeforeStep = getActions(parentStep).size();
+
+        return current.subList(numberOfActionsBeforeStep, current.size());
     }
 
     /**
@@ -1237,6 +1261,82 @@ public class PreparationService {
      */
     private PreparationDetails getDetails(Preparation preparation) {
         return new PreparationDetails(preparation);
+    }
+
+    /**
+     * Deletes the step of specified id of the specified preparation
+     *
+     * @param preparation the specified preparation
+     * @param stepToDeleteId the specified step id to delete
+     */
+    private void deleteAction(Preparation preparation, String stepToDeleteId) {
+        final List<String> steps = extractSteps(preparation, stepToDeleteId); // throws an exception if stepId is not in
+
+        // get created columns by step to delete
+        final Step std = getStep(stepToDeleteId);
+        final List<String> deletedColumns = std.getDiff().getCreatedColumns();
+        final int columnsDiffNumber = -deletedColumns.size();
+        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ? MAX_VALUE
+                : deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
+
+        LOGGER.debug("Deleting actions in preparation #{} at step #{}", preparation.getId(), stepToDeleteId); //$NON-NLS-1$
+
+        // get new actions to rewrite history from deleted step
+        final List<AppendStep> actions = getStepsWithShiftedColumnIds(steps, stepToDeleteId, deletedColumns,
+                maxCreatedColumnIdBeforeUpdate, columnsDiffNumber);
+
+        // rewrite history
+        final Step stepToDelete = getStep(stepToDeleteId);
+        replaceHistory(preparation, stepToDelete.getParent(), actions);
+    }
+
+    /**
+     * Moves the step with specified <i>stepId</i> just after the step with <i>parentStepId</i> as identifier within the specified
+     * preparation.
+     *
+     * @param preparation the preparation containing the step to move
+     * @param stepId the id of the step to move
+     * @param parentStepId the id of the step which wanted as the parent of the step to move
+     */
+    private void reorderSteps(Preparation preparation, String stepId, String parentStepId) {
+        List<String> steps = extractSteps(preparation, rootStep.getId());
+
+        // extract all appendStep
+        List<AppendStep> allAppendSteps = extractActionsAfterStep(steps, steps.get(0));
+
+        int stepIndex = steps.indexOf(stepId);
+        int parentIndex = steps.indexOf(parentStepId);
+
+        if (stepIndex < 0) {
+            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, build().put("id", preparation.getId()).put("stepId", stepId));
+        }
+        if (parentIndex < 0) {
+            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST,
+                    build().put("id", preparation.getId()).put("stepId", parentStepId));
+        }
+
+        if (stepIndex - 1 == parentIndex) {
+            LOGGER.debug("No need to Move step {} after step {}, within preparation {}: already at the wanted position.", stepId,
+                    parentIndex, preparation.getId());
+            return;
+        }
+
+        final int lastUnchangedIndex;
+
+        if (parentIndex < stepIndex) {
+            lastUnchangedIndex = parentIndex;
+        } else {
+            lastUnchangedIndex = stepIndex - 1;
+        }
+
+        int allAppendStepsSize = allAppendSteps.size();
+        AppendStep removedStep = allAppendSteps.remove(stepIndex - 1);
+        allAppendSteps.add(parentIndex == allAppendStepsSize ? parentIndex - 1 : parentIndex, removedStep);
+
+        List<AppendStep> result = allAppendSteps.subList(lastUnchangedIndex, allAppendSteps.size());
+
+        replaceHistory(preparation, steps.get(lastUnchangedIndex), result);
+
     }
 
 }

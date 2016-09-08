@@ -420,8 +420,6 @@ public class PreparationAPI extends APIService {
         }
     }
 
-
-
     /**
      * Copy the steps from the another preparation to this one.
      *
@@ -445,6 +443,34 @@ public class PreparationAPI extends APIService {
 
         LOG.info("preparation's steps copied from {} to {}", from, id);
     }
+
+
+    /**
+     * Moves the step of specified id <i>stepId</i> after step of specified id <i>parentId</i> within the specified preparation.
+     *
+     * @param preparationId the Id of the specified preparation
+     * @param stepId the Id of the specified step to move
+     * @param parentStepId the Id of the specified step which will become the parent of the step to move
+     */
+    // formatter:off
+    @RequestMapping(value = "/api/preparations/{preparationId}/steps/{stepId}/order", method = POST, consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Moves a step within a preparation just after the specified <i>parentStepId</i>", notes = "Moves a step within a preparation.")
+    @Timed
+    public void moveStep(@PathVariable("preparationId") final String preparationId,
+                              @ApiParam(value = "The current index of the action we want to move.") @PathVariable("stepId")  String stepId,
+                              @ApiParam(value = "The current index of the action we want to move.") @RequestParam String parentStepId
+                              ) {
+        //@formatter:on
+
+        LOG.debug("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
+
+        final HystrixCommand<String> command = getCommand(PreparationReorderStep.class, preparationId, stepId, parentStepId);
+        command.execute();
+
+        LOG.debug("Step {} moved after step {}, within preparation {}", stepId, parentStepId, preparationId);
+
+    }
+
 
 
     // ---------------------------------------------------------------------------------

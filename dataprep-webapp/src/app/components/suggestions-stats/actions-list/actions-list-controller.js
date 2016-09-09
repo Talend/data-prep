@@ -155,7 +155,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
             EarlyPreviewService.deactivatePreview();
             EarlyPreviewService.cancelPendingPreview();
 
-            if(!vm.transformationInProgress) {
+            if (!vm.transformationInProgress) {
                 vm.transformationInProgress = true;
                 PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
                     .then(function () {

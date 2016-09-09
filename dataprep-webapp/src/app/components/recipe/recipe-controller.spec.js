@@ -51,7 +51,7 @@ describe('Recipe controller',() => {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(($rootScope, $controller, $q, $timeout, RecipeService, PlaygroundService, PreparationService, PreviewService) => {
+    beforeEach(inject(($componentController, $rootScope, $q, $timeout, RecipeService, PlaygroundService, PreparationService, PreviewService) => {
         scope = $rootScope.$new();
 
         createController = () => $componentController('recipe', {
@@ -112,10 +112,10 @@ describe('Recipe controller',() => {
                     parameters: { pattern: '.', column_name: 'state' },
                 },
             };
-            const  parameters = { pattern: '-' };
+            const parameters = { pattern: '-' };
 
             //when
-            const  updateClosure = ctrl.stepUpdateClosure(step);
+            const updateClosure = ctrl.stepUpdateClosure(step);
             updateClosure(parameters);
             $rootScope.$digest();
 
@@ -128,8 +128,8 @@ describe('Recipe controller',() => {
 
         it('should update step', inject((PlaygroundService) => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 column: { id: 'state' },
                 transformation: {
                     stepId: 'a598bc83fc894578a8b823',
@@ -145,7 +145,7 @@ describe('Recipe controller',() => {
                     },
                 },
             };
-            const  parameters = { pattern: '-' };
+            const parameters = { pattern: '-' };
 
             //when
             ctrl.updateStep(step, parameters);
@@ -157,8 +157,8 @@ describe('Recipe controller',() => {
         describe('preview', () => {
             it('should do nothing on update preview if the step is inactive', inject(($rootScope, PreviewService) => {
                 //given
-                const  ctrl = createController();
-                const  step = {
+                const ctrl = createController();
+                const step = {
                     column: { id: 'state' },
                     transformation: {
                         stepId: 'a598bc83fc894578a8b823',
@@ -170,8 +170,8 @@ describe('Recipe controller',() => {
                     },
                     inactive: true,
                 };
-                const  parameters = { pattern: '--' };
-                const  closure = ctrl.previewUpdateClosure(step);
+                const parameters = { pattern: '--' };
+                const closure = ctrl.previewUpdateClosure(step);
 
                 //when
                 closure(parameters);
@@ -183,8 +183,8 @@ describe('Recipe controller',() => {
 
             it('should do nothing on update preview if the params have not changed', inject(($rootScope, PreviewService) => {
                 //given
-                const  ctrl = createController();
-                const  step = {
+                const ctrl = createController();
+                const step = {
                     column: { id: '0', name: 'state' },
                     transformation: {
                         stepId: 'a598bc83fc894578a8b823',
@@ -195,8 +195,8 @@ describe('Recipe controller',() => {
                         parameters: { pattern: '.', column_id: '0', column_name: 'state' },
                     },
                 };
-                const  parameters = { pattern: '.' };
-                const  closure = ctrl.previewUpdateClosure(step);
+                const parameters = { pattern: '.' };
+                const closure = ctrl.previewUpdateClosure(step);
 
                 //when
                 closure(parameters);
@@ -211,8 +211,8 @@ describe('Recipe controller',() => {
                 RecipeService.refresh(); //set last active step for the test : see mock
                 $rootScope.$digest();
 
-                const  ctrl = createController();
-                const  step = {
+                const ctrl = createController();
+                const step = {
                     column: { id: '0', name: 'state' },
                     transformation: {
                         stepId: 'a598bc83fc894578a8b823',
@@ -228,8 +228,8 @@ describe('Recipe controller',() => {
                         },
                     },
                 };
-                const  parameters = { pattern: '--' };
-                const  closure = ctrl.previewUpdateClosure(step);
+                const parameters = { pattern: '--' };
+                const closure = ctrl.previewUpdateClosure(step);
 
                 //when
                 closure(parameters);
@@ -248,15 +248,15 @@ describe('Recipe controller',() => {
     describe('step parameters', () => {
         it('should return that step has dynamic parameters when it has cluster', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {
                     cluster: {},
                 },
             };
 
             //when
-            const  hasDynamicParams = ctrl.hasDynamicParams(step);
+            const hasDynamicParams = ctrl.hasDynamicParams(step);
 
             //then
             expect(hasDynamicParams).toBeTruthy();
@@ -264,13 +264,13 @@ describe('Recipe controller',() => {
 
         it('should return that step has NO dynamic parameters', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {},
             };
 
             //when
-            const  hasDynamicParams = ctrl.hasDynamicParams(step);
+            const hasDynamicParams = ctrl.hasDynamicParams(step);
 
             //then
             expect(hasDynamicParams).toBeFalsy();
@@ -278,15 +278,15 @@ describe('Recipe controller',() => {
 
         it('should return that step has static parameters when it has simple params', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {
                     parameters: [{}],
                 },
             };
 
             //when
-            const  hasStaticParams = ctrl.hasStaticParams(step);
+            const hasStaticParams = ctrl.hasStaticParams(step);
 
             //then
             expect(hasStaticParams).toBeTruthy();
@@ -294,15 +294,15 @@ describe('Recipe controller',() => {
 
         it('should return that step has static parameters when it has choice params', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {
                     items: [{}],
                 },
             };
 
             //when
-            const  hasStaticParams = ctrl.hasStaticParams(step);
+            const hasStaticParams = ctrl.hasStaticParams(step);
 
             //then
             expect(hasStaticParams).toBeTruthy();
@@ -310,13 +310,13 @@ describe('Recipe controller',() => {
 
         it('should return that step has NO static parameters', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {},
             };
 
             //when
-            const  hasStaticParams = ctrl.hasStaticParams(step);
+            const hasStaticParams = ctrl.hasStaticParams(step);
 
             //then
             expect(hasStaticParams).toBeFalsy();
@@ -324,15 +324,15 @@ describe('Recipe controller',() => {
 
         it('should return that step has parameters when it has static params', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {
                     parameters: [{}],
                 },
             };
 
             //when
-            const  hasParams = ctrl.hasParameters(step);
+            const hasParams = ctrl.hasParameters(step);
 
             //then
             expect(hasParams).toBeTruthy();
@@ -340,8 +340,8 @@ describe('Recipe controller',() => {
 
         it('should return that step has parameters when it has dybamic params', () => {
             //given
-            const  ctrl = createController();
-            const  step = {
+            const ctrl = createController();
+            const step = {
                 transformation: {
                     cluster: [],
                 },
@@ -370,7 +370,7 @@ describe('Recipe controller',() => {
     });
 
     describe('remove step', () => {
-        const  step = {
+        const step = {
             transformation: { label: 'Replace empty value ...', name: 'lookup', stepId: '0001' },
             actionParameters: { parameters: { column_name: 'firstname' } },
         };
@@ -466,11 +466,11 @@ describe('Recipe controller',() => {
             transformation: { label: 'Replace empty value ...', name: 'lookup', stepId: '0001' },
             actionParameters: { parameters: { column_name: 'firstname' } },
         };
-        const  notLookupStep = {
+        const notLookupStep = {
             transformation: { label: 'Change case to UPPER ...', name: 'uppercase', stepId: '0002' },
             actionParameters: { parameters: { column_name: 'firstname' } },
         };
-        const  clusterStep = {
+        const clusterStep = {
             transformation: { label: 'Cluster ...', name: 'cluster', stepId: '0003', cluster: {} },
             actionParameters: { parameters: { column_name: 'firstname' } },
         };
@@ -496,7 +496,7 @@ describe('Recipe controller',() => {
 
         it('should open lookup in update mode', inject((LookupService, StateService) => {
             //given
-            const  ctrl = createController();
+            const ctrl = createController();
             stateMock.playground.lookup.visibility = false;
 
             //when
@@ -510,7 +510,7 @@ describe('Recipe controller',() => {
 
         it('should do nothing on lookup when the selected step is not a lookup', inject((LookupService, StateService) => {
             //given
-            const  ctrl = createController();
+            const ctrl = createController();
 
             //when
             ctrl.select(notLookupStep);
@@ -523,7 +523,7 @@ describe('Recipe controller',() => {
 
         it('should show dynamic params modal',() => {
             //given
-            const  ctrl = createController();
+            const ctrl = createController();
             ctrl.showModal[clusterStep.transformation.stepId] = false;
 
             //when
@@ -593,7 +593,7 @@ describe('Recipe controller',() => {
     });
 
     describe('remove step filter', () => {
-        const  filter1 = {
+        const filter1 = {
             type: 'exact',
             colId: '0000',
             colName: 'name',
@@ -603,15 +603,15 @@ describe('Recipe controller',() => {
             },
             value: '        AMC  ',
         };
-        const  filter2 = {
+        const filter2 = {
             type: 'contains',
             colId: '0002',
             args: {
                 phrase: ['toto'],
             },
         };
-        let  stepDeleteLinesWithSingleFilter;
-        let  stepWithMultipleFilters;
+        let stepDeleteLinesWithSingleFilter;
+        let stepWithMultipleFilters;
 
         beforeEach(inject((FilterAdapterService) => {
             spyOn(FilterAdapterService, 'toTree').and.returnValue({
@@ -640,7 +640,7 @@ describe('Recipe controller',() => {
         it('should remove step filter', inject(($q, PlaygroundService) => {
             //given
             spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
-            const  ctrl = createController();
+            const ctrl = createController();
 
             //when
             ctrl.removeStepFilter(stepWithMultipleFilters, filter1);
@@ -657,7 +657,7 @@ describe('Recipe controller',() => {
             //given
             spyOn(MessageService, 'warning').and.returnValue();
             spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
-            const  ctrl = createController();
+            const ctrl = createController();
 
             //when
             ctrl.removeStepFilter(stepDeleteLinesWithSingleFilter, filter1);
@@ -671,7 +671,7 @@ describe('Recipe controller',() => {
     });
 
     describe('filters', () => {
-        const  filters = [
+        const filters = [
             {
                 type: 'exact',
                 colId: '0000',
@@ -695,7 +695,7 @@ describe('Recipe controller',() => {
 
         it('should display all filter name on hover', inject(() => {
             //given
-            const  ctrl = createController();
+            const ctrl = createController();
             //then
             expect(ctrl.getAllFiltersNames(filters)).toBe('(NAME, ID)');
         }));

@@ -115,8 +115,6 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
                         }, 500, false);
                     });
             }
-
-
         };
     };
 

@@ -30,10 +30,11 @@ const CLUSTER_TYPE = 'CLUSTER';
  */
 export default class RecipeCtrl {
 
-    constructor($timeout,FilterAdapterService, LookupService, MessageService, ParametersService,
+    constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
                 PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
         'ngInject';
 
+        this.$timeout = $timeout;
         this.FilterAdapterService = FilterAdapterService;
         this.LookupService = LookupService;
         this.MessageService = MessageService;
@@ -267,7 +268,7 @@ export default class RecipeCtrl {
                 this.updateStepInProgress = true;
                 this.updateStep(step, newParams)
                     .finally(() => {
-                        $timeout(() => {
+                        this.$timeout(() => {
                             this.updateStepInProgress = false;
                         }, 500, false);
                     });

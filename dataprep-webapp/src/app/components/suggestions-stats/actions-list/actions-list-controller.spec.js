@@ -48,7 +48,7 @@ describe('Actions list controller', () => {
     describe('init', () => {
         it('should init const s and flags', inject(() => {
             //when
-            const  ctrl = createController();
+            const ctrl = createController();
 
             //then
             expect(ctrl.dynamicTransformation).toBe(null);
@@ -61,8 +61,8 @@ describe('Actions list controller', () => {
     describe('early preview', () => {
         it('should trigger early preview with current scope', inject((EarlyPreviewService) => {
             //given
-            const  transformation = { name: 'delete' };
-            const  ctrl = createController();
+            const transformation = { name: 'delete' };
+            const ctrl = createController();
             ctrl.scope = 'column';
 
             //when
@@ -76,13 +76,13 @@ describe('Actions list controller', () => {
     describe('transform', () => {
         it('should call appendStep function on transform closure execution', inject((PlaygroundService) => {
             //given
-            const  transformation = { name: 'tolowercase' };
-            const  params = { param: 'value' };
-            const  ctrl = createController();
+            const transformation = { name: 'tolowercase' };
+            const params = { param: 'value' };
+            const ctrl = createController();
             ctrl.scope = 'column';
 
             //when
-            const  closure = ctrl.transform(transformation);
+            const closure = ctrl.transform(transformation);
             closure(params);
 
             //then
@@ -91,14 +91,14 @@ describe('Actions list controller', () => {
 
         it('should hide modal after step append', () => {
             //given
-            const  transformation = { name: 'tolowercase' };
-            const  params = { param: 'value' };
-            const  ctrl = createController();
+            const transformation = { name: 'tolowercase' };
+            const params = { param: 'value' };
+            const ctrl = createController();
             ctrl.scope = 'column';
             ctrl.showDynamicModal = true;
 
             //when
-            const  closure = ctrl.transform(transformation);
+            const closure = ctrl.transform(transformation);
             closure(params);
             scope.$digest();
 
@@ -108,8 +108,8 @@ describe('Actions list controller', () => {
 
         it('should append new step on static transformation selection', inject((PlaygroundService) => {
             //given
-            const  transformation = { name: 'tolowercase' };
-            const  ctrl = createController();
+            const transformation = { name: 'tolowercase' };
+            const ctrl = createController();
             ctrl.scope = 'column';
 
             //when
@@ -121,14 +121,14 @@ describe('Actions list controller', () => {
 
         it('should cancel pending preview and disable it', inject((EarlyPreviewService) => {
             //given
-            const  transformation = { name: 'tolowercase' };
-            const  params = { param: 'value' };
-            const  ctrl = createController();
+            const transformation = { name: 'tolowercase' };
+            const params = { param: 'value' };
+            const ctrl = createController();
             ctrl.scope = 'column';
             ctrl.showDynamicModal = true;
 
             //when
-            const  closure = ctrl.transform(transformation);
+            const closure = ctrl.transform(transformation);
             closure(params);
 
             //then
@@ -138,14 +138,14 @@ describe('Actions list controller', () => {
 
         it('should re-enable early preview after 500ms', inject( ($timeout, EarlyPreviewService) => {
             //given
-            const  transformation = { name: 'tolowercase' };
-            const  params = { param: 'value' };
-            const  ctrl = createController();
+            const transformation = { name: 'tolowercase' };
+            const params = { param: 'value' };
+            const ctrl = createController();
             ctrl.scope = 'column';
             ctrl.showDynamicModal = true;
 
             //when
-            const  closure = ctrl.transform(transformation);
+            const closure = ctrl.transform(transformation);
             closure(params);
             scope.$digest();
 
@@ -157,14 +157,14 @@ describe('Actions list controller', () => {
         }));
         it('should update transformationInProgress', inject(($timeout) => {
             //given
-            const  transformation = { name: 'tolowercase' };
-            const  params = { param: 'value' };
-            const  ctrl = createController();
+            const transformation = { name: 'tolowercase' };
+            const params = { param: 'value' };
+            const ctrl = createController();
             ctrl.scope = 'column';
             ctrl.showDynamicModal = true;
 
             //when
-            const  closure = ctrl.transform(transformation);
+            const closure = ctrl.transform(transformation);
             closure(params);
             scope.$digest();
 
@@ -185,8 +185,8 @@ describe('Actions list controller', () => {
             //given
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
 
-            const  transformation = { name: 'cluster', dynamic: true };
-            const  ctrl = createController();
+            const transformation = { name: 'cluster', dynamic: true };
+            const ctrl = createController();
             ctrl.dynamicTransformation = null;
 
             //when
@@ -201,9 +201,9 @@ describe('Actions list controller', () => {
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
             stateMock.playground.preparation = null;
 
-            const  transformation = { name: 'cluster', dynamic: true };
+            const transformation = { name: 'cluster', dynamic: true };
 
-            const  ctrl = createController();
+            const ctrl = createController();
 
             //when
             ctrl.select(transformation);
@@ -221,8 +221,8 @@ describe('Actions list controller', () => {
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
             stateMock.playground.preparation = { id: '35da66fc454568f4a52' };
 
-            const  transformation = { name: 'cluster', dynamic: true };
-            const  ctrl = createController();
+            const transformation = { name: 'cluster', dynamic: true };
+            const ctrl = createController();
 
             //when
             ctrl.select(transformation);
@@ -238,9 +238,9 @@ describe('Actions list controller', () => {
         it('should update fetch progress flag during dynamic parameters init', inject(($rootScope) => {
             //given
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
-            const  transformation = { name: 'cluster', dynamic: true };
+            const transformation = { name: 'cluster', dynamic: true };
 
-            const  ctrl = createController();
+            const ctrl = createController();
             ctrl.dynamicFetchInProgress = false;
 
             //when
@@ -255,8 +255,8 @@ describe('Actions list controller', () => {
         it('should show NO CLUSTERS WERE FOUND message', inject(($rootScope) => {
             //given
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
-            const  dynamicTransformation = { name: 'cluster', dynamic: true, cluster: { clusters: [] } };
-            const  ctrl = createController();
+            const dynamicTransformation = { name: 'cluster', dynamic: true, cluster: { clusters: [] } };
+            const ctrl = createController();
 
             //when
             ctrl.select(dynamicTransformation);
@@ -270,8 +270,8 @@ describe('Actions list controller', () => {
         it('should show NO PARAMETERS WERE FOUND message', inject(($rootScope) => {
             //given
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
-            const  dynamicTransformation = { name: 'choices', dynamic: true, parameters: [] };
-            const  ctrl = createController();
+            const dynamicTransformation = { name: 'choices', dynamic: true, parameters: [] };
+            const ctrl = createController();
 
             //when
             ctrl.select(dynamicTransformation);
@@ -285,12 +285,12 @@ describe('Actions list controller', () => {
         it('should show dynamic cluster transformation in a modal', inject(($rootScope) => {
             //given
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
-            const  dynamicTransformation = {
+            const dynamicTransformation = {
                 name: 'cluster',
                 dynamic: true,
                 cluster: { clusters: [{ parameters: [], replace: {} }] },
             };
-            const  ctrl = createController();
+            const ctrl = createController();
 
             //when
             ctrl.select(dynamicTransformation);
@@ -303,8 +303,8 @@ describe('Actions list controller', () => {
         it('should show dynamic parameters in a modal', inject(($rootScope) => {
             //given
             stateMock.playground.dataset = { id: '41fa397a8239cd051b35' };
-            const  ctrl = createController();
-            const  dynamicTransformation = { name: 'items', dynamic: true, parameters: [{}] };
+            const ctrl = createController();
+            const dynamicTransformation = { name: 'items', dynamic: true, parameters: [{}] };
 
             //when
             ctrl.select(dynamicTransformation);

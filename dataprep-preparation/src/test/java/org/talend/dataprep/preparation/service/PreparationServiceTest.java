@@ -37,6 +37,7 @@ import org.springframework.http.HttpStatus;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.lock.store.LockedResource;
 import org.talend.dataprep.preparation.BasePreparationTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -1370,6 +1371,233 @@ public class PreparationServiceTest extends BasePreparationTest {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------STEPS REORDERING-------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+
+    @Test
+    public void shouldReturnANotFoundForNonExistingPreparation(){
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", rootStep.getId())
+        .when()
+            .post("/preparations/{id}/steps/{stepId}/order", "DoesNotExist", rootStep)//
+        .then()//
+            .statusCode(404);
+        // @formatter:on
+
+        final String preparationId = createPreparation("1234", "My preparation");
+
+    }
+
+    @Test
+    public void shouldReturnANotFoundForNonExistingStep(){
+        final String preparationId = createPreparation("1234", "My preparation");
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", rootStep.getId())
+        .when()
+            .post("/preparations/{id}/steps/{stepId}/order", preparationId, "DoesNotexist")//
+        .then()//
+            .statusCode(404);
+        // @formatter:on
+
+
+
+    }
+
+    @Test
+    public void shouldMoveAStepToFirstPositionIfLegal() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "My preparation");
+        applyTransformation(preparationId, "actions/append_upper_case.json");
+        final String copyStepId = applyTransformation(preparationId, "actions/append_copy_lastname.json");
+        applyTransformation(preparationId, "actions/append_rename_copy_lastname.json");
+        final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
+
+        Step head = repository.get(headStepId, Step.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", rootStep.getId())
+        .when().post("/preparations/{id}/steps/{stepId}/order", preparationId, copyStepId)//
+            .then()//
+            .statusCode(200);
+        // @formatter:on
+        // then
+        final Preparation preparation = repository.get(preparationId, Preparation.class);
+        final String newHeadStepId = preparation.getHeadId();
+
+        head = repository.get(newHeadStepId, Step.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+        assertThat(headActions.getActions().get(0).getName(), is("copy"));
+        assertThat(headActions.getActions().get(1).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+    }
+
+    @Test
+    public void shouldMoveAStepToLastPositionIfLegal() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "My preparation");
+        final String upperCaseStepId = applyTransformation(preparationId, "actions/append_upper_case.json");
+        applyTransformation(preparationId, "actions/append_copy_lastname.json");
+        applyTransformation(preparationId, "actions/append_rename_copy_lastname.json");
+        final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
+
+        Step head = repository.get(headStepId, Step.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+
+        // when : delete second step in single mode
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", headStepId)
+        .when()
+            .post("/preparations/{id}/steps/{stepId}/order", preparationId, upperCaseStepId)//
+        .then()//
+            .statusCode(200);
+        // @formatter:on
+        // then
+        final Preparation preparation = repository.get(preparationId, Preparation.class);
+        final String newHeadStepId = preparation.getHeadId();
+
+        head = repository.get(newHeadStepId, Step.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+
+        assertThat(headActions.getActions().get(0).getName(), is("copy"));
+        assertThat(headActions.getActions().get(1).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(2).getName(), is("lowercase"));
+        assertThat(headActions.getActions().get(3).getName(), is("uppercase"));
+    }
+
+
+    @Test
+    public void shouldMoveAStepToNonBoundaryPositionIfLegal() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "My preparation");
+        final String upperCaseStepId = applyTransformation(preparationId, "actions/append_upper_case.json");
+        final String copyStepId = applyTransformation(preparationId, "actions/append_copy_lastname.json");
+        applyTransformation(preparationId, "actions/append_rename_copy_lastname.json");
+        final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
+
+        Step head = repository.get(headStepId, Step.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+
+        // when : delete second step in single mode
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", copyStepId)
+        .when()
+            .post("/preparations/{id}/steps/{stepId}/order", preparationId, upperCaseStepId)//
+        .then()//
+            .statusCode(200);
+        // @formatter:on
+        // then
+        final Preparation preparation = repository.get(preparationId, Preparation.class);
+        final String newHeadStepId = preparation.getHeadId();
+
+        head = repository.get(newHeadStepId, Step.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+
+        assertThat(headActions.getActions().get(0).getName(), is("copy"));
+        assertThat(headActions.getActions().get(1).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+    }
+
+    @Test
+    public void shouldNotMoveAStepIfItUseANotYetCreatedColumn() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "My preparation");
+        final String upperCaseStepId = applyTransformation(preparationId, "actions/append_upper_case.json");
+        applyTransformation(preparationId, "actions/append_copy_lastname.json");
+        final String renameCopyStepId =applyTransformation(preparationId, "actions/append_rename_copy_lastname.json");
+        final String headStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
+
+        Step head = repository.get(headStepId, Step.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+
+        // when : delete second step in single mode
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", upperCaseStepId)
+        .when()
+            .post("/preparations/{id}/steps/{stepId}/order", preparationId, renameCopyStepId)//
+        .then()//
+            .statusCode(403);
+        // @formatter:on
+        // then
+        head = repository.get(headStepId, Step.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("lowercase"));
+    }
+
+    @Test
+    public void shouldNotMoveAStepIfItUsesADeletedColumn() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "My preparation");
+        final String upperCaseStepId = applyTransformation(preparationId, "actions/append_upper_case.json");
+        applyTransformation(preparationId, "actions/append_copy_lastname.json");
+        final String renameCopyStepId =applyTransformation(preparationId, "actions/append_rename_copy_lastname.json");
+        final String headStepId = applyTransformation(preparationId, "actions/append_delete_case.json");
+
+        Step head = repository.get(headStepId, Step.class);
+        PreparationActions headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("delete_column"));
+
+        // when : delete second step in single mode
+        // @formatter:off
+        given()
+            .queryParam("parentStepId", upperCaseStepId)
+        .when()
+            .post("/preparations/{id}/steps/{stepId}/order", preparationId, renameCopyStepId)//
+        .then()//
+            .statusCode(403);
+        // @formatter:on
+        // then
+        head = repository.get(headStepId, Step.class);
+        headActions = repository.get(head.getContent(), PreparationActions.class);
+        assertThat(headActions.getActions(), hasSize(4));
+
+        assertThat(headActions.getActions().get(0).getName(), is("uppercase"));
+        assertThat(headActions.getActions().get(1).getName(), is("copy"));
+        assertThat(headActions.getActions().get(2).getName(), is("rename_column"));
+        assertThat(headActions.getActions().get(3).getName(), is("delete_column"));
+    }
+        // -----------------------------------------------------------------------------------------------------------------
     // ----------------------------------------------------CHECKS-------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
     @Test
@@ -1434,6 +1662,8 @@ public class PreparationServiceTest extends BasePreparationTest {
         assertThat(response.getStatusCode(), is(204));
     }
 
+
+
     // -----------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------UTILS-------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
@@ -1462,6 +1692,7 @@ public class PreparationServiceTest extends BasePreparationTest {
      * @return The created step id
      */
     private String applyTransformation(final String preparationId, final String transformationFilePath) throws IOException {
+
         given().body(IOUtils.toString(PreparationServiceTest.class.getResourceAsStream(transformationFilePath)))//
                 .contentType(ContentType.JSON)//
                 .when()//

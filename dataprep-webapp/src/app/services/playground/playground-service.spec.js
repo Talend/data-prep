@@ -951,7 +951,7 @@ describe('Playground Service', () => {
             const nextPosition = 1;
             const nextParentId = 'STEP_ID_1';
 
-            beforeEach(() => {
+            beforeEach(inject((StepUtilsService) => {
                 stateMock.playground.preparation = { id: preparationId };
                 stateMock.playground.recipe.current.steps = [
                     {
@@ -979,7 +979,11 @@ describe('Playground Service', () => {
                         },
                     },
                 ];
-            });
+
+                spyOn(StepUtilsService, 'getStep').and.callFake((stepId) => {
+                    return stateMock.playground.recipe.current.steps[stepId] || stateMock.playground.recipe.initialStep;
+                });
+            }));
 
             it('should reorder preparation step to top', inject(($rootScope, PlaygroundService, PreparationService) => {
                 // when

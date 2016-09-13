@@ -463,33 +463,35 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @description Update step order
      */
     function updateStepOrder(previousPosition, nextPosition) {
-        /* jshint camelcase: false */
         $rootScope.$emit(EVENT_LOADING_START);
 
         const recipe = state.playground.recipe;
         const preparationId = state.playground.preparation.id;
-        const steps = recipe.current.steps;
 
         // save the head before transformation for undo
         const previousHead = StepUtilsService.getLastStep(recipe).transformation.stepId;
 
         const initialStep = recipe.initialStep;
-        const currentStep = steps[previousPosition];
+        const currentStep = StepUtilsService.getStep(previousPosition);
         const stepId = currentStep.transformation.stepId;
 
         let parentStep;
+        // Step list has not yet change in fact so
+        // if we want to move step up the next parent is the step at the next position - 1
         if (previousPosition > nextPosition) {
             const parentStepIndex = nextPosition - 1;
-            parentStep = steps[parentStepIndex];
+            parentStep = StepUtilsService.getStep(parentStepIndex);
         }
+        // if we want to move step down the next parent is the step at the next position
         else {
-            parentStep = steps[nextPosition];
+            parentStep = StepUtilsService.getStep(nextPosition);
         }
 
         let nextParentId;
         if (parentStep) {
             nextParentId = parentStep.transformation.stepId;
         }
+        // if we want to move step up step at first position then the next parent id is root step
         else {
             nextParentId = initialStep.transformation.stepId;
         }
@@ -501,7 +503,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             })
             // add entry in history for undo/redo
             .then(() => {
-                const actualHead = StepUtilsService.getLastStep(state.playground.recipe).transformation.stepId;
+                const actualHead = StepUtilsService.getLastStep(recipe).transformation.stepId;
                 const undo = setPreparationHead.bind(service, preparationId, previousHead, currentStep.actionParameters.parameters.column_id);
                 const redo = setPreparationHead.bind(service, preparationId, actualHead);
                 HistoryService.addAction(undo, redo);

@@ -980,7 +980,7 @@ describe('Playground Service', () => {
                     },
                 ];
 
-                spyOn(StepUtilsService, 'getStep').and.callFake((recipe, stepId) => {
+                spyOn(StepUtilsService, 'getStep').and.callFake((stepId) => {
                     return stateMock.playground.recipe.current.steps[stepId] || stateMock.playground.recipe.initialStep;
                 });
             }));

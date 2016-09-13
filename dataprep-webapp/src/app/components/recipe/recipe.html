@@ -13,12 +13,15 @@
   ~ ============================================================================
   -->
 
-<div class="recipe">
+<div class="recipe"
+     ng-model="$ctrl.state.playground.recipe.current.steps"
+     as-sortable="$ctrl.dragControlListeners">
     <sc-accordion>
-        <li ng-repeat="step in $ctrl.state.playground.recipe.current.steps track by step.transformation.stepId">
+        <li ng-repeat="step in $ctrl.state.playground.recipe.current.steps track by step.transformation.stepId"
+            as-sortable-item>
             <div class="step-container"
-                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}">
-
+                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}"
+                 as-sortable-item-handle>
 
                 <sc-accordion-item id="step-{{step.transformation.stepId}}"
                                    class="recipe-step"

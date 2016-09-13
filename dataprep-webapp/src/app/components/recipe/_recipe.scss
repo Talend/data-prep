@@ -14,6 +14,10 @@
 $recipe-step-disabled-color: #9591a0 !default;
 $recipe-step-disabled-background-color: #c5c5c5 !default;
 
+$recipe-step-background-color: $white !default;
+
+$recipe-step-draggable-background-color: #F1F1F1 !default;
+
 .recipe {
   display: block;
   font-size: 0.95em;
@@ -142,6 +146,17 @@ $recipe-step-disabled-background-color: #c5c5c5 !default;
       .list-item-handler {
         @include justify-content(flex-start);
       }
+    }
+  }
+
+  .as-sortable {
+
+    &-dragging {
+      background-color: $recipe-step-background-color;
+    }
+
+    &-placeholder {
+      background-color: $recipe-step-draggable-background-color;
     }
   }
 }

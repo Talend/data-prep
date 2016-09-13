@@ -52,6 +52,15 @@ export default class RecipeCtrl {
 
         // Flag that indicates if a step update is in progress
         this.updateStepInProgress = false;
+
+        // Help to hide lines between step bullets while dragging
+        this.isDragStart = false;
+        this.dragControlListeners = {
+            containment: '.recipe',
+            dragStart: this.dragStart.bind(this),
+            dragEnd: this.dragEnd.bind(this),
+            orderChanged: this.orderChanged.bind(this),
+        };
     }
 
     /**
@@ -283,6 +292,46 @@ export default class RecipeCtrl {
         const previousPosition = stepPosition;
         const nextPosition = stepPosition + 1;
         this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+    }
+
+    /**
+     * @ngdoc method
+     * @name dragStart
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @description Callback on drag start
+     */
+    dragStart() {
+        this.isDragStart = true;
+    }
+
+    /**
+     * @ngdoc method
+     * @name dragEnd
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @description Callback on drag end
+     */
+    dragEnd() {
+        this.isDragStart = false;
+    }
+
+    /**
+     * @ngdoc method
+     * @name orderChanged
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} event Data embedded into drag and drop event
+     * @description Callback when step order is changed within the step list
+     */
+    orderChanged(event) {
+        const { source, dest } = event;
+        const previousPosition = source.index;
+        const nextPosition = dest.index;
+        this.PlaygroundService
+            .updateStepOrder(previousPosition, nextPosition, true)
+            .catch(() => {
+                // Must manually reset order if reorder request fails
+                dest.sortableScope.removeItem(dest.index);
+                source.itemScope.sortableScope.insertItem(source.index, source.itemScope.step);
+            });
     }
 
     //---------------------------------------------------------------------------------------------

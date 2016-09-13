@@ -32,6 +32,7 @@ export default function PreparationRestService($http, RestURLs) {
         // step
         appendStep,
         updateStep,
+        moveStep,
         removeStep,
         setHead,
         copySteps,
@@ -230,6 +231,28 @@ export default function PreparationRestService($http, RestURLs) {
             url: `${RestURLs.preparationUrl}/${preparationId}/actions/${stepId}`,
             headers: { 'Content-Type': 'application/json' },
             data: { actions: [actionParams] },
+        };
+
+        return $http(request);
+    }
+
+    /**
+     * @ngdoc method
+     * @name moveStep
+     * @methodOf data-prep.services.preparation.service:PreparationRestService
+     * @param {string} preparationId The preaparation id to update
+     * @param {string} stepId The step to update
+     * @param {string} nextParentId The next parent step Id, or at least, the initial step
+     * @description Move step and change its order in a recipe
+     * @returns {promise} The POST promise
+     */
+    function moveStep(preparationId, stepId, nextParentId) {
+        const request = {
+            method: 'POST',
+            url: `${RestURLs.preparationUrl}/${preparationId}/steps/${stepId}/order`,
+            headers: { 'Content-Type': 'application/json' },
+            data: {}, // Needed to set header Content-Type since $http actually used to send data while using POST
+            params: { parentStepId: nextParentId },
         };
 
         return $http(request);

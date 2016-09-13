@@ -15,9 +15,10 @@ $recipe-step-disabled-color: #9591a0 !default;
 $recipe-step-disabled-background-color: #c5c5c5 !default;
 
 .recipe {
-  font-size: 0.95em;
   display: block;
+  font-size: 0.95em;
   padding-right: 10px;
+  padding-bottom: 10px;
 
   .step-container {
     @include display(flex);
@@ -42,23 +43,42 @@ $recipe-step-disabled-background-color: #c5c5c5 !default;
       }
     }
 
+    .reorder-handler + step-description {
+      @include transition(margin-left .1s linear);
+      margin-left: -20px;
+    }
+
+    .reorder-handler,
+    .remove-icon {
+      @include transition(opacity .1s linear);
+      opacity: 0;
+    }
+
+    &:hover {
+      .reorder-handler + step-description {
+        margin-left: 0;
+      }
+
+      .reorder-handler,
+      .remove-icon {
+        opacity: 1;
+      }
+    }
+
     .remove-icon {
       @include flex-shrink(0);
-      visibility: hidden;
       margin: 5px;
       cursor: pointer;
       color: $medium-gray;
       font-size: 0.5em;
     }
 
-    &:hover .remove-icon {
-      visibility: visible;
-    }
-
     .recipe-step {
       @include flex-grow(1);
 
       .step-description {
+        @include display(flex);
+        @include flex-direction(row);
         font-size: .85em;
 
         .filter-icon {
@@ -99,6 +119,29 @@ $recipe-step-disabled-background-color: #c5c5c5 !default;
 
     > content {
       padding: 10px;
+    }
+  }
+
+  .reorder-handler {
+    margin: 0 5px;
+
+    .list-item-handler {
+      margin: 0 5px 0 -5px;
+    }
+  }
+
+  sc-accordion > ul > li {
+
+    &:first-child {
+      .list-item-handler {
+        @include justify-content(flex-end);
+      }
+    }
+
+    &:last-child {
+      .list-item-handler {
+        @include justify-content(flex-start);
+      }
     }
   }
 }

@@ -252,6 +252,40 @@ export default class RecipeCtrl {
     }
 
     //---------------------------------------------------------------------------------------------
+    // --------------------------------------------REORDER----------------------------------------
+    //---------------------------------------------------------------------------------------------
+
+    /**
+     * @ngdoc method
+     * @name moveUp
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {number} stepPosition Current position of step to move up
+     * @param {object} $event The click event
+     * @description Move step up in recipe
+     */
+    moveUp(stepPosition, $event) {
+        $event.stopPropagation();
+        const previousPosition = stepPosition;
+        const nextPosition = stepPosition - 1;
+        this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+    }
+
+    /**
+     * @ngdoc method
+     * @name moveDown
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {number} stepPosition Current position of step to move down
+     * @param {object} $event The click event
+     * @description Move step down in recipe
+     */
+    moveDown(stepPosition, $event) {
+        $event.stopPropagation();
+        const previousPosition = stepPosition;
+        const nextPosition = stepPosition + 1;
+        this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+    }
+
+    //---------------------------------------------------------------------------------------------
     // ------------------------------------------UPDATE STEP----------------------------------------
     //---------------------------------------------------------------------------------------------
     /**

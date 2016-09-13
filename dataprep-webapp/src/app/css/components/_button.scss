@@ -49,3 +49,20 @@
   background: $button-secondary !important;
   color: $button-secondary-text !important;
 }
+
+.btn-link {
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    border: 0;
+    background: transparent;
+    outline: none;
+  }
+}

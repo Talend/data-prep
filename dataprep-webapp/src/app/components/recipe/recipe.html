@@ -13,16 +13,27 @@
   ~ ============================================================================
   -->
 
-<sc-accordion class="recipe">
-    <li ng-repeat="step in $ctrl.state.playground.recipe.current.steps track by step.transformation.stepId">
-        <div class="step-container" ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}">
-            <sc-accordion-item id="step-{{step.transformation.stepId}}"
-                               class="recipe-step"
-                               on-open="$ctrl.resetParams(step)"
-                               default="$index === ($ctrl.state.playground.recipe.current.steps.length - 1)">
+<div class="recipe">
+    <sc-accordion>
+        <li ng-repeat="step in $ctrl.state.playground.recipe.current.steps track by step.transformation.stepId">
+            <div class="step-container"
+                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}">
 
-                <trigger class="step-description"
-                         ng-click="$ctrl.select(step)">
+
+                <sc-accordion-item id="step-{{step.transformation.stepId}}"
+                                   class="recipe-step"
+                                   on-open="$ctrl.resetParams(step)"
+                                   default="$index === ($ctrl.state.playground.recipe.current.steps.length - 1)">
+
+                    <trigger class="step-description"
+                             ng-click="$ctrl.select(step)">
+                        <list-item-handler class="reorder-handler"
+                                           ng-if="!($first && $last)"
+                                           show-top-button="!$first"
+                                           show-bottom-button="!$last"
+                                           on-top-click="$ctrl.moveUp($index, ev)"
+                                           on-bottom-click="$ctrl.moveDown($index, ev)">
+                        </list-item-handler>
 
                         <step-description index="$index" step="step"></step-description>
 
@@ -30,56 +41,58 @@
                               data-icon="q" ng-if="step.filters.length"
                               title="{{'FILTERS_APPLIED' | translate}} {{$ctrl.getAllFiltersNames(step.filters)}}">
                         </span>
-                </trigger>
-                <content ng-if="$ctrl.hasParameters(step) || step.filters.length" class="step-details">
-                    <div class="step-filters-list" ng-if="step.filters.length">
-                        <filter-list class="list"
-                                     filters="step.filters"
-                                     on-filter-change="$ctrl.updateStepFilter(step, filter, value)"
-                                     on-filter-remove="$ctrl.removeStepFilter(step, filter)"
-                                     enabled="true"></filter-list>
+                    </trigger>
 
-                    </div>
-                    <div class="step-parameters-list" ng-if="step.transformation.name !== 'lookup'">
-                        <transform-form ng-if="$ctrl.hasStaticParams(step)"
-                                        transformation="step.transformation"
-                                        on-submit="$ctrl.stepUpdateClosure(step)(params)"
-                                        on-submit-hover-on="$ctrl.previewUpdateClosure(step)(params)"
-                                        on-submit-hover-off="$ctrl.cancelPreview()"
-                                        is-transformation-in-progress="recipeCtrl.updateStepInProgress"></transform-form>
+                    <content ng-if="$ctrl.hasParameters(step) || step.filters.length" class="step-details">
+                        <div class="step-filters-list" ng-if="step.filters.length">
+                            <filter-list class="list"
+                                         filters="step.filters"
+                                         on-filter-change="$ctrl.updateStepFilter(step, filter, value)"
+                                         on-filter-remove="$ctrl.removeStepFilter(step, filter)"
+                                         enabled="true"></filter-list>
 
-                        <talend-modal ng-if="$ctrl.hasDynamicParams(step)"
-                                      fullscreen="false"
-                                      state="$ctrl.showModal[step.transformation.stepId]"
-                                      close-button="true">
-                            <div class="modal-title">{{ ::step.transformation.label }}</div>
-                            <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
-
-                            <transform-form transformation="step.transformation"
+                        </div>
+                        <div class="step-parameters-list" ng-if="step.transformation.name !== 'lookup'">
+                            <transform-form ng-if="$ctrl.hasStaticParams(step)"
+                                            transformation="step.transformation"
                                             on-submit="$ctrl.stepUpdateClosure(step)(params)"
+                                            on-submit-hover-on="$ctrl.previewUpdateClosure(step)(params)"
+                                            on-submit-hover-off="$ctrl.cancelPreview()"
                                             is-transformation-in-progress="recipeCtrl.updateStepInProgress"></transform-form>
-                        </talend-modal>
-                    </div>
-                </content>
-            </sc-accordion-item>
-            <recipe-knot class="step-trigger"
-                         inactive="step.inactive"
-                         on-hover-start="$ctrl.stepHoverStart(step)"
-                         on-hover-end="$ctrl.stepHoverEnd(step)"
-                         show-bottom-line="$ctrl.showBottomLine(step)"
-                         show-top-line="$ctrl.showTopLine(step)"
-                         to-be-switched="$ctrl.toBeSwitched(step)"
-                         toggle-step="$ctrl.toggleStep(step)"></recipe-knot>
-            <div class="remove-icon"
-                 role="button"
-                 aria-labelledby="{{ 'REMOVE_STEP' | translate }}">
-                <i data-icon="e"
-                     id="step-remove-{{step.transformation.stepId}}"
-                     ng-click="$ctrl.remove(step, $event)"
-                     ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
-                     ng-mouseleave="$ctrl.resetStepToBeDeleted()"
-                ></i>
+
+                            <talend-modal ng-if="$ctrl.hasDynamicParams(step)"
+                                          fullscreen="false"
+                                          state="$ctrl.showModal[step.transformation.stepId]"
+                                          close-button="true">
+                                <div class="modal-title">{{ ::step.transformation.label }}</div>
+                                <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
+
+                                <transform-form transformation="step.transformation"
+                                                on-submit="$ctrl.stepUpdateClosure(step)(params)"
+                                                is-transformation-in-progress="recipeCtrl.updateStepInProgress"></transform-form>
+                            </talend-modal>
+                        </div>
+                    </content>
+                </sc-accordion-item>
+                <recipe-knot class="step-trigger"
+                             inactive="step.inactive"
+                             on-hover-start="$ctrl.stepHoverStart(step)"
+                             on-hover-end="$ctrl.stepHoverEnd(step)"
+                             show-bottom-line="!$ctrl.isDragStart && $ctrl.showBottomLine(step)"
+                             show-top-line="!$ctrl.isDragStart && $ctrl.showTopLine(step)"
+                             to-be-switched="$ctrl.toBeSwitched(step)"
+                             toggle-step="$ctrl.toggleStep(step)"></recipe-knot>
+                <div class="remove-icon"
+                     role="button"
+                     aria-labelledby="{{ 'REMOVE_STEP' | translate }}">
+                    <i data-icon="e"
+                       id="step-remove-{{step.transformation.stepId}}"
+                       ng-click="$ctrl.remove(step, $event)"
+                       ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
+                       ng-mouseleave="$ctrl.resetStepToBeDeleted()"
+                    ></i>
+                </div>
             </div>
-        </div>
-    </li>
-</sc-accordion>
+        </li>
+    </sc-accordion>
+</div>

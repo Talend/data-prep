@@ -1,0 +1,33 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<div class="list-item-handler">
+    <button type="button"
+            class="btn btn-link top"
+            translate-once-title="MOVE_UP"
+            aria-label="{{ 'MOVE_UP' | translate }}"
+            ng-if="$ctrl.showTopButton"
+            ng-click="$ctrl.onTopClick({ev: $event})">
+        <span class="sr-only" translate-once="MOVE_UP"></span>
+    </button>
+    <button type="button"
+            class="btn btn-link bottom"
+            translate-once-title="MOVE_DOWN"
+            aria-label="{{ 'MOVE_DOWN' | translate }}"
+            ng-if="$ctrl.showBottomButton"
+            ng-click="$ctrl.onBottomClick({ev: $event})">
+        <span class="sr-only" translate-once="MOVE_DOWN"></span>
+    </button>
+</div>

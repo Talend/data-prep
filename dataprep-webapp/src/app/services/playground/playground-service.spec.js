@@ -1,3 +1,16 @@
+/*  ============================================================================
+
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
+
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
+
+ ============================================================================*/
+
 describe('Playground Service', () => {
     'use strict';
 
@@ -35,7 +48,9 @@ describe('Playground Service', () => {
     beforeEach(angular.mock.module('data-prep.services.playground', ($provide) => {
         stateMock = {
             playground: {
-                recipe: { current: { steps: [] } },
+                recipe: {
+                    initialStep: { transformation: { stepId: 'INITIAL_STEP_ID'} },
+                    current: { steps: [] } },
                 filter: {},
                 grid: {},
             },
@@ -541,6 +556,7 @@ describe('Playground Service', () => {
             spyOn($rootScope, '$emit').and.returnValue();
             spyOn(PreparationService, 'appendStep').and.returnValue($q.when());
             spyOn(PreparationService, 'updateStep').and.returnValue($q.when());
+            spyOn(PreparationService, 'moveStep').and.returnValue($q.when());
             spyOn(PreparationService, 'removeStep').and.returnValue($q.when());
             spyOn(PreparationService, 'getContent').and.returnValue($q.when(preparationHeadContent));
             spyOn(StepUtilsService, 'getLastStep').and.returnValue(lastStep);
@@ -924,6 +940,198 @@ describe('Playground Service', () => {
                     expect(PreparationService.getContent.calls.argsFor(1)[1]).toBe(lastActiveStep.transformation.stepId);
                     expect(DatagridService.updateData.calls.count()).toBe(2);
                     expect(DatagridService.updateData.calls.argsFor(1)[0]).toBe(preparationHeadContent);
+                }));
+            });
+        });
+
+        describe('reorder', () => {
+            const preparationId = 'PREPARATION_ID';
+            const stepIdToMove = 'STEP_ID_3';
+            const previousPosition = 2;
+            const nextPosition = 1;
+            const nextParentId = 'STEP_ID_1';
+
+            beforeEach(inject((StepUtilsService) => {
+                stateMock.playground.preparation = { id: preparationId };
+                stateMock.playground.recipe.current.steps = [
+                    {
+                        column: { id: '0001' },
+                        transformation: { stepId: 'STEP_ID_1' },
+                        actionParameters: {
+                            action: 'lorem_ipsum',
+                            parameters: {value: 'toto', column_id: '0001'},
+                        },
+                    },
+                    {
+                        column: { id: '0001' },
+                        transformation: { stepId: 'STEP_ID_2' },
+                        actionParameters: {
+                            action: 'lorem_ipsum',
+                            parameters: { value: 'tata', column_id: '0001' },
+                        },
+                    },
+                    {
+                        column: { id: '0001' },
+                        transformation: { stepId: 'STEP_ID_3' },
+                        actionParameters: {
+                            action: 'lorem_ipsum',
+                            parameters: { value: 'titi', column_id: '0001' },
+                        },
+                    },
+                ];
+
+                spyOn(StepUtilsService, 'getStep').and.callFake((stepId) => {
+                    return stateMock.playground.recipe.current.steps[stepId] || stateMock.playground.recipe.initialStep;
+                });
+            }));
+
+            it('should reorder preparation step to top', inject(($rootScope, PlaygroundService, PreparationService) => {
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
+            }));
+
+            it('should not reorder preparation step to top if it already the first one', inject(($rootScope, PlaygroundService, PreparationService) => {
+                // given
+                const stepIdToMove = 'STEP_ID_1';
+                const previousPosition = 0;
+                const nextPosition = 0;
+                const nextParentId = 'STEP_ID_1';
+
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
+            }));
+
+            it('should reorder preparation step to top by selecting initial step if step becomes the first', inject(($rootScope, PlaygroundService, PreparationService) => {
+                // given
+                const nextPosition = 0;
+                const nextParentId = 'INITIAL_STEP_ID';
+
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
+            }));
+
+            it('should reorder preparation step to bottom', inject(($rootScope, PlaygroundService, PreparationService) => {
+                // given
+                const stepIdToMove = 'STEP_ID_2';
+                const previousPosition = 1;
+                const nextPosition = 2;
+                const nextParentId = 'STEP_ID_3';
+
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
+            }));
+
+            it('should not reorder preparation step to bottom if it already the last one', inject(($rootScope, PlaygroundService, PreparationService) => {
+                // given
+                const nextPosition = 2;
+                const nextParentId = 'STEP_ID_3';
+
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
+            }));
+
+            it('should show/hide loading', inject(($rootScope, PlaygroundService) => {
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+                expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+                $rootScope.$digest();
+
+                // then
+                expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+            }));
+
+            it('should refresh recipe', inject(($rootScope, PlaygroundService, RecipeService) => {
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+                $rootScope.$digest();
+
+                // then
+                expect(RecipeService.refresh).toHaveBeenCalled();
+            }));
+
+            it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+                $rootScope.$digest();
+
+                // then
+                expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head');
+                expect(DatagridService.focusedColumn).toBeFalsy();
+                expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+                expect(PreviewService.reset).toHaveBeenCalledWith(false);
+            }));
+
+            describe('history', () => {
+                let undo;
+
+                beforeEach(inject((StepUtilsService) => {
+                    spyOn(StepUtilsService, 'getLastActiveStep').and.returnValue(lastStep);
+                }));
+
+                beforeEach(inject(($rootScope, HistoryService, PlaygroundService) => {
+                    // given
+                    expect(HistoryService.addAction).not.toHaveBeenCalled();
+
+                    // when
+                    PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+                    $rootScope.$digest();
+
+                    // then
+                    undo = HistoryService.addAction.calls.argsFor(0)[0];
+                }));
+
+                it('should add undo/redo actions after remove transformation', inject((HistoryService) => {
+                    // then
+                    expect(HistoryService.addAction).toHaveBeenCalled();
+                }));
+
+                it('should set preparation head to previous head on UNDO', inject((PreparationService) => {
+                    // given
+                    expect(PreparationService.setHead).not.toHaveBeenCalled();
+
+                    // when
+                    undo();
+
+                    // then
+                    expect(PreparationService.setHead).toHaveBeenCalledWith(preparationId, lastStepId);
+                }));
+
+                it('should refresh recipe on UNDO', inject(($rootScope, RecipeService) => {
+                    // given
+                    expect(RecipeService.refresh.calls.count()).toBe(1);
+
+                    // when
+                    undo();
+                    $rootScope.$digest();
+
+                    // then
+                    expect(RecipeService.refresh.calls.count()).toBe(2);
+                }));
+
+                it('should refresh datagrid content on UNDO', inject(($rootScope, PreparationService, DatagridService, PreviewService) => {
+                    // when
+                    undo();
+                    $rootScope.$digest();
+
+                    // then
+                    expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head');
+                    expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
+                    expect(PreviewService.reset).toHaveBeenCalledWith(false);
                 }));
             });
         });

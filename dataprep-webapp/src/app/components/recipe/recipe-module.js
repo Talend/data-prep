@@ -14,11 +14,11 @@
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import sunchoke from 'sunchoke';
+
 import RECIPE_KNOT_MODULE from '../recipe/knot/recipe-knot-module';
 import RECIPE_STEP_DESCRIPTION from '../recipe/step-description/step-description-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
 import TRANSFORMATION_FORM_MODULE from '../transformation/form/transformation-form-module';
-
 import SERVICES_FILTER_MODULE from '../../services/filter/filter-module';
 import SERVICES_PARAMETERS_MODULE from '../../services/parameters/parameters-module';
 import SERVICES_PLAYGROUND_MODULE from '../../services/playground/playground-module';

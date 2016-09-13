@@ -1,5 +1,4 @@
 describe('Preparation REST Service', () => {
-    'use strict';
 
     let $httpBackend;
     const allPreparations = [
@@ -108,7 +107,7 @@ describe('Preparation REST Service', () => {
 
     describe('preparation lifecycle', () => {
         it('should create a new preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
             const datasetId = '8ec053b1-7870-4bc6-af54-523be91dc774';
             const name = 'The new preparation';
@@ -117,14 +116,14 @@ describe('Preparation REST Service', () => {
                 .expectPOST(`${RestURLs.preparationUrl}?folder=${folderId}`, { dataSetId: datasetId, name: name })
                 .respond(200, 'fbaa18e82e913e97e5f0e9d40f04413412be1126');
 
-            //when
+            // when
             PreparationRestService.create(datasetId, name, folderId);
             $httpBackend.flush();
             $rootScope.$digest();
         }));
 
         it('should update preparation name', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const name = 'The new preparation name';
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
 
@@ -132,27 +131,27 @@ describe('Preparation REST Service', () => {
                 .expectPUT(RestURLs.preparationUrl + '/fbaa18e82e913e97e5f0e9d40f04413412be1126', { name: name })
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.update(preparationId, { name: name });
             $httpBackend.flush();
             $rootScope.$digest();
         }));
 
         it('should delete the preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             $httpBackend
                 .expectDELETE(RestURLs.preparationUrl + '/' + preparationId)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.delete(preparationId);
             $httpBackend.flush();
             $rootScope.$digest();
         }));
 
         it('should copy the preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
             const name = 'jso_prep';
@@ -160,14 +159,14 @@ describe('Preparation REST Service', () => {
                 .expectPOST(`${RestURLs.preparationUrl}/${preparationId}/copy?destination=${encodeURIComponent(folderId)}&newName=${encodeURIComponent(name)}`)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.copy(preparationId, folderId, name);
             $httpBackend.flush();
             $rootScope.$digest();
         }));
 
         it('should move the preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             const folderId = 'LW==';
             const destinationId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
@@ -176,7 +175,7 @@ describe('Preparation REST Service', () => {
                 .expectPUT(`${RestURLs.preparationUrl}/${preparationId}/move?folder=${encodeURIComponent(folderId)}&destination=${encodeURIComponent(destinationId)}&newName=${encodeURIComponent(name)}`)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.move(preparationId, folderId, destinationId, name);
             $httpBackend.flush();
             $rootScope.$digest();
@@ -185,14 +184,14 @@ describe('Preparation REST Service', () => {
 
     describe('preparation getters', () => {
         it('should get the current preparation details', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let details = null;
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             $httpBackend
                 .expectGET(RestURLs.preparationUrl + '/' + preparationId + '/details')
                 .respond(200, allPreparations[1]);
 
-            //when
+            // when
             PreparationRestService.getDetails(preparationId)
                 .then((response) => {
                     details = response;
@@ -200,19 +199,19 @@ describe('Preparation REST Service', () => {
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then
+            // then
             expect(details).toEqual(allPreparations[1]);
         }));
 
         it('should get the requested version of preparation content', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let content = null;
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             $httpBackend
                 .expectGET(RestURLs.preparationUrl + '/' + preparationId + '/content?version=head')
                 .respond(200, records);
 
-            //when
+            // when
             PreparationRestService.getContent(preparationId, 'head')
                 .then((response) => {
                     content = response;
@@ -220,14 +219,14 @@ describe('Preparation REST Service', () => {
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then
+            // then
             expect(content).toEqual(records);
         }));
     });
 
     describe('preparation step lifecycle', () => {
         it('should append a transformation step in the current preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const actionParams = [{
                 action: 'fillemptywithdefault',
                 parameters: {
@@ -238,23 +237,23 @@ describe('Preparation REST Service', () => {
 
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
 
-            //given : preparation step append request
+            // given : preparation step append request
             $httpBackend
                 .expectPOST(RestURLs.preparationUrl + '/' + preparationId + '/actions', {
                     actions: actionParams,
                 })
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.appendStep(preparationId, actionParams);
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then : append request to have been called
+            // then : append request to have been called
         }));
 
         it('should append a transformation step in the current preparation at a provided insertion point', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const actionParams = [{
                 action: 'fillemptywithdefault',
                 parameters: {
@@ -266,7 +265,7 @@ describe('Preparation REST Service', () => {
 
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
 
-            //given : preparation step append request
+            // given : preparation step append request
             $httpBackend
                 .expectPOST(RestURLs.preparationUrl + '/' + preparationId + '/actions', {
                     insertionStepId: insertionPoint,
@@ -274,7 +273,7 @@ describe('Preparation REST Service', () => {
                 })
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.appendStep(preparationId, actionParams, insertionPoint);
             $httpBackend.flush();
             $rootScope.$digest();
@@ -282,7 +281,7 @@ describe('Preparation REST Service', () => {
         }));
 
         it('should append a list of transformation step in the current preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const actionParams = [
                 {
                     action: 'fillemptywithdefault',
@@ -293,23 +292,23 @@ describe('Preparation REST Service', () => {
 
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
 
-            //given : preparation step append request
+            // given : preparation step append request
             $httpBackend
                 .expectPOST(RestURLs.preparationUrl + '/' + preparationId + '/actions', {
                     actions: actionParams,
                 })
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.appendStep(preparationId, actionParams);
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then : update request to have been called
+            // then : update request to have been called
         }));
 
         it('should update a transformation step in the current preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const actionParams = {
                 action: 'fillemptywithdefault',
                 parameters: {
@@ -321,23 +320,41 @@ describe('Preparation REST Service', () => {
 
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
 
-            //given : preparation step update request
+            // given : preparation step update request
             $httpBackend
                 .expectPUT(RestURLs.preparationUrl + '/' + preparationId + '/actions/' + stepId, {
                     actions: [actionParams],
                 })
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.updateStep(preparationId, stepId, actionParams);
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then : update request to have been called
+            // then : update request to have been called
+        }));
+
+        it('should move a transformation step in the preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
+            // given
+            const preparationId = 'PREPARATION_ID';
+            const stepId = 'STEP_ID';
+            const nextParentId = 'NEXT_PARENT_ID';
+
+            $httpBackend
+                .expectPOST(`${RestURLs.preparationUrl}/${preparationId}/steps/${stepId}/order?parentStepId=${nextParentId}`)
+                .respond(200);
+
+            // when
+            PreparationRestService.moveStep(preparationId, stepId, nextParentId);
+            $httpBackend.flush();
+            $rootScope.$digest();
+
+            // then : move step request to have been called
         }));
 
         it('should remove a transformation step in the preparation', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             const stepId = '856980bacf0890c89bc318856980bacf0890c89b';
 
@@ -345,16 +362,16 @@ describe('Preparation REST Service', () => {
                 .expectDELETE(RestURLs.preparationUrl + '/' + preparationId + '/actions/' + stepId)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.removeStep(preparationId, stepId);
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then : delete request to have been called
+            // then : delete request to have been called
         }));
 
         it('should move preparation head', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f04413412be1126';
             const headId = '856980bacf0890c89bc318856980bacf0890c89b';
 
@@ -362,16 +379,16 @@ describe('Preparation REST Service', () => {
                 .expectPUT(RestURLs.preparationUrl + '/' + preparationId + '/head/' + headId)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.setHead(preparationId, headId);
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then : put request to have been called
+            // then : put request to have been called
         }));
 
         it('should copy preparation reference steps', inject(($rootScope, RestURLs, PreparationRestService) => {
-            //given
+            // given
             const preparationId = 'fbaa18e82e913e97e5f0e9d40f';
             const referenceId = '371aa397d835db4fa1584ee854';
 
@@ -379,18 +396,18 @@ describe('Preparation REST Service', () => {
                 .expectPUT(RestURLs.preparationUrl + '/' + preparationId + '/steps/copy?from=' + referenceId)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.copySteps(preparationId, referenceId);
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then : put request to have been called
+            // then : put request to have been called
         }));
     });
 
     describe('preview', () => {
         it('should call preview POST request', inject(($rootScope, $q, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let done = false;
             let canceled = false;
             const canceler = $q.defer();
@@ -407,7 +424,7 @@ describe('Preparation REST Service', () => {
                 .respond(200);
 
 
-            //when
+            // when
             PreparationRestService.getPreviewDiff(expectedParams, canceler)
                 .then(() => {
                     done = true;
@@ -418,13 +435,13 @@ describe('Preparation REST Service', () => {
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then
+            // then
             expect(done).toBe(true);
             expect(canceled).toBe(false);
         }));
 
         it('should cancel POST preview by resolving the given promise', inject(($rootScope, $q, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let done = false;
             let canceled = false;
             const canceler = $q.defer();
@@ -440,7 +457,7 @@ describe('Preparation REST Service', () => {
                 .expectPOST(RestURLs.previewUrl + '/diff', expectedParams)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.getPreviewDiff(expectedParams, canceler)
                 .then(() => {
                     done = true;
@@ -451,13 +468,13 @@ describe('Preparation REST Service', () => {
             canceler.resolve(true);
             $rootScope.$digest();
 
-            //then
+            // then
             expect(done).toBe(false);
             expect(canceled).toBe(true);
         }));
 
         it('should call update preview POST request', inject(($rootScope, $q, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let done = false;
             let canceled = false;
             const newParams = { value: 'toto' };
@@ -479,7 +496,7 @@ describe('Preparation REST Service', () => {
                 .respond(200);
 
 
-            //when
+            // when
             PreparationRestService.getPreviewUpdate(params, canceler)
                 .then(() => {
                     done = true;
@@ -490,13 +507,13 @@ describe('Preparation REST Service', () => {
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then
+            // then
             expect(done).toBe(true);
             expect(canceled).toBe(false);
         }));
 
         it('should cancel POST update preview by resolving the given promise', inject(($rootScope, $q, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let done = false;
             let canceled = false;
             const newParams = { value: 'toto' };
@@ -518,7 +535,7 @@ describe('Preparation REST Service', () => {
                 .respond(200);
 
 
-            //when
+            // when
             PreparationRestService.getPreviewUpdate(params, canceler)
                 .then(() => {
                     done = true;
@@ -529,13 +546,13 @@ describe('Preparation REST Service', () => {
             canceler.resolve(true);
             $rootScope.$digest();
 
-            //then
+            // then
             expect(done).toBe(false);
             expect(canceled).toBe(true);
         }));
 
         it('should call add preview POST request', inject(($rootScope, $q, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let done = false;
             let canceled = false;
             const canceler = $q.defer();
@@ -554,7 +571,7 @@ describe('Preparation REST Service', () => {
                 .expectPOST(RestURLs.previewUrl + '/add', params)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.getPreviewAdd(params, canceler)
                 .then(() => {
                     done = true;
@@ -565,13 +582,13 @@ describe('Preparation REST Service', () => {
             $httpBackend.flush();
             $rootScope.$digest();
 
-            //then
+            // then
             expect(done).toBe(true);
             expect(canceled).toBe(false);
         }));
 
         it('should cancel POST add preview by resolving the given promise', inject(($rootScope, $q, RestURLs, PreparationRestService) => {
-            //given
+            // given
             let done = false;
             let canceled = false;
             const canceler = $q.defer();
@@ -590,7 +607,7 @@ describe('Preparation REST Service', () => {
                 .expectPOST(RestURLs.previewUrl + '/add', params)
                 .respond(200);
 
-            //when
+            // when
             PreparationRestService.getPreviewAdd(params, canceler)
                 .then(() => {
                     done = true;
@@ -601,7 +618,7 @@ describe('Preparation REST Service', () => {
             canceler.resolve(true);
             $rootScope.$digest();
 
-            //then
+            // then
             expect(done).toBe(false);
             expect(canceled).toBe(true);
         }));

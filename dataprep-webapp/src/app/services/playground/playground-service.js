@@ -471,7 +471,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         // save the head before transformation for undo
         const previousHead = StepUtilsService.getLastStep(recipe).transformation.stepId;
 
-        const currentStep = StepUtilsService.getStep(previousPosition);
+        const currentStep = StepUtilsService.getStep(recipe, previousPosition);
         const stepId = currentStep.transformation.stepId;
 
         // Step list has not yet change in fact so
@@ -479,11 +479,11 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         // if we want to move step up the next parent is the step at the next position - 1
         if (previousPosition > nextPosition) {
             const parentStepIndex = nextPosition - 1;
-            nextParentStep = StepUtilsService.getStep(parentStepIndex);
+            nextParentStep = StepUtilsService.getStep(recipe, parentStepIndex);
         }
         // if we want to move step down the next parent is the step at the next position
         else {
-            nextParentStep = StepUtilsService.getStep(nextPosition);
+            nextParentStep = StepUtilsService.getStep(recipe, nextPosition);
         }
         const nextParentStepId = nextParentStep.transformation.stepId;
 

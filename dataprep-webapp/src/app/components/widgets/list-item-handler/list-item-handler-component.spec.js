@@ -13,6 +13,7 @@
 
 const BTN_TOP_SELECTOR = '.btn.top';
 const BTN_BOTTOM_SELECTOR = '.btn.bottom';
+
 const I18N = {
     MOVE_UP: 'Move up',
     MOVE_DOWN: 'Move down',
@@ -54,8 +55,8 @@ describe('List Item Handler Component', () => {
         };
     }));
 
-    describe('Both buttons are displayed', () => {
-        it('should render buttons', () => {
+    describe('rendering', () => {
+        it('should render two up and down buttons', () => {
             // given
             createElement();
 
@@ -64,6 +65,52 @@ describe('List Item Handler Component', () => {
             expect(element.find(BTN_BOTTOM_SELECTOR).length).toBe(1);
         });
 
+        it('should render only up button', () => {
+            // when
+            scope.showBottomButton = false;
+
+            // given
+            createElement();
+
+            // then
+            expect(element.find(BTN_TOP_SELECTOR).length).toBe(1);
+            expect(element.find(BTN_BOTTOM_SELECTOR).length).toBe(0);
+        });
+
+        it('should render aria-label for up button', () => {
+            // given
+            createElement();
+
+            // then
+            const btn = element.find(BTN_TOP_SELECTOR).eq(0);
+            const btnAriaLabel = btn.attr('aria-label');
+            expect(btnAriaLabel).toBe(I18N.MOVE_UP);
+        });
+
+        it('should render only down button', () => {
+            // when
+            scope.showTopButton = false;
+
+            // given
+            createElement();
+
+            // then
+            expect(element.find(BTN_TOP_SELECTOR).length).toBe(0);
+            expect(element.find(BTN_BOTTOM_SELECTOR).length).toBe(1);
+        });
+
+        it('should render aria-label for down button', () => {
+            // given
+            createElement();
+
+            // then
+            const btn = element.find(BTN_BOTTOM_SELECTOR).eq(0);
+            const btnAriaLabel = btn.attr('aria-label');
+            expect(btnAriaLabel).toBe(I18N.MOVE_DOWN);
+        });
+    });
+
+    describe('actions', () => {
         it('should call onTopClick method when top button is clicked', () => {
             // given
             createElement();
@@ -84,56 +131,6 @@ describe('List Item Handler Component', () => {
 
             // then
             expect(scope.onBottomClick).toHaveBeenCalled();
-        });
-    });
-
-    describe('Top button only', () => {
-        beforeEach(() => {
-            scope.showBottomButton = false;
-        });
-
-        it('should render top button only', () => {
-            // given
-            createElement();
-
-            // then
-            expect(element.find(BTN_TOP_SELECTOR).length).toBe(1);
-            expect(element.find(BTN_BOTTOM_SELECTOR).length).toBe(0);
-        });
-
-        it('should has aria-label', () => {
-            // given
-            createElement();
-
-            // then
-            const btn = element.find(BTN_TOP_SELECTOR).eq(0);
-            const btnAriaLabel = btn.attr('aria-label');
-            expect(btnAriaLabel).toBe(I18N.MOVE_UP);
-        });
-    });
-
-    describe('Bottom button only', () => {
-        beforeEach(() => {
-            scope.showTopButton = false;
-        });
-
-        it('should render bottom button only', () => {
-            // given
-            createElement();
-
-            // then
-            expect(element.find(BTN_BOTTOM_SELECTOR).length).toBe(1);
-            expect(element.find(BTN_TOP_SELECTOR).length).toBe(0);
-        });
-
-        it('should has aria-label', () => {
-            // given
-            createElement();
-
-            // then
-            const btn = element.find(BTN_BOTTOM_SELECTOR).eq(0);
-            const btnAriaLabel = btn.attr('aria-label');
-            expect(btnAriaLabel).toBe(I18N.MOVE_DOWN);
         });
     });
 });

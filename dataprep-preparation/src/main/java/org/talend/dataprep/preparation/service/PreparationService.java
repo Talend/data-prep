@@ -41,7 +41,6 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.security.Security;
-import org.talend.dataprep.transformation.actions.column.DeleteColumn;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -67,6 +66,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.preparation.service.ReorderStepsUtils.renameCreatedColumns;
+import static org.talend.dataprep.preparation.service.ReorderStepsUtils.useAColumnBeforeCreationOrAfterDeletion;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 @RestController
@@ -335,7 +336,7 @@ public class PreparationService {
     @ApiOperation(value = "Copy a preparation", produces = TEXT_PLAIN_VALUE, notes = "Copy the preparation to the new name / folder and returns the new id.")
     @Timed
     public String copy(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to copy") String preparationId,
+            @ApiParam(name = "id", value = "Id of the preparation to copy") @PathVariable(value = "id") String preparationId,
             @ApiParam(value = "The name of the copied preparation.") @RequestParam(required = false) String name,
             @ApiParam(value = "The folder path to create the copy.") @RequestParam() String destination)
             throws IOException {
@@ -415,7 +416,7 @@ public class PreparationService {
     @RequestMapping(value = "/preparations/{id}/move", method = PUT, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Move a preparation", produces = TEXT_PLAIN_VALUE, notes = "Move a preparation to an other folder.")
     @Timed
-    public void move(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String preparationId,
+    public void move(@ApiParam(name = "id", value = "Id of the preparation to move") @PathVariable(value = "id") String preparationId,
                      @ApiParam(value = "The original folder path of the preparation.") @RequestParam String folder,
                      @ApiParam(value = "The new folder path of the preparation.") @RequestParam String destination,
                      @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName)
@@ -468,7 +469,7 @@ public class PreparationService {
     @RequestMapping(value = "/preparations/{id}", method = RequestMethod.DELETE, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Delete a preparation by id", notes = "Delete a preparation content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing preparation id returns empty content.")
     @Timed
-    public void delete(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to delete") String id) {
+    public void delete(@ApiParam(name = "id", value = "Id of the preparation to delete") @PathVariable(value = "id") String id) {
 
         LOGGER.debug("Deletion of preparation #{} requested.", id);
 
@@ -503,7 +504,7 @@ public class PreparationService {
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the updated preparation.")
     @Timed
     public String update(@ApiParam("id") @PathVariable("id") String id,
-                         @RequestBody @ApiParam("preparation") final Preparation preparation) {
+                         @ApiParam("preparation") @RequestBody final Preparation preparation) {
         //@formatter:on
 
         Preparation previousPreparation = preparationRepository.get(id, Preparation.class);
@@ -1313,122 +1314,29 @@ public class PreparationService {
         if (stepIndex - 1 == parentIndex) {
             LOGGER.debug("No need to Move step {} after step {}, within preparation {}: already at the wanted position.", stepId,
                     parentStepId, preparation.getId());
-            return;
-        }
-
-        final int lastUnchangedIndex;
-
-        if (parentIndex < stepIndex) {
-            lastUnchangedIndex = parentIndex;
         } else {
-            lastUnchangedIndex = stepIndex - 1;
-        }
+            final int lastUnchangedIndex;
 
-        final AppendStep removedStep = allAppendSteps.remove(stepIndex - 1);
-        allAppendSteps.add(lastUnchangedIndex == stepIndex - 1 ? parentIndex - 1 : parentIndex, removedStep);
-
-        // check that the wanted reordering is legal
-        if (useAColumnBeforeCreationOrAfterDeletion(allAppendSteps)) {
-            throw new TDPException(PREPARATION_STEP_CANNOT_BE_REORDERED, build(), true);
-        }
-
-        // rename created columns to conform to the way the transformation are performed
-        renameCreatedColumns(allAppendSteps);
-
-        // apply the reordering since it seems to be legal
-        final List<AppendStep> result = allAppendSteps.subList(lastUnchangedIndex, allAppendSteps.size());
-        replaceHistory(preparation, steps.get(lastUnchangedIndex), result);
-    }
-
-    /**
-     * Checks if the reordering implied by the specified list of steps is legal.
-     * <p>
-     * <p>
-     * TODO: When the column metadata of the dataset become available to the preparation, we should improve this method.
-     *
-     * @param appendSteps the specified list of steps
-     * @return either <tt>true</tt> if the specified list of steps have a step that use a column before it is created by
-     * a following step or deleted by a preceding step or <t>false</t> otherwise
-     */
-    private boolean useAColumnBeforeCreationOrAfterDeletion(List<AppendStep> appendSteps) {
-        // Add all the columns created by steps as not available at the beginning
-        final Set<String> notYetAvailableColumnsIds = appendSteps.stream()
-                .flatMap(step -> step.getDiff().getCreatedColumns().stream())
-                .collect(Collectors.toSet());
-
-        return appendSteps.stream().anyMatch(step -> {
-            for (Action action : step.getActions()) {
-                final Map<String, String> parameters = action.getParameters();
-                final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
-
-                // remove the created columns from not available columns
-                notYetAvailableColumnsIds.removeAll(step.getDiff().getCreatedColumns());
-
-                // if the columns is no
-                if (notYetAvailableColumnsIds.contains(columnId)) {
-                    return true;
-                }
-
-                // add removed columns to non available
-                if (StringUtils.equalsIgnoreCase(DeleteColumn.DELETE_COLUMN_ACTION_NAME, action.getName())) {
-                    notYetAvailableColumnsIds.add(columnId);
-                }
-
+            if (parentIndex < stepIndex) {
+                lastUnchangedIndex = parentIndex;
+            } else {
+                lastUnchangedIndex = stepIndex - 1;
             }
-            return false;
-        });
-    }
 
-    /**
-     * Renames the created columns according to their order of creation starting from the minimum created column.
-     *
-     * @param appendSteps the specified list of append steps
-     */
-    private void renameCreatedColumns(List<AppendStep> appendSteps) {
+            final AppendStep removedStep = allAppendSteps.remove(stepIndex - 1);
+            allAppendSteps.add(lastUnchangedIndex == stepIndex - 1 ? parentIndex - 1 : parentIndex, removedStep);
 
-        final List<String> createdColumns = appendSteps.stream()
-                .flatMap(step -> step.getDiff().getCreatedColumns().stream())
-                .collect(Collectors.toList());
+            // check that the wanted reordering is legal
+            if (useAColumnBeforeCreationOrAfterDeletion(allAppendSteps)) {
+                throw new TDPException(PREPARATION_STEP_CANNOT_BE_REORDERED, build(), true);
+            }
 
-        if (createdColumns.isEmpty()) {
-            return;
+            // rename created columns to conform to the way the transformation are performed
+            renameCreatedColumns(allAppendSteps);
+
+            // apply the reordering since it seems to be legal
+            final List<AppendStep> result = allAppendSteps.subList(lastUnchangedIndex, allAppendSteps.size());
+            replaceHistory(preparation, steps.get(lastUnchangedIndex), result);
         }
-
-        //retrieve the minimum index
-        final int firstIndex = Integer.parseInt(createdColumns.stream().min(String::compareTo).get());
-
-        // map old created column names to the new ones
-        final DecimalFormat format = new DecimalFormat("0000");
-        Map<String, String> rename = new HashMap<>();
-        IntStream.range(0, createdColumns.size()).forEach(i -> {
-            rename.put(createdColumns.get(i), format.format(i + firstIndex));
-        });
-
-        // walk over the list of append steps and change names (id) of created columns
-        appendSteps.stream().forEach(step -> {
-
-                    // first for created columns
-                    List<String> renamedCreatedColumns = step.getDiff().getCreatedColumns().stream().map(s -> {
-                        if (rename.containsKey(s)) {
-                            return rename.get(s);
-                        } else {
-                            return s;
-                        }
-                    }).collect(Collectors.toList());
-
-                    // then within actions
-                    step.getDiff().setCreatedColumns(renamedCreatedColumns);
-                    for (Action action : step.getActions()) {
-                        final Map<String, String> parameters = action.getParameters();
-                        final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
-
-                        if (rename.containsKey(columnId)) {
-                            parameters.put(ImplicitParameters.COLUMN_ID.getKey(), rename.get(columnId));
-                        }
-                    }
-                }
-        );
-
     }
-
 }

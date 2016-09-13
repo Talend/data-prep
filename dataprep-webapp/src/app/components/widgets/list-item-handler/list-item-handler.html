@@ -16,18 +16,18 @@
 <div class="list-item-handler">
     <button type="button"
             class="btn btn-link top"
-            title="{{ 'MOVE_UP' | translate }}"
+            translate-once-title="MOVE_UP"
             aria-label="{{ 'MOVE_UP' | translate }}"
             ng-if="$ctrl.showTopButton"
             ng-click="$ctrl.onTopClick({ev: $event})">
-        <span class="sr-only">{{ 'MOVE_UP' | translate }}</span>
+        <span class="sr-only" translate-once="MOVE_UP"></span>
     </button>
     <button type="button"
             class="btn btn-link bottom"
-            title="{{ 'MOVE_DOWN' | translate }}"
+            translate-once-title="MOVE_DOWN"
             aria-label="{{ 'MOVE_DOWN' | translate }}"
             ng-if="$ctrl.showBottomButton"
             ng-click="$ctrl.onBottomClick({ev: $event})">
-        <span class="sr-only">{{ 'MOVE_DOWN' | translate }}</span>
+        <span class="sr-only" translate-once="MOVE_DOWN"></span>
     </button>
 </div>

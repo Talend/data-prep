@@ -13,12 +13,8 @@
 
 package org.talend.dataprep.exception;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.ExceptionContext;
@@ -27,8 +23,11 @@ import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class for all business (TDP) exception.
@@ -83,7 +82,7 @@ public class TDPException extends TalendRuntimeException {
      */
     public TDPException(ErrorCode code, ExceptionContext context, boolean error) {
         super(code, null, context);
-        this.error = true;
+        this.error = error;
     }    
     
     /**

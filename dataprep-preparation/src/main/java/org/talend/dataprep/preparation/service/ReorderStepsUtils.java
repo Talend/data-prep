@@ -1,11 +1,5 @@
 package org.talend.dataprep.preparation.service;
 
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.transformation.actions.column.DeleteColumn;
-import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +8,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.transformation.actions.column.DeleteColumn;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+
+@Component
 public class ReorderStepsUtils {
 
     /**
@@ -26,13 +28,13 @@ public class ReorderStepsUtils {
      * @return either <tt>true</tt> if the specified list of steps have a step that use a column before it is created by
      * a following step or deleted by a preceding step or <t>false</t> otherwise
      */
-    static boolean useAColumnBeforeCreationOrAfterDeletion(List<AppendStep> appendSteps) {
+    boolean isStepOrderValid(List<AppendStep> appendSteps) {
         // Add all the columns created by steps as not available at the beginning
         final Set<String> notYetAvailableColumnsIds = appendSteps.stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toSet());
 
-        return appendSteps.stream().anyMatch(step -> {
+        return !appendSteps.stream().anyMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
                 final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
@@ -60,7 +62,7 @@ public class ReorderStepsUtils {
      *
      * @param appendSteps the specified list of append steps
      */
-    static void renameCreatedColumns(List<AppendStep> appendSteps) {
+    void renameCreatedColumns(List<AppendStep> appendSteps) {
 
         final List<String> createdColumns = appendSteps.stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
@@ -82,28 +84,25 @@ public class ReorderStepsUtils {
 
         // walk over the list of append steps and change names (id) of created columns
         appendSteps.stream().forEach(step -> {
-
-                    // first for created columns
-                    List<String> renamedCreatedColumns = step.getDiff().getCreatedColumns().stream().map(s -> {
-                        if (rename.containsKey(s)) {
-                            return rename.get(s);
-                        } else {
-                            return s;
-                        }
-                    }).collect(Collectors.toList());
-
-                    // then within actions
-                    step.getDiff().setCreatedColumns(renamedCreatedColumns);
-                    for (Action action : step.getActions()) {
-                        final Map<String, String> parameters = action.getParameters();
-                        final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
-
-                        if (rename.containsKey(columnId)) {
-                            parameters.put(ImplicitParameters.COLUMN_ID.getKey(), rename.get(columnId));
-                        }
-                    }
+            // first for created columns
+            List<String> renamedCreatedColumns = step.getDiff().getCreatedColumns().stream().map(s -> {
+                if (rename.containsKey(s)) {
+                    return rename.get(s);
+                } else {
+                    return s;
                 }
-        );
+            }).collect(Collectors.toList());
 
+            // then within actions
+            step.getDiff().setCreatedColumns(renamedCreatedColumns);
+            for (Action action : step.getActions()) {
+                final Map<String, String> parameters = action.getParameters();
+                final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
+
+                if (rename.containsKey(columnId)) {
+                    parameters.put(ImplicitParameters.COLUMN_ID.getKey(), rename.get(columnId));
+                }
+            }
+        });
     }
 }

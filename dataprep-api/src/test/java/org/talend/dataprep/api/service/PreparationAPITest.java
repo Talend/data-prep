@@ -13,37 +13,39 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.annotation.Resource;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.security.Security;
+
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
+import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
+import static org.talend.dataprep.api.service.PreparationAPITestClient.*;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -802,4 +804,34 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         assertThat(preview, sameJSONAsFile(expectedPreviewStream));
     }
+
+    @Test
+    public void testMoveStep() throws Exception {
+        final String datasetId = createDataset("preview/preview_dataset.csv", "testPreview", "text/csv");
+
+        String testPrepId = createPreparationFromDataset(datasetId, "testPrep");
+
+        AppendStep appendStep = new AppendStep();
+        appendStep.setActions(Arrays.asList(
+                buildAction("uppercase", buildParametersMap("column_id", "0002", "column_name", "lastname", "scope", "column")),
+                buildAction("uppercase", buildParametersMap("column_id", "0001", "column_name", "firstname", "scope", "column"))));
+        appendStepsToPrep(testPrepId, appendStep);
+
+        // Adding steps
+        PreparationAPITestClient.PreparationDetailsResponse testPrepDetails = getPreparationDetails(testPrepId);
+
+        List<String> stepsCreated = testPrepDetails.steps;
+
+        String rootStep = stepsCreated.get(0);
+        String secondStep = stepsCreated.get(2);
+
+        // changing steps order
+        changePreparationStepsOrder(testPrepId, rootStep, secondStep);
+
+        PreparationAPITestClient.PreparationDetailsResponse testPrepDetailsAfter = getPreparationDetails(testPrepId);
+
+        assertEquals(testPrepDetailsAfter.actions.get(0), testPrepDetails.actions.get(1));
+        assertEquals(testPrepDetailsAfter.actions.get(1), testPrepDetails.actions.get(0));
+    }
+
 }

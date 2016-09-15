@@ -1,14 +1,14 @@
 package org.talend.dataprep.preparation.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
 
 public class ReorderStepsUtilsTest {
 
+    private ReorderStepsUtils reorderStepsUtils = new ReorderStepsUtils();
+
     @Test
     public void useAColumnBeforeCreationOrAfterDeletion_coherentStepsList() throws Exception {
         List<AppendStep> steps = new ArrayList<>();
@@ -24,7 +26,7 @@ public class ReorderStepsUtilsTest {
         steps.add(createAppendStep("0002", asList("0003", "0004")));
         steps.add(createAppendStep("0003", emptyList()));
 
-        assertFalse(ReorderStepsUtils.useAColumnBeforeCreationOrAfterDeletion(steps));
+        assertTrue(reorderStepsUtils.isStepOrderValid(steps));
     }
 
     @Test
@@ -34,7 +36,7 @@ public class ReorderStepsUtilsTest {
         steps.add(createAppendStep("0003", emptyList()));
         steps.add(createAppendStep("0002", asList("0003", "0004")));
 
-        assertTrue(ReorderStepsUtils.useAColumnBeforeCreationOrAfterDeletion(steps));
+        assertFalse(reorderStepsUtils.isStepOrderValid(steps));
     }
 
     @Test
@@ -48,7 +50,7 @@ public class ReorderStepsUtilsTest {
         AppendStep thirdStep = createAppendStep("0003", emptyList());
         steps.add(thirdStep);
 
-        ReorderStepsUtils.renameCreatedColumns(steps);
+        reorderStepsUtils.renameCreatedColumns(steps);
 
         assertEquals("0003", firstStep.getDiff().getCreatedColumns().iterator().next());
         assertEquals("0004", secondStep.getDiff().getCreatedColumns().iterator().next());

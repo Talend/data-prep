@@ -13,6 +13,17 @@
 
 package org.talend.dataprep.preparation.service;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import javax.annotation.Resource;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,17 +56,6 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -66,8 +66,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.preparation.service.ReorderStepsUtils.renameCreatedColumns;
-import static org.talend.dataprep.preparation.service.ReorderStepsUtils.useAColumnBeforeCreationOrAfterDeletion;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 @RestController
@@ -131,7 +129,10 @@ public class PreparationService {
     private LockedResourceRepository lockedResourceRepository;
 
     @Autowired
-    PreparationCleaner preparationCleaner;
+    private PreparationCleaner preparationCleaner;
+
+    @Autowired
+    private ReorderStepsUtils reorderStepsUtils;
 
     /**
      * Create a preparation from the http request body.
@@ -188,7 +189,8 @@ public class PreparationService {
 
         final List<String> preparations = preparationRepository.list(Preparation.class) //
                 .sorted(getPreparationComparator(sort, order)) //
-                .map(Preparation::id).collect(toList());
+                .map(Preparation::id)
+                .collect(toList());
 
         LOGGER.info("found {} preparation(s) ID in total", preparations.size());
         return preparations;
@@ -703,8 +705,9 @@ public class PreparationService {
                 // not anymore
                 .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
         final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
+        final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty() ?
+                originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() :
+                MAX_VALUE;
 
         // Build list of actions from modified one to the head
         final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -868,7 +871,8 @@ public class PreparationService {
                          @ApiParam(value = "The step that will become the parent of stepId") @RequestParam String parentStepId) {
         //@formatter:on
 
-        LOGGER.debug("Modifying actions in preparation #{}", preparationId);
+        LOGGER.debug("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
+
         final Preparation preparation = getPreparation(preparationId);
 
         // Ensure that the preparation is not locked elsewhere
@@ -1262,7 +1266,7 @@ public class PreparationService {
     /**
      * Deletes the step of specified id of the specified preparation
      *
-     * @param preparation the specified preparation
+     * @param preparation    the specified preparation
      * @param stepToDeleteId the specified step id to delete
      */
     private void deleteAction(Preparation preparation, String stepToDeleteId) {
@@ -1272,8 +1276,9 @@ public class PreparationService {
         final Step std = getStep(stepToDeleteId);
         final List<String> deletedColumns = std.getDiff().getCreatedColumns();
         final int columnsDiffNumber = -deletedColumns.size();
-        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ? MAX_VALUE
-                : deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
+        final int maxCreatedColumnIdBeforeUpdate = deletedColumns.isEmpty() ?
+                MAX_VALUE :
+                deletedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt();
 
         LOGGER.debug("Deleting actions in preparation #{} at step #{}", preparation.getId(), stepToDeleteId); //$NON-NLS-1$
 
@@ -1327,12 +1332,12 @@ public class PreparationService {
             allAppendSteps.add(lastUnchangedIndex == stepIndex - 1 ? parentIndex - 1 : parentIndex, removedStep);
 
             // check that the wanted reordering is legal
-            if (useAColumnBeforeCreationOrAfterDeletion(allAppendSteps)) {
+            if (!reorderStepsUtils.isStepOrderValid(allAppendSteps)) {
                 throw new TDPException(PREPARATION_STEP_CANNOT_BE_REORDERED, build(), true);
             }
 
             // rename created columns to conform to the way the transformation are performed
-            renameCreatedColumns(allAppendSteps);
+            reorderStepsUtils.renameCreatedColumns(allAppendSteps);
 
             // apply the reordering since it seems to be legal
             final List<AppendStep> result = allAppendSteps.subList(lastUnchangedIndex, allAppendSteps.size());

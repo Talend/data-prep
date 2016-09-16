@@ -59,12 +59,12 @@ public class FahrenheitToCelsiusTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testBasicValue() {
-        testConversion("100", "37.778");
+        testConversion("100", "37.78");
     }
 
     @Test
     public void test32Value() {
-        testConversion("32", "0.000");
+        testConversion("32", "0.00");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class FahrenheitToCelsiusTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testNegativeValue() {
-        testConversion("-100", "-73.333");
+        testConversion("-100", "-73.33");
     }
 
     public void testConversion(String from, String expected) {
@@ -104,7 +104,7 @@ public class FahrenheitToCelsiusTest extends AbstractMetadataBaseTest {
 
         // then
         assertEquals(expected, row1.get("0002"));
-        assertEquals("0.000", row2.get("0002"));
+        assertEquals("0.00", row2.get("0002"));
 
         assertEquals("0001_in Celsius", row1.getRowMetadata().getById("0002").getName());
     }

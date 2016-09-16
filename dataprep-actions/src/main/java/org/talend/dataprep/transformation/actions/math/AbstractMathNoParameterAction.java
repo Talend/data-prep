@@ -22,7 +22,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  */
 public abstract class AbstractMathNoParameterAction extends AbstractMathAction implements ColumnAction {
 
-    protected abstract String calculateResult(String columnValue);
+    protected abstract String calculateResult(String columnValue, ActionContext context);
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
@@ -32,10 +32,11 @@ public abstract class AbstractMathNoParameterAction extends AbstractMathAction i
         String result = ERROR_RESULT;
 
         if (NumberUtils.isNumber(colValue)) {
-            result = calculateResult(colValue);
+            result = calculateResult(colValue, context);
         }
 
         String newColumnId = context.column("result");
         row.set(newColumnId, result);
     }
+
 }

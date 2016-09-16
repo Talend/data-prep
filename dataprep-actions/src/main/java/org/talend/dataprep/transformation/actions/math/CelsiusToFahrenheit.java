@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.actions.math;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import java.math.BigDecimal;
 
@@ -27,10 +28,10 @@ public class CelsiusToFahrenheit extends AbstractFahrenheitCelsiusConversion {
     protected static final String ACTION_NAME = "celsius_to_fahrenheit";
 
     @Override
-    protected String calculateResult(String columnValue) {
+    protected String calculateResult(String columnValue, ActionContext context) {
         BigDecimal value = BigDecimalParser.toBigDecimal(columnValue);
 
-        BigDecimal result = value.multiply(_1_8).add(_32).setScale(2, DEFAULT_ROUNDING_MODE);
+        BigDecimal result = value.multiply(_1_8).add(_32).setScale(getPrecision(context), DEFAULT_ROUNDING_MODE);
 
         return String.valueOf(result);
     }

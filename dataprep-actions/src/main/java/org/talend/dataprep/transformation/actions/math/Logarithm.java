@@ -18,6 +18,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 /**
  * Create a new column with Logarithm
@@ -28,7 +29,7 @@ public class Logarithm extends AbstractMathNoParameterAction {
     protected static final String LOGARITHM_NAME = "logarithm_numbers";
 
     @Override
-    protected String calculateResult(String columnValue) {
+    protected String calculateResult(String columnValue, ActionContext context) {
         double value = BigDecimalParser.toBigDecimal(columnValue).doubleValue();
 
         double result = FastMath.log10(value);

@@ -23,9 +23,6 @@ $recipe-step-disabled-background-color: #c5c5c5 !default;
     @include display(flex);
     @include flex-direction(row);
     @include justify-content(space-between);
-    border-bottom: 1px solid $shadow-gray;
-    border-right: 1px solid $shadow-gray;
-
 
     &.disabled-step {
       color: $recipe-step-disabled-color;

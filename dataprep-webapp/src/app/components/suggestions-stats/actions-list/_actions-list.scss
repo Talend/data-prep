@@ -40,19 +40,30 @@
       }
 
       .trigger {
-        .trigger-label {
+
+        &-container {
+          position: relative;
+          padding: 7px;
+
+          > content {
+            padding: 10px;
+          }
+        }
+
+        &-label {
           font-size: .9em;
           cursor: pointer;
           padding-left: 10px;
+
+          &:before {
+            position: absolute;
+            content: '';
+            top:0;
+            right:0;
+            bottom: 0;
+            left: 0;
+          }
         }
-      }
-
-      .trigger-container {
-        padding: 7px;
-      }
-
-      .content-container > content {
-        padding: 10px;
       }
     }
   }

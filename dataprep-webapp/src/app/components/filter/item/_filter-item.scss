@@ -42,6 +42,10 @@ $matches-color: $brown;
   &.invalid_records {
     .badge {
       @include badge($invalid_records-color);
+
+      &-btn-close {
+        color: $white;
+      }
     }
   }
 

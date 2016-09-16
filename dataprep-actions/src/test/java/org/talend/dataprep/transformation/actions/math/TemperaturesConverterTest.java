@@ -13,10 +13,6 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,16 +24,20 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.CELSIUS;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
+
 /**
  * Unit test for the CelsiusToFahrenheit action.
- *
- * @see CelsiusToFahrenheit
  */
-public class CelsiusToFahrenheitTest extends AbstractMetadataBaseTest {
+public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
     @Autowired
-    private CelsiusToFahrenheit action;
+    private TemperaturesConverter action;
 
     @Test
     public void testCategory() {
@@ -54,30 +54,31 @@ public class CelsiusToFahrenheitTest extends AbstractMetadataBaseTest {
         final String name = action.getName();
 
         // then
-        assertThat(name, is("celsius_to_fahrenheit"));
+        assertThat(name, is("temperatures_converter"));
     }
 
     @Test
     public void testBasicValue() {
-        testConversion("37.778", "100.00");
+        testConversion("37.778", CELSIUS, "100.0004", FAHRENHEIT);
     }
 
     @Test
     public void test32Value() {
-        testConversion("0", "32.00");
+        testConversion("0", CELSIUS, "32.00", FAHRENHEIT);
     }
 
     @Test
     public void test_NaN() {
-        testConversion("toto", "");
+        testConversion("toto", CELSIUS, "", FAHRENHEIT);
     }
 
     @Test
     public void testNegativeValue() {
-        testConversion("-100", "-148.00");
+        testConversion("-100", CELSIUS, "-148.00", FAHRENHEIT);
     }
 
-    public void testConversion(String from, String expected) {
+    public void testConversion(String from, TemperaturesConverter.TemperatureUnit fromUnit, String expected,
+                               TemperaturesConverter.TemperatureUnit toUnit) {
         // given
         long rowId = 120;
 
@@ -98,6 +99,8 @@ public class CelsiusToFahrenheitTest extends AbstractMetadataBaseTest {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
+        parameters.put("from unit parameter", fromUnit.name());
+        parameters.put("to unit parameter", toUnit.name());
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));

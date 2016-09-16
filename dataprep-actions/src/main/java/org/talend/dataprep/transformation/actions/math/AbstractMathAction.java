@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.actions.math;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,7 +44,7 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
         return ActionCategory.MATH.getDisplayName();
     }
 
-    protected abstract String getColumnNameSuffix();
+    protected abstract String getColumnNameSuffix(Map<String, String> parameters);
 
     /**
      * @see ActionMetadata#compile(ActionContext)
@@ -61,7 +62,7 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
             context.column("result", r -> {
                 ColumnMetadata c = ColumnMetadata.Builder //
                         .column() //
-                        .name(column.getName() + "_" + getColumnNameSuffix()) //
+                        .name(column.getName() + "_" + getColumnNameSuffix(context.getParameters())) //
                         .type(Type.STRING) // Leave actual type detection to transformation
                         .build();
                 rowMetadata.insertAfter(columnId, c);

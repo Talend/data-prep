@@ -12,13 +12,15 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.talend.dataprep.transformation.actions.math.Exponential.EXPONENTIAL_NAME;
+import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.talend.dataprep.transformation.actions.math.Exponential.EXPONENTIAL_NAME;
 
 /**
  * Create a new column with Exponential
@@ -36,7 +38,7 @@ public class Exponential extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix() {
+    protected String getColumnNameSuffix(Map<String, String> parameters) {
         return "exponential";
     }
 

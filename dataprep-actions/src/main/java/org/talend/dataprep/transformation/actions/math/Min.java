@@ -12,13 +12,15 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.talend.dataprep.transformation.actions.math.Min.MIN_NAME;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+
+import static org.talend.dataprep.transformation.actions.math.Min.MIN_NAME;
 
 /**
  * Calculate Min with a constant or an other column
@@ -34,7 +36,7 @@ public class Min extends AbstractMathOneParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix() {
+    protected String getColumnNameSuffix(Map<String, String> parameters) {
         return "min";
     }
 

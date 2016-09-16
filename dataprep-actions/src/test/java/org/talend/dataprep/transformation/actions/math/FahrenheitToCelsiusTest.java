@@ -13,49 +13,23 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Unit test for the FahrenheitToCelsius action.
  *
- * @see FahrenheitToCelsius
  */
 public class FahrenheitToCelsiusTest extends AbstractMetadataBaseTest {
-
-    /** The action to test. */
-    @Autowired
-    private FahrenheitToCelsius action;
-
-    @Test
-    public void testCategory() {
-        // when
-        final String name = action.getCategory();
-
-        // then
-        assertThat(name, is("Conversions"));
-    }
-
-    @Test
-    public void testName() {
-        // when
-        final String name = action.getName();
-
-        // then
-        assertThat(name, is("fahrenheit_to_celsius"));
-    }
 
     @Test
     public void testBasicValue() {
@@ -100,7 +74,7 @@ public class FahrenheitToCelsiusTest extends AbstractMetadataBaseTest {
         parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(null, parameters));
 
         // then
         assertEquals(expected, row1.get("0002"));

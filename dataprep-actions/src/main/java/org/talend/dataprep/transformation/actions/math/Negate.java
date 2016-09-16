@@ -12,12 +12,14 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.talend.dataprep.transformation.actions.math.Negate.NEGATE_NAME;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.talend.dataprep.transformation.actions.math.Negate.NEGATE_NAME;
 
 /**
  * Create a new column with negate value
@@ -33,7 +35,7 @@ public class Negate extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix() {
+    protected String getColumnNameSuffix(Map<String, String> parameters) {
         return "negate";
     }
 

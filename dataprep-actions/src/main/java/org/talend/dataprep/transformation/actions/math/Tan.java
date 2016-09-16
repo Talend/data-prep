@@ -12,13 +12,15 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.talend.dataprep.transformation.actions.math.Tan.TAN_NAME;
+import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.talend.dataprep.transformation.actions.math.Tan.TAN_NAME;
 
 /**
  * Create a new column with Tangent
@@ -38,7 +40,7 @@ public class Tan extends AbstractMathNoParameterAction {
     }
 
     @Override
-    protected String getColumnNameSuffix() {
+    protected String getColumnNameSuffix(Map<String, String> parameters) {
         return "tan";
     }
 

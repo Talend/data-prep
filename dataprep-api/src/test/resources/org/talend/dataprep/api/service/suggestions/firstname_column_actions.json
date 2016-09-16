@@ -4406,5 +4406,13 @@
   {
     "name": "modify_date",
     "category": "dates"
+  },
+  {
+    "name": "fahrenheit_to_celsius",
+    "category": "Conversions"
+  },
+  {
+    "name": "celsius_to_fahrenheit",
+    "category": "Conversions"
   }
 ]

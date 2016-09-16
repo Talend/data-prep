@@ -4408,5 +4408,7 @@
     "category": "dates"
   },
   {
-all  }
+    "name": "temperatures_converter",
+    "category": "Conversions"
+  }
 ]

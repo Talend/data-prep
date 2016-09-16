@@ -59,12 +59,12 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testBasicValue() {
-        testConversion("37.778", CELSIUS, "100.0004", FAHRENHEIT);
+        testConversion("37.778", CELSIUS, "100.000", FAHRENHEIT);
     }
 
     @Test
     public void test32Value() {
-        testConversion("0", CELSIUS, "32.00", FAHRENHEIT);
+        testConversion("0", CELSIUS, "32", FAHRENHEIT);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
 
     @Test
     public void testNegativeValue() {
-        testConversion("-100", CELSIUS, "-148.00", FAHRENHEIT);
+        testConversion("-100", CELSIUS, "-148", FAHRENHEIT);
     }
 
     public void testConversion(String from, TemperaturesConverter.TemperatureUnit fromUnit, String expected,
@@ -99,15 +99,15 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put("column_id", "0001");
-        parameters.put("from unit parameter", fromUnit.name());
-        parameters.put("to unit parameter", toUnit.name());
+        parameters.put("from_temperature", fromUnit.name());
+        parameters.put("to_temperature", toUnit.name());
 
         // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expected, row1.get("0002"));
-        assertEquals("32.00", row2.get("0002"));
+        assertEquals("32", row2.get("0002"));
 
         assertEquals("0001_in Fahrenheit", row1.getRowMetadata().getById("0002").getName());
     }

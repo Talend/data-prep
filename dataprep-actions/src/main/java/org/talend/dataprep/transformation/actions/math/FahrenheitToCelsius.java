@@ -22,19 +22,15 @@ import java.math.BigDecimal;
  * Given a column, assumed to be a temperature in Fahrenheit, creates a new one with temperature convertedin Celsius.
  */
 @Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + FahrenheitToCelsius.ACTION_NAME)
-public class FahrenheitToCelsius extends AbstractMathNoParameterAction {
+public class FahrenheitToCelsius extends AbstractFahrenheitCelsiusConversion {
 
     protected static final String ACTION_NAME = "fahrenheit_to_celsius";
-
-    private static final BigDecimal _32 = new BigDecimal(32);
-
-    private static final BigDecimal _1_8 = new BigDecimal(1.8);
 
     @Override
     protected String calculateResult(String columnValue) {
         BigDecimal value = BigDecimalParser.toBigDecimal(columnValue);
 
-        BigDecimal result = value.subtract(_32).divide(_1_8, 3, BigDecimal.ROUND_HALF_UP);
+        BigDecimal result = value.subtract(_32).divide(_1_8, 3, DEFAULT_ROUNDING_MODE);
 
         return String.valueOf(result);
     }
@@ -47,11 +43,6 @@ public class FahrenheitToCelsius extends AbstractMathNoParameterAction {
     @Override
     public String getName() {
         return ACTION_NAME;
-    }
-
-    @Override
-    public String getCategory() {
-        return "Conversions";
     }
 
 }

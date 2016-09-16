@@ -17,25 +17,20 @@ import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 /**
  * Given a column, assumed to be a temperature in Celsius, creates a new one with temperature convertedin Fahrenheit.
  */
 @Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + CelsiusToFahrenheit.ACTION_NAME)
-public class CelsiusToFahrenheit extends AbstractMathNoParameterAction {
+public class CelsiusToFahrenheit extends AbstractFahrenheitCelsiusConversion {
 
     protected static final String ACTION_NAME = "celsius_to_fahrenheit";
-
-    private static final BigDecimal _32 = new BigDecimal(32);
-
-    private static final BigDecimal _1_8 = new BigDecimal(1.8);
 
     @Override
     protected String calculateResult(String columnValue) {
         BigDecimal value = BigDecimalParser.toBigDecimal(columnValue);
 
-        BigDecimal result = value.multiply(_1_8).add(_32).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+        BigDecimal result = value.multiply(_1_8).add(_32).setScale(2, DEFAULT_ROUNDING_MODE);
 
         return String.valueOf(result);
     }
@@ -48,11 +43,6 @@ public class CelsiusToFahrenheit extends AbstractMathNoParameterAction {
     @Override
     public String getName() {
         return ACTION_NAME;
-    }
-
-    @Override
-    public String getCategory() {
-        return "Conversions";
     }
 
 }

@@ -11,9 +11,12 @@
 
  ============================================================================*/
 
+import 'ng-sortable/dist/ng-sortable.min.css';
+
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import sunchoke from 'sunchoke';
+import asSortable from 'ng-sortable';
 
 import RECIPE_KNOT_MODULE from '../recipe/knot/recipe-knot-module';
 import RECIPE_STEP_DESCRIPTION from '../recipe/step-description/step-description-module';
@@ -51,6 +54,7 @@ angular.module(MODULE_NAME,
     [
         ngTranslate,
         sunchoke.all,
+        asSortable,
         RECIPE_KNOT_MODULE,
         RECIPE_STEP_DESCRIPTION,
         TALEND_WIDGET_MODULE,

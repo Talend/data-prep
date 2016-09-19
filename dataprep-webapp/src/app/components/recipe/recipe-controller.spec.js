@@ -11,12 +11,10 @@
 
  ============================================================================*/
 
-describe('Recipe controller',() => {
-    'use strict';
-
+describe('Recipe controller', () => {
     let createController;
     let scope;
-    let lastActiveStep = { inactive: false };
+    const lastActiveStep = { inactive: false };
     let stateMock;
     const steps = [{ inactive: false }, { inactive: false }, { inactive: true }, { inactive: true }];
 
@@ -42,9 +40,10 @@ describe('Recipe controller',() => {
                 data: { metadata: {} },
                 recipe: {
                     current: {
-                        steps: steps,
+                        steps,
+                        reorderedSteps: steps,
                         lastActiveStep: steps[1],
-                    }
+                    },
                 },
             },
         };
@@ -60,7 +59,7 @@ describe('Recipe controller',() => {
 
         spyOn($rootScope, '$emit').and.returnValue();
         spyOn(RecipeService, 'refresh').and.callFake(() => {
-            stateMock.playground.recipe.current.steps = [lastActiveStep];
+            stateMock.playground.recipe.current.reorderedSteps = [lastActiveStep];
         });
         spyOn(PreviewService, 'getPreviewDiffRecords').and.returnValue($q.when());
         spyOn(PreviewService, 'getPreviewUpdateRecords').and.returnValue($q.when());
@@ -74,7 +73,7 @@ describe('Recipe controller',() => {
         }));
 
         it('should create a closure that update the step parameters', inject(($rootScope, PlaygroundService) => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 column: { id: 'state' },
@@ -89,19 +88,19 @@ describe('Recipe controller',() => {
             };
             const parameters = { pattern: '-' };
 
-            //when
+            // when
             const updateClosure = ctrl.stepUpdateClosure(step);
             updateClosure(parameters);
             $rootScope.$digest();
 
-            //then
+            // then
             expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
         }));
 
         it('should update updateStepInProgress', inject(($rootScope, $timeout) => {
-            //given
-            const  ctrl = createController();
-            const  step = {
+            // given
+            const ctrl = createController();
+            const step = {
                 column: { id: 'state' },
                 transformation: {
                     stepId: 'a598bc83fc894578a8b823',
@@ -114,7 +113,7 @@ describe('Recipe controller',() => {
             };
             const parameters = { pattern: '-' };
 
-            //when
+            // when
             const updateClosure = ctrl.stepUpdateClosure(step);
             updateClosure(parameters);
             $rootScope.$digest();
@@ -122,12 +121,12 @@ describe('Recipe controller',() => {
             expect(ctrl.updateStepInProgress).toEqual(true);
             $timeout.flush(500);
 
-            //then
+            // then
             expect(ctrl.updateStepInProgress).toEqual(false);
         }));
 
         it('should update step', inject((PlaygroundService) => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 column: { id: 'state' },
@@ -141,22 +140,22 @@ describe('Recipe controller',() => {
                         pattern: '.',
                         column_name: 'state',
                         column_id: '0001',
-                        scope: 'column'
+                        scope: 'column',
                     },
                 },
             };
             const parameters = { pattern: '-' };
 
-            //when
+            // when
             ctrl.updateStep(step, parameters);
 
-            //then
+            // then
             expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
         }));
 
         describe('preview', () => {
             it('should do nothing on update preview if the step is inactive', inject(($rootScope, PreviewService) => {
-                //given
+                // given
                 const ctrl = createController();
                 const step = {
                     column: { id: 'state' },
@@ -173,16 +172,16 @@ describe('Recipe controller',() => {
                 const parameters = { pattern: '--' };
                 const closure = ctrl.previewUpdateClosure(step);
 
-                //when
+                // when
                 closure(parameters);
                 $rootScope.$digest();
 
-                //then
+                // then
                 expect(PreviewService.getPreviewUpdateRecords).not.toHaveBeenCalled();
             }));
 
             it('should do nothing on update preview if the params have not changed', inject(($rootScope, PreviewService) => {
-                //given
+                // given
                 const ctrl = createController();
                 const step = {
                     column: { id: '0', name: 'state' },
@@ -198,17 +197,17 @@ describe('Recipe controller',() => {
                 const parameters = { pattern: '.' };
                 const closure = ctrl.previewUpdateClosure(step);
 
-                //when
+                // when
                 closure(parameters);
                 $rootScope.$digest();
 
-                //then
+                // then
                 expect(PreviewService.getPreviewUpdateRecords).not.toHaveBeenCalled();
             }));
 
             it('should call update preview', inject(($rootScope, PreviewService, RecipeService) => {
-                //given
-                RecipeService.refresh(); //set last active step for the test : see mock
+                // given
+                RecipeService.refresh(); // set last active step for the test : see mock
                 $rootScope.$digest();
 
                 const ctrl = createController();
@@ -231,11 +230,11 @@ describe('Recipe controller',() => {
                 const parameters = { pattern: '--' };
                 const closure = ctrl.previewUpdateClosure(step);
 
-                //when
+                // when
                 closure(parameters);
                 $rootScope.$digest();
 
-                //then
+                // then
                 expect(PreviewService.getPreviewUpdateRecords).toHaveBeenCalledWith(
                     stateMock.playground.preparation.id,
                     lastActiveStep,
@@ -247,7 +246,7 @@ describe('Recipe controller',() => {
 
     describe('step parameters', () => {
         it('should return that step has dynamic parameters when it has cluster', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {
@@ -255,29 +254,29 @@ describe('Recipe controller',() => {
                 },
             };
 
-            //when
+            // when
             const hasDynamicParams = ctrl.hasDynamicParams(step);
 
-            //then
+            // then
             expect(hasDynamicParams).toBeTruthy();
         });
 
         it('should return that step has NO dynamic parameters', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {},
             };
 
-            //when
+            // when
             const hasDynamicParams = ctrl.hasDynamicParams(step);
 
-            //then
+            // then
             expect(hasDynamicParams).toBeFalsy();
         });
 
         it('should return that step has static parameters when it has simple params', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {
@@ -285,15 +284,15 @@ describe('Recipe controller',() => {
                 },
             };
 
-            //when
+            // when
             const hasStaticParams = ctrl.hasStaticParams(step);
 
-            //then
+            // then
             expect(hasStaticParams).toBeTruthy();
         });
 
         it('should return that step has static parameters when it has choice params', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {
@@ -301,29 +300,29 @@ describe('Recipe controller',() => {
                 },
             };
 
-            //when
+            // when
             const hasStaticParams = ctrl.hasStaticParams(step);
 
-            //then
+            // then
             expect(hasStaticParams).toBeTruthy();
         });
 
         it('should return that step has NO static parameters', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {},
             };
 
-            //when
+            // when
             const hasStaticParams = ctrl.hasStaticParams(step);
 
-            //then
+            // then
             expect(hasStaticParams).toBeFalsy();
         });
 
         it('should return that step has parameters when it has static params', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {
@@ -331,15 +330,15 @@ describe('Recipe controller',() => {
                 },
             };
 
-            //when
+            // when
             const hasParams = ctrl.hasParameters(step);
 
-            //then
+            // then
             expect(hasParams).toBeTruthy();
         });
 
         it('should return that step has parameters when it has dybamic params', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {
@@ -347,24 +346,24 @@ describe('Recipe controller',() => {
                 },
             };
 
-            //when
+            // when
             const hasParams = ctrl.hasParameters(step);
 
-            //then
+            // then
             expect(hasParams).toBeTruthy();
         });
 
         it('should return that step has NO parameters', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {
                 transformation: {},
             };
 
-            //when
+            // when
             const hasParams = ctrl.hasParameters(step);
 
-            //then
+            // then
             expect(hasParams).toBeFalsy();
         });
     });
@@ -381,22 +380,22 @@ describe('Recipe controller',() => {
         }));
 
         it('should remove step', inject((PlaygroundService) => {
-            //given
+            // given
             const ctrl = createController();
             const event = angular.element.Event('click');
             ctrl.stepToBeDeleted = {};
 
-            //when
+            // when
             ctrl.remove(step, event);
             scope.$digest();
 
-            //then
+            // then
             expect(ctrl.stepToBeDeleted).toBe(null);
             expect(PlaygroundService.removeStep).toHaveBeenCalledWith(step);
         }));
 
         it('should stop click propagation', () => {
-            //given
+            // given
             const ctrl = createController();
             const event = angular.element.Event('click');
             spyOn(event, 'stopPropagation').and.returnValue();
@@ -404,59 +403,59 @@ describe('Recipe controller',() => {
             stateMock.playground.lookup.visibility = true;
             stateMock.playground.lookup.step = step;
 
-            //when
+            // when
             ctrl.remove(step, event);
             scope.$digest();
 
-            //then
+            // then
             expect(event.stopPropagation).toHaveBeenCalled();
         });
 
         it('should hide lookup if it is in update mode', inject((StateService) => {
-            //given
+            // given
             const ctrl = createController();
             const event = angular.element.Event('click');
 
             stateMock.playground.lookup.visibility = true;
             stateMock.playground.lookup.step = step;
 
-            //when
+            // when
             ctrl.remove(step, event);
             scope.$digest();
 
-            //then
+            // then
             expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
         }));
 
         it('should NOT hide lookup when it is NOT in update mode', inject((StateService) => {
-            //given
+            // given
             const ctrl = createController();
             const event = angular.element.Event('click');
 
             stateMock.playground.lookup.visibility = true;
             stateMock.playground.lookup.step = null;
 
-            //when
+            // when
             ctrl.remove(step, event);
             scope.$digest();
 
-            //then
+            // then
             expect(StateService.setLookupVisibility).not.toHaveBeenCalled();
         }));
 
         it('should NOT hide lookup when it is already already hidden', inject((StateService) => {
-            //given
+            // given
             const ctrl = createController();
             const event = angular.element.Event('click');
 
             stateMock.playground.lookup.visibility = false;
             stateMock.playground.lookup.step = step;
 
-            //when
+            // when
             ctrl.remove(step, event);
             scope.$digest();
 
-            //then
+            // then
             expect(StateService.setLookupVisibility).not.toHaveBeenCalled();
         }));
     });
@@ -481,56 +480,56 @@ describe('Recipe controller',() => {
         }));
 
         it('should close lookup if it is opened in selected step update mode', inject((StateService) => {
-            //given
+            // given
             const ctrl = createController();
             stateMock.playground.lookup.visibility = true;
             stateMock.playground.lookup.step = lookupStep;
 
-            //when
+            // when
             ctrl.select(lookupStep);
             scope.$digest();
 
-            //then
+            // then
             expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
         }));
 
         it('should open lookup in update mode', inject((LookupService, StateService) => {
-            //given
+            // given
             const ctrl = createController();
             stateMock.playground.lookup.visibility = false;
 
-            //when
+            // when
             ctrl.select(lookupStep);
             scope.$digest();
 
-            //then
+            // then
             expect(LookupService.loadFromStep).toHaveBeenCalledWith(lookupStep);
             expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true, undefined);
         }));
 
         it('should do nothing on lookup when the selected step is not a lookup', inject((LookupService, StateService) => {
-            //given
+            // given
             const ctrl = createController();
 
-            //when
+            // when
             ctrl.select(notLookupStep);
             scope.$digest();
 
-            //then
+            // then
             expect(LookupService.loadFromStep).not.toHaveBeenCalled();
             expect(StateService.setLookupVisibility).not.toHaveBeenCalled();
         }));
 
-        it('should show dynamic params modal',() => {
-            //given
+        it('should show dynamic params modal', () => {
+            // given
             const ctrl = createController();
             ctrl.showModal[clusterStep.transformation.stepId] = false;
 
-            //when
+            // when
             ctrl.select(clusterStep);
             scope.$digest();
 
-            //then
+            // then
             expect(ctrl.showModal[clusterStep.transformation.stepId]).toBe(true);
         });
     });
@@ -574,17 +573,17 @@ describe('Recipe controller',() => {
         };
 
         it('should update step filters', inject(($q, PlaygroundService) => {
-            //given
+            // given
             const ctrl = createController();
             const newFilterValue = [{ value: ['toto'] }];
 
             spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when());
 
-            //when
+            // when
             ctrl.updateStepFilter(stepWithMultipleFilters, multiValuedFilter, newFilterValue);
             scope.$digest();
 
-            //then
+            // then
             expect(PlaygroundService.updateStep).toHaveBeenCalled();
             const callArgs = PlaygroundService.updateStep.calls.argsFor(0);
             expect(callArgs[0]).toBe(stepWithMultipleFilters);
@@ -638,15 +637,15 @@ describe('Recipe controller',() => {
         }));
 
         it('should remove step filter', inject(($q, PlaygroundService) => {
-            //given
+            // given
             spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
             const ctrl = createController();
 
-            //when
+            // when
             ctrl.removeStepFilter(stepWithMultipleFilters, filter1);
             scope.$digest();
 
-            //then
+            // then
             expect(PlaygroundService.updateStep).toHaveBeenCalled();
             const callArgs = PlaygroundService.updateStep.calls.argsFor(0);
             expect(callArgs[0]).toBe(stepWithMultipleFilters);
@@ -654,16 +653,16 @@ describe('Recipe controller',() => {
         }));
 
         it('should show warning message on delete lines step with last filter removal', inject(($q, PlaygroundService, MessageService) => {
-            //given
+            // given
             spyOn(MessageService, 'warning').and.returnValue();
             spyOn(PlaygroundService, 'updateStep').and.returnValue($q.when(true));
             const ctrl = createController();
 
-            //when
+            // when
             ctrl.removeStepFilter(stepDeleteLinesWithSingleFilter, filter1);
             scope.$digest();
 
-            //then
+            // then
             expect(MessageService.warning).toHaveBeenCalled();
             expect(PlaygroundService.updateStep).not.toHaveBeenCalled();
             expect(stepDeleteLinesWithSingleFilter.filters.length).toBe(1);
@@ -694,9 +693,9 @@ describe('Recipe controller',() => {
         ];
 
         it('should display all filter name on hover', inject(() => {
-            //given
+            // given
             const ctrl = createController();
-            //then
+            // then
             expect(ctrl.getAllFiltersNames(filters)).toBe('(NAME, ID)');
         }));
     });
@@ -705,259 +704,259 @@ describe('Recipe controller',() => {
 
         describe('First/Last in the recipe', () => {
             it('should return true if the step is the 1st in the recipe', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const isStartChain = ctrl.isStartChain(steps[0]);
 
-                //then
+                // then
                 expect(isStartChain).toBe(true);
             });
 
             it('should return false if the step is the 1st in the recipe', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const isStartChain = ctrl.isStartChain(steps[1]);
 
-                //then
+                // then
                 expect(isStartChain).toBe(false);
             });
 
             it('should return true if the step is the last in the recipe', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const isEndChain = ctrl.isEndChain(steps[steps.length - 1]);
 
-                //then
+                // then
                 expect(isEndChain).toBe(true);
             });
 
             it('should return false if the step is the last in the recipe', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const isEndChain = ctrl.isEndChain(steps[0]);
 
-                //then
+                // then
                 expect(isEndChain).toBe(false);
             });
         });
 
         describe('Last Active', () => {
             it('should return false when the step is not the last active in the recipe', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const lastActive = ctrl.isLastActive(steps[0]);
 
-                //then
+                // then
                 expect(lastActive).toBe(false);
             });
 
             it('should return true when the step is the last active in the recipe', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const lastActive = ctrl.isLastActive(steps[1]);
 
-                //then
+                // then
                 expect(lastActive).toBe(true);
             });
         });
 
         describe('Show Top Line', () => {
             it('should return false when step is first', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const showTopLine = ctrl.showTopLine(steps[0]);
 
-                //then
+                // then
                 expect(showTopLine).toBe(false);
             });
 
             it('should return true when step is not first and is active', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const showTopLine = ctrl.showTopLine(steps[1]);
 
-                //then
+                // then
                 expect(showTopLine).toBe(true);
             });
 
             it('should return true when step is not first and it will be activated', () => {
-                //given
+                // given
                 const ctrl = createController();
                 stateMock.playground.recipe.hoveredStep = steps[2];
 
-                //when
+                // when
                 const showTopLine = ctrl.showTopLine(ctrl.step = steps[2]);
 
-                //then
+                // then
                 expect(showTopLine).toBe(true);
             });
         });
 
         describe('Show Bottom Line', () => {
             it('should return false when step is last', () => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 const showBottomLine = ctrl.showBottomLine(steps[3]);
 
-                //then
+                // then
                 expect(showBottomLine).toBe(false);
             });
 
             it('should return true when step is not last, it is active, and not the last active', () => {
-                //given
+                // given
                 stateMock.playground.recipe.current.lastActiveStep = steps[0];
                 const ctrl = createController();
 
-                //when
+                // when
                 const showBottomLine = ctrl.showBottomLine(steps[1]);
 
-                //then
+                // then
                 expect(showBottomLine).toBe(true);
             });
 
             it('should return true when step is not last, it is inactive, it will NOT be activated and it is not hovered', () => {
-                //given
+                // given
                 const ctrl = createController();
                 stateMock.playground.recipe.hoveredStep = steps[1];
 
-                //when
+                // when
                 const showBottomLine = ctrl.showBottomLine(steps[2]);
 
-                //then
+                // then
                 expect(showBottomLine).toBe(false);
             });
 
             it('should return true when step is not last, it will be activated and it is not hovered', () => {
-                //given
+                // given
                 const ctrl = createController();
                 stateMock.playground.recipe.hoveredStep = steps[3];
 
-                //when
+                // when
                 const showBottomLine = ctrl.showBottomLine(steps[2]);
 
-                //then
+                // then
                 expect(showBottomLine).toBe(true);
             });
         });
 
         describe('Step will be activated', () => {
             it('should return true for the 3rd step (inactive), when hovering on the 4th step (inactive)', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[3];
                 const ctrl = createController();
 
-                //when
+                // when
                 const _toBeActivated = ctrl._toBeActivated(steps[2]);
 
-                //then
+                // then
                 expect(_toBeActivated).toBe(true);
             });
 
             it('should return false for the 4th step (inactive), when the 3rd step (inactive) is hovered', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[2];
                 const ctrl = createController();
 
-                //when
+                // when
                 const _toBeActivated = ctrl._toBeActivated(steps[3]);
 
-                //then
+                // then
                 expect(_toBeActivated).toBe(false);
             });
         });
 
         describe('Step will be deactivated', () => {
             it('should return true for the 2nd step (active), when the 1st step (active) is hovered', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[0];
                 const ctrl = createController();
 
-                //when
+                // when
                 const _toBeDeactivated = ctrl._toBeDeactivated(steps[1]);
 
-                //then
+                // then
                 expect(_toBeDeactivated).toBe(true);
             });
 
             it('should return false for the 1st step (active) when the 2nd step (active) is hovered', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[1];
                 const ctrl = createController();
 
-                //when
+                // when
                 const _toBeDeactivated = ctrl._toBeDeactivated(steps[0]);
 
-                //then
+                // then
                 expect(_toBeDeactivated).toBe(false);
             });
         });
 
         describe('Step will switch its status', () => {
             it('should return true when inactive step will be activated', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[3];
                 const ctrl = createController();
 
-                //when
+                // when
                 const toBeSwitched = ctrl.toBeSwitched(steps[3]);
 
-                //then
+                // then
                 expect(toBeSwitched).toBe(true);
             });
 
             it('should return true when active step will be deactivated', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[1];
                 const ctrl = createController();
 
-                //when
+                // when
                 const toBeSwitched = ctrl.toBeSwitched(steps[1]);
 
-                //then
+                // then
                 expect(toBeSwitched).toBe(true);
             });
         });
 
         describe('Hovered status', () => {
             it('should return true if the step is hovered', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[1];
                 const ctrl = createController();
 
-                //when
+                // when
                 const hovered = ctrl.isHoveredStep(steps[1]);
 
-                //then
+                // then
                 expect(hovered).toBe(true);
             });
 
             it('should return true if the step is hovered', () => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[1];
                 const ctrl = createController();
 
-                //when
+                // when
                 const hovered = ctrl.isHoveredStep(steps[0]);
 
-                //then
+                // then
                 expect(hovered).toBe(false);
             });
         });
@@ -971,41 +970,74 @@ describe('Recipe controller',() => {
             }));
 
             it('should start hover', inject((StateService, RecipeKnotService) => {
-                //given
+                // given
                 const ctrl = createController();
 
-                //when
+                // when
                 ctrl.stepHoverStart(steps[1]);
 
-                //then
+                // then
                 expect(StateService.setHoveredStep).toHaveBeenCalledWith(steps[1]);
                 expect(RecipeKnotService.stepHoverStart).toHaveBeenCalledWith(steps[1]);
             }));
 
             it('should return true if the step is hovered', inject((StateService, RecipeKnotService) => {
-                //given
+                // given
                 stateMock.playground.recipe.hoveredStep = steps[1];
                 const ctrl = createController();
 
-                //when
+                // when
                 ctrl.stepHoverEnd(steps[0]);
 
-                //then
+                // then
                 expect(StateService.setHoveredStep).toHaveBeenCalledWith(null);
                 expect(RecipeKnotService.stepHoverEnd).toHaveBeenCalledWith(steps[0]);
             }));
         });
 
+        describe('Drag Start/End', () => {
+            it('should have isDrag to false by default', () => {
+                // given
+                const ctrl = createController();
+
+                // then
+                expect(ctrl.isDragStart).toBeFalsy();
+            });
+
+            it('should enable isDrag', () => {
+                // given
+                const ctrl = createController();
+
+                // when
+                ctrl.dragStart();
+
+                // then
+                expect(ctrl.isDragStart).toBeTruthy();
+            });
+
+            it('should disable isDrag', () => {
+                // given
+                const ctrl = createController();
+                ctrl.isDragStart = false;
+
+                // when
+                ctrl.dragEnd();
+
+                // then
+                expect(ctrl.isDragStart).toBeFalsy();
+            });
+        });
+
         describe('click on a knot', () => {
             it('should toggle step', inject((PlaygroundService) => {
-                //given
+                // given
                 spyOn(PlaygroundService, 'toggleStep').and.returnValue();
                 const ctrl = createController();
 
-                //when
+                // when
                 ctrl.toggleStep(steps[0]);
 
-                //then
+                // then
                 expect(PlaygroundService.toggleStep).toHaveBeenCalledWith(steps[0]);
             }));
         });
@@ -1013,15 +1045,15 @@ describe('Recipe controller',() => {
 
     describe('setting the step that will be deleted', () => {
         it('should set the step that will be deleted', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = {};
             expect(ctrl.stepToBeDeleted).toBe(null);
 
-            //when
+            // when
             ctrl.setStepToBeDeleted(step);
 
-            //then
+            // then
             expect(ctrl.stepToBeDeleted).toBe(step);
         });
 
@@ -1029,55 +1061,55 @@ describe('Recipe controller',() => {
             const ctrl = createController();
             ctrl.stepToBeDeleted = {};
 
-            //when
+            // when
             ctrl.resetStepToBeDeleted();
 
-            //then
+            // then
             expect(ctrl.stepToBeDeleted).toBe(null);
         });
     });
 
     describe('steps that should be removed', () => {
         it('should return true when the current step should be removed', () => {
-            //given
+            // given
             const ctrl = createController();
             const step = { transformation: { stepId: 'abc-def' } };
             ctrl.stepToBeDeleted = step;
 
-            //when
+            // when
             const shouldBeRemoved = ctrl.shouldBeRemoved(step);
 
-            //then
+            // then
             expect(shouldBeRemoved).toBe(true);
         });
 
         it('should return true when the step parent should be also removed', () => {
-            //given
+            // given
             const ctrl = createController();
             const parentStep = {
                 transformation: {
-                    stepId: 'abc-def'
+                    stepId: 'abc-def',
                 },
                 diff: {
-                    createdColumns: ['0008']
+                    createdColumns: ['0008'],
                 },
             };
             ctrl.stepToBeDeleted = parentStep;
             const childStep = {
                 transformation: {
-                    stepId: '123-abd'
+                    stepId: '123-abd',
                 },
                 actionParameters: {
-                    parameters:{
-                        column_id: '0008'
+                    parameters: {
+                        column_id: '0008',
                     },
                 },
             };
 
-            //when
+            // when
             const shouldBeRemoved = ctrl.shouldBeRemoved(childStep);
 
-            //then
+            // then
             expect(shouldBeRemoved).toBe(true);
         });
     });

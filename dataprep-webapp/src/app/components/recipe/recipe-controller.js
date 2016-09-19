@@ -52,6 +52,15 @@ export default class RecipeCtrl {
 
         // Flag that indicates if a step update is in progress
         this.updateStepInProgress = false;
+
+        // Help to hide lines between step bullets while dragging
+        this.isDragStart = false;
+        this.dragControlListeners = {
+            containment: '.recipe',
+            dragStart: this.dragStart.bind(this),
+            dragEnd: this.dragEnd.bind(this),
+            orderChanged: this.orderChanged.bind(this),
+        };
     }
 
     /**
@@ -83,7 +92,7 @@ export default class RecipeCtrl {
      */
     isStartChain(step) {
         // DO NOT use StepUtilsService.isLastStep as it could use the recipe with the before preview steps
-        return step === this.state.playground.recipe.current.steps[0];
+        return step === this.state.playground.recipe.current.reorderedSteps[0];
     }
 
     /**
@@ -94,7 +103,7 @@ export default class RecipeCtrl {
      * @returns {boolean} true if step is the last step
      */
     isEndChain(step) {
-        return step === this.state.playground.recipe.current.steps[this.state.playground.recipe.current.steps.length - 1];
+        return step === this.state.playground.recipe.current.reorderedSteps[this.state.playground.recipe.current.reorderedSteps.length - 1];
     }
 
     /**
@@ -140,8 +149,8 @@ export default class RecipeCtrl {
      * @returns {boolean} true if the step will be activated
      */
     _toBeActivated(step) {
-        const hoveredStepPosition = this.state.playground.recipe.current.steps.indexOf(this.state.playground.recipe.hoveredStep);
-        const stepPosition = this.state.playground.recipe.current.steps.indexOf(step);
+        const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
+        const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
         return hoveredStepPosition !== -1 && hoveredStepPosition >= stepPosition;
     }
 
@@ -153,8 +162,8 @@ export default class RecipeCtrl {
      * @returns {boolean} true if the step will be deactivated
      */
     _toBeDeactivated(step) {
-        const hoveredStepPosition = this.state.playground.recipe.current.steps.indexOf(this.state.playground.recipe.hoveredStep);
-        const stepPosition = this.state.playground.recipe.current.steps.indexOf(step);
+        const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
+        const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
         return hoveredStepPosition !== -1 && hoveredStepPosition <= stepPosition;
     }
 
@@ -283,6 +292,46 @@ export default class RecipeCtrl {
         const previousPosition = stepPosition;
         const nextPosition = stepPosition + 1;
         this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+    }
+
+    /**
+     * @ngdoc method
+     * @name dragStart
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @description Callback on drag start
+     */
+    dragStart() {
+        this.isDragStart = true;
+    }
+
+    /**
+     * @ngdoc method
+     * @name dragEnd
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @description Callback on drag end
+     */
+    dragEnd() {
+        this.isDragStart = false;
+    }
+
+    /**
+     * @ngdoc method
+     * @name orderChanged
+     * @methodOf data-prep.recipe.controller:RecipeCtrl
+     * @param {object} event Data embedded into drag and drop event
+     * @description Callback when step order is changed within the step list
+     */
+    orderChanged(event) {
+        const { source, dest } = event;
+        const previousPosition = source.index;
+        const nextPosition = dest.index;
+        this.PlaygroundService
+            .updateStepOrder(previousPosition, nextPosition, true)
+            .catch(() => {
+                // Must manually reset order if reorder request fails
+                dest.sortableScope.removeItem(dest.index);
+                source.itemScope.sortableScope.insertItem(source.index, source.itemScope.step);
+            });
     }
 
     //---------------------------------------------------------------------------------------------

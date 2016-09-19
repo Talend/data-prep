@@ -985,21 +985,31 @@ describe('Playground Service', () => {
                 });
             }));
 
-            it('should reorder preparation step to top', inject(($rootScope, PlaygroundService, PreparationService) => {
-                // when
-                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
-
-                // then
-                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
-            }));
-
-            it('should not reorder preparation step to top if it already the first one', inject(($rootScope, PlaygroundService, PreparationService) => {
+            it('should not reorder steps if step does not move', inject(($rootScope, PlaygroundService, PreparationService) => {
                 // given
-                const stepIdToMove = 'STEP_ID_1';
-                const previousPosition = 0;
-                const nextPosition = 0;
-                const nextParentId = 'STEP_ID_1';
+                const previousPosition = 1;
+                const nextPosition = 1;
 
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).not.toHaveBeenCalled();
+            }));
+
+            it('should not move step up if it is already the first one', inject(($rootScope, PlaygroundService, PreparationService) => {
+                // given
+                const previousPosition = 0;
+                const nextPosition = -1;
+
+                // when
+                PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+
+                // then
+                expect(PreparationService.moveStep).not.toHaveBeenCalled();
+            }));
+
+            it('should move step up', inject(($rootScope, PlaygroundService, PreparationService) => {
                 // when
                 PlaygroundService.updateStepOrder(previousPosition, nextPosition);
 
@@ -1007,7 +1017,7 @@ describe('Playground Service', () => {
                 expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
             }));
 
-            it('should reorder preparation step to top by selecting initial step if step becomes the first', inject(($rootScope, PlaygroundService, PreparationService) => {
+            it('should move step up by selecting initial step as next parent if step becomes the first', inject(($rootScope, PlaygroundService, PreparationService) => {
                 // given
                 const nextPosition = 0;
                 const nextParentId = 'INITIAL_STEP_ID';
@@ -1019,7 +1029,7 @@ describe('Playground Service', () => {
                 expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
             }));
 
-            it('should reorder preparation step to bottom', inject(($rootScope, PlaygroundService, PreparationService) => {
+            it('should move step down', inject(($rootScope, PlaygroundService, PreparationService) => {
                 // given
                 const stepIdToMove = 'STEP_ID_2';
                 const previousPosition = 1;
@@ -1033,16 +1043,15 @@ describe('Playground Service', () => {
                 expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
             }));
 
-            it('should not reorder preparation step to bottom if it already the last one', inject(($rootScope, PlaygroundService, PreparationService) => {
+            it('should not move step down if it is already the last one', inject(($rootScope, PlaygroundService, PreparationService) => {
                 // given
-                const nextPosition = 2;
-                const nextParentId = 'STEP_ID_3';
+                const nextPosition = 3;
 
                 // when
                 PlaygroundService.updateStepOrder(previousPosition, nextPosition);
 
                 // then
-                expect(PreparationService.moveStep).toHaveBeenCalledWith(preparationId, stepIdToMove, nextParentId);
+                expect(PreparationService.moveStep).not.toHaveBeenCalled();
             }));
 
             it('should show/hide loading', inject(($rootScope, PlaygroundService) => {
@@ -1095,7 +1104,7 @@ describe('Playground Service', () => {
                     undo = HistoryService.addAction.calls.argsFor(0)[0];
                 }));
 
-                it('should add undo/redo actions after remove transformation', inject((HistoryService) => {
+                it('should add undo/redo actions after move step', inject((HistoryService) => {
                     // then
                     expect(HistoryService.addAction).toHaveBeenCalled();
                 }));

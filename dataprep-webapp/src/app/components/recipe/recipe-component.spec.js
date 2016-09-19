@@ -11,8 +11,7 @@
 
   ============================================================================*/
 
-describe('Recipe component', function () {
-    'use strict';
+describe('Recipe component', () => {
     let scope;
     let element;
     let stateMock;
@@ -736,16 +735,17 @@ describe('Recipe component', function () {
     });
 
     it('should render recipe entries', () => {
-        //when
+        // when
         stateMock.playground.recipe.current.steps = [
             steps[0],
             steps[1],
             steps[2],
             steps[4],
         ];
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(element.find('.recipe ul sc-accordion-item').length).toBe(4);
         expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Split on column COL1');
         expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2. To uppercase on column COL2');
@@ -754,25 +754,27 @@ describe('Recipe component', function () {
     });
 
     it('should render recipe Lookup entry', () => {
-        //when
+        // when
         stateMock.playground.recipe.current.steps = [steps[steps.length - 1]];
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(element.find('.recipe ul sc-accordion-item ').length).toBe(1);
         expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Lookup done with dataset customers_100_with_pb. Join has been set between id and id. The column firstname has been added.');
     });
 
     it('should render early preview step', () => {
-        //when
+        // when
         stateMock.playground.recipe.current.steps = [
             steps[0],
             steps[1],
             steps[5], // preview step
         ];
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(element.find('.recipe .step-container').length).toBe(3);
         expect(element.find('.recipe .step-container').eq(0).hasClass('preview')).toBe(false);
         expect(element.find('.recipe .step-container').eq(1).hasClass('preview')).toBe(false);
@@ -780,48 +782,52 @@ describe('Recipe component', function () {
     });
 
     it('should render recipe params', () => {
-        //when
+        // when
         stateMock.playground.recipe.current.steps = [steps[0]];
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(element.find('.recipe ul sc-accordion-item content').length).toBe(1);
         expect(element.find('.recipe ul sc-accordion-item content').eq(0).find('.transformation-form').length).toBe(1);
     });
 
     it('should render recipe cluster params', () => {
-        //given
+        // given
         const body = angular.element('body');
 
-        //when
+        // when
         stateMock.playground.recipe.current.steps = [steps[3]];
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(body.find('.modal-inner').length).toBe(1);
         expect(body.find('.modal-inner').find('.cluster').length).toBe(1);
     });
 
     it('should render knots', () => {
-        //when
+        // when
         stateMock.playground.recipe.current.steps = [
             steps[0],
             steps[1],
             steps[2],
             steps[4],
         ];
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(element.find('.recipe ul recipe-knot').length).toBe(4);
     });
 
     it('should render inactive style', () => {
-        //when
+        // when
         stateMock.playground.recipe.current.steps = steps;
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
-        //then
+        // then
         expect(element.find('.recipe ul .disabled-step').length).toBe(4);
         expect(element.find('.recipe .step-container').eq(1).hasClass('disabled-step')).toBe(true);
         expect(element.find('.recipe .step-container').eq(2).hasClass('disabled-step')).toBe(true);
@@ -830,36 +836,38 @@ describe('Recipe component', function () {
     });
 
     it('should highlight steps that will be deleted on remove icon mouse over', inject(($timeout) => {
-        //given
+        // given
         stateMock.playground.recipe.current.steps = stepsWithDiff;
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
         $timeout.flush(1);
 
-        //when
+        // when
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();
 
-        //then
+        // then
         expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(true);
         expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(true);
         expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(true);
     }));
 
     it('should remove highlight class on remove icon mouse out', inject(($timeout) => {
-        //given
+        // given
         stateMock.playground.recipe.current.steps = stepsWithDiff;
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
         $timeout.flush(1);
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();
 
-        //then
+        // then
         expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(true);
         expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(true);
         expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(true);
 
-        //when
+        // when
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseout();
 
-        //then
+        // then
         expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(false);
         expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(false);
         expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(false);

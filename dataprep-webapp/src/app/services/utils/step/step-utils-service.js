@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
+import { map } from 'lodash';
 
 /**
  * @ngdoc service
@@ -42,7 +42,7 @@ export default class StepUtilsService {
      * @description Return a recipe step identified by index
      * @returns {object} The recipe step
      */
-    getStep(recipeState, index, defaultLast) {
+    getStep(recipeState, index, defaultLast = false) {
         if (index < 0) {
             return recipeState.initialStep;
         }
@@ -191,6 +191,6 @@ export default class StepUtilsService {
      */
     getAllActionsFrom(recipeState, step) {
         const steps = this.getAllStepsFrom(recipeState, step);
-        return _.map(steps, 'actionParameters');
+        return map(steps, 'actionParameters');
     }
 }

@@ -9,6 +9,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.parameters.Parameter;
@@ -19,8 +20,7 @@ import org.talend.dataprep.units.TemperatureImpl;
 
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.ACTION_NAME;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.CELSIUS;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.*;
 
 /**
  * Abstract class for conversions from Fahrenheit to Celsius and vice versa.
@@ -34,17 +34,23 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
 
     private static final String TO_UNIT_PARAMETER = "to_temperature";
 
+    private static final String TARGET_PRECISION = "precision";
+
     @Override
     protected String calculateResult(String columnValue, ActionContext context) {
         TemperatureUnit fromTemperatureUnit = TemperatureUnit.valueOf(context.getParameters().get(FROM_UNIT_PARAMETER));
         TemperatureUnit toTemperatureUnit = TemperatureUnit.valueOf(context.getParameters().get(TO_UNIT_PARAMETER));
+        String precisionParameter = context.getParameters().get(TARGET_PRECISION);
 
         BigDecimal value = BigDecimalParser.toBigDecimal(columnValue);
-
         TemperatureImpl fromTemp = new TemperatureImpl(value, fromTemperatureUnit.asJavaUnit());
-
         TemperatureImpl temperature = fromTemp.convertTo(toTemperatureUnit.asJavaUnit());
-        return String.valueOf(temperature.getValue().setScale(value.scale(), RoundingMode.HALF_UP));
+
+        Integer targetPrecision = NumberUtils.toInt(precisionParameter, value.precision());
+
+        int targetScale = value.scale() - value.precision() +  targetPrecision;
+
+        return temperature.getValue().setScale(targetScale, RoundingMode.HALF_UP).toPlainString();
     }
 
     @Override
@@ -53,6 +59,7 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
         parameters.add(SelectParameter.Builder.builder()
                 .item(FAHRENHEIT.name(), FAHRENHEIT.toString())
                 .item(CELSIUS.name(), CELSIUS.toString())
+                .item(KELVIN.name(), KELVIN.toString())
                 .canBeBlank(false)
                 .defaultValue(FAHRENHEIT.name())
                 .name(FROM_UNIT_PARAMETER)
@@ -61,12 +68,13 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
         parameters.add(SelectParameter.Builder.builder()
                 .item(FAHRENHEIT.name(), FAHRENHEIT.toString())
                 .item(CELSIUS.name(), CELSIUS.toString())
+                .item(KELVIN.name(), KELVIN.toString())
                 .canBeBlank(false)
                 .defaultValue(CELSIUS.name())
                 .name(TO_UNIT_PARAMETER)
                 .build());
 
-        parameters.add(new Parameter("precision", INTEGER, null, true, true, "precision"));
+        parameters.add(new Parameter(TARGET_PRECISION, INTEGER, null, false, true, "precision"));
         return parameters;
     }
 
@@ -93,7 +101,8 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
      */
     public enum TemperatureUnit {
         FAHRENHEIT("Fahrenheit", NonSI.FAHRENHEIT),
-        CELSIUS("Celsius", SI.CELSIUS);
+        CELSIUS("Celsius", SI.CELSIUS),
+        KELVIN("Kelvin", SI.KELVIN);
 
         private final String displayName;
 

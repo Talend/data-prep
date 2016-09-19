@@ -41,7 +41,7 @@ describe('Recipe controller', () => {
                 recipe: {
                     current: {
                         steps,
-                        stepsClone: steps,
+                        reorderedSteps: steps,
                         lastActiveStep: steps[1],
                     },
                 },
@@ -59,7 +59,7 @@ describe('Recipe controller', () => {
 
         spyOn($rootScope, '$emit').and.returnValue();
         spyOn(RecipeService, 'refresh').and.callFake(() => {
-            stateMock.playground.recipe.current.stepsClone = [lastActiveStep];
+            stateMock.playground.recipe.current.reorderedSteps = [lastActiveStep];
         });
         spyOn(PreviewService, 'getPreviewDiffRecords').and.returnValue($q.when());
         spyOn(PreviewService, 'getPreviewUpdateRecords').and.returnValue($q.when());

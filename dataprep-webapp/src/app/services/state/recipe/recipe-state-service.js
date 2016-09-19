@@ -18,7 +18,7 @@ export const recipeState = {
     initialStep: null,
     current: {
         steps: [],
-        stepsClone: [],
+        reorderedSteps: [],
         lastActiveStep: null,
     },
     beforePreview: null,
@@ -80,7 +80,7 @@ export function RecipeStateService() {
         recipeState.initialStep = initialStep;
         recipeState.current = {
             steps,
-            stepsClone: angular.copy(steps),
+            reorderedSteps: steps.slice(0),
             lastActiveStep: null,
         };
         recipeState.beforePreview = null;
@@ -99,7 +99,7 @@ export function RecipeStateService() {
 
         recipeState.current = {
             steps: previewSteps,
-            stepsClone: angular.copy(previewSteps),
+            reorderedSteps: previewSteps.slice(0),
             lastActiveStep: null,
         };
         disableStepsAfter(null); // enable all steps
@@ -146,12 +146,12 @@ export function RecipeStateService() {
         recipeState.initialStep = null;
         recipeState.current = {
             steps: [],
-            stepsClone: [],
+            reorderedSteps: [],
             lastActiveStep: null,
         };
         recipeState.beforePreview = {
             steps: [],
-            stepsClone: [],
+            reorderedSteps: [],
             lastActiveStep: null,
         };
     }

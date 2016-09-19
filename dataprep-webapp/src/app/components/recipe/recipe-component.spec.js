@@ -742,7 +742,7 @@ describe('Recipe component', () => {
             steps[2],
             steps[4],
         ];
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -756,7 +756,7 @@ describe('Recipe component', () => {
     it('should render recipe Lookup entry', () => {
         // when
         stateMock.playground.recipe.current.steps = [steps[steps.length - 1]];
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -771,7 +771,7 @@ describe('Recipe component', () => {
             steps[1],
             steps[5], // preview step
         ];
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -784,7 +784,7 @@ describe('Recipe component', () => {
     it('should render recipe params', () => {
         // when
         stateMock.playground.recipe.current.steps = [steps[0]];
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -798,7 +798,7 @@ describe('Recipe component', () => {
 
         // when
         stateMock.playground.recipe.current.steps = [steps[3]];
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -814,7 +814,7 @@ describe('Recipe component', () => {
             steps[2],
             steps[4],
         ];
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -824,7 +824,7 @@ describe('Recipe component', () => {
     it('should render inactive style', () => {
         // when
         stateMock.playground.recipe.current.steps = steps;
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
 
         // then
@@ -838,7 +838,7 @@ describe('Recipe component', () => {
     it('should highlight steps that will be deleted on remove icon mouse over', inject(($timeout) => {
         // given
         stateMock.playground.recipe.current.steps = stepsWithDiff;
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
         $timeout.flush(1);
 
@@ -854,7 +854,7 @@ describe('Recipe component', () => {
     it('should remove highlight class on remove icon mouse out', inject(($timeout) => {
         // given
         stateMock.playground.recipe.current.steps = stepsWithDiff;
-        stateMock.playground.recipe.current.stepsClone = angular.copy(stateMock.playground.recipe.current.steps);
+        stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
         scope.$digest();
         $timeout.flush(1);
         element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();

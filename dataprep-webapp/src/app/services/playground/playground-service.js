@@ -503,9 +503,6 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             .then(() => {
                 return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]);
             })
-            .then(() => {
-                state.playground.recipe.current.stepsClone = angular.copy(state.playground.recipe.current.steps);
-            })
             // add entry in history for undo/redo
             .then(() => {
                 const actualHead = StepUtilsService.getLastStep(recipe).transformation.stepId;

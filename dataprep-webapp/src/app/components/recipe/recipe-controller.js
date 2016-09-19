@@ -92,7 +92,7 @@ export default class RecipeCtrl {
      */
     isStartChain(step) {
         // DO NOT use StepUtilsService.isLastStep as it could use the recipe with the before preview steps
-        return step === this.state.playground.recipe.current.stepsClone[0];
+        return step === this.state.playground.recipe.current.reorderedSteps[0];
     }
 
     /**
@@ -103,7 +103,7 @@ export default class RecipeCtrl {
      * @returns {boolean} true if step is the last step
      */
     isEndChain(step) {
-        return step === this.state.playground.recipe.current.stepsClone[this.state.playground.recipe.current.stepsClone.length - 1];
+        return step === this.state.playground.recipe.current.reorderedSteps[this.state.playground.recipe.current.reorderedSteps.length - 1];
     }
 
     /**
@@ -149,8 +149,8 @@ export default class RecipeCtrl {
      * @returns {boolean} true if the step will be activated
      */
     _toBeActivated(step) {
-        const hoveredStepPosition = this.state.playground.recipe.current.stepsClone.indexOf(this.state.playground.recipe.hoveredStep);
-        const stepPosition = this.state.playground.recipe.current.stepsClone.indexOf(step);
+        const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
+        const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
         return hoveredStepPosition !== -1 && hoveredStepPosition >= stepPosition;
     }
 
@@ -162,8 +162,8 @@ export default class RecipeCtrl {
      * @returns {boolean} true if the step will be deactivated
      */
     _toBeDeactivated(step) {
-        const hoveredStepPosition = this.state.playground.recipe.current.stepsClone.indexOf(this.state.playground.recipe.hoveredStep);
-        const stepPosition = this.state.playground.recipe.current.stepsClone.indexOf(step);
+        const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
+        const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
         return hoveredStepPosition !== -1 && hoveredStepPosition <= stepPosition;
     }
 

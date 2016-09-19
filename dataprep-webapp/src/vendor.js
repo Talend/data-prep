@@ -61,6 +61,10 @@ import 'moment-jdateformatparser';
 // https://github.com/danialfarid/ng-file-upload
 import 'ng-file-upload/dist/angular-file-upload.min';
 
+// https://github.com/a5hik/ng-sortable
+import 'ng-sortable/dist/ng-sortable.min.css';
+import 'ng-sortable';
+
 // https://github.com/jirikavi/AngularJS-Toaster
 import 'angularjs-toaster';
 import 'angularjs-toaster/toaster.scss';

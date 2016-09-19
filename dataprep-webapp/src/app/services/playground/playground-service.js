@@ -460,10 +460,9 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @methodOf data-prep.services.playground.service:PlaygroundService
      * @param {number} previousPosition Previous recipe step position
      * @param {number} nextPosition New recipe step position
-     * @param {boolean} isListAlreadyUpdated If we have to deal with previous step list state or the just modified one
      * @description Update step order
      */
-    function updateStepOrder(previousPosition, nextPosition, isListAlreadyUpdated = false) {
+    function updateStepOrder(previousPosition, nextPosition) {
         if (previousPosition === nextPosition) {
             return;
         }
@@ -476,20 +475,13 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 
         $rootScope.$emit(EVENT_LOADING_START);
 
-        let currentStep;
-        // If drag and drop, list is already updated
-        if (isListAlreadyUpdated) {
-            currentStep = StepUtilsService.getStep(recipe, nextPosition);
-        }
         // If move up or move down buttons, list is not yet updated
-        else {
-            currentStep = StepUtilsService.getStep(recipe, previousPosition);
-        }
+        const currentStep = StepUtilsService.getStep(recipe, previousPosition);
 
         // Step list has not yet change in fact so
         let nextParentStep;
         // if we want to move step up the next parent is the step at the next position - 1
-        if (isListAlreadyUpdated || previousPosition > nextPosition) {
+        if (previousPosition > nextPosition) {
             const parentStepIndex = nextPosition - 1;
             nextParentStep = StepUtilsService.getStep(recipe, parentStepIndex);
         }
@@ -503,20 +495,16 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         const nextParentStepId = nextParentStep.transformation.stepId;
 
         // Save the head before transformation for undo
-        let previousHead;
-        // If list is already updated and moved step is last
-        if (isListAlreadyUpdated && StepUtilsService.isLastStep(recipe, currentStep)) {
-            previousHead = nextParentStepId;
-        }
         // If list is not updated yet or moved step is not the last one
-        else {
-            previousHead = StepUtilsService.getLastStep(recipe).transformation.stepId;
-        }
+        const previousHead = StepUtilsService.getLastStep(recipe).transformation.stepId;
 
         return PreparationService.moveStep(preparationId, currentStepId, nextParentStepId)
             // update recipe and datagrid
             .then(() => {
                 return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]);
+            })
+            .then(() => {
+                state.playground.recipe.current.stepsClone = angular.copy(state.playground.recipe.current.steps);
             })
             // add entry in history for undo/redo
             .then(() => {

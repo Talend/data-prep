@@ -14,10 +14,10 @@
   -->
 
 <div class="recipe"
-     ng-model="$ctrl.state.playground.recipe.current.steps"
+     ng-model="$ctrl.state.playground.recipe.current.stepsClone"
      as-sortable="$ctrl.dragControlListeners">
     <sc-accordion>
-        <li ng-repeat="step in $ctrl.state.playground.recipe.current.steps track by step.transformation.stepId"
+        <li ng-repeat="step in $ctrl.state.playground.recipe.current.stepsClone track by step.transformation.stepId"
             as-sortable-item>
             <div class="step-container"
                  ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}"
@@ -26,7 +26,7 @@
                 <sc-accordion-item id="step-{{step.transformation.stepId}}"
                                    class="recipe-step"
                                    on-open="$ctrl.resetParams(step)"
-                                   default="$index === ($ctrl.state.playground.recipe.current.steps.length - 1)">
+                                   default="$index === ($ctrl.state.playground.recipe.current.stepsClone.length - 1)">
 
                     <trigger class="step-description"
                              ng-click="$ctrl.select(step)">

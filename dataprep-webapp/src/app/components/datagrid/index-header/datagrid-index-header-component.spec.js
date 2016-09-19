@@ -35,15 +35,15 @@ describe('Datagrid index header Component', () => {
     });
 
     it('should render index filter menu', () => {
-        //given
+        // given
         createElement();
 
-        //then
+        // then
         expect(element.find('sc-dropdown').size()).toBe(1);
         expect(element.find('sc-dropdown li').size()).toBe(3);
 
-        expect(element.find('sc-dropdown li[translate-once="DISPLAY_ROWS_INVALID_VALUES"]').length).toBe(1);
-        expect(element.find('sc-dropdown li[translate-once="DISPLAY_ROWS_EMPTY_VALUES"]').length).toBe(1);
-        expect(element.find('sc-dropdown li[translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES"]').length).toBe(1);
+        expect(element.find('sc-dropdown li a[translate-once="DISPLAY_ROWS_INVALID_VALUES"]').length).toBe(1);
+        expect(element.find('sc-dropdown li a[translate-once="DISPLAY_ROWS_EMPTY_VALUES"]').length).toBe(1);
+        expect(element.find('sc-dropdown li a[translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES"]').length).toBe(1);
     });
 });

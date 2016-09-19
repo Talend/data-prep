@@ -13,22 +13,25 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.CELSIUS;
+import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
+
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.CELSIUS;
-import static org.talend.dataprep.transformation.actions.math.TemperaturesConverter.TemperatureUnit.FAHRENHEIT;
 
 /**
  * Unit test for the CelsiusToFahrenheit action.
@@ -75,6 +78,25 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
     @Test
     public void testNegativeValue() {
         testConversion("-100", CELSIUS, "-148", FAHRENHEIT);
+    }
+
+    @Test
+    public void shouldGetParameters() throws Exception {
+        // given
+        List<String> parameterNames = Arrays.asList("to_temperature", "from_temperature", "precision", "column_id", "row_id",
+                "scope", "filter");
+
+        // when
+        final List<Parameter> parameters = action.getParameters();
+
+        // then
+        assertNotNull(parameters);
+        assertEquals(7, parameters.size()); // 4 implicit parameters + 3 specific
+        final List<String> expectedParametersNotFound = parameters.stream() //
+                .map(Parameter::getName) //
+                .filter(n -> !parameterNames.contains(n)) //
+                .collect(Collectors.toList());
+        assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
     }
 
     public void testConversion(String from, TemperaturesConverter.TemperatureUnit fromUnit, String expected,

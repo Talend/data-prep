@@ -48,6 +48,8 @@
         <org.talend.dataquality.standardization.version>3.2.2-SNAPSHOT</org.talend.dataquality.standardization.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
+        <!-- This version should match the one pulled by tika-parsers -> geoapi -->
+        <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
     </properties>
     <modules>
         <module>../dataprep-backend-common</module>
@@ -495,6 +497,11 @@
                 <groupId>org.talend.datastewardship</groupId>
                 <artifactId>tql</artifactId>
                 <version>0.4.0-BUILD-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.measure</groupId>
+                <artifactId>jsr-275</artifactId>
+                <version>${javax.measure.jsr-275.version}</version>
             </dependency>
             <!-- SWAGGER DEPENDENCIES -->
             <dependency>

@@ -17,8 +17,8 @@
     <div ng-if="qualityBarCtrl.isTrusted">
         <div talend-dropdown
              class="valid-partition"
-             ng-style="{'flex': (qualityBarCtrl.width.valid > 10 ? '1 1 ' + qualityBarCtrl.width.valid + '%' : '0 0 ' + qualityBarCtrl.width.valid + 'px')}"
-             ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+             ng-style="qualityBarCtrl.width.isVariableValid && {'flex-basis': qualityBarCtrl.width.valid + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableValid, 'not-fixed-width': qualityBarCtrl.width.isVariableValid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.valid > 0"
              title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)">
                 <div class="dropdown-container">
@@ -30,8 +30,8 @@
 
         <div talend-dropdown
              class="empty-partition"
-             ng-style="{'flex': (qualityBarCtrl.width.empty > 10 ? '1 1 ' + qualityBarCtrl.width.empty + '%' : '0 0 ' + qualityBarCtrl.width.empty + 'px')}"
-             ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+             ng-style="qualityBarCtrl.width.isVariableEmpty && {'flex-basis': qualityBarCtrl.width.empty + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableEmpty, 'not-fixed-width': qualityBarCtrl.width.isVariableEmpty, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.empty > 0"
              title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
                 <div class="dropdown-container">
@@ -43,8 +43,8 @@
 
         <div talend-dropdown
              class="invalid-partition"
-             ng-style="{'flex': (qualityBarCtrl.width.invalid > 10 ? '1 1 ' + qualityBarCtrl.width.invalid + '%' : '0 0 ' + qualityBarCtrl.width.invalid + 'px')}"
-             ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+             ng-style="qualityBarCtrl.width.isVariableInvalid && {'flex-basis': qualityBarCtrl.width.invalid + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableInvalid, 'not-fixed-width': qualityBarCtrl.width.isVariableInvalid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.invalid > 0"
              title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
                 <div class="dropdown-container">
@@ -59,22 +59,22 @@
 <div class="quality-bar" ng-if="!qualityBarCtrl.hasMenu">
     <div ng-if="qualityBarCtrl.isTrusted">
         <div class="valid-partition"
-             ng-style="{width: qualityBarCtrl.width.valid + '%'}"
-             ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+             ng-style="qualityBarCtrl.width.isVariableValid && {'flex-basis': qualityBarCtrl.width.valid + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableValid, 'not-fixed-width': qualityBarCtrl.width.isVariableValid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.valid > 0"
              title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)">
         </div>
 
         <div class="empty-partition"
-             ng-style="{width: qualityBarCtrl.width.empty + '%'}"
-             ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+             ng-style="qualityBarCtrl.width.isVariableEmpty && {'flex-basis': qualityBarCtrl.width.empty + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableEmpty, 'not-fixed-width': qualityBarCtrl.width.isVariableEmpty, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.empty > 0"
              title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
         </div>
 
         <div class="invalid-partition"
-             ng-style="{width: qualityBarCtrl.width.invalid + '%'}"
-             ng-class="{'no-transition' : qualityBarCtrl.blockTransition}"
+             ng-style="qualityBarCtrl.width.isVariableInvalid && {'flex-basis': qualityBarCtrl.width.invalid + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableInvalid, 'not-fixed-width': qualityBarCtrl.width.isVariableInvalid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.invalid > 0"
              title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
         </div>

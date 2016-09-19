@@ -12,7 +12,6 @@
  ============================================================================*/
 
 describe('Quality bar directive', () => {
-    'use strict';
 
     let scope;
     let element;
@@ -40,7 +39,7 @@ describe('Quality bar directive', () => {
 
     describe('with enter animation', () => {
         it(' should enable transition', () => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -49,15 +48,15 @@ describe('Quality bar directive', () => {
             scope.enterAnimation = true;
             createElement();
 
-            //when
+            // when
             scope.$digest();
 
-            //then
+            // then
             expect(controller.blockTransition).toBe(false);
         });
 
         it(' should reset the width object', () => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -66,10 +65,10 @@ describe('Quality bar directive', () => {
             scope.enterAnimation = true;
             createElement();
 
-            //when
+            // when
             scope.$digest();
 
-            //then
+            // then
             expect(controller.width).toEqual({
                 invalid: 0,
                 empty: 0,
@@ -78,7 +77,7 @@ describe('Quality bar directive', () => {
         });
 
         it(' compute percentage and width after a 300ms timeout', inject(($timeout) => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -87,13 +86,13 @@ describe('Quality bar directive', () => {
             scope.enterAnimation = true;
             createElement();
 
-            //when
+            // when
             scope.$digest();
             $timeout.flush(300);
 
-            //then
+            // then
             expect(controller.percent).toEqual({ invalid: 20, empty: 70, valid: 10 });
-            expect(controller.width).toEqual({ invalid: 20, empty: 70, valid: 10 });
+            expect(controller.width).toEqual({ invalid: 20, empty: 70, valid: 10, isVariableInvalid: true, isVariableEmpty: true, isVariableValid: false });
         }));
     });
 
@@ -109,7 +108,7 @@ describe('Quality bar directive', () => {
         }));
 
         it(' should not enable transition', () => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -117,15 +116,15 @@ describe('Quality bar directive', () => {
             };
             createElement();
 
-            //when
+            // when
             scope.$digest();
 
-            //then
+            // then
             expect(controller.blockTransition).toBe(true);
         });
 
         it('compute percentage and width with no animation', () => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -133,12 +132,12 @@ describe('Quality bar directive', () => {
             };
             createElement();
 
-            //when
+            // when
             scope.$digest();
 
-            //then
+            // then
             expect(controller.percent).toEqual({ invalid: 20, empty: 70, valid: 10 });
-            expect(controller.width).toEqual({ invalid: 20, empty: 70, valid: 10 });
+            expect(controller.width).toEqual({ invalid: 20, empty: 70, valid: 10, isVariableInvalid: true, isVariableEmpty: true, isVariableValid: false });
         });
     });
 
@@ -154,7 +153,7 @@ describe('Quality bar directive', () => {
         }));
 
         it('should render only the 3 partitions', inject(($timeout) => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -163,11 +162,11 @@ describe('Quality bar directive', () => {
             scope.hasMenu = false;
             createElement();
 
-            //when
+            // when
             scope.$digest();
             $timeout.flush(300);
 
-            //then
+            // then
             expect(element.find('.valid-partition').eq(0)[0].hasAttribute('talend-dropdown')).toBe(false);
         }));
     });
@@ -187,33 +186,45 @@ describe('Quality bar directive', () => {
         }));
 
         it('should render menu and its content', () => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
+                isVariableValid: false,
                 invalid: 20,
+                isVariableInvalid: true,
                 empty: 70,
+                isVariableEmpty: true,
             };
             scope.hasMenu = true;
             createElement();
 
-            //when
+            // when
             scope.$digest();
 
-            //then
-            expect(element.find('.valid-partition').eq(0)[0].hasAttribute('talend-dropdown')).toBe(true);
+            // then
+            const validPartitionElm = element.find('.valid-partition').eq(0);
+            expect(validPartitionElm[0].hasAttribute('talend-dropdown')).toBeTruthy();
+            expect(validPartitionElm.hasClass('fixed-width')).toBeTruthy();
+            expect(validPartitionElm.hasClass('not-fixed-width')).toBeFalsy();
             expect(element.find('.valid-partition .dropdown-container .dropdown-menu .column-action').text()).toBe('valid');
 
-            expect(element.find('.empty-partition').eq(0)[0].hasAttribute('talend-dropdown')).toBe(true);
+            const emptyPartitionElm = element.find('.empty-partition').eq(0);
+            expect(emptyPartitionElm[0].hasAttribute('talend-dropdown')).toBeTruthy();
+            expect(emptyPartitionElm.hasClass('fixed-width')).toBeFalsy();
+            expect(emptyPartitionElm.hasClass('not-fixed-width')).toBeTruthy();
             expect(element.find('.empty-partition .dropdown-container .dropdown-menu .column-action').text()).toBe('empty');
 
-            expect(element.find('.invalid-partition').eq(0)[0].hasAttribute('talend-dropdown')).toBe(true);
+            const invalidPartitionElm = element.find('.invalid-partition').eq(0);
+            expect(invalidPartitionElm[0].hasAttribute('talend-dropdown')).toBeTruthy();
+            expect(invalidPartitionElm.hasClass('fixed-width')).toBeFalsy();
+            expect(invalidPartitionElm.hasClass('not-fixed-width')).toBeTruthy();
             expect(element.find('.invalid-partition .dropdown-container .dropdown-menu .column-action').text()).toBe('invalid');
         });
     });
 
     describe('with no trusted statistics', () => {
         it('should not render its content', () => {
-            //given
+            // given
             scope.quality = {
                 valid: 10,
                 invalid: 20,
@@ -222,10 +233,10 @@ describe('Quality bar directive', () => {
             scope.isTrusted = false;
             createElement();
 
-            //when
+            // when
             scope.$digest();
 
-            //then
+            // then
             expect(element.find('.quality-bar').children().length).toBe(0);
         });
     });

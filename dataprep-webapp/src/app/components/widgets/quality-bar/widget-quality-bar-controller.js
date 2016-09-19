@@ -11,14 +11,20 @@
 
   ============================================================================*/
 
+import { chain } from 'lodash';
+
+const MIN_QUALITY_WIDTH = 10;
+
 /**
  * @ngdoc controller
  * @name talend.widget.controller:QualityBarCtrl
  * @description Quality bar controller
  */
-export default function QualityBarCtrl() {
-    const MIN_QUALITY_WIDTH = 10;
-    const vm = this;
+export default class QualityBarCtrl {
+
+    constructor() {
+        this.hashQuality = this.hashQuality.bind(this);
+    }
 
     /**
      * @ngdoc method
@@ -27,18 +33,18 @@ export default function QualityBarCtrl() {
      * @param {string} type The bar type
      * @description [PRIVATE] Return the adapted width to have a min value if the real value is greater than 0
      */
-    const getMinimalPercent = function getMinimalPercent(type) {
-        if (vm.quality[type] <= 0) {
+    getMinimalPercent(type) {
+        if (this.quality[type] <= 0) {
             return 0;
         }
 
-        const percent = vm.percent[type];
+        const percent = this.percent[type];
         if (percent < MIN_QUALITY_WIDTH) {
             return MIN_QUALITY_WIDTH;
         }
 
         return percent;
-    };
+    }
 
     /**
      * @ngdoc method
@@ -48,8 +54,8 @@ export default function QualityBarCtrl() {
      * @description [PRIVATE] Return the modifiable object keys sorted by object value desc.
      * An entry is modifiable if the value is greater than the minimum width
      */
-    const getOrderedModifiableKeys = function getOrderedKeys(widthObject) {
-        return _.chain(Object.keys(widthObject))
+    getOrderedModifiableKeys(widthObject) {
+        return chain(Object.keys(widthObject))
             // filter : only keep values > min width.
             // those with min width are not reducable
             .filter(function (key) {
@@ -61,7 +67,7 @@ export default function QualityBarCtrl() {
             })
             .reverse()
             .value();
-    };
+    }
 
     /**
      * @ngdoc method
@@ -71,12 +77,12 @@ export default function QualityBarCtrl() {
      * @param {number} amount The amount to remove from the bars
      * @description [PRIVATE] Reduce the bars width to fit 100%. The amount value is removed.
      */
-    const reduce = function reduce(widthObject, amount) {
+    reduce(widthObject, amount) {
         if (amount <= 0) {
             return;
         }
 
-        const orderedKeys = getOrderedModifiableKeys(widthObject);
+        const orderedKeys = this.getOrderedModifiableKeys(widthObject);
         if (amount <= 2) {
             widthObject[orderedKeys[0]] -= amount;
             return;
@@ -87,8 +93,8 @@ export default function QualityBarCtrl() {
         widthObject[bigAmountKey] -= 2;
         widthObject[smallAmountKey] -= 1;
 
-        reduce(widthObject, amount - 3);
-    };
+        this.reduce(widthObject, amount - 3);
+    }
 
     /**
      * @ngdoc method
@@ -97,20 +103,24 @@ export default function QualityBarCtrl() {
      * @description [PRIVATE] Compute quality bars width
      * WARNING : the percentages must be computed before this function call
      */
-    vm.computeQualityWidth = function computeQualityWidth() {
+    computeQualityWidth() {
         const widthObject = {
-            invalid: getMinimalPercent('invalid'),
-            empty: getMinimalPercent('empty'),
-            valid: getMinimalPercent('valid'),
+            invalid: this.getMinimalPercent('invalid'),
+            empty: this.getMinimalPercent('empty'),
+            valid: this.getMinimalPercent('valid'),
         };
+
+        widthObject.isVariableInvalid = (widthObject.invalid > MIN_QUALITY_WIDTH);
+        widthObject.isVariableEmpty = (widthObject.empty > MIN_QUALITY_WIDTH);
+        widthObject.isVariableValid = (widthObject.valid > MIN_QUALITY_WIDTH);
 
         const diff = (widthObject.invalid + widthObject.empty + widthObject.valid) - 100;
         if (diff > 0) {
-            reduce(widthObject, diff);
+            this.reduce(widthObject, diff);
         }
 
-        vm.width = widthObject;
-    };
+        this.width = widthObject;
+    }
 
     /**
      * @ngdoc method
@@ -118,15 +128,15 @@ export default function QualityBarCtrl() {
      * @methodOf talend.widget.controller:QualityBarCtrl
      * @description [PRIVATE] Compute quality bars percentage
      */
-    vm.computePercent = function computePercent() {
-        const total = vm.quality.empty + vm.quality.invalid + vm.quality.valid;
+    computePercent() {
+        const total = this.quality.empty + this.quality.invalid + this.quality.valid;
 
-        vm.percent = {
-            invalid: vm.quality.invalid <= 0 ? 0 : Math.round(vm.quality.invalid * 100 / total),
-            empty: vm.quality.empty <= 0 ? 0 : Math.round(vm.quality.empty * 100 / total),
-            valid: vm.quality.valid <= 0 ? 0 : Math.round(vm.quality.valid * 100 / total),
+        this.percent = {
+            invalid: this.quality.invalid <= 0 ? 0 : Math.round(this.quality.invalid * 100 / total),
+            empty: this.quality.empty <= 0 ? 0 : Math.round(this.quality.empty * 100 / total),
+            valid: this.quality.valid <= 0 ? 0 : Math.round(this.quality.valid * 100 / total),
         };
-    };
+    }
 
     /**
      * @ngdoc method
@@ -134,7 +144,7 @@ export default function QualityBarCtrl() {
      * @methodOf talend.widget.controller:QualityBarCtrl
      * @description [PRIVATE] Calculate a simple hash from concatenating values
      */
-    vm.hashQuality = function hashQuality() {
-        return vm.quality.empty + '' + vm.quality.invalid + '' + vm.quality.valid;
-    };
+    hashQuality() {
+        return this.quality.empty + '' + this.quality.invalid + '' + this.quality.valid;
+    }
 }

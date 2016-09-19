@@ -42,9 +42,20 @@
   }
 
   .sub-bar {
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include flex-basis(0px); // Unit is needed for IE11
     @include transition(flex .75s ease-out);
-    @include flex(0 0 0);
     border: 1px solid transparent;
+
+    &.fixed-width {
+      @include flex-basis(10px);
+    }
+
+    &.not-fixed-width {
+      @include flex-grow(1);
+      @include flex-shrink(1);
+    }
 
     &.no-transition {
       @include transition(none);

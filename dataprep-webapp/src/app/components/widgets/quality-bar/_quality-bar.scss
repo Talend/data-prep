@@ -21,7 +21,7 @@
   background-color: $unknown-color;
 
   > div {
-    display: flex;
+    @include display(flex);
     height: 100%;
   }
 

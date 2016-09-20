@@ -166,7 +166,6 @@ $recipe-step-draggable-background-color: #808080 !default;
   }
 
   &-dragging {
-    height: auto !important;
     background-color: darken($recipe-step-background-color, 5%);
     box-shadow:0 2px 2px $recipe-step-draggable-background-color;
 

@@ -172,6 +172,7 @@ $recipe-step-draggable-background-color: #808080 !default;
   }
 
   &-placeholder {
+    margin-top: -2px;
     height: 2px !important;
     background-color: $recipe-step-draggable-background-color;
   }

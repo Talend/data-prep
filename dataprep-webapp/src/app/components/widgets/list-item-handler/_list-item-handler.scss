@@ -30,7 +30,7 @@ $list-item-handler-btn-click-area:    10px !default;
   position: relative;
   height: 50px;
   width: $list-item-handler-width;
-  cursor: pointer;
+  cursor: move;
   @include background(
                   linear-gradient(
                                   to bottom,

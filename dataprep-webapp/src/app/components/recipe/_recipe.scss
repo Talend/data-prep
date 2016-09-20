@@ -16,7 +16,7 @@ $recipe-step-disabled-background-color: #c5c5c5 !default;
 
 $recipe-step-background-color: $white !default;
 
-$recipe-step-draggable-background-color: #F1F1F1 !default;
+$recipe-step-draggable-background-color: #808080 !default;
 
 .recipe {
   display: block;
@@ -28,6 +28,7 @@ $recipe-step-draggable-background-color: #F1F1F1 !default;
     @include display(flex);
     @include flex-direction(row);
     @include justify-content(space-between);
+    border-bottom: 1px solid #dedede;
 
     &.disabled-step {
       color: $recipe-step-disabled-color;
@@ -49,7 +50,7 @@ $recipe-step-draggable-background-color: #F1F1F1 !default;
 
     .reorder-handler + step-description {
       @include transition(margin-left .1s linear);
-      margin-left: -20px;
+      margin-left: 0;
     }
 
     .reorder-handler,
@@ -60,7 +61,7 @@ $recipe-step-draggable-background-color: #F1F1F1 !default;
 
     &:hover {
       .reorder-handler + step-description {
-        margin-left: 0;
+        margin-left: 10px;
       }
 
       .reorder-handler,
@@ -126,14 +127,6 @@ $recipe-step-draggable-background-color: #F1F1F1 !default;
     }
   }
 
-  .reorder-handler {
-    margin: 0 5px;
-
-    .list-item-handler {
-      margin: 0 5px 0 -5px;
-    }
-  }
-
   sc-accordion > ul > li {
 
     &:first-child {
@@ -148,15 +141,38 @@ $recipe-step-draggable-background-color: #F1F1F1 !default;
       }
     }
   }
+}
 
-  .as-sortable {
+.as-sortable {
+  &-un-selectable {
+    sc-accordion-item .trigger-container {
+      cursor: move !important;
+    }
+  }
 
-    &-dragging {
-      background-color: $recipe-step-background-color;
+  &-item-handle {
+    &:hover {
+      background-color: darken($recipe-step-background-color, 1%);
     }
 
-    &-placeholder {
-      background-color: $recipe-step-draggable-background-color;
+    .reorder-handler {
+      &:hover {
+        cursor: move;
+      }
     }
+  }
+
+  &-dragging {
+    background-color: darken($recipe-step-background-color, 5%);
+    box-shadow:0 2px 2px $recipe-step-draggable-background-color;
+
+    .step-container {
+      border: 0;
+    }
+  }
+
+  &-placeholder {
+    height: 2px !important;
+    background-color: $recipe-step-draggable-background-color;
   }
 }

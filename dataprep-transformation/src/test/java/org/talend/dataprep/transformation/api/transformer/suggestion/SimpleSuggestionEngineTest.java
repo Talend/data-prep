@@ -19,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -41,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit test for the SimpleSuggestionEngine
- * 
+ *
  * @see SimpleSuggestionEngine
  */
 public class SimpleSuggestionEngineTest {
@@ -57,12 +59,12 @@ public class SimpleSuggestionEngineTest {
 
         // ReflectionUtils to save the use of a spring context
         List<SuggestionEngineRule> rules = new ArrayList<>();
-        rules.add(new InvalidRules().deleteInvalidRule());
-        rules.add(new InvalidRules().fillInvalidRule());
-        rules.add(new EmptyRules().deleteEmptyRule());
-        rules.add(new EmptyRules().fillEmptyRule());
-        rules.add(new IntegerRules().absoluteRule());
-        rules.add(new IntegerRules().integerRule());
+        rules.add(InvalidRules.deleteInvalidRule());
+        rules.add(InvalidRules.fillInvalidRule());
+        rules.add(EmptyRules.deleteEmptyRule());
+        rules.add(EmptyRules.fillEmptyRule());
+        rules.add(IntegerRules.absoluteRule());
+        rules.add(IntegerRules.integerRule());
         ReflectionTestUtils.setField(engine, "rules", rules);
     }
 
@@ -85,10 +87,10 @@ public class SimpleSuggestionEngineTest {
         actions.add(new DeleteEmpty());
         actions.add(new Absolute());
         actions.add(new UpperCase());
-        final List<Suggestion> suggestions = engine.score(actions, columnMetadata);
+        final Stream<Suggestion> suggestions = engine.score(actions.stream(), columnMetadata);
 
         int currentScore = Integer.MAX_VALUE;
-        for (Suggestion suggestion : suggestions) {
+        for (Suggestion suggestion : suggestions.collect(Collectors.toList())) {
             assertTrue(currentScore >= suggestion.getScore());
             currentScore = suggestion.getScore();
         }

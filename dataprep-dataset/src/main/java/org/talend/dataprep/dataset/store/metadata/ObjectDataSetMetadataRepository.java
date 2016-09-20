@@ -1,5 +1,8 @@
 package org.talend.dataprep.dataset.store.metadata;
 
+import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -29,10 +32,16 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
     }
 
     @Override
-    public Stream<DataSetMetadata> list(String filter) {
+    public Stream<DataSetMetadata> list(String filter, String sortField, String sortDirection) {
         final Predicate<Object> accept = (Predicate<Object>) Tql.parse(filter)
                 .accept(new ObjectPredicateVisitor(DataSetMetadata.class));
-        return source().filter(accept);
+        final Stream<DataSetMetadata> stream = source().filter(accept);
+        if (sortField != null) {
+            final Comparator<DataSetMetadata> dataSetMetadataComparator = getDataSetMetadataComparator(sortField, sortDirection);
+            return stream.sorted(dataSetMetadataComparator);
+        } else {
+            return stream;
+        }
     }
 
     @Override

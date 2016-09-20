@@ -15,6 +15,7 @@ package org.talend.dataprep.api.service;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 
 import java.io.IOException;
@@ -22,11 +23,14 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +49,7 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.format.export.ExportFormatMessage;
 import org.talend.dataprep.http.HttpRequestContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -53,13 +58,14 @@ import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import reactor.core.publisher.Flux;
 
 @RestController
 public class ExportAPI extends APIService {
 
     @RequestMapping(value = "/api/export", method = GET)
     @ApiOperation(value = "Export a dataset", consumes = APPLICATION_FORM_URLENCODED_VALUE, notes = "Export a dataset or a preparation to file. The file type is provided in the request body.")
-    public StreamingResponseBody export(@ApiParam(value = "Export configuration") @Valid final ExportParameters parameters) {
+    public ResponseEntity<StreamingResponseBody> export(@ApiParam(value = "Export configuration") @Valid final ExportParameters parameters) {
         try {
             Map<String, String> arguments = new HashMap<>();
             final Enumeration<String> names = HttpRequestContext.parameters();
@@ -124,9 +130,8 @@ public class ExportAPI extends APIService {
     @ApiOperation(value = "Get the available format types")
     @Timed
     @PublicAPI
-    public StreamingResponseBody exportTypes() {
-        final HystrixCommand<InputStream> command = getCommand(ExportTypes.class);
-        return CommandHelper.toStreaming(command);
+    public Callable<Stream<ExportFormatMessage>> exportTypes() {
+        return () -> toStream(ExportFormatMessage.class, mapper, getCommand(ExportTypes.class));
     }
 
     /**
@@ -135,9 +140,8 @@ public class ExportAPI extends APIService {
     @RequestMapping(value = "/api/export/formats/preparations/{preparationId}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types for preparation.")
     @Timed
-    public StreamingResponseBody exportTypesForPreparation(@PathVariable("preparationId") String preparationId) {
-        final HystrixCommand<InputStream> command = getCommand(PreparationExportTypes.class, preparationId);
-        return CommandHelper.toStreaming(command);
+    public Callable<Stream<ExportFormatMessage>> exportTypesForPreparation(@PathVariable("preparationId") String preparationId) {
+        return () -> toStream(ExportFormatMessage.class, mapper, getCommand(PreparationExportTypes.class, preparationId));
     }
 
     /**
@@ -146,8 +150,7 @@ public class ExportAPI extends APIService {
     @RequestMapping(value = "/api/export/formats/datasets/{dataSetId}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types for preparation.")
     @Timed
-    public StreamingResponseBody exportTypesForDataSet(@PathVariable("dataSetId") String dataSetId) {
-        final HystrixCommand<InputStream> command = getCommand(DataSetExportTypes.class, dataSetId);
-        return CommandHelper.toStreaming(command);
+    public Callable<Stream<ExportFormatMessage>> exportTypesForDataSet(@PathVariable("dataSetId") String dataSetId) {
+        return () -> toStream(ExportFormatMessage.class, mapper, getCommand(DataSetExportTypes.class, dataSetId));
     }
 }

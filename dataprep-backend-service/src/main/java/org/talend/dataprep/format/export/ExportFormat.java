@@ -16,17 +16,13 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.format.export.json.ExportFormatSerializer;
 import org.talend.dataprep.i18n.DataprepBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.Parameterizable;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 /**
  * Models a type of format.
  */
-@JsonSerialize(using = ExportFormatSerializer.class)
 public abstract class ExportFormat extends Parameterizable {
 
     /** Prefix that must be used for all export parameters. */

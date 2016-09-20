@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,35 +12,26 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import java.util.List;
+import java.io.InputStream;
 
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Command to list dataset import types.
  */
 @Component
 @Scope("request")
-public class DataSetGetImports extends GenericCommand<List<Import>> {
+public class DataSetGetImports extends GenericCommand<InputStream> {
 
     public DataSetGetImports() {
         super(GenericCommand.DATASET_GROUP);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets/imports"));
+        on(HttpStatus.OK).then(Defaults.pipeStream());
     }
 
-    @PostConstruct
-    public void init() {
-        on(HttpStatus.OK).then(Defaults.convertResponse(objectMapper, new TypeReference<List<Import>>() {
-        }));
-    }
 }

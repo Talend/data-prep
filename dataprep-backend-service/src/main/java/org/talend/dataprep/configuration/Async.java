@@ -12,10 +12,13 @@
 
 package org.talend.dataprep.configuration;
 
+import static org.springframework.http.HttpHeaders.*;
+
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.concurrent.Callable;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -25,18 +28,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.async.CallableProcessingInterceptorAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.talend.dataprep.exception.TDPException;
 
-import static org.springframework.http.HttpHeaders.*;
-
 /**
  * Configuration for non blocking HTTP handling.
  */
 @Configuration
+@EnableAsync
 public class Async {
 
     @Bean

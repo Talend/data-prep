@@ -22,6 +22,8 @@ import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FO
 import static org.talend.dataprep.util.SortAndOrderHelper.getFolderComparator;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
@@ -65,9 +67,9 @@ public class FolderService {
     @RequestMapping(value = "/folders/{id}/children", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Folder children", produces = APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
     @Timed
-    public Iterable<Folder> children(@PathVariable String id,
-                                     @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
-                                     @RequestParam(defaultValue = "DESC") @ApiParam(value = "Order for sort key (desc or asc).") String order) {
+    public Stream<Folder> children(@PathVariable String id,
+                                   @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
+                                   @RequestParam(defaultValue = "DESC") @ApiParam(value = "Order for sort key (desc or asc).") String order) {
     //@formatter:on
 
         if (!folderRepository.exists(id)) {
@@ -76,19 +78,20 @@ public class FolderService {
 
         Iterable<Folder> children = folderRepository.children(id);
 
+        final AtomicInteger folderCount = new AtomicInteger();
+
         // update the number of preparations in each children
         children.forEach(f -> {
             final long count = stream(folderRepository.entries(f.getId(), PREPARATION).spliterator(), false).count();
             f.setNbPreparations(count);
+            folderCount.addAndGet(1);
         });
 
-        // sort the folders
-        children = StreamSupport.stream(children.spliterator(), false) //
-                .sorted(getFolderComparator(sort, order)) //
-                .collect(toList());
+        LOGGER.info("found {} children for {}", folderCount.get(), id);
 
-        LOGGER.info("found {} children for {}", stream(children.spliterator(), false).count(), id);
-        return children;
+        // sort the folders
+        return StreamSupport.stream(children.spliterator(), false) //
+                .sorted(getFolderComparator(sort, order));
     }
 
     /**

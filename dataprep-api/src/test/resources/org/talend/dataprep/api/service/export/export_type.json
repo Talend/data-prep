@@ -3,8 +3,8 @@
     "mimeType": "text/csv",
     "extension": ".csv",
     "id": "CSV",
-    "needParameters": "true",
-    "defaultExport": "false",
+    "needParameters": true,
+    "defaultExport": false,
     "enabled": true,
     "disableReason": "",
     "title": "Export to CSV",
@@ -40,10 +40,9 @@
           ],
           "multiple": false
         },
-        "radio": true,
         "description": "Select character to use as a delimiter",
         "label": "Delimiter",
-        "default": ";"
+        "default": null
       },
       {
         "name": "fileName",
@@ -53,16 +52,18 @@
         "placeHolder": "",
         "description": "Name of the generated export file",
         "label": "Filename",
-        "default": ""
+        "default": null
       }
-    ]
+    ],
+    "supportSampling": true,
+    "name": "CSV"
   },
   {
     "mimeType": "application/vnd.ms-excel",
     "extension": ".xlsx",
     "id": "XLSX",
-    "needParameters": "true",
-    "defaultExport": "true",
+    "needParameters": true,
+    "defaultExport": true,
     "enabled": true,
     "disableReason": "",
     "title": "Export to XLSX",
@@ -75,8 +76,10 @@
         "placeHolder": "",
         "description": "Name of the generated export file",
         "label": "Filename",
-        "default": ""
+        "default": null
       }
-    ]
+    ],
+    "supportSampling": true,
+    "name": "XLSX"
   }
 ]

@@ -20,15 +20,15 @@ import java.io.InputStream;
 
 import javax.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.service.command.aggregation.Aggregate;
 import org.talend.dataprep.command.CommandHelper;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
-
-import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,11 +47,11 @@ public class AggregationAPI extends APIService {
      */
     @RequestMapping(value = "/api/aggregate", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Compute aggregation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE, notes = "Compute aggregation according to the given parameters")
-    public StreamingResponseBody compute(@RequestBody @Valid final AggregationParameters input) {
+    public ResponseEntity<StreamingResponseBody> compute(@RequestBody @Valid final AggregationParameters input) {
         LOG.debug("Aggregation computation requested (pool: {} )...", getConnectionStats());
         // get the command and execute it, then copy the content to the http response
         try {
-            HystrixCommand<InputStream> command = getCommand(Aggregate.class, input);
+            GenericCommand<InputStream> command = getCommand(Aggregate.class, input);
             return CommandHelper.toStreaming(command);
         } finally {
             LOG.debug("Aggregation done (pool: {} )...", getConnectionStats());

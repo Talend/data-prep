@@ -59,7 +59,7 @@ public class InvalidRules extends BasicRules {
      * @return A {@link SuggestionEngineRule rule} that hides "fill invalid" if no invalid.
      */
     @Bean
-    public SuggestionEngineRule fillInvalidRule() {
+    public static SuggestionEngineRule fillInvalidRule() {
         return forActions(FillInvalid.FILL_INVALID_ACTION_NAME) //
                         .then(columnMetadata -> {
                     if (getInvalidCount(columnMetadata) > invalidThreshold) {

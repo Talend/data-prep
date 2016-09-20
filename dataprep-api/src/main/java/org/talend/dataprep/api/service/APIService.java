@@ -26,6 +26,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
+
 import io.swagger.annotations.Api;
 
 @Api(value = "api", basePath = "/api", description = "Data Preparation API")

@@ -89,6 +89,11 @@
             <artifactId>dataprep-backend-service</artifactId>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-backend-common</artifactId>
+            <type>test-jar</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

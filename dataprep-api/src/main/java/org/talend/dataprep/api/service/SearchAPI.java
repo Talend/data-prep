@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
@@ -25,6 +24,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
@@ -60,48 +60,48 @@ public class SearchAPI extends APIService {
     @RequestMapping(value = "/api/search", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List the of elements contained in a folder matching the given name", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public void search(
+    public StreamingResponseBody search(
             @ApiParam(value = "name") @RequestParam(defaultValue = "", required = false) final String name,
             @ApiParam(value = "filter") @RequestParam(required = false) final List<String> filter,
-            @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict,
-            final OutputStream output) {
+            @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict) {
     //@formatter:on
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
-        }
-
-        int foldersFound = 0;
-        int datasetsFound = 0;
-        int preparationsFound = 0;
-        try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
-            generator.writeStartObject();
-
-            if(filter == null || filter.contains("folder")) {
-                foldersFound = searchAndWriteFolders(name, strict, generator);
-            }
-            if(filter == null || filter.contains("dataset")) {
-                datasetsFound = searchAndWriteDatasets(name, strict, generator);
-            }
-            if(filter == null || filter.contains("preparation")) {
-                preparationsFound = searchAndWritePreparations(name, strict, generator);
+        return output -> {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
             }
 
-            generator.writeEndObject();
+            int foldersFound = 0;
+            int datasetsFound = 0;
+            int preparationsFound = 0;
+            try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
+                generator.writeStartObject();
 
-        } catch (IOException e) {
-            throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
-        }
+                if(filter == null || filter.contains("folder")) {
+                    foldersFound = searchAndWriteFolders(name, strict, generator);
+                }
+                if(filter == null || filter.contains("dataset")) {
+                    datasetsFound = searchAndWriteDatasets(name, strict, generator);
+                }
+                if(filter == null || filter.contains("preparation")) {
+                    preparationsFound = searchAndWritePreparations(name, strict, generator);
+                }
 
-        LOG.info("Searching dataprep for {} done with filter: {} and strict mode: {}, found {} folder(s), {} dataset(s) and {} preparation(s)",
-                name,
-                filter,
-                strict,
-                datasetsFound,
-                foldersFound,
-                preparationsFound
-        );
+                generator.writeEndObject();
 
+            } catch (IOException e) {
+                throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
+            }
+
+            LOG.info("Searching dataprep for {} done with filter: {} and strict mode: {}, found {} folder(s), {} dataset(s) and {} preparation(s)",
+                    name,
+                    filter,
+                    strict,
+                    datasetsFound,
+                    foldersFound,
+                    preparationsFound
+            );
+        };
     }
 
     /**

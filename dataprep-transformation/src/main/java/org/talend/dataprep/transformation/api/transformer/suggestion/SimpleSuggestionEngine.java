@@ -14,10 +14,9 @@
 package org.talend.dataprep.transformation.api.transformer.suggestion;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,20 +35,18 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
     private List<SuggestionEngineRule> rules = new ArrayList<>();
 
     /**
-     * @see SuggestionEngine#score(Collection, ColumnMetadata)
+     * @see SuggestionEngine#score(Stream, ColumnMetadata)
      */
     @Override
-    public List<Suggestion> score(Collection<ActionDefinition> actions, ColumnMetadata column) {
-        return actions.stream() //
-                .map(actionMetadata -> {
+    public Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column) {
+        return actions.map(actionMetadata -> { //
                     int score = 0;
                     for (SuggestionEngineRule rule : rules) {
                         score += rule.apply(actionMetadata, column);
                     }
                     return new Suggestion(actionMetadata, score);
                 }) //
-                .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
-                .collect(Collectors.toList());
+                .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
     }
 
     /**

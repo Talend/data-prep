@@ -41,10 +41,14 @@ public interface DataSetMetadataRepository {
 
     /**
      * Returns an {@link Iterable} of all {@link DataSetMetadata} that match given filter.
+     *
      * @param filter A TQL filter (i.e. storage-agnostic)
+     * @param sortField An optional field to be used to sort results (may be <code>null</code> to indicate no sort).
+     * @param sortDirection An optional field to be used how to sort results (may be <code>null</code> to indicate no sort). Valid
+     * values are "ASC" or "DESC".
      * @return A {@link Iterable} of {@link DataSetMetadata} that matches <code>filter</code>.
      */
-    Stream<DataSetMetadata> list(String filter);
+    Stream<DataSetMetadata> list(String filter, String sortField, String sortDirection);
 
     /**
      * <p>

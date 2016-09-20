@@ -243,9 +243,14 @@
                 <version>1.5.0</version>
             </dependency>
             <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>3.0.2.RELEASE</version>
+            </dependency>
+            <dependency>
                 <groupId>io.reactivex</groupId>
                 <artifactId>rxjava</artifactId>
-                <version>1.1.1</version>
+                <version>1.1.9</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.opencsv</groupId>
@@ -493,6 +498,7 @@
                 <artifactId>dataprep-backend-common</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>

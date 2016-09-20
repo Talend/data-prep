@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -27,6 +26,8 @@ import org.talend.dataprep.security.PublicAPI;
 
 import io.swagger.annotations.ApiOperation;
 
+import java.util.concurrent.Callable;
+
 /**
  * App settings API
  */
@@ -44,7 +45,7 @@ public class AppSettingsAPI extends APIService {
     @ApiOperation(value = "Get the app settings", produces = APPLICATION_JSON_VALUE)
     @Timed
     @PublicAPI
-    public AppSettings getSettings() {
-        return appSettingsService.getSettings();
+    public Callable<AppSettings> getSettings() {
+        return () -> appSettingsService.getSettings();
     }
 }

@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.format;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class FormatRegistrationServiceTest extends BaseFormatTest {
 
     @Test
     public void shouldListOnlyExternalFormats() {
-        final List<ExportFormat> externalFormats = service.getExternalFormats();
+        final Stream<ExportFormat> externalFormats = service.getExternalFormats();
         externalFormats.forEach(format -> Assert.assertFalse(StringUtils.equals(JsonFormat.JSON, format.getName())));
     }
 

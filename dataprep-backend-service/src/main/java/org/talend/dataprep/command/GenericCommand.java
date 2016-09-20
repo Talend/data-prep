@@ -109,6 +109,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Default onError behaviour. */
     private Function<Exception, RuntimeException> onError = Defaults.passthrough();
+    private HttpStatus status;
 
     /**
      * Protected constructor.
@@ -165,7 +166,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         }
         commandResponseHeaders = response.getAllHeaders();
 
-        final HttpStatus status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+        status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
 
         // do we have a behavior for this status code (even an error) ?
         // if yes use it
@@ -193,6 +194,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      */
     public Header[] getCommandResponseHeaders() {
         return commandResponseHeaders;
+    }
+
+    /**
+     * @return The HTTP status of the executed request.
+     */
+    public HttpStatus getStatus() {
+        return status;
     }
 
     /**

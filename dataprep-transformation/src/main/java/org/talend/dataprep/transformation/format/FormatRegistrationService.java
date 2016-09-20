@@ -13,10 +13,10 @@
 
 package org.talend.dataprep.transformation.format;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import org.talend.dataprep.format.export.ExportFormat;
 public class FormatRegistrationService {
 
     /** List of internal format types. */
-    private static final List<String> INTERNAL_TYPES = Arrays.asList(new String[] { JsonFormat.JSON });
+    private static final List<String> INTERNAL_TYPES = Collections.singletonList(JsonFormat.JSON);
 
     /** List of available format types. */
     @Autowired
@@ -39,8 +39,8 @@ public class FormatRegistrationService {
     /**
      * Return external formats.
      */
-    public List<ExportFormat> getExternalFormats() {
-        return types.stream().filter(format -> !INTERNAL_TYPES.contains(format.getName())).collect(Collectors.toList());
+    public Stream<ExportFormat> getExternalFormats() {
+        return types.stream().filter(format -> !INTERNAL_TYPES.contains(format.getName()));
     }
 
     /**

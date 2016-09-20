@@ -5,8 +5,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +35,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.zafarkhaja.semver.ParseException;
 import com.github.zafarkhaja.semver.Version;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -86,11 +89,11 @@ public class UpgradeAPI extends APIService {
     @ApiOperation(value = "Checks if a newer versions are available and returns them as JSON.", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @PublicAPI
-    public List<UpgradeServerVersion> check() {
+    public Stream<UpgradeServerVersion> check() {
 
         // defensive programming
         if (StringUtils.isBlank(upgradeVersionLocation)) {
-            return Collections.emptyList();
+            return Stream.empty();
         }
 
         try {
@@ -103,15 +106,11 @@ public class UpgradeAPI extends APIService {
             LOGGER.debug("{} available version(s) returned by update server: {}", versions.size(), toString(versions));
 
             // Compare current version with available and filter new versions
-            List<UpgradeServerVersion> filteredVersions = versions.stream() //
-                    .filter(v -> Version.valueOf(v.getVersion()).greaterThan(parsedCurrentVersion)) //
-                    .collect(Collectors.toList());
-            LOGGER.debug("{} possible version(s) for upgrade: {} ", filteredVersions.size(), toString(filteredVersions));
-            return filteredVersions;
+            return versions.stream().filter(v -> Version.valueOf(v.getVersion()).greaterThan(parsedCurrentVersion));
         } catch (Exception e) {
             LOGGER.error("Unable to check for new version (message: {}).", e.getMessage());
             LOGGER.debug("Exception occurred during new version check. ", e);
-            return Collections.emptyList();
+            return Stream.empty();
         }
     }
 

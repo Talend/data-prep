@@ -1,15 +1,16 @@
-/*  ============================================================================
-
- Copyright (C) 2006-2016 Talend Inc. - www.talend.com
-
- This source code is available under agreement available at
- https://github.com/Talend/data-prep/blob/master/LICENSE
-
- You should have received a copy of the agreement
- along with this program; if not, write to Talend SA
- 9 rue Pages 92150 Suresnes, France
-
- ============================================================================*/
+/*
+ * ============================================================================
+ * Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ *
+ * This source code is available under agreement available at
+ * https://github.com/Talend/data-prep/blob/master/LICENSE
+ *
+ * You should have received a copy of the agreement
+ * along with this program; if not, write to Talend SA
+ * 9 rue Pages 92150 Suresnes, France
+ *
+ * ============================================================================
+ */
 
 /**
  * @ngdoc service
@@ -30,24 +31,24 @@ export default class ExportService {
 		this.state = state;
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name getType
-	 * @methodOf data-prep.services.export.service:ExportService
-	 * @param {String} id the export type id
-	 * @description Get the type by id
-	 */
+    /**
+     * @ngdoc method
+     * @name getType
+     * @methodOf data-prep.services.export.service:ExportService
+     * @param {String} id the export type id
+     * @description Get the type by id
+     */
 	getType(id) {
 		return _.find(this.state.export.exportTypes, { id });
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name setExportParams
-	 * @methodOf data-prep.services.export.service:ExportService
-	 * @param {Object} params The export params
-	 * @description Set the export parameters in app state and storage
-	 */
+    /**
+     * @ngdoc method
+     * @name setExportParams
+     * @methodOf data-prep.services.export.service:ExportService
+     * @param {Object} params The export params
+     * @description Set the export parameters in app state and storage
+     */
 	setExportParams(params) {
 		this.StorageService.saveExportParams(params);
 		this.StateService.setDefaultExportType(params);
@@ -69,7 +70,7 @@ export default class ExportService {
 				let defaultExportParams = this.StorageService.getExportParams();
 
 				if (!defaultExportParams) {
-					const exportType = exportTypes.find(type => type.defaultExport === 'true');
+					const exportType = exportTypes.find(type => type.defaultExport === true);
 					defaultExportParams = { exportType: exportType.id };
 					this.StorageService.saveExportParams(defaultExportParams);
 				}

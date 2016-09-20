@@ -58,13 +58,16 @@ public class BeanConversionService implements ConversionService {
                 final PropertyDescriptor targetProperty = targetBean.getPropertyDescriptor(sourceProperty.getName());
                 final Class<?> sourcePropertyType = sourceProperty.getPropertyType();
                 final Class<?> targetPropertyType = targetProperty.getPropertyType();
-                final Type sourceReturnType = sourceProperty.getReadMethod().getGenericReturnType();
-                final Method targetPropertyWriteMethod = targetProperty.getWriteMethod();
-                if (targetPropertyWriteMethod != null) {
-                    final Type targetReturnType = targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
-                    boolean valid = sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
-                    if (!valid) {
-                        discardedProperties.add(sourceProperty.getName());
+                final Method readMethod = sourceProperty.getReadMethod();
+                if (readMethod != null) {
+                    final Type sourceReturnType = readMethod.getGenericReturnType();
+                    final Method targetPropertyWriteMethod = targetProperty.getWriteMethod();
+                    if (targetPropertyWriteMethod != null) {
+                        final Type targetReturnType = targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
+                        boolean valid = sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
+                        if (!valid) {
+                            discardedProperties.add(sourceProperty.getName());
+                        }
                     }
                 }
             }

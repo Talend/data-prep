@@ -257,7 +257,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         }).readValue(getResult);
 
         // then
-        assertTrue(compatiblePreparations.size() == 2);
+        assertEquals(2, compatiblePreparations.size());
         assertTrue(prep2.equals(compatiblePreparations.get(0).getId()));
         assertTrue(prep1.equals(compatiblePreparations.get(1).getId()));
     }

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -28,6 +28,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Model a Data Prep action.
  */
+@JsonDeserialize(using = ActionDefinitionDeserializer.class)
 public interface ActionDefinition extends Serializable {
 
     /**

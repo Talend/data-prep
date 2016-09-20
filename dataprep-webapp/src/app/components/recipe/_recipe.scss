@@ -154,12 +154,6 @@ $recipe-step-draggable-background-color: #808080 !default;
     &:hover {
       background-color: darken($recipe-step-background-color, 1%);
     }
-
-    .reorder-handler {
-      &:hover {
-        cursor: move;
-      }
-    }
   }
 
   &-dragging {

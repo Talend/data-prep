@@ -93,7 +93,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         StateService.setCurrentData(data);
         StateService.setCurrentPreparation(preparation);
         this.updatePreparationDetails();
-        updateFilter(dataset, preparation);
+        updateFilter(preparation);
         TransformationCacheService.invalidateCache();
         HistoryService.clear();
         PreviewService.reset(false);
@@ -228,10 +228,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @ngdoc method
      * @name updateFilter
      * @methodOf data-prep.services.playground.service:PlaygroundService
-     * @description add the least applied filters
+     * @param {object} preparation The preparation to which load filters
+     * @description add the last applied filters
      */
-    function updateFilter(dataset, prepparation) {
-        const filters = StorageService.getFilter(prepparation ? prepparation.id : dataset.id);
+    function updateFilter(preparation) {
+        if (!preparation) {
+            return;
+        }
+        const filters = StorageService.getFilter(preparation.id);
         filters.forEach((filter) => {
             FilterService.addFilter(filter.type, filter.colId, filter.colName, filter.args);
         });

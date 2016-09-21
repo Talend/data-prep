@@ -17,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.ContentCacheKey;
 
+import java.util.function.Predicate;
+
 /**
  * Content cache key used to cache transformation.
  */
@@ -43,6 +45,16 @@ public class TransformationMetadataCacheKey implements ContentCacheKey {
     @Override
     public String getKey() {
         return "transformation-metadata_" + preparationId + "_" + stepId + "_" + sourceType + "_" + userId;
+    }
+
+    @Override
+    public Predicate<String> getMatcher() {
+        final String regex = "transformation-metadata_"
+                + (preparationId == null ? ".*" : preparationId) + "_"
+                + (stepId == null ? ".*" : stepId) + "_"
+                + (sourceType == null ? ".*" : sourceType) + "_"
+                + (userId == null ? ".*" : userId);
+        return (str) -> str.matches(regex);
     }
 
     public String getPreparationId() {

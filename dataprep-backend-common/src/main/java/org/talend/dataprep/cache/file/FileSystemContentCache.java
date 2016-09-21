@@ -47,6 +47,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 /**
  * File system cache implementation.
@@ -56,10 +57,14 @@ import java.util.function.BiConsumer;
 @EnableScheduling
 public class FileSystemContentCache implements ContentCache {
 
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemContentCache.class);
 
-    /** Where to store cache entries. */
+    /**
+     * Where to store cache entries.
+     */
     private final String location;
 
     /**
@@ -107,7 +112,7 @@ public class FileSystemContentCache implements ContentCache {
     /**
      * Compute the path for the given key.
      *
-     * @param key the cache key entry.
+     * @param key        the cache key entry.
      * @param timeToLive an optional time to live when performing content cache lookup (<code>null</code> allowed).
      * @return the HDFS path for the entry key.
      */
@@ -134,7 +139,7 @@ public class FileSystemContentCache implements ContentCache {
                     LOGGER.trace("file {} does not match key {}", file.getName(), key.getKey());
                     continue;
                 }
-                if(Paths.get(file.toURI()).equals(path.toAbsolutePath())) {
+                if (Paths.get(file.toURI()).equals(path.toAbsolutePath())) {
                     LOGGER.debug("cache entry for #{} is {}", key, file.toPath());
                     return file.toPath();
                 }
@@ -215,25 +220,35 @@ public class FileSystemContentCache implements ContentCache {
             return;
         }
         try {
-            Files.walkFileTree(parent, new SimpleFileVisitor<Path>() {
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    try {
-                        if (StringUtils.startsWith(file.getFileName().toString(), key.getKey())) {
-                            final Path evictedFile = Paths.get(file.toAbsolutePath().toString() + ".0");
-                            Files.move(file, evictedFile, REPLACE_EXISTING, ATOMIC_MOVE);
-                        }
-                    } catch (IOException e) {
-                        LOGGER.error("Unable to evict {}.", file.getFileName(), e);
-                    }
-                    return super.visitFile(file, attrs);
-                }
-            });
+            final String keyStr = key.getKey();
+            final BiConsumer<Path, String> evictKey = getEvictionConsumer((entryKey) -> StringUtils.startsWith(entryKey, keyStr));
+            final boolean skipPermanentEntries = false;
+            Files.walkFileTree(Paths.get(location), new FileSystemVisitor(evictKey, skipPermanentEntries));
         } catch (IOException e) {
             LOGGER.error("Unable to evict.", e);
         }
         LOGGER.debug("[{}] Evict.", key);
+    }
+
+    @Override
+    public void evictMatch(ContentCacheKey key) {
+        final Path path = computeEntryPath(key, null);
+        final Path parent = path.getParent();
+
+        // defensive programming
+        if (!parent.toFile().exists()) {
+            return;
+        }
+
+        try {
+            final Predicate<String> matchKey = key.getMatcher();
+            final BiConsumer<Path, String> evictKey = getEvictionConsumer(matchKey);
+            final boolean skipPermanentEntries = false;
+            Files.walkFileTree(Paths.get(location), new FileSystemVisitor(evictKey, skipPermanentEntries));
+        } catch (IOException e) {
+            LOGGER.error("Unable to evict.", e);
+        }
+        LOGGER.debug("[{}] Evict Match.", key);
     }
 
     @Override
@@ -278,8 +293,9 @@ public class FileSystemContentCache implements ContentCache {
         final AtomicLong totalCount = new AtomicLong();
         LOGGER.debug("Janitor process started @ {}.", start);
         try {
-            final BiConsumer<Path, Long> deleteOld = (file, time) -> {
+            final BiConsumer<Path, String> deleteOld = (file, suffix) -> {
                 try {
+                    final long time = Long.parseLong(suffix);
                     if (time < start) {
                         try {
                             Files.delete(file);
@@ -304,12 +320,31 @@ public class FileSystemContentCache implements ContentCache {
                 totalCount);
     }
 
+    private BiConsumer<Path, String> getEvictionConsumer(final Predicate<String> keyMatcher) {
+        return (file, suffix) -> {
+            try {
+                if (keyMatcher.test(file.getFileName().toString())) {
+                    final Path evictedFile = Paths.get(file.toAbsolutePath().toString() + ".0");
+                    Files.move(file, evictedFile, REPLACE_EXISTING, ATOMIC_MOVE);
+                }
+            } catch (IOException e) {
+                LOGGER.error("Unable to evict {}.", file.getFileName(), e);
+            }
+        };
+    }
+
     private class FileSystemVisitor extends SimpleFileVisitor<Path> {
 
-        private final BiConsumer<Path, Long> consumer;
+        private final BiConsumer<Path, String> consumer;
+        private final boolean skipPermanent;
 
-        FileSystemVisitor(final BiConsumer<Path, Long> consumer) {
+        FileSystemVisitor(final BiConsumer<Path, String> consumer) {
+            this(consumer, true);
+        }
+
+        FileSystemVisitor(final BiConsumer<Path, String> consumer, final boolean skipPermanent) {
             this.consumer = consumer;
+            this.skipPermanent = skipPermanent;
         }
 
         @Override
@@ -324,11 +359,10 @@ public class FileSystemContentCache implements ContentCache {
             if (suffix.startsWith("nfs")) {
                 return FileVisitResult.CONTINUE;
             }
-            if (StringUtils.isEmpty(suffix)) {
+            if (this.skipPermanent && StringUtils.isEmpty(suffix)) {
                 return FileVisitResult.CONTINUE;
             }
-            final long time = Long.parseLong(suffix);
-            consumer.accept(file, time);
+            consumer.accept(file, suffix);
             return super.visitFile(file, attrs);
         }
     }

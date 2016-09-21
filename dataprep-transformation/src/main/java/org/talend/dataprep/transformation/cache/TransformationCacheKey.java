@@ -13,13 +13,13 @@
 
 package org.talend.dataprep.transformation.cache;
 
-import java.io.IOException;
-import java.util.Objects;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.ContentCacheKey;
+
+import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Content cache key used to cache transformation.
@@ -100,7 +100,13 @@ public class TransformationCacheKey implements ContentCacheKey {
      */
     @Override
     public String getKey() {
-        return "transformation_" + DigestUtils.sha1Hex(
-                preparationId + datasetId + stepId + format + Objects.hash(parameters) + sourceType + userId);
+        return "transformation_" + preparationId + "_"
+                + DigestUtils.sha1Hex(datasetId + stepId + format + Objects.hash(parameters) + sourceType + userId);
+    }
+
+    @Override
+    public Predicate<String> getMatcher() {
+        final String regex = "transformation_" + preparationId + "_.*";
+        return (str) -> str.matches(regex);
     }
 }

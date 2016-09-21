@@ -13,34 +13,36 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
-
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 
-import com.jayway.restassured.response.Response;
-import org.talend.dataprep.transformation.format.JsonFormat;
+import java.io.OutputStream;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 /**
  * Integration tests on actions.
  */
 public class TransformTests extends TransformationServiceBaseTests {
 
-    /** Content cache for the tests. */
+    /**
+     * Content cache for the tests.
+     */
     @Autowired
     private ContentCache contentCache;
 
@@ -194,6 +196,49 @@ public class TransformTests extends TransformationServiceBaseTests {
                 .get("/apply/preparation/{prepId}/dataset/{datasetId}/{format}", prepId, dsId, "JSON");
         assertThat(response.getStatusCode(), is(200));
     }
+    
+    @Test
+    public void testEvictPreparationCache() throws Exception {
+        // given
+        final String preparationId = "prepId";
+        final ContentCacheKey metadataKey = cacheKeyGenerator
+                .metadataBuilder()
+                .preparationId(preparationId)
+                .stepId("step1")
+                .sourceType(HEAD)
+                .build();
+        final ContentCacheKey contentKey = cacheKeyGenerator
+                .contentBuilder()
+                .datasetId("datasetId")
+                .preparationId(preparationId)
+                .stepId("step1")
+                .format(JSON)
+                .parameters("")
+                .sourceType(HEAD)
+                .build();
+        try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
+            entry.write("metadata".getBytes());
+            entry.flush();
+        }
+        try (final OutputStream entry = contentCache.put(contentKey, PERMANENT)) {
+            entry.write("content".getBytes());
+            entry.flush();
+        }
+
+        assertThat(contentCache.has(metadataKey), is(true));
+        assertThat(contentCache.has(contentKey), is(true));
+
+        // when
+        given() //
+                .expect().statusCode(200).log().ifError()//
+                .when() //
+                .delete("/preparation/{preparationId}/cache", preparationId) //
+                .asString();
+
+        // then
+        assertThat(contentCache.has(metadataKey), is(false));
+        assertThat(contentCache.has(contentKey), is(false));
+    }
 
     @Test
     public void exportDataSet() throws Exception {
@@ -221,9 +266,9 @@ public class TransformTests extends TransformationServiceBaseTests {
 
         // when
         given() //
-            .when() //
-            .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON") //
-            .asString();
+                .when() //
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON") //
+                .asString();
 
         // then
         // Transformation failure

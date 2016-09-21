@@ -60,7 +60,7 @@ public interface ContentCache {
     OutputStream put(ContentCacheKey key, TimeToLive timeToLive);
 
     /**
-     * Mark cache entry as invalid for given <code>preparationId</code> at step <code>stepId</code>. After this method
+     * Mark cache entry as invalid for given key. After this method
      * completes, {@link #has(ContentCacheKey)} must immediately return <code>false</code>.
      *
      * The eviction is performed gradually according to the given key : the more precise the key is, the finer the
@@ -73,6 +73,16 @@ public interface ContentCache {
      * @param key content cache key.
      */
     void evict(ContentCacheKey key);
+
+    /**
+     * Mark cache entry as invalid for the provided partial key. After this method
+     * completes, {@link #has(ContentCacheKey)} must immediately return <code>false</code>.
+     *
+     * The eviction is performed when the entry's key match the partial key.
+     *
+     * @param key partial content cache key.
+     */
+    void evictMatch(ContentCacheKey key);
 
     /**
      * <p>

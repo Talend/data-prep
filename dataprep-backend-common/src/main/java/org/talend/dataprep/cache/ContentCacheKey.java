@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.cache;
 
+import java.util.function.Predicate;
+
 /**
  * Content cache key used to group all information needed by the cache.
  */
@@ -25,5 +27,13 @@ public interface ContentCacheKey {
      * @return the key for this cache content as a string.
      */
     String getKey();
+
+    /**
+     * Create a predicate that match the potentially partial key
+     * @return The predicate that match the key
+     */
+    default Predicate<String> getMatcher() {
+        throw new UnsupportedOperationException("Matcher is not implemented, it is not usable");
+    }
 
 }

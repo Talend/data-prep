@@ -76,6 +76,14 @@ public class NoOpContentCache implements ContentCache {
         // Nothing to do.
     }
 
+    /**
+     * @see ContentCache#evictMatch(ContentCacheKey)
+     */
+    @Override
+    public void evictMatch(ContentCacheKey key) {
+        // Nothing to do.
+    }
+
     @Override
     public void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
         // Nothing to do.

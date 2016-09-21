@@ -14,6 +14,9 @@
 package org.talend.dataprep.cache.file;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,6 +100,24 @@ public class FileSystemContentCacheTest {
         cache.evict(key);
         // ... has() must immediately return false
         Assert.assertThat(cache.has(key), is(false));
+    }
+
+    @Test
+    public void testEvictMatch() throws Exception {
+        // given
+        final ContentCacheKey key = new DummyCacheKey("youpala");
+        final ContentCacheKey keyMatch = new DummyCacheKey("youpala");
+        assertThat(cache.has(key), not(is(keyMatch.getKey()))); // not the same key because of random + hash
+
+        // Put a content in cache...
+        addCacheEntry(key, "content", DEFAULT);
+        assertThat(cache.has(key), is(true));
+
+        // when
+        cache.evictMatch(key);
+
+        // then
+        assertThat(cache.has(key), is(false));
     }
 
     @Test

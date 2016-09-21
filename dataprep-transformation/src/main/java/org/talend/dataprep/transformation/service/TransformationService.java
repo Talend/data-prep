@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.service;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
@@ -423,6 +424,20 @@ public class TransformationService extends BaseTransformationService {
     @VolumeMetered
     public List<StepDiff> getCreatedColumns(@ApiParam(name = "body", value = "Preview parameters list in json.") @RequestBody final List<PreviewParameters> previewParameters) {
         return previewParameters.stream().map(this::getCreatedColumns).collect(toList());
+    }
+
+    @RequestMapping(value = "/preparation/{preparationId}/cache", method = DELETE)
+    @ApiOperation(value = "Evict content entries related to the preparation", notes = "This operation remove content entries related to the preparation.")
+    @VolumeMetered
+    public void evictCache(@ApiParam(value = "Preparation Id.") @PathVariable(value = "preparationId") final String preparationId) {
+        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder()
+                .preparationId(preparationId)
+                .build();
+        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder()
+                .preparationId(preparationId)
+                .build();
+        contentCache.evictMatch(metadataKey);
+        contentCache.evictMatch(contentKey);
     }
 
     /**

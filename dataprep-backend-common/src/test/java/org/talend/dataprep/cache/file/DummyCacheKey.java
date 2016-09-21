@@ -15,6 +15,7 @@ package org.talend.dataprep.cache.file;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import org.talend.dataprep.cache.ContentCacheKey;
 
@@ -46,6 +47,15 @@ public class DummyCacheKey implements ContentCacheKey {
      */
     @Override
     public String getKey() {
-        return this.getClass().getSimpleName() + '_' + Objects.hash(name, random);
+        return this.getClass().getSimpleName() + '_' + name + '_' + Objects.hash(name, random);
+    }
+
+    @Override
+    public Predicate<String> getMatcher() {
+        final String regex = this.getClass().getSimpleName()
+                + '_'
+                + (name == null ? ".*" : name)
+                + "_.*";
+        return (key) -> key.matches(regex);
     }
 }

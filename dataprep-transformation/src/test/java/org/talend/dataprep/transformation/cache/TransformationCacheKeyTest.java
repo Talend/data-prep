@@ -13,11 +13,15 @@
 
 package org.talend.dataprep.transformation.cache;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import org.junit.Test;
+import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 
 /**
@@ -25,7 +29,7 @@ import org.talend.dataprep.transformation.TransformationBaseTest;
  *
  * @see TransformationCacheKey
  */
-public class TransformationCacheKeyTest extends TransformationBaseTest {
+public class TransformationCacheKeyTest {
 
     @Test
     public void shouldGenerateKey() throws Exception {
@@ -58,6 +62,50 @@ public class TransformationCacheKeyTest extends TransformationBaseTest {
                 FILTER,
                 "user 1"
         );
+    }
+
+    @Test
+    public void getKey_should_generate_serialized_key() throws Exception {
+        // given
+        final ContentCacheKey key = new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1");
+
+        // when
+        final String keyStr = key.getKey();
+
+        // then
+        assertThat(keyStr, is("transformation_prep1_223ec8d45bd185281992fae16a612fb60a9a0d16"));
+    }
+
+    @Test
+    public void getMatcher_should_return_matcher_for_partial_key() throws Exception {
+        // given
+        final ContentCacheKey prepKey = new TransformationCacheKey("prep1", null, null, null, null, null, null);
+        final ContentCacheKey datasetKey = new TransformationCacheKey( null, "dataset1",  null, null, null, null, null);
+        final ContentCacheKey formatKey = new TransformationCacheKey( null, null, "JSON",  null, null, null, null);
+        final ContentCacheKey stepKey = new TransformationCacheKey( null, null, null, "step1",  null, null, null);
+        final ContentCacheKey paramKey = new TransformationCacheKey( null, null, null, null, "param1",  null, null);
+        final ContentCacheKey sourceKey = new TransformationCacheKey( null, null, null, null, null, HEAD,  null);
+        final ContentCacheKey userKey = new TransformationCacheKey( null, null, null, null, null, null, "user1");
+
+        final ContentCacheKey matchingKey = new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1");
+        final ContentCacheKey nonMatchingKey = new TransformationCacheKey("prep2", "dataset2", "XLS", "step2", "param2", FILTER, "user2");
+
+        // when / then
+        assertThat(prepKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(datasetKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(formatKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(stepKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(paramKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(sourceKey.getMatcher().test(matchingKey.getKey()), is(true));
+        assertThat(userKey.getMatcher().test(matchingKey.getKey()), is(true));
+
+        assertThat(prepKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(datasetKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(formatKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(stepKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(paramKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(sourceKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
+        assertThat(userKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
     }
 
     private TransformationCacheKey createTestDefaultKey() {

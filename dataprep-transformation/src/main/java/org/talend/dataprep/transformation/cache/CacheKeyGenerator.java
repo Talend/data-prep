@@ -43,7 +43,7 @@ public class CacheKeyGenerator {
                                                      final String parameters) {
         final String actualParameters = parameters == null ? StringUtils.EMPTY : parameters;
         final ExportParameters.SourceType actualSourceType = sourceType == null ? HEAD : sourceType;
-        final String actualUserId = actualSourceType == HEAD ? null : getUser();
+        final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
 
         return new TransformationCacheKey(
                 preparationId,
@@ -62,7 +62,7 @@ public class CacheKeyGenerator {
      */
     public TransformationMetadataCacheKey generateMetadataKey(final String preparationId, final String stepId, final ExportParameters.SourceType sourceType) {
         final ExportParameters.SourceType actualSourceType = sourceType == null ? HEAD : sourceType;
-        final String actualUserId = actualSourceType == HEAD ? null : getUser();
+        final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
 
         return new TransformationMetadataCacheKey(
                 preparationId,
@@ -72,7 +72,95 @@ public class CacheKeyGenerator {
         );
     }
 
-    private String getUser() {
-        return security.getUserId();
+    /**
+     * @return a builder for metadata cache key
+     */
+    public MetadataCacheKeyBuilder metadataBuilder() {
+        return new MetadataCacheKeyBuilder(this);
+    }
+
+    /**
+     * @return a builder for content cache key
+     */
+    public ContentCacheKeyBuilder contentBuilder() {
+        return new ContentCacheKeyBuilder(this);
+    }
+
+    public class MetadataCacheKeyBuilder {
+        private String preparationId;
+        private String stepId;
+        private ExportParameters.SourceType sourceType;
+        private CacheKeyGenerator cacheKeyGenerator;
+
+        private MetadataCacheKeyBuilder(final CacheKeyGenerator cacheKeyGenerator) {
+            this.cacheKeyGenerator = cacheKeyGenerator;
+        }
+
+        public MetadataCacheKeyBuilder preparationId(final String preparationId) {
+            this.preparationId = preparationId;
+            return this;
+        }
+
+        public MetadataCacheKeyBuilder stepId(final String stepId) {
+            this.stepId = stepId;
+            return this;
+        }
+
+        public MetadataCacheKeyBuilder sourceType(final ExportParameters.SourceType sourceType) {
+            this.sourceType = sourceType;
+            return this;
+        }
+
+        public TransformationMetadataCacheKey build() {
+            return cacheKeyGenerator.generateMetadataKey(preparationId, stepId, sourceType);
+        }
+    }
+
+    public class ContentCacheKeyBuilder {
+        private String datasetId;
+        private String format;
+        private String parameters;
+        private String preparationId;
+        private String stepId;
+        private ExportParameters.SourceType sourceType;
+        private CacheKeyGenerator cacheKeyGenerator;
+
+        private ContentCacheKeyBuilder(final CacheKeyGenerator cacheKeyGenerator) {
+            this.cacheKeyGenerator = cacheKeyGenerator;
+        }
+
+        public ContentCacheKeyBuilder preparationId(final String preparationId) {
+            this.preparationId = preparationId;
+            return this;
+        }
+
+        public ContentCacheKeyBuilder stepId(final String stepId) {
+            this.stepId = stepId;
+            return this;
+        }
+
+        public ContentCacheKeyBuilder sourceType(final ExportParameters.SourceType sourceType) {
+            this.sourceType = sourceType;
+            return this;
+        }
+
+        public ContentCacheKeyBuilder datasetId(final String datasetId) {
+            this.datasetId = datasetId;
+            return this;
+        }
+
+        public ContentCacheKeyBuilder format(final String format) {
+            this.format = format;
+            return this;
+        }
+
+        public ContentCacheKeyBuilder parameters(final String parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
+        public TransformationCacheKey build() {
+            return cacheKeyGenerator.generateContentKey(datasetId, preparationId, stepId, format, sourceType, parameters);
+        }
     }
 }

@@ -80,32 +80,13 @@ public class TransformationCacheKeyTest {
     public void getMatcher_should_return_matcher_for_partial_key() throws Exception {
         // given
         final ContentCacheKey prepKey = new TransformationCacheKey("prep1", null, null, null, null, null, null);
-        final ContentCacheKey datasetKey = new TransformationCacheKey( null, "dataset1",  null, null, null, null, null);
-        final ContentCacheKey formatKey = new TransformationCacheKey( null, null, "JSON",  null, null, null, null);
-        final ContentCacheKey stepKey = new TransformationCacheKey( null, null, null, "step1",  null, null, null);
-        final ContentCacheKey paramKey = new TransformationCacheKey( null, null, null, null, "param1",  null, null);
-        final ContentCacheKey sourceKey = new TransformationCacheKey( null, null, null, null, null, HEAD,  null);
-        final ContentCacheKey userKey = new TransformationCacheKey( null, null, null, null, null, null, "user1");
 
         final ContentCacheKey matchingKey = new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1");
         final ContentCacheKey nonMatchingKey = new TransformationCacheKey("prep2", "dataset2", "XLS", "step2", "param2", FILTER, "user2");
 
         // when / then
         assertThat(prepKey.getMatcher().test(matchingKey.getKey()), is(true));
-        assertThat(datasetKey.getMatcher().test(matchingKey.getKey()), is(true));
-        assertThat(formatKey.getMatcher().test(matchingKey.getKey()), is(true));
-        assertThat(stepKey.getMatcher().test(matchingKey.getKey()), is(true));
-        assertThat(paramKey.getMatcher().test(matchingKey.getKey()), is(true));
-        assertThat(sourceKey.getMatcher().test(matchingKey.getKey()), is(true));
-        assertThat(userKey.getMatcher().test(matchingKey.getKey()), is(true));
-
         assertThat(prepKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
-        assertThat(datasetKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
-        assertThat(formatKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
-        assertThat(stepKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
-        assertThat(paramKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
-        assertThat(sourceKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
-        assertThat(userKey.getMatcher().test(nonMatchingKey.getKey()), is(false));
     }
 
     private TransformationCacheKey createTestDefaultKey() {

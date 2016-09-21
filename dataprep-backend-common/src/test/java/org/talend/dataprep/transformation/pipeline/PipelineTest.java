@@ -1,6 +1,8 @@
 package org.talend.dataprep.transformation.pipeline;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.pipeline.Signal.END_OF_STREAM;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +27,6 @@ import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.pipeline.Signal.END_OF_STREAM;
 
 public class PipelineTest {
 
@@ -299,7 +296,7 @@ public class PipelineTest {
         dataSet.setRecords(records.stream());
 
         // when
-        pipeline.stop();
+        pipeline.signal(Signal.STOP);
         pipeline.execute(dataSet);
 
         // then

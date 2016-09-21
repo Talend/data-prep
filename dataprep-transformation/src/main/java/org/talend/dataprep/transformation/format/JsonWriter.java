@@ -83,7 +83,7 @@ public class JsonWriter implements TransformerWriter {
             try {
                 generator.writeObject(col);
             } catch (IOException e) {
-                throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
+                throw new TDPException(CommonErrorCodes.UNABLE_TO_WRITE_JSON, e);
             }
         });
         endArray();

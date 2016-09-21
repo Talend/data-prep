@@ -1,5 +1,7 @@
 package org.talend.dataprep.transformation.pipeline.model;
 
+import static org.talend.dataprep.transformation.pipeline.Signal.END_OF_STREAM;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -61,7 +63,7 @@ public class WriterNode extends BasicNode implements Monitored {
 
         // do not write this row if the writer is stopped
         if (isStopped.get()) {
-            LOGGER.debug("already stopped, let's skip this row");
+            LOGGER.debug("already finished or canceled, let's skip this row");
             return;
         }
 
@@ -98,49 +100,68 @@ public class WriterNode extends BasicNode implements Monitored {
 
         LOGGER.debug("receive {}", signal);
 
-        if (signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) {
-
-            if (isStopped.get()) {
-                LOGGER.debug("cannot process {} because WriterNode is already stopped", signal);
-                super.signal(signal);
-                return;
-            }
-
-            // set this writer to stopped
-            this.isStopped.set(true);
-
-            final long start = System.currentTimeMillis();
-            try {
-                writer.endArray(); // <- end records
-                writer.fieldName("metadata"); // <- start metadata
-                writer.startObject();
-
-                writer.fieldName("columns");
-                writer.write(lastRowMetadata);
-
-                writer.endObject();
-                writer.endObject(); // <- end data set
-                writer.flush();
-            } catch (IOException e) {
-                LOGGER.error("Unable to end writer.", e);
-            } finally {
-                totalTime += System.currentTimeMillis() - start;
-            }
-
-            // Cache computed metadata for later reuse
-            try {
-                metadataCacheWriter.write(metadataKey, lastRowMetadata);
-                writer.flush();
-            } catch (IOException e) {
-                LOGGER.error("Unable to cache metadata for preparation #{} @ step #{}", metadataKey.getKey());
-                LOGGER.debug("Unable to cache metadata due to exception.", e);
-            }
-
-        } else {
+        switch (signal) {
+        case END_OF_STREAM:
+            endOfStream();
+            break;
+        case CANCEL:
+            cancel();
+            break;
+        default:
             LOGGER.debug("Unhandled signal {}.", signal);
+                super.signal(signal);
+        }
+    }
+
+    /**
+     * Deal with the cancel signal.
+     */
+    private void cancel() {
+        // just set stopped flag to true so that the writer is not used anymore
+        this.isStopped.set(true);
+        super.signal(Signal.CANCEL);
+    }
+
+
+    /**
+     * Deal with end of stream signal.
+     */
+    private void endOfStream() {
+        if (isStopped.get()) {
+            LOGGER.debug("cannot process {} because WriterNode is already finished or canceled", END_OF_STREAM);
+            super.signal(END_OF_STREAM);
+            return;
         }
 
-        super.signal(signal);
+        // set this writer to stopped
+        this.isStopped.set(true);
+
+        final long start = System.currentTimeMillis();
+        try {
+            writer.endArray(); // <- end records
+            writer.fieldName("metadata"); // <- start metadata
+            writer.startObject();
+
+            writer.fieldName("columns");
+            writer.write(lastRowMetadata);
+
+            writer.endObject();
+            writer.endObject(); // <- end data set
+            writer.flush();
+        } catch (IOException e) {
+            LOGGER.error("Unable to end writer.", e);
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+        }
+
+        // Cache computed metadata for later reuse
+        try {
+            metadataCacheWriter.write(metadataKey, lastRowMetadata);
+            writer.flush();
+        } catch (IOException e) {
+            LOGGER.error("Unable to cache metadata for preparation #{} @ step #{}", metadataKey.getKey());
+            LOGGER.debug("Unable to cache metadata due to exception.", e);
+        }
     }
 
     @Override

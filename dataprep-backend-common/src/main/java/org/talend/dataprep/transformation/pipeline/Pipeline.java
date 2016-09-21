@@ -1,5 +1,7 @@
 package org.talend.dataprep.transformation.pipeline;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -8,6 +10,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -22,10 +25,25 @@ import org.talend.dataprep.transformation.pipeline.node.NullNode;
 
 public class Pipeline implements Node, RuntimeNode {
 
+    /** This class' logger. */
+    private static final Logger LOG = getLogger(Pipeline.class);
+
     private Node node;
 
+    /** Flag used to know if the pipeline is stopped or not. */
     private final AtomicBoolean isStopped = new AtomicBoolean();
 
+    /**
+     * Boolean used as semaphore to make the pipeline#signal(Stop) method wait for the pipeline to be finished before
+     * returning.
+     * 
+     * @see Pipeline#signal(Signal)
+     */
+    private final Boolean isFinished = Boolean.FALSE;
+
+    /**
+     * Default empty constructor.
+     */
     public Pipeline() {
     }
 
@@ -37,20 +55,26 @@ public class Pipeline implements Node, RuntimeNode {
         this.node = node;
     }
 
+
     public void execute(DataSet dataSet) {
         final RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata().clone();
         try (Stream<DataSetRow> records = dataSet.getRecords()) {
-            // we use map/allMatch to stop the stream when isStopped = true
-            // with only forEach((row) -> if(isStopped)) for ex we just stop the processed code
-            // but we proceed all the rows of the stream
-            // to replace when java introduce more useful functions to stream (ex: takeWhile)
-            records
-                    .map(row -> {
-                        node.exec().receive(row, rowMetadata);
-                        return row;
-                    })
-                    .allMatch((row) -> !isStopped.get());
-            node.exec().signal(Signal.END_OF_STREAM);
+
+            // get the lock on isFinished to make the signal(STOP) method wait for the whole pipeline to finish
+            synchronized (isFinished) {
+
+                // we use map/allMatch to stop the stream when isStopped = true
+                // with only forEach((row) -> if(isStopped)) for ex we just stop the processed code
+                // but we proceed all the rows of the stream
+                // to replace when java introduce more useful functions to stream (ex: takeWhile)
+                records //
+                        .map(row -> { //
+                            node.exec().receive(row, rowMetadata);
+                            return row;
+                        }) //
+                        .allMatch((row) -> !isStopped.get());
+                node.exec().signal(Signal.END_OF_STREAM);
+            }
         }
     }
 
@@ -87,7 +111,26 @@ public class Pipeline implements Node, RuntimeNode {
 
     @Override
     public void signal(Signal signal) {
-        node.exec().signal(signal);
+
+        // stop the pipeline and swallows the signal (Signal.END_OF_STREAM will be sent by the execute method)
+        if (signal == Signal.STOP) {
+            isStopped.set(true);
+            waitForPipelineToFinish();
+        } else if (signal == Signal.CANCEL) {
+            isStopped.set(true);
+            node.exec().signal(signal);
+        } else {
+            node.exec().signal(signal);
+        }
+    }
+
+    /**
+     * Simply wait for the pipeline to finish via the isFinished lock.
+     */
+    private void waitForPipelineToFinish() {
+        synchronized (isFinished) {
+            LOG.debug("pipeline is finished");
+        }
     }
 
     @Override
@@ -102,10 +145,6 @@ public class Pipeline implements Node, RuntimeNode {
 
     public Node getNode() {
         return node;
-    }
-
-    public void stop() {
-        isStopped.set(true);
     }
 
     public static class Builder {

@@ -31,7 +31,7 @@
  * @requires data-prep.services.utils.service:StorageService
  */
 
-import { map, find } from 'lodash';
+import { map } from 'lodash';
 
 // actions scopes
 const LINE = 'line';
@@ -46,7 +46,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                                           FilterAdapterService, PreparationService, PreviewService,
                                           RecipeService, TransformationCacheService,
                                           StatisticsService, HistoryService,
-                                          OnboardingService, MessageService, StorageService) {
+                                          OnboardingService, MessageService) {
     'ngInject';
 
     const INVENTORY_SUFFIX = ' ' + $translate.instant('PREPARATION');
@@ -105,14 +105,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @ngdoc method
      * @name updateGridSelection
      * @methodOf data-prep.services.playground.service:PlaygroundService
+     * @param {object} dataset The dataset to update
+     * @param {object} preparation The preparation to update
      * @description Update grid selection by using localstorage
      */
     function updateGridSelection(dataset, preparation) {
-        const selectedCols = StorageService.getSelectedColumns(preparation? preparation.id : dataset.id);
-        if(selectedCols.length) {
-            StateService.setGridSelection(state.playground.grid.columns.filter((col) => {
-                return selectedCols.indexOf(col.id) > -1;
-            }));
+        const selectedCols = StorageService.getSelectedColumns(preparation ? preparation.id : dataset.id);
+        if (selectedCols.length) {
+            StateService.setGridSelection(state.playground.grid.columns.filter((col) => selectedCols.indexOf(col.id) > -1));
         }
     }
 

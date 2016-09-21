@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { map } from 'lodash';
+
 /**
  * @ngdoc service
  * @name data-prep.datagrid.service:DatagridExternalService
@@ -96,7 +98,7 @@ export default class DatagridExternalService {
                 this.StatisticsService.reset();
             }
 
-            const selectedCols = _.map(this.state.playground.grid.selectedColumns, 'id');
+            const selectedCols = map(this.state.playground.grid.selectedColumns, 'id');
             this.StorageService.setSelectedColumns(
                 this.state.playground.preparation ? this.state.playground.preparation.id : this.state.playground.dataset.id,
                 selectedCols

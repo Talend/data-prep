@@ -77,6 +77,7 @@ public class WriterNode extends BasicNode implements Monitored {
             if (row.shouldWrite()) {
                 row.setRowMetadata(metadata);
                 writer.write(row);
+                super.receive(row, metadata);
             }
         } catch (IOException e) {
             LOGGER.error("Unable to write record.", e);
@@ -84,7 +85,6 @@ public class WriterNode extends BasicNode implements Monitored {
             totalTime += System.currentTimeMillis() - start;
             count++;
         }
-        super.receive(row, metadata);
     }
 
     /**

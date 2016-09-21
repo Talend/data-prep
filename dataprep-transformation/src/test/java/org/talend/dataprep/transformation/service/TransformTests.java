@@ -31,6 +31,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
@@ -205,7 +206,7 @@ public class TransformTests extends TransformationServiceBaseTests {
                 .metadataBuilder()
                 .preparationId(preparationId)
                 .stepId("step1")
-                .sourceType(HEAD)
+                .sourceType(FILTER)
                 .build();
         final ContentCacheKey contentKey = cacheKeyGenerator
                 .contentBuilder()
@@ -214,7 +215,7 @@ public class TransformTests extends TransformationServiceBaseTests {
                 .stepId("step1")
                 .format(JSON)
                 .parameters("")
-                .sourceType(HEAD)
+                .sourceType(FILTER)
                 .build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
             entry.write("metadata".getBytes());

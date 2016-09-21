@@ -172,7 +172,8 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleting preparation (pool: {} )...", getConnectionStats());
         }
-        PreparationDelete preparationDelete = getCommand(PreparationDelete.class, id);
+        final CachePreparationEviction evictPreparationCache = getCommand(CachePreparationEviction.class, id);
+        final PreparationDelete preparationDelete = getCommand(PreparationDelete.class, id, evictPreparationCache);
         final String preparationId = preparationDelete.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleted preparation (pool: {} )...", getConnectionStats());

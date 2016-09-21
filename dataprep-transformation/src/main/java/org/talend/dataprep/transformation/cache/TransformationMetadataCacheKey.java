@@ -53,7 +53,7 @@ public class TransformationMetadataCacheKey implements ContentCacheKey {
                 + (preparationId == null ? ".*" : preparationId) + "_"
                 + (stepId == null ? ".*" : stepId) + "_"
                 + (sourceType == null ? ".*" : sourceType) + "_"
-                + (userId == null ? ".*" : userId);
+                + (userId == null ? ".*" : userId) + "([.].*)?";
         return (str) -> str.matches(regex);
     }
 

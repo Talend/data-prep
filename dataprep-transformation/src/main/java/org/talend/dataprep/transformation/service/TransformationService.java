@@ -19,16 +19,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -430,11 +428,19 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Evict content entries related to the preparation", notes = "This operation remove content entries related to the preparation.")
     @VolumeMetered
     public void evictCache(@ApiParam(value = "Preparation Id.") @PathVariable(value = "preparationId") final String preparationId) {
+        for(final ExportParameters.SourceType sourceType : ExportParameters.SourceType.values()) {
+            evictCache(preparationId, sourceType);
+        }
+    }
+
+    private void evictCache(final String preparationId, final ExportParameters.SourceType sourceType) {
         final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder()
                 .preparationId(preparationId)
+                .sourceType(sourceType)
                 .build();
         final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder()
                 .preparationId(preparationId)
+                .sourceType(sourceType)
                 .build();
         contentCache.evictMatch(metadataKey);
         contentCache.evictMatch(contentKey);

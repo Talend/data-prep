@@ -15,6 +15,7 @@ package org.talend.dataprep.api.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.folder.Folder;
@@ -33,18 +35,26 @@ import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
 import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
 import static org.talend.dataprep.api.service.PreparationAPITestClient.*;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class PreparationAPITest extends ApiServiceTestBase {
@@ -57,6 +67,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
     @Autowired
     private Security security;
+
+    @Autowired
+    private ContentCache contentCache;
+
+    @Autowired
+    private CacheKeyGenerator cacheKeyGenerator;
 
     //------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------GETTER-------------------------------------------------------
@@ -267,6 +283,50 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // then
         list = when().get("/api/preparations").asString();
         assertEquals("[]", list);
+    }
+
+    @Test
+    public void testPreparationCacheDeletion() throws Exception {
+        // given
+        final String prepId = "1234";
+        final String preparationId = createPreparationFromDataset(prepId, "original_name");
+
+        final String list = when().get("/api/preparations").asString();
+        assertThat(list.contains(preparationId), is(true));
+
+        final ContentCacheKey metadataKey = cacheKeyGenerator
+                .metadataBuilder()
+                .preparationId(preparationId)
+                .stepId("step1")
+                .sourceType(FILTER)
+                .build();
+        final ContentCacheKey contentKey = cacheKeyGenerator
+                .contentBuilder()
+                .datasetId("datasetId")
+                .preparationId(preparationId)
+                .stepId("step1")
+                .format(JSON)
+                .parameters("")
+                .sourceType(FILTER)
+                .build();
+        try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
+            entry.write("metadata".getBytes());
+            entry.flush();
+        }
+        try (final OutputStream entry = contentCache.put(contentKey, PERMANENT)) {
+            entry.write("content".getBytes());
+            entry.flush();
+        }
+
+        assertThat(contentCache.has(metadataKey), is(true));
+        assertThat(contentCache.has(contentKey), is(true));
+
+        // when
+        when().delete("/api/preparations/" + preparationId).asString();
+
+        // then
+        Assert.assertThat(contentCache.has(metadataKey), is(false));
+        Assert.assertThat(contentCache.has(contentKey), is(false));
     }
 
     //------------------------------------------------------------------------------------------------------------------

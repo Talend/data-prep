@@ -22,6 +22,7 @@ import org.talend.daikon.exception.error.ErrorCode;
 
 public enum APIErrorCodes implements ErrorCode {
     UNABLE_TO_DELETE_PREPARATION(400),
+    UNABLE_TO_DELETE_PREPARATION_CACHE(500),
     UNABLE_TO_CREATE_DATASET(400),
     UNABLE_TO_CREATE_OR_UPDATE_DATASET(400),
     UNABLE_TO_CERTIFY_DATASET(400),

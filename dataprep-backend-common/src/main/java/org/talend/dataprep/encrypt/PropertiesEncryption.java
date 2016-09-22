@@ -71,8 +71,10 @@ public class PropertiesEncryption {
         if (Files.exists(inputFilePath) && Files.isRegularFile(inputFilePath) && Files.isReadable(inputFilePath)) {
             try {
                 Parameters params = new Parameters();
-                FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
-                        PropertiesConfiguration.class).configure(params.fileBased().setFile(inputFilePath.toFile()));
+                FileBasedConfigurationBuilder<PropertiesConfiguration> builder = //
+                        new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class) //
+                                .configure(params.fileBased() //
+                                        .setFile(inputFilePath.toFile())); //
                 PropertiesConfiguration config = builder.getConfiguration();
                 for (String key : mustBeModified) {
                     config.setProperty(key, function.apply(config.getString(key)));

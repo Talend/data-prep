@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,37 +32,72 @@ import com.google.common.io.Resources;
 public class PropertiesEncryptionTest {
 
     @Test
-    public void encryptAndSave() throws Exception {
+    public void shouldEncryptAndSaveAllOccurrences() throws Exception {
+        // given
         String propertyKey = "admin.password";
         String propertyValue = "5ecr3t";
         String propertyEncodedValue = "JP6lC6hVeu3wRZA1Tzigyg==";
         Path tempFile = Files.createTempFile("dataprep-PropertiesEncryptionTest.", ".properties");
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempFile, Charsets.UTF_8)) {
-            bufferedWriter.write(propertyKey + "=" + propertyValue);
+            for (int i = 0; i < 5; i++) {
+                bufferedWriter.write(propertyKey + "=" + propertyValue);
+                bufferedWriter.newLine();
+            }
         }
 
+        // when
         new PropertiesEncryption().encryptAndSave(tempFile.toString(), Sets.newHashSet(propertyKey));
 
+        // then
+        final String expectedLine = propertyKey + "=" + propertyEncodedValue;
+        verifyContent(expectedLine, tempFile);
+    }
+
+    @Test
+    public void shouldNotEncryptCommentedProperties() throws Exception {
+        // given
+        String commentedLines = "# admin.password = administrator password";
+
+        Path tempFile = Files.createTempFile("dataprep-PropertiesEncryptionTest.", ".properties");
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempFile, Charsets.UTF_8)) {
+            bufferedWriter.write("# file.password = the file password");
+            bufferedWriter.newLine();
+            bufferedWriter.write("file = /tmp");
+            bufferedWriter.newLine();
+        }
+
+        // when
+        new PropertiesEncryption().encryptAndSave(tempFile.toString(), Sets.newHashSet("file.password"));
+
+        // then
         try (BufferedReader reader = Files.newBufferedReader(tempFile)) {
-            assertEquals(propertyKey + "=" + propertyEncodedValue, reader.readLine());
+            String line = reader.readLine();
+            assertEquals("# file.password = the file password", line);
+            line = reader.readLine();
+            assertEquals("file = /tmp", line);
         }
     }
 
     @Test
     public void decryptAndSave() throws Exception {
+        // given
         String propertyKey = "admin.password";
         String propertyEncodedValue = "JP6lC6hVeu3wRZA1Tzigyg==";
         String propertyValue = "5ecr3t";
         Path tempFile = Files.createTempFile("dataprep-PropertiesEncryptionTest.", ".properties");
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempFile, Charsets.UTF_8)) {
-            bufferedWriter.write(propertyKey + "=" + propertyEncodedValue);
+            for (int i = 0; i < 5; i++) {
+                bufferedWriter.write(propertyKey + "=" + propertyEncodedValue);
+                bufferedWriter.newLine();
+            }
         }
 
+        // when
         new PropertiesEncryption().decryptAndSave(tempFile.toString(), Sets.newHashSet(propertyKey));
 
-        try (BufferedReader reader = Files.newBufferedReader(tempFile)) {
-            assertEquals(propertyKey + "=" + propertyValue, reader.readLine());
-        }
+        // then
+        final String expectedLine = propertyKey + "=" + propertyValue;
+        verifyContent(expectedLine, tempFile);
     }
 
     @Test
@@ -78,4 +114,13 @@ public class PropertiesEncryptionTest {
 
     }
 
+    private void verifyContent(String expectedLine, Path tempFile) throws IOException {
+        try (BufferedReader reader = Files.newBufferedReader(tempFile)) {
+            String line = reader.readLine();
+            while (line != null) {
+                assertEquals(expectedLine, line);
+                line = reader.readLine();
+            }
+        }
+    }
 }

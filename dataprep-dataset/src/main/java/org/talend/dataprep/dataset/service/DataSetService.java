@@ -266,8 +266,9 @@ public class DataSetService extends BaseDataSetService {
             final List<String> predicates = new ArrayList<>();
             predicates.add("lifecycle.importing = false");
             if (favorite) {
-                if (userData != null) {
-                    predicates.add("id in [" + userData.getFavoritesDatasets().stream().collect(Collectors.joining(",")) + "]");
+                if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
+                    predicates.add("id in [" + userData.getFavoritesDatasets().stream().map(ds -> '\'' + ds + '\'')
+                            .collect(Collectors.joining(",")) + "]");
                 } else {
                     predicates.add("isFavorite = 'true'");
                 }

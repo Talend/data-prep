@@ -93,6 +93,33 @@ public class ExtractDateTokensTest extends BaseDateTests {
     }
 
     @Test
+    public void test_TDP_2480() throws Exception {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "toto");
+        values.put("0001", "Apr-25-1999");
+        values.put("0002", "tata");
+
+        final DataSetRow row = new DataSetRow(values);
+        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "toto");
+        expectedValues.put("0001", "Apr-25-1999");
+        expectedValues.put("0003", "1999");
+        expectedValues.put("0004", "4");
+        expectedValues.put("0005", "0");
+        expectedValues.put("0006", "0");
+        expectedValues.put("0002", "tata");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_process_row_with_time() throws Exception {
         // given
         final Map<String, String> values = new HashMap<>();

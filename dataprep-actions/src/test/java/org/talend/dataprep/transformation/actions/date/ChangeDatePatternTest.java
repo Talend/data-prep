@@ -226,6 +226,23 @@ public class ChangeDatePatternTest extends BaseDateTests {
     }
 
     @Test
+    public void test_TDP_2480() throws Exception {
+        // given
+        DataSetRow row = getRow("toto", "APR-25-09", "tata");
+        setStatistics(row, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+
+        parameters.put(ChangeDatePattern.FROM_MODE, ChangeDatePattern.FROM_MODE_CUSTOM);
+        parameters.put(ChangeDatePattern.FROM_CUSTOM_PATTERN, "MMM-dd-yy");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        final DataSetRow expectedRow = getRow("toto", "25 - Apr - 2009", "tata");
+        assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
     public void test_TDP_2255_not_working_with_timezone_in_format() throws Exception {
         // given
         DataSetRow row = getRow("toto", "Apr-25-09", "tata");

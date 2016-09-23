@@ -57,7 +57,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction, Dat
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeDatePattern.class);
 
-    private static final String FROM_MODE_BEST_GUESS = "unknown_separators"; //$NON-NLS-1$
+    protected static final String FROM_MODE_BEST_GUESS = "unknown_separators"; //$NON-NLS-1$
     /**
      * Keys for action context:
      */

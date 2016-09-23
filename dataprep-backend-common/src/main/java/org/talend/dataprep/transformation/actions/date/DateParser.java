@@ -20,6 +20,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,8 +65,8 @@ public class DateParser {
     /**
      * Parse the date time out of the given value based on the column date pattern.
      * <p>
-     * At first uses the known date patterns from the column statistics. If it fails, the DQ library is called to try to
-     * get the pattern.
+     * At first uses the known date patterns from the column statistics. If it fails, the DQ library is called to try to get the
+     * pattern.
      *
      * @param value the value to get the date time from. Value can't be be empty or null/
      * @param column the column to get the date patterns from.
@@ -156,16 +157,19 @@ public class DateParser {
         }
 
         for (DatePattern pattern : patterns) {
-            final DateTimeFormatter formatter = pattern.getFormatter();
+                final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .append(pattern.getFormatter())
+                    .toFormatter(Locale.ENGLISH);
 
             // first try to parse directly as LocalDateTime
             try {
-                return LocalDateTime.parse(WordUtils.capitalizeFully(value), formatter);
+                return LocalDateTime.parse(value, formatter);
             } catch (DateTimeException e) {
                 LOGGER.trace("Unable to parse date '{}' using LocalDateTime.", value, e);
                 // if it fails, let's try the LocalDate first
                 try {
-                    LocalDate temp = LocalDate.parse(WordUtils.capitalizeFully(value), formatter);
+                    LocalDate temp = LocalDate.parse(value, formatter);
                     return temp.atStartOfDay();
                 } catch (DateTimeException e2) {
                     LOGGER.trace("Unable to parse date '{}' using LocalDate.", value, e2);

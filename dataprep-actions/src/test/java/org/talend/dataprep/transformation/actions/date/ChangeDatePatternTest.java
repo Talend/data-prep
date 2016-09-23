@@ -32,6 +32,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -240,6 +241,41 @@ public class ChangeDatePatternTest extends BaseDateTests {
         // then
         final DataSetRow expectedRow = getRow("toto", "25 - Apr - 2009", "tata");
         assertEquals(expectedRow.values(), row.values());
+    }
+
+    @Test
+    public void test_TDP_2636() throws Exception {
+        // given
+        long rowId = 120;
+
+        // row 1
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "David");
+        rowContent.put("0001", "6/12/2015 0:01");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(rowId++);
+        setStatistics(row1, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+
+        // row 2
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "12/14/2015 1:18 AM");
+        final DataSetRow row2 = new DataSetRow(rowContent);
+        row2.setTdpId(rowId++);
+        setStatistics(row2, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ChangeDatePattern.FROM_MODE, ChangeDatePattern.FROM_MODE_BEST_GUESS);
+        parameters.put(ChangeDatePattern.NEW_PATTERN, "yyyy-MM-dd");
+        parameters.put("column_id", "0001");
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("2015-06-12", row1.get("0001"));
+        assertEquals("2015-12-14", row2.get("0001"));
     }
 
     @Test

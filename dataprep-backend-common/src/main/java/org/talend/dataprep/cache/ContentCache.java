@@ -81,6 +81,7 @@ public interface ContentCache {
      * The eviction is performed when the entry's key match the partial key.
      *
      * @param key partial content cache key.
+     * @see ContentCacheKey#getMatcher()
      */
     void evictMatch(ContentCacheKey key);
 

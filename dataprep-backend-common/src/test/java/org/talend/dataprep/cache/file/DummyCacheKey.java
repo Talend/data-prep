@@ -16,6 +16,7 @@ package org.talend.dataprep.cache.file;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import org.talend.dataprep.cache.ContentCacheKey;
 
@@ -56,6 +57,7 @@ public class DummyCacheKey implements ContentCacheKey {
                 + '_'
                 + (name == null ? ".*" : name)
                 + "_.*";
-        return (key) -> key.matches(regex);
+        final Pattern pattern = Pattern.compile(regex);
+        return key -> pattern.matcher(key).matches();
     }
 }

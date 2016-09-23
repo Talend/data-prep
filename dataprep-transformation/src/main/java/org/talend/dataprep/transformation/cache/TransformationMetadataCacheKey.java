@@ -18,6 +18,7 @@ import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.ContentCacheKey;
 
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Content cache key used to cache transformation.
@@ -54,7 +55,8 @@ public class TransformationMetadataCacheKey implements ContentCacheKey {
                 + (stepId == null ? ".*" : stepId) + "_"
                 + (sourceType == null ? ".*" : sourceType) + "_"
                 + (userId == null ? ".*" : userId) + "([.].*)?";
-        return (str) -> str.matches(regex);
+        final Pattern pattern = Pattern.compile(regex);
+        return str -> pattern.matcher(str).matches();
     }
 
     public String getPreparationId() {

@@ -20,6 +20,7 @@ import org.talend.dataprep.cache.ContentCacheKey;
 
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Content cache key used to cache transformation.
@@ -107,6 +108,7 @@ public class TransformationCacheKey implements ContentCacheKey {
     @Override
     public Predicate<String> getMatcher() {
         final String regex = "transformation_" + preparationId + "_.*";
-        return (str) -> str.matches(regex);
+        final Pattern pattern = Pattern.compile(regex);
+        return str -> pattern.matcher(str).matches();
     }
 }

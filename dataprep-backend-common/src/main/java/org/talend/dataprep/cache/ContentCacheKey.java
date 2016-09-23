@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.cache;
 
@@ -29,11 +29,20 @@ public interface ContentCacheKey {
     String getKey();
 
     /**
-     * Create a predicate that match the potentially partial key
-     * @return The predicate that match the key
+     * <p>
+     * Create a predicate that allows to compare another content cache key (as returned by {@link #getKey()}) with this
+     * current cache key.
+     * </p>
+     * <p>
+     * Each implementation may decide to match on partial key or on full key.
+     * </p>
+     *
+     * @return A predicate that match another content cache key
+     * @see #getKey()
+     * @see ContentCache#evictMatch(ContentCacheKey)
      */
     default Predicate<String> getMatcher() {
-        throw new UnsupportedOperationException("Matcher is not implemented, it is not usable");
+        throw new UnsupportedOperationException("Matcher is not implemented");
     }
 
 }

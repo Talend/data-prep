@@ -23,6 +23,8 @@ import java.io.OutputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,16 +40,6 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 
 /**
  * File system cache implementation.
@@ -112,7 +104,7 @@ public class FileSystemContentCache implements ContentCache {
     /**
      * Compute the path for the given key.
      *
-     * @param key        the cache key entry.
+     * @param key the cache key entry.
      * @param timeToLive an optional time to live when performing content cache lookup (<code>null</code> allowed).
      * @return the HDFS path for the entry key.
      */
@@ -336,6 +328,7 @@ public class FileSystemContentCache implements ContentCache {
     private class FileSystemVisitor extends SimpleFileVisitor<Path> {
 
         private final BiConsumer<Path, String> consumer;
+
         private final boolean skipPermanent;
 
         FileSystemVisitor(final BiConsumer<Path, String> consumer) {

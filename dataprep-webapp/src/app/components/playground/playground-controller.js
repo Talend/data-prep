@@ -330,6 +330,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
     }
 
     if ($stateParams.prepid) {
+        PlaygroundService.startLoader();
         getPreparationById($stateParams.prepid)
             .then((preparation) => {
                 loadPreparation();
@@ -338,12 +339,19 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
             .then((preparation) => {
                 return getDatasetById(preparation.dataSetId);
             })
-            .catch(() => errorGoBack(false));
+            .catch(() => {
+                PlaygroundService.stopLoader();
+                return errorGoBack(false);
+            });
     }
     else if ($stateParams.datasetid) {
+        PlaygroundService.startLoader();
         getDatasetById($stateParams.datasetid)
             .then(loadDataset)
-            .catch(() => errorGoBack(false));
+            .catch(() => {
+                PlaygroundService.stopLoader();
+                return errorGoBack(false);
+            });
     }
 }
 

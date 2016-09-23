@@ -56,11 +56,15 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
     }
 
     const service = {
+        // events helpers
+        startLoader,
+        stopLoader,
+
         // init/load
         initPlayground,     // load dataset
-        load,                         // load preparation
-        loadStep,                 // load preparation step
-        updateStatistics, // load column statistics and trigger statistics update
+        load,               // load preparation
+        loadStep,           // load preparation step
+        updateStatistics,   // load column statistics and trigger statistics update
 
         // preparation
         createOrUpdatePreparation,
@@ -84,6 +88,20 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
         changeDatasetParameters,
     };
     return service;
+
+    /**
+     * Helper to emit start loader event
+     */
+    function startLoader() {
+        $rootScope.$emit(EVENT_LOADING_START);
+    }
+
+    /**
+     * Helper to emit stop loader event
+     */
+    function stopLoader() {
+        $rootScope.$emit(EVENT_LOADING_STOP);
+    }
 
     // --------------------------------------------------------------------------------------------
     // -------------------------------------------INIT/LOAD----------------------------------------
@@ -126,7 +144,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @returns {Promise} The process promise
      */
     function initPlayground(dataset) {
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
         return DatasetService.getContent(dataset.id, true)
             .then((data) => checkRecords(data))
             .then((data) => {
@@ -140,9 +158,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                     $timeout(OnboardingService.startTour('playground'), 300, false);
                 }
             })
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -161,7 +177,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @returns {Promise} The process promise
      */
     function load(preparation, sampleType = 'HEAD') {
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
         return PreparationService.getContent(preparation.id, 'head', sampleType)
             .then((response) => {
                 StateService.setPreparationName(preparation.name);
@@ -170,9 +186,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                 StateService.setNameEditionMode(false);
                 return response;
             })
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -184,16 +198,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @returns {Promise} The process promise
      */
     function loadStep(step) {
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
         return PreparationService.getContent(state.playground.preparation.id, step.transformation.stepId, state.playground.sampleType)
             .then((response) => {
                 DatagridService.updateData(response);
                 StateService.disableRecipeStepsAfter(step);
                 PreviewService.reset(false);
             })
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -355,7 +367,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @returns {promise} The process promise
      */
     function setPreparationHead(preparationId, headId, columnToFocus) {
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
 
         let promise = PreparationService.setHead(preparationId, headId);
 
@@ -382,9 +394,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             });
         }
 
-        return promise.finally(() => {
-            $rootScope.$emit(EVENT_LOADING_STOP);
-        });
+        return promise.finally(stopLoader);
     }
 
     // --------------------------------------------------------------------------------------------
@@ -400,8 +410,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * in actions history. It there is no preparation yet, it is created first and tagged as draft.
      */
     function appendStep(actions) {
-        /* jshint camelcase: false */
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
         const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
         return getCurrentPreparation()
@@ -422,9 +431,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                 HistoryService.addAction(undo, redo);
             })
             // hide loading screen
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -444,8 +451,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             return $q.when();
         }
 
-        /* jshint camelcase: false */
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
 
         // save the head before transformation for undo
         const previousHead = StepUtilsService.getLastStep(state.playground.recipe).transformation.stepId;
@@ -471,9 +477,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                 HistoryService.addAction(undo, redo);
             })
             // hide loading screen
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -495,7 +499,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             return;
         }
 
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
 
         // If move up or move down buttons, list is not yet updated
         const currentStep = StepUtilsService.getStep(recipe, previousPosition);
@@ -533,9 +537,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                 HistoryService.addAction(undo, redo);
             })
             // hide loading screen
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -547,8 +549,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * in actions history
      */
     function removeStep(step) {
-        /* jshint camelcase: false */
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
 
         // save the head before transformation for undo
         const previousHead = StepUtilsService.getLastStep(state.playground.recipe).transformation.stepId;
@@ -566,9 +567,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                 HistoryService.addAction(undo, redo);
             })
             // hide loading screen
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**
@@ -580,14 +579,12 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @returns {Promise} The process promise
      */
     function copySteps(referenceId) {
-        $rootScope.$emit(EVENT_LOADING_START);
+        startLoader();
 
         return getCurrentPreparation()
             .then((preparation) => PreparationService.copySteps(preparation.id, referenceId))
             .then(() => $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]))
-            .finally(() => {
-                $rootScope.$emit(EVENT_LOADING_STOP);
-            });
+            .finally(stopLoader);
     }
 
     /**

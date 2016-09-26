@@ -13,7 +13,11 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import com.fasterxml.jackson.core.JsonParser;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +30,7 @@ import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.dataset.DataSetGet;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -35,10 +40,7 @@ import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.service.ExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * A {@link ExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
@@ -86,6 +88,7 @@ public class PreparationExportStrategy extends StandardExportStrategy {
 
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false);
+        final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
         try (InputStream datasetContent = dataSetGet.execute()) {
             try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
                 // head is not allowed as step id
@@ -93,6 +96,7 @@ public class PreparationExportStrategy extends StandardExportStrategy {
 
                 // Create dataset
                 final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+                dataSet.setMetadata(dataSetGetMetadata.execute());
 
                 // get the actions to apply (no preparation ==> dataset export ==> no actions)
                 final String actions = getActions(preparationId, version);

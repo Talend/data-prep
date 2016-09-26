@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.command.dataset.DataSetGet;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -58,11 +59,14 @@ public class DataSetExportStrategy extends StandardExportStrategy {
         ExportUtils.setExportHeaders(parameters.getExportName(), format);
         return outputStream -> {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
-            final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, parameters.getDatasetId(), false);
+            final String datasetId = parameters.getDatasetId();
+            final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, datasetId, false);
+            final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, datasetId);
             try (InputStream datasetContent = dataSetGet.execute()) {
                 try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
                     // Create dataset
                     final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+                    dataSet.setMetadata(dataSetGetMetadata.execute());
                     // get the actions to apply (no preparation ==> dataset export ==> no actions)
                     Configuration configuration = Configuration.builder() //
                             .args(parameters.getArguments()) //

@@ -65,11 +65,10 @@ export default function PreparationService($q, $state, $window, $stateParams, St
     function create(datasetId, name, destinationFolder) {
         StateService.setPreviousRoute('nav.index.preparations', { folderId: $stateParams.folderId });
         return PreparationRestService.create(datasetId, name, destinationFolder)
-            .then((preparationId) => PreparationRestService.getDetails(preparationId))
-            .then((preparation) => {
+            .then(preparationId => {
                 // get all dataset aggregations per columns from localStorage and save them for the new preparation
-                StorageService.savePreparationAggregationsFromDataset(datasetId, preparation.id);
-                return preparation;
+                StorageService.savePreparationAggregationsFromDataset(datasetId, preparationId);
+                return preparationId;
             });
     }
 

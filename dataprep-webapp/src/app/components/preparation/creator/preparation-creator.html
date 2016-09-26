@@ -102,5 +102,5 @@
     <button class="btn-primary modal-primary-button"
             translate-once="CONFIRM"
             ng-click="$ctrl.createPreparation()"
-            ng-disabled="$ctrl.anyMissingEntries()"></button>
+            ng-disabled="$ctrl.importDisabled || $ctrl.anyMissingEntries()"></button>
 </div>

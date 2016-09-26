@@ -372,7 +372,7 @@ describe('Preparation Creator Controller', () => {
             id: 'def-12558',
         };
         beforeEach(inject(($q, $state, PreparationService, UploadWorkflowService) => {
-            spyOn(PreparationService, 'create').and.returnValue($q.when(newPreparation));
+            spyOn(PreparationService, 'create').and.returnValue($q.when(newPreparation.id));
             spyOn(UploadWorkflowService, 'openDraft').and.returnValue();
             spyOn($state, 'go').and.returnValue();
         }));

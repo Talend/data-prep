@@ -23,7 +23,7 @@ describe('Preparation Service', () => {
     }));
 
     beforeEach(inject(($q, PreparationRestService, StorageService) => {
-        spyOn(PreparationRestService, 'create').and.returnValue($q.when({ id: newPreparationId }));
+        spyOn(PreparationRestService, 'create').and.returnValue($q.when(newPreparationId));
         spyOn(PreparationRestService, 'update').and.returnValue($q.when({
             id: updatedPreparationId,
             dataSetId: updatedDatasetId,

@@ -340,20 +340,24 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
      * @returns {Promise} The process promise
      */
     function performCreateOrUpdatePreparation(name) {
-        const promise = state.playground.preparation ?
-            PreparationService.setName(state.playground.preparation.id, name) :
-            PreparationService.create(state.playground.dataset.id, name, state.inventory.homeFolderId);
-
-        return promise
+        let promise;
+        if (state.playground.preparation) {
+            promise = PreparationService.setName(state.playground.preparation.id, name);
+        }
+        else {
+            promise = PreparationService.create(state.playground.dataset.id, name, state.inventory.homeFolderId)
+                .then(prepid => {
+                    $state.go('playground.preparation', { prepid });
+                    return PreparationService.getDetails(prepid);
+                });
+        }
+        promise
             .then((preparation) => {
                 StateService.setCurrentPreparation(preparation);
                 StateService.setPreparationName(preparation.name);
                 return preparation;
-            })
-            .then((preparation) => {
-                $state.go('playground.preparation', { prepid: state.playground.preparation.id });
-                return preparation;
             });
+        return promise;
     }
 
     /**

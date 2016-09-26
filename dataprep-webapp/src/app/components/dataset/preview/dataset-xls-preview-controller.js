@@ -99,11 +99,8 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
                             DatasetSheetPreviewService.preparationName,
                             state.inventory.folder.metadata.id
                     )
-                        .then((newPreparation) => {
-                            $state.go(
-                                'playground.preparation',
-                                { prepid: newPreparation.id }
-                            );
+                        .then(prepid => {
+                            $state.go('playground.preparation', { prepid });
                         });
                 }
                 else {

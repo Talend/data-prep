@@ -184,7 +184,7 @@ describe('Dataset xls preview controller', () => {
 
         it('should open preparation', inject(($q, $state, DatasetSheetPreviewService, StateService, PreparationService) => {
             //given
-            spyOn(PreparationService, 'create').and.returnValue($q.when({ id: 'aaaa256cf813a25d158' }));
+            spyOn(PreparationService, 'create').and.returnValue($q.when('aaaa256cf813a25d158'));
 
             const ctrl = createController();
             ctrl.selectedSheetName = 'my sheet';

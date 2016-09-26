@@ -115,7 +115,7 @@ export default class PreparationCreatorCtrl {
                             this._getUniquePrepName();
                         }
 
-                        this.createPreparation();
+                        return this.createPreparation();
                     });
             })
             .catch(() => {
@@ -162,9 +162,10 @@ export default class PreparationCreatorCtrl {
             },
         };
 
+        let promise;
         if (configuration.dataset.draft) {
             this.onCreation();
-            this.uploadWorkflowService.openDraft(
+            promise = this.uploadWorkflowService.openDraft(
                 configuration.dataset.metadata,
                 true,
                 configuration.preparation.name
@@ -172,17 +173,18 @@ export default class PreparationCreatorCtrl {
         }
         else {
             this.addPreparationForm.$commitViewValue();
-            this.preparationService
+            promise = this.preparationService
                 .create(
                     configuration.dataset.metadata.id,
                     configuration.preparation.name,
                     configuration.preparation.folder
                 )
-                .then((newPreparation) => {
+                .then(prepid => {
                     this.onCreation();
-                    this.$state.go('playground.preparation', { prepid: newPreparation.id });
+                    this.$state.go('playground.preparation', { prepid });
                 });
         }
+        return promise;
     }
 
     /**

@@ -85,6 +85,10 @@
       "occurrences": 1
     },
     {
+      "pattern": "d-MMM-yyyy",
+      "occurrences": 1
+    },
+    {
       "pattern": "M/d/yyyy H:mm",
       "occurrences": 1
     },

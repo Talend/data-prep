@@ -251,7 +251,7 @@ public class ChangeDatePatternTest extends BaseDateTests {
         // row 1
         Map<String, String> rowContent = new HashMap<>();
         rowContent.put("0000", "David");
-        rowContent.put("0001", "6/12/2015 0:01");
+        rowContent.put("0001", "6/12/2015 0:01"); // Test nominal case
         final DataSetRow row1 = new DataSetRow(rowContent);
         row1.setTdpId(rowId++);
         setStatistics(row1, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
@@ -259,10 +259,18 @@ public class ChangeDatePatternTest extends BaseDateTests {
         // row 2
         rowContent = new HashMap<>();
         rowContent.put("0000", "John");
-        rowContent.put("0001", "12/14/2015 1:18 AM");
+        rowContent.put("0001", "12/14/2015 1:18 AM"); // Test with AM
         final DataSetRow row2 = new DataSetRow(rowContent);
         row2.setTdpId(rowId++);
         setStatistics(row2, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
+
+        // row 3
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "James");
+        rowContent.put("0001", "9-oct-2016"); // Test with MMM invalid case
+        final DataSetRow row3 = new DataSetRow(rowContent);
+        row3.setTdpId(rowId++);
+        setStatistics(row3, "0001", getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"));
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
@@ -271,11 +279,12 @@ public class ChangeDatePatternTest extends BaseDateTests {
         parameters.put("column_id", "0001");
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("2015-06-12", row1.get("0001"));
         assertEquals("2015-12-14", row2.get("0001"));
+        assertEquals("2016-10-09", row3.get("0001"));
     }
 
     @Test

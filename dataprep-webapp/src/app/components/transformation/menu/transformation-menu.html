@@ -18,12 +18,13 @@
 
     <li class="divider"></li>
 
-    <li ng-repeat="menu in menuCtrl.menuItems track by menu.name"
-        ng-click="menuCtrl.select(menu, 'column')">
-
-        <span>{{ menu.label }}</span>
+    <li ng-repeat="menu in menuCtrl.menuItems track by menu.name">
+        <a href
+           title="{{ menu.label }}"
+           ng-click="menuCtrl.select(menu, 'column')">
+            {{ menu.label }}
+        </a>
     </li>
-
 </ul>
 
 <!-- Params modal -->

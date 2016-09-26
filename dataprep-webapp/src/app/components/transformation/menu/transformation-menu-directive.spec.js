@@ -51,7 +51,18 @@ describe('Transformation menu directive', function () {
         var element = createElement();
 
         //then
-        expect(element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]').text().trim()).toBe('uppercase');
+        expect(element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]').text().trim()).toBe('uppercase');
+    });
+
+    it('should render title of a simple action', function () {
+        //given
+        scope.menu = [{ label: 'uppercase' }];
+
+        //when
+        var element = createElement();
+
+        //then
+        expect(element.find('li a[title]').text().trim()).toBe('uppercase');
     });
 
     it('should render an action with parameters', function () {
@@ -79,7 +90,7 @@ describe('Transformation menu directive', function () {
         var element = createElement();
 
         //then
-        var menuItem = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
+        var menuItem = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
         expect(menuItem.text().trim()).toBe('menu with param');
         expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
@@ -114,7 +125,7 @@ describe('Transformation menu directive', function () {
         var element = createElement();
 
         //then
-        var menuItem = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
+        var menuItem = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
         expect(menuItem.text().trim()).toBe('menu with param');
         expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
@@ -170,7 +181,7 @@ describe('Transformation menu directive', function () {
         var element = createElement();
 
         //then
-        var menuItems = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
+        var menuItems = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
         expect(menuItems.length).toBe(3);
         expect(menuItems.eq(0).text().trim()).toBe('uppercase');
         expect(menuItems.eq(1).text().trim()).toBe('menu with choice');
@@ -224,7 +235,7 @@ describe('Transformation menu directive', function () {
         ];
 
         var element = createElement();
-        var menuItems = element.find('li[ng-click="menuCtrl.select(menu, \'column\')"]');
+        var menuItems = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
         var menuWithChoice = menuItems.eq(1);
         var menuWithParams = menuItems.eq(2);
         expect(angular.element('body').find('.transformation-form').length).toBe(0);

@@ -10,6 +10,8 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+$item-link-margin-spacing: -5px -20px;
+$item-padding-spacing: 5px 20px;
 
 @mixin menu-shape() {
   background-color: $white;
@@ -23,7 +25,7 @@
   li {
     border: none;
     line-height: 1.5;
-    padding: 5px 20px;
+    padding: $item-padding-spacing;
     position: relative;
     white-space: nowrap;
     color: #333;
@@ -47,6 +49,13 @@
       content: '\25b8';
       position: absolute;
       right: 5px;
+    }
+
+    a {
+      display: block;
+      color: #333;
+      margin: $item-link-margin-spacing;
+      padding: $item-padding-spacing;
     }
 
     .info {

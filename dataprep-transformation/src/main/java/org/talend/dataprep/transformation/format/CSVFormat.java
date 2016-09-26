@@ -42,6 +42,7 @@ public class CSVFormat extends ExportFormat {
                         .item("\u0009", "tabulation") //
                         .item(" ", "space") //
                         .item(",", "comma") //
+                        .item("|", "pipe") //
                         .defaultValue(";") //
                         .canBeBlank(true) //
                         .radio(true) //

@@ -31,6 +31,10 @@
           {
             "value": ",",
             "label": "Comma"
+          },
+          {
+            "value": "|",
+            "label": "Pipe"
           }
         ],
         "multiple": false

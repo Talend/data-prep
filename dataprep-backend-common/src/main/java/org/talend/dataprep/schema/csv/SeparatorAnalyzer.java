@@ -43,7 +43,7 @@ public class SeparatorAnalyzer implements Consumer<Separator> {
     /**
      * Priority of valid separators
      */
-    private final List<Character> priority = Arrays.asList(';', ',', '\t', ' ');
+    private final List<Character> priority = Arrays.asList(';', ',', '\t', ' ', '|');
 
     /**
      * Constructor.

@@ -21,6 +21,7 @@ export const parametersState = {
             { label: ',', value: ',' },
             { label: '<space>', value: ' ' },
             { label: '<tab>', value: '\t' },
+            { label: '|', value: '|' },
         ],
     },
     values: {

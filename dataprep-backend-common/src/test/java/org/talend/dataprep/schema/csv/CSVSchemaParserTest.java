@@ -86,6 +86,26 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
     }
 
     /**
+     * When trying to guess an input with | as separator separator should be found.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void shouldFindPipeSeparator() throws IOException {
+        String str = "c1|c2|c3" + System.lineSeparator() + "1|2|false";
+        try (InputStream inputStream = new ByteArrayInputStream(str.getBytes())) {
+            // We do know the format and therefore we go directly to the CSV schema guessing
+            SchemaParser.Request request = getRequest(inputStream, "#3");
+            request.getMetadata().setEncoding("UTF-8");
+
+            csvSchemaParser.parse(request);
+            final Map<String, String> parameters = request.getMetadata().getContent().getParameters();
+            char actual = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
+            assertEquals('|', actual);
+        }
+    }
+
+    /**
      * csv file with 2 possible separators : ';' or '/', ';' should be selected
      */
     @Test

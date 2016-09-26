@@ -34,6 +34,7 @@ describe('Playground state service', function () {
                 { label: ',', value: ',' },
                 { label: '<space>', value: ' ' },
                 { label: '<tab>', value: '\t' },
+                { label: '|', value: '|' },
             ]);
         }));
     });

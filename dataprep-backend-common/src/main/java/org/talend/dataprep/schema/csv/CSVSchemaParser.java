@@ -60,7 +60,7 @@ public class CSVSchemaParser implements SchemaParser {
 
     /** A list of supported separators for a CSV content */
     public static final List<Character> DEFAULT_VALID_SEPARATORS = Collections
-            .unmodifiableList(Arrays.asList(' ', '\t', ',', ';'));
+            .unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
 
     @Override
     public boolean accept(DataSetMetadata metadata) {

@@ -23,6 +23,7 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -193,9 +194,22 @@ public class DataSetJSONTest {
     }
 
     @Test
+    public void shouldDealWithNoRecords() throws Exception {
+        // given
+        final InputStream input = this.getClass().getResourceAsStream("no_records.json");
+
+        // when
+        DataSet dataSet = from(input);
+
+        // then
+        final List<DataSetRow> records = dataSet.getRecords().collect(Collectors.toList());
+        assertTrue(records.isEmpty());
+    }
+
+    @Test
     public void should_iterate_row_with_metadata() throws IOException {
         // given
-        String[] columnNames = new String[] {"id", "firstname", "lastname", "state", "registration", "city", "birth", "nbCommands", "avgAmount"};
+        String[] columnNames = new String[] { "0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009" };
 
         final InputStream input = this.getClass().getResourceAsStream("dataSetRowMetadata.json");
         try (JsonParser parser = mapper.getFactory().createParser(input)) {

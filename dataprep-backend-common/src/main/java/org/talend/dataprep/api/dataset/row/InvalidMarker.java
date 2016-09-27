@@ -4,7 +4,6 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.function.Function;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;

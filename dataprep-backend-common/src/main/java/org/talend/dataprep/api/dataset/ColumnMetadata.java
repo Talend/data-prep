@@ -544,6 +544,25 @@ public class ColumnMetadata implements Serializable {
         }
 
         /**
+         * Copy the column metadata type (without statistics)
+         * 
+         * @param original the original column to copy.
+         * @return the column metadata that only match the type.
+         */
+        public ColumnMetadata.Builder copyMatchingEmptyColumnMetadata(ColumnMetadata original) {
+            this.id = original.getId();
+            this.name = original.getName();
+            this.empty = 0;
+            this.invalid = 0;
+            this.valid = 0;
+            this.type = Type.get(original.getType());
+            this.domain = original.getDomain();
+            this.domainLabel = original.getDomainLabel();
+            this.semanticDomains = original.getSemanticDomains();
+            return this;
+        }
+
+        /**
          * Build the column with the previously entered values.
          * 
          * @return the built column metadata.

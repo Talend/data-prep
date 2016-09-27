@@ -302,7 +302,7 @@ public class DataSetRow implements Cloneable {
     @Override
     public String toString() {
         return "DataSetRow{" + //
-                ", rowMetadata=" + rowMetadata + //
+                "rowMetadata=" + rowMetadata + //
                 ", values=" + values + //
                 ", deleted=" + deleted + //
                 ", oldValue=" + oldValue + //

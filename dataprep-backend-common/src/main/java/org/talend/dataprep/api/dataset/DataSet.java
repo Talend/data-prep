@@ -27,10 +27,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonRootName("dataset")
 public class DataSet {
 
-    @JsonProperty(value = "metadata", required = false)
+    @JsonProperty(value = "metadata")
     DataSetMetadata metadata;
 
-    @JsonProperty(value = "records", required = false)
+    @JsonProperty(value = "records")
     @JsonSerialize(using = DataSetRowStreamSerializer.class)
     @JsonDeserialize(using = DataSetRowStreamDeserializer.class)
     Stream<DataSetRow> records;

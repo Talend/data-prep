@@ -77,7 +77,7 @@ public class Pipeline implements Node, RuntimeNode {
                             return row;
                         }) //
                         .allMatch((row) -> !isStopped.get());
-                LOG.debug("{} sent in the pipeline", counter.get());
+                LOG.debug("{} rows sent in the pipeline", counter.get());
                 node.exec().signal(Signal.END_OF_STREAM);
             }
         }

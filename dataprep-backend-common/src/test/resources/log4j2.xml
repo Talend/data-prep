@@ -24,6 +24,8 @@
         <!-- interesting debug log for this unit test -->
         <logger name="org.talend.dataprep" level="info"/>
         <!--logger name="org.springframework.data.mongodb" level="trace"/-->
+        <logger name="org.talend.dataprep.api.dataset" level="trace"/>
+        <logger name="com.fasterxml" level="trace"/>
         <root level="fatal" includeLocation="true">
             <appender-ref ref="console"/>
         </root>

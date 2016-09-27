@@ -1,5 +1,8 @@
 package org.talend.dataprep.transformation.api.transformer.json;
 
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
+import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +23,7 @@ import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
-
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.DEFAULT;
-import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
+import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
 
 @Component
 public class PipelineTransformer implements Transformer {
@@ -50,9 +51,16 @@ public class PipelineTransformer implements Transformer {
     @Autowired
     CacheKeyGenerator cacheKeyGenerator;
 
+    @Autowired
+    private TransformationRowMetadataUtils transformationRowMetadataUtils;
+
     @Override
     public void transform(DataSet input, Configuration configuration) {
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
+
+        // prepare the fallback row metadata
+        RowMetadata fallBackRowMetadata = transformationRowMetadataUtils.getMatchingEmptyRowMetadata(rowMetadata);
+
         final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(), configuration.output(),
                 configuration.getArguments());
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
@@ -65,7 +73,7 @@ public class PipelineTransformer implements Transformer {
                 .withMonitor(configuration.getMonitor())
                 .withFilter(configuration.getFilter())
                 .withFilterOut(configuration.getOutFilter())
-                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey))
+                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata))
                 .withStatisticsAdapter(adapter)
                 .withGlobalStatistics(configuration.isGlobalStatistics())
                 .allowMetadataChange(configuration.isAllowMetadataChange())

@@ -28,6 +28,9 @@ public class WriterNode extends BasicNode implements Monitored {
 
     private final ContentCacheKey metadataKey;
 
+    /** Fall back raw metadata when no row (hence row metadata) is received. */
+    private RowMetadata fallBackRowMetadata;
+
     private RowMetadata lastRowMetadata;
 
     private boolean startRecords = false;
@@ -45,11 +48,15 @@ public class WriterNode extends BasicNode implements Monitored {
      * @param writer the transformer writer.
      * @param metadataCacheWriter the metadata cache writer.
      * @param metadataKey the transformation metadata cache key to use.
+     * @param fallBackRowMetadata fallback raw metadata to be able to write an empty content even if no row/rowMetadata id
+     * received.
      */
-    public WriterNode(final TransformerWriter writer, final ConfiguredCacheWriter metadataCacheWriter, final ContentCacheKey metadataKey) {
+    public WriterNode(final TransformerWriter writer, final ConfiguredCacheWriter metadataCacheWriter,
+            final ContentCacheKey metadataKey, RowMetadata fallBackRowMetadata) {
         this.writer = writer;
         this.metadataCacheWriter = metadataCacheWriter;
         this.metadataKey = metadataKey;
+        this.fallBackRowMetadata = fallBackRowMetadata;
     }
 
     /**
@@ -136,7 +143,16 @@ public class WriterNode extends BasicNode implements Monitored {
         this.isStopped.set(true);
 
         final long start = System.currentTimeMillis();
+
         try {
+            // no row received, let's switch to the fallback row metadata
+            if (!startRecords) {
+                writer.startObject();
+                writer.fieldName("records");
+                writer.startArray();
+                lastRowMetadata = fallBackRowMetadata;
+            }
+
             writer.endArray(); // <- end records
             writer.fieldName("metadata"); // <- start metadata
             writer.startObject();
@@ -145,6 +161,7 @@ public class WriterNode extends BasicNode implements Monitored {
             writer.write(lastRowMetadata);
 
             writer.endObject();
+
             writer.endObject(); // <- end data set
             writer.flush();
         } catch (IOException e) {

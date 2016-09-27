@@ -11,7 +11,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.InvalidMarker;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
@@ -57,7 +56,9 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
     @Override
     public void signal(Signal signal) {
         try {
-            configuredAnalyzer.close();
+            if (configuredAnalyzer != null) {
+                configuredAnalyzer.close();
+            }
         } catch (Exception e) {
             LOGGER.error("Unable to close analyzer.", e);
         }

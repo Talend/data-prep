@@ -1,0 +1,523 @@
+{
+  "records": [],
+  "metadata": {
+    "columns": [
+      {
+        "name": "No",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0000",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Civilité",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0001",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "CIVILITY",
+        "domainLabel": "Civility",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "First Name",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0002",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "FIRST_NAME",
+        "domainLabel": "First Name",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Last Name",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0003",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "LAST_NAME",
+        "domainLabel": "Last Name",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Email",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0004",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "EMAIL",
+        "domainLabel": "Email",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Job title",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0005",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Company",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0006",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "City",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0007",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "FR_COMMUNE",
+        "domainLabel": "FR Commune",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Zip code",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0008",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "FR_POSTAL_CODE",
+        "domainLabel": "FR Postal Code",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Date",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0009",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Campaign ID",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0010",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Phone",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 0,
+          "invalidValues": []
+        },
+        "id": "0011",
+        "statistics": {
+          "count": 0,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 0,
+          "max": 0.0,
+          "min": 0.0,
+          "mean": 0.0,
+          "variance": 0.0,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0.0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      }
+    ]
+  }
+}

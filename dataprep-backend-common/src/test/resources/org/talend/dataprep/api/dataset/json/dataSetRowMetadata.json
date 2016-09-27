@@ -2,7 +2,7 @@
   "metadata": {
     "columns": [
       {
-        "id": "id",
+        "id": "0001",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -11,7 +11,7 @@
         "type": "integer"
       },
       {
-        "id": "firstname",
+        "id": "0002",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -20,7 +20,7 @@
         "type": "string"
       },
       {
-        "id": "lastname",
+        "id": "0003",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -29,7 +29,7 @@
         "type": "string"
       },
       {
-        "id": "state",
+        "id": "0004",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -38,7 +38,7 @@
         "type": "string"
       },
       {
-        "id": "registration",
+        "id": "0005",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -47,7 +47,7 @@
         "type": "string"
       },
       {
-        "id": "city",
+        "id": "0006",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -56,7 +56,7 @@
         "type": "string"
       },
       {
-        "id": "birth",
+        "id": "0007",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -65,7 +65,7 @@
         "type": "string"
       },
       {
-        "id": "nbCommands",
+        "id": "0008",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -74,7 +74,7 @@
         "type": "integer"
       },
       {
-        "id": "avgAmount",
+        "id": "",
         "quality": {
           "empty": 5,
           "invalid": 10,
@@ -86,114 +86,114 @@
   },
   "records": [
     {
-      "id": "1",
-      "firstname": "Woodrow",
-      "lastname": "Buchanan",
-      "state": "OK",
-      "registration": "06-05-2008",
-      "city": "Honolulu",
-      "birth": "13-01-1977",
-      "nbCommands": "60",
-      "avgAmount": "19.7"
+      "0001": "1",
+      "0002": "Woodrow",
+      "0003": "Buchanan",
+      "0004": "OK",
+      "0005": "06-05-2008",
+      "0006": "Honolulu",
+      "0007": "13-01-1977",
+      "0008": "60",
+      "0009": "19.7"
     },
     {
-      "id": "2",
-      "firstname": "James",
-      "lastname": "Nixon",
-      "state": "ID",
-      "registration": "01-09-2007",
-      "city": "Austin",
-      "birth": "15-06-1958",
-      "nbCommands": "84",
-      "avgAmount": "36.6"
+      "0001": "2",
+      "0002": "James",
+      "0003": "Nixon",
+      "0004": "ID",
+      "0005": "01-09-2007",
+      "0006": "Austin",
+      "0007": "15-06-1958",
+      "0008": "84",
+      "0009": "36.6"
     },
     {
-      "id": "3",
-      "firstname": "Dwight",
-      "lastname": "Hayes",
-      "state": "WI",
-      "registration": "28-06-2008",
-      "city": "Salem",
-      "birth": "25-09-1947",
-      "nbCommands": "72",
-      "avgAmount": "96.2"
+      "0001": "3",
+      "0002": "Dwight",
+      "0003": "Hayes",
+      "0004": "WI",
+      "0005": "28-06-2008",
+      "0006": "Salem",
+      "0007": "25-09-1947",
+      "0008": "72",
+      "0009": "96.2"
     },
     {
-      "id": "4",
-      "firstname": "Benjamin",
-      "lastname": "Carter",
-      "state": "MN",
-      "registration": "10-11-2007",
-      "city": "Boston",
-      "birth": "17-01-1986",
-      "nbCommands": "43",
-      "avgAmount": "54.6"
+      "0001": "4",
+      "0002": "Benjamin",
+      "0003": "Carter",
+      "0004": "MN",
+      "0005": "10-11-2007",
+      "0006": "Boston",
+      "0007": "17-01-1986",
+      "0008": "43",
+      "0009": "54.6"
     },
     {
-      "id": "5",
-      "firstname": "Millard",
-      "lastname": "Ford",
-      "state": "NM",
-      "registration": "22-01-2008",
-      "city": "Indianapolis",
-      "birth": "03-11-1958",
-      "nbCommands": "26",
-      "avgAmount": "13.7"
+      "0001": "5",
+      "0002": "Millard",
+      "0003": "Ford",
+      "0004": "NM",
+      "0005": "22-01-2008",
+      "0006": "Indianapolis",
+      "0007": "03-11-1958",
+      "0008": "26",
+      "0009": "13.7"
     },
     {
-      "id": "6",
-      "firstname": "Calvin",
-      "lastname": "Harrison",
-      "state": "ID",
-      "registration": "16-07-2007",
-      "city": "Jackson",
-      "birth": "23-01-1962",
-      "nbCommands": "45",
-      "avgAmount": "31.8"
+      "0001": "6",
+      "0002": "Calvin",
+      "0003": "Harrison",
+      "0004": "ID",
+      "0005": "16-07-2007",
+      "0006": "Jackson",
+      "0007": "23-01-1962",
+      "0008": "45",
+      "0009": "31.8"
     },
     {
-      "id": "7",
-      "firstname": "George",
-      "lastname": "Grant",
-      "state": "NJ",
-      "registration": "05-06-2008",
-      "city": "Saint Paul",
-      "birth": "24-04-1976",
-      "nbCommands": "2",
-      "avgAmount": "93.1"
+      "0001": "7",
+      "0002": "George",
+      "0003": "Grant",
+      "0004": "NJ",
+      "0005": "05-06-2008",
+      "0006": "Saint Paul",
+      "0007": "24-04-1976",
+      "0008": "2",
+      "0009": "93.1"
     },
     {
-      "id": "8",
-      "firstname": "Andrew",
-      "lastname": "Washington",
-      "state": "NY",
-      "registration": "05-10-2008",
-      "city": "Nashville",
-      "birth": "03-07-1958",
-      "nbCommands": "85",
-      "avgAmount": "70.6"
+      "0001": "8",
+      "0002": "Andrew",
+      "0003": "Washington",
+      "0004": "NY",
+      "0005": "05-10-2008",
+      "0006": "Nashville",
+      "0007": "03-07-1958",
+      "0008": "85",
+      "0009": "70.6"
     },
     {
-      "id": "9",
-      "firstname": "Jimmy",
-      "lastname": "Carter",
-      "state": "PA",
-      "registration": "15-01-2008",
-      "city": "Richmond",
-      "birth": "18-01-1949",
-      "nbCommands": "51",
-      "avgAmount": "58.9"
+      "0001": "9",
+      "0002": "Jimmy",
+      "0003": "Carter",
+      "0004": "PA",
+      "0005": "15-01-2008",
+      "0006": "Richmond",
+      "0007": "18-01-1949",
+      "0008": "51",
+      "0009": "58.9"
     },
     {
-      "id": "10",
-      "firstname": "John",
-      "lastname": "Nixon",
-      "state": "CO",
-      "registration": "31-08-2008",
-      "city": "Phoenix",
-      "birth": "07-06-1966",
-      "nbCommands": "37",
-      "avgAmount": "35.2"
+      "0001": "10",
+      "0002": "John",
+      "0003": "Nixon",
+      "0004": "CO",
+      "0005": "31-08-2008",
+      "0006": "Phoenix",
+      "0007": "07-06-1966",
+      "0008": "37",
+      "0009": "35.2"
     }
   ]
 }

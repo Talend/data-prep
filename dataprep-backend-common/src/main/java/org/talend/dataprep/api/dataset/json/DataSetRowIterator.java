@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.dataset.json;
 
+import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
 import static org.talend.dataprep.api.dataset.row.FlagNames.TDP_ID;
 
 import java.io.IOException;
@@ -76,12 +77,35 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
         }
     }
 
+
     /**
      * @see Iterator#hasNext()
      */
     @Override
     public boolean hasNext() {
-        return !parser.isClosed() && parser.getCurrentToken() != JsonToken.END_ARRAY;
+
+        // parser is closed, it's easy !
+        if (parser.isClosed()) {
+            return false;
+        }
+
+        final String currentName;
+        try {
+            currentName = parser.getCurrentName();
+        } catch (IOException e) {
+            return false;
+        }
+
+        final JsonToken currentToken = parser.getCurrentToken();
+
+        // when dealing with records, there are still records when the token is not null and the end of the array is not reached
+        if ("records".equals(currentName)) {
+            return currentToken != null && currentToken != END_ARRAY;
+        }
+        // for all the other cases, let's keep it simple
+        else {
+            return currentToken != END_ARRAY;
+        }
     }
 
     /**

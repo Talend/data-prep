@@ -23,6 +23,7 @@ $recipe-knot-inactive-color: $medium-gray !default;
   height: 100%;
   cursor: pointer;
   align-items: center;
+  position: absolute;
 
   .line {
     width: 1px;

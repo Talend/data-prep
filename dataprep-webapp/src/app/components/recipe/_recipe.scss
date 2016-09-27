@@ -87,6 +87,15 @@ $recipe-step-draggable-background-color: #808080 !default;
         @include flex-direction(row);
         font-size: .85em;
 
+        > * {
+          @include flex(0);
+          @include flex-basis(10px);
+        }
+
+        > step-description {
+          @include flex(1);
+        }
+
         .filter-icon {
           color: $dark-gray;
           font-size: 0.65em;

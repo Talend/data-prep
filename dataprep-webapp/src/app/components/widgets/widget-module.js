@@ -47,6 +47,7 @@ import TalendTooltipCtrl from './tooltip/widget-tooltip-controller';
 import TalendTooltip from './tooltip/widget-tooltip-directive';
 import Typeahead from './typeahead/typeahead-directive';
 import ListItemHandler from './list-item-handler/list-item-handler-component';
+import AutoScroll from './auto-scroll/auto-scroll-directive';
 
 const MODULE_NAME = 'talend.widget';
 
@@ -106,6 +107,7 @@ angular.module(MODULE_NAME, [ngTranslate, ngAnimate])
     .controller('TalendTooltipCtrl', TalendTooltipCtrl)
     .directive('talendTooltip', TalendTooltip)
     .directive('typeahead', Typeahead)
-    .component('listItemHandler', ListItemHandler);
+    .component('listItemHandler', ListItemHandler)
+    .directive('autoScroll', AutoScroll);
 
 export default MODULE_NAME;

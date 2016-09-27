@@ -15,7 +15,15 @@
 
 <div class="recipe"
      ng-model="$ctrl.state.playground.recipe.current.reorderedSteps"
-     as-sortable="$ctrl.dragControlListeners">
+     as-sortable="$ctrl.dragControlListeners"
+
+     auto-scroll
+     bottom-delta="50"
+     dnd-position="$ctrl.eventClientY"
+     scroll-step="35"
+     top-delta="0"
+     while-dragging="$ctrl.isDragStart"
+>
     <sc-accordion>
         <li ng-repeat="step in $ctrl.state.playground.recipe.current.reorderedSteps track by step.transformation.stepId"
             as-sortable-item>

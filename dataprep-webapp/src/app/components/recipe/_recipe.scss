@@ -22,7 +22,7 @@ $recipe-step-draggable-background-color: #808080 !default;
 .recipe {
   display: block;
   font-size: 0.95em;
-  padding-right: 10px;
+  padding-right: 15px;
   padding-bottom: 10px;
 
   .step-container {
@@ -125,7 +125,7 @@ $recipe-step-draggable-background-color: #808080 !default;
             @include flex-grow(1);
             @include flex-shrink(1);
 
-            li:hover{
+            li:hover {
               background-color: transparent;
             }
           }
@@ -181,7 +181,7 @@ $recipe-step-draggable-background-color: #808080 !default;
 
   &-dragging {
     background-color: darken($recipe-step-background-color, 5%);
-    box-shadow:0 2px 2px $recipe-step-draggable-background-color;
+    box-shadow: 0 2px 2px $recipe-step-draggable-background-color;
 
     .step-container {
       border: 0;
@@ -189,7 +189,7 @@ $recipe-step-draggable-background-color: #808080 !default;
   }
 
   &-placeholder {
-    margin-top: -2px;
+    margin-top: 0;
     height: 2px !important;
     background-color: $recipe-step-draggable-background-color;
   }

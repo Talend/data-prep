@@ -31,7 +31,7 @@ const CLUSTER_TYPE = 'CLUSTER';
 export default class RecipeCtrl {
 
 	constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
-				PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
+		PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
 		'ngInject';
 
 		this.$timeout = $timeout;
@@ -59,6 +59,7 @@ export default class RecipeCtrl {
 			containment: '.recipe',
 			dragStart: this.dragStart.bind(this),
 			dragEnd: this.dragEnd.bind(this),
+			dragMove: this.dragMove.bind(this),
 			orderChanged: this.orderChanged.bind(this),
 		};
 	}
@@ -302,6 +303,16 @@ export default class RecipeCtrl {
 	 */
 	dragStart() {
 		this.isDragStart = true;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name dragMove
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Callback on while dragging
+	 */
+	dragMove(itemPosition, containment, event) {
+		this.eventClientY = event.clientY;
 	}
 
 	/**

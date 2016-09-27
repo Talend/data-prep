@@ -60,8 +60,35 @@ $slide-action-background: $base-background-color;
     @include slidable-action-bar();
     box-shadow: $box-shadow-to-right;
 
-    > .content > .content-container {
-      padding-right: 5px;
+    > .content {
+      overflow: hidden;
+
+      > .content-container {
+        @include display(flex);
+        @include flex-grow(1);
+        height: 0;
+
+        .fixed-content {
+          @include flex-column();
+          min-width: 330px;
+
+          > div {
+            @include flex(0 0 auto);
+          }
+
+          > recipe {
+            @include display(flex);
+            @include flex-grow(1);
+            height: 0;
+
+
+            > .recipe {
+              overflow-x: hidden;
+              overflow-y: auto;
+            }
+          }
+        }
+      }
     }
 
     .steps-header {
@@ -124,8 +151,6 @@ $slide-action-background: $base-background-color;
     @include suggestions-layout();
   }
 }
-
-
 
 .preparation-picker-modal {
   .modal .modal-inner {

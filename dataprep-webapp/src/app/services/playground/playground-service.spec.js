@@ -592,7 +592,7 @@ describe('Playground Service', () => {
                     column_id: '0001',
                     column_name: 'firstname',
                 };
-                const actions = [{ action: 'uppercase', parameters: parameters }];
+                const actions = [{ action: 'uppercase', parameters }];
 
                 expect(createdPreparation.draft).toBeFalsy();
 
@@ -604,6 +604,7 @@ describe('Playground Service', () => {
                 // then
                 expect(createdPreparation.draft).toBe(true);
                 expect(PreparationService.create).toHaveBeenCalledWith('76a415cf854d8654', 'my dataset name Preparation', 'Lw==');
+                expect(PreparationService.getDetails).toHaveBeenCalledWith(createdPreparation.id);
             }));
 
             it('should append step to the new created preparation', inject(($rootScope, PlaygroundService, PreparationService) => {

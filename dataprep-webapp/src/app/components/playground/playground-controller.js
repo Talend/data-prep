@@ -208,6 +208,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
      * @description Playground close callback. It reset the playground and redirect to the previous page
      */
     vm.close = function close() {
+        $timeout.cancel(vm.fetchStatsTimeout);
         $timeout(StateService.resetPlayground, 500, false);
         $state.go(state.route.previous, state.route.previousOptions);
     };
@@ -255,7 +256,9 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
         StateService.setIsFetchingStats(true);
         PlaygroundService.updateStatistics()
             .then(() => StateService.setIsFetchingStats(false))
-            .catch(() => $timeout(fetchStatistics, 1500, false));
+            .catch(() => {
+                vm.fetchStatsTimeout = $timeout(fetchStatistics, 1500, false);
+            });
     }
 
     //--------------------------------------------------------------------------------------------------------------

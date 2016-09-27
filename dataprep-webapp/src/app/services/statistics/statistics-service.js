@@ -810,7 +810,9 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
         if (!aggregationName) {
             const column = state.playground.grid.selectedColumns[0];
-            if (!column) {
+            const numberOrDateHistogram = column.statistics.histogram;
+            const frequencyTable = column.statistics.frequencyTable;
+            if (!column || (!numberOrDateHistogram && !frequencyTable.length)) {
                 return;
             }
             const simplifiedType = ConverterService.simplifyType(column.type);

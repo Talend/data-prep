@@ -729,7 +729,10 @@ describe('Statistics service', () => {
         it('should create a function that do nothing when the selected column is NOT the same', inject(function (StatisticsService, StateService) {
             //given
             stateMock.playground.statistics.histogram = {};
-            stateMock.playground.grid.selectedColumns = [{ id: '0000', statistics: { min: 5, max: 55 } }];
+            stateMock.playground.grid.selectedColumns = [{
+                id: '0000',
+                statistics: { min: 5, max: 55 }
+            }];
 
             const removeCallback = StatisticsService.getRangeFilterRemoveFn();
 
@@ -1123,7 +1126,10 @@ describe('Statistics service', () => {
             });
             expect(StateService.setStatisticsFilteredHistogram).toHaveBeenCalledWith({
                 data: [
-                    { formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3 },
+                    {
+                        formattedValue: '<span class="hiddenChars">   </span>toto',
+                        filteredOccurrences: 3
+                    },
                     { formattedValue: 'titi', filteredOccurrences: 2 },
                     { formattedValue: 'coucou', filteredOccurrences: 0 },
                     { formattedValue: 'cici', filteredOccurrences: 0 },
@@ -1176,7 +1182,10 @@ describe('Statistics service', () => {
             });
             expect(StateService.setStatisticsFilteredHistogram).toHaveBeenCalledWith({
                 data: [
-                    { formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3 },
+                    {
+                        formattedValue: '<span class="hiddenChars">   </span>toto',
+                        filteredOccurrences: 3
+                    },
                     { formattedValue: 'titi', filteredOccurrences: 2 },
                     { formattedValue: 'coucou', filteredOccurrences: 0 },
                     { formattedValue: 'cici', filteredOccurrences: 0 },
@@ -1755,7 +1764,10 @@ describe('Statistics service', () => {
                 });
                 expect(StateService.setStatisticsFilteredHistogram).toHaveBeenCalledWith({
                     data: [
-                        { formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3 },
+                        {
+                            formattedValue: '<span class="hiddenChars">   </span>toto',
+                            filteredOccurrences: 3
+                        },
                         { formattedValue: 'titi', filteredOccurrences: 2 },
                         { formattedValue: 'coucou', filteredOccurrences: 0 },
                         { formattedValue: 'cici', filteredOccurrences: 0 },
@@ -1772,7 +1784,12 @@ describe('Statistics service', () => {
             it('should set the frequency data with formatted value when column type is "string" without filter', inject(function (StatisticsService, StateService) {
                 //given
                 stateMock.playground.grid.selectedColumns = [barChartStrCol2];
-                stateMock.playground.grid.filteredOccurences = { '   toto': 1, coucou: 1, cici: 1, titi: 1 };
+                stateMock.playground.grid.filteredOccurences = {
+                    '   toto': 1,
+                    coucou: 1,
+                    cici: 1,
+                    titi: 1
+                };
                 expect(StatisticsService.histogram).toBeFalsy();
 
                 //when
@@ -1799,7 +1816,10 @@ describe('Statistics service', () => {
                 });
                 expect(StateService.setStatisticsFilteredHistogram).toHaveBeenCalledWith({
                     data: [
-                        { formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 1 },
+                        {
+                            formattedValue: '<span class="hiddenChars">   </span>toto',
+                            filteredOccurrences: 1
+                        },
                         { formattedValue: 'titi', filteredOccurrences: 1 },
                         { formattedValue: 'coucou', filteredOccurrences: 1 },
                         { formattedValue: 'cici', filteredOccurrences: 1 },
@@ -2633,6 +2653,30 @@ describe('Statistics service', () => {
             _StateService = StateService;
         }));
 
+        it('should do nothing when there is no statistics yet', () => {
+            //given
+            stateMock.playground.grid.selectedColumns = [{
+                statistics: {
+                    frequencyTable: [],
+                    histogram: null,
+                }
+            }];
+            stateMock.playground.statistics.histogram = {};
+            stateMock.playground.grid.filteredOccurences = {
+                1: 2,
+                3: 1,
+                11: 6,
+            };
+            spyOn(_StorageService, 'getAggregation').and.returnValue();
+
+            //when
+            _StatisticsService.updateFilteredStatistics();
+            _$rootScope.$digest();
+
+            //then
+            expect(_StateService.setStatisticsFilteredHistogram).not.toHaveBeenCalled();
+        });
+
         it('should update filtered Numeric column', () => {
             //given
             stateMock.playground.grid.selectedColumns = [barChartNumCol];
@@ -2775,7 +2819,10 @@ describe('Statistics service', () => {
             //then
             expect(_StateService.setStatisticsFilteredHistogram).toHaveBeenCalledWith({
                 data: [
-                    { formattedValue: '<span class="hiddenChars">   </span>toto', filteredOccurrences: 3 },
+                    {
+                        formattedValue: '<span class="hiddenChars">   </span>toto',
+                        filteredOccurrences: 3
+                    },
                     { formattedValue: 'titi', filteredOccurrences: 2 },
                     { formattedValue: 'coucou', filteredOccurrences: 0 },
                     { formattedValue: 'cici', filteredOccurrences: 0 },
@@ -2791,9 +2838,10 @@ describe('Statistics service', () => {
 
         it('should update filtered Patterns Frequency', (done) => {
             //given
-            stateMock.playground.grid.selectedColumns[0].statistics.patternFrequencyTable = [
-                { pattern: '', occurrences: 1 },
-            ];
+            stateMock.playground.grid.selectedColumns[0].statistics = {
+                patternFrequencyTable: [{ pattern: '', occurrences: 1 }],
+                frequencyTable: [{}],
+            };
             stateMock.playground.grid.filteredRecords = [{ '0001': 'toto' }];
 
             //when

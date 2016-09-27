@@ -22,17 +22,16 @@ import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_DOES
 
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Command to get a dataset.
@@ -42,7 +41,11 @@ import javax.annotation.PostConstruct;
 public class DataSetGet extends GenericCommand<InputStream> {
 
     private final boolean fullContent;
+
     private final String dataSetId;
+
+    private final boolean includeInternalContent;
+
     @Autowired
     private DataSetContentLimit limit;
 
@@ -51,10 +54,11 @@ public class DataSetGet extends GenericCommand<InputStream> {
      *
      * @param dataSetId the requested dataset id.
      */
-    public DataSetGet(final String dataSetId, final boolean fullContent) {
+    public DataSetGet(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
         super(DATASET_GROUP);
         this.fullContent = fullContent;
         this.dataSetId = dataSetId;
+        this.includeInternalContent = includeInternalContent;
 
         on(HttpStatus.NOT_FOUND).then((req, res) -> {
             throw new TDPException(DATASET_DOES_NOT_EXIST, build().put("id", dataSetId));
@@ -75,7 +79,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
     private void configureLimitedDataset(final String dataSetId) {
         execute(() -> {
-            final String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=true";
+            final String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=true&includeInternalContent=" + includeInternalContent;
             return new HttpGet(url);
         });
     }

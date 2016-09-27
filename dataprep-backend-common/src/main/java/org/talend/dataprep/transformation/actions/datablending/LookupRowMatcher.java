@@ -93,7 +93,7 @@ public class LookupRowMatcher implements DisposableBean {
     @PostConstruct
     private void init() {
 
-        final DataSetGet dataSetGet = context.getBean(DataSetGet.class, datasetId, false);
+        final DataSetGet dataSetGet = context.getBean(DataSetGet.class, datasetId, false, true);
 
         LOGGER.debug("opening {}", datasetId);
 

@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -38,8 +40,6 @@ import org.talend.dataprep.transformation.service.ExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
-
-import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 
 /**
  * A {@link ExportStrategy strategy} to apply a preparation on a different dataset (different from the one initially
@@ -87,7 +87,7 @@ public class ApplyPreparationExportStrategy extends StandardExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
-        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false);
+        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
         try (final InputStream datasetContent = dataSetGet.execute();
              final JsonParser parser = mapper.getFactory().createParser(datasetContent)) {
             // head is not allowed as step id

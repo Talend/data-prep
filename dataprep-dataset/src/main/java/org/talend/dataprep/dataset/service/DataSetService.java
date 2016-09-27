@@ -51,6 +51,8 @@ import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.location.SemanticDomain;
 import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
@@ -423,6 +425,7 @@ public class DataSetService extends BaseDataSetService {
     @ResponseBody
     public Callable<DataSet> get(
             @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata, //
+            @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent", value = "Include internal content in the response") boolean includeInternalContent, //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId) {
         return () -> {
             final Marker marker = Markers.dataset(dataSetId);
@@ -436,7 +439,22 @@ public class DataSetService extends BaseDataSetService {
                     completeWithUserData(dataSetMetadata);
                     dataSet.setMetadata(dataSetMetadata);
                 }
-                dataSet.setRecords(contentStore.stream(dataSetMetadata, -1)); // Disable line limit
+                Stream<DataSetRow> stream = contentStore.stream(dataSetMetadata, -1);  // Disable line limit
+                if (!includeInternalContent) {
+                    LOG.debug("Skip internal content when serving data set #{} content.", dataSetId);
+                    stream = stream.map(r -> {
+                        final Map<String, Object> values = r.values();
+                        final Map<String, Object> filteredValues = new HashMap<>(values);
+                        values.forEach((k,v) -> {
+                            if (k != null && k.startsWith(FlagNames.INTERNAL_PROPERTY_PREFIX)) { // Removes technical properties from returned values.
+                                filteredValues.remove(k);
+                            }
+                        });
+                        filteredValues.put(FlagNames.TDP_ID, r.getTdpId()); // Include TDP_ID anyway
+                        return new DataSetRow(r.getRowMetadata(), filteredValues);
+                    });
+                }
+                dataSet.setRecords(stream);
                 return dataSet;
             } finally {
                 LOG.debug(marker, "Get done.");

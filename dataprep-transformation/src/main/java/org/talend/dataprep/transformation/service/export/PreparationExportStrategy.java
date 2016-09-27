@@ -87,7 +87,7 @@ public class PreparationExportStrategy extends StandardExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
-        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false);
+        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, false, true);
         final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
         try (InputStream datasetContent = dataSetGet.execute()) {
             try (JsonParser parser = mapper.getFactory().createParser(datasetContent)) {

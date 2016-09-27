@@ -221,7 +221,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
     function getContent(datasetId, metadata) {
-        const url = RestURLs.datasetUrl + '/' + datasetId + '?metadata=' + metadata;
+        const url = RestURLs.datasetUrl + '/' + datasetId + '?metadata=' + metadata + '&includeTechnicalProperties=true';
         return $http.get(url).then((response) => response.data);
     }
 

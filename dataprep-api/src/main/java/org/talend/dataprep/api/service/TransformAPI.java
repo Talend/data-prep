@@ -35,7 +35,6 @@ import org.talend.dataprep.api.service.command.transformation.SuggestColumnActio
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGet;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.metrics.Timed;
 
 import com.netflix.hystrix.HystrixCommand;
@@ -107,7 +106,7 @@ public class TransformAPI extends APIService {
         if (isNotBlank(preparationId)) {
             inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId());
         } else {
-            inputData = getCommand(DataSetGet.class, dynamicParamsInput.getDatasetId(), false);
+            inputData = getCommand(DataSetGet.class, dynamicParamsInput.getDatasetId(), false, false);
         }
 
         // get params, passing content in the body

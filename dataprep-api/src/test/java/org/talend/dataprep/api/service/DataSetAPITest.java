@@ -13,12 +13,22 @@
 
 package org.talend.dataprep.api.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.InputStream;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -32,21 +42,12 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 
-import java.io.InputStream;
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 /**
  * Unit test for Data Set API.
@@ -94,6 +95,23 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String jsonUpdatedMetadata = when().get("/api/datasets/{id}/metadata", dataSetId).asString();
         final DataSetMetadata updatedMetadata = mapper.readValue(jsonUpdatedMetadata, DataSetMetadata.class);
         assertEquals(datasetOriginalName, updatedMetadata.getName());
+    }
+
+    @Test
+    public void test_TDP_2546() throws Exception {
+        // given a created dataset
+        final String datasetOriginalName = "testDataset";
+        final String dataSetId = createDataset("dataset/dataset_TDP-2546.csv", datasetOriginalName, "text/csv");
+
+        // then, the content should include technical properties when asked.
+        String defaultDataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
+        assertThat(defaultDataSetContent.contains("__tdp"), is(false));
+
+        String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=false").asString();
+        assertThat(dataSetContent.contains("__tdp"), is(false));
+
+        String dataSetContentWithTechnicalContent = when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=true").asString();
+        assertThat(dataSetContentWithTechnicalContent.contains("__tdp"), is(true));
     }
 
     @Test

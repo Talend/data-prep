@@ -77,7 +77,6 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
         }
     }
 
-
     /**
      * @see Iterator#hasNext()
      */
@@ -93,6 +92,7 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
         try {
             currentName = parser.getCurrentName();
         } catch (IOException e) {
+            LOGGER.debug("Unable to get current JSON field name.", e);
             return false;
         }
 

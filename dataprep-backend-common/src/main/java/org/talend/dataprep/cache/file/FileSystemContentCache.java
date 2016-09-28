@@ -251,7 +251,7 @@ public class FileSystemContentCache implements ContentCache {
         try {
             final Path fromPath = findEntry(from);
             if (fromPath == null) {
-                LOGGER.warn("Cache entry '{}' cannot be found.", from.getKey());
+                LOGGER.warn("Cache entry '{}' cannot be found to be moved.", from.getKey());
                 return;
             }
             final Path toPath = computeEntryPath(to, toTimeToLive);

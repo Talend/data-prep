@@ -50,11 +50,13 @@
 
     &.fixed-width {
       @include flex-basis(10px);
+      position: relative;
     }
 
     &.not-fixed-width {
       @include flex-grow(1);
       @include flex-shrink(1);
+      position: relative;
     }
 
     &.no-transition {
@@ -65,8 +67,13 @@
       border: 1px solid grey;
     }
 
+    .dropdown-container,
     .quality-bar-action {
-      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
 
     .quality-bar-menu {

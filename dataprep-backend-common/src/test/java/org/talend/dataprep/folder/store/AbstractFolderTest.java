@@ -11,7 +11,22 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.folder;
+package org.talend.dataprep.folder.store;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
+import org.assertj.core.api.Assertions;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContentType;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.security.Security;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,25 +34,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderContentType;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.folder.store.NotEmptyFolderException;
-import org.talend.dataprep.security.Security;
-
-import com.google.common.collect.Lists;
 
 public abstract class AbstractFolderTest {
 
@@ -431,7 +427,7 @@ public abstract class AbstractFolderTest {
 
         assertChildrenSize(foo.getId(), 2);
 
-        foo = getFolderRepository().renameFolder(foo.getId(), "/wine");
+        foo = getFolderRepository().renameFolder(foo.getId(), "wine");
 
         assertChildrenSize(foo.getId(), 2);
 

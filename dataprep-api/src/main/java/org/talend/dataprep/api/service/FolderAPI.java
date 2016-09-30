@@ -34,17 +34,16 @@ import org.talend.dataprep.api.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.common.HttpResponse;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.api.service.command.folder.*;
 import org.talend.dataprep.api.service.command.preparation.PreparationListByFolder;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.security.SecurityProxy;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -174,48 +173,6 @@ public class FolderAPI extends APIService {
             throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDERS, e);
         }
     }
-
-
-    /**
-     * TODO This is not used : should remove ?
-     * The folder entry deletion is directly done in DELETE /preparations/{id}
-     */
-    @RequestMapping(value = "/api/folders/entries/{contentType}/{id}", method = DELETE)
-    @ApiOperation(value = "Remove a Folder Entry")
-    @Timed
-    @Deprecated
-    public void deleteFolderEntry( //
-            @PathVariable(value = "contentType") final String contentType, //
-            @PathVariable(value = "id") final String contentId, //
-            @RequestParam final String path) {
-        try {
-            final HystrixCommand<Void> removeFolderEntry = getCommand(RemoveFolderEntry.class, path, contentType,
-                    contentId);
-            removeFolderEntry.execute();
-        } catch (Exception e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER_ENTRY, e);
-        }
-    }
-
-
-    /**
-     * TODO Vincent check if really used or not
-     */
-    @RequestMapping(value = "/api/folders/entries", method = GET)
-    @ApiOperation(value = "List all folder entries of the given content type within the path", produces = APPLICATION_JSON_VALUE)
-    @Timed
-    @VolumeMetered
-    @Deprecated
-    public StreamingResponseBody entries(@RequestParam String path, @RequestParam String contentType, final OutputStream output) {
-        try  {
-            final HystrixCommand<InputStream> listFolderEntries = getCommand(FolderEntriesList.class, path,
-                    contentType);
-            return CommandHelper.toStreaming(listFolderEntries);
-        } catch (Exception e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDER_ENTRIES, e);
-        }
-    }
-
 
     /**
      * List all the folders and preparations out of the given id.

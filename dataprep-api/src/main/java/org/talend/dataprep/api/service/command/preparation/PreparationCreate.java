@@ -36,21 +36,22 @@ public class PreparationCreate extends GenericCommand<String> {
 
     /**
      * Private constructor to ensure the use of IoC.
+     * 
      * @param preparation the preparation to create.
-     * @param folder the optional folder name to create the preparation into.
+     * @param folderId the optional folder ID to create the preparation into.
      */
-    private PreparationCreate(Preparation preparation, String folder) {
+    private PreparationCreate(Preparation preparation, String folderId) {
         super(GenericCommand.PREPARATION_GROUP);
-        execute(() -> onExecute(preparation, folder));
+        execute(() -> onExecute(preparation, folderId));
         onError(e -> new TDPException(UNABLE_TO_CREATE_PREPARATION, e));
         on(HttpStatus.OK).then(asString());
     }
 
-    private HttpRequestBase onExecute(Preparation preparation, String folder) {
+    private HttpRequestBase onExecute(Preparation preparation, String folderId) {
 
         String uri = preparationServiceUrl + "/preparations";
-        if (StringUtils.isNotBlank(folder)) {
-            uri += "?folder="+folder;
+        if (StringUtils.isNotBlank(folderId)) {
+            uri += "?folderId=" + folderId;
         }
 
         HttpPost preparationCreation = new HttpPost(uri);

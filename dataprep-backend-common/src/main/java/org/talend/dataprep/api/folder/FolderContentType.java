@@ -13,9 +13,6 @@
 
 package org.talend.dataprep.api.folder;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 /**
  * Folder content type constants.
  */
@@ -38,26 +35,18 @@ public enum FolderContentType {
     }
 
     /**
-     * Returns the content type that matches the given name
-     *
-     * @param name
-     * @return
+     * Returns the content type that matches the given name.
      */
     public static FolderContentType fromName(String name) {
-
         if (name == null) {
             throw new IllegalArgumentException("null is not permitted as a valid content type for Folder entry");
         }
 
-        Optional<FolderContentType> type = Arrays.stream(FolderContentType.values()).filter(type1 -> type1.name().equalsIgnoreCase(name))
-                .findFirst();
-
-        if (type.isPresent()) {
-            return type.get();
-        } else {
-            throw new IllegalArgumentException("Unknown Folder entry content type : '" + name +'\'');
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown Folder entry content type : '" + name +'\'', e);
         }
-
     }
 
     @Override

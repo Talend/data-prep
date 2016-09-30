@@ -123,7 +123,7 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
                 .accept(ContentType.ANY) //
                 .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\"}")//
                 .when()//
-                .post("/preparations?folder="+ home.getId());
+                .post("/preparations?folderId=" + home.getId());
 
         assertThat(post.getStatusCode(), is(200));
 

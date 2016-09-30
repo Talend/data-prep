@@ -13,12 +13,23 @@
 
 package org.talend.dataprep.preparation.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,22 +42,12 @@ import org.talend.dataprep.preparation.BasePreparationTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.util.SortAndOrderHelper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 /**
  * Unit test for the preparation service.
@@ -186,7 +187,7 @@ public class PreparationServiceTest extends BasePreparationTest {
     private void checkSearchFolder(final String folderId, final List<String> expectedIds, String sort) throws IOException {
         // when
         final Response response = given() //
-                .queryParam("folder", folderId) //
+                .queryParam("folderId", folderId) //
                 .queryParam("sort", sort) //
                 .queryParam("order", "ASC") //
                 .when().expect().statusCode(200).log().ifError() //

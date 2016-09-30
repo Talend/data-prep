@@ -13,29 +13,29 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
 import org.junit.Test;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 public class SearchAPITest extends ApiServiceTestBase {
 
     @Test
     public void shouldReturnMatchingPreparationsWhenPerformingInventory() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventoryOfPreparations", "text/csv", "/");
+        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventoryOfPreparations", "text/csv",
+                folderRepository.getHome().getId());
 
         // when
         final Response response = given() //
@@ -47,7 +47,9 @@ public class SearchAPITest extends ApiServiceTestBase {
         assertEquals(200, response.getStatusCode());
         JsonNode rootNode = mapper.readTree(response.asInputStream());
         JsonNode preparations = rootNode.get("preparations");
-        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
+        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>() {
+
+        });
         assertThat(preparationList.size(), is(1));
         assertEquals("testInventoryOfPreparations", preparationList.get(0).getName());
         assertEquals(preparationId, preparationList.get(0).id());
@@ -56,7 +58,8 @@ public class SearchAPITest extends ApiServiceTestBase {
     @Test
     public void shouldReturnMatchingPreparationsWithSpaceWhenPerformingInventory() throws IOException {
         // given
-        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations", "text/csv", "/");
+        final String preparationId = createPreparationFromFile("t-shirt_100.csv", "testInventory OfPreparations", "text/csv",
+                folderRepository.getHome().getId());
 
         // when
         final Response response = given() //
@@ -68,7 +71,9 @@ public class SearchAPITest extends ApiServiceTestBase {
         assertEquals(200, response.getStatusCode());
         JsonNode rootNode = mapper.readTree(response.asInputStream());
         JsonNode preparations = rootNode.get("preparations");
-        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
+        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>() {
+
+        });
         assertThat(preparationList.size(), is(1));
         assertEquals("testInventory OfPreparations", preparationList.get(0).getName());
         assertEquals(preparationId, preparationList.get(0).id());
@@ -82,15 +87,16 @@ public class SearchAPITest extends ApiServiceTestBase {
         // when
         final Response response = given() //
                 .queryParam("name", "Inventory") //
-                .when()
-                .expect().statusCode(200).log().ifError() //
+                .when().expect().statusCode(200).log().ifError() //
                 .get("/api/search");
 
         // then
         assertEquals(200, response.getStatusCode());
         JsonNode rootNode = mapper.readTree(response.asInputStream());
         JsonNode preparations = rootNode.get("preparations");
-        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>(){});
+        List<Preparation> preparationList = mapper.readValue(preparations.toString(), new TypeReference<List<Preparation>>() {
+
+        });
         assertThat(preparationList.size(), is(0));
     }
 
@@ -111,13 +117,13 @@ public class SearchAPITest extends ApiServiceTestBase {
         folderRepository.addFolder(home.getId(), "/menu/menu B");
         folderRepository.addFolder(home.getId(), "/menu/menu C");
 
-
         final String datasetId1 = createDataset("dataset/dataset.csv", "MacCallan collection", "text/csv");
         final String datasetId2 = createDataset("dataset/dataset.csv", "menu", "text/csv");
         createDataset("dataset/dataset.csv", "Saint Feuillien", "text/csv");
         createDataset("dataset/dataset.csv", "menu bis", "text/csv");
 
-        final String preparationId1 = createPreparationFromFile("dataset/dataset.csv", "cleanup MacCallan", "text/csv", whiskyFolder.getId());
+        final String preparationId1 = createPreparationFromFile("dataset/dataset.csv", "cleanup MacCallan", "text/csv",
+                whiskyFolder.getId());
         final String preparationId2 = createPreparationFromFile("dataset/dataset.csv", "menu", "text/csv", menuFolder.getId());
         createPreparationFromFile("dataset/dataset.csv", "cleanup Queue 2 charrue", "text/csv", beerFolder.getId());
         createPreparationFromFile("dataset/dataset.csv", "cleanup menu", "text/csv", menuFolder.getId());
@@ -126,24 +132,15 @@ public class SearchAPITest extends ApiServiceTestBase {
         final boolean strict = true;
 
         // when / then
-        assertSearch("callan",
-                nonStrict,
+        assertSearch("callan", nonStrict,
                 new String[] { "/whisky/McCallan Sherry Oak", "/whisky/McCallan Fine Oak", "/whisky/McCallan 1824 Collection" },
-                new String[] { datasetId1 },
-                new String[] { preparationId1 });
+                new String[] { datasetId1 }, new String[] { preparationId1 });
 
-        assertSearch("menu",
-                strict,
-                new String[] { "/menu" },
-                new String[] { datasetId2 },
-                new String[] { preparationId2 });
+        assertSearch("menu", strict, new String[] { "/menu" }, new String[] { datasetId2 }, new String[] { preparationId2 });
     }
 
-    private void assertSearch(final String name,
-                              final boolean strict,
-                              final String[] expectedFoldersPath,
-                              final String[] expectedDatasetsId,
-                              final String[] expectedPreparationsId) throws IOException {
+    private void assertSearch(final String name, final boolean strict, final String[] expectedFoldersPath,
+                              final String[] expectedDatasetsId, final String[] expectedPreparationsId) throws IOException {
         // when
         final Response response = given() //
                 .queryParam("name", name) //
@@ -162,12 +159,13 @@ public class SearchAPITest extends ApiServiceTestBase {
         assertSearchItems(rootNode, "preparations", "id", expectedPreparationsId);
 
         final JsonNode preparations = rootNode.get("preparations");
-        for(int i = 0; i < preparations.size(); ++i) {
+        for (int i = 0; i < preparations.size(); ++i) {
             assertTrue(preparations.get(i).has("folder"));
         }
     }
 
-    private void assertSearchItems(final JsonNode rootNode, final String prop, final String field, final String[] expectedFields) {
+    private void assertSearchItems(final JsonNode rootNode, final String prop, final String field,
+                                   final String[] expectedFields) {
         // check that the property holding the list of items exists
         assertTrue(rootNode.has(prop));
 
@@ -179,7 +177,7 @@ public class SearchAPITest extends ApiServiceTestBase {
         // check that list of items contains exactly list of expected ones
         // by comparing the "field" of each item with the expectedFields
         final List<String> extractedFields = new ArrayList<>(items.size());
-        for(int i = 0; i < items.size(); ++i) {
+        for (int i = 0; i < items.size(); ++i) {
             extractedFields.add(items.get(i).get(field).textValue());
         }
         assertThat(extractedFields, containsInAnyOrder(expectedFields));

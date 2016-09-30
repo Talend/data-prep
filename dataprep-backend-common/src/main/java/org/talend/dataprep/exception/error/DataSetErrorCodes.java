@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +20,8 @@ import java.util.List;
 
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
+
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * Dataset error codes.
@@ -117,6 +117,8 @@ public enum DataSetErrorCodes implements ErrorCode {
      * Error thrown when a folder is... not... found !
      */
     FOLDER_NOT_FOUND(NOT_FOUND.value(), "path"),
+    /** Error returned in case user tries to access to a folder that does not exist (or no longer exists). */
+    FOLDER_DOES_NOT_EXIST(BAD_REQUEST.value(), "id"),
     /**
      * Error thrown when a problem occurred while listing folder children.
      */
@@ -125,6 +127,10 @@ public enum DataSetErrorCodes implements ErrorCode {
      * Error thrown when a folder could not be added.
      */
     UNABLE_TO_ADD_FOLDER(INTERNAL_SERVER_ERROR.value(), "path"),
+    /**
+     * Error thrown when a folder could not be added.
+     */
+    ILLEGAL_FOLDER_NAME(BAD_REQUEST.value(), "name"),
     /**
      * Error thrown when a folder could not be added.
      */
@@ -189,7 +195,7 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * default constructor.
      *
-     * @param httpStatus the http status to use.
+     * @param httpStatus     the http status to use.
      * @param contextEntries expected context entries.
      */
     DataSetErrorCodes(int httpStatus, String... contextEntries) {

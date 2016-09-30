@@ -43,11 +43,11 @@ import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
 import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
@@ -158,30 +158,32 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldCopyPreparation() throws Exception {
         // given
-        folderRepository.addFolder(home.getId(), "/destination");
-        final String id = createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv", "/from");
+        Folder destination = folderRepository.addFolder(home.getId(), "/destination");
+        Folder origin = folderRepository.addFolder(home.getId(), "/from");
+        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv", origin.getId());
 
         // when
+        String newPreparationName = "NEW super preparation";
         final Response response = given() //
-                .queryParam("destination", "/destination") //
-                .queryParam("newName", "NEW super preparation") //
+                .queryParam("destination", destination.getId()) //
+                .queryParam("newName", newPreparationName) //
                 .when()//
                 .expect().statusCode(200).log().ifError() //
-                .post("api/preparations/{id}/copy", id);
+                .post("api/preparations/{id}/copy", preparationId);
 
         // then
         assertEquals(200, response.getStatusCode());
         String copyId = response.asString();
 
         // check the folder entry
-        final Iterator<FolderEntry> iterator = folderRepository.entries("/destination", PREPARATION).iterator();
+        final Iterator<FolderEntry> iterator = folderRepository.entries(destination.getId(), PREPARATION).iterator();
         assertTrue(iterator.hasNext());
         final FolderEntry entry = iterator.next();
         assertEquals(entry.getContentId(), copyId);
 
         // check the name
         final Preparation actual = preparationRepository.get(copyId, Preparation.class);
-        assertEquals("NEW super preparation", actual.getName());
+        assertEquals(newPreparationName, actual.getName());
     }
 
     @Test
@@ -572,14 +574,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void shouldCreatePreparationInDefaultFolder() throws Exception {
 
         // given
-        Iterator<FolderEntry> entries = folderRepository.entries("/", PREPARATION).iterator();
+        Folder home = folderRepository.getHome();
+        Iterator<FolderEntry> entries = folderRepository.entries(home.getId(), PREPARATION).iterator();
         assertFalse(entries.hasNext());
 
         // when
         final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", "text/csv");
 
         // then
-        entries = folderRepository.entries("/", PREPARATION).iterator();
+        entries = folderRepository.entries(home.getId(), PREPARATION).iterator();
         assertTrue(entries.hasNext());
         final FolderEntry entry = entries.next();
         assertThat(entry.getContentId(), is(preparationId));
@@ -592,14 +595,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // given
         final String path = "/folder-1/sub-folder-2";
-        Iterator<FolderEntry> entries = folderRepository.entries(path, PREPARATION).iterator();
+        Folder folder = folderRepository.addFolder(folderRepository.getHome().getId(), path);
+        Iterator<FolderEntry> entries = folderRepository.entries(folder.getId(), PREPARATION).iterator();
         assertFalse(entries.hasNext());
 
         // when
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", "text/csv", path);
+        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testCreatePreparation", "text/csv", folder.getId());
 
         // then
-        entries = folderRepository.entries(path, PREPARATION).iterator();
+        entries = folderRepository.entries(folder.getId(), PREPARATION).iterator();
         assertTrue(entries.hasNext());
         final FolderEntry entry = entries.next();
         assertThat(entry.getContentId(), is(preparationId));

@@ -105,7 +105,7 @@ public abstract class BasePreparationTest {
         final Response response = given() //
                 .contentType(ContentType.JSON) //
                 .body(preparationContent) //
-                .queryParam("folder", folderId) //
+                .queryParam("folderId", folderId) //
                 .when() //
                 .expect().statusCode(200).log().ifError() //
                 .post("/preparations");

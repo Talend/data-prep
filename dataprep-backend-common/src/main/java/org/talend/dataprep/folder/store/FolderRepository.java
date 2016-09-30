@@ -24,6 +24,9 @@ import org.talend.dataprep.exception.TDPException;
 
 /**
  * Folder repository that manage folders and folder entries.
+ * TODO: there is a real problem in this API: folderId and  folder path are two different concept that should not be interchangeable.
+ * It might be better to remove folder ID concept to FolderPath or use it as a real ID that could be toatally decorellated from path.
+ * It should be taken in account a path might not be enough to find a folder as two users might create the same folder.
  */
 public interface FolderRepository {
 

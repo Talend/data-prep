@@ -13,6 +13,18 @@
 
 package org.talend.dataprep.preparation.service;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -22,11 +34,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.annotation.Resource;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,17 +66,9 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
@@ -138,7 +140,7 @@ public class PreparationService {
      * Create a preparation from the http request body.
      *
      * @param preparation the preparation to create.
-     * @param folder      where to store the preparation.
+     * @param folderId where to store the preparation.
      * @return the created preparation id.
      */
     //@formatter:off
@@ -146,10 +148,10 @@ public class PreparationService {
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the created preparation.")
     @Timed
     public String create(@ApiParam("preparation") @RequestBody final Preparation preparation,
-                         @ApiParam(value = "The folder path to create the entry.") @RequestParam() String folder) {
+                         @ApiParam(value = "The folder id to create the entry.") @RequestParam String folderId) {
         //@formatter:on
 
-        LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folder);
+        LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
 
         Preparation toCreate = new Preparation(UUID.randomUUID().toString(), versionService.version().getVersionId());
         toCreate.setHeadId(rootStep.id());
@@ -163,9 +165,9 @@ public class PreparationService {
 
         // create associated folderEntry
         FolderEntry folderEntry = new FolderEntry(PREPARATION, id);
-        folderRepository.addFolderEntry(folderEntry, folder);
+        folderRepository.addFolderEntry(folderEntry, folderId);
 
-        LOGGER.info("New preparation {} created and stored in {} ", preparation, folder);
+        LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
         // Lock the freshly created preparation
         lock(id);
         return id;
@@ -228,16 +230,16 @@ public class PreparationService {
      * <ul>
      * <li>dataset id</li>
      * <li>preparation name & exact match</li>
-     * <li>folder path</li>
+     * <li>folderId path</li>
      * </ul>
      * </p>
      *
-     * @param dataSetId  to search all preparations based on this dataset id.
-     * @param folder     to search all preparations located in this folder.
-     * @param name       to search all preparations that match this name.
+     * @param dataSetId to search all preparations based on this dataset id.
+     * @param folderId to search all preparations located in this folderId.
+     * @param name to search all preparations that match this name.
      * @param exactMatch if true, the name matching must be exact.
-     * @param sort       Sort key (by name, creation date or modification date).
-     * @param order      Order for sort key (desc or asc).
+     * @param sort Sort key (by name, creation date or modification date).
+     * @param order Order for sort key (desc or asc).
      */
     //@formatter:off
     @RequestMapping(value = "/preparations/search", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -245,7 +247,7 @@ public class PreparationService {
     @Timed
     public Iterable<PreparationDetails> searchPreparations(
             @RequestParam(required = false) @ApiParam("dataSetId") String dataSetId,
-            @RequestParam(required = false) @ApiParam(value = "path of the folder where to look for preparations") String folder,
+            @RequestParam(required = false) @ApiParam(value = "id of the folder where to look for preparations") String folderId,
             @RequestParam(required = false) @ApiParam("name") String name,
             @RequestParam(defaultValue = "true") @ApiParam("exactMatch") boolean exactMatch,
             @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
@@ -258,8 +260,8 @@ public class PreparationService {
 
         if (dataSetId != null) {
             result = searchByDataSet(dataSetId);
-        } else if (folder != null) {
-            result = searchByFolder(folder);
+        } else if (folderId != null) {
+            result = searchByFolder(folderId);
         } else {
             result = searchByName(name, exactMatch);
         }
@@ -285,14 +287,14 @@ public class PreparationService {
     /**
      * List all preparations details in the given folder.
      *
-     * @param folderPath the folder where to look for preparations.
+     * @param folderId the folder where to look for preparations.
      * @return the list of preparations details for the given folder path.
      */
-    private Collection<Preparation> searchByFolder(String folderPath) {
+    private Collection<Preparation> searchByFolder(String folderId) {
 
-        LOGGER.debug("looking for preparations in {}", folderPath);
+        LOGGER.debug("looking for preparations in {}", folderId);
 
-        final Iterable<FolderEntry> entries = folderRepository.entries(folderPath, PREPARATION);
+        final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
 
         final List<Preparation> preparations;
         try (final Stream<FolderEntry> stream = StreamSupport.stream(entries.spliterator(), false)) {
@@ -301,7 +303,7 @@ public class PreparationService {
                     .collect(Collectors.toList());
         }
 
-        LOGGER.info("found {} preparation(s) in {}", preparations.size(), folderPath);
+        LOGGER.info("found {} preparation(s) in {}", preparations.size(), folderId);
 
         return preparations;
     }
@@ -340,7 +342,7 @@ public class PreparationService {
     public String copy(
             @ApiParam(name = "id", value = "Id of the preparation to copy") @PathVariable(value = "id") String preparationId,
             @ApiParam(value = "The name of the copied preparation.") @RequestParam(required = false) String name,
-            @ApiParam(value = "The folder path to create the copy.") @RequestParam() String destination)
+            @ApiParam(value = "The folder id to create the copy.") @RequestParam String destination)
             throws IOException {
         //@formatter:on
 
@@ -384,23 +386,23 @@ public class PreparationService {
     }
 
     /**
-     * Check if the name is available in the given folder.
+     * Check if the name is available in the given folderId.
      *
-     * @param folder where to look for the name.
-     * @param name   the wanted preparation name.
+     * @param folderId where to look for the name.
+     * @param name the wanted preparation name.
      * @throws TDPException Preparation name already used (409) if there's already a preparation with this name in the
-     *                      folder.
+     * folderId.
      */
-    private void checkIfPreparationNameIsAvailable(String folder, String name) {
+    private void checkIfPreparationNameIsAvailable(String folderId, String name) {
 
-        // make sure the preparation does not already exist in the target folder
-        final Iterable<FolderEntry> entries = folderRepository.entries(folder, PREPARATION);
+        // make sure the preparation does not already exist in the target folderId
+        final Iterable<FolderEntry> entries = folderRepository.entries(folderId, PREPARATION);
         entries.forEach(folderEntry -> {
             Preparation preparation = preparationRepository.get(folderEntry.getContentId(), Preparation.class);
             if (preparation != null && StringUtils.equals(name, preparation.getName())) {
                 final ExceptionContext context = build() //
                         .put("id", folderEntry.getContentId()) //
-                        .put("folder", folder) //
+                        .put("folderId", folderId) //
                         .put("name", name);
                 throw new TDPException(PREPARATION_NAME_ALREADY_USED, context, true);
             }
@@ -420,7 +422,7 @@ public class PreparationService {
     @Timed
     public void move(@ApiParam(name = "id", value = "Id of the preparation to move") @PathVariable(value = "id") String preparationId,
                      @ApiParam(value = "The original folder path of the preparation.") @RequestParam String folder,
-                     @ApiParam(value = "The new folder path of the preparation.") @RequestParam String destination,
+                     @ApiParam(value = "The new folder id of the preparation.") @RequestParam String destination,
                      @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName)
             throws IOException {
         //@formatter:on

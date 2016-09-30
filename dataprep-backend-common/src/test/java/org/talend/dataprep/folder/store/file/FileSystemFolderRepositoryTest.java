@@ -11,10 +11,9 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.folder.file;
+package org.talend.dataprep.folder.store.file;
 
 import java.util.Base64;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -24,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.talend.dataprep.folder.AbstractFolderTest;
+import org.talend.dataprep.folder.store.AbstractFolderTest;
 import org.talend.dataprep.folder.store.FolderRepository;
 
 @RunWith(SpringRunner.class)

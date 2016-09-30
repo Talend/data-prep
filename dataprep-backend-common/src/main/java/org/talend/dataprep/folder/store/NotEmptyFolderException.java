@@ -15,6 +15,7 @@ package org.talend.dataprep.folder.store;
 
 /**
  * This exception happen whern trying to delete a non empty folder
+ * TODO: this should be a TDPException as it is a business exception.
  */
 public class NotEmptyFolderException extends Exception {
 

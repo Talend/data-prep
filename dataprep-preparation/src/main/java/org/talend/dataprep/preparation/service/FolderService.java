@@ -30,9 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.talend.dataprep.api.folder.*;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderInfo;
+import org.talend.dataprep.api.folder.FolderTreeNode;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.FolderErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.NotEmptyFolderException;
 import org.talend.dataprep.metrics.Timed;
@@ -176,53 +177,6 @@ public class FolderService {
     @Timed
     public void renameFolder(@PathVariable String id, @RequestBody String newName) {
         folderRepository.renameFolder(id, newName);
-    }
-
-    /**
-     * Remove a folder entry.
-     * TODO This is not used : should remove ?
-     *
-     * @param folderId where to look for the entry.
-     * @param contentId the content id.
-     * @param contentType the entry content type.
-     */
-    @Deprecated
-    //@formatter:off
-    @RequestMapping(value = "/folders/entries/{contentType}/{id}", method = DELETE)
-    @ApiOperation(value = "Remove a FolderEntry", notes = "Delete the folder entry")
-    @Timed
-    public void deleteFolderEntry(
-            @PathVariable(value = "contentType") final String contentType, //
-            @PathVariable(value = "id") final String contentId, //
-            @RequestParam final String folderId) {
-    //@formatter:on
-
-        try {
-            FolderContentType checkedContentType = FolderContentType.fromName(contentType);
-            folderRepository.removeFolderEntry(folderId, contentId, checkedContentType);
-        } catch (IllegalArgumentException exc) {
-            throw new TDPException(FolderErrorCodes.UNABLE_TO_DELETE_FOLDER_ENTRY, exc);
-        }
-    }
-
-    /**
-     * Return the list of folder entries out of the given path.
-     *
-     * @param path the path where to look for entries.
-     * @param contentType the type of wanted entries.
-     * @return the list of folder entries out of the given path.
-     */
-    @RequestMapping(value = "/folders/entries", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List folder entries", produces = APPLICATION_JSON_VALUE, notes = "List all folder entries of the given content type")
-    @Timed
-    @Deprecated
-    public Iterable<FolderEntry> entries(@RequestParam String path, @RequestParam String contentType) {
-        try {
-            FolderContentType checkedContentType = FolderContentType.fromName(contentType);
-            return folderRepository.entries(path, checkedContentType);
-        } catch (IllegalArgumentException exc) {
-            throw new TDPException(FolderErrorCodes.UNABLE_TO_LIST_FOLDER_ENTRIES, exc);
-        }
     }
 
     @RequestMapping(value = "/folders/tree", method = GET)

@@ -40,16 +40,16 @@ public class PreparationListByFolder extends GenericCommand<InputStream> {
     /**
      * Private constructor used to construct the generic command used to list of preparations matching name.
      *
-     * @param folder the folder path where to look for preparations.
+     * @param folderId the folder id where to look for preparations.
      * @param sort how to sort the preparations.
      * @param order the order to apply to the sort.
      */
-    private PreparationListByFolder(final String folder, final String sort, final String order) {
+    private PreparationListByFolder(final String folderId, final String sort, final String order) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> {
             try {
                 final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/search");
-                uriBuilder.addParameter("folder", folder);
+                uriBuilder.addParameter("folderId", folderId);
                 uriBuilder.addParameter("sort", sort);
                 uriBuilder.addParameter("order", order);
                 return new HttpGet(uriBuilder.build());

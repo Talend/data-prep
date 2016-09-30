@@ -13,66 +13,48 @@
 
 package org.talend.dataprep.util;
 
-import java.io.IOException;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.i18n.MessagesBundle;
 
 /**
  * This bean and servlet Filter will hold a ThreadLocal variable with a reference to the bean {@link MessagesBundle}
+ *
+ * @deprecated please, use {@link org.talend.dataprep.i18n.DataprepBundle} for i18n needs.
  */
 @Component
-public class MessagesBundleContext implements Filter {
-
-    private static final ThreadLocal<MessagesBundle> THREAD_LOCAL = new ThreadLocal<>();
+@Deprecated
+public class MessagesBundleContext {
 
     @Autowired
     private MessagesBundle messagesBundle;
 
-    public static MessagesBundle get() {
-        return THREAD_LOCAL.get();
-    }
-
     /**
-     * will setup the current thread. Can help for startup thread (and ease unit testing as well)
+     * Instance created by Spring at instantiation.
      */
-    @PostConstruct
-    public void initializeCurrentThread() {
-        THREAD_LOCAL.set(messagesBundle);
-    }
+    private static MessagesBundleContext INSTANCE;
 
-    @Override
-    public void destroy() {
-        // really to be sure it's clean because doFilter do it as well.
-        THREAD_LOCAL.remove();
-    }
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
-
-        THREAD_LOCAL.set( messagesBundle );
-        try {
-            filterChain.doFilter(servletRequest, servletResponse);
-        } finally {
-            THREAD_LOCAL.remove();
+    public MessagesBundleContext() {
+        synchronized (MessagesBundleContext.class) {
+            INSTANCE = this;
         }
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // no op
-    }
-
-    public static void set(MessagesBundle messagesBundle) {
-        THREAD_LOCAL.set(messagesBundle);
-    }
-
-    public static void clear() {
-        THREAD_LOCAL.remove();
+    /**
+     * Dirty way to keep the retrocompatibility.
+     *
+     * @deprecated please uses {@link org.talend.dataprep.i18n.DataprepBundle}.
+     */
+    @Deprecated
+    public static MessagesBundle get() {
+        if (INSTANCE == null) {
+            synchronized (MessagesBundleContext.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new MessagesBundleContext();
+                    INSTANCE.messagesBundle = new MessagesBundle();
+                }
+            }
+        }
+        return INSTANCE.messagesBundle;
     }
 }

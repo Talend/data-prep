@@ -13,16 +13,16 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.i18n.DataprepBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
-import org.talend.dataprep.util.MessagesBundleContext;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 /**
  * This interface is designed to be implemented by actions that have a date pattern as parameter.
@@ -65,7 +65,7 @@ public interface DatePatternParamModel {
             String value = patterns.getString(key);
             SelectParameter.Item item = SelectParameter.Item.Builder.builder()
                     .value(value)
-                    .label(MessagesBundleContext.get().getString("choice." + key, key + " (" + value + ")"))
+                    .label(DataprepBundle.message("choice." + key, key + " (" + value + ")"))
                     .build();
             items.add(item);
 

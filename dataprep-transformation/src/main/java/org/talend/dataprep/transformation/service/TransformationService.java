@@ -13,15 +13,6 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static java.util.stream.Collectors.toList;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,14 +20,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.core.JsonParser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -82,12 +77,16 @@ import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionE
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+import org.talend.dataprep.transformation.service.dtos.ActionDescription;
 
-import com.fasterxml.jackson.core.JsonParser;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 @RestController
 @Api(value = "transformations", basePath = "/transform", description = "Transformations on data")
@@ -548,10 +547,11 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/actions/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Return all actions for a column (regardless of column metadata)", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public List<ActionMetadata> columnActions(@RequestBody(required = false) ColumnMetadata column) {
+    public List<ActionDescription> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return Stream.of(allActions) //
                 .filter(action -> action.acceptScope(COLUMN)) //
                 .map(am -> column != null ? am.adapt(column) : am) //
+                .map(am -> ActionDescription.from(LocaleContextHolder.getLocale(), am)) //
                 .collect(toList());
     }
 
@@ -566,7 +566,7 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/suggest/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Suggest actions for a given column metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public List<ActionMetadata> suggest(@RequestBody(required = false) ColumnMetadata column, //
+    public List<ActionDescription> suggest(@RequestBody(required = false) ColumnMetadata column, //
                                         @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5", required = false) int limit) {
         if (column == null) {
             return Collections.emptyList();
@@ -584,6 +584,7 @@ public class TransformationService extends BaseTransformationService {
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
                 .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)
+                .map(am -> ActionDescription.from(LocaleContextHolder.getLocale(), am)) //
                 .collect(toList());
     }
 
@@ -595,11 +596,12 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/actions/line", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Return all actions on lines", notes = "This operation returns an array of actions.")
     @ResponseBody
-    public List<ActionMetadata> lineActions() {
+    public List<ActionDescription> lineActions() {
         try (Stream<ActionMetadata> stream = Stream.of(this.allActions)) {
             return stream //
                     .filter(action -> action.acceptScope(LINE)) //
                     .map(action -> action.adapt(LINE)) //
+                    .map(am -> ActionDescription.from(LocaleContextHolder.getLocale(), am)) //
                     .collect(toList());
         }
     }
@@ -614,7 +616,7 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/suggest/dataset", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Suggest actions for a given data set metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public List<ActionMetadata> suggest(DataSet dataSet) {
+    public List<ActionDescription> suggest(DataSet dataSet) {
         return Collections.emptyList();
     }
 

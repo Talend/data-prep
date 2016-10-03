@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.talend.dataprep.i18n.MessagesBundle;
 import org.talend.dataprep.util.MessagesBundleContext;
 
@@ -128,8 +127,7 @@ public class SelectParameter extends Parameter implements Serializable {
          */
         private Item(String value, List<Parameter> parameters) {
             this.value = value;
-            this.label = MessagesBundleContext.get() //
-                    .getString("choice." + value, value);
+            this.label = MessagesBundleContext.get().getString("choice." + value, value);
             this.inlineParameters = parameters;
         }
 

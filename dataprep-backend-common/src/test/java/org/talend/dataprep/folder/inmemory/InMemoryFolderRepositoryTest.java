@@ -17,15 +17,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.folder.AbstractFolderTest;
 import org.talend.dataprep.folder.store.FolderRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = InMemoryFolderRepositoryTest.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = InMemoryFolderRepositoryTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "folder.store=in-memory" })
 public class InMemoryFolderRepositoryTest extends AbstractFolderTest {

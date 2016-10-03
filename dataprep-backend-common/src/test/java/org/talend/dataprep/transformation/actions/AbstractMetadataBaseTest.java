@@ -17,14 +17,13 @@ import java.io.IOException;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.test.MockTestApplication;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -35,10 +34,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Base class for all related unit tests that deal with metadata
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AbstractMetadataBaseTest.class)
-@Configuration
-@ComponentScan(basePackages = "org.talend.dataprep")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = MockTestApplication.class)
 public abstract class AbstractMetadataBaseTest {
 
     @Autowired

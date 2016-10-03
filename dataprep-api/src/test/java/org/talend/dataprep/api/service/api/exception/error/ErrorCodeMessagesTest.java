@@ -18,10 +18,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.Application;
 import org.talend.dataprep.exception.error.*;
 import org.talend.dataprep.i18n.MessagesBundle;
@@ -30,10 +28,8 @@ import org.talend.dataprep.i18n.MessagesBundle;
  * Test that each error code has a message and a message title in the (default language) error message properties file.
  * see org.talend.dataprep/error_messages.properties
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@IntegrationTest
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 public class ErrorCodeMessagesTest {
 
     @Autowired

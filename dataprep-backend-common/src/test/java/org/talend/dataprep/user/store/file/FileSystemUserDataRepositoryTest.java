@@ -22,12 +22,12 @@ import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.user.store.AbstractUserDataRepositoryTest;
 import org.talend.dataprep.user.store.UserDataRepository;
@@ -37,8 +37,8 @@ import org.talend.dataprep.user.store.UserDataRepository;
  * 
  * @see FileSystemUserDataRepository
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = FileSystemUserDataRepositoryTest.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = FileSystemUserDataRepositoryTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "user.data.store:file",
         "user.data.store.file.location:target/test/store/userdata" })

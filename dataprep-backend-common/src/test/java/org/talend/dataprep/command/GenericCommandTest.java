@@ -15,6 +15,7 @@ package org.talend.dataprep.command;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.talend.dataprep.command.Defaults.asString;
 
 import java.util.Collections;
@@ -31,14 +32,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.dataprep.api.user.UserGroup;
 import org.talend.dataprep.exception.TDPException;
@@ -48,12 +47,10 @@ import org.talend.dataprep.test.MockTestApplication;
 
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = { MockTestApplication.class })
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = { MockTestApplication.class }, webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = { "security.mode=genericCommandTest", "transformation.service.url=", "preparation.service.url=",
         "dataset.service.url=" })
-@WebAppConfiguration
-@IntegrationTest({ "server.port=0" })
 public class GenericCommandTest {
 
     private static TDPException lastException;

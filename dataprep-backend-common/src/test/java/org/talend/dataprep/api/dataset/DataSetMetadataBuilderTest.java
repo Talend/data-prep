@@ -14,35 +14,30 @@
 package org.talend.dataprep.api.dataset;
 
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.DataSetGovernance.Certification.CERTIFIED;
 import static org.talend.dataprep.api.type.Type.INTEGER;
 import static org.talend.dataprep.api.type.Type.STRING;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.talend.dataprep.api.dataset.location.HttpLocation;
-import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
-import org.talend.dataprep.schema.Schema;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DataSetMetadataBuilderTest.class)
-@Configuration
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.talend.dataprep.api.dataset.location.HttpLocation;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
+import org.talend.dataprep.schema.Schema;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DataSetMetadataBuilderTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
-@EnableAutoConfiguration
 public class DataSetMetadataBuilderTest {
 
     @Autowired

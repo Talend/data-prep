@@ -26,11 +26,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -43,11 +41,9 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
  * Unit test for the ActionParser class.
  * @see ActionParser
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ActionParserTest.class)
-@Configuration
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ActionParserTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
-@EnableAutoConfiguration
 public class ActionParserTest {
 
     @Autowired

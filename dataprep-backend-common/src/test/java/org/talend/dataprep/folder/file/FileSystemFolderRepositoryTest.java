@@ -20,15 +20,15 @@ import javax.inject.Named;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.folder.AbstractFolderTest;
 import org.talend.dataprep.folder.store.FolderRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = FileSystemFolderRepositoryTest.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = FileSystemFolderRepositoryTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "folder.store=file",
         "folder.store.file.location=target/test/store/folders" })

@@ -21,10 +21,9 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.location.HttpLocation;
 
@@ -33,9 +32,8 @@ import org.talend.dataprep.api.dataset.location.HttpLocation;
  * 
  * @see HttpDataSetLocator
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = HdfsDataSetLocatorTest.class)
-@Configuration
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = HdfsDataSetLocatorTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 public class HttpDataSetLocatorTest {
 

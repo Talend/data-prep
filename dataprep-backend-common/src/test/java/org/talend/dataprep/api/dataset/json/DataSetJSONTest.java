@@ -28,11 +28,9 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.location.HttpLocation;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -44,11 +42,9 @@ import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DataSetJSONTest.class)
-@Configuration
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DataSetJSONTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
-@EnableAutoConfiguration
 public class DataSetJSONTest {
 
     @Autowired

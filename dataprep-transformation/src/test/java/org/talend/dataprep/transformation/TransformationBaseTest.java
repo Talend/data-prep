@@ -13,11 +13,12 @@
 
 package org.talend.dataprep.transformation;
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.DataSetMetadataBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,9 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Base class for all unit/integration tests for transformation.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
 public abstract class TransformationBaseTest {
 
     @Autowired

@@ -18,22 +18,18 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.transformation.api.action.dynamic.cluster.ClusterParameters;
 
 /**
  * Unit test for the dynamic type.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DynamicTypeTest.class)
-@Configuration
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DynamicTypeTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
-@EnableAutoConfiguration
 public class DynamicTypeTest {
 
     /** Spring application context. */

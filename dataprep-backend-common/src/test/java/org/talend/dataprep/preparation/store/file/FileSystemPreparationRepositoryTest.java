@@ -27,12 +27,12 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
@@ -49,8 +49,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  * 
  * @see FileSystemPreparationRepositoryTest
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = FileSystemPreparationRepositoryTest.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = FileSystemPreparationRepositoryTest.class)
 @ComponentScan(basePackages = "org.talend.dataprep")
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "preparation.store=file",
         "preparation.store.file.location=target/test/store/preparation" })

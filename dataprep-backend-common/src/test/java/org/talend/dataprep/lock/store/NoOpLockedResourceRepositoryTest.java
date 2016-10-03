@@ -22,15 +22,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = { NoOpLockedResourceRepositoryTest.class })
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = { NoOpLockedResourceRepositoryTest.class })
 @ComponentScan(basePackages = "org.talend.dataprep")
 @TestPropertySource(properties = { "lock.preparation.store=none" })
 public class NoOpLockedResourceRepositoryTest extends LockedResourceTestUtils {

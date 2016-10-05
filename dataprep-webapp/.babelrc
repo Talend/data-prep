@@ -3,7 +3,11 @@
     "transform-runtime",
     "transform-object-rest-spread"
   ],
+  "ignore": [
+    "**/**/*.css"
+  ],
   "presets": [
-    "es2015"
+    "es2015",
+    "react"
   ]
 }

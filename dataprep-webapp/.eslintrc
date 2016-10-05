@@ -15,6 +15,7 @@
 
     // react
     "react/prefer-es6-class": 0,
+    "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
     "react/jsx-indent": ["error", "tab"],
     "react/jsx-indent-props": ["error", "tab"],
 

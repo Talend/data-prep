@@ -29,6 +29,10 @@ import HomeComponent from './home-component';
 import HomeDatasetComponent from './dataset/home-dataset-component';
 import HomePreparationComponent from './preparation/home-preparation-component';
 
+// React home page
+import APP_BAR_MODULE from '../app-bar/app-bar-module';
+import HomeCommonComponent from './common/home-common-component';
+
 const MODULE_NAME = 'data-prep.home';
 
 /**
@@ -50,6 +54,7 @@ const MODULE_NAME = 'data-prep.home';
  */
 angular.module(MODULE_NAME,
 	[
+		APP_BAR_MODULE,
 		DATASET_UPDLOAD_LIST_MODULE,
 		DATASET_HEADER_MODULE,
 		DATASET_LIST_MODULE,
@@ -64,6 +69,7 @@ angular.module(MODULE_NAME,
 	])
     .component('home', HomeComponent)
     .component('homeDataset', HomeDatasetComponent)
-    .component('homePreparation', HomePreparationComponent);
+    .component('homePreparation', HomePreparationComponent)
+    .component('homeCommon', HomeCommonComponent);
 
 export default MODULE_NAME;

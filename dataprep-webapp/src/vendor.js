@@ -75,3 +75,7 @@ import 'angular-mass-autocomplete/massautocomplete.theme.css';
 
 // Sunchoke https://github.com/Talend/sunchoke
 import 'sunchoke';
+
+// ngReact
+import 'react';
+import 'ngreact';

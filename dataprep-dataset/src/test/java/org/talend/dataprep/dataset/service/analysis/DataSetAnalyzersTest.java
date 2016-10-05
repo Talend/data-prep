@@ -13,17 +13,15 @@
 
 package org.talend.dataprep.dataset.service.analysis;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.dataset.DataSetBaseTest;
-import org.talend.dataprep.dataset.service.analysis.asynchronous.AsynchronousDataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 
 public class DataSetAnalyzersTest extends DataSetBaseTest {
@@ -34,23 +32,12 @@ public class DataSetAnalyzersTest extends DataSetBaseTest {
     @Autowired
     List<SynchronousDataSetAnalyzer> synchronousAnalyzers;
 
-    @Autowired(required = false)
-    List<AsynchronousDataSetAnalyzer> asynchronousAnalyzers = new LinkedList<>();
-
     @Test
     public void testSynchronousOrder() throws Exception {
         synchronousAnalyzers.sort((analyzer1, analyzer2) -> analyzer1.order() - analyzer2.order());
         int previousOrder = -1;
         for (SynchronousDataSetAnalyzer synchronousAnalyzer : synchronousAnalyzers) {
             assertThat(synchronousAnalyzer.order(), greaterThan(previousOrder));
-        }
-    }
-
-    @Test
-    public void testAsynchronousDestinations() throws Exception {
-        for (AsynchronousDataSetAnalyzer asynchronousAnalyzer : asynchronousAnalyzers) {
-            assertThat(asynchronousAnalyzer.destination(), notNullValue());
-            assertThat(asynchronousAnalyzer.destination(), not(is("")));
         }
     }
 

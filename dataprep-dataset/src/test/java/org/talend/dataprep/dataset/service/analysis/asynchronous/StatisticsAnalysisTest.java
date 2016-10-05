@@ -27,6 +27,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.dataset.DataSetBaseTest;
+import org.talend.dataprep.dataset.event.DataSetImportedEvent;
 import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
@@ -43,7 +44,7 @@ public class StatisticsAnalysisTest extends DataSetBaseTest {
     ContentAnalysis contentAnalysis;
 
     @Autowired
-    SyncBackgroundAnalyzer statisticsAnalysis;
+    SyncBackgroundAnalysis statisticsAnalysis;
 
     /** Random to generate random dataset id. */
     private Random random = new Random();
@@ -97,7 +98,7 @@ public class StatisticsAnalysisTest extends DataSetBaseTest {
         formatAnalysis.analyze(id);
         contentAnalysis.analyze(id);
         schemaAnalysis.analyze(id);
-        statisticsAnalysis.analyze(id);
+        statisticsAnalysis.onApplicationEvent(new DataSetImportedEvent(id));
 
         final DataSetMetadata analyzed = dataSetMetadataRepository.get(id);
         assertThat(analyzed.getLifecycle().schemaAnalyzed(), is(true));

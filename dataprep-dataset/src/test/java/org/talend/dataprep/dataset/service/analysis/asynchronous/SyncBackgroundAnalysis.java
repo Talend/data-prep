@@ -15,23 +15,20 @@ package org.talend.dataprep.dataset.service.analysis.asynchronous;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.dataset.event.AsyncApplicationListener;
 import org.talend.dataprep.dataset.event.DataSetImportedEvent;
-import org.talend.dataprep.security.SecurityProxy;
+
 
 /**
- * Compute statistics analysis on the full dataset.
+ * Synchronous analysis of a dataset used for unit / integration tests.
  */
 @Component
-@ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
-public class AsyncBackgroundAnalysis implements AsyncApplicationListener<DataSetImportedEvent> {
+@ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "false")
+public class SyncBackgroundAnalysis implements ApplicationListener<DataSetImportedEvent> {
 
     @Autowired
     private BackgroundAnalysis backgroundAnalysis;
-
-    @Autowired
-    private SecurityProxy securityProxy;
 
     /**
      * Handle an application event.
@@ -41,12 +38,6 @@ public class AsyncBackgroundAnalysis implements AsyncApplicationListener<DataSet
     @Override
     public void onApplicationEvent(DataSetImportedEvent event) {
         String dataSetId = event.getSource();
-
-        try {
-            securityProxy.asTechnicalUser();
-            backgroundAnalysis.analyze(dataSetId);
-        } finally {
-            securityProxy.releaseIdentity();
-        }
+        backgroundAnalysis.analyze(dataSetId);
     }
 }

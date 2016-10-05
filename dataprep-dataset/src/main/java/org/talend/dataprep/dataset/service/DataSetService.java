@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.dataset.service;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -32,7 +35,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.jms.Message;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +45,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
@@ -56,12 +57,10 @@ import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
+import org.talend.dataprep.dataset.event.DataSetImportedEvent;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
 import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
 import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
-import org.talend.dataprep.dataset.service.analysis.asynchronous.AsyncBackgroundAnalysis;
-import org.talend.dataprep.dataset.service.analysis.asynchronous.AsynchronousDataSetAnalyzer;
-import org.talend.dataprep.dataset.service.analysis.asynchronous.SyncBackgroundAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.synchronous.*;
 import org.talend.dataprep.dataset.service.api.Import;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
@@ -131,12 +130,6 @@ public class DataSetService extends BaseDataSetService {
     private ApplicationEventPublisher publisher;
 
     /**
-     * DQ asynchronous analyzers.
-     */
-    @Autowired(required = false)
-    private AsynchronousDataSetAnalyzer[] asynchronousAnalyzers = new AsynchronousDataSetAnalyzer[0];
-
-    /**
      * DQ synchronous analyzers.
      */
     @Autowired
@@ -147,12 +140,6 @@ public class DataSetService extends BaseDataSetService {
      */
     @Autowired
     private FormatAnalysis formatAnalyzer;
-
-    /**
-     * JMS template used to call asynchronous analysers.
-     */
-    @Autowired
-    private JmsTemplate jmsTemplate;
 
     /**
      * User repository.
@@ -220,16 +207,15 @@ public class DataSetService extends BaseDataSetService {
      * Performs the analysis on the given dataset id.
      *
      * @param id the dataset id.
+     * @param performAsyncBackgroundAnalysis true if the asynchronous background analysis should be performed.
      * @param analysersToSkip the list of analysers to skip.
      */
-    @SafeVarargs
-    private final void queueEvents(String id, Class<? extends DataSetAnalyzer>... analysersToSkip) {
-
-        List<Class<? extends DataSetAnalyzer>> toSkip = Arrays.asList(analysersToSkip);
+    private final void analyzeDataSet(String id, boolean performAsyncBackgroundAnalysis,
+            List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
 
         // Calls all synchronous analysis first
         for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
-            if (toSkip.contains(synchronousDataSetAnalyzer.getClass())) {
+            if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
                 continue;
             }
             LOG.info("Running {}", synchronousDataSetAnalyzer.getClass());
@@ -238,16 +224,12 @@ public class DataSetService extends BaseDataSetService {
         }
 
         // Then use JMS queue for all optional analysis
-        for (AsynchronousDataSetAnalyzer asynchronousDataSetAnalyzer : asynchronousAnalyzers) {
-            if (toSkip.contains(asynchronousDataSetAnalyzer.getClass())) {
-                continue;
-            }
-            jmsTemplate.send(asynchronousDataSetAnalyzer.destination(), session -> {
-                Message message = session.createMessage();
-                message.setStringProperty("dataset.id", id);
-                message.setStringProperty("security.token", security.getAuthenticationToken());
-                return message;
-            });
+        if (performAsyncBackgroundAnalysis) {
+            LOG.debug("starting async background analysis");
+            publisher.publishEvent(new DataSetImportedEvent(id));
+        }
+        else {
+            LOG.info("skipping asynchronous background analysis");
         }
     }
 
@@ -347,7 +329,7 @@ public class DataSetService extends BaseDataSetService {
      * @param content The raw content of the data set (might be a CSV, XLS...) or the connection parameter in case of a
      * remote csv.
      * @return The new data id.
-     * @see #get(boolean, String)
+     * @see DataSetService#get(boolean, boolean, String)
      */
     //@formatter:off
     @RequestMapping(value = "/datasets", method = POST, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
@@ -399,7 +381,7 @@ public class DataSetService extends BaseDataSetService {
             LOG.debug(marker, "dataset metadata stored {}", dataSetMetadata);
 
             // Queue events (format analysis, content indexing for search...)
-            queueEvents(id);
+            analyzeDataSet(id, true, emptyList());
 
             LOG.debug(marker, "Created!");
             return id;
@@ -679,7 +661,7 @@ public class DataSetService extends BaseDataSetService {
             lock.unlock();
         }
         // Content was changed, so queue events (format analysis, content indexing for search...)
-        queueEvents(dataSetId);
+        analyzeDataSet(dataSetId, true, emptyList());
     }
 
     /**
@@ -753,7 +735,7 @@ public class DataSetService extends BaseDataSetService {
             List<ColumnMetadata> columnMetadatas = sheetContentFound.get().getColumnMetadatas();
 
             if (dataSetMetadata.getRowMetadata() == null) {
-                dataSetMetadata.setRowMetadata(new RowMetadata(Collections.emptyList()));
+                dataSetMetadata.setRowMetadata(new RowMetadata(emptyList()));
             }
 
             dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
@@ -827,7 +809,7 @@ public class DataSetService extends BaseDataSetService {
                     if (sheetContentFound.isPresent()) {
                         List<ColumnMetadata> columnMetadatas = sheetContentFound.get().getColumnMetadatas();
                         if (metadataForUpdate.getRowMetadata() == null) {
-                            metadataForUpdate.setRowMetadata(new RowMetadata(Collections.emptyList()));
+                            metadataForUpdate.setRowMetadata(new RowMetadata(emptyList()));
                         }
                         metadataForUpdate.getRowMetadata().setColumns(columnMetadatas);
                     }
@@ -877,7 +859,7 @@ public class DataSetService extends BaseDataSetService {
 
                 // all good mate!! so send that to jms
                 // Asks for a in depth schema analysis (for column type information).
-                queueEvents(dataSetId, FormatAnalysis.class);
+                analyzeDataSet(dataSetId, true, singletonList(FormatAnalysis.class));
             } catch (TDPException e) {
                 throw e;
             } catch (Exception e) {
@@ -900,7 +882,7 @@ public class DataSetService extends BaseDataSetService {
     public Iterable<String> favorites() {
         String userId = security.getUserId();
         UserData userData = userDataRepository.get(userId);
-        return userData != null ? userData.getFavoritesDatasets() : Collections.emptyList();
+        return userData != null ? userData.getFavoritesDatasets() : emptyList();
     }
 
     /**
@@ -1008,12 +990,9 @@ public class DataSetService extends BaseDataSetService {
             dataSetMetadataRepository.add(dataSetMetadata);
 
             // analyze the updated dataset (not all analysis are performed)
-            queueEvents(dataSetId, //
-                    ContentAnalysis.class, //
-                    FormatAnalysis.class, //
-                    SchemaAnalysis.class, //
-                    SyncBackgroundAnalyzer.class, //
-                    AsyncBackgroundAnalysis.class);
+            analyzeDataSet(dataSetId, //
+                    false, //
+                    asList(ContentAnalysis.class, FormatAnalysis.class, SchemaAnalysis.class));
 
         } finally {
             lock.unlock();
@@ -1062,14 +1041,14 @@ public class DataSetService extends BaseDataSetService {
     @PublicAPI
     public List<Parameter> getImportParameters(@PathVariable("import") final String importType) {
         if (StringUtils.isEmpty(importType)) {
-            return Collections.emptyList();
+            return emptyList();
         }
         for (DataSetLocation location : locations) {
             if (importType.equals(location.getLocationType())) {
                 return location.getParameters();
             }
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1085,7 +1064,7 @@ public class DataSetService extends BaseDataSetService {
                     if (l.isDynamic()) {
                         return new Import(l.getLocationType(), //
                                 l.getAcceptedContentType(), //
-                                Collections.emptyList(), //
+                                emptyList(), //
                                 l.isDynamic(), //
                                 defaultImport);
                     } else {

@@ -13,21 +13,20 @@
 
 package org.talend.dataprep.dataset.service.analysis;
 
-import org.talend.dataprep.dataset.service.analysis.asynchronous.AsynchronousDataSetAnalyzer;
+import java.util.List;
+
 import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 
 /**
  * Represents a component to analyze data set content. Analyzers are split into 2 categories:
  * <ul>
  * <li>Synchronous: see {@link SynchronousDataSetAnalyzer}</li>
- * <li>Asynchronous: see {@link AsynchronousDataSetAnalyzer}</li>
  * </ul>
  * Synchronous analyzers are called during data set creation and executed sequentially. Asynchronous can execute
  * concurrently and should listen to a JMS queue.
  * 
  * @see SynchronousDataSetAnalyzer
- * @see AsynchronousDataSetAnalyzer
- * @see org.talend.dataprep.dataset.service.DataSetService#queueEvents(String, Class[])
+ * @see org.talend.dataprep.dataset.service.DataSetService#analyzeDataSet(String, boolean, List)
  */
 public interface DataSetAnalyzer {
 

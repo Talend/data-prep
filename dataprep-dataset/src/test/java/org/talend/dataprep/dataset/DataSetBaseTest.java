@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -85,9 +84,6 @@ public abstract class DataSetBaseTest {
 
     @Autowired
     protected UserDataRepository userDataRepository;
-
-    @Autowired
-    protected JmsTemplate jmsTemplate;
 
     @Autowired
     @Qualifier("ContentStore#local")

@@ -22,7 +22,6 @@
     "test:ci": "karma start karma.conf.ci.js",
     "test:auto": "karma start --auto",
     "lint:es": "eslint --config .eslintrc --fix src/app",
-    "jso": "eslint --config .eslintrc --fix src/app/services/utils/text-format/text-format-service.js",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/app/**/*.scss' -v -q",
     "stats": "webpack --config config/webpack.config.dev.js --profile -j > stats.json"
   },

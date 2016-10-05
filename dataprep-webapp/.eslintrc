@@ -1,18 +1,27 @@
 {
   "extends": "airbnb",
+  "parser": "babel-eslint",
   "plugins": ["angular"],
 
   "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/*.spec.js"]}],
+    "no-tabs": "off",
+    "indent": ["error", "tab"],
+
+    // angular
     "angular/controller-name": [2, "/[A-Z].*Ctrl/"],
     "angular/di": 0,
     "angular/json-functions": 0,
 
-    "brace-style": [2, "stroustrup"],
-    "indent": [2, 4],
-
+    // react
+    "react/prefer-es6-class": 0,
+    "react/jsx-indent": ["error", "tab"],
+    "react/jsx-indent-props": ["error", "tab"],
 
     // to remove step by step
     "arrow-body-style": 0,
+    "brace-style": [2, "stroustrup"],
+    "class-methods-use-this": 0,
     "consistent-return": 0,
     "default-case": 0,
     "func-names": 0,
@@ -20,6 +29,7 @@
     "max-len": 0,
     "no-else-return": 0,
     "no-param-reassign": 0,
+    "no-plusplus": 0,
     "no-return-assign": 0,
     "no-shadow": 0,
     "no-underscore-dangle": 0,
@@ -28,7 +38,7 @@
     "prefer-template": 0,
     "prefer-arrow-callback": 0
   },
-  
+
   "env": {
     "es6": true,
     "browser": true,

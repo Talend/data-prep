@@ -12,22 +12,22 @@
  ============================================================================*/
 
 export const parametersState = {
-    visible: false,
-    isSending: false,
-    configuration: {
-        encodings: [],
-        separators: [
+	visible: false,
+	isSending: false,
+	configuration: {
+		encodings: [],
+		separators: [
             { label: ';', value: ';' },
             { label: ',', value: ',' },
             { label: '<space>', value: ' ' },
             { label: '<tab>', value: '\t' },
             { label: '|', value: '|' },
-        ],
-    },
-    values: {
-        separator: null,
-        encoding: null,
-    },
+		],
+	},
+	values: {
+		separator: null,
+		encoding: null,
+	},
 };
 
 /**
@@ -36,14 +36,14 @@ export const parametersState = {
  * @description Parameters service.
  */
 export function ParametersStateService() {
-    return {
-        show,
-        hide,
-        setIsSending,
-        setEncodings,
-        update,
-        reset,
-    };
+	return {
+		show,
+		hide,
+		setIsSending,
+		setEncodings,
+		update,
+		reset,
+	};
 
     /**
      * @ngdoc method
@@ -51,9 +51,9 @@ export function ParametersStateService() {
      * @methodOf data-prep.services.state.service:ParameterService
      * @description Set the parameters visible
      */
-    function show() {
-        parametersState.visible = true;
-    }
+	function show() {
+		parametersState.visible = true;
+	}
 
     /**
      * @ngdoc method
@@ -61,9 +61,9 @@ export function ParametersStateService() {
      * @methodOf data-prep.services.state.service:ParameterService
      * @description Set the parameters visible
      */
-    function hide() {
-        parametersState.visible = false;
-    }
+	function hide() {
+		parametersState.visible = false;
+	}
 
     /**
      * @ngdoc method
@@ -72,9 +72,9 @@ export function ParametersStateService() {
      * @param {boolean} sending True if the app is sending new parameters
      * @description Set the parameters sending flag
      */
-    function setIsSending(sending) {
-        parametersState.isSending = sending;
-    }
+	function setIsSending(sending) {
+		parametersState.isSending = sending;
+	}
 
     /**
      * @ngdoc method
@@ -83,9 +83,9 @@ export function ParametersStateService() {
      * @param {array} encodings The array of supported encodings
      * @description Set the array of supported encodings
      */
-    function setEncodings(encodings) {
-        parametersState.configuration.encodings = encodings;
-    }
+	function setEncodings(encodings) {
+		parametersState.configuration.encodings = encodings;
+	}
 
     /**
      * @ngdoc method
@@ -94,10 +94,10 @@ export function ParametersStateService() {
      * @param {object} dataset The dataset where to extract parameters
      * @description Set the lookup visible
      */
-    function update(dataset) {
-        parametersState.values.separator = dataset.parameters.SEPARATOR;
-        parametersState.values.encoding = dataset.encoding;
-    }
+	function update(dataset) {
+		parametersState.values.separator = dataset.parameters.SEPARATOR;
+		parametersState.values.encoding = dataset.encoding;
+	}
 
     /**
      * @ngdoc method
@@ -105,12 +105,12 @@ export function ParametersStateService() {
      * @methodOf data-prep.services.state.service:ParameterService
      * @description Reset the parameters internal state
      */
-    function reset() {
-        parametersState.visible = false;
-        parametersState.isSending = false;
-        parametersState.values = {
-            separator: null,
-            encoding: null,
-        };
-    }
+	function reset() {
+		parametersState.visible = false;
+		parametersState.isSending = false;
+		parametersState.values = {
+			separator: null,
+			encoding: null,
+		};
+	}
 }

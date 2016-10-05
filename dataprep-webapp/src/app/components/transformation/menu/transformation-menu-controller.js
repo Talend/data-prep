@@ -20,9 +20,9 @@
  * @requires data-prep.services.transformation.service:TransformationService
  */
 export default function TransformMenuCtrl($timeout, state, PlaygroundService, ParametersService, TransformationService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc property
@@ -30,7 +30,7 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
      * @propertyOf data-prep.transformation-menu.controller:TransformMenuCtrl
      * @description Flag that indicates if a transformation is in progress
      */
-    vm.transformationInProgress = false;
+	vm.transformationInProgress = false;
 
     /**
      * @ngdoc method
@@ -41,16 +41,16 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
      * @param {object} menu The dynamic transformation
      * @returns {promise} The GET request promise
      */
-    function initDynamicParams(menu) {
-        const infos = {
-            columnId: vm.column.id,
-            datasetId: state.playground.dataset.id,
-            preparationId: state.playground.preparation ?
+	function initDynamicParams(menu) {
+		const infos = {
+			columnId: vm.column.id,
+			datasetId: state.playground.dataset.id,
+			preparationId: state.playground.preparation ?
                 state.playground.preparation.id :
                 null,
-        };
-        return TransformationService.initDynamicParameters(menu, infos);
-    }
+		};
+		return TransformationService.initDynamicParameters(menu, infos);
+	}
 
     /**
      * @ngdoc method
@@ -65,29 +65,29 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
      * @param {object} menu The transformation to perform
      * @param {string} scope The transformation scope to perform
      */
-    vm.select = function (menu, scope) {
-        if (menu.dynamic) {
-            vm.dynamicFetchInProgress = true;
-            vm.showModal = true;
-            vm.selectedMenu = menu;
-            vm.selectedScope = scope;
+	vm.select = function (menu, scope) {
+		if (menu.dynamic) {
+			vm.dynamicFetchInProgress = true;
+			vm.showModal = true;
+			vm.selectedMenu = menu;
+			vm.selectedScope = scope;
 
             // get new parameters
-            initDynamicParams(menu).finally(function () {
-                vm.dynamicFetchInProgress = false;
-            });
-        }
-        else if (menu.parameters || menu.items) {
-            ParametersService.resetParamValue(menu.parameters);
-            ParametersService.resetParamValue(menu.items, 'CHOICE');
-            vm.showModal = true;
-            vm.selectedMenu = menu;
-            vm.selectedScope = scope;
-        }
-        else {
-            vm.appendClosure(menu, scope)();
-        }
-    };
+			initDynamicParams(menu).finally(function () {
+				vm.dynamicFetchInProgress = false;
+			});
+		}
+		else if (menu.parameters || menu.items) {
+			ParametersService.resetParamValue(menu.parameters);
+			ParametersService.resetParamValue(menu.items, 'CHOICE');
+			vm.showModal = true;
+			vm.selectedMenu = menu;
+			vm.selectedScope = scope;
+		}
+		else {
+			vm.appendClosure(menu, scope)();
+		}
+	};
 
     /**
      * @ngdoc method
@@ -98,25 +98,25 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
      * @param {object} menu The transformation to perform
      * @param {string} scope The transformation scope to perform
      */
-    vm.appendClosure = function appendClosure(menu, scope) {
-        return function (params) {
-            if (!vm.transformationInProgress) {
-                vm.transformationInProgress = true;
+	vm.appendClosure = function appendClosure(menu, scope) {
+		return function (params) {
+			if (!vm.transformationInProgress) {
+				vm.transformationInProgress = true;
 
-                params = params || {};
-                params.scope = scope;
-                params.column_id = vm.column.id;
-                params.column_name = vm.column.name;
+				params = params || {};
+				params.scope = scope;
+				params.column_id = vm.column.id;
+				params.column_name = vm.column.name;
 
-                transform(menu, params)
+				transform(menu, params)
                     .finally(function () {
-                        $timeout(() => {
-                            vm.transformationInProgress = false;
-                        }, 500, false);
-                    });
-            }
-        };
-    };
+	$timeout(() => {
+		vm.transformationInProgress = false;
+	}, 500, false);
+});
+			}
+		};
+	};
 
     /**
      * @ngdoc method
@@ -126,10 +126,10 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
      * @param {object} params The transformation params
      * @description Perform a transformation on the column
      */
-    function transform(menu, params) {
-        return PlaygroundService.appendStep([{ action: menu.name, parameters: params }])
+	function transform(menu, params) {
+		return PlaygroundService.appendStep([{ action: menu.name, parameters: params }])
             .then(function () {
-                vm.showModal = false;
-            });
-    }
+	vm.showModal = false;
+});
+	}
 }

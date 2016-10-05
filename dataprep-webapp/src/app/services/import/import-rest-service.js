@@ -16,12 +16,12 @@
  * @description Import service. This service provide the entry point to the backend import REST api.<br/>
  */
 export default function ImportRestService($http, RestURLs) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        importTypes,
-        importParameters,
-    };
+	return {
+		importTypes,
+		importParameters,
+	};
     /**
      * @ngdoc method
      * @name importTypes
@@ -29,9 +29,9 @@ export default function ImportRestService($http, RestURLs) {
      * @description Fetch the available import types
      * @returns {Promise}  The GET call promise
      */
-    function importTypes() {
-        return $http.get(RestURLs.datasetUrl + '/imports');
-    }
+	function importTypes() {
+		return $http.get(RestURLs.datasetUrl + '/imports');
+	}
 
     /**
      * @ngdoc method
@@ -40,7 +40,7 @@ export default function ImportRestService($http, RestURLs) {
      * @description Fetch the available import parameters
      * @returns {Promise}  The GET call promise
      */
-    function importParameters(locationType) {
-        return $http.get(RestURLs.datasetUrl + '/imports/' + locationType + '/parameters');
-    }
+	function importParameters(locationType) {
+		return $http.get(RestURLs.datasetUrl + '/imports/' + locationType + '/parameters');
+	}
 }

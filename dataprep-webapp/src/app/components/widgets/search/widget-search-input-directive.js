@@ -19,49 +19,49 @@
  * @usage <talend-search-input ng-model="model"></talend-search-input>
  */
 export default function TalendSearchInput() {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link(scope, iElement, iAttrs, ngModel) {
+	return {
+		restrict: 'A',
+		require: 'ngModel',
+		link(scope, iElement, iAttrs, ngModel) {
             // var margin = 5;
-            const wrapper = angular.element('<div class="search-input"></div>');
-            iElement.wrap(wrapper);
+			const wrapper = angular.element('<div class="search-input"></div>');
+			iElement.wrap(wrapper);
 
-            const clearButton = angular.element('<div class="search-input-icon clear-icon"><span class="icon" data-icon="d"></span></div>');
-            const searchIcon = angular.element('<div class="search-input-icon"><span class="icon" data-icon="D"></span></div>');
+			const clearButton = angular.element('<div class="search-input-icon clear-icon"><span class="icon" data-icon="d"></span></div>');
+			const searchIcon = angular.element('<div class="search-input-icon"><span class="icon" data-icon="D"></span></div>');
 
-            iElement.parent().append(clearButton);
-            iElement.parent().append(searchIcon);
+			iElement.parent().append(clearButton);
+			iElement.parent().append(searchIcon);
 
-            iElement.bind('keydown', function (e) {
+			iElement.bind('keydown', function (e) {
                 // hide modal on 'ESC' keydown
-                if (e.keyCode === 27) {
-                    e.stopPropagation();
-                }
-            });
+				if (e.keyCode === 27) {
+					e.stopPropagation();
+				}
+			});
 
-            scope.$watch(
+			scope.$watch(
                 function () {
-                    return ngModel.$modelValue;
-                },
+	return ngModel.$modelValue;
+},
 
                 function (value) {
-                    if (value) {
-                        clearButton.css('display', 'block');
-                        searchIcon.css('display', 'none');
-                    }
-                    else {
-                        searchIcon.css('display', 'block');
-                        clearButton.css('display', 'none');
-                    }
-                });
+	if (value) {
+		clearButton.css('display', 'block');
+		searchIcon.css('display', 'none');
+	}
+	else {
+		searchIcon.css('display', 'block');
+		clearButton.css('display', 'none');
+	}
+});
 
-            clearButton.on('click', function () {
-                scope.$apply(function () {
-                    ngModel.$setViewValue('');
-                    ngModel.$render();
-                });
-            });
-        },
-    };
+			clearButton.on('click', function () {
+				scope.$apply(function () {
+					ngModel.$setViewValue('');
+					ngModel.$render();
+				});
+			});
+		},
+	};
 }

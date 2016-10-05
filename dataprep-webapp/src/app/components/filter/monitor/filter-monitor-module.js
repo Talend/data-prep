@@ -27,10 +27,10 @@ const MODULE_NAME = 'data-prep.filter-monitor';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_FILTER_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		SERVICES_FILTER_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .directive('filterMonitor', FilterMonitor);
 
 export default MODULE_NAME;

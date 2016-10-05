@@ -21,14 +21,14 @@
  * @requires data-prep.services.folder.service:DatasetService
  */
 export default class PreparationHeaderCtrl {
-    constructor(state, StateService, StorageService, FolderService) {
-        'ngInject';
+	constructor(state, StateService, StorageService, FolderService) {
+		'ngInject';
 
-        this.state = state;
-        this.StateService = StateService;
-        this.StorageService = StorageService;
-        this.FolderService = FolderService;
-    }
+		this.state = state;
+		this.StateService = StateService;
+		this.StorageService = StorageService;
+		this.FolderService = FolderService;
+	}
 
     /**
      * @ngdoc method
@@ -37,18 +37,18 @@ export default class PreparationHeaderCtrl {
      * @description sort dataset by sortType by calling refreshDatasets from DatasetService
      * @param {object} sortType Criteria to sort
      */
-    updateSortBy(sortType) {
-        const oldSort = this.state.inventory.preparationsSort;
+	updateSortBy(sortType) {
+		const oldSort = this.state.inventory.preparationsSort;
 
-        this.StateService.setPreparationsSort(sortType);
-        this.StorageService.setPreparationsSort(sortType.id);
+		this.StateService.setPreparationsSort(sortType);
+		this.StorageService.setPreparationsSort(sortType.id);
 
-        return this.FolderService.refresh(this.state.inventory.folder.metadata.id)
+		return this.FolderService.refresh(this.state.inventory.folder.metadata.id)
             .catch(() => {
-                this.StateService.setPreparationsSort(oldSort);
-                this.StorageService.setPreparationsSort(oldSort.id);
-            });
-    }
+	this.StateService.setPreparationsSort(oldSort);
+	this.StorageService.setPreparationsSort(oldSort.id);
+});
+	}
 
     /**
      * @ngdoc method
@@ -58,18 +58,18 @@ export default class PreparationHeaderCtrl {
      * by calling refreshDatasets from DatasetService
      * @param {object} order Sort order ASC(ascending) or DESC(descending)
      */
-    updateSortOrder(order) {
-        const oldOrder = this.state.inventory.preparationsOrder;
+	updateSortOrder(order) {
+		const oldOrder = this.state.inventory.preparationsOrder;
 
-        this.StateService.setPreparationsOrder(order);
-        this.StorageService.setPreparationsOrder(order.id);
+		this.StateService.setPreparationsOrder(order);
+		this.StorageService.setPreparationsOrder(order.id);
 
-        return this.FolderService.refresh(this.state.inventory.folder.metadata.id)
+		return this.FolderService.refresh(this.state.inventory.folder.metadata.id)
             .catch(() => {
-                this.StateService.setPreparationsOrder(oldOrder);
-                this.StorageService.setPreparationsOrder(oldOrder.id);
-            });
-    }
+	this.StateService.setPreparationsOrder(oldOrder);
+	this.StorageService.setPreparationsOrder(oldOrder.id);
+});
+	}
 
     /**
      * @ngdoc method
@@ -78,11 +78,11 @@ export default class PreparationHeaderCtrl {
      * @description Create a new folder
      * @param {string} folderName The new folder name
      */
-    createFolder(folderName) {
-        const currentFolderId = this.state.inventory.folder.metadata.id;
-        return this.FolderService.create(currentFolderId, folderName)
+	createFolder(folderName) {
+		const currentFolderId = this.state.inventory.folder.metadata.id;
+		return this.FolderService.create(currentFolderId, folderName)
             .then(() => {
-                this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-            });
-    }
+	this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+});
+	}
 }

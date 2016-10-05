@@ -41,17 +41,17 @@ import template from './folder-tree-node.html';
  */
 
 const FolderTreeNodeComponent = {
-    bindings: {
-        hasChildren: '<',
-        isOpened: '<',
-        isSelected: '<',
-        level: '<',
-        name: '<',
-        path: '<',
-        onSelect: '&',
-        onToggle: '&',
-    },
-    templateUrl: template,
+	bindings: {
+		hasChildren: '<',
+		isOpened: '<',
+		isSelected: '<',
+		level: '<',
+		name: '<',
+		path: '<',
+		onSelect: '&',
+		onToggle: '&',
+	},
+	templateUrl: template,
 };
 
 export default FolderTreeNodeComponent;

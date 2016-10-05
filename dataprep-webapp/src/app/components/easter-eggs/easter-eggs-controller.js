@@ -19,9 +19,9 @@
  * @requires data-prep.services.state.service:StateService
  */
 export default function EasterEggsCtrl(state, StateService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.state = state;
-    vm.disableEasterEgg = StateService.disableEasterEgg;
+	const vm = this;
+	vm.state = state;
+	vm.disableEasterEgg = StateService.disableEasterEgg;
 }

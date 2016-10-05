@@ -31,12 +31,12 @@ const MODULE_NAME = 'data-prep.dataset-parameters';
  * @requires data-prep.services.playground
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-    ])
+	[
+		ngTranslate,
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+	])
     .controller('DatasetParametersCtrl', DatasetParametersCtrl)
     .directive('datasetParameters', DatasetParameters);
 

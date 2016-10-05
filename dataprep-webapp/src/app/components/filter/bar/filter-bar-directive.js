@@ -14,18 +14,18 @@
 import template from './filter-bar.html';
 
 export default function FilterBar(state, FilterService) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {},
-        bindToController: true,
-        controller() {
-            this.filterService = FilterService;
-            this.state = state;
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {},
+		bindToController: true,
+		controller() {
+			this.filterService = FilterService;
+			this.state = state;
+		},
 
-        controllerAs: 'filterBarCtrl',
-    };
+		controllerAs: 'filterBarCtrl',
+	};
 }

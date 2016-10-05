@@ -22,14 +22,14 @@ import template from './transformation-params.html';
  * @param {array} parameters The parameters to render
  */
 export default function TransformParams() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            parameters: '=',
-        },
-        bindToController: true,
-        controllerAs: 'paramsCtrl',
-        controller: 'TransformParamsCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			parameters: '=',
+		},
+		bindToController: true,
+		controllerAs: 'paramsCtrl',
+		controller: 'TransformParamsCtrl',
+	};
 }

@@ -16,12 +16,12 @@ import template from './preparation-picker.html';
 import PreparationPickerCtrl from './preparation-picker-controller';
 
 const PreparationPicker = {
-    templateUrl: template,
-    bindings: {
-        dataset: '<',
-        fetchPreparations: '&',
-        onSelect: '&',
-    },
-    controller: PreparationPickerCtrl,
+	templateUrl: template,
+	bindings: {
+		dataset: '<',
+		fetchPreparations: '&',
+		onSelect: '&',
+	},
+	controller: PreparationPickerCtrl,
 };
 export default PreparationPicker;

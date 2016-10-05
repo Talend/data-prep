@@ -17,9 +17,9 @@
  * @description Column types service
  */
 export default function ColumnTypesService($q, $http, RestURLs) {
-    'ngInject';
+	'ngInject';
 
-    let types;
+	let types;
 
     /**
      * @ngdoc method
@@ -28,14 +28,14 @@ export default function ColumnTypesService($q, $http, RestURLs) {
      * @description Return all primitive types
      * @returns {Promise} The GET promise
      */
-    this.getTypes = function getTypes() {
-        if (types) {
-            return $q.when(types);
-        }
+	this.getTypes = function getTypes() {
+		if (types) {
+			return $q.when(types);
+		}
 
-        return $http.get(RestURLs.typesUrl).then((response) => {
-            types = response.data;
-            return types;
-        });
-    };
+		return $http.get(RestURLs.typesUrl).then((response) => {
+			types = response.data;
+			return types;
+		});
+	};
 }

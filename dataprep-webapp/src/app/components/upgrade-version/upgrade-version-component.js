@@ -16,8 +16,8 @@ import template from './upgrade-version.html';
 import UpgradeVersionCtrl from './upgrade-version-controller';
 
 const UpgradeVersionComponent = {
-    controller: UpgradeVersionCtrl,
-    templateUrl: template,
+	controller: UpgradeVersionCtrl,
+	templateUrl: template,
 };
 
 export default UpgradeVersionComponent;

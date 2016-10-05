@@ -18,7 +18,7 @@
  * @requires data-prep.services.state.service:StateService
  */
 export default function EasterEggsService(StateService) {
-    'ngInject';
+	'ngInject';
 
     /**
      * @ngdoc method
@@ -26,7 +26,7 @@ export default function EasterEggsService(StateService) {
      * @methodOf data-prep.services.easter-eggs.service:EasterEggsService
      * @description Enable easter egg depending on the given input.
      */
-    this.enableEasterEgg = function enableEasterEgg(input) {
-        StateService.enableEasterEgg(input);
-    };
+	this.enableEasterEgg = function enableEasterEgg(input) {
+		StateService.enableEasterEgg(input);
+	};
 }

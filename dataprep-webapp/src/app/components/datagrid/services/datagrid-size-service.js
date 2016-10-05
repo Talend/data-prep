@@ -17,16 +17,16 @@
  * @description Datagrid private service that manage the grid sizes
  */
 export default function DatagridSizeService($window, state) {
-    'ngInject';
+	'ngInject';
 
-    let grid;
-    const MIN_COLUMN_WIDTH = 60;
-    const INITIAL_COLUMN_WIDTH = 120;
+	let grid;
+	const MIN_COLUMN_WIDTH = 60;
+	const INITIAL_COLUMN_WIDTH = 120;
 
-    return {
-        init,
-        autosizeColumns,
-    };
+	return {
+		init,
+		autosizeColumns,
+	};
 
     //--------------------------------------------------------------------------------------------------------------
 
@@ -36,9 +36,9 @@ export default function DatagridSizeService($window, state) {
      * @methodOf data-prep.datagrid.service:DatagridSizeService
      * @description Get the actual dataset column sizes key. This key is used in localStorage
      */
-    function getLocalStorageKey() {
-        return 'org.talend.dataprep.col_size_' + state.playground.dataset.id;
-    }
+	function getLocalStorageKey() {
+		return 'org.talend.dataprep.col_size_' + state.playground.dataset.id;
+	}
 
     /**
      * @ngdoc method
@@ -48,18 +48,18 @@ export default function DatagridSizeService($window, state) {
      * localstorage if not already saved. They are then used to set the last saved sized.
      * WARNING : this set columns in the grid, which trigger a repaint
      */
-    function autosizeColumns(gridColumns) {
-        const localKey = getLocalStorageKey();
-        const sizesStr = $window.localStorage.getItem(localKey);
-        const sizes = (sizesStr && JSON.parse(sizesStr)) || {};
-        _.forEach(gridColumns, function (col) {
-            col.minWidth = MIN_COLUMN_WIDTH;
-            col.width = sizes[col.id] || INITIAL_COLUMN_WIDTH;
-        });
+	function autosizeColumns(gridColumns) {
+		const localKey = getLocalStorageKey();
+		const sizesStr = $window.localStorage.getItem(localKey);
+		const sizes = (sizesStr && JSON.parse(sizesStr)) || {};
+		_.forEach(gridColumns, function (col) {
+			col.minWidth = MIN_COLUMN_WIDTH;
+			col.width = sizes[col.id] || INITIAL_COLUMN_WIDTH;
+		});
 
-        grid.setColumns(gridColumns);
-        saveColumnSizes();
-    }
+		grid.setColumns(gridColumns);
+		saveColumnSizes();
+	}
 
     /**
      * @ngdoc method
@@ -67,16 +67,16 @@ export default function DatagridSizeService($window, state) {
      * @methodOf data-prep.datagrid.service:DatagridSizeService
      * @description Save the columns sizes of the dataset in localstorage
      */
-    function saveColumnSizes() {
-        const localKey = getLocalStorageKey();
-        const sizes = {};
+	function saveColumnSizes() {
+		const localKey = getLocalStorageKey();
+		const sizes = {};
 
-        _.forEach(grid.getColumns(), function (col) {
-            sizes[col.id] = col.width;
-        });
+		_.forEach(grid.getColumns(), function (col) {
+			sizes[col.id] = col.width;
+		});
 
-        $window.localStorage.setItem(localKey, JSON.stringify(sizes));
-    }
+		$window.localStorage.setItem(localKey, JSON.stringify(sizes));
+	}
 
     /**
      * @ngdoc method
@@ -84,11 +84,11 @@ export default function DatagridSizeService($window, state) {
      * @methodOf data-prep.datagrid.service:DatagridSizeService
      * @description Attach listeners on window resize
      */
-    function attachGridResizeListener() {
-        $window.addEventListener('resize', function () {
-            grid.resizeCanvas();
-        }, true);
-    }
+	function attachGridResizeListener() {
+		$window.addEventListener('resize', function () {
+			grid.resizeCanvas();
+		}, true);
+	}
 
     /**
      * @ngdoc method
@@ -96,9 +96,9 @@ export default function DatagridSizeService($window, state) {
      * @methodOf data-prep.datagrid.service:DatagridSizeService
      * @description Attach listeners for column resize
      */
-    function attachColumnResizeListener() {
-        grid.onColumnsResized.subscribe(saveColumnSizes);
-    }
+	function attachColumnResizeListener() {
+		grid.onColumnsResized.subscribe(saveColumnSizes);
+	}
 
     /**
      * @ngdoc method
@@ -107,9 +107,9 @@ export default function DatagridSizeService($window, state) {
      * @param {object} newGrid The new grid
      * @description Initialize the grid and attach the column listeners
      */
-    function init(newGrid) {
-        grid = newGrid;
-        attachGridResizeListener();
-        attachColumnResizeListener();
-    }
+	function init(newGrid) {
+		grid = newGrid;
+		attachGridResizeListener();
+		attachColumnResizeListener();
+	}
 }

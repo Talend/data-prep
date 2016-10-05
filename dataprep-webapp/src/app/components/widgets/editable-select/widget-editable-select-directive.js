@@ -26,17 +26,17 @@ import template from './editable-select.html';
  * @param {object} ngModel The model to bind
  */
 export default function EditableSelect() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            list: '=',
-            value: '=ngModel',
-        },
-        bindToController: true,
-        controller: () => {
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			list: '=',
+			value: '=ngModel',
+		},
+		bindToController: true,
+		controller: () => {
+		},
 
-        controllerAs: 'editableSelectCtrl',
-    };
+		controllerAs: 'editableSelectCtrl',
+	};
 }

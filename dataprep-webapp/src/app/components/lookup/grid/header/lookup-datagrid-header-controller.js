@@ -20,11 +20,11 @@
  * @requires data-prep.services.utils.service:ConverterService
  */
 export default function LookupDatagridHeaderCtrl(ConverterService, state, StateService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.converterService = ConverterService;
-    vm.state = state;
+	const vm = this;
+	vm.converterService = ConverterService;
+	vm.state = state;
 
     /**
      * @ngdoc method
@@ -32,14 +32,14 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
      * @methodOf data-prep.lookup-datagrid-header.controller:LookupDatagridHeaderCtrl
      * @description show/hide the checkbox responsible for adding the columns to the lookup action
      */
-    vm.showCheckbox = function showCheckbox() {
-        if (vm.state.playground.lookup.selectedColumn) {
-            return vm.column.id !== vm.state.playground.lookup.selectedColumn.id;
-        }
-        else {
-            return false;
-        }
-    };
+	vm.showCheckbox = function showCheckbox() {
+		if (vm.state.playground.lookup.selectedColumn) {
+			return vm.column.id !== vm.state.playground.lookup.selectedColumn.id;
+		}
+		else {
+			return false;
+		}
+	};
 
     /**
      * @ngdoc method
@@ -47,9 +47,9 @@ export default function LookupDatagridHeaderCtrl(ConverterService, state, StateS
      * @methodOf data-prep.lookup-datagrid-header.controller:LookupDatagridHeaderCtrl
      * @description updates the array of the selected columns to be added to the lookup
      */
-    vm.updateColsToAdd = function updateColsToAdd(e) {
+	vm.updateColsToAdd = function updateColsToAdd(e) {
         // stop event propagation in order not to select the column
-        e.stopPropagation();
-        StateService.updateLookupColumnsToAdd();
-    };
+		e.stopPropagation();
+		StateService.updateLookupColumnsToAdd();
+	};
 }

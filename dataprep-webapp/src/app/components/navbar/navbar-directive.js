@@ -14,12 +14,12 @@
 import template from './navbar.html';
 
 export default function Navbar() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {},
-        bindToController: true,
-        controller: 'NavbarCtrl',
-        controllerAs: 'navbarCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {},
+		bindToController: true,
+		controller: 'NavbarCtrl',
+		controllerAs: 'navbarCtrl',
+	};
 }

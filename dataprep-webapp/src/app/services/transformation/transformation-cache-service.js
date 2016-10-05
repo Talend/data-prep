@@ -18,11 +18,11 @@
  * It holds a cache that should be invalidated at each new playground load
  */
 export default class TransformationCacheService {
-    constructor($cacheFactory) {
-        'ngInject';
-        this.transformationsCache = $cacheFactory('transformationsCache', { capacity: 10 });
-        this.suggestionsCache = $cacheFactory('suggestionsCache', { capacity: 10 });
-    }
+	constructor($cacheFactory) {
+		'ngInject';
+		this.transformationsCache = $cacheFactory('transformationsCache', { capacity: 10 });
+		this.suggestionsCache = $cacheFactory('suggestionsCache', { capacity: 10 });
+	}
 
     /**
      * @ngdoc method
@@ -32,9 +32,9 @@ export default class TransformationCacheService {
      * @param {object} entity The entity to set as key
      * @description [PRIVATE] Generate a unique key for the scope/entity.
      */
-    getKey(scope, entity) {
-        return scope + JSON.stringify(entity);
-    }
+	getKey(scope, entity) {
+		return scope + JSON.stringify(entity);
+	}
 
     /**
      * @ngdoc method
@@ -44,10 +44,10 @@ export default class TransformationCacheService {
      * @param {object} entity The entity key
      * @description Get transformations from cache if present
      */
-    getTransformations(scope, entity) {
-        const key = this.getKey(scope, entity);
-        return this.transformationsCache.get(key);
-    }
+	getTransformations(scope, entity) {
+		const key = this.getKey(scope, entity);
+		return this.transformationsCache.get(key);
+	}
 
     /**
      * @ngdoc method
@@ -57,10 +57,10 @@ export default class TransformationCacheService {
      * @param {object} entity The entity key
      * @description Get suggestions from cache if present
      */
-    getSuggestions(scope, entity) {
-        const key = this.getKey(scope, entity);
-        return this.suggestionsCache.get(key);
-    }
+	getSuggestions(scope, entity) {
+		const key = this.getKey(scope, entity);
+		return this.suggestionsCache.get(key);
+	}
 
     /**
      * @ngdoc method
@@ -71,10 +71,10 @@ export default class TransformationCacheService {
      * @param {object} transformations The transformations to cache
      * @description Set transformations in cache
      */
-    setTransformations(scope, entity, transformations) {
-        const key = this.getKey(scope, entity);
-        this.transformationsCache.put(key, transformations);
-    }
+	setTransformations(scope, entity, transformations) {
+		const key = this.getKey(scope, entity);
+		this.transformationsCache.put(key, transformations);
+	}
 
     /**
      * @ngdoc method
@@ -85,10 +85,10 @@ export default class TransformationCacheService {
      * @param {object} suggestions The suggestions to cache
      * @description Set suggestions in cache
      */
-    setSuggestions(scope, entity, suggestions) {
-        const key = this.getKey(scope, entity);
-        return this.suggestionsCache.put(key, suggestions);
-    }
+	setSuggestions(scope, entity, suggestions) {
+		const key = this.getKey(scope, entity);
+		return this.suggestionsCache.put(key, suggestions);
+	}
 
     /**
      * @ngdoc method
@@ -96,8 +96,8 @@ export default class TransformationCacheService {
      * @methodOf data-prep.services.transformation.service:TransformationCacheService
      * @description Invalidate all cache entries
      */
-    invalidateCache() {
-        this.transformationsCache.removeAll();
-        this.suggestionsCache.removeAll();
-    }
+	invalidateCache() {
+		this.transformationsCache.removeAll();
+		this.suggestionsCache.removeAll();
+	}
 }

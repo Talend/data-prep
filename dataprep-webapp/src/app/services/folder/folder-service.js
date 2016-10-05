@@ -21,18 +21,18 @@
  * @requires data-prep.services.utils.service:StorageService
  */
 export default function FolderService($q, state, StateService, FolderRestService, StorageService) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        init,
-        refresh,
-        refreshBreadcrumbChildren,
-        children,
-        create,
-        rename,
-        remove: FolderRestService.remove,
-        tree: FolderRestService.tree,
-    };
+	return {
+		init,
+		refresh,
+		refreshBreadcrumbChildren,
+		children,
+		create,
+		rename,
+		remove: FolderRestService.remove,
+		tree: FolderRestService.tree,
+	};
 
     /**
      * @ngdoc method
@@ -41,11 +41,11 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @param {string} id The folder id to init
      * @description Init the sort parameters and folder content
      */
-    function init(id) {
-        refreshPreparationsSort();
-        refreshPreparationsOrder();
-        return refresh(id);
-    }
+	function init(id) {
+		refreshPreparationsSort();
+		refreshPreparationsOrder();
+		return refresh(id);
+	}
 
     /**
      * @ngdoc method
@@ -55,22 +55,22 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @param {string} id The folder to init
      * @returns {Promise} The GET promise
      */
-    function refresh(id) {
-        const folderId = id || state.inventory.homeFolderId;
+	function refresh(id) {
+		const folderId = id || state.inventory.homeFolderId;
 
-        const sort = state.inventory.preparationsSort.id;
-        const order = state.inventory.preparationsOrder.id;
+		const sort = state.inventory.preparationsSort.id;
+		const order = state.inventory.preparationsOrder.id;
 
-        const breadcrumbPromise = FolderRestService.getById(folderId);
-        const contentPromise = FolderRestService.getContent(folderId, sort, order);
-        return $q.all([breadcrumbPromise, contentPromise])
+		const breadcrumbPromise = FolderRestService.getById(folderId);
+		const contentPromise = FolderRestService.getContent(folderId, sort, order);
+		return $q.all([breadcrumbPromise, contentPromise])
             .then(([breadcrumb, content]) => {
-                const currentFolder = breadcrumb.folder;
-                const fullBreadcrumb = breadcrumb.hierarchy.concat(currentFolder);
-                StateService.setFolder(currentFolder, content);
-                StateService.setBreadcrumb(fullBreadcrumb);
-            });
-    }
+	const currentFolder = breadcrumb.folder;
+	const fullBreadcrumb = breadcrumb.hierarchy.concat(currentFolder);
+	StateService.setFolder(currentFolder, content);
+	StateService.setBreadcrumb(fullBreadcrumb);
+});
+	}
 
     /**
      * @ngdoc method
@@ -79,12 +79,12 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @param {string} id The folder to refresh
      * @returns {Promise} The process promise
      */
-    function refreshBreadcrumbChildren(id) {
-        return FolderRestService.children(id)
+	function refreshBreadcrumbChildren(id) {
+		return FolderRestService.children(id)
             .then((children) => {
-                StateService.setBreadcrumbChildren(id, children);
-            });
-    }
+	StateService.setBreadcrumbChildren(id, children);
+});
+	}
 
     /**
      * @ngdoc method
@@ -92,12 +92,12 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @name refreshPreparationsSort
      * @description Refresh the actual sort parameter
      * */
-    function refreshPreparationsSort() {
-        const savedSort = StorageService.getPreparationsSort();
-        if (savedSort) {
-            StateService.setPreparationsSort(_.find(state.inventory.sortList, { id: savedSort }));
-        }
-    }
+	function refreshPreparationsSort() {
+		const savedSort = StorageService.getPreparationsSort();
+		if (savedSort) {
+			StateService.setPreparationsSort(_.find(state.inventory.sortList, { id: savedSort }));
+		}
+	}
 
     /**
      * @ngdoc method
@@ -105,12 +105,12 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @name refreshPreparationsOrder
      * @description Refresh the actual order parameter
      */
-    function refreshPreparationsOrder() {
-        const savedSortOrder = StorageService.getPreparationsOrder();
-        if (savedSortOrder) {
-            StateService.setPreparationsOrder(_.find(state.inventory.orderList, { id: savedSortOrder }));
-        }
-    }
+	function refreshPreparationsOrder() {
+		const savedSortOrder = StorageService.getPreparationsOrder();
+		if (savedSortOrder) {
+			StateService.setPreparationsOrder(_.find(state.inventory.orderList, { id: savedSortOrder }));
+		}
+	}
 
     /**
      * @ngdoc method
@@ -120,9 +120,9 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @param {string} parentId The parent id
      * @returns {Promise} The GET promise
      */
-    function children(parentId = state.inventory.homeFolderId) {
-        return FolderRestService.children(parentId);
-    }
+	function children(parentId = state.inventory.homeFolderId) {
+		return FolderRestService.children(parentId);
+	}
 
     /**
      * @ngdoc method
@@ -133,9 +133,9 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @param {string} path The relative path to create (from parent)
      * @returns {Promise} The PUT promise
      */
-    function create(parentId = state.inventory.homeFolderId, path) {
-        return FolderRestService.create(parentId, path);
-    }
+	function create(parentId = state.inventory.homeFolderId, path) {
+		return FolderRestService.create(parentId, path);
+	}
 
     /**
      * @ngdoc method
@@ -146,7 +146,7 @@ export default function FolderService($q, state, StateService, FolderRestService
      * @param {string} newName The new name
      * @returns {Promise} The PUT promise
      */
-    function rename(folderId = state.inventory.homeFolderId, newName) {
-        return FolderRestService.rename(folderId, newName);
-    }
+	function rename(folderId = state.inventory.homeFolderId, newName) {
+		return FolderRestService.rename(folderId, newName);
+	}
 }

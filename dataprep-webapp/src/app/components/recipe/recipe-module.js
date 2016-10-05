@@ -51,22 +51,22 @@ const MODULE_NAME = 'data-prep.recipe';
  * @requires data-prep.services.playground.service:PlaygroundService
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        sunchoke.all,
-        asSortable,
-        RECIPE_KNOT_MODULE,
-        RECIPE_STEP_DESCRIPTION,
-        TALEND_WIDGET_MODULE,
-        TRANSFORMATION_FORM_MODULE,
-        SERVICES_FILTER_MODULE,
-        SERVICES_PARAMETERS_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_PREVIEW_MODULE,
-        SERVICES_RECIPE_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		ngTranslate,
+		sunchoke.all,
+		asSortable,
+		RECIPE_KNOT_MODULE,
+		RECIPE_STEP_DESCRIPTION,
+		TALEND_WIDGET_MODULE,
+		TRANSFORMATION_FORM_MODULE,
+		SERVICES_FILTER_MODULE,
+		SERVICES_PARAMETERS_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_PREVIEW_MODULE,
+		SERVICES_RECIPE_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .component('recipe', Recipe);
 
 export default MODULE_NAME;

@@ -20,9 +20,9 @@ import moment from 'moment';
  * @description DateService service. This service help to manipulate dates
  */
 export default function DateService() {
-    return {
-        isInDateLimits,
-    };
+	return {
+		isInDateLimits,
+	};
 
     /**
      * @ngdoc method
@@ -33,19 +33,19 @@ export default function DateService() {
      * @param {number} maxTimestamp The range max timestamp
      * @param {Array} patterns The date patterns to use for date parsing
      */
-    function isInDateLimits(minTimestamp, maxTimestamp, patterns) {
-        return (value) => {
-            const parsedMoment = _.chain(patterns)
-                .map((pattern) => moment(value, pattern, true))
-                .find((momentDate) => momentDate.isValid())
+	function isInDateLimits(minTimestamp, maxTimestamp, patterns) {
+		return (value) => {
+			const parsedMoment = _.chain(patterns)
+                .map(pattern => moment(value, pattern, true))
+                .find(momentDate => momentDate.isValid())
                 .value();
 
-            if (!parsedMoment) {
-                return false;
-            }
+			if (!parsedMoment) {
+				return false;
+			}
 
-            const time = parsedMoment.toDate().getTime();
-            return time === minTimestamp || (time > minTimestamp && time < maxTimestamp);
-        };
-    }
+			const time = parsedMoment.toDate().getTime();
+			return time === minTimestamp || (time > minTimestamp && time < maxTimestamp);
+		};
+	}
 }

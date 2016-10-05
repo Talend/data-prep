@@ -24,13 +24,13 @@ import template from './search-bar.html';
 import SearchBarCtrl from './search-bar-controller';
 
 const SearchBarComponent = {
-    templateUrl: template,
-    bindings: {
-        items: '<',
-        placeholder: '@',
-        search: '&',
-    },
-    controller: SearchBarCtrl,
+	templateUrl: template,
+	bindings: {
+		items: '<',
+		placeholder: '@',
+		search: '&',
+	},
+	controller: SearchBarCtrl,
 };
 
 export default SearchBarComponent;

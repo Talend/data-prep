@@ -25,24 +25,24 @@ import { filter } from 'lodash';
  */
 export default function DatagridHeaderCtrl($scope, state, TransformationService, ConverterService, PlaygroundService,
                                            FilterService) {
-    'ngInject';
+	'ngInject';
 
-    const ACTION_SCOPE = 'column_metadata';
-    const RENAME_ACTION = 'rename_column';
-    let originalName;
+	const ACTION_SCOPE = 'column_metadata';
+	const RENAME_ACTION = 'rename_column';
+	let originalName;
 
-    const vm = this;
-    vm.converterService = ConverterService;
-    vm.filterService = FilterService;
-    vm.PlaygroundService = PlaygroundService;
-    vm.state = state;
+	const vm = this;
+	vm.converterService = ConverterService;
+	vm.filterService = FilterService;
+	vm.PlaygroundService = PlaygroundService;
+	vm.state = state;
 
     /**
      * @name transformationsMustBeRetrieved
      * @description flag to force transformation list to be retrieved
      * @type {boolean}
      */
-    let transformationsMustBeRetrieved;
+	let transformationsMustBeRetrieved;
 
     /**
      * @ngdoc property
@@ -51,7 +51,7 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @description the new column modified name
      * @type {string}
      */
-    vm.newName = null;
+	vm.newName = null;
 
     /**
      * @ngdoc property
@@ -60,7 +60,7 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @description the flag to switch column name edition mode
      * @type {string}
      */
-    vm.isEditMode = false;
+	vm.isEditMode = false;
 
     /**
      * @ngdoc method
@@ -68,27 +68,27 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
      * @description Get transformations from REST call
      */
-    vm.initTransformations = function initTransformations() {
-        if (transformationsMustBeRetrieved || (!vm.transformations && !vm.initTransformationsInProgress)) {
-            vm.transformationsRetrieveError = false;
-            vm.initTransformationsInProgress = true;
+	vm.initTransformations = function initTransformations() {
+		if (transformationsMustBeRetrieved || (!vm.transformations && !vm.initTransformationsInProgress)) {
+			vm.transformationsRetrieveError = false;
+			vm.initTransformationsInProgress = true;
 
-            TransformationService.getTransformations('column', vm.column)
+			TransformationService.getTransformations('column', vm.column)
                 .then((columnTransformations) => {
-                    vm.transformations = filter(
+	vm.transformations = filter(
                         columnTransformations.allTransformations,
-                        (menu) => (menu.actionScope.indexOf(ACTION_SCOPE) !== -1)
+                        menu => (menu.actionScope.indexOf(ACTION_SCOPE) !== -1)
                     );
-                })
+})
                 .catch(() => {
-                    vm.transformationsRetrieveError = true;
-                })
+	vm.transformationsRetrieveError = true;
+})
                 .finally(() => {
-                    transformationsMustBeRetrieved = false;
-                    vm.initTransformationsInProgress = false;
-                });
-        }
-    };
+	transformationsMustBeRetrieved = false;
+	vm.initTransformationsInProgress = false;
+});
+		}
+	};
 
     /**
      * @ngdoc method
@@ -96,20 +96,20 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
      * @description update the new column name
      */
-    vm.updateColumnName = function updateColumnName() {
-        const params = {
-            new_column_name: vm.newName,
-            scope: 'column',
-            column_id: vm.column.id,
-            column_name: vm.column.name,
-        };
+	vm.updateColumnName = function updateColumnName() {
+		const params = {
+			new_column_name: vm.newName,
+			scope: 'column',
+			column_id: vm.column.id,
+			column_name: vm.column.name,
+		};
 
-        PlaygroundService.appendStep([{ action: RENAME_ACTION, parameters: params }])
+		PlaygroundService.appendStep([{ action: RENAME_ACTION, parameters: params }])
             .then(() => {
-                vm.setEditMode(false);
-                originalName = vm.newName;
-            });
-    };
+	vm.setEditMode(false);
+	originalName = vm.newName;
+});
+	};
 
     /**
      * @ngdoc method
@@ -117,9 +117,9 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
      * @description Check if the new name is correct for column name change
      */
-    vm.nameHasChanged = function nameHasChanged() {
-        return vm.newName && originalName !== vm.newName;
-    };
+	vm.nameHasChanged = function nameHasChanged() {
+		return vm.newName && originalName !== vm.newName;
+	};
 
 
     /**
@@ -129,13 +129,13 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @description Set isEditMode to provided value
      * @param {boolean} bool The new edit mode value
      */
-    vm.setEditMode = function setEditMode(bool) {
-        vm.isEditMode = bool;
+	vm.setEditMode = function setEditMode(bool) {
+		vm.isEditMode = bool;
 
-        if (bool) {
-            vm.newName = originalName = vm.column.name;
-        }
-    };
+		if (bool) {
+			vm.newName = originalName = vm.column.name;
+		}
+	};
 
 
     /**
@@ -144,18 +144,18 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
      * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
      * @description Reset newName with the original name
      */
-    vm.resetColumnName = function resetColumnName() {
-        vm.newName = originalName;
-    };
+	vm.resetColumnName = function resetColumnName() {
+		vm.newName = originalName;
+	};
 
     /**
      * Invalidate transformations if a column has been modified
      * e.g. its name
      */
-    $scope.$watch(
+	$scope.$watch(
         () => vm.column,
         () => {
-            transformationsMustBeRetrieved = true;
-        }
+	transformationsMustBeRetrieved = true;
+}
     );
 }

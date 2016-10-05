@@ -33,13 +33,13 @@ const MODULE_NAME = 'data-prep.import';
  * @requires data-prep.services.import
  */
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_DATASET_WORKFLOW_MODULE,
-        SERVICES_IMPORT_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_DATASET_WORKFLOW_MODULE,
+		SERVICES_IMPORT_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .component('import', Import);
 
 export default MODULE_NAME;

@@ -20,15 +20,15 @@
  * @param {string} canBeBlank 'false' = should check for non blank value. Any other value (including empty) is considered as 'true'
  */
 export default function CanBeBlankValidation() {
-    return {
-        require: 'ngModel',
-        link(scope, elm, attrs, ctrl) {
-            ctrl.$validators.canBeBlankValidation = function (modelValue) {
-                const mandatory = attrs.canBeBlank === 'false';
+	return {
+		require: 'ngModel',
+		link(scope, elm, attrs, ctrl) {
+			ctrl.$validators.canBeBlankValidation = function (modelValue) {
+				const mandatory = attrs.canBeBlank === 'false';
 
                 // not mandatory OR (value not null AND not blank)
-                return !mandatory || (modelValue !== null && !!('' + modelValue).trim());
-            };
-        },
-    };
+				return !mandatory || (modelValue !== null && !!('' + modelValue).trim());
+			};
+		},
+	};
 }

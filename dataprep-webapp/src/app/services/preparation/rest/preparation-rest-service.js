@@ -19,33 +19,33 @@
  * {@link data-prep.services.preparation.service:PreparationService PreparationService} must be the only entry point for preparations</b>
  */
 export default function PreparationRestService($http, RestURLs) {
-    'ngInject';
+	'ngInject';
 
-    return {
+	return {
         // lifecycle
-        create,
-        copy,
-        move,
-        update,
-        delete: deletePreparation,
+		create,
+		copy,
+		move,
+		update,
+		delete: deletePreparation,
 
         // step
-        appendStep,
-        updateStep,
-        moveStep,
-        removeStep,
-        setHead,
-        copySteps,
+		appendStep,
+		updateStep,
+		moveStep,
+		removeStep,
+		setHead,
+		copySteps,
 
         // getter : list, content, details
-        getContent,
-        getDetails,
+		getContent,
+		getDetails,
 
         // preview
-        getPreviewDiff,
-        getPreviewUpdate,
-        getPreviewAdd,
-    };
+		getPreviewDiff,
+		getPreviewUpdate,
+		getPreviewAdd,
+	};
 
     //---------------------------------------------------------------------------------
     // ----------------------------------------GETTERS----------------------------------
@@ -60,10 +60,10 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Get preparation records at the specific step
      * @returns {promise} The GET promise
      */
-    function getContent(preparationId, stepId, sampleType) {
-        const url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
-        return $http.get(url).then((res) => res.data);
-    }
+	function getContent(preparationId, stepId, sampleType) {
+		const url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
+		return $http.get(url).then(res => res.data);
+	}
 
     /**
      * @ngdoc method
@@ -73,9 +73,9 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Get current preparation details
      * @returns {promise} The GET promise
      */
-    function getDetails(preparationId) {
-        return $http.get(`${RestURLs.preparationUrl}/${preparationId}/details`).then((response) => response.data);
-    }
+	function getDetails(preparationId) {
+		return $http.get(`${RestURLs.preparationUrl}/${preparationId}/details`).then(response => response.data);
+	}
 
     //---------------------------------------------------------------------------------
     // ---------------------------------------LIFECYCLE---------------------------------
@@ -90,18 +90,18 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Create a new preparation
      * @returns {promise} The POST promise
      */
-    function create(datasetId, name, folderId = '') {
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.preparationUrl}?folder=${folderId}`,
-            data: {
-                name,
-                dataSetId: datasetId,
-            },
-        };
+	function create(datasetId, name, folderId = '') {
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.preparationUrl}?folder=${folderId}`,
+			data: {
+				name,
+				dataSetId: datasetId,
+			},
+		};
 
-        return $http(request).then((resp) => resp.data);
-    }
+		return $http(request).then(resp => resp.data);
+	}
 
     /**
      * @ngdoc method
@@ -113,13 +113,13 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Copy the preparation
      * @returns {promise} The POST promise
      */
-    function copy(preparationId, folderId, name) {
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.preparationUrl}/${preparationId}/copy?destination=${encodeURIComponent(folderId)}&newName=${encodeURIComponent(name)}`,
-        };
-        return $http(request).then((resp) => resp.data);
-    }
+	function copy(preparationId, folderId, name) {
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.preparationUrl}/${preparationId}/copy?destination=${encodeURIComponent(folderId)}&newName=${encodeURIComponent(name)}`,
+		};
+		return $http(request).then(resp => resp.data);
+	}
 
     /**
      * @ngdoc method
@@ -132,16 +132,16 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Move the preparation
      * @returns {promise} The PUT promise
      */
-    function move(preparationId, fromFolderId, toFolderId, name) {
-        const origin = encodeURIComponent(fromFolderId);
-        const destination = encodeURIComponent(toFolderId);
-        const newName = encodeURIComponent(name);
-        const request = {
-            method: 'PUT',
-            url: `${RestURLs.preparationUrl}/${preparationId}/move?folder=${origin}&destination=${destination}&newName=${newName}`,
-        };
-        return $http(request).then((resp) => resp.data);
-    }
+	function move(preparationId, fromFolderId, toFolderId, name) {
+		const origin = encodeURIComponent(fromFolderId);
+		const destination = encodeURIComponent(toFolderId);
+		const newName = encodeURIComponent(name);
+		const request = {
+			method: 'PUT',
+			url: `${RestURLs.preparationUrl}/${preparationId}/move?folder=${origin}&destination=${destination}&newName=${newName}`,
+		};
+		return $http(request).then(resp => resp.data);
+	}
 
     /**
      * @ngdoc method
@@ -152,16 +152,16 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Update the current preparation with the given data
      * @returns {promise} The PUT promise
      */
-    function update(preparationId, newData) {
-        const request = {
-            method: 'PUT',
-            url: `${RestURLs.preparationUrl}/${preparationId}`,
-            headers: { 'Content-Type': 'application/json' },
-            data: newData,
-        };
+	function update(preparationId, newData) {
+		const request = {
+			method: 'PUT',
+			url: `${RestURLs.preparationUrl}/${preparationId}`,
+			headers: { 'Content-Type': 'application/json' },
+			data: newData,
+		};
 
-        return $http(request).then((resp) => resp.data);
-    }
+		return $http(request).then(resp => resp.data);
+	}
 
     /**
      * @ngdoc method
@@ -171,9 +171,9 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Delete a preparation
      * @returns {promise} The DELETE promise
      */
-    function deletePreparation(preparationId) {
-        return $http.delete(RestURLs.preparationUrl + '/' + preparationId);
-    }
+	function deletePreparation(preparationId) {
+		return $http.delete(RestURLs.preparationUrl + '/' + preparationId);
+	}
 
     //---------------------------------------------------------------------------------
     // -----------------------------------------STEPS-----------------------------------
@@ -187,12 +187,12 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Adapt transformation action to api
      * @returns {object} - the adapted action
      */
-    function adaptTransformAction(actions, insertionStepId) {
-        return {
-            insertionStepId,
-            actions,
-        };
-    }
+	function adaptTransformAction(actions, insertionStepId) {
+		return {
+			insertionStepId,
+			actions,
+		};
+	}
 
     /**
      * @ngdoc method
@@ -204,17 +204,17 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Append a new transformation in the current preparation.
      * @returns {promise} - the POST promise
      */
-    function appendStep(preparationId, actions, insertionStepId) {
-        const actionParam = adaptTransformAction(actions, insertionStepId);
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.preparationUrl}/${preparationId}/actions`,
-            headers: { 'Content-Type': 'application/json' },
-            data: actionParam,
-        };
+	function appendStep(preparationId, actions, insertionStepId) {
+		const actionParam = adaptTransformAction(actions, insertionStepId);
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.preparationUrl}/${preparationId}/actions`,
+			headers: { 'Content-Type': 'application/json' },
+			data: actionParam,
+		};
 
-        return $http(request);
-    }
+		return $http(request);
+	}
 
     /**
      * @ngdoc method
@@ -226,16 +226,16 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Update a step with new parameters
      * @returns {promise} The PUT promise
      */
-    function updateStep(preparationId, stepId, actionParams) {
-        const request = {
-            method: 'PUT',
-            url: `${RestURLs.preparationUrl}/${preparationId}/actions/${stepId}`,
-            headers: { 'Content-Type': 'application/json' },
-            data: { actions: [actionParams] },
-        };
+	function updateStep(preparationId, stepId, actionParams) {
+		const request = {
+			method: 'PUT',
+			url: `${RestURLs.preparationUrl}/${preparationId}/actions/${stepId}`,
+			headers: { 'Content-Type': 'application/json' },
+			data: { actions: [actionParams] },
+		};
 
-        return $http(request);
-    }
+		return $http(request);
+	}
 
     /**
      * @ngdoc method
@@ -247,17 +247,17 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Move step and change its order in a recipe
      * @returns {promise} The POST promise
      */
-    function moveStep(preparationId, stepId, nextParentId) {
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.preparationUrl}/${preparationId}/steps/${stepId}/order`,
-            headers: { 'Content-Type': 'application/json' },
-            data: {}, // Needed to set header Content-Type since $http actually used to send data while using POST
-            params: { parentStepId: nextParentId },
-        };
+	function moveStep(preparationId, stepId, nextParentId) {
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.preparationUrl}/${preparationId}/steps/${stepId}/order`,
+			headers: { 'Content-Type': 'application/json' },
+			data: {}, // Needed to set header Content-Type since $http actually used to send data while using POST
+			params: { parentStepId: nextParentId },
+		};
 
-        return $http(request);
-    }
+		return $http(request);
+	}
 
     /**
      * @ngdoc method
@@ -268,10 +268,10 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Delete a step
      * @returns {promise} The DELETE promise
      */
-    function removeStep(preparationId, stepId) {
-        const url = `${RestURLs.preparationUrl}/${preparationId}/actions/${stepId}`;
-        return $http.delete(url);
-    }
+	function removeStep(preparationId, stepId) {
+		const url = `${RestURLs.preparationUrl}/${preparationId}/actions/${stepId}`;
+		return $http.delete(url);
+	}
 
     /**
      * @ngdoc method
@@ -282,10 +282,10 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Move the preparation head to the specified step
      * @returns {promise} The PUT promise
      */
-    function setHead(preparationId, stepId) {
-        const url = `${RestURLs.preparationUrl}/${preparationId}/head/${stepId}`;
-        return $http.put(url);
-    }
+	function setHead(preparationId, stepId) {
+		const url = `${RestURLs.preparationUrl}/${preparationId}/head/${stepId}`;
+		return $http.put(url);
+	}
 
     /**
      * @ngdoc method
@@ -296,10 +296,10 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Apply the reference steps to the preparation
      * @returns {promise} The PUT promise
      */
-    function copySteps(preparationId, referenceId) {
-        const url = `${RestURLs.preparationUrl}/${preparationId}/steps/copy?from=${referenceId}`;
-        return $http.put(url);
-    }
+	function copySteps(preparationId, referenceId) {
+		const url = `${RestURLs.preparationUrl}/${preparationId}/steps/copy?from=${referenceId}`;
+		return $http.put(url);
+	}
 
     //---------------------------------------------------------------------------------
     // ----------------------------------------PREVIEW----------------------------------
@@ -313,17 +313,17 @@ export default function PreparationRestService($http, RestURLs) {
      * @description POST Preview diff between 2 unchanged steps of a recipe
      * @returns {promise} The POST promise
      */
-    function getPreviewDiff(params, canceler) {
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.previewUrl}/diff`,
-            headers: { 'Content-Type': 'application/json' },
-            data: params,
-            timeout: canceler.promise,
-        };
+	function getPreviewDiff(params, canceler) {
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.previewUrl}/diff`,
+			headers: { 'Content-Type': 'application/json' },
+			data: params,
+			timeout: canceler.promise,
+		};
 
-        return $http(request);
-    }
+		return $http(request);
+	}
 
     /**
      * @ngdoc method
@@ -334,17 +334,17 @@ export default function PreparationRestService($http, RestURLs) {
      * @description POST preview diff between 2 same actions but with 1 updated step
      * @returns {promise} The POST promise
      */
-    function getPreviewUpdate(params, canceler) {
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.previewUrl}/update`,
-            headers: { 'Content-Type': 'application/json' },
-            data: params,
-            timeout: canceler.promise,
-        };
+	function getPreviewUpdate(params, canceler) {
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.previewUrl}/update`,
+			headers: { 'Content-Type': 'application/json' },
+			data: params,
+			timeout: canceler.promise,
+		};
 
-        return $http(request);
-    }
+		return $http(request);
+	}
 
     /**
      * @ngdoc method
@@ -355,15 +355,15 @@ export default function PreparationRestService($http, RestURLs) {
      * @description POST preview diff between the preparation head and a new added transformation
      * @returns {promise} The POST promise
      */
-    function getPreviewAdd(params, canceler) {
-        const request = {
-            method: 'POST',
-            url: `${RestURLs.previewUrl}/add`,
-            headers: { 'Content-Type': 'application/json' },
-            data: params,
-            timeout: canceler.promise,
-        };
+	function getPreviewAdd(params, canceler) {
+		const request = {
+			method: 'POST',
+			url: `${RestURLs.previewUrl}/add`,
+			headers: { 'Content-Type': 'application/json' },
+			data: params,
+			timeout: canceler.promise,
+		};
 
-        return $http(request);
-    }
+		return $http(request);
+	}
 }

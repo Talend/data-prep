@@ -26,10 +26,10 @@ const MODULE_NAME = 'data-prep.services.inventory';
  * @description This module contains the services to manage the inventory
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('InventoryService', InventoryService)
     .service('InventoryRestService', InventoryRestService);
 

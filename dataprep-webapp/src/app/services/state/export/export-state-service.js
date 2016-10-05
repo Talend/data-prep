@@ -13,21 +13,21 @@
 
 
 export const exportState = {
-    exportTypes: [],
-    defaultExportType: {},
+	exportTypes: [],
+	defaultExportType: {},
 };
 
 export function ExportStateService() {
-    return {
-        setExportTypes,
-        setDefaultExportType,
-    };
+	return {
+		setExportTypes,
+		setDefaultExportType,
+	};
 
-    function setExportTypes(exportTypes) {
-        exportState.exportTypes = exportTypes;
-    }
+	function setExportTypes(exportTypes) {
+		exportState.exportTypes = exportTypes;
+	}
 
-    function setDefaultExportType(exportType) {
-        exportState.defaultExportType = exportType;
-    }
+	function setDefaultExportType(exportType) {
+		exportState.defaultExportType = exportType;
+	}
 }

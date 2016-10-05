@@ -17,7 +17,7 @@
  * @description History service. This service expose functions to manage actions in history
  */
 export default function HistoryService($q) {
-    'ngInject';
+	'ngInject';
 
     /**
      * @ngdoc property
@@ -25,29 +25,29 @@ export default function HistoryService($q) {
      * @propertyOf data-prep.services.history.service:HistoryService
      * @description The history actions. These actions can be canceled by the undo
      */
-    let history = [];
+	let history = [];
     /**
      * @ngdoc property
      * @name undoneHistory
      * @propertyOf data-prep.services.history.service:HistoryService
      * @description The history undone actions. These actions can be reexecuted by the redo.
      */
-    let undoneHistory = [];
+	let undoneHistory = [];
 
-    const service = {
-        undoing: false,
-        redoing: false,
+	const service = {
+		undoing: false,
+		redoing: false,
 
-        addAction,
-        clear,
+		addAction,
+		clear,
 
-        canUndo,
-        undo,
+		canUndo,
+		undo,
 
-        canRedo,
-        redo,
-    };
-    return service;
+		canRedo,
+		redo,
+	};
+	return service;
 
     /**
      * @ngdoc method
@@ -56,9 +56,9 @@ export default function HistoryService($q) {
      * @description Check if an undo or a redo is being performed
      * @returns {boolean} True if an undo or a redo is in progress
      */
-    function isPerforming() {
-        return service.undoing || service.redoing;
-    }
+	function isPerforming() {
+		return service.undoing || service.redoing;
+	}
 
     //----------------------------------------------------------------------------------------------------
     // -----------------------------------------------ADD HISTORY------------------------------------------
@@ -71,13 +71,13 @@ export default function HistoryService($q) {
      * @param {function} redoAction Redo action to execute to execute the action again (if undone)
      * @description Create an entry un the history list and flush the undoneHistory list
      */
-    function addAction(undoAction, redoAction) {
-        history.push({
-            undo: undoAction,
-            redo: redoAction,
-        });
-        undoneHistory = [];
-    }
+	function addAction(undoAction, redoAction) {
+		history.push({
+			undo: undoAction,
+			redo: redoAction,
+		});
+		undoneHistory = [];
+	}
 
     /**
      * @ngdoc method
@@ -85,10 +85,10 @@ export default function HistoryService($q) {
      * @methodOf data-prep.services.history.service:HistoryService
      * @description Reset the history
      */
-    function clear() {
-        history = [];
-        undoneHistory = [];
-    }
+	function clear() {
+		history = [];
+		undoneHistory = [];
+	}
 
     //----------------------------------------------------------------------------------------------------
     // ---------------------------------------------------UNDO---------------------------------------------
@@ -100,9 +100,9 @@ export default function HistoryService($q) {
      * @description Test if an undo action can be executed
      * @returns {number} The number of action in history (Truthy if we can undo any action)
      */
-    function canUndo() {
-        return history.length && !isPerforming();
-    }
+	function canUndo() {
+		return history.length && !isPerforming();
+	}
 
     /**
      * @ngdoc method
@@ -110,27 +110,27 @@ export default function HistoryService($q) {
      * @methodOf data-prep.services.history.service:HistoryService
      * @description Perform the last action cancelation and push it to the undone list
      */
-    function undo() {
-        if (!canUndo()) {
-            return;
-        }
+	function undo() {
+		if (!canUndo()) {
+			return;
+		}
 
-        service.undoing = true;
-        const action = history.pop();
-        $q.when()
+		service.undoing = true;
+		const action = history.pop();
+		$q.when()
             .then(function () {
-                return action.undo();
-            })
+	return action.undo();
+})
             .then(function () {
-                undoneHistory.unshift(action);
-            })
+	undoneHistory.unshift(action);
+})
             .catch(function () {
-                history.push(action);
-            })
+	history.push(action);
+})
             .finally(function () {
-                service.undoing = false;
-            });
-    }
+	service.undoing = false;
+});
+	}
 
     //----------------------------------------------------------------------------------------------------
     // ---------------------------------------------------REDO---------------------------------------------
@@ -142,9 +142,9 @@ export default function HistoryService($q) {
      * @description Test if a redo action can be executed
      * @returns {number} The number of action in undone history (Truthy if we can redo any action)
      */
-    function canRedo() {
-        return undoneHistory.length && !isPerforming();
-    }
+	function canRedo() {
+		return undoneHistory.length && !isPerforming();
+	}
 
     /**
      * @ngdoc method
@@ -152,25 +152,25 @@ export default function HistoryService($q) {
      * @methodOf data-prep.services.history.service:HistoryService
      * @description Perform the last undone action again and push it to the history list
      */
-    function redo() {
-        if (!canRedo()) {
-            return;
-        }
+	function redo() {
+		if (!canRedo()) {
+			return;
+		}
 
-        service.redoing = true;
-        const action = undoneHistory.shift();
-        $q.when()
+		service.redoing = true;
+		const action = undoneHistory.shift();
+		$q.when()
             .then(function () {
-                return action.redo();
-            })
+	return action.redo();
+})
             .then(function () {
-                history.push(action);
-            })
+	history.push(action);
+})
             .catch(function () {
-                undoneHistory.unshift(action);
-            })
+	undoneHistory.unshift(action);
+})
             .finally(function () {
-                service.redoing = false;
-            });
-    }
+	service.redoing = false;
+});
+	}
 }

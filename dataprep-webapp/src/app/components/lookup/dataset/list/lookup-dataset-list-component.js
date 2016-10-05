@@ -24,12 +24,12 @@ import template from './lookup-dataset-list.html';
  * @restrict E
  */
 const LookupDatasetListComponent = {
-    templateUrl: template,
-    controller: LookupDatasetListCtrl,
-    bindings: {
-        datasets: '<',
-        searchText: '<',
-    },
+	templateUrl: template,
+	controller: LookupDatasetListCtrl,
+	bindings: {
+		datasets: '<',
+		searchText: '<',
+	},
 };
 
 export default LookupDatasetListComponent;

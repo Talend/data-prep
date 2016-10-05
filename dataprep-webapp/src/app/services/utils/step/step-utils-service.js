@@ -28,9 +28,9 @@ export default class StepUtilsService {
      * @description Return real current recipe steps
      * @returns {object} The current recipe steps
      */
-    getCurrentSteps(recipeState) {
-        return recipeState.beforePreview || recipeState.current;
-    }
+	getCurrentSteps(recipeState) {
+		return recipeState.beforePreview || recipeState.current;
+	}
 
     /**
      * @ngdoc method
@@ -42,17 +42,17 @@ export default class StepUtilsService {
      * @description Return a recipe step identified by index
      * @returns {object} The recipe step
      */
-    getStep(recipeState, index, defaultLast = false) {
-        if (index < 0) {
-            return recipeState.initialStep;
-        }
+	getStep(recipeState, index, defaultLast = false) {
+		if (index < 0) {
+			return recipeState.initialStep;
+		}
 
-        if (index >= this.getCurrentSteps(recipeState).steps.length || index < 0) {
-            return defaultLast ? this.getCurrentSteps(recipeState).steps[this.getCurrentSteps(recipeState).steps.length - 1] : null;
-        }
+		if (index >= this.getCurrentSteps(recipeState).steps.length || index < 0) {
+			return defaultLast ? this.getCurrentSteps(recipeState).steps[this.getCurrentSteps(recipeState).steps.length - 1] : null;
+		}
 
-        return this.getCurrentSteps(recipeState).steps[index];
-    }
+		return this.getCurrentSteps(recipeState).steps[index];
+	}
 
     /**
      * @ngdoc method
@@ -63,16 +63,16 @@ export default class StepUtilsService {
      * @description Return the step just before the provided index
      * @returns {object} The recipe step
      */
-    getStepBefore(recipeState, index) {
-        if (index <= 0) {
-            return recipeState.initialStep;
-        }
-        else if (index >= this.getCurrentSteps(recipeState).steps.length) {
-            return this.getCurrentSteps(recipeState).steps[this.getCurrentSteps(recipeState).steps.length - 1];
-        }
+	getStepBefore(recipeState, index) {
+		if (index <= 0) {
+			return recipeState.initialStep;
+		}
+		else if (index >= this.getCurrentSteps(recipeState).steps.length) {
+			return this.getCurrentSteps(recipeState).steps[this.getCurrentSteps(recipeState).steps.length - 1];
+		}
 
-        return this.getCurrentSteps(recipeState).steps[index - 1];
-    }
+		return this.getCurrentSteps(recipeState).steps[index - 1];
+	}
 
     /**
      * @ngdoc method
@@ -82,10 +82,10 @@ export default class StepUtilsService {
      * @param {object} step The given step
      * @description Get the step before the given one
      */
-    getPreviousStep(recipeState, step) {
-        const index = this.getCurrentSteps(recipeState).steps.indexOf(step);
-        return this.getStepBefore(recipeState, index);
-    }
+	getPreviousStep(recipeState, step) {
+		const index = this.getCurrentSteps(recipeState).steps.indexOf(step);
+		return this.getStepBefore(recipeState, index);
+	}
 
     /**
      * @ngdoc method
@@ -95,11 +95,11 @@ export default class StepUtilsService {
      * @description Get the last active step index
      * @returns {number} The last active step index
      */
-    getActiveThresholdStepIndex(recipeState) {
-        return this.getCurrentSteps(recipeState).lastActiveStep ?
+	getActiveThresholdStepIndex(recipeState) {
+		return this.getCurrentSteps(recipeState).lastActiveStep ?
             this.getCurrentSteps(recipeState).steps.indexOf(this.getCurrentSteps(recipeState).lastActiveStep) :
         this.getCurrentSteps(recipeState).steps.length - 1;
-    }
+	}
 
     /**
      * @ngdoc method
@@ -110,9 +110,9 @@ export default class StepUtilsService {
      * @description Get the current clicked step index
      * @returns {number} The current step index
      */
-    getStepIndex(recipeState, step) {
-        return this.getCurrentSteps(recipeState).steps.indexOf(step);
-    }
+	getStepIndex(recipeState, step) {
+		return this.getCurrentSteps(recipeState).steps.indexOf(step);
+	}
 
     /**
      * @ngdoc method
@@ -122,9 +122,9 @@ export default class StepUtilsService {
      * @param {object} recipeState The recipe state
      * @returns {object} The last active step
      */
-    getLastActiveStep(recipeState) {
-        return this.getCurrentSteps(recipeState).lastActiveStep || this.getLastStep(recipeState);
-    }
+	getLastActiveStep(recipeState) {
+		return this.getCurrentSteps(recipeState).lastActiveStep || this.getLastStep(recipeState);
+	}
 
     /**
      * @ngdoc method
@@ -135,9 +135,9 @@ export default class StepUtilsService {
      * @description Test if the provided step is the first step of the recipe
      * @returns {boolean} True if the step is the first step
      */
-    isFirstStep(recipeState, step) {
-        return this.getStepIndex(recipeState, step) === 0;
-    }
+	isFirstStep(recipeState, step) {
+		return this.getStepIndex(recipeState, step) === 0;
+	}
 
     /**
      * @ngdoc method
@@ -148,9 +148,9 @@ export default class StepUtilsService {
      * @description Test if the provided step is the last step of the recipe
      * @returns {boolean} True if the step is the last step
      */
-    isLastStep(recipeState, step) {
-        return step === this.getLastStep(recipeState);
-    }
+	isLastStep(recipeState, step) {
+		return step === this.getLastStep(recipeState);
+	}
 
     /**
      * @ngdoc method
@@ -160,11 +160,11 @@ export default class StepUtilsService {
      * @description Get the last step of the recipe
      * @returns {object} The last step
      */
-    getLastStep(recipeState) {
-        return this.getCurrentSteps(recipeState).steps.length > 0 ?
+	getLastStep(recipeState) {
+		return this.getCurrentSteps(recipeState).steps.length > 0 ?
             this.getCurrentSteps(recipeState).steps[this.getCurrentSteps(recipeState).steps.length - 1] :
             recipeState.initialStep;
-    }
+	}
 
     /**
      * @ngdoc method
@@ -175,10 +175,10 @@ export default class StepUtilsService {
      * @param {object} step The starting step
      * @returns {object} The sublist from 'step' to head
      */
-    getAllStepsFrom(recipeState, step) {
-        const index = this.getStepIndex(recipeState, step);
-        return this.getCurrentSteps(recipeState).steps.slice(index);
-    }
+	getAllStepsFrom(recipeState, step) {
+		const index = this.getStepIndex(recipeState, step);
+		return this.getCurrentSteps(recipeState).steps.slice(index);
+	}
 
     /**
      * @ngdoc method
@@ -189,8 +189,8 @@ export default class StepUtilsService {
      * @param {object} step The starting step
      * @returns {object} The actions array
      */
-    getAllActionsFrom(recipeState, step) {
-        const steps = this.getAllStepsFrom(recipeState, step);
-        return map(steps, 'actionParameters');
-    }
+	getAllActionsFrom(recipeState, step) {
+		const steps = this.getAllStepsFrom(recipeState, step);
+		return map(steps, 'actionParameters');
+	}
 }

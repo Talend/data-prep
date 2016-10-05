@@ -21,18 +21,18 @@ import template from './dataset-xls-preview.html';
  * @restrict E
  */
 export default function DatasetXlsPreview($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'previewCtrl',
-        controller: 'DatasetXlsPreviewCtrl',
-        link: (scope, iElement, iAttrs, ctrl) => {
-            $timeout(() => {
-                ctrl.initGrid();
-            }, 100);
-        },
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'previewCtrl',
+		controller: 'DatasetXlsPreviewCtrl',
+		link: (scope, iElement, iAttrs, ctrl) => {
+			$timeout(() => {
+				ctrl.initGrid();
+			}, 100);
+		},
+	};
 }

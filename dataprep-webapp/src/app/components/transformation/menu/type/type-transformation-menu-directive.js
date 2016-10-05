@@ -22,14 +22,14 @@ import template from './type-transformation-menu.html';
  * @param {object} column The target column of this transformation menu item
  */
 export default function TypeTransformMenu() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            column: '=',
-        },
-        bindToController: true,
-        controllerAs: 'typeMenuCtrl',
-        controller: 'TypeTransformMenuCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			column: '=',
+		},
+		bindToController: true,
+		controllerAs: 'typeMenuCtrl',
+		controller: 'TypeTransformMenuCtrl',
+	};
 }

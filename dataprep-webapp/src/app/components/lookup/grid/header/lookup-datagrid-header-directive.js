@@ -27,31 +27,31 @@ import template from './lookup-datagrid-header.html';
  * @param {object} added checkbox ng-model
  */
 export default function LookupDatagridHeader($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            column: '=',
-            added: '=',
-        },
-        bindToController: true,
-        controllerAs: 'lookupDatagridHeaderCtrl',
-        controller: 'LookupDatagridHeaderCtrl',
-        link: (scope, iElement) => {
-            let addToLookupDiv;
-            let addToLookupCheckbox;
-            $timeout(() => {
-                addToLookupDiv = iElement.find('.add-to-lookup');
-                addToLookupDiv.on('click', (e) => {
-                    e.stopPropagation();
-                    addToLookupCheckbox = addToLookupDiv.find('input[type=checkbox]');
-                    if (addToLookupCheckbox) {
-                        addToLookupCheckbox.click();
-                    }
-                });
-            }, 250, false);
-        },
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			column: '=',
+			added: '=',
+		},
+		bindToController: true,
+		controllerAs: 'lookupDatagridHeaderCtrl',
+		controller: 'LookupDatagridHeaderCtrl',
+		link: (scope, iElement) => {
+			let addToLookupDiv;
+			let addToLookupCheckbox;
+			$timeout(() => {
+				addToLookupDiv = iElement.find('.add-to-lookup');
+				addToLookupDiv.on('click', (e) => {
+					e.stopPropagation();
+					addToLookupCheckbox = addToLookupDiv.find('input[type=checkbox]');
+					if (addToLookupCheckbox) {
+						addToLookupCheckbox.click();
+					}
+				});
+			}, 250, false);
+		},
+	};
 }

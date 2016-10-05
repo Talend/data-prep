@@ -54,25 +54,25 @@ import template from './navbar.html';
  * @param {class} navigation-tools Tools (ex: search bar)
  */
 export default function TalendNavbar() {
-    return {
-        restrict: 'EA',
-        transclude: true,
-        templateUrl: template,
-        link: {
-            post: (scope, iElement) => {
-                const menuToggle = iElement.find('.navigation-menu-button').unbind();
-                const menu = iElement.find('.navigation-menu');
+	return {
+		restrict: 'EA',
+		transclude: true,
+		templateUrl: template,
+		link: {
+			post: (scope, iElement) => {
+				const menuToggle = iElement.find('.navigation-menu-button').unbind();
+				const menu = iElement.find('.navigation-menu');
 
-                menu.removeClass('show');
-                menuToggle.on('click', (e) => {
-                    e.preventDefault();
-                    iElement.find('.navigation-menu').slideToggle(() => {
-                        if (menu.css('display') === 'none') {
-                            menu.removeAttr('style');
-                        }
-                    });
-                });
-            },
-        },
-    };
+				menu.removeClass('show');
+				menuToggle.on('click', (e) => {
+					e.preventDefault();
+					iElement.find('.navigation-menu').slideToggle(() => {
+						if (menu.css('display') === 'none') {
+							menu.removeAttr('style');
+						}
+					});
+				});
+			},
+		},
+	};
 }

@@ -27,11 +27,11 @@ const HIGHLIGHT_CLASS = 'highlighted';
  * @requires data-prep.services.utils.service:ConverterService
  */
 export default class TransformationUtilsService {
-    constructor(TextFormatService, ConverterService) {
-        'ngInject';
-        this.ConverterService = ConverterService;
-        this.TextFormatService = TextFormatService;
-    }
+	constructor(TextFormatService, ConverterService) {
+		'ngInject';
+		this.ConverterService = ConverterService;
+		this.TextFormatService = TextFormatService;
+	}
 
     // ---------------------------------------------------------------------------------------------
     // ---------------------------------------TRANSFORMATIONS---------------------------------------
@@ -44,12 +44,12 @@ export default class TransformationUtilsService {
      * @description Remove 'column_id' and 'column_name' parameters (automatically sent),
      * and clean empty arrays (choices and params)
      */
-    cleanParams(menus) {
-        return forEach(menus, (menu) => {
-            const filteredParameters = filter(menu.parameters, (param) => !param.implicit);
-            menu.parameters = filteredParameters.length ? filteredParameters : null;
-        });
-    }
+	cleanParams(menus) {
+		return forEach(menus, (menu) => {
+			const filteredParameters = filter(menu.parameters, param => !param.implicit);
+			menu.parameters = filteredParameters.length ? filteredParameters : null;
+		});
+	}
 
     /**
      * @ngdoc method
@@ -58,26 +58,26 @@ export default class TransformationUtilsService {
      * @param {Array} transformation The transformation with parameters to adapt
      * @description Insert adapted html input type in each parameter in the menu
      */
-    insertType(transformation) {
-        if (!transformation.parameters) {
-            return;
-        }
+	insertType(transformation) {
+		if (!transformation.parameters) {
+			return;
+		}
 
-        forEach(transformation.parameters, (param) => {
-            param.inputType = this.ConverterService.toInputType(param.type);
+		forEach(transformation.parameters, (param) => {
+			param.inputType = this.ConverterService.toInputType(param.type);
 
             // also take care of select parameters...
-            if (param.type === 'select' && param.configuration && param.configuration.values) {
-                forEach(param.configuration.values, (selectItem) => {
-                    selectItem.inputType = this.ConverterService.toInputType(selectItem.type);
+			if (param.type === 'select' && param.configuration && param.configuration.values) {
+				forEach(param.configuration.values, (selectItem) => {
+					selectItem.inputType = this.ConverterService.toInputType(selectItem.type);
                     // ...and its parameters
-                    if (selectItem.parameters) {
-                        this.insertType(selectItem);
-                    }
-                });
-            }
-        });
-    }
+					if (selectItem.parameters) {
+						this.insertType(selectItem);
+					}
+				});
+			}
+		});
+	}
 
     /**
      * @ngdoc method
@@ -86,9 +86,9 @@ export default class TransformationUtilsService {
      * @param {Array} transformations The transformations with parameters to adapt
      * @description Insert parameter type to HTML input type in each transformations
      */
-    insertInputTypes(transformations) {
-        forEach(transformations, (transformation) => this.insertType(transformation));
-    }
+	insertInputTypes(transformations) {
+		forEach(transformations, transformation => this.insertType(transformation));
+	}
 
     /**
      * @ngdoc method
@@ -97,12 +97,12 @@ export default class TransformationUtilsService {
      * @description Inject the UI label in each transformations
      * @param {Array} transformations The list of transformations
      */
-    setHtmlDisplayLabels(transformations) {
-        forEach(transformations, (transfo) => {
-            transfo.labelHtml =
+	setHtmlDisplayLabels(transformations) {
+		forEach(transformations, (transfo) => {
+			transfo.labelHtml =
                 transfo.label + (transfo.parameters || transfo.dynamic ? '...' : '');
-        });
-    }
+		});
+	}
 
     /**
      * @ngdoc method
@@ -114,12 +114,12 @@ export default class TransformationUtilsService {
      * - init html labels
      * @param {Array} transformations The list of transformations
      */
-    adaptTransformations(transformations) {
-        const allTransformations = this.cleanParams(transformations);
-        this.insertInputTypes(allTransformations);
-        this.setHtmlDisplayLabels(allTransformations);
-        return allTransformations;
-    }
+	adaptTransformations(transformations) {
+		const allTransformations = this.cleanParams(transformations);
+		this.insertInputTypes(allTransformations);
+		this.setHtmlDisplayLabels(allTransformations);
+		return allTransformations;
+	}
 
     /**
      * @ngdoc method
@@ -131,25 +131,25 @@ export default class TransformationUtilsService {
      * "categoryHtml" the adapted category for UI
      * "transformations" the array of transformations for this category
      */
-    sortAndGroupByCategory(transformations) {
-        const groupedTransformations = chain(transformations)
+	sortAndGroupByCategory(transformations) {
+		const groupedTransformations = chain(transformations)
         // is not "column" category
-            .filter((transfo) => transfo.category !== COLUMN_CATEGORY)
-            .sortBy((transfo) => transfo.label.toLowerCase())
+            .filter(transfo => transfo.category !== COLUMN_CATEGORY)
+            .sortBy(transfo => transfo.label.toLowerCase())
             .groupBy(CATEGORY)
             .value();
 
-        return chain(Object.getOwnPropertyNames(groupedTransformations))
-            .sortBy((key) => key.toLowerCase())
+		return chain(Object.getOwnPropertyNames(groupedTransformations))
+            .sortBy(key => key.toLowerCase())
             .map((key) => {
-                return {
-                    category: key,
-                    categoryHtml: key.toUpperCase(),
-                    transformations: groupedTransformations[key],
-                };
-            })
+	return {
+		category: key,
+		categoryHtml: key.toUpperCase(),
+		transformations: groupedTransformations[key],
+	};
+})
             .value();
-    }
+	}
 
     // ---------------------------------------------------------------------------------------------
     // ------------------------------------------CATEGORIES-----------------------------------------
@@ -166,36 +166,36 @@ export default class TransformationUtilsService {
      * @param categories All the categories
      * @returns {Array} The array containing all the categories
      */
-    adaptCategories(suggestions, categories) {
-        const {
+	adaptCategories(suggestions, categories) {
+		const {
             filterCategory,
             otherCategories,
         } = this.popFilteredCategory(categories);
 
-        const filterTransformations = filterCategory ? filterCategory.transformations : [];
-        const suggestionsCategory = {
-            category: SUGGESTION_CATEGORY,
-            categoryHtml: SUGGESTION_CATEGORY.toUpperCase(),
-            transformations: filterTransformations.concat(suggestions),
-        };
+		const filterTransformations = filterCategory ? filterCategory.transformations : [];
+		const suggestionsCategory = {
+			category: SUGGESTION_CATEGORY,
+			categoryHtml: SUGGESTION_CATEGORY.toUpperCase(),
+			transformations: filterTransformations.concat(suggestions),
+		};
 
-        return [suggestionsCategory].concat(otherCategories);
-    }
+		return [suggestionsCategory].concat(otherCategories);
+	}
 
     /**
      * Extract "filtered" category.
      * @param categories The categories
      * @returns {{filterCategory: *, otherCategories: *}}
      */
-    popFilteredCategory(categories) {
-        const filterCategory = find(categories, { category: FILTERED_CATEGORY });
+	popFilteredCategory(categories) {
+		const filterCategory = find(categories, { category: FILTERED_CATEGORY });
 
-        const otherCategories = filter(categories, (item) => {
-            return item.category !== FILTERED_CATEGORY;
-        });
+		const otherCategories = filter(categories, (item) => {
+			return item.category !== FILTERED_CATEGORY;
+		});
 
-        return { filterCategory, otherCategories };
-    }
+		return { filterCategory, otherCategories };
+	}
 
     // ---------------------------------------------------------------------------------------------
     // ------------------------------------------FILTER---------------------------------------------
@@ -206,35 +206,35 @@ export default class TransformationUtilsService {
      * @param search The search term
      * @returns {function} The predicate closure
      */
-    transfosMatchSearch(search) {
-        return (transfo) => {
-            return transfo.labelHtml.toLowerCase().indexOf(search) !== -1 ||
+	transfosMatchSearch(search) {
+		return (transfo) => {
+			return transfo.labelHtml.toLowerCase().indexOf(search) !== -1 ||
                 transfo.description.toLowerCase().indexOf(search) !== -1;
-        };
-    }
+		};
+	}
 
     /**
      * Create a closure that filter the transformations within a category
      * @param search The search term
      * @returns {function} the filter closure
      */
-    extractTransfosThatMatch(search) {
-        return (categoryItem) => {
-            const { category, transformations } = categoryItem;
+	extractTransfosThatMatch(search) {
+		return (categoryItem) => {
+			const { category, transformations } = categoryItem;
 
             // category matches : display all this category transformations
             // category does NOT match : filter to only have matching displayed label or description
-            const filteredTransformations = category.toLowerCase().indexOf(search) !== -1 ?
+			const filteredTransformations = category.toLowerCase().indexOf(search) !== -1 ?
                 transformations :
                 filter(transformations, this.transfosMatchSearch(search));
 
-            return {
-                category,
-                categoryHtml: category.toUpperCase(),
-                transformations: filteredTransformations,
-            };
-        };
-    }
+			return {
+				category,
+				categoryHtml: category.toUpperCase(),
+				transformations: filteredTransformations,
+			};
+		};
+	}
 
     /**
      * Create a closure that highlight a search term in the labelHtml field of
@@ -242,30 +242,30 @@ export default class TransformationUtilsService {
      * @param search The search term
      * @returns {function} The mapping closure
      */
-    highlightDisplayedLabels(search) {
-        return (category) => {
-            const highlightedCategoryName = this.TextFormatService.highlightWords(
+	highlightDisplayedLabels(search) {
+		return (category) => {
+			const highlightedCategoryName = this.TextFormatService.highlightWords(
                 category.categoryHtml,
                 search,
                 HIGHLIGHT_CLASS
             );
 
-            const highlightedTransformations = map(category.transformations, (transfo) => {
-                return {
-                    ...transfo,
-                    labelHtml: this.TextFormatService.highlightWords(
+			const highlightedTransformations = map(category.transformations, (transfo) => {
+				return {
+					...transfo,
+					labelHtml: this.TextFormatService.highlightWords(
                         transfo.labelHtml,
                         search,
                         HIGHLIGHT_CLASS
                     ),
-                };
-            });
+				};
+			});
 
-            return {
-                ...category,
-                categoryHtml: highlightedCategoryName,
-                transformations: highlightedTransformations,
-            };
-        };
-    }
+			return {
+				...category,
+				categoryHtml: highlightedCategoryName,
+				transformations: highlightedTransformations,
+			};
+		};
+	}
 }

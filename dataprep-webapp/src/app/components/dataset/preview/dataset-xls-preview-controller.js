@@ -24,10 +24,10 @@
 export default function DatasetXlsPreviewCtrl($timeout, $state, state,
     DatasetSheetPreviewService, DatasetService,
     PlaygroundService, StateService, PreparationService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.datasetSheetPreviewService = DatasetSheetPreviewService;
+	const vm = this;
+	vm.datasetSheetPreviewService = DatasetSheetPreviewService;
 
     /**
      * @ngdoc method
@@ -37,22 +37,22 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
      * The service will provide the data in it.
      * This is called at controller creation
      */
-    vm.initGrid = function () {
-        const options = {
-            enableColumnReorder: false,
-            editable: false,
-            enableAddRow: false,
-            enableCellNavigation: true,
-            enableTextSelectionOnCells: false,
-        };
+	vm.initGrid = function () {
+		const options = {
+			enableColumnReorder: false,
+			editable: false,
+			enableAddRow: false,
+			enableCellNavigation: true,
+			enableTextSelectionOnCells: false,
+		};
 
-        DatasetSheetPreviewService.grid = new Slick.Grid(
+		DatasetSheetPreviewService.grid = new Slick.Grid(
             '#datasetSheetPreviewGrid',
             [],
             [],
             options
         );
-    };
+	};
 
     /**
      * @ngdoc method
@@ -60,9 +60,9 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
      * @methodOf data-prep.dataset-xls-preview.controller:DatasetPreviewXlsCtrl
      * @description Load a sheet preview in the grid
      */
-    vm.selectSheet = function selectSheet() {
-        return DatasetSheetPreviewService.loadSheet(vm.selectedSheetName);
-    };
+	vm.selectSheet = function selectSheet() {
+		return DatasetSheetPreviewService.loadSheet(vm.selectedSheetName);
+	};
 
     /**
      * @ngdoc method
@@ -70,14 +70,14 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
      * @methodOf data-prep.dataset-xls-preview.controller:DatasetPreviewXlsCtrl
      * @description Disable dataset Sheet confirm button
      */
-    vm.disableDatasetSheetConfirm = function disableDatasetSheetConfirm() {
-        if (DatasetSheetPreviewService.addPreparation) {
-            return _.some(state.inventory.folder.content.preparations, { name: vm.metadata.name });
-        }
-        else {
-            return false;
-        }
-    };
+	vm.disableDatasetSheetConfirm = function disableDatasetSheetConfirm() {
+		if (DatasetSheetPreviewService.addPreparation) {
+			return _.some(state.inventory.folder.content.preparations, { name: vm.metadata.name });
+		}
+		else {
+			return false;
+		}
+	};
 
 
     /**
@@ -86,29 +86,29 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
      * @methodOf data-prep.dataset-xls-preview.controller:DatasetPreviewXlsCtrl
      * @description Set the sheet in the dataset, update the dataset list, and hide the modal
      */
-    vm.setDatasetSheet = function () {
-        DatasetSheetPreviewService.setDatasetSheet(vm.selectedSheetName)
+	vm.setDatasetSheet = function () {
+		DatasetSheetPreviewService.setDatasetSheet(vm.selectedSheetName)
             .then(() => {
-                vm.visible = false;
-            })
+	vm.visible = false;
+})
             .then(() => {
-                if (DatasetSheetPreviewService.addPreparation) {
-                    PreparationService
+	if (DatasetSheetPreviewService.addPreparation) {
+		PreparationService
                         .create(
                             vm.metadata.id,
                             DatasetSheetPreviewService.preparationName,
                             state.inventory.folder.metadata.id
                     )
-                        .then(prepid => {
-                            $state.go('playground.preparation', { prepid });
-                        });
-                }
-                else {
-                    StateService.setPreviousRoute('nav.index.datasets');
-                    $state.go('playground.dataset', { datasetid: vm.metadata.id });
-                }
-            });
-    };
+                        .then((prepid) => {
+	$state.go('playground.preparation', { prepid });
+});
+	}
+	else {
+		StateService.setPreviousRoute('nav.index.datasets');
+		$state.go('playground.dataset', { datasetid: vm.metadata.id });
+	}
+});
+	};
 }
 
 /**
@@ -120,16 +120,16 @@ export default function DatasetXlsPreviewCtrl($timeout, $state, state,
  */
 Object.defineProperty(DatasetXlsPreviewCtrl.prototype,
     'visible', {
-        enumerable: true,
-        configurable: false,
-        get() {
-            return this.datasetSheetPreviewService.showModal;
-        },
+	enumerable: true,
+	configurable: false,
+	get() {
+		return this.datasetSheetPreviewService.showModal;
+	},
 
-        set(value) {
-            this.datasetSheetPreviewService.showModal = value;
-        },
-    });
+	set(value) {
+		this.datasetSheetPreviewService.showModal = value;
+	},
+});
 
 /**
  * @ngdoc property
@@ -140,12 +140,12 @@ Object.defineProperty(DatasetXlsPreviewCtrl.prototype,
  */
 Object.defineProperty(DatasetXlsPreviewCtrl.prototype,
     'metadata', {
-        enumerable: true,
-        configurable: false,
-        get() {
-            return this.datasetSheetPreviewService.currentMetadata;
-        },
-    });
+	enumerable: true,
+	configurable: false,
+	get() {
+		return this.datasetSheetPreviewService.currentMetadata;
+	},
+});
 
 /**
  * @ngdoc property
@@ -156,13 +156,13 @@ Object.defineProperty(DatasetXlsPreviewCtrl.prototype,
  */
 Object.defineProperty(DatasetXlsPreviewCtrl.prototype,
     'selectedSheetName', {
-        enumerable: true,
-        configurable: false,
-        get() {
-            return this.datasetSheetPreviewService.selectedSheetName;
-        },
+	enumerable: true,
+	configurable: false,
+	get() {
+		return this.datasetSheetPreviewService.selectedSheetName;
+	},
 
-        set(newValue) {
-            this.datasetSheetPreviewService.selectedSheetName = newValue;
-        },
-    });
+	set(newValue) {
+		this.datasetSheetPreviewService.selectedSheetName = newValue;
+	},
+});

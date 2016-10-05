@@ -31,12 +31,12 @@ const MODULE_NAME = 'data-prep.actions-suggestions';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        uiRouter,
-        TALEND_WIDGET_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_TRANSFORMATION_MODULE,
-    ])
+	[
+		uiRouter,
+		TALEND_WIDGET_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_TRANSFORMATION_MODULE,
+	])
     .controller('ActionsSuggestionsCtrl', ActionsSuggestionsCtrl)
     .directive('actionsSuggestions', ActionsSuggestions);
 

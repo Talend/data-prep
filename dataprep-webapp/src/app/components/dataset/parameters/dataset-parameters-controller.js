@@ -17,7 +17,7 @@
  * @description Dataset parameters controller
  */
 export default function DatasetParametersCtrl() {
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc method
@@ -25,10 +25,10 @@ export default function DatasetParametersCtrl() {
      * @methodOf data-prep.dataset-parameters.controller:DatasetParametersCtrl
      * @description Check if the current separator is in the list of separators
      */
-    vm.separatorIsInList = function separatorIsInList() {
-        return vm.parameters.separator &&
+	vm.separatorIsInList = function separatorIsInList() {
+		return vm.parameters.separator &&
             _.find(vm.configuration.separators, { value: vm.parameters.separator });
-    };
+	};
 
     /**
      * @ngdoc method
@@ -36,10 +36,10 @@ export default function DatasetParametersCtrl() {
      * @methodOf data-prep.dataset-parameters.controller:DatasetParametersCtrl
      * @description Call the parameter change validation callback
      */
-    vm.validate = function validate() {
-        vm.onParametersChange({
-            dataset: vm.dataset,
-            parameters: vm.parameters,
-        });
-    };
+	vm.validate = function validate() {
+		vm.onParametersChange({
+			dataset: vm.dataset,
+			parameters: vm.parameters,
+		});
+	};
 }

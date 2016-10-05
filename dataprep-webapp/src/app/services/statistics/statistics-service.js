@@ -11,10 +11,13 @@
 
  ============================================================================*/
 
+import _ from 'lodash';
+
+/* eslint-disable import/no-extraneous-dependencies */
 const DateOccurrenceWorker = require('worker!./date-occurence.worker');
 const PatternOccurrenceWorker = require('worker!./pattern-occurence.worker');
+/* eslint-enable import/no-extraneous-dependencies */
 
-import _ from 'lodash';
 
 /**
  * @ngdoc service
@@ -33,26 +36,26 @@ export default function StatisticsService($q, $log, $filter, state, StateService
                                           StepUtilsService, StatisticsRestService,
                                           ConverterService, FilterAdapterService, TextFormatService,
                                           StorageService) {
-    'ngInject';
+	'ngInject';
 
-    const service = {
-        dateWorker: null,
-        patternWorker: null,
+	const service = {
+		dateWorker: null,
+		patternWorker: null,
 
         // update range
-        initRangeLimits,
+		initRangeLimits,
 
         // filters
-        getRangeFilterRemoveFn,
+		getRangeFilterRemoveFn,
 
         // statistics entry points
-        processAggregation,             // aggregation charts
-        processClassicChart,           // classic charts (not aggregation)
-        updateStatistics,                 // update all stats (values, charts)
-        updateFilteredStatistics, // update filtered entries stats
-        reset,                                       // reset charts/statistics/cache
-    };
-    return service;
+		processAggregation,             // aggregation charts
+		processClassicChart,           // classic charts (not aggregation)
+		updateStatistics,                 // update all stats (values, charts)
+		updateFilteredStatistics, // update filtered entries stats
+		reset,                                       // reset charts/statistics/cache
+	};
+	return service;
 
     //
     // BELOW ARE ALL THE STATISTICS TABS FUNCTIONS FOR (1-CHART, 2-VALUES, 3-PATTERN, 4-OTHERS)
@@ -72,17 +75,17 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @param {string} className The bar class name
      * @description Create a records frequency ranges table that fit the histogram format
      */
-    function initHorizontalHistogram(keyField, valueField, label, data, className) {
-        return {
-            data,
-            label,
-            keyField,
-            valueField,
-            column: state.playground.grid.selectedColumns[0],
-            vertical: false,
-            className,
-        };
-    }
+	function initHorizontalHistogram(keyField, valueField, label, data, className) {
+		return {
+			data,
+			label,
+			keyField,
+			valueField,
+			column: state.playground.grid.selectedColumns[0],
+			vertical: false,
+			className,
+		};
+	}
 
     /**
      * @ngdoc method
@@ -94,16 +97,16 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @param {Array} data The data to display
      * @description Create a records frequency ranges table that fit the histogram format
      */
-    function initVerticalHistogram(keyField, valueField, label, data) {
-        return {
-            data,
-            keyField,
-            valueField,
-            label,
-            column: state.playground.grid.selectedColumns[0],
-            vertical: true,
-        };
-    }
+	function initVerticalHistogram(keyField, valueField, label, data) {
+		return {
+			data,
+			keyField,
+			valueField,
+			label,
+			column: state.playground.grid.selectedColumns[0],
+			vertical: true,
+		};
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ------------------------------------------ 1.2 Number Range barcharts ----------------------------------------
@@ -117,22 +120,22 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Compute The filtered records that fullfill the given predicate
      * @returns {number} The Number of records
      */
-    function getRangeFilteredOccurrence(min, max) {
-        return _.chain(state.playground.grid.filteredOccurences)
+	function getRangeFilteredOccurrence(min, max) {
+		return _.chain(state.playground.grid.filteredOccurences)
             .keys()
             .filter(function (value) {
-                const numberValue = Number(value);
-                return !isNaN(numberValue) &&
+	const numberValue = Number(value);
+	return !isNaN(numberValue) &&
                     ((numberValue === min) || (numberValue > min && numberValue < max));
-            })
+})
             .map(function (key) {
-                return state.playground.grid.filteredOccurences[key];
-            })
+	return state.playground.grid.filteredOccurences[key];
+})
             .reduce(function (accu, value) {
-                return accu + value;
-            }, 0)
+	return accu + value;
+}, 0)
             .value();
-    }
+	}
 
     /**
      * @ngdoc method
@@ -141,38 +144,38 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @return {Object} containing the original and the filtered data
      * @description prepares the numeric data details
      */
-    function createNumberRangeHistograms() {
-        const histoData = state.playground.grid.selectedColumns[0].statistics.histogram;
-        if (!histoData) {
-            return;
-        }
+	function createNumberRangeHistograms() {
+		const histoData = state.playground.grid.selectedColumns[0].statistics.histogram;
+		if (!histoData) {
+			return;
+		}
 
-        const rangeData = [];
-        const filteredRangeData = [];
-        _.forEach(histoData.items, function (histDatum) {
-            const min = histDatum.range.min;
-            const max = histDatum.range.max;
-            const range = {
-                type: 'number',
-                min,
-                max,
-            };
+		const rangeData = [];
+		const filteredRangeData = [];
+		_.forEach(histoData.items, function (histDatum) {
+			const min = histDatum.range.min;
+			const max = histDatum.range.max;
+			const range = {
+				type: 'number',
+				min,
+				max,
+			};
 
-            rangeData.push({
-                data: range,
-                occurrences: histDatum.occurrences,
-            });
-            filteredRangeData.push({
-                data: range,
-                filteredOccurrences: state.playground.filter.gridFilters.length ? getRangeFilteredOccurrence(min, max) : histDatum.occurrences,
-            });
-        });
+			rangeData.push({
+				data: range,
+				occurrences: histDatum.occurrences,
+			});
+			filteredRangeData.push({
+				data: range,
+				filteredOccurrences: state.playground.filter.gridFilters.length ? getRangeFilteredOccurrence(min, max) : histDatum.occurrences,
+			});
+		});
 
-        return {
-            histogram: initVerticalHistogram('data', 'occurrences', 'Occurrences', rangeData),
-            filteredHistogram: initVerticalHistogram('data', 'filteredOccurrences', 'Filtered Occurrences', filteredRangeData),
-        };
-    }
+		return {
+			histogram: initVerticalHistogram('data', 'occurrences', 'Occurrences', rangeData),
+			filteredHistogram: initVerticalHistogram('data', 'filteredOccurrences', 'Filtered Occurrences', filteredRangeData),
+		};
+	}
 
     /**
      * @ngdoc method
@@ -180,13 +183,13 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Adapt the numeric range data to fit histogram format
      */
-    function initRangeHistogram() {
-        const histograms = createNumberRangeHistograms();
-        if (histograms) {
-            StateService.setStatisticsHistogram(histograms.histogram);
-            StateService.setStatisticsFilteredHistogram(histograms.filteredHistogram);
-        }
-    }
+	function initRangeHistogram() {
+		const histograms = createNumberRangeHistograms();
+		if (histograms) {
+			StateService.setStatisticsHistogram(histograms.histogram);
+			StateService.setStatisticsFilteredHistogram(histograms.filteredHistogram);
+		}
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ------------------------------------------ 1.2 bis Number Range limits ---------------------------------------
@@ -198,17 +201,17 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Get the corresponding value within [min, max] interval.
      * If the value is not in the interval, we return min or max if it is under min or above max respectively
      */
-    function getValueWithinRange(value, min, max) {
-        if (value < min) {
-            return min;
-        }
+	function getValueWithinRange(value, min, max) {
+		if (value < min) {
+			return min;
+		}
 
-        if (value > max) {
-            return max;
-        }
+		if (value > max) {
+			return max;
+		}
 
-        return value;
-    }
+		return value;
+	}
 
     /**
      * @ngdoc method
@@ -217,60 +220,60 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Set the range slider limits to update the rangeSlider handlers
      * and the active/inactive bars of the vertical barchart
      */
-    function initRangeLimits() {
-        if (!state.playground.statistics.histogram) {
-            return;
-        }
+	function initRangeLimits() {
+		if (!state.playground.statistics.histogram) {
+			return;
+		}
 
-        const column = state.playground.grid.selectedColumns[0];
-        const statistics = column.statistics;
-        const currentRangeFilter = _.find(state.playground.filter.gridFilters, function (filter) {
-            return filter.colId === column.id && filter.type === 'inside_range';
-        });
+		const column = state.playground.grid.selectedColumns[0];
+		const statistics = column.statistics;
+		const currentRangeFilter = _.find(state.playground.filter.gridFilters, function (filter) {
+			return filter.colId === column.id && filter.type === 'inside_range';
+		});
 
-        let rangeLimits;
-        if (state.playground.grid.selectedColumns[0].type === 'date') {
-            const firstHistogramItem = _.first(state.playground.grid.selectedColumns[0].statistics.histogram.items);
-            const lastHistogramItem = _.last(state.playground.grid.selectedColumns[0].statistics.histogram.items);
-            rangeLimits = {
-                min: firstHistogramItem.range.min,
-                max: lastHistogramItem.range.max,
-            };
-        }
-        else {
-            rangeLimits = {
-                min: statistics.min,
-                max: statistics.max,
-            };
-        }
+		let rangeLimits;
+		if (state.playground.grid.selectedColumns[0].type === 'date') {
+			const firstHistogramItem = _.first(state.playground.grid.selectedColumns[0].statistics.histogram.items);
+			const lastHistogramItem = _.last(state.playground.grid.selectedColumns[0].statistics.histogram.items);
+			rangeLimits = {
+				min: firstHistogramItem.range.min,
+				max: lastHistogramItem.range.max,
+			};
+		}
+		else {
+			rangeLimits = {
+				min: statistics.min,
+				max: statistics.max,
+			};
+		}
 
-        rangeLimits.type = state.playground.grid.selectedColumns[0].type;
+		rangeLimits.type = state.playground.grid.selectedColumns[0].type;
 
-        if (currentRangeFilter) {
-            const currentRangeFilterIntervals = currentRangeFilter.args.intervals;
-            const { filterMin, filterMax } = currentRangeFilterIntervals.reduce(
+		if (currentRangeFilter) {
+			const currentRangeFilterIntervals = currentRangeFilter.args.intervals;
+			const { filterMin, filterMax } = currentRangeFilterIntervals.reduce(
                 (accu, interval) => {
-                    const [intervalMin, intervalMax] = interval.value;
-                    return {
-                        filterMin: Math.min(accu.filterMin, intervalMin),
-                        filterMax: Math.max(accu.filterMax, intervalMax),
-                    };
-                },
+	const [intervalMin, intervalMax] = interval.value;
+	return {
+		filterMin: Math.min(accu.filterMin, intervalMin),
+		filterMax: Math.max(accu.filterMax, intervalMax),
+	};
+},
 
                 { filterMin: Infinity, filterMax: -Infinity }
             );
 
-            rangeLimits.minFilterVal = filterMin;
-            rangeLimits.maxFilterVal = filterMax;
+			rangeLimits.minFilterVal = filterMin;
+			rangeLimits.maxFilterVal = filterMax;
 
-            rangeLimits.minBrush = getValueWithinRange(filterMin, rangeLimits.min, rangeLimits.max);
-            rangeLimits.maxBrush = getValueWithinRange(filterMax, rangeLimits.min, rangeLimits.max);
+			rangeLimits.minBrush = getValueWithinRange(filterMin, rangeLimits.min, rangeLimits.max);
+			rangeLimits.maxBrush = getValueWithinRange(filterMax, rangeLimits.min, rangeLimits.max);
 
-            StateService.setStatisticsHistogramActiveLimits([rangeLimits.minBrush, rangeLimits.maxBrush]);
-        }
+			StateService.setStatisticsHistogramActiveLimits([rangeLimits.minBrush, rangeLimits.maxBrush]);
+		}
 
-        StateService.setStatisticsRangeLimits(rangeLimits);
-    }
+		StateService.setStatisticsRangeLimits(rangeLimits);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- 1.3 Date Range barcharts ----------------------------------------
@@ -281,32 +284,32 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description prepares the date data to be visualized
      */
-    function createDateRangeHistogram() {
-        const histoData = state.playground.grid.selectedColumns[0].statistics.histogram;
-        if (!histoData) {
-            return;
-        }
+	function createDateRangeHistogram() {
+		const histoData = state.playground.grid.selectedColumns[0].statistics.histogram;
+		if (!histoData) {
+			return;
+		}
 
-        const dateRangeData = _.map(histoData.items, function (histDatum) {
+		const dateRangeData = _.map(histoData.items, function (histDatum) {
             // range are UTC dates. We convert them to local zone date, so the app date manipulation is easier.
-            const minDate = new Date(histDatum.range.min);
-            minDate.setTime(minDate.getTime() + (minDate.getTimezoneOffset() * 60 * 1000));
-            const maxDate = new Date(histDatum.range.max);
-            maxDate.setTime(maxDate.getTime() + (maxDate.getTimezoneOffset() * 60 * 1000));
+			const minDate = new Date(histDatum.range.min);
+			minDate.setTime(minDate.getTime() + (minDate.getTimezoneOffset() * 60 * 1000));
+			const maxDate = new Date(histDatum.range.max);
+			maxDate.setTime(maxDate.getTime() + (maxDate.getTimezoneOffset() * 60 * 1000));
 
-            return {
-                data: {
-                    type: 'date',
-                    label: getDateLabel(histoData.pace, minDate, maxDate),
-                    min: minDate.getTime(),
-                    max: maxDate.getTime(),
-                },
-                occurrences: histDatum.occurrences,
-            };
-        });
+			return {
+				data: {
+					type: 'date',
+					label: getDateLabel(histoData.pace, minDate, maxDate),
+					min: minDate.getTime(),
+					max: maxDate.getTime(),
+				},
+				occurrences: histDatum.occurrences,
+			};
+		});
 
-        return initVerticalHistogram('data', 'occurrences', 'Occurrences', dateRangeData);
-    }
+		return initVerticalHistogram('data', 'occurrences', 'Occurrences', dateRangeData);
+	}
 
     /**
      * @ngdoc method
@@ -314,16 +317,16 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Adapt the date range data to fit histogram format
      */
-    function initDateRangeHistogram() {
-        const dateRangeData = createDateRangeHistogram();
-        if (dateRangeData) {
-            StateService.setStatisticsHistogram(dateRangeData);
-            return createFilteredDateRangeHistogram()
+	function initDateRangeHistogram() {
+		const dateRangeData = createDateRangeHistogram();
+		if (dateRangeData) {
+			StateService.setStatisticsHistogram(dateRangeData);
+			return createFilteredDateRangeHistogram()
                 .then((filteredDateRangeHistogram) => {
-                    StateService.setStatisticsFilteredHistogram(filteredDateRangeHistogram);
-                });
-        }
-    }
+	StateService.setStatisticsFilteredHistogram(filteredDateRangeHistogram);
+});
+		}
+	}
 
     /**
      * @ngdoc method
@@ -332,32 +335,32 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @params {Object} dateRangeData containing the data and the patterns
      * @description Use a Worker to compute the date FilteredHistogram
      */
-    function createFilteredDateRangeHistogram() {
-        const parameters = {
-            rangeData: state.playground.statistics.histogram.data,
-            patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
+	function createFilteredDateRangeHistogram() {
+		const parameters = {
+			rangeData: state.playground.statistics.histogram.data,
+			patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
                 .pluck('pattern')
                 .map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
                 .value(),
-            filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null,
-        };
+			filteredOccurrences: state.playground.filter.gridFilters.length ? state.playground.grid.filteredOccurences : null,
+		};
 
-        const defer = $q.defer();
-        const dateWorker = new DateOccurrenceWorker();
-        dateWorker.onmessage = (event) => {
-            const filteredRangeData = event.data;
-            const histo = initVerticalHistogram('data', 'filteredOccurrences', 'Filtered Occurrences', filteredRangeData);
-            defer.resolve(histo);
-        };
+		const defer = $q.defer();
+		const dateWorker = new DateOccurrenceWorker();
+		dateWorker.onmessage = (event) => {
+			const filteredRangeData = event.data;
+			const histo = initVerticalHistogram('data', 'filteredOccurrences', 'Filtered Occurrences', filteredRangeData);
+			defer.resolve(histo);
+		};
 
-        dateWorker.onerror = (error) => {
-            defer.reject(error);
-        };
+		dateWorker.onerror = (error) => {
+			defer.reject(error);
+		};
 
-        dateWorker.postMessage(parameters);
-        service.dateWorker = dateWorker;
-        return defer.promise;
-    }
+		dateWorker.postMessage(parameters);
+		service.dateWorker = dateWorker;
+		return defer.promise;
+	}
 
     /**
      * @ngdoc method
@@ -367,24 +370,24 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @param {Date} startDate The range starting date
      * @description Returns the date pattern that fit the pace at the starting date
      */
-    function getDateFormat(pace, startDate) {
-        switch (pace) {
-        case 'CENTURY':
-        case 'DECADE':
-        case 'YEAR':
-            return 'yyyy';
-        case 'HALF_YEAR':
-            return '\'H\'' + (startDate.getMonth() / 6 + 1) + ' yyyy';
-        case 'QUARTER':
-            return 'Q' + (startDate.getMonth() / 3 + 1) + ' yyyy';
-        case 'MONTH':
-            return 'MMM yyyy';
-        case 'WEEK':
-            return 'Www yyyy';
-        default:
-            return 'mediumDate';
-        }
-    }
+	function getDateFormat(pace, startDate) {
+		switch (pace) {
+		case 'CENTURY':
+		case 'DECADE':
+		case 'YEAR':
+			return 'yyyy';
+		case 'HALF_YEAR':
+			return '\'H\'' + ((startDate.getMonth() / 6) + 1) + ' yyyy';
+		case 'QUARTER':
+			return 'Q' + ((startDate.getMonth() / 3) + 1) + ' yyyy';
+		case 'MONTH':
+			return 'MMM yyyy';
+		case 'WEEK':
+			return 'Www yyyy';
+		default:
+			return 'mediumDate';
+		}
+	}
 
     /**
      * @ngdoc method
@@ -395,22 +398,22 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @param {Date} maxDate The range ending date
      * @description Returns the range label
      */
-    function getDateLabel(pace, minDate, maxDate) {
-        const dateFilter = $filter('date');
-        const format = getDateFormat(pace, minDate);
+	function getDateLabel(pace, minDate, maxDate) {
+		const dateFilter = $filter('date');
+		const format = getDateFormat(pace, minDate);
 
-        switch (pace) {
-        case 'YEAR':
-        case 'HALF_YEAR':
-        case 'QUARTER':
-        case 'MONTH':
-        case 'WEEK':
-        case 'DAY':
-            return dateFilter(minDate, format);
-        default:
-            return '[' + dateFilter(minDate, format) + ', ' + dateFilter(maxDate, format) + '[';
-        }
-    }
+		switch (pace) {
+		case 'YEAR':
+		case 'HALF_YEAR':
+		case 'QUARTER':
+		case 'MONTH':
+		case 'WEEK':
+		case 'DAY':
+			return dateFilter(minDate, format);
+		default:
+			return '[' + dateFilter(minDate, format) + ', ' + dateFilter(maxDate, format) + '[';
+		}
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- 1.4 Classical barcharts -----------------------------------------
@@ -423,9 +426,9 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Get the occurrence of the provided value
      * @returns {number} The Number of records
      */
-    function getClassicFilteredOccurrence(value) {
-        return state.playground.grid.filteredOccurences[value] || 0;
-    }
+	function getClassicFilteredOccurrence(value) {
+		return state.playground.grid.filteredOccurences[value] || 0;
+	}
 
     /**
      * @ngdoc method
@@ -433,13 +436,13 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Set the frequency table that fit the histogram format (filter is managed in frontend)
      */
-    function initClassicHistogram() {
-        const histograms = createClassicHistograms();
-        if (histograms) {
-            StateService.setStatisticsHistogram(histograms.histogram);
-            StateService.setStatisticsFilteredHistogram(histograms.filteredHistogram);
-        }
-    }
+	function initClassicHistogram() {
+		const histograms = createClassicHistograms();
+		if (histograms) {
+			StateService.setStatisticsHistogram(histograms.histogram);
+			StateService.setStatisticsFilteredHistogram(histograms.filteredHistogram);
+		}
+	}
 
     /**
      * @ngdoc method
@@ -448,37 +451,37 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description prepares the frequency data
      * @return {Object} The classical and filtered histograms
      */
-    function createClassicHistograms() {
-        const dataTable = state.playground.grid.selectedColumns[0].statistics.frequencyTable;
-        if (!dataTable || !dataTable.length) {
-            return;
-        }
+	function createClassicHistograms() {
+		const dataTable = state.playground.grid.selectedColumns[0].statistics.frequencyTable;
+		if (!dataTable || !dataTable.length) {
+			return;
+		}
 
-        const keyField = 'formattedValue';
-        const filteredValueField = 'filteredOccurrences';
-        const valueField = 'occurrences';
-        const adaptedData = [];
-        const adaptedFilteredData = [];
-        _.forEach(dataTable, function (rec) {
-            const formattedValue = TextFormatService.adaptToGridConstraints(rec.data);
+		const keyField = 'formattedValue';
+		const filteredValueField = 'filteredOccurrences';
+		const valueField = 'occurrences';
+		const adaptedData = [];
+		const adaptedFilteredData = [];
+		_.forEach(dataTable, function (rec) {
+			const formattedValue = TextFormatService.adaptToGridConstraints(rec.data);
 
-            const item = {};
-            item[keyField] = formattedValue;
-            item[valueField] = rec[valueField];
-            item.data = rec.data;
-            adaptedData.push(item);
+			const item = {};
+			item[keyField] = formattedValue;
+			item[valueField] = rec[valueField];
+			item.data = rec.data;
+			adaptedData.push(item);
 
-            const filteredItem = {};
-            filteredItem[keyField] = formattedValue;
-            filteredItem[filteredValueField] = getClassicFilteredOccurrence(rec.data);
-            adaptedFilteredData.push(filteredItem);
-        });
+			const filteredItem = {};
+			filteredItem[keyField] = formattedValue;
+			filteredItem[filteredValueField] = getClassicFilteredOccurrence(rec.data);
+			adaptedFilteredData.push(filteredItem);
+		});
 
-        return {
-            histogram: initHorizontalHistogram(keyField, valueField, 'Occurrences', adaptedData, null),
-            filteredHistogram: initHorizontalHistogram(keyField, filteredValueField, null, adaptedFilteredData, 'blueBar'),
-        };
-    }
+		return {
+			histogram: initHorizontalHistogram(keyField, valueField, 'Occurrences', adaptedData, null),
+			filteredHistogram: initHorizontalHistogram(keyField, filteredValueField, null, adaptedFilteredData, 'blueBar'),
+		};
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- 1.5 Aggregation barcharts ---------------------------------------
@@ -492,15 +495,15 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @param {Array} data The data to display
      * @description Create the histogram format for aggregation (filter is managed in backend)
      */
-    function getAggregationHistogram(valueField, label, data) {
-        const keyField = 'formattedValue';
+	function getAggregationHistogram(valueField, label, data) {
+		const keyField = 'formattedValue';
 
-        _.forEach(data, function (rec) {
-            rec[keyField] = TextFormatService.adaptToGridConstraints(rec.data);
-        });
+		_.forEach(data, function (rec) {
+			rec[keyField] = TextFormatService.adaptToGridConstraints(rec.data);
+		});
 
-        return initHorizontalHistogram(keyField, valueField, label, data, 'blueBar');
-    }
+		return initHorizontalHistogram(keyField, valueField, label, data, 'blueBar');
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------2- Values----------------------------------------------------
@@ -513,9 +516,9 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @description Cleans the value to have 2 decimals (5.2568845842587425588 -> 5.25)
      * @returns {number} The value in the clean format
      */
-    function cleanNumber(value) {
-        return isNaN(value) || value === parseInt(value, 10) ? value : +value.toFixed(2);
-    }
+	function cleanNumber(value) {
+		return isNaN(value) || value === parseInt(value, 10) ? value : +value.toFixed(2);
+	}
 
     /**
      * @ngdoc method
@@ -523,47 +526,47 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Initialize the statistics to display in the values TAB of the stats part
      */
-    function initStatisticsValues() {
-        const column = state.playground.grid.selectedColumns[0];
-        const stats = column.statistics;
-        const colType = ConverterService.simplifyType(column.type);
-        const commonStats = {
-            COUNT: stats.count,
-            DISTINCT_COUNT: stats.distinctCount,
-            DUPLICATE_COUNT: stats.duplicateCount,
+	function initStatisticsValues() {
+		const column = state.playground.grid.selectedColumns[0];
+		const stats = column.statistics;
+		const colType = ConverterService.simplifyType(column.type);
+		const commonStats = {
+			COUNT: stats.count,
+			DISTINCT_COUNT: stats.distinctCount,
+			DUPLICATE_COUNT: stats.duplicateCount,
 
-            VALID: stats.valid,
-            EMPTY: stats.empty,
-            INVALID: stats.invalid,
-        };
+			VALID: stats.valid,
+			EMPTY: stats.empty,
+			INVALID: stats.invalid,
+		};
 
-        const specificStats = {};
-        switch (colType) {
-        case 'integer':
-        case 'decimal':
-            specificStats.MIN = cleanNumber(stats.min);
-            specificStats.MAX = cleanNumber(stats.max);
-            specificStats.MEAN = cleanNumber(stats.mean);
-            specificStats.VARIANCE = cleanNumber(stats.variance);
-            if (stats.quantiles.lowerQuantile !== 'NaN') {
-                specificStats.MEDIAN = cleanNumber(stats.quantiles.median);
-                specificStats.LOWER_QUANTILE = cleanNumber(stats.quantiles.lowerQuantile);
-                specificStats.UPPER_QUANTILE = cleanNumber(stats.quantiles.upperQuantile);
-            }
+		const specificStats = {};
+		switch (colType) {
+		case 'integer':
+		case 'decimal':
+			specificStats.MIN = cleanNumber(stats.min);
+			specificStats.MAX = cleanNumber(stats.max);
+			specificStats.MEAN = cleanNumber(stats.mean);
+			specificStats.VARIANCE = cleanNumber(stats.variance);
+			if (stats.quantiles.lowerQuantile !== 'NaN') {
+				specificStats.MEDIAN = cleanNumber(stats.quantiles.median);
+				specificStats.LOWER_QUANTILE = cleanNumber(stats.quantiles.lowerQuantile);
+				specificStats.UPPER_QUANTILE = cleanNumber(stats.quantiles.upperQuantile);
+			}
 
-            break;
-        case 'text':
-            specificStats.AVG_LENGTH = cleanNumber(stats.textLengthSummary.averageLength);
-            specificStats.MIN_LENGTH = stats.textLengthSummary.minimalLength;
-            specificStats.MAX_LENGTH = stats.textLengthSummary.maximalLength;
-            break;
-        }
+			break;
+		case 'text':
+			specificStats.AVG_LENGTH = cleanNumber(stats.textLengthSummary.averageLength);
+			specificStats.MIN_LENGTH = stats.textLengthSummary.minimalLength;
+			specificStats.MAX_LENGTH = stats.textLengthSummary.maximalLength;
+			break;
+		}
 
-        StateService.setStatisticsDetails({
-            common: commonStats,
-            specific: specificStats,
-        });
-    }
+		StateService.setStatisticsDetails({
+			common: commonStats,
+			specific: specificStats,
+		});
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------3- Pattern---------------------------------------------------
@@ -574,16 +577,16 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description update patterns statistics
      */
-    function initPatternsFrequency() {
-        const patternFrequency = state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable;
-        if (patternFrequency) {
-            StateService.setStatisticsPatterns(patternFrequency);
-            createFilteredPatternsFrequency()
+	function initPatternsFrequency() {
+		const patternFrequency = state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable;
+		if (patternFrequency) {
+			StateService.setStatisticsPatterns(patternFrequency);
+			createFilteredPatternsFrequency()
                 .then((filteredPatternFrequency) => {
-                    StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-                });
-        }
-    }
+	StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
+});
+		}
+	}
 
     /**
      * @ngdoc method
@@ -591,27 +594,27 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Create the filtered patterns statistics
      */
-    function createFilteredPatternsFrequency() {
-        const column = state.playground.grid.selectedColumns[0];
-        const parameters = {
-            columnId: column.id,
-            patternFrequencyTable: column.statistics.patternFrequencyTable,
-            filteredRecords: state.playground.filter.gridFilters.length ? state.playground.grid.filteredRecords : null,
-        };
+	function createFilteredPatternsFrequency() {
+		const column = state.playground.grid.selectedColumns[0];
+		const parameters = {
+			columnId: column.id,
+			patternFrequencyTable: column.statistics.patternFrequencyTable,
+			filteredRecords: state.playground.filter.gridFilters.length ? state.playground.grid.filteredRecords : null,
+		};
 
-        const defer = $q.defer();
-        service.patternWorker = new PatternOccurrenceWorker();
-        service.patternWorker.onmessage = (event) => {
-            defer.resolve(event.data);
-        };
+		const defer = $q.defer();
+		service.patternWorker = new PatternOccurrenceWorker();
+		service.patternWorker.onmessage = (event) => {
+			defer.resolve(event.data);
+		};
 
-        service.patternWorker.onerror = (error) => {
-            defer.reject(error);
-        };
+		service.patternWorker.onerror = (error) => {
+			defer.reject(error);
+		};
 
-        service.patternWorker.postMessage(parameters);
-        return defer.promise;
-    }
+		service.patternWorker.postMessage(parameters);
+		return defer.promise;
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------4- Others----------------------------------------------------
@@ -622,21 +625,21 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Gathers the boxPlot data from the specific stats of the columns having a 'number' type
      */
-    function initBoxplotData() {
-        const specStats = state.playground.statistics.details.specific;
+	function initBoxplotData() {
+		const specStats = state.playground.statistics.details.specific;
 
-        StateService.setStatisticsBoxPlot(
-            {
-                min: specStats.MIN,
-                max: specStats.MAX,
-                q1: specStats.LOWER_QUANTILE,
-                q2: specStats.UPPER_QUANTILE,
-                median: specStats.MEDIAN,
-                mean: specStats.MEAN,
-                variance: specStats.VARIANCE,
-            }
+		StateService.setStatisticsBoxPlot(
+			{
+				min: specStats.MIN,
+				max: specStats.MAX,
+				q1: specStats.LOWER_QUANTILE,
+				q2: specStats.UPPER_QUANTILE,
+				median: specStats.MEDIAN,
+				mean: specStats.MEAN,
+				variance: specStats.VARIANCE,
+			}
         );
-    }
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------FILTER-------------------------------------------------------
@@ -648,20 +651,20 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Create a remove callback to reinit the current active limits on the current column range chart
      */
-    function getRangeFilterRemoveFn() {
-        const selectedColumn = state.playground.grid.selectedColumns[0];
-        const columnMin = selectedColumn.statistics.min;
-        const columnMax = selectedColumn.statistics.max;
+	function getRangeFilterRemoveFn() {
+		const selectedColumn = state.playground.grid.selectedColumns[0];
+		const columnMin = selectedColumn.statistics.min;
+		const columnMax = selectedColumn.statistics.max;
 
-        return function removeFilterFn(filter) {
-            const actualSelectedColumn = state.playground.grid.selectedColumns[0];
-            if (filter.colId === actualSelectedColumn.id) {
-                initRangeLimits();
+		return function removeFilterFn(filter) {
+			const actualSelectedColumn = state.playground.grid.selectedColumns[0];
+			if (filter.colId === actualSelectedColumn.id) {
+				initRangeLimits();
                 // to reset the vertical bars colors
-                StateService.setStatisticsHistogramActiveLimits([columnMin, columnMax]);
-            }
-        };
-    }
+				StateService.setStatisticsHistogramActiveLimits([columnMin, columnMax]);
+			}
+		};
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------NON AGGREGATION--------------------------------------------------
@@ -673,33 +676,33 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Compute the needed data for chart visualization
      */
-    function processClassicChart() {
-        resetCharts();
-        removeSavedColumnAggregation();
+	function processClassicChart() {
+		resetCharts();
+		removeSavedColumnAggregation();
 
-        const column = state.playground.grid.selectedColumns[0];
-        const simplifiedType = ConverterService.simplifyType(column.type);
-        switch (simplifiedType) {
-        case 'integer':
-        case 'decimal':
-            initBoxplotData();
-            initRangeHistogram();
-            initRangeLimits();
-            break;
-        case 'date': {
-            const promise = initDateRangeHistogram();
-            initRangeLimits();
-            return promise;
-        }
+		const column = state.playground.grid.selectedColumns[0];
+		const simplifiedType = ConverterService.simplifyType(column.type);
+		switch (simplifiedType) {
+		case 'integer':
+		case 'decimal':
+			initBoxplotData();
+			initRangeHistogram();
+			initRangeLimits();
+			break;
+		case 'date': {
+			const promise = initDateRangeHistogram();
+			initRangeLimits();
+			return promise;
+		}
 
-        case 'text':
-        case 'boolean':
-            initClassicHistogram('occurrences', 'Occurrences', column.statistics.frequencyTable);
-            break;
-        default:
-            $log.debug('nor a number neither a boolean, neither a string, neither a date but a ' + simplifiedType);
-        }
-    }
+		case 'text':
+		case 'boolean':
+			initClassicHistogram('occurrences', 'Occurrences', column.statistics.frequencyTable);
+			break;
+		default:
+			$log.debug('nor a number neither a boolean, neither a string, neither a date but a ' + simplifiedType);
+		}
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------Aggregation--------------------------------------------------
@@ -712,40 +715,40 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @param {string} aggregationName The aggregation to perform
      * @description Processes the statistics aggregation for visualization
      */
-    function processAggregation(column, aggregationName) {
-        resetCharts();
+	function processAggregation(column, aggregationName) {
+		resetCharts();
 
-        const datasetId = state.playground.dataset.id;
-        const preparationId = state.playground.preparation && state.playground.preparation.id;
-        const lastActiveStep = preparationId && StepUtilsService.getLastActiveStep(state.playground.recipe);
-        const stepId = lastActiveStep && lastActiveStep.transformation.stepId;
-        const selectedColumn = state.playground.grid.selectedColumns[0];
+		const datasetId = state.playground.dataset.id;
+		const preparationId = state.playground.preparation && state.playground.preparation.id;
+		const lastActiveStep = preparationId && StepUtilsService.getLastActiveStep(state.playground.recipe);
+		const stepId = lastActiveStep && lastActiveStep.transformation.stepId;
+		const selectedColumn = state.playground.grid.selectedColumns[0];
 
-        let aggregationParameters = {
-            datasetId: preparationId ? null : datasetId,
-            preparationId,
-            stepId,
-            operations: [{
-                operator: aggregationName,
-                columnId: column.id,
-            }],
-            groupBy: [selectedColumn.id],
-        };
+		let aggregationParameters = {
+			datasetId: preparationId ? null : datasetId,
+			preparationId,
+			stepId,
+			operations: [{
+				operator: aggregationName,
+				columnId: column.id,
+			}],
+			groupBy: [selectedColumn.id],
+		};
 
         // add filter in parameters only if there are filters
-        aggregationParameters = _.extend(aggregationParameters, FilterAdapterService.toTree(state.playground.filter.gridFilters));
+		aggregationParameters = _.extend(aggregationParameters, FilterAdapterService.toTree(state.playground.filter.gridFilters));
 
-        return StatisticsRestService.getAggregations(aggregationParameters)
+		return StatisticsRestService.getAggregations(aggregationParameters)
             .then(function (response) {
-                const histogram = getAggregationHistogram(aggregationName, $filter('translate')(aggregationName), response);
-                histogram.aggregationColumn = column;
-                histogram.aggregation = aggregationName;
+	const histogram = getAggregationHistogram(aggregationName, $filter('translate')(aggregationName), response);
+	histogram.aggregationColumn = column;
+	histogram.aggregation = aggregationName;
 
-                StateService.setStatisticsHistogram(histogram);
+	StateService.setStatisticsHistogram(histogram);
 
-                saveColumnAggregation(aggregationName, column.id);
-            });
-    }
+	saveColumnAggregation(aggregationName, column.id);
+});
+	}
 
     /**
      * @ngdoc method
@@ -753,12 +756,12 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Get the saved dataset column aggregation.
      */
-    function getSavedColumnAggregation() {
-        const datasetId = state.playground.dataset && state.playground.dataset.id;
-        const preparationId = state.playground.preparation && state.playground.preparation.id;
-        const columnId = state.playground.grid.selectedColumns[0] && state.playground.grid.selectedColumns[0].id;
-        return StorageService.getAggregation(datasetId, preparationId, columnId);
-    }
+	function getSavedColumnAggregation() {
+		const datasetId = state.playground.dataset && state.playground.dataset.id;
+		const preparationId = state.playground.preparation && state.playground.preparation.id;
+		const columnId = state.playground.grid.selectedColumns[0] && state.playground.grid.selectedColumns[0].id;
+		return StorageService.getAggregation(datasetId, preparationId, columnId);
+	}
 
     /**
      * @ngdoc method
@@ -766,12 +769,12 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Delete the actual column aggregation key in localStorage
      */
-    function removeSavedColumnAggregation() {
-        const datasetId = state.playground.dataset && state.playground.dataset.id;
-        const preparationId = state.playground.preparation && state.playground.preparation.id;
-        const columnId = state.playground.grid.selectedColumns[0] && state.playground.grid.selectedColumns[0].id;
-        return StorageService.removeAggregation(datasetId, preparationId, columnId);
-    }
+	function removeSavedColumnAggregation() {
+		const datasetId = state.playground.dataset && state.playground.dataset.id;
+		const preparationId = state.playground.preparation && state.playground.preparation.id;
+		const columnId = state.playground.grid.selectedColumns[0] && state.playground.grid.selectedColumns[0].id;
+		return StorageService.removeAggregation(datasetId, preparationId, columnId);
+	}
 
     /**
      * @ngdoc method
@@ -779,18 +782,18 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Update the actual dataset column aggregation in localStorage
      */
-    function saveColumnAggregation(aggregationName, colId) {
-        const datasetId = state.playground.dataset && state.playground.dataset.id;
-        const preparationId = state.playground.preparation && state.playground.preparation.id;
-        const columnId = state.playground.grid.selectedColumns[0] && state.playground.grid.selectedColumns[0].id;
+	function saveColumnAggregation(aggregationName, colId) {
+		const datasetId = state.playground.dataset && state.playground.dataset.id;
+		const preparationId = state.playground.preparation && state.playground.preparation.id;
+		const columnId = state.playground.grid.selectedColumns[0] && state.playground.grid.selectedColumns[0].id;
 
-        const aggregation = {
-            aggregation: aggregationName,
-            aggregationColumnId: colId,
-        };
+		const aggregation = {
+			aggregation: aggregationName,
+			aggregationColumnId: colId,
+		};
 
-        return StorageService.setAggregation(datasetId, preparationId, columnId, aggregation);
-    }
+		return StorageService.setAggregation(datasetId, preparationId, columnId, aggregation);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------COMMON-------------------------------------------------------
@@ -801,60 +804,60 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description responsible for updating the filtered data according to the selected column type
      */
-    function updateFilteredStatistics() {
-        resetWorkers();
-        const asyncProcess = [];
+	function updateFilteredStatistics() {
+		resetWorkers();
+		const asyncProcess = [];
 
-        const columnAggregation = getSavedColumnAggregation();
-        const aggregationName = columnAggregation && columnAggregation.aggregation;
+		const columnAggregation = getSavedColumnAggregation();
+		const aggregationName = columnAggregation && columnAggregation.aggregation;
 
-        if (!aggregationName) {
-            const column = state.playground.grid.selectedColumns[0];
-            const numberOrDateHistogram = column.statistics.histogram;
-            const frequencyTable = column.statistics.frequencyTable;
-            if (!column || (!numberOrDateHistogram && !frequencyTable.length)) {
-                return;
-            }
-            const simplifiedType = ConverterService.simplifyType(column.type);
-            switch (simplifiedType) {
-            case 'integer':
-            case 'decimal':
-                StateService.setStatisticsFilteredHistogram(createNumberRangeHistograms().filteredHistogram);
-                initRangeLimits();
-                break;
-            case 'date': {
-                const dateRangeProcess = createFilteredDateRangeHistogram()
+		if (!aggregationName) {
+			const column = state.playground.grid.selectedColumns[0];
+			const numberOrDateHistogram = column.statistics.histogram;
+			const frequencyTable = column.statistics.frequencyTable;
+			if (!column || (!numberOrDateHistogram && !frequencyTable.length)) {
+				return;
+			}
+			const simplifiedType = ConverterService.simplifyType(column.type);
+			switch (simplifiedType) {
+			case 'integer':
+			case 'decimal':
+				StateService.setStatisticsFilteredHistogram(createNumberRangeHistograms().filteredHistogram);
+				initRangeLimits();
+				break;
+			case 'date': {
+				const dateRangeProcess = createFilteredDateRangeHistogram()
                         .then((histogram) => {
-                            StateService.setStatisticsFilteredHistogram(histogram);
-                            initRangeLimits();
-                        });
-                asyncProcess.push(dateRangeProcess);
-                break;
-            }
+	StateService.setStatisticsFilteredHistogram(histogram);
+	initRangeLimits();
+});
+				asyncProcess.push(dateRangeProcess);
+				break;
+			}
 
-            case 'text':
-            case 'boolean':
-                StateService.setStatisticsFilteredHistogram(createClassicHistograms().filteredHistogram);
-                break;
-            }
-        }
-        else {
-            const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
-            if (aggregatedColumn) {
-                const aggregationProcess = processAggregation(aggregatedColumn, aggregationName);
-                asyncProcess.push(aggregationProcess);
-            }
-        }
+			case 'text':
+			case 'boolean':
+				StateService.setStatisticsFilteredHistogram(createClassicHistograms().filteredHistogram);
+				break;
+			}
+		}
+		else {
+			const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+			if (aggregatedColumn) {
+				const aggregationProcess = processAggregation(aggregatedColumn, aggregationName);
+				asyncProcess.push(aggregationProcess);
+			}
+		}
 
         // should be outside the IF(!aggregationName) statement because it does not depend on the aggregation
-        const patternProcess = createFilteredPatternsFrequency()
+		const patternProcess = createFilteredPatternsFrequency()
             .then((filteredPatternFrequency) => {
-                StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-            });
-        asyncProcess.push(patternProcess);
+	StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
+});
+		asyncProcess.push(patternProcess);
 
-        return $q.all(asyncProcess);
-    }
+		return $q.all(asyncProcess);
+	}
 
     /**
      * @ngdoc method
@@ -864,23 +867,23 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * If an aggregation is stored, we process the computation to init this aggregation chart.
      * Otherwise, we init classic charts
      */
-    function updateStatistics() {
-        resetStatistics();
-        resetWorkers();
+	function updateStatistics() {
+		resetStatistics();
+		resetWorkers();
 
-        initStatisticsValues();
-        initPatternsFrequency();
+		initStatisticsValues();
+		initPatternsFrequency();
 
-        const columnAggregation = getSavedColumnAggregation();
-        const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
-        const aggregation = columnAggregation && columnAggregation.aggregation;
-        if (aggregatedColumn && aggregation) {
-            processAggregation(aggregatedColumn, aggregation);
-        }
-        else {
-            processClassicChart();
-        }
-    }
+		const columnAggregation = getSavedColumnAggregation();
+		const aggregatedColumn = columnAggregation && _.findWhere(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+		const aggregation = columnAggregation && columnAggregation.aggregation;
+		if (aggregatedColumn && aggregation) {
+			processAggregation(aggregatedColumn, aggregation);
+		}
+		else {
+			processClassicChart();
+		}
+	}
 
     /**
      * @ngdoc method
@@ -888,50 +891,50 @@ export default function StatisticsService($q, $log, $filter, state, StateService
      * @methodOf data-prep.services.statistics.service:StatisticsService
      * @description Removes all data (charts, statistics values, cache, workers)
      */
-    function reset() {
-        resetCharts();
-        resetStatistics();
-        resetCache();
+	function reset() {
+		resetCharts();
+		resetStatistics();
+		resetCache();
 
-        resetWorkers();
-    }
+		resetWorkers();
+	}
 
     /**
      * Reset the charts
      */
-    function resetCharts() {
-        StateService.setStatisticsRangeLimits(null);
-        StateService.setStatisticsBoxPlot(null);
-        StateService.setStatisticsHistogram(null);
-        StateService.setStatisticsHistogramActiveLimits(null);
-    }
+	function resetCharts() {
+		StateService.setStatisticsRangeLimits(null);
+		StateService.setStatisticsBoxPlot(null);
+		StateService.setStatisticsHistogram(null);
+		StateService.setStatisticsHistogramActiveLimits(null);
+	}
 
     /**
      * Reset the statistics
      */
-    function resetStatistics() {
-        StateService.setStatisticsDetails(null);
-    }
+	function resetStatistics() {
+		StateService.setStatisticsDetails(null);
+	}
 
     /**
      * Reset the statistics cache
      */
-    function resetCache() {
-        StatisticsRestService.resetCache();
-    }
+	function resetCache() {
+		StatisticsRestService.resetCache();
+	}
 
     /**
      * Reset web workers
      */
-    function resetWorkers() {
-        if (service.dateWorker) {
-            service.dateWorker.terminate();
-            service.dateWorker = null;
-        }
+	function resetWorkers() {
+		if (service.dateWorker) {
+			service.dateWorker.terminate();
+			service.dateWorker = null;
+		}
 
-        if (service.patternWorker) {
-            service.patternWorker.terminate();
-            service.patternWorker = null;
-        }
-    }
+		if (service.patternWorker) {
+			service.patternWorker.terminate();
+			service.patternWorker = null;
+		}
+	}
 }

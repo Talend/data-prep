@@ -32,13 +32,13 @@
 import template from './breadcrumb.html';
 
 const BreadcrumbComponent = {
-    templateUrl: template,
-    bindings: {
-        children: '<',
-        items: '<',
-        onListOpen: '&',
-        onSelect: '&',
-    },
+	templateUrl: template,
+	bindings: {
+		children: '<',
+		items: '<',
+		onListOpen: '&',
+		onSelect: '&',
+	},
 };
 
 export default BreadcrumbComponent;

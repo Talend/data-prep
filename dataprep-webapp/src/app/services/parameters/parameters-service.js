@@ -23,10 +23,10 @@ const CLUSTER_TYPE = 'CLUSTER';
  * @description Manage dynamic parameters
  */
 export default class ParametersService {
-    constructor(ConverterService) {
-        'ngInject';
-        this.ConverterService = ConverterService;
-    }
+	constructor(ConverterService) {
+		'ngInject';
+		this.ConverterService = ConverterService;
+	}
 
     /**
      * @ngdoc method
@@ -36,44 +36,44 @@ export default class ParametersService {
      * @param {string} type The param type
      * @description Reset params values with saved initial values
      */
-    resetParamValue(params, type) {
-        if (!params) {
-            return;
-        }
+	resetParamValue(params, type) {
+		if (!params) {
+			return;
+		}
 
-        function executeOnSimpleParams(simpleParamsToInit) {
-            _.forEach(simpleParamsToInit, (param) => {
-                param.value = angular.isDefined(param.initialValue) ?
+		function executeOnSimpleParams(simpleParamsToInit) {
+			_.forEach(simpleParamsToInit, (param) => {
+				param.value = angular.isDefined(param.initialValue) ?
                     param.initialValue :
                     param.default;
-            });
-        }
+			});
+		}
 
-        switch (type) {
-        case CHOICE_TYPE:
-            _.forEach(params, (choice) => {
-                choice.selectedValue = angular.isDefined(choice.initialValue) ?
+		switch (type) {
+		case CHOICE_TYPE:
+			_.forEach(params, (choice) => {
+				choice.selectedValue = angular.isDefined(choice.initialValue) ?
                         choice.initialValue :
                         choice.default;
 
-                _.forEach(choice.values, (choiceItem) => {
-                    executeOnSimpleParams(choiceItem.parameters);
-                });
-            });
-            break;
+				_.forEach(choice.values, (choiceItem) => {
+					executeOnSimpleParams(choiceItem.parameters);
+				});
+			});
+			break;
 
-        case CLUSTER_TYPE:
-            _.forEach(params.clusters, (cluster) => {
-                cluster.active = cluster.initialActive;
-                executeOnSimpleParams(cluster.parameters);
-                executeOnSimpleParams([cluster.replace]);
-            });
-            break;
+		case CLUSTER_TYPE:
+			_.forEach(params.clusters, (cluster) => {
+				cluster.active = cluster.initialActive;
+				executeOnSimpleParams(cluster.parameters);
+				executeOnSimpleParams([cluster.replace]);
+			});
+			break;
 
-        default:
-            executeOnSimpleParams(params);
-        }
-    }
+		default:
+			executeOnSimpleParams(params);
+		}
+	}
 
     /**
      * @ngdoc method
@@ -84,25 +84,25 @@ export default class ParametersService {
      * @description Init parameters initial value and type
      * @returns {object[]} The parameters with initialized values
      */
-    initParameters(parameters, paramValues) {
-        return _.chain(parameters)
+	initParameters(parameters, paramValues) {
+		return _.chain(parameters)
             .filter(param => !param.implicit)
             .forEach((param) => {
-                param.initialValue = param.value = this.ConverterService.adaptValue(
+	param.initialValue = param.value = this.ConverterService.adaptValue(
                     param.type,
                     paramValues[param.name]
                 );
-                param.inputType = this.ConverterService.toInputType(param.type);
+	param.inputType = this.ConverterService.toInputType(param.type);
 
                 // also take care of select parameters
-                if (param.type === 'select' && param.configuration && param.configuration.values) {
-                    _.forEach(param.configuration.values, (selectItem) => {
-                        this.initParameters(selectItem.parameters, paramValues);
-                    });
-                }
-            })
+	if (param.type === 'select' && param.configuration && param.configuration.values) {
+		_.forEach(param.configuration.values, (selectItem) => {
+			this.initParameters(selectItem.parameters, paramValues);
+		});
+	}
+})
             .value();
-    }
+	}
 
     /**
      * @ngdoc method
@@ -113,27 +113,27 @@ export default class ParametersService {
      * @description Init Clusters initial value
      * @returns {object} The Cluster with initialized values
      */
-    initCluster(cluster, paramValues) {
-        _.forEach(cluster.clusters, (clusterItem) => {
-            const firstActiveParam = _.chain(clusterItem.parameters)
+	initCluster(cluster, paramValues) {
+		_.forEach(cluster.clusters, (clusterItem) => {
+			const firstActiveParam = _.chain(clusterItem.parameters)
                 .forEach((param) => {
-                    param.initialValue = param.value = param.name in paramValues;
-                })
+	param.initialValue = param.value = param.name in paramValues;
+})
                 .filter('value')
                 .first()
                 .value();
-            clusterItem.initialActive = !!firstActiveParam;
+			clusterItem.initialActive = !!firstActiveParam;
 
             // get the replace value or the default if the cluster item is inactive
             // and init the replace input value
-            const replaceValue = firstActiveParam ?
+			const replaceValue = firstActiveParam ?
                 paramValues[firstActiveParam.name] :
                 clusterItem.replace.default;
-            const replaceParamValues = { replaceValue };
-            this.initParameters([clusterItem.replace], replaceParamValues);
-        });
-        return cluster;
-    }
+			const replaceParamValues = { replaceValue };
+			this.initParameters([clusterItem.replace], replaceParamValues);
+		});
+		return cluster;
+	}
 
     /**
      * @ngdoc method
@@ -143,15 +143,15 @@ export default class ParametersService {
      * @param {object} paramValues The transformation parameters initial values
      * @description Init parameters values and save them as initial values
      */
-    initParamsValues(transformation, paramValues) {
-        if (transformation.parameters) {
-            transformation.parameters = this.initParameters(transformation.parameters, paramValues);
-        }
+	initParamsValues(transformation, paramValues) {
+		if (transformation.parameters) {
+			transformation.parameters = this.initParameters(transformation.parameters, paramValues);
+		}
 
-        if (transformation.cluster) {
-            transformation.cluster = this.initCluster(transformation.cluster, paramValues);
-        }
-    }
+		if (transformation.cluster) {
+			transformation.cluster = this.initCluster(transformation.cluster, paramValues);
+		}
+	}
 
     /**
      * @ngdoc method
@@ -159,8 +159,8 @@ export default class ParametersService {
      * @methodOf data-prep.services.parameters.service:ParametersService
      * @description Reset all the transformation parameters
      */
-    resetParameters(transformation) {
-        transformation.parameters = null;
-        transformation.cluster = null;
-    }
+	resetParameters(transformation) {
+		transformation.parameters = null;
+		transformation.cluster = null;
+	}
 }

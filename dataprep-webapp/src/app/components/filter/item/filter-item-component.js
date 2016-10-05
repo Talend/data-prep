@@ -30,15 +30,15 @@ import template from './filter-item.html';
  * @param {function}  onRemove   The callback that is triggered on badge close
  */
 const FilterItemComponent = {
-    templateUrl: template,
-    controller: 'FilterItemCtrl',
-    bindings: {
-        value: '<',
-        editable: '<',
-        onEdit: '&',
-        removable: '<',
-        onRemove: '&',
-    },
+	templateUrl: template,
+	controller: 'FilterItemCtrl',
+	bindings: {
+		value: '<',
+		editable: '<',
+		onEdit: '&',
+		removable: '<',
+		onRemove: '&',
+	},
 };
 
 export default FilterItemComponent;

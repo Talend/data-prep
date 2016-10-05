@@ -33,11 +33,11 @@ const MODULE_NAME = 'data-prep.services.transformation';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_PARAMETERS_SERVICE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_PARAMETERS_SERVICE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('TransformationService', TransformationService)
     .service('TransformationUtilsService', TransformationUtilsService)
     .service('TransformationRestService', TransformationRestService)

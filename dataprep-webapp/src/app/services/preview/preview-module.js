@@ -31,12 +31,12 @@ const MODULE_NAME = 'data-prep.services.preview';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_DATAGRID_MODULE,
-        SERVICES_PREPARATION_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_DATAGRID_MODULE,
+		SERVICES_PREPARATION_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('PreviewService', PreviewService);
 
 export default MODULE_NAME;

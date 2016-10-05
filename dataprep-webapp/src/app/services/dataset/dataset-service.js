@@ -13,30 +13,30 @@
 
 
 const filters = [
-    {
-        id: 'RECENT',
-        order: 1,
-        imageUrl: '/assets/images/inventory/recent-datasets.png',
-        title: 'RECENT_DATASETS',
-        description: 'RECENT_DATASETS_DESCRIPTION',
-        getParameters: (name) => `sort=MODIF&limit=true&name=${name}`,
-    },
-    {
-        id: 'FAVORITE',
-        order: 2,
-        icon: 'f',
-        title: 'FAVORITE_DATASETS',
-        description: 'FAVORITE_DATASETS_DESCRIPTION',
-        getParameters: (name) => `favorite=true&name=${name}`,
-    },
-    {
-        id: 'ALL',
-        order: 3,
-        imageUrl: '/assets/images/inventory/all-datasets.png',
-        title: 'ALL_DATASETS',
-        description: 'ALL_DATASETS_DESCRIPTION',
-        getParameters: (name) => `name=${name}`,
-    },
+	{
+		id: 'RECENT',
+		order: 1,
+		imageUrl: '/assets/images/inventory/recent-datasets.png',
+		title: 'RECENT_DATASETS',
+		description: 'RECENT_DATASETS_DESCRIPTION',
+		getParameters: name => `sort=MODIF&limit=true&name=${name}`,
+	},
+	{
+		id: 'FAVORITE',
+		order: 2,
+		icon: 'f',
+		title: 'FAVORITE_DATASETS',
+		description: 'FAVORITE_DATASETS_DESCRIPTION',
+		getParameters: name => `favorite=true&name=${name}`,
+	},
+	{
+		id: 'ALL',
+		order: 3,
+		imageUrl: '/assets/images/inventory/all-datasets.png',
+		title: 'ALL_DATASETS',
+		description: 'ALL_DATASETS_DESCRIPTION',
+		getParameters: name => `name=${name}`,
+	},
 ];
 
 /**
@@ -50,54 +50,54 @@ const filters = [
  *
  */
 export default function DatasetService($q, state, StateService, DatasetListService, DatasetRestService, StorageService) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        filters,
-        init,
+	return {
+		filters,
+		init,
 
         // lifecycle
-        create: DatasetListService.create,
-        update: DatasetListService.update,
-        delete: deleteDataset,
-        clone: DatasetListService.clone,
+		create: DatasetListService.create,
+		update: DatasetListService.update,
+		delete: deleteDataset,
+		clone: DatasetListService.clone,
 
         // dataset actions
-        updateColumn: DatasetRestService.updateColumn,
-        processCertification: DatasetListService.processCertification,
-        toggleFavorite: DatasetListService.toggleFavorite,
-        isRemoveEnabled,
-        isProcessCertificationEnabled,
-        isRenameEnabled,
+		updateColumn: DatasetRestService.updateColumn,
+		processCertification: DatasetListService.processCertification,
+		toggleFavorite: DatasetListService.toggleFavorite,
+		isRemoveEnabled,
+		isProcessCertificationEnabled,
+		isRenameEnabled,
 
         // content
-        getMetadata: DatasetRestService.getMetadata,
-        getContent: DatasetRestService.getContent,
+		getMetadata: DatasetRestService.getMetadata,
+		getContent: DatasetRestService.getContent,
 
         // dataset getters, refresher
-        refreshDatasets: DatasetListService.refreshDatasets,
-        getDatasets,           // promise that resolves datasets list
-        getFilteredDatasets, // retrieve datasets given a set of filters
-        getDatasetById,     // retrieve dataset by id
-        getDatasetByName, // retrieve dataset by name
-        getSheetPreview,
-        loadFilteredDatasets: DatasetRestService.loadFilteredDatasets, // retrieve datasets given a set of filters
+		refreshDatasets: DatasetListService.refreshDatasets,
+		getDatasets,           // promise that resolves datasets list
+		getFilteredDatasets, // retrieve datasets given a set of filters
+		getDatasetById,     // retrieve dataset by id
+		getDatasetByName, // retrieve dataset by name
+		getSheetPreview,
+		loadFilteredDatasets: DatasetRestService.loadFilteredDatasets, // retrieve datasets given a set of filters
 
         // dataset update
-        rename,
-        setDatasetSheet,
-        updateParameters,
-        refreshSupportedEncodings,
+		rename,
+		setDatasetSheet,
+		updateParameters,
+		refreshSupportedEncodings,
 
         // compatible preparation list
-        getCompatiblePreparations,
+		getCompatiblePreparations,
 
         // utils
-        getUniqueName,
-        createDatasetInfo,
-        checkNameAvailability,
-        getLocationParamIteration: getParamIteration,
-    };
+		getUniqueName,
+		createDatasetInfo,
+		checkNameAvailability,
+		getLocationParamIteration: getParamIteration,
+	};
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Lifecycle--------------------------------------------------
@@ -108,12 +108,12 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @name refreshDatasetsSort
      * @description Refresh the actual sort parameter
      * */
-    function refreshDatasetsSort() {
-        const savedSort = StorageService.getDatasetsSort();
-        if (savedSort) {
-            StateService.setDatasetsSort(_.find(state.inventory.sortList, { id: savedSort }));
-        }
-    }
+	function refreshDatasetsSort() {
+		const savedSort = StorageService.getDatasetsSort();
+		if (savedSort) {
+			StateService.setDatasetsSort(_.find(state.inventory.sortList, { id: savedSort }));
+		}
+	}
 
     /**
      * @ngdoc method
@@ -121,12 +121,12 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @name refreshDatasetsOrder
      * @description Refresh the actual order parameter
      */
-    function refreshDatasetsOrder() {
-        const savedSortOrder = StorageService.getDatasetsOrder();
-        if (savedSortOrder) {
-            StateService.setDatasetsOrder(_.find(state.inventory.orderList, { id: savedSortOrder }));
-        }
-    }
+	function refreshDatasetsOrder() {
+		const savedSortOrder = StorageService.getDatasetsOrder();
+		if (savedSortOrder) {
+			StateService.setDatasetsOrder(_.find(state.inventory.orderList, { id: savedSortOrder }));
+		}
+	}
 
     /**
      * @ngdoc method
@@ -134,11 +134,11 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @name refreshDatasetsOrder
      * @description Init datasets sort/order and refresh datasets list
      */
-    function init() {
-        refreshDatasetsSort();
-        refreshDatasetsOrder();
-        return DatasetListService.refreshDatasets();
-    }
+	function init() {
+		refreshDatasetsSort();
+		refreshDatasetsOrder();
+		return DatasetListService.refreshDatasets();
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Lifecycle--------------------------------------------------
@@ -151,13 +151,13 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Delete a dataset.
      * @returns {promise} The pending DELETE promise
      */
-    function deleteDataset(dataset) {
-        return DatasetListService.delete(dataset)
+	function deleteDataset(dataset) {
+		return DatasetListService.delete(dataset)
             .then((response) => {
-                StorageService.removeAllAggregations(dataset.id);
-                return response;
-            });
-    }
+	StorageService.removeAllAggregations(dataset.id);
+	return response;
+});
+	}
 
     /**
      * @ngdoc method
@@ -165,9 +165,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @methodOf data-prep.services.dataset.service:DatasetService
      * @description check if Process Certification is enabled
      */
-    function isProcessCertificationEnabled() {
-        return false;
-    }
+	function isProcessCertificationEnabled() {
+		return false;
+	}
 
     /**
      * @ngdoc method
@@ -175,9 +175,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @methodOf data-prep.services.dataset.service:DatasetService
      * @description check if Remove is enabled
      */
-    function isRemoveEnabled() {
-        return true;
-    }
+	function isRemoveEnabled() {
+		return true;
+	}
 
     /**
      * @ngdoc method
@@ -185,9 +185,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @methodOf data-prep.services.dataset.service:DatasetService
      * @description check if Rename is enabled
      */
-    function isRenameEnabled() {
-        return true;
-    }
+	function isRenameEnabled() {
+		return true;
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Metadata---------------------------------------------------
@@ -199,16 +199,16 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Return a promise that resolves the datasets list.
      * @returns {promise} The pending GET or resolved promise
      */
-    function getDatasets() {
-        if (DatasetListService.hasDatasetsPromise()) {
-            return DatasetListService.getDatasetsPromise();
-        }
-        else {
-            return state.inventory.datasets !== null ?
+	function getDatasets() {
+		if (DatasetListService.hasDatasetsPromise()) {
+			return DatasetListService.getDatasetsPromise();
+		}
+		else {
+			return state.inventory.datasets !== null ?
                 $q.when(state.inventory.datasets) :
                 DatasetListService.refreshDatasets();
-        }
-    }
+		}
+	}
 
     /**
      * @ngdoc method
@@ -219,9 +219,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Return a promise that resolves the datasets list.
      * @returns {promise} The GET promise
      */
-    function getFilteredDatasets(filter, name) {
-        return DatasetRestService.getFilteredDatasets(filter.getParameters(name));
-    }
+	function getFilteredDatasets(filter, name) {
+		return DatasetRestService.getFilteredDatasets(filter.getParameters(name));
+	}
 
     /**
      * @ngdoc method
@@ -231,12 +231,12 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Get the dataset that has the wanted name. The case is not important here.
      * @returns {object} The dataset that has the same name (case insensitive)
      */
-    function getDatasetByName(name) {
-        const lowerCaseName = name.toLowerCase();
-        return _.find(state.inventory.datasets, (dataset) => {
-            return dataset.name.toLowerCase() === lowerCaseName;
-        });
-    }
+	function getDatasetByName(name) {
+		const lowerCaseName = name.toLowerCase();
+		return _.find(state.inventory.datasets, (dataset) => {
+			return dataset.name.toLowerCase() === lowerCaseName;
+		});
+	}
 
     /**
      * @ngdoc method
@@ -246,13 +246,13 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Get the dataset that has the wanted id
      * @returns {promise} The dataset
      */
-    function getDatasetById(datasetId) {
-        return DatasetListService.getDatasetsPromise().then((datasetList) => {
-            return _.find(datasetList, (dataset) => {
-                return dataset.id === datasetId;
-            });
-        });
-    }
+	function getDatasetById(datasetId) {
+		return DatasetListService.getDatasetsPromise().then((datasetList) => {
+			return _.find(datasetList, (dataset) => {
+				return dataset.id === datasetId;
+			});
+		});
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Utils-----------------------------------------------------
@@ -267,16 +267,16 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @param {string} id The dataset id (used to update existing dataset)
      * @returns {Object} The adapted dataset infos {name: string, progress: number, file: *, error: boolean}
      */
-    function createDatasetInfo(file, name, id) {
-        return {
-            name,
-            progress: 0,
-            file,
-            error: false,
-            id,
-            type: file === null ? 'remote' : 'file',
-        };
-    }
+	function createDatasetInfo(file, name, id) {
+		return {
+			name,
+			progress: 0,
+			file,
+			error: false,
+			id,
+			type: file === null ? 'remote' : 'file',
+		};
+	}
 
     /**
      * @ngdoc method
@@ -288,13 +288,13 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      *     transform the base name, adding "(number)"
      * @returns {promise} The process to get a unique name
      */
-    function getUniqueName(name, index = 1) {
-        const cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
-        const result = cleanedName + ' (' + index + ')';
+	function getUniqueName(name, index = 1) {
+		const cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
+		const result = cleanedName + ' (' + index + ')';
 
-        return checkNameAvailability(result)
+		return checkNameAvailability(result)
             .catch(() => getUniqueName(name, index + 1));
-    }
+	}
 
     /**
      * @ngdoc method
@@ -305,17 +305,17 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @returns {promise} Resolve the promise if it is available,
      * reject it with the existing dataset if not
      */
-    function checkNameAvailability(name) {
-        return DatasetRestService.getDatasetByName(name)
+	function checkNameAvailability(name) {
+		return DatasetRestService.getDatasetByName(name)
             .then((dataset) => {
-                if (dataset) {
-                    return $q.reject(dataset);
-                }
-                else {
-                    return $q.when(name);
-                }
-            });
-    }
+	if (dataset) {
+		return $q.reject(dataset);
+	}
+	else {
+		return $q.when(name);
+	}
+});
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------Sheet Preview-------------------------------------------------
@@ -329,9 +329,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Get a dataset sheet preview
      * @returns {object} The preview data
      */
-    function getSheetPreview(dataset, sheetName) {
-        return DatasetRestService.getSheetPreview(dataset.id, sheetName);
-    }
+	function getSheetPreview(dataset, sheetName) {
+		return DatasetRestService.getSheetPreview(dataset.id, sheetName);
+	}
 
     /**
      * @ngdoc method
@@ -342,25 +342,25 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Set the selected sheet to the dataset
      * @returns {Promise} The process Promise
      */
-    function setDatasetSheet(metadata, sheetName) {
-        metadata.sheetName = sheetName;
-        return DatasetRestService.updateMetadata(metadata);
-    }
+	function setDatasetSheet(metadata, sheetName) {
+		metadata.sheetName = sheetName;
+		return DatasetRestService.updateMetadata(metadata);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------Dataset Parameters-----------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    function extractOriginalParameters(metadata) {
-        return {
-            separator: metadata.parameters.SEPARATOR,
-            encoding: metadata.encoding,
-        };
-    }
+	function extractOriginalParameters(metadata) {
+		return {
+			separator: metadata.parameters.SEPARATOR,
+			encoding: metadata.encoding,
+		};
+	}
 
-    function setParameters(metadata, parameters) {
-        metadata.parameters.SEPARATOR = parameters.separator;
-        metadata.encoding = parameters.encoding;
-    }
+	function setParameters(metadata, parameters) {
+		metadata.parameters.SEPARATOR = parameters.separator;
+		metadata.encoding = parameters.encoding;
+	}
 
     /**
      * @ngdoc method
@@ -371,21 +371,21 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @param {array} parameters The parameters array
      * @returns {object} The parameters
      */
-    function getParamIteration(paramsAccu, parameters) {
-        if (parameters) {
-            _.forEach(parameters, (paramItem) => {
-                paramsAccu[paramItem.name] = typeof (paramItem.value) !== 'undefined' ? paramItem.value : paramItem.default;
+	function getParamIteration(paramsAccu, parameters) {
+		if (parameters) {
+			_.forEach(parameters, (paramItem) => {
+				paramsAccu[paramItem.name] = typeof (paramItem.value) !== 'undefined' ? paramItem.value : paramItem.default;
 
                 // deal with select inline parameters
-                if (paramItem.type === 'select') {
-                    const selectedValue = _.find(paramItem.configuration.values, { value: paramItem.value });
-                    getParamIteration(paramsAccu, selectedValue.parameters);
-                }
-            });
-        }
+				if (paramItem.type === 'select') {
+					const selectedValue = _.find(paramItem.configuration.values, { value: paramItem.value });
+					getParamIteration(paramsAccu, selectedValue.parameters);
+				}
+			});
+		}
 
-        return paramsAccu;
-    }
+		return paramsAccu;
+	}
 
     /**
      * @ngdoc method
@@ -396,19 +396,19 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Set the new parameters
      * @returns {Promise} The process Promise
      */
-    function updateParameters(metadata, parameters) {
-        const originalParameters = extractOriginalParameters(metadata);
-        setParameters(metadata, parameters);
+	function updateParameters(metadata, parameters) {
+		const originalParameters = extractOriginalParameters(metadata);
+		setParameters(metadata, parameters);
 
-        return DatasetRestService.updateMetadata(metadata)
+		return DatasetRestService.updateMetadata(metadata)
             .then(() => {
-                metadata.preparations = originalParameters.preparations;
-            })
+	metadata.preparations = originalParameters.preparations;
+})
             .catch((error) => {
-                setParameters(metadata, originalParameters);
-                return $q.reject(error);
-            });
-    }
+	setParameters(metadata, originalParameters);
+	return $q.reject(error);
+});
+	}
 
     /**
      * @ngdoc method
@@ -417,10 +417,10 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Refresh the supported encodings list
      * @returns {Promise} The process Promise
      */
-    function refreshSupportedEncodings() {
-        return DatasetRestService.getEncodings()
+	function refreshSupportedEncodings() {
+		return DatasetRestService.getEncodings()
             .then(StateService.setDatasetEncodings);
-    }
+	}
 
     /**
      * @ngdoc method
@@ -429,21 +429,21 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description fetches the compatible prepartions for a given dataset
      * @returns {Promise} The process Promise
      */
-    function getCompatiblePreparations(datasetId) {
-        return DatasetRestService.getCompatiblePreparations(datasetId)
+	function getCompatiblePreparations(datasetId) {
+		return DatasetRestService.getCompatiblePreparations(datasetId)
             .then((compatiblePreparations) => {
-                if (state.playground.preparation) {
-                    compatiblePreparations = _.reject(compatiblePreparations, { id: state.playground.preparation.id });
-                }
+	if (state.playground.preparation) {
+		compatiblePreparations = _.reject(compatiblePreparations, { id: state.playground.preparation.id });
+	}
 
-                return _.map(compatiblePreparations, (candidatePrepa) => {
-                    return {
-                        preparation: candidatePrepa,
-                        dataset: _.find(state.inventory.datasets, { id: candidatePrepa.dataSetId }),
-                    };
-                });
-            });
-    }
+	return _.map(compatiblePreparations, (candidatePrepa) => {
+		return {
+			preparation: candidatePrepa,
+			dataset: _.find(state.inventory.datasets, { id: candidatePrepa.dataSetId }),
+		};
+	});
+});
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------Rename---------------------------------------------------
@@ -457,14 +457,14 @@ export default function DatasetService($q, state, StateService, DatasetListServi
      * @description Set the new name
      * @returns {Promise} The process Promise
      */
-    function rename(metadata, name) {
-        const oldName = metadata.name;
-        StateService.setDatasetName(metadata.id, name);
+	function rename(metadata, name) {
+		const oldName = metadata.name;
+		StateService.setDatasetName(metadata.id, name);
 
-        return DatasetRestService.updateMetadata(metadata)
+		return DatasetRestService.updateMetadata(metadata)
             .catch((error) => {
-                StateService.setDatasetName(metadata.id, oldName);
-                return $q.reject(error);
-            });
-    }
+	StateService.setDatasetName(metadata.id, oldName);
+	return $q.reject(error);
+});
+	}
 }

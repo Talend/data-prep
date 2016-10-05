@@ -19,13 +19,13 @@
  */
 export default class HomeCtrl {
 
-    constructor($window, $document, $state, state) {
-        'ngInject';
-        this.$window = $window;
-        this.$document = $document;
-        this.$state = $state;
-        this.state = state;
-        this.DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
+	constructor($window, $document, $state, state) {
+		'ngInject';
+		this.$window = $window;
+		this.$document = $document;
+		this.$state = $state;
+		this.state = state;
+		this.DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
 
         /**
          * @ngdoc property
@@ -34,7 +34,7 @@ export default class HomeCtrl {
          * @description Flag that control the right panel display
          * @type {boolean}
          */
-        this.showRightPanel = this.getRightPanelState();
+		this.showRightPanel = this.getRightPanelState();
 
         /**
          * @ngdoc property
@@ -43,12 +43,12 @@ export default class HomeCtrl {
          * @description data icon of the state of the right panel
          * @type {string}
          */
-        this.showRightPanelIcon = 'u';
-    }
+		this.showRightPanelIcon = 'u';
+	}
 
-    $onInit() {
-        this.updateRightPanelIcon();
-    }
+	$onInit() {
+		this.updateRightPanelIcon();
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Right panel------------------------------------------------
@@ -59,12 +59,12 @@ export default class HomeCtrl {
      * @methodOf data-prep.home.controller:HomeCtrl
      * @description Toggle the right panel containing inventory data
      */
-    toggleRightPanel() {
-        this.showRightPanel = !this.showRightPanel;
+	toggleRightPanel() {
+		this.showRightPanel = !this.showRightPanel;
 
-        this.saveRightPanelState();
-        this.updateRightPanelIcon();
-    }
+		this.saveRightPanelState();
+		this.updateRightPanelIcon();
+	}
 
     /**
      * @ngdoc method
@@ -72,9 +72,9 @@ export default class HomeCtrl {
      * @methodOf data-prep.home.controller:HomeCtrl
      * @description Update the displayed icon to toggle right panel
      */
-    updateRightPanelIcon() {
-        this.showRightPanelIcon = this.showRightPanel ? 't' : 'u';
-    }
+	updateRightPanelIcon() {
+		this.showRightPanelIcon = this.showRightPanel ? 't' : 'u';
+	}
 
     /**
      * @ngdoc method
@@ -82,10 +82,10 @@ export default class HomeCtrl {
      * @methodOf data-prep.home.controller:HomeCtrl
      * @description Get the data inventory panel parameters from localStorage
      */
-    getRightPanelState() {
-        const params = this.$window.localStorage.getItem(this.DATA_INVENTORY_PANEL_KEY);
-        return params ? JSON.parse(params) : false;
-    }
+	getRightPanelState() {
+		const params = this.$window.localStorage.getItem(this.DATA_INVENTORY_PANEL_KEY);
+		return params ? JSON.parse(params) : false;
+	}
 
     /**
      * @ngdoc method
@@ -93,7 +93,7 @@ export default class HomeCtrl {
      * @methodOf data-prep.home.controller:HomeCtrl
      * @description Save the data inventory panel parameters in localStorage
      */
-    saveRightPanelState() {
-        this.$window.localStorage.setItem(this.DATA_INVENTORY_PANEL_KEY, JSON.stringify(this.showRightPanel));
-    }
+	saveRightPanelState() {
+		this.$window.localStorage.setItem(this.DATA_INVENTORY_PANEL_KEY, JSON.stringify(this.showRightPanel));
+	}
 }

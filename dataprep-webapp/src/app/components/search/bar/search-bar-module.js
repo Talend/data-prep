@@ -28,11 +28,11 @@ const MODULE_NAME = 'data-prep.search-bar';
  * @requires talend.widget
  */
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_WORKFLOW_MODULE,
-        SERVICES_PREPARATION_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_WORKFLOW_MODULE,
+		SERVICES_PREPARATION_MODULE,
+	])
     .component('searchBar', SearchBarComponent);
 
 export default MODULE_NAME;

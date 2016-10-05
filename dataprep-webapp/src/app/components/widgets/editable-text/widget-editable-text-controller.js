@@ -18,14 +18,14 @@
  */
 export default class TalendEditableTextCtrl {
 
-    constructor($scope) {
-        'ngInject';
-        this.$scope = $scope;
-    }
+	constructor($scope) {
+		'ngInject';
+		this.$scope = $scope;
+	}
 
-    $onInit() {
-        this.$scope.$watch(() => this.text, this.reset.bind(this));
-    }
+	$onInit() {
+		this.$scope.$watch(() => this.text, this.reset.bind(this));
+	}
 
     /**
      * @ngdoc method
@@ -33,9 +33,9 @@ export default class TalendEditableTextCtrl {
      * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Set the edition text with the original value
      */
-    reset() {
-        this.editionText = this.text;
-    }
+	reset() {
+		this.editionText = this.text;
+	}
 
     /**
      * @ngdoc method
@@ -43,10 +43,10 @@ export default class TalendEditableTextCtrl {
      * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Reset the edition text and set edition mode flag
      */
-    edit() {
-        this.reset();
-        this.editionMode = true;
-    }
+	edit() {
+		this.reset();
+		this.editionMode = true;
+	}
 
     /**
      * @ngdoc method
@@ -56,13 +56,13 @@ export default class TalendEditableTextCtrl {
      * when value has changed
      * then switch to non the edition mode
      */
-    validate() {
-        if (angular.isUndefined(this.validateOnlyOnChange) || this.editionText !== this.text) {
-            this.onValidate({ text: this.editionText });
-        }
+	validate() {
+		if (angular.isUndefined(this.validateOnlyOnChange) || this.editionText !== this.text) {
+			this.onValidate({ text: this.editionText });
+		}
 
-        this.editionMode = false;
-    }
+		this.editionMode = false;
+	}
 
     /**
      * @ngdoc method
@@ -70,8 +70,8 @@ export default class TalendEditableTextCtrl {
      * @methodOf talend.widgets.controller:TalendEditableTextCtrl
      * @description Execute the cancel callback and set the edition mode to false
      */
-    cancel() {
-        this.onCancel({ text: this.editionText });
-        this.editionMode = false;
-    }
+	cancel() {
+		this.onCancel({ text: this.editionText });
+		this.editionMode = false;
+	}
 }

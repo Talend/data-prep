@@ -22,8 +22,8 @@ import PreparationListCtrl from './preparation-list-controller';
  * @restrict E
  */
 const PreparationListComponent = {
-    templateUrl: template,
-    controller: PreparationListCtrl,
+	templateUrl: template,
+	controller: PreparationListCtrl,
 };
 
 export default PreparationListComponent;

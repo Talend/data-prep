@@ -12,7 +12,7 @@
   ============================================================================*/
 
 export const feedbackState = {
-    visible: false,
+	visible: false,
 };
 
 /**
@@ -21,10 +21,10 @@ export const feedbackState = {
  * @description Manage the state of the feedback
  */
 export function FeedbackStateService() {
-    return {
-        show,
-        hide,
-    };
+	return {
+		show,
+		hide,
+	};
 
     /**
      * @ngdoc method
@@ -32,9 +32,9 @@ export function FeedbackStateService() {
      * @methodOf data-prep.services.state.service:FeedbackStateService
      * @description Display the feedback
      */
-    function show() {
-        feedbackState.visible = true;
-    }
+	function show() {
+		feedbackState.visible = true;
+	}
 
     /**
      * @ngdoc method
@@ -42,7 +42,7 @@ export function FeedbackStateService() {
      * @methodOf data-prep.services.state.service:FeedbackStateService
      * @description Hide the feedback
      */
-    function hide() {
-        feedbackState.visible = false;
-    }
+	function hide() {
+		feedbackState.visible = false;
+	}
 }

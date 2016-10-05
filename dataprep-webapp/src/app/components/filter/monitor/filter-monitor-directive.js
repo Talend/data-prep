@@ -14,21 +14,21 @@
 import template from './filter-monitor.html';
 
 export default function FilterMonitor() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            filters: '=',
-            onToogle: '&',
-            nbLines: '=',
-            nbTotalLines: '=',
-            percentage: '=',
-            state: '=',
-        },
-        bindToController: true,
-        controller: () => {
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			filters: '=',
+			onToogle: '&',
+			nbLines: '=',
+			nbTotalLines: '=',
+			percentage: '=',
+			state: '=',
+		},
+		bindToController: true,
+		controller: () => {
+		},
 
-        controllerAs: 'filterMonitorCtrl',
-    };
+		controllerAs: 'filterMonitorCtrl',
+	};
 }

@@ -21,14 +21,14 @@ import template from './export.html';
  * @usage <export></export>
  */
 export default function Export() {
-    return {
-        templateUrl: template,
-        restrict: 'E',
-        bindToController: true,
-        controllerAs: 'exportCtrl',
-        controller: 'ExportCtrl',
-        link: (scope, iElement, iAttrs, ctrl) => {
-            ctrl.form = iElement.find('#exportForm').eq(0)[0];
-        },
-    };
+	return {
+		templateUrl: template,
+		restrict: 'E',
+		bindToController: true,
+		controllerAs: 'exportCtrl',
+		controller: 'ExportCtrl',
+		link: (scope, iElement, iAttrs, ctrl) => {
+			ctrl.form = iElement.find('#exportForm').eq(0)[0];
+		},
+	};
 }

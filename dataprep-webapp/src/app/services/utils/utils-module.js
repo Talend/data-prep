@@ -36,10 +36,10 @@ const MODULE_NAME = 'data-prep.services.utils';
  * @description This module contains all the utiles services
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        toaster,
-    ])
+	[
+		ngTranslate,
+		toaster,
+	])
     .value('copyRights', copyright)
     .value('version', version)
     .value('documentationSearchURL', documentationSearchURL)

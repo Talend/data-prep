@@ -14,11 +14,11 @@
 import template from './column-profile.html';
 
 export default function ColumnProfile() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'columnProfileCtrl',
-        controller: 'ColumnProfileCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'columnProfileCtrl',
+		controller: 'ColumnProfileCtrl',
+	};
 }

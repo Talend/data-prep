@@ -23,36 +23,36 @@ const DOUBLE_REGEXP = /^\-?\d+(\.\d+)?$/;
  * @param {string} isType The wanted type (integer | numeric | double | float)
  */
 export default function IsTypeValidation() {
-    return {
-        require: 'ngModel',
-        link: (scope, elm, attrs, ctrl) => {
-            const type = attrs.isType;
-            ctrl.$validators.isTypeValidation = (modelValue, viewValue) => {
-                if (ctrl.$isEmpty(modelValue)) {
-                    return true;
-                }
+	return {
+		require: 'ngModel',
+		link: (scope, elm, attrs, ctrl) => {
+			const type = attrs.isType;
+			ctrl.$validators.isTypeValidation = (modelValue, viewValue) => {
+				if (ctrl.$isEmpty(modelValue)) {
+					return true;
+				}
 
-                switch (type) {
-                case 'integer':
-                    if (!INTEGER_REGEXP.test(viewValue)) {
-                        return false;
-                    }
+				switch (type) {
+				case 'integer':
+					if (!INTEGER_REGEXP.test(viewValue)) {
+						return false;
+					}
 
-                    break;
-                case 'numeric':
-                case 'double':
-                case 'float':
-                    if (!DOUBLE_REGEXP.test(viewValue)) {
-                        return false;
-                    }
+					break;
+				case 'numeric':
+				case 'double':
+				case 'float':
+					if (!DOUBLE_REGEXP.test(viewValue)) {
+						return false;
+					}
 
-                    break;
-                default:
-                    break;
-                }
+					break;
+				default:
+					break;
+				}
 
-                return true;
-            };
-        },
-    };
+				return true;
+			};
+		},
+	};
 }

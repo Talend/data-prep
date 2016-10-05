@@ -22,14 +22,14 @@ import template from './lookup.html';
  * @param {Boolean} visible boolean to show or hide the lookup
  */
 export default function Lookup() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            visible: '=',
-        },
-        bindToController: true,
-        controllerAs: 'lookupCtrl',
-        controller: 'LookupCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			visible: '=',
+		},
+		bindToController: true,
+		controllerAs: 'lookupCtrl',
+		controller: 'LookupCtrl',
+	};
 }

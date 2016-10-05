@@ -23,12 +23,12 @@ import Feedback from './feedback-directive';
 const MODULE_NAME = 'data-prep.feedback';
 
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        SERVICES_FEEDBACK_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		SERVICES_FEEDBACK_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('FeedbackCtrl', FeedbackCtrl)
     .directive('feedback', Feedback);
 

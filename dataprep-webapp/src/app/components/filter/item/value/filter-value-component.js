@@ -30,15 +30,15 @@ import template from './filter-value.html';
  * @param {Function}   onRemove      Callback when value has been removed
  */
 const FilterValueComponent = {
-    templateUrl: template,
-    controller: 'FilterValueCtrl',
-    bindings: {
-        value: '<',
-        editable: '<',
-        onEdit: '&',
-        removable: '<',
-        onRemove: '&',
-    },
+	templateUrl: template,
+	controller: 'FilterValueCtrl',
+	bindings: {
+		value: '<',
+		editable: '<',
+		onEdit: '&',
+		removable: '<',
+		onRemove: '&',
+	},
 };
 
 export default FilterValueComponent;

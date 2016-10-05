@@ -24,14 +24,14 @@ import DataPrepApp from './app-directive';
 const MODULE_NAME = 'data-prep.app';
 
 angular.module(MODULE_NAME,
-    [
-        EASTER_EGG_MODULE,
-        FEEDBACK_MODULE,
-        HOME_MODULE,
-        NAVBAR_MODULE,
-        PLAYGROUND_MODULE,
-        UPGRADE_VERSION_MODULE,
-    ])
+	[
+		EASTER_EGG_MODULE,
+		FEEDBACK_MODULE,
+		HOME_MODULE,
+		NAVBAR_MODULE,
+		PLAYGROUND_MODULE,
+		UPGRADE_VERSION_MODULE,
+	])
     .directive('dataprepApp', DataPrepApp);
 
 export default MODULE_NAME;

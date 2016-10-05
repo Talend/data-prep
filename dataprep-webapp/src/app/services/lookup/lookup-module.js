@@ -31,12 +31,12 @@ const MODULE_NAME = 'data-prep.services.lookup';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_DATASET_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_TRANSFORMATION_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_DATASET_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_TRANSFORMATION_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('LookupService', LookupService);
 
 export default MODULE_NAME;

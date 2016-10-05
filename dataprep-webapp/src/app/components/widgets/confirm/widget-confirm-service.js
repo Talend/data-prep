@@ -17,10 +17,10 @@
  * @description Talend confirm service
  */
 export default function TalendConfirmService($rootScope, $compile, $document, $q, $timeout, $translate) {
-    'ngInject';
+	'ngInject';
 
-    const body = $document.find('body').eq(0);
-    const self = this;
+	const body = $document.find('body').eq(0);
+	const self = this;
 
     /**
      * @ngdoc method
@@ -31,14 +31,14 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @description [PRIVATE] Translate the texts to display
      * @returns {promise} The promise that resolves the translated texts
      */
-    const translateTexts = function (textIds, textArgs) {
-        return $translate(textIds, textArgs)
+	const translateTexts = function (textIds, textArgs) {
+		return $translate(textIds, textArgs)
             .then(function (translations) {
-                return _.map(textIds, function (id) {
-                    return translations[id];
-                });
-            });
-    };
+	return _.map(textIds, function (id) {
+		return translations[id];
+	});
+});
+	};
 
     /**
      * @ngdoc method
@@ -49,21 +49,21 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @param {object} textArgs The translation args
      * @description [PRIVATE] Create confirm modal isolated scope
      */
-    const createScope = function (options, textIds, textArgs) {
-        if (self.modalScope) {
-            throw new Error('A confirm popup is already created');
-        }
+	const createScope = function (options, textIds, textArgs) {
+		if (self.modalScope) {
+			throw new Error('A confirm popup is already created');
+		}
 
-        self.modalScope = $rootScope.$new(true);
-        translateTexts(textIds, textArgs)
+		self.modalScope = $rootScope.$new(true);
+		translateTexts(textIds, textArgs)
             .then(function (translatedTexts) {
-                self.modalScope.texts = translatedTexts;
-            });
+	self.modalScope.texts = translatedTexts;
+});
 
-        if (options) {
-            self.modalScope.disableEnter = options.disableEnter;
-        }
-    };
+		if (options) {
+			self.modalScope.disableEnter = options.disableEnter;
+		}
+	};
 
     /**
      * @ngdoc method
@@ -71,10 +71,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @methodOf talend.widget.service:TalendConfirmService
      * @description [PRIVATE] Destroy the modal scope
      */
-    const removeScope = function () {
-        self.modalScope.$destroy();
-        self.modalScope = null;
-    };
+	const removeScope = function () {
+		self.modalScope.$destroy();
+		self.modalScope = null;
+	};
 
     /**
      * @ngdoc method
@@ -82,11 +82,11 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @methodOf talend.widget.service:TalendConfirmService
      * @description [PRIVATE] Create the confirm modal element and attach it to the body
      */
-    const createElement = function () {
-        self.element = angular.element('<talend-confirm disable-enter="disableEnter" texts="texts"></talend-confirm>');
-        $compile(self.element)(self.modalScope);
-        body.append(self.element);
-    };
+	const createElement = function () {
+		self.element = angular.element('<talend-confirm disable-enter="disableEnter" texts="texts"></talend-confirm>');
+		$compile(self.element)(self.modalScope);
+		body.append(self.element);
+	};
 
     /**
      * @ngdoc method
@@ -94,10 +94,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @methodOf talend.widget.service:TalendConfirmService
      * @description [PRIVATE] Remove the the element
      */
-    const removeElement = function () {
-        self.element.remove();
-        self.element = null;
-    };
+	const removeElement = function () {
+		self.element.remove();
+		self.element = null;
+	};
 
     /**
      * @ngdoc method
@@ -105,13 +105,13 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @methodOf talend.widget.service:TalendConfirmService
      * @description [PRIVATE] Remove the modal and reset everything
      */
-    const close = function () {
-        removeScope();
-        removeElement();
+	const close = function () {
+		removeScope();
+		removeElement();
 
-        self.confirmResolve = null;
-        self.confirmReject = null;
-    };
+		self.confirmResolve = null;
+		self.confirmReject = null;
+	};
 
     /**
      * @ngdoc method
@@ -119,10 +119,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @methodOf talend.widget.service:TalendConfirmService
      * @description Resolve the modal promise and destroy the modal
      */
-    this.resolve = function () {
-        self.confirmResolve();
-        $timeout(close);
-    };
+	this.resolve = function () {
+		self.confirmResolve();
+		$timeout(close);
+	};
 
     /**
      * @ngdoc method
@@ -131,10 +131,10 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @param {string} cause 'dismiss' if the modal is closed without clicking on a button
      * @description Reject the modal promise and destroy the modal
      */
-    this.reject = function (cause) {
-        self.confirmReject(cause);
-        $timeout(close);
-    };
+	this.reject = function (cause) {
+		self.confirmReject(cause);
+		$timeout(close);
+	};
 
     /**
      * @ngdoc method
@@ -147,13 +147,13 @@ export default function TalendConfirmService($rootScope, $compile, $document, $q
      * @description Create the confirm modal element and return a promise that will be resolve on button click or modal dismiss
      * Example : TalendConfirmService.confirm({disableEnter: true}, ['First text', 'Second text'], {translateArg: 'value'})
      */
-    this.confirm = function (options, textIds, textArgs) {
-        createScope(options, textIds, textArgs);
-        createElement();
+	this.confirm = function (options, textIds, textArgs) {
+		createScope(options, textIds, textArgs);
+		createElement();
 
-        return $q(function (resolve, reject) {
-            self.confirmResolve = resolve;
-            self.confirmReject = reject;
-        });
-    };
+		return $q(function (resolve, reject) {
+			self.confirmResolve = resolve;
+			self.confirmReject = reject;
+		});
+	};
 }

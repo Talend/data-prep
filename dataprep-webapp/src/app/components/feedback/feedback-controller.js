@@ -12,58 +12,58 @@
  ============================================================================*/
 
 export default function FeedbackCtrl(state, $translate, FeedbackRestService, MessageService, StateService, StorageService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.isSendingFeedback = false;
-    vm.state = state;
+	const vm = this;
+	vm.isSendingFeedback = false;
+	vm.state = state;
 
-    $translate(
-        [
-            'FEEDBACK_TYPE_BUG',
-            'FEEDBACK_TYPE_IMPROVEMENT',
-            'FEEDBACK_SEVERITY_CRITICAL',
-            'FEEDBACK_SEVERITY_MAJOR',
-            'FEEDBACK_SEVERITY_MINOR',
-            'FEEDBACK_SEVERITY_TRIVIAL',
-        ])
+	$translate(
+		[
+			'FEEDBACK_TYPE_BUG',
+			'FEEDBACK_TYPE_IMPROVEMENT',
+			'FEEDBACK_SEVERITY_CRITICAL',
+			'FEEDBACK_SEVERITY_MAJOR',
+			'FEEDBACK_SEVERITY_MINOR',
+			'FEEDBACK_SEVERITY_TRIVIAL',
+		])
         .then((translations) => {
-            vm.feedbackTypes = [
+	vm.feedbackTypes = [
                 { name: translations.FEEDBACK_TYPE_BUG, value: 'BUG' },
                 { name: translations.FEEDBACK_TYPE_IMPROVEMENT, value: 'IMPROVEMENT' },
-            ];
-            vm.feedbackSeverities = [
+	];
+	vm.feedbackSeverities = [
                 { name: translations.FEEDBACK_SEVERITY_CRITICAL, value: 'CRITICAL' },
                 { name: translations.FEEDBACK_SEVERITY_MAJOR, value: 'MAJOR' },
                 { name: translations.FEEDBACK_SEVERITY_MINOR, value: 'MINOR' },
                 { name: translations.FEEDBACK_SEVERITY_TRIVIAL, value: 'TRIVIAL' },
-            ];
-        });
+	];
+});
 
-    resetForm();
+	resetForm();
 
-    function resetForm() {
-        vm.feedback = {
-            title: '',
-            mail: StorageService.getFeedbackUserMail(),
-            severity: 'MINOR',
-            type: 'BUG',
-            description: '',
-        };
-    }
+	function resetForm() {
+		vm.feedback = {
+			title: '',
+			mail: StorageService.getFeedbackUserMail(),
+			severity: 'MINOR',
+			type: 'BUG',
+			description: '',
+		};
+	}
 
-    vm.sendFeedback = function sendFeedback() {
-        vm.feedbackForm.$commitViewValue();
-        vm.isSendingFeedback = true;
-        FeedbackRestService.sendFeedback(vm.feedback)
+	vm.sendFeedback = function sendFeedback() {
+		vm.feedbackForm.$commitViewValue();
+		vm.isSendingFeedback = true;
+		FeedbackRestService.sendFeedback(vm.feedback)
             .then(() => {
-                StorageService.saveFeedbackUserMail(vm.feedback.mail);
-                resetForm();
-                StateService.hideFeedback();
-                MessageService.success('FEEDBACK_SENT_TITLE', 'FEEDBACK_SENT_CONTENT');
-            })
+	StorageService.saveFeedbackUserMail(vm.feedback.mail);
+	resetForm();
+	StateService.hideFeedback();
+	MessageService.success('FEEDBACK_SENT_TITLE', 'FEEDBACK_SENT_CONTENT');
+})
             .finally(() => {
-                vm.isSendingFeedback = false;
-            });
-    };
+	vm.isSendingFeedback = false;
+});
+	};
 }

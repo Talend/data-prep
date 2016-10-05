@@ -17,7 +17,7 @@
  * @description Transformation parameters controller.
  */
 export default function TransformFormCtrl() {
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc method
@@ -28,27 +28,27 @@ export default function TransformFormCtrl() {
      * @param {array} parameters The parameters array
      * @returns {object} The parameters
      */
-    function getParamIteration(paramsAccu, parameters) {
-        if (parameters) {
-            _.forEach(parameters, (paramItem) => {
-                paramsAccu[paramItem.name] =
+	function getParamIteration(paramsAccu, parameters) {
+		if (parameters) {
+			_.forEach(parameters, (paramItem) => {
+				paramsAccu[paramItem.name] =
                     typeof (paramItem.value) !== 'undefined' ?
                         paramItem.value :
                         paramItem.default;
 
                 // deal with select inline parameters
-                if (paramItem.type === 'select') {
-                    const selectedValue = _.find(
+				if (paramItem.type === 'select') {
+					const selectedValue = _.find(
                         paramItem.configuration.values,
                         { value: paramItem.value }
                     );
-                    getParamIteration(paramsAccu, selectedValue.parameters);
-                }
-            });
-        }
+					getParamIteration(paramsAccu, selectedValue.parameters);
+				}
+			});
+		}
 
-        return paramsAccu;
-    }
+		return paramsAccu;
+	}
 
     /**
      * @ngdoc method
@@ -57,9 +57,9 @@ export default function TransformFormCtrl() {
      * @description [PRIVATE] Get item parameters into one object for REST call
      * @returns {object} - the parameters
      */
-    function getParams() {
-        return getParamIteration({}, vm.transformation.parameters);
-    }
+	function getParams() {
+		return getParamIteration({}, vm.transformation.parameters);
+	}
 
     /**
      * @ngdoc method
@@ -68,24 +68,24 @@ export default function TransformFormCtrl() {
      * @description [PRIVATE] Get cluster choice and choice parameters into one object
      * @returns {object} the parameters
      */
-    function getClusterParams() {
-        const params = {};
-        if (vm.transformation.cluster) {
-            _.chain(vm.transformation.cluster.clusters)
+	function getClusterParams() {
+		const params = {};
+		if (vm.transformation.cluster) {
+			_.chain(vm.transformation.cluster.clusters)
                 .filter('active')
                 .forEach((cluster) => {
-                    const replaceValue = cluster.replace.value;
-                    _.forEach(cluster.parameters, (param) => {
-                        if (param.value) {
-                            params[param.name] = replaceValue;
-                        }
-                    });
-                })
+	const replaceValue = cluster.replace.value;
+	_.forEach(cluster.parameters, (param) => {
+		if (param.value) {
+			params[param.name] = replaceValue;
+		}
+	});
+})
                 .value();
-        }
+		}
 
-        return params;
-    }
+		return params;
+	}
 
     /**
      * @ngdoc method
@@ -94,11 +94,11 @@ export default function TransformFormCtrl() {
      * @description [PRIVATE] Gather params into one unique object
      * @returns {object} The entire parameter values
      */
-    function gatherParams() {
-        const params = getParams();
-        const clusterParams = getClusterParams();
-        return _.merge(params, clusterParams);
-    }
+	function gatherParams() {
+		const params = getParams();
+		const clusterParams = getClusterParams();
+		return _.merge(params, clusterParams);
+	}
 
     /**
      * @ngdoc method
@@ -106,10 +106,10 @@ export default function TransformFormCtrl() {
      * @methodOf data-prep.transformation-form.controller:TransformFormCtrl
      * @description Gather params and perform a transformation on the column if the form is valid
      */
-    vm.transformWithParam = function transformWithParam() {
-        const transformationParams = gatherParams();
-        vm.onSubmit({ params: transformationParams });
-    };
+	vm.transformWithParam = function transformWithParam() {
+		const transformationParams = gatherParams();
+		vm.onSubmit({ params: transformationParams });
+	};
 
     /**
      * @ngdoc method
@@ -117,11 +117,11 @@ export default function TransformFormCtrl() {
      * @methodOf data-prep.transformation-form.controller:TransformFormCtrl
      * @description Gather params and perform the submit mouseenter action
      */
-    vm.submitHoverOn = function submitHoverOn() {
-        vm.paramForm.$commitViewValue();
-        const params = gatherParams();
-        vm.onSubmitHoverOn({ params });
-    };
+	vm.submitHoverOn = function submitHoverOn() {
+		vm.paramForm.$commitViewValue();
+		const params = gatherParams();
+		vm.onSubmitHoverOn({ params });
+	};
 
     /**
      * @ngdoc method
@@ -129,8 +129,8 @@ export default function TransformFormCtrl() {
      * @methodOf data-prep.transformation-form.controller:TransformFormCtrl
      * @description Gather params and perform the submit mouseleave action
      */
-    vm.submitHoverOff = function submitHoverOff() {
-        const params = gatherParams();
-        vm.onSubmitHoverOff({ params });
-    };
+	vm.submitHoverOff = function submitHoverOff() {
+		const params = gatherParams();
+		vm.onSubmitHoverOff({ params });
+	};
 }

@@ -14,14 +14,14 @@
 import InventoryCopyMoveCtrl from './inventory-copy-move-controller';
 
 const InventoryCopyMoveComponent = {
-    bindings: {
-        initialFolder: '<',
-        item: '<',
-        onCopy: '&',
-        onMove: '&',
-    },
-    controller: InventoryCopyMoveCtrl,
-    template: `
+	bindings: {
+		initialFolder: '<',
+		item: '<',
+		onCopy: '&',
+		onMove: '&',
+	},
+	controller: InventoryCopyMoveCtrl,
+	template: `
     <div>
         <div class="modal-title" 
              translate-once="CHOOSE_FOLDER_DESTINATION" 

@@ -16,8 +16,8 @@ import PreparationHeaderCtrl from './preparation-header-controller';
 import template from './preparation-header.html';
 
 const PreparationHeaderComponent = {
-    templateUrl: template,
-    controller: PreparationHeaderCtrl,
+	templateUrl: template,
+	controller: PreparationHeaderCtrl,
 };
 
 export default PreparationHeaderComponent;

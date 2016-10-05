@@ -22,14 +22,14 @@ import template from './transformation-regex-param.html';
  * @param {object} parameter The parameter to render
  */
 export default function TransformRegexParam() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            parameter: '=',
-        },
-        bindToController: true,
-        controllerAs: 'regexParamCtrl',
-        controller: 'TransformRegexParamCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			parameter: '=',
+		},
+		bindToController: true,
+		controllerAs: 'regexParamCtrl',
+		controller: 'TransformRegexParamCtrl',
+	};
 }

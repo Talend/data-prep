@@ -16,11 +16,11 @@ import FolderSelectionCtrl from './folder-selection-controller';
 import template from './folder-selection.html';
 
 const FolderSelection = {
-    bindings: {
-        selectedFolder: '=ngModel',
-    },
-    controller: FolderSelectionCtrl,
-    templateUrl: template,
+	bindings: {
+		selectedFolder: '=ngModel',
+	},
+	controller: FolderSelectionCtrl,
+	templateUrl: template,
 };
 
 export default FolderSelection;

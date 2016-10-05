@@ -14,11 +14,11 @@
 import template from './stats-details.html';
 
 export default function StatsDetails() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'statsDetailsCtrl',
-        controller: 'StatsDetailsCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'statsDetailsCtrl',
+		controller: 'StatsDetailsCtrl',
+	};
 }

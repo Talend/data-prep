@@ -21,11 +21,11 @@ import template from './easter-eggs.html';
  * @usage <easter-eggs></easter-eggs>
  */
 export default function EasterEggs() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'easterEggsCtrl',
-        controller: 'EasterEggsCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'easterEggsCtrl',
+		controller: 'EasterEggsCtrl',
+	};
 }

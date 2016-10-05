@@ -26,10 +26,10 @@ const MODULE_NAME = 'data-prep.documentation-search';
  * @requires talend.widget
  */
 angular.module(MODULE_NAME,
-    [
-        SEARCH_BAR_MODULE,
-        SERVICES_DOCUMENTATION_MODULE,
-    ])
+	[
+		SEARCH_BAR_MODULE,
+		SERVICES_DOCUMENTATION_MODULE,
+	])
     .component('documentationSearch', DocumentationSearch);
 
 export default MODULE_NAME;

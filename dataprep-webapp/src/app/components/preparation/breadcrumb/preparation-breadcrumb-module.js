@@ -21,11 +21,11 @@ import PreparationBreadcrumbComponent from './preparation-breadcrumb-component';
 const MODULE_NAME = 'data-prep.preparation-breadcrumb';
 
 angular.module(MODULE_NAME,
-    [
-        BREADCRUMB_MODULE,
-        SERVICES_FOLDER_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		BREADCRUMB_MODULE,
+		SERVICES_FOLDER_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .component('preparationBreadcrumb', PreparationBreadcrumbComponent);
 
 export default MODULE_NAME;

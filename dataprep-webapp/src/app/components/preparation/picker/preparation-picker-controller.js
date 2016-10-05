@@ -12,10 +12,10 @@
  ============================================================================*/
 
 class PreparationPickerCtrl {
-    constructor() {
-        'ngInject';
-        this.candidatePreparations = [];
-    }
+	constructor() {
+		'ngInject';
+		this.candidatePreparations = [];
+	}
 
     /**
      * @ngdoc method
@@ -23,16 +23,16 @@ class PreparationPickerCtrl {
      * @methodOf data-prep.preparation-picker.controller:PreparationPickerCtrl
      * @description initializes preparation picker form
      **/
-    $onInit() {
-        this.isFetchingPreparations = true;
-        this.fetchPreparations({ datasetId: this.dataset.id })
+	$onInit() {
+		this.isFetchingPreparations = true;
+		this.fetchPreparations({ datasetId: this.dataset.id })
             .then((compatiblePreparations) => {
-                this.candidatePreparations = compatiblePreparations;
-            })
+	this.candidatePreparations = compatiblePreparations;
+})
             .finally(() => {
-                this.isFetchingPreparations = false;
-            });
-    }
+	this.isFetchingPreparations = false;
+});
+	}
 }
 
 export default PreparationPickerCtrl;

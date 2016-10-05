@@ -31,10 +31,10 @@ const MODULE_NAME = 'data-prep.filter-item';
  */
 angular
     .module(MODULE_NAME, [
-        ngTranslate,
-        FILTER_ITEM_VALUE_MODULE,
-        TALEND_WIDGET_MODULE,
-    ])
+	ngTranslate,
+	FILTER_ITEM_VALUE_MODULE,
+	TALEND_WIDGET_MODULE,
+])
     .controller('FilterItemCtrl', FilterItemCtrl)
     .component('filterItem', FilterItemComponent);
 

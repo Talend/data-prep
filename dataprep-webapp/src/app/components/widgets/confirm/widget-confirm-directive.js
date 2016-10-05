@@ -32,15 +32,15 @@ import template from './confirm.html';
  * @param {string[]} texts The texts ids (translation ids) to display
  */
 export default function TalendConfirm() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            disableEnter: '=',
-            texts: '=',
-        },
-        bindToController: true,
-        controller: 'TalendConfirmCtrl',
-        controllerAs: 'confirmCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			disableEnter: '=',
+			texts: '=',
+		},
+		bindToController: true,
+		controller: 'TalendConfirmCtrl',
+		controllerAs: 'confirmCtrl',
+	};
 }

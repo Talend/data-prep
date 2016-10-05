@@ -20,8 +20,8 @@ import template from './datagrid-index-header.html';
  * @restrict E
  */
 const DatagridIndexHeaderComponent = {
-    templateUrl: template,
-    controller: DatagridIndexHeaderCtrl,
+	templateUrl: template,
+	controller: DatagridIndexHeaderCtrl,
 };
 
 export default DatagridIndexHeaderComponent;

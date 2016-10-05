@@ -14,23 +14,23 @@
 import template from './inventory-header.html';
 
 export default function InventoryHeaderDirective() {
-    return {
-        templateUrl: template,
-        scope: true,
-        bindToController: {
-            sort: '<',
-            order: '<',
-            folderList: '<',
-            sortList: '<',
-            orderList: '<',
-            onSortChange: '&',
-            onOrderChange: '&',
-            onFolderCreation: '&',
-        },
-        controllerAs: '$ctrl',
-        controller: 'InventoryHeaderCtrl',
-        link(scope, iElement, iAttrs, ctrl) {
-            ctrl.canCreateFolder = iAttrs.onFolderCreation;
-        },
-    };
+	return {
+		templateUrl: template,
+		scope: true,
+		bindToController: {
+			sort: '<',
+			order: '<',
+			folderList: '<',
+			sortList: '<',
+			orderList: '<',
+			onSortChange: '&',
+			onOrderChange: '&',
+			onFolderCreation: '&',
+		},
+		controllerAs: '$ctrl',
+		controller: 'InventoryHeaderCtrl',
+		link(scope, iElement, iAttrs, ctrl) {
+			ctrl.canCreateFolder = iAttrs.onFolderCreation;
+		},
+	};
 }

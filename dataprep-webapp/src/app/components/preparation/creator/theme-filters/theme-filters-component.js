@@ -29,13 +29,13 @@
  * */
 
 export default {
-    bindings: {
-        filters: '<',
-        selectedFilter: '<',
-        onSelect: '&',
-        disableSelection: '<',
-    },
-    template: `
+	bindings: {
+		filters: '<',
+		selectedFilter: '<',
+		onSelect: '&',
+		disableSelection: '<',
+	},
+	template: `
         <div class="theme-filter"
              ng-repeat="filter in $ctrl.filters track by filter.id"
              ng-class="{'selected': $ctrl.selectedFilter === filter}"

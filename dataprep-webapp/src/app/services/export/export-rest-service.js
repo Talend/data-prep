@@ -19,11 +19,11 @@
  * {@link data-prep.services.export.service:ExportService ExportService} must be the only entry point for Export</b>
  */
 export default class ExportRestService {
-    constructor($http, RestURLs) {
-        'ngInject';
-        this.$http = $http;
-        this.url = RestURLs.exportUrl;
-    }
+	constructor($http, RestURLs) {
+		'ngInject';
+		this.$http = $http;
+		this.url = RestURLs.exportUrl;
+	}
 
     /**
      * @ngdoc method
@@ -32,7 +32,7 @@ export default class ExportRestService {
      * @description Fetch the available export types
      * @returns {Promise}  The GET call promise
      */
-    exportTypes() {
-        return this.$http.get(this.url + '/formats').then(resp => resp.data);
-    }
+	exportTypes() {
+		return this.$http.get(this.url + '/formats').then(resp => resp.data);
+	}
 }

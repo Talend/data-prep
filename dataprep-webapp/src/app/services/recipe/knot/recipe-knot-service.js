@@ -19,14 +19,14 @@
  * @requires data-prep.services.playground.service:PreviewService
  */
 export default function RecipeKnotService($timeout, state, StepUtilsService, PreviewService) {
-    'ngInject';
+	'ngInject';
 
-    let previewTimeout;
+	let previewTimeout;
 
-    return {
-        stepHoverStart,
-        stepHoverEnd,
-    };
+	return {
+		stepHoverStart,
+		stepHoverEnd,
+	};
 
     //---------------------------------------------------------------------------------------------
     // ------------------------------------------Mouse Actions--------------------------------------
@@ -37,10 +37,10 @@ export default function RecipeKnotService($timeout, state, StepUtilsService, Pre
      * @methodOf data-prep.services.recipe.service:RecipeKnotService
      * @description Cancel the pending preview. If the REST call is pending, this call is canceled too.
      */
-    function cancelPendingPreview() {
-        $timeout.cancel(previewTimeout);
-        PreviewService.stopPendingPreview();
-    }
+	function cancelPendingPreview() {
+		$timeout.cancel(previewTimeout);
+		PreviewService.stopPendingPreview();
+	}
 
     /**
      * @ngdoc method
@@ -49,13 +49,13 @@ export default function RecipeKnotService($timeout, state, StepUtilsService, Pre
      * @param {object} step The hovered step
      * @description Cancel pending preview and trigger a new one with a 200ms delay
      */
-    function stepHoverStart(step) {
-        cancelPendingPreview();
-        previewTimeout = $timeout(function () {
-            const previewFn = step.inactive ? previewAppend : previewDisable;
-            previewFn(step);
-        }, 300, false);
-    }
+	function stepHoverStart(step) {
+		cancelPendingPreview();
+		previewTimeout = $timeout(function () {
+			const previewFn = step.inactive ? previewAppend : previewDisable;
+			previewFn(step);
+		}, 300, false);
+	}
 
     /**
      * @ngdoc method
@@ -64,10 +64,10 @@ export default function RecipeKnotService($timeout, state, StepUtilsService, Pre
      * @param {object} step The hovered end step
      * @description Cancel any pending preview and cancel the current preview with a 100ms delay
      */
-    function stepHoverEnd(step) {
-        cancelPendingPreview();
-        previewTimeout = $timeout(PreviewService.cancelPreview.bind(null, false, step.column.id), 100);
-    }
+	function stepHoverEnd(step) {
+		cancelPendingPreview();
+		previewTimeout = $timeout(PreviewService.cancelPreview.bind(null, false, step.column.id), 100);
+	}
 
     //---------------------------------------------------------------------------------------------
     // ---------------------------------------------Preview-----------------------------------------
@@ -79,12 +79,12 @@ export default function RecipeKnotService($timeout, state, StepUtilsService, Pre
      * @param {object} previewStep The step to preview
      * @description Call the preview service to display the diff between the current active step and the preview step to activate
      */
-    function previewAppend(previewStep) {
-        const currentStep = StepUtilsService.getLastActiveStep(state.playground.recipe);
-        const preparationId = state.playground.preparation.id;
-        const columnToFocusId = previewStep.column.id;
-        PreviewService.getPreviewDiffRecords(preparationId, currentStep, previewStep, columnToFocusId);
-    }
+	function previewAppend(previewStep) {
+		const currentStep = StepUtilsService.getLastActiveStep(state.playground.recipe);
+		const preparationId = state.playground.preparation.id;
+		const columnToFocusId = previewStep.column.id;
+		PreviewService.getPreviewDiffRecords(preparationId, currentStep, previewStep, columnToFocusId);
+	}
 
     /**
      * @ngdoc method
@@ -93,11 +93,11 @@ export default function RecipeKnotService($timeout, state, StepUtilsService, Pre
      * @param {object} disabledStep The step to disable for the preview
      * @description Call the preview service to display the diff between the current active step and the step before the one to deactivate
      */
-    function previewDisable(disabledStep) {
-        const previewStep = StepUtilsService.getPreviousStep(state.playground.recipe, disabledStep);
-        const currentStep = StepUtilsService.getLastActiveStep(state.playground.recipe);
-        const preparationId = state.playground.preparation.id;
-        const columnToFocusId = disabledStep.column.id;
-        PreviewService.getPreviewDiffRecords(preparationId, currentStep, previewStep, columnToFocusId);
-    }
+	function previewDisable(disabledStep) {
+		const previewStep = StepUtilsService.getPreviousStep(state.playground.recipe, disabledStep);
+		const currentStep = StepUtilsService.getLastActiveStep(state.playground.recipe);
+		const preparationId = state.playground.preparation.id;
+		const columnToFocusId = disabledStep.column.id;
+		PreviewService.getPreviewDiffRecords(preparationId, currentStep, previewStep, columnToFocusId);
+	}
 }

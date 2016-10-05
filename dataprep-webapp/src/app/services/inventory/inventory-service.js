@@ -12,25 +12,25 @@
  ============================================================================*/
 class InventoryService {
 
-    constructor($q, InventoryRestService, TextFormatService) {
-        'ngInject';
-        this.deferredCancel = null;
-        this.$q = $q;
-        this.InventoryRestService = InventoryRestService;
-        this.TextFormatService = TextFormatService;
-    }
+	constructor($q, InventoryRestService, TextFormatService) {
+		'ngInject';
+		this.deferredCancel = null;
+		this.$q = $q;
+		this.InventoryRestService = InventoryRestService;
+		this.TextFormatService = TextFormatService;
+	}
 
     /**
      * @ngdoc method
      * @name cancelPendingGetRequest
      * @description Cancel the pending search GET request
      */
-    cancelPendingGetRequest() {
-        if (this.deferredCancel) {
-            this.deferredCancel.resolve('user cancel');
-            this.deferredCancel = null;
-        }
-    }
+	cancelPendingGetRequest() {
+		if (this.deferredCancel) {
+			this.deferredCancel.resolve('user cancel');
+			this.deferredCancel = null;
+		}
+	}
 
     /**
      * @ngdoc method
@@ -39,17 +39,17 @@ class InventoryService {
      * @param {String} searchValue string
      * @description Search inventory items
      */
-    search(searchValue) {
-        this.cancelPendingGetRequest();
+	search(searchValue) {
+		this.cancelPendingGetRequest();
 
-        this.deferredCancel = this.$q.defer();
+		this.deferredCancel = this.$q.defer();
 
-        return this.InventoryRestService.search(searchValue, this.deferredCancel)
+		return this.InventoryRestService.search(searchValue, this.deferredCancel)
             .then((response) => {
-                return this.addHtmlLabelsAndSort(searchValue, response.data);
-            })
+	return this.addHtmlLabelsAndSort(searchValue, response.data);
+})
             .finally(() => this.deferredCancel = null);
-    }
+	}
 
     /**
      * @ngdoc method
@@ -58,56 +58,56 @@ class InventoryService {
      * @param {Object} data data to process
      * @description add html label to data based on searchValue and sort the results
      */
-    addHtmlLabelsAndSort(searchValue, data) {
-        let inventoryItems = [];
+	addHtmlLabelsAndSort(searchValue, data) {
+		let inventoryItems = [];
 
-        if (data.datasets && data.datasets.length) {
-            _.each(data.datasets, function (item) {
-                const itemToDisplay = {};
+		if (data.datasets && data.datasets.length) {
+			_.each(data.datasets, function (item) {
+				const itemToDisplay = {};
 
-                itemToDisplay.inventoryType = 'dataset';
-                itemToDisplay.author = item.author;
-                itemToDisplay.created = item.created;
-                itemToDisplay.records = item.records;
-                itemToDisplay.name = item.name;
-                itemToDisplay.path = item.path;
-                itemToDisplay.type = item.type;
-                itemToDisplay.originalItem = item;
-                itemToDisplay.lastModificationDate = item.lastModificationDate;
-                itemToDisplay.tooltipName = item.name;
-                itemToDisplay.owner = item.owner;
+				itemToDisplay.inventoryType = 'dataset';
+				itemToDisplay.author = item.author;
+				itemToDisplay.created = item.created;
+				itemToDisplay.records = item.records;
+				itemToDisplay.name = item.name;
+				itemToDisplay.path = item.path;
+				itemToDisplay.type = item.type;
+				itemToDisplay.originalItem = item;
+				itemToDisplay.lastModificationDate = item.lastModificationDate;
+				itemToDisplay.tooltipName = item.name;
+				itemToDisplay.owner = item.owner;
 
-                inventoryItems.push(itemToDisplay);
-            });
-        }
+				inventoryItems.push(itemToDisplay);
+			});
+		}
 
-        if (data.preparations && data.preparations.length) {
-            _.each(data.preparations, function (item) {
-                item.inventoryType = 'preparation';
-                item.tooltipName = item.name;
-            });
+		if (data.preparations && data.preparations.length) {
+			_.each(data.preparations, function (item) {
+				item.inventoryType = 'preparation';
+				item.tooltipName = item.name;
+			});
 
-            inventoryItems = inventoryItems.concat(data.preparations);
-        }
+			inventoryItems = inventoryItems.concat(data.preparations);
+		}
 
-        if (data.folders && data.folders.length) {
-            _.each(data.folders, function (item) {
-                item.inventoryType = 'folder';
-                item.tooltipName = item.name;
-            });
+		if (data.folders && data.folders.length) {
+			_.each(data.folders, function (item) {
+				item.inventoryType = 'folder';
+				item.tooltipName = item.name;
+			});
 
-            inventoryItems = inventoryItems.concat(data.folders);
-        }
+			inventoryItems = inventoryItems.concat(data.folders);
+		}
 
-        return _.chain(inventoryItems)
+		return _.chain(inventoryItems)
             .map((item) => {
-                this.TextFormatService.highlight(item, 'name', searchValue, 'highlighted');
-                return item;
-            })
+	this.TextFormatService.highlight(item, 'name', searchValue, 'highlighted');
+	return item;
+})
             .sortBy('lastModificationDate')
             .reverse()
             .value();
-    }
+	}
 }
 
 export default InventoryService;

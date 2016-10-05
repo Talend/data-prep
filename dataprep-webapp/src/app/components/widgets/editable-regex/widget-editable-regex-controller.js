@@ -17,45 +17,45 @@
  * @description Editable regex controller. It manage the entered value adaptation to match the wanted regex type
  */
 export default function TalendEditableRegexCtrl($translate) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
+	const vm = this;
 
-    const equals = {
-        key: '=',
-        label: $translate.instant('EQUALS'),
-        operator: 'equals',
-    };
+	const equals = {
+		key: '=',
+		label: $translate.instant('EQUALS'),
+		operator: 'equals',
+	};
 
-    const contains = {
-        key: '≅',
-        label: $translate.instant('CONTAINS'),
-        operator: 'contains',
-    };
+	const contains = {
+		key: '≅',
+		label: $translate.instant('CONTAINS'),
+		operator: 'contains',
+	};
 
-    const startsWith = {
-        key: '>',
-        label: $translate.instant('STARTS_WITH'),
-        operator: 'starts_with',
-    };
+	const startsWith = {
+		key: '>',
+		label: $translate.instant('STARTS_WITH'),
+		operator: 'starts_with',
+	};
 
-    const endsWith = {
-        key: '<',
-        label: $translate.instant('ENDS_WITH'),
-        operator: 'ends_with',
-    };
+	const endsWith = {
+		key: '<',
+		label: $translate.instant('ENDS_WITH'),
+		operator: 'ends_with',
+	};
 
-    const regex = {
-        key: '^\\',
-        label: $translate.instant('REGEX'),
-        operator: 'regex',
-    };
+	const regex = {
+		key: '^\\',
+		label: $translate.instant('REGEX'),
+		operator: 'regex',
+	};
 
     // TODO should be removed as backend must initialize it
-    vm.value = vm.value ? vm.value : {
-        token: '',
-        operator: 'contains',
-    };
+	vm.value = vm.value ? vm.value : {
+		token: '',
+		operator: 'contains',
+	};
 
     /**
      * @ngdoc property
@@ -63,7 +63,7 @@ export default function TalendEditableRegexCtrl($translate) {
      * @propertyOf talend.widget.controller:EditableRegexCtrl
      * @description The array of regex types
      */
-    vm.types = [equals, contains, startsWith, endsWith, regex];
+	vm.types = [equals, contains, startsWith, endsWith, regex];
 
     /**
      * @ngdoc method
@@ -71,9 +71,9 @@ export default function TalendEditableRegexCtrl($translate) {
      * @methodOf talend.widget.controller:EditableRegexCtrl
      * @description Change selected type and trigger model update
      */
-    vm.setSelectedType = function setSelectedType(type) {
-        vm.value.operator = type.operator;
-    };
+	vm.setSelectedType = function setSelectedType(type) {
+		vm.value.operator = type.operator;
+	};
 
     /**
      * @ngdoc method
@@ -82,8 +82,8 @@ export default function TalendEditableRegexCtrl($translate) {
      * @description Change selected type and trigger model update
      * @return {String} the type key
      */
-    vm.getTypeKey = function getTypeKey() {
-        const currentType = _.find(vm.types, { operator: vm.value.operator });
-        return currentType.key;
-    };
+	vm.getTypeKey = function getTypeKey() {
+		const currentType = _.find(vm.types, { operator: vm.value.operator });
+		return currentType.key;
+	};
 }

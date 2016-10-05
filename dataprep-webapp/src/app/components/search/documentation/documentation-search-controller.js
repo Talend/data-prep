@@ -20,10 +20,10 @@
  */
 class DocumentationSearchCtrl {
 
-    constructor(DocumentationService) {
-        'ngInject';
-        this.documentationService = DocumentationService;
-    }
+	constructor(DocumentationService) {
+		'ngInject';
+		this.documentationService = DocumentationService;
+	}
 
     /**
      * @ngdoc method
@@ -31,13 +31,13 @@ class DocumentationSearchCtrl {
      * @methodOf data-prep.documentation-search.controller:DocumentationSearchCtrl
      * @description Search based on searchInput
      */
-    search(searchInput) {
-        this.results = null;
-        this.currentInput = searchInput;
+	search(searchInput) {
+		this.results = null;
+		this.currentInput = searchInput;
 
-        return this.documentationService.search(searchInput)
-            .then((response) => (this.currentInput === searchInput) && (this.results = response));
-    }
+		return this.documentationService.search(searchInput)
+            .then(response => (this.currentInput === searchInput) && (this.results = response));
+	}
 }
 
 export default DocumentationSearchCtrl;

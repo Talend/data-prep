@@ -17,7 +17,7 @@
  * @description Transformation parameters controller.
  */
 export default function TransformParamsCtrl() {
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc method
@@ -26,18 +26,18 @@ export default function TransformParamsCtrl() {
      * @description Return the parameter type to display
      * @param {object} parameter The parameter
      */
-    vm.getParameterType = function getParameterType(parameter) {
-        const type = parameter.type.toLowerCase();
-        switch (type) {
-        case 'select':
-        case 'cluster':
-        case 'date':
-        case 'column':
-        case 'regex':
-        case 'hidden':
-            return type;
-        default:
-            return 'simple';
-        }
-    };
+	vm.getParameterType = function getParameterType(parameter) {
+		const type = parameter.type.toLowerCase();
+		switch (type) {
+		case 'select':
+		case 'cluster':
+		case 'date':
+		case 'column':
+		case 'regex':
+		case 'hidden':
+			return type;
+		default:
+			return 'simple';
+		}
+	};
 }

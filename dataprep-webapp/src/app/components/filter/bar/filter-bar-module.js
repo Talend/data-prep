@@ -27,12 +27,12 @@ const MODULE_NAME = 'data-prep.filter-bar';
  * @description This module aggregate the filters components into a bar
  */
 angular.module(MODULE_NAME,
-    [
-        FILTER_ITEM,
-        FILTER_LIST,
-        FILTER_MONITOR,
-        FILTER_SEARCH_MODULE,
-    ])
+	[
+		FILTER_ITEM,
+		FILTER_LIST,
+		FILTER_MONITOR,
+		FILTER_SEARCH_MODULE,
+	])
     .directive('filterBar', FilterBar);
 
 export default MODULE_NAME;

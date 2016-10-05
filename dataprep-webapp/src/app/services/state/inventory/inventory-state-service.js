@@ -22,56 +22,56 @@ const orderList = [
 ];
 
 const HOME_FOLDER = {
-    id: 'Lw==',
-    path: '/',
-    name: 'Home',
+	id: 'Lw==',
+	path: '/',
+	name: 'Home',
 };
 
 export const inventoryState = {
-    datasets: null,
+	datasets: null,
 
-    sortList,
-    orderList,
-    datasetsSort: sortList[1],
-    datasetsOrder: orderList[1],
-    preparationsSort: sortList[1],
-    preparationsOrder: orderList[1],
+	sortList,
+	orderList,
+	datasetsSort: sortList[1],
+	datasetsOrder: orderList[1],
+	preparationsSort: sortList[1],
+	preparationsOrder: orderList[1],
 
-    homeFolderId: HOME_FOLDER.id,
-    folder: {
-        metadata: HOME_FOLDER,
-        content: {
-            folders: [],
-            preparations: [],
-        },
-    },
-    breadcrumb: [],
-    breadcrumbChildren: {},
+	homeFolderId: HOME_FOLDER.id,
+	folder: {
+		metadata: HOME_FOLDER,
+		content: {
+			folders: [],
+			preparations: [],
+		},
+	},
+	breadcrumb: [],
+	breadcrumbChildren: {},
 
-    isFetchingDatasets: false,
-    isFetchingPreparations: false,
+	isFetchingDatasets: false,
+	isFetchingPreparations: false,
 };
 
 export function InventoryStateService() {
-    return {
-        setDatasets,
-        removeDataset,
-        setDatasetName,
+	return {
+		setDatasets,
+		removeDataset,
+		setDatasetName,
 
-        setHomeFolderId,
-        setFolder,
-        setBreadcrumb,
-        setBreadcrumbChildren,
+		setHomeFolderId,
+		setFolder,
+		setBreadcrumb,
+		setBreadcrumbChildren,
 
-        setDatasetsSort,
-        setDatasetsOrder,
+		setDatasetsSort,
+		setDatasetsOrder,
 
-        setPreparationsSort,
-        setPreparationsOrder,
+		setPreparationsSort,
+		setPreparationsOrder,
 
-        setFetchingDatasets,
-        setFetchingPreparations,
-    };
+		setFetchingDatasets,
+		setFetchingPreparations,
+	};
 
     /**
      * @ngdoc method
@@ -80,9 +80,9 @@ export function InventoryStateService() {
      * @param {boolean} bool isFetchingDatasets flag
      * @description Set isFetchingDatasets in Inventory
      */
-    function setFetchingDatasets(bool) {
-        inventoryState.isFetchingDatasets = bool;
-    }
+	function setFetchingDatasets(bool) {
+		inventoryState.isFetchingDatasets = bool;
+	}
 
     /**
      * @ngdoc method
@@ -91,9 +91,9 @@ export function InventoryStateService() {
      * @param {boolean} bool setFetchingPreparations flag
      * @description Set isFetchingPreparations in Inventory
      */
-    function setFetchingPreparations(bool) {
-        inventoryState.isFetchingPreparations = bool;
-    }
+	function setFetchingPreparations(bool) {
+		inventoryState.isFetchingPreparations = bool;
+	}
 
     /**
      * @ngdoc method
@@ -102,9 +102,9 @@ export function InventoryStateService() {
      * @param {array} datasets The datasets list
      * @description Set datasets in Inventory
      */
-    function setDatasets(datasets) {
-        inventoryState.datasets = datasets;
-    }
+	function setDatasets(datasets) {
+		inventoryState.datasets = datasets;
+	}
 
     /**
      * @ngdoc method
@@ -113,9 +113,9 @@ export function InventoryStateService() {
      * @param {object} dataset The dataset
      * @description Remove a dataset
      */
-    function removeDataset(dataset) {
-        inventoryState.datasets = _.reject(inventoryState.datasets, { id: dataset.id });
-    }
+	function removeDataset(dataset) {
+		inventoryState.datasets = _.reject(inventoryState.datasets, { id: dataset.id });
+	}
 
     /**
      * @ngdoc method
@@ -125,10 +125,10 @@ export function InventoryStateService() {
      * @param {string} name The dataset name
      * @description Change the dataset name in folder and datasets list
      */
-    function setDatasetName(datasetId, name) {
-        const dataset = _.find(inventoryState.datasets, { id: datasetId });
-        dataset.name = name;
-    }
+	function setDatasetName(datasetId, name) {
+		const dataset = _.find(inventoryState.datasets, { id: datasetId });
+		dataset.name = name;
+	}
 
     /**
      * @ngdoc method
@@ -136,9 +136,9 @@ export function InventoryStateService() {
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {string} homeFolderId The home folder id
      */
-    function setHomeFolderId(homeFolderId) {
-        inventoryState.homeFolderId = homeFolderId;
-    }
+	function setHomeFolderId(homeFolderId) {
+		inventoryState.homeFolderId = homeFolderId;
+	}
 
     /**
      * @ngdoc method
@@ -147,9 +147,9 @@ export function InventoryStateService() {
      * @param {string} metadata The folder metadata
      * @param {object} content The folder content
      */
-    function setFolder(metadata, content) {
-        inventoryState.folder = { metadata, content };
-    }
+	function setFolder(metadata, content) {
+		inventoryState.folder = { metadata, content };
+	}
 
     /**
      * @ngdoc method
@@ -157,10 +157,10 @@ export function InventoryStateService() {
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {array} folders The folders in breadcrumb
      */
-    function setBreadcrumb(folders) {
-        inventoryState.breadcrumb = folders;
-        inventoryState.breadcrumbChildren = {};
-    }
+	function setBreadcrumb(folders) {
+		inventoryState.breadcrumb = folders;
+		inventoryState.breadcrumbChildren = {};
+	}
 
     /**
      * @ngdoc method
@@ -169,9 +169,9 @@ export function InventoryStateService() {
      * @param {object} parentId The parent folder id
      * @param {array} children The children folders
      */
-    function setBreadcrumbChildren(parentId, children) {
-        inventoryState.breadcrumbChildren[parentId] = children;
-    }
+	function setBreadcrumbChildren(parentId, children) {
+		inventoryState.breadcrumbChildren[parentId] = children;
+	}
 
     /**
      * @ngdoc method
@@ -180,9 +180,9 @@ export function InventoryStateService() {
      * @param {object} sort The sort type
      * @description Set rhe sort type
      */
-    function setDatasetsSort(sort) {
-        inventoryState.datasetsSort = sort;
-    }
+	function setDatasetsSort(sort) {
+		inventoryState.datasetsSort = sort;
+	}
 
     /**
      * @ngdoc method
@@ -191,9 +191,9 @@ export function InventoryStateService() {
      * @param {object} order The order
      * @description Set the order
      */
-    function setDatasetsOrder(order) {
-        inventoryState.datasetsOrder = order;
-    }
+	function setDatasetsOrder(order) {
+		inventoryState.datasetsOrder = order;
+	}
 
     /**
      * @ngdoc method
@@ -202,9 +202,9 @@ export function InventoryStateService() {
      * @param {object} sort The sort type
      * @description Set rhe sort type
      */
-    function setPreparationsSort(sort) {
-        inventoryState.preparationsSort = sort;
-    }
+	function setPreparationsSort(sort) {
+		inventoryState.preparationsSort = sort;
+	}
 
     /**
      * @ngdoc method
@@ -213,7 +213,7 @@ export function InventoryStateService() {
      * @param {object} order The order
      * @description Set the order
      */
-    function setPreparationsOrder(order) {
-        inventoryState.preparationsOrder = order;
-    }
+	function setPreparationsOrder(order) {
+		inventoryState.preparationsOrder = order;
+	}
 }

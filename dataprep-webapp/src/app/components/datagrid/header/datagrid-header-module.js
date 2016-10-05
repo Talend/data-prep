@@ -39,16 +39,16 @@ const MODULE_NAME = 'data-prep.datagrid-header';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        sunchoke.dropdown,
-        TALEND_WIDGET_MODULE,
-        TRANSFORMATION_MENU_MODULE,
-        SERVICES_FILTER_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_TRANSFORMATION_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		sunchoke.dropdown,
+		TALEND_WIDGET_MODULE,
+		TRANSFORMATION_MENU_MODULE,
+		SERVICES_FILTER_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_TRANSFORMATION_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('DatagridHeaderCtrl', DatagridHeaderCtrl)
     .directive('datagridHeader', DatagridHeader);
 

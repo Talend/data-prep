@@ -22,24 +22,24 @@
  * @requires data-prep.services.utils.service:StorageService
  */
 export default function DatasetListService($q, state, DatasetRestService, StateService) {
-    'ngInject';
+	'ngInject';
 
-    let deferredCancel;
-    let datasetsPromise;
+	let deferredCancel;
+	let datasetsPromise;
 
-    return {
-        refreshDatasets,
-        getDatasetsPromise,
-        hasDatasetsPromise,
+	return {
+		refreshDatasets,
+		getDatasetsPromise,
+		hasDatasetsPromise,
 
-        create,
-        clone,
-        update,
-        delete: deleteDataset,
+		create,
+		clone,
+		update,
+		delete: deleteDataset,
 
-        processCertification,
-        toggleFavorite,
-    };
+		processCertification,
+		toggleFavorite,
+	};
 
     /**
      * @ngdoc method
@@ -47,12 +47,12 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @methodOf data-prep.services.dataset.service:DatasetListService
      * @description Cancel the pending datasets list GET request
      */
-    function cancelPendingGetRequest() {
-        if (datasetsPromise) {
-            deferredCancel.resolve('user cancel');
-            datasetsPromise = null;
-        }
-    }
+	function cancelPendingGetRequest() {
+		if (datasetsPromise) {
+			deferredCancel.resolve('user cancel');
+			datasetsPromise = null;
+		}
+	}
 
     /**
      * @ngdoc method
@@ -61,24 +61,24 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Refresh datasets list
      * @returns {promise} The pending GET promise
      */
-    function refreshDatasets() {
-        cancelPendingGetRequest();
-        const sort = state.inventory.datasetsSort.id;
-        const order = state.inventory.datasetsOrder.id;
+	function refreshDatasets() {
+		cancelPendingGetRequest();
+		const sort = state.inventory.datasetsSort.id;
+		const order = state.inventory.datasetsOrder.id;
 
-        deferredCancel = $q.defer();
-        datasetsPromise = DatasetRestService.getDatasets(sort, order, deferredCancel)
+		deferredCancel = $q.defer();
+		datasetsPromise = DatasetRestService.getDatasets(sort, order, deferredCancel)
             .then((res) => {
-                StateService.setDatasets(res.data);
-                return res.data;
-            })
+	StateService.setDatasets(res.data);
+	return res.data;
+})
             .catch(() => {
-                StateService.setDatasets([]);
-                return [];
-            })
+	StateService.setDatasets([]);
+	return [];
+})
             .finally(() => datasetsPromise = null);
-        return datasetsPromise;
-    }
+		return datasetsPromise;
+	}
 
     /**
      * @ngdoc method
@@ -88,12 +88,12 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Clone a dataset from backend and refresh its internal list
      * @returns {promise} The pending GET promise
      */
-    function clone(dataset) {
-        const promise = DatasetRestService.clone(dataset);
-        promise.then(refreshDatasets);
+	function clone(dataset) {
+		const promise = DatasetRestService.clone(dataset);
+		promise.then(refreshDatasets);
 
-        return promise;
-    }
+		return promise;
+	}
 
     /**
      * @ngdoc method
@@ -105,15 +105,15 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Import a remote dataset from backend and refresh its internal list
      * @returns {promise} The pending POST promise
      */
-    function create(parameters, contentType, file) {
-        const promise = DatasetRestService.create(parameters, contentType, file);
+	function create(parameters, contentType, file) {
+		const promise = DatasetRestService.create(parameters, contentType, file);
 
         // The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
         // which is used by the caller
-        promise.then(refreshDatasets);
+		promise.then(refreshDatasets);
 
-        return promise;
-    }
+		return promise;
+	}
 
     /**
      * @ngdoc method
@@ -123,15 +123,15 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Update a dataset from backend and refresh its internal list
      * @returns {promise} The pending POST promise
      */
-    function update(dataset) {
-        const promise = DatasetRestService.update(dataset);
+	function update(dataset) {
+		const promise = DatasetRestService.update(dataset);
 
         // The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
         // which is used by the caller
-        promise.then(refreshDatasets);
+		promise.then(refreshDatasets);
 
-        return promise;
-    }
+		return promise;
+	}
 
     /**
      * @ngdoc method
@@ -141,10 +141,10 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Ask certification for a dataset and refresh its internal list
      * @returns {promise} The pending PUT promise
      */
-    function processCertification(dataset) {
-        return DatasetRestService.processCertification(dataset.id)
+	function processCertification(dataset) {
+		return DatasetRestService.processCertification(dataset.id)
             .then(refreshDatasets);
-    }
+	}
 
     /**
      * @ngdoc method
@@ -154,12 +154,12 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Delete a dataset from backend and from its internal list
      * @returns {promise} The pending DELETE promise
      */
-    function deleteDataset(dataset) {
-        return DatasetRestService.delete(dataset)
+	function deleteDataset(dataset) {
+		return DatasetRestService.delete(dataset)
             .then(function () {
-                StateService.removeDataset(dataset);
-            });
-    }
+	StateService.removeDataset(dataset);
+});
+	}
 
     /**
      * @ngdoc method
@@ -168,9 +168,9 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Return resolved or unresolved promise that returns the most updated datasetsList
      * @returns {promise} Promise that resolves datasetsList
      */
-    function getDatasetsPromise() {
-        return datasetsPromise || refreshDatasets();
-    }
+	function getDatasetsPromise() {
+		return datasetsPromise || refreshDatasets();
+	}
 
     /**
      * @ngdoc method
@@ -179,9 +179,9 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Check if datasetsPromise is true or not
      * @returns {promise} datasetsPromise
      */
-    function hasDatasetsPromise() {
-        return datasetsPromise;
-    }
+	function hasDatasetsPromise() {
+		return datasetsPromise;
+	}
 
     /**
      * @ngdoc method
@@ -191,9 +191,9 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
      * @description Set or Unset the dataset as favorite
      * @returns {promise} The pending POST promise
      */
-    function toggleFavorite(dataset) {
-        return DatasetRestService.toggleFavorite(dataset)
+	function toggleFavorite(dataset) {
+		return DatasetRestService.toggleFavorite(dataset)
             .then(() => dataset.favorite = !dataset.favorite)
             .then(refreshDatasets);
-    }
+	}
 }

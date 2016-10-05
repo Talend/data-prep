@@ -49,19 +49,19 @@ const MODULE_NAME = 'data-prep.home';
  * @requires data-prep.services.folder
  */
 angular.module(MODULE_NAME,
-    [
-        DATASET_UPDLOAD_LIST_MODULE,
-        DATASET_HEADER_MODULE,
-        DATASET_LIST_MODULE,
-        IMPORT_MODULE,
-        PREPARATION_BREADCRUMB_MODULE,
-        PREPARATION_HEADER_MODULE,
-        PREPARATION_LIST,
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_DATASET_WORKFLOW_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		DATASET_UPDLOAD_LIST_MODULE,
+		DATASET_HEADER_MODULE,
+		DATASET_LIST_MODULE,
+		IMPORT_MODULE,
+		PREPARATION_BREADCRUMB_MODULE,
+		PREPARATION_HEADER_MODULE,
+		PREPARATION_LIST,
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_DATASET_WORKFLOW_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .component('home', HomeComponent)
     .component('homeDataset', HomeDatasetComponent)
     .component('homePreparation', HomePreparationComponent);

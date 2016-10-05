@@ -20,15 +20,15 @@
  * @requires data-prep.services.early-preview.service:EarlyPreviewService
  */
 export default function ActionsListCtrl($timeout, state, TransformationService, PlaygroundService, EarlyPreviewService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.state = state;
+	const vm = this;
+	vm.state = state;
 
-    vm.cancelEarlyPreview = EarlyPreviewService.cancelEarlyPreview;
-    vm.earlyPreview = function earlyPreview(action) {
-        return EarlyPreviewService.earlyPreview(action, vm.scope);
-    };
+	vm.cancelEarlyPreview = EarlyPreviewService.cancelEarlyPreview;
+	vm.earlyPreview = function earlyPreview(action) {
+		return EarlyPreviewService.earlyPreview(action, vm.scope);
+	};
 
     /**
      * @ngdoc property
@@ -36,7 +36,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description Flag that indicates if a transformation is in progress
      */
-    vm.transformationInProgress = false;
+	vm.transformationInProgress = false;
 
     /**
      * @ngdoc property
@@ -44,7 +44,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description The dynamic param transformation to display
      */
-    vm.dynamicTransformation = null;
+	vm.dynamicTransformation = null;
 
     /**
      * @ngdoc property
@@ -52,7 +52,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description Flag that indicates if a fetch of dynamic parameters is in progress
      */
-    vm.dynamicFetchInProgress = false;
+	vm.dynamicFetchInProgress = false;
 
     /**
      * @ngdoc property
@@ -60,7 +60,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description Flag that change the dynamic parameters modal display
      */
-    vm.showDynamicModal = false;
+	vm.showDynamicModal = false;
 
     /**
      * @ngdoc property
@@ -68,7 +68,7 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @propertyOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description show/hides the dynamic transformation or the alert message
      */
-    vm.showModalContent = null;
+	vm.showModalContent = null;
 
     /**
      * @ngdoc method
@@ -77,14 +77,14 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @description [PRIVATE] Fetch the transformation dynamic parameters and inject them into transformation menu params
      * @returns {promise} The GET request promise
      */
-    const initDynamicParams = function (action) {
-        const infos = {
-            columnId: state.playground.grid.selectedColumns[0].id,
-            datasetId: state.playground.dataset.id,
-            preparationId: state.playground.preparation ? state.playground.preparation.id : null,
-        };
-        return TransformationService.initDynamicParameters(action, infos);
-    };
+	const initDynamicParams = function (action) {
+		const infos = {
+			columnId: state.playground.grid.selectedColumns[0].id,
+			datasetId: state.playground.dataset.id,
+			preparationId: state.playground.preparation ? state.playground.preparation.id : null,
+		};
+		return TransformationService.initDynamicParameters(action, infos);
+	};
 
     /**
      * @ngdoc method
@@ -92,29 +92,29 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description [PRIVATE] sets the showHideModalContent and the emptyParamsMsg properties
      */
-    function checkDynamicResponse() {
+	function checkDynamicResponse() {
         // transformation type :cluster
-        if (vm.dynamicTransformation.cluster) {
-            if (vm.dynamicTransformation.cluster.clusters.length) {
-                vm.showModalContent = true;
-            }
-            else {
-                vm.showModalContent = false;
-                vm.emptyParamsMsg = 'NO_CLUSTERS_ACTION_MSG';
-            }
-        }
+		if (vm.dynamicTransformation.cluster) {
+			if (vm.dynamicTransformation.cluster.clusters.length) {
+				vm.showModalContent = true;
+			}
+			else {
+				vm.showModalContent = false;
+				vm.emptyParamsMsg = 'NO_CLUSTERS_ACTION_MSG';
+			}
+		}
 
         // transformation type :simpleParams
-        else if (vm.dynamicTransformation.parameters) {
-            if (vm.dynamicTransformation.parameters.length) {
-                vm.showModalContent = true;
-            }
-            else {
-                vm.showModalContent = false;
-                vm.emptyParamsMsg = 'NO_PARAMETERS_ACTION_MSG';
-            }
-        }
-    }
+		else if (vm.dynamicTransformation.parameters) {
+			if (vm.dynamicTransformation.parameters.length) {
+				vm.showModalContent = true;
+			}
+			else {
+				vm.showModalContent = false;
+				vm.emptyParamsMsg = 'NO_PARAMETERS_ACTION_MSG';
+			}
+		}
+	}
 
     /**
      * @ngdoc method
@@ -127,22 +127,22 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      </ul>
      * @param {object} transformation The selected transformation
      */
-    vm.select = function select(transformation) {
-        if (transformation.dynamic) {
-            vm.dynamicTransformation = transformation;
-            vm.dynamicFetchInProgress = true;
-            vm.showDynamicModal = true;
+	vm.select = function select(transformation) {
+		if (transformation.dynamic) {
+			vm.dynamicTransformation = transformation;
+			vm.dynamicFetchInProgress = true;
+			vm.showDynamicModal = true;
 
             // get new parameters
-            initDynamicParams(transformation).finally(function () {
-                checkDynamicResponse();
-                vm.dynamicFetchInProgress = false;
-            });
-        }
-        else {
-            vm.transform(transformation, vm.scope)();
-        }
-    };
+			initDynamicParams(transformation).finally(function () {
+				checkDynamicResponse();
+				vm.dynamicFetchInProgress = false;
+			});
+		}
+		else {
+			vm.transform(transformation, vm.scope)();
+		}
+	};
 
     /**
      * @ngdoc method
@@ -150,24 +150,24 @@ export default function ActionsListCtrl($timeout, state, TransformationService, 
      * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @description Apply a transformation
      */
-    vm.transform = function transform(action) {
-        return function (params) {
-            EarlyPreviewService.deactivatePreview();
-            EarlyPreviewService.cancelPendingPreview();
+	vm.transform = function transform(action) {
+		return function (params) {
+			EarlyPreviewService.deactivatePreview();
+			EarlyPreviewService.cancelPendingPreview();
 
-            if (!vm.transformationInProgress) {
-                vm.transformationInProgress = true;
-                PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
+			if (!vm.transformationInProgress) {
+				vm.transformationInProgress = true;
+				PlaygroundService.completeParamsAndAppend(action, vm.scope, params)
                     .then(function () {
-                        vm.showDynamicModal = false;
-                    })
+	vm.showDynamicModal = false;
+})
                     .finally(function () {
-                        $timeout(() => {
-                            EarlyPreviewService.activatePreview();
-                            vm.transformationInProgress = false;
-                        }, 500, false);
-                    });
-            }
-        };
-    };
+	$timeout(() => {
+		EarlyPreviewService.activatePreview();
+		vm.transformationInProgress = false;
+	}, 500, false);
+});
+			}
+		};
+	};
 }

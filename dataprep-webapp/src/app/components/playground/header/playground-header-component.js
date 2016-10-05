@@ -47,21 +47,21 @@ import template from './playground-header.html';
  * @param {boolean} preview A preview is in progress
  */
 const PlaygroundHeader = {
-    templateUrl: template,
-    bindings: {
-        enableExport: '<',
-        feedbackVisible: '<',
-        lookupVisible: '<',
-        onClose: '&',
-        onFeedback: '&',
-        onLookup: '&',
-        onOnboarding: '&',
-        onParameters: '&',
-        onPreparationPicker: '&',
-        parametersVisible: '<',
-        preparationPicker: '<',
-        preview: '<',
-    },
+	templateUrl: template,
+	bindings: {
+		enableExport: '<',
+		feedbackVisible: '<',
+		lookupVisible: '<',
+		onClose: '&',
+		onFeedback: '&',
+		onLookup: '&',
+		onOnboarding: '&',
+		onParameters: '&',
+		onPreparationPicker: '&',
+		parametersVisible: '<',
+		preparationPicker: '<',
+		preview: '<',
+	},
 };
 
 export default PlaygroundHeader;

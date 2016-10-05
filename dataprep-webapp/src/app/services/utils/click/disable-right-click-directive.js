@@ -12,12 +12,12 @@
   ============================================================================*/
 
 export default function DisableRightClick() {
-    return {
-        restrict: 'A',
-        link: (scope, iElement) => {
-            iElement.bind('contextmenu', (e) => {
-                e.preventDefault();
-            });
-        },
-    };
+	return {
+		restrict: 'A',
+		link: (scope, iElement) => {
+			iElement.bind('contextmenu', (e) => {
+				e.preventDefault();
+			});
+		},
+	};
 }

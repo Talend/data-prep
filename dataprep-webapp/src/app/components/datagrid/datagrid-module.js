@@ -49,16 +49,16 @@ Slick.Editors.TalendEditor = TalendEditor;
 
 const MODULE_NAME = 'data-prep.datagrid';
 angular.module(MODULE_NAME,
-    [
-        DATAGRID_HEADER_MODULE,
-        DATAGRID_INDEX_HEADER_MODULE,
-        SERVICES_DATEGRID_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_PREVIEW_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_STATISTICS_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		DATAGRID_HEADER_MODULE,
+		DATAGRID_INDEX_HEADER_MODULE,
+		SERVICES_DATEGRID_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_PREVIEW_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_STATISTICS_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('DatagridColumnService', DatagridColumnService)
     .service('DatagridExternalService', DatagridExternalService)
     .service('DatagridGridService', DatagridGridService)

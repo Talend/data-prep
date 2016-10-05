@@ -19,30 +19,30 @@
  * {@link data-prep.services.dataset.service:DatasetService DatasetService} must be the only entry point for datasets</b>
  */
 export default function DatasetRestService($rootScope, $upload, $http, RestURLs) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        create,
-        update,
-        delete: deleteDataset,
-        clone: cloneDataset,
+	return {
+		create,
+		update,
+		delete: deleteDataset,
+		clone: cloneDataset,
 
-        updateColumn,
+		updateColumn,
 
-        getDatasets,
-        getFilteredDatasets,
-        updateMetadata,
-        getMetadata,
-        getContent,
-        getSheetPreview,
-        getEncodings,
-        getDatasetByName,
+		getDatasets,
+		getFilteredDatasets,
+		updateMetadata,
+		getMetadata,
+		getContent,
+		getSheetPreview,
+		getEncodings,
+		getDatasetByName,
 
-        processCertification,
-        toggleFavorite,
+		processCertification,
+		toggleFavorite,
 
-        getCompatiblePreparations,
-    };
+		getCompatiblePreparations,
+	};
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Dataset----------------------------------------------------
@@ -57,16 +57,16 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {string} contentType The request Content-Type
      * @returns {Promise} The POST promise
      */
-    function create(parameters, contentType, file) {
-        const req = {
-            url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name),
-            headers: {
-                'Content-Type': contentType,
-            },
-            data: file || parameters,
-        };
-        return $upload.http(req);
-    }
+	function create(parameters, contentType, file) {
+		const req = {
+			url: RestURLs.datasetUrl + '?name=' + encodeURIComponent(parameters.name),
+			headers: {
+				'Content-Type': contentType,
+			},
+			data: file || parameters,
+		};
+		return $upload.http(req);
+	}
 
     /**
      * @ngdoc method
@@ -76,14 +76,14 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {dataset} dataset The dataset infos to update
      * @returns {Promise} the $upload promise
      */
-    function update(dataset) {
-        return $upload.http({
-            url: RestURLs.datasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name),
-            method: 'PUT',
-            headers: { 'Content-Type': 'text/plain' },
-            data: dataset.file,
-        });
-    }
+	function update(dataset) {
+		return $upload.http({
+			url: RestURLs.datasetUrl + '/' + dataset.id + '?name=' + encodeURIComponent(dataset.name),
+			method: 'PUT',
+			headers: { 'Content-Type': 'text/plain' },
+			data: dataset.file,
+		});
+	}
 
     /**
      * @ngdoc method
@@ -93,9 +93,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {object} dataset the dataset infos to delete
      * @returns {Promise} The DELETE promise
      */
-    function deleteDataset(dataset) {
-        return $http.delete(RestURLs.datasetUrl + '/' + dataset.id);
-    }
+	function deleteDataset(dataset) {
+		return $http.delete(RestURLs.datasetUrl + '/' + dataset.id);
+	}
 
     /**
      * @ngdoc method
@@ -105,9 +105,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {Object} dataset the dataset metadata
      * @returns {Promise} The GET promise
      */
-    function cloneDataset(dataset) {
-        return $http.post(RestURLs.datasetUrl + '/' + dataset.id + '/copy');
-    }
+	function cloneDataset(dataset) {
+		return $http.post(RestURLs.datasetUrl + '/' + dataset.id + '/copy');
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Metadata---------------------------------------------------
@@ -122,23 +122,23 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @description Get the dataset list
      * @returns {Promise} The GET call promise
      */
-    function getDatasets(sortType, sortOrder, deferredAbort) {
-        let url = RestURLs.datasetUrl + '/summary';
+	function getDatasets(sortType, sortOrder, deferredAbort) {
+		let url = RestURLs.datasetUrl + '/summary';
 
-        if (sortType) {
-            url += '?sort=' + sortType;
-        }
+		if (sortType) {
+			url += '?sort=' + sortType;
+		}
 
-        if (sortOrder) {
-            url += (sortType ? '&' : '?') + 'order=' + sortOrder;
-        }
+		if (sortOrder) {
+			url += (sortType ? '&' : '?') + 'order=' + sortOrder;
+		}
 
-        return $http({
-            url,
-            method: 'GET',
-            timeout: deferredAbort.promise,
-        });
-    }
+		return $http({
+			url,
+			method: 'GET',
+			timeout: deferredAbort.promise,
+		});
+	}
 
     /**
      * @ngdoc method
@@ -147,14 +147,14 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {String} name The dataset name
      * @returns {Promise} The GET promise
      */
-    function getDatasetByName(name) {
-        return $http(
-            {
-                url: `${RestURLs.searchUrl}?name=${encodeURIComponent(name)}&strict=true&filter=dataset`,
-                method: 'GET',
-            })
-            .then((resp) => resp.data.datasets && resp.data.datasets[0]);
-    }
+	function getDatasetByName(name) {
+		return $http(
+			{
+				url: `${RestURLs.searchUrl}?name=${encodeURIComponent(name)}&strict=true&filter=dataset`,
+				method: 'GET',
+			})
+            .then(resp => resp.data.datasets && resp.data.datasets[0]);
+	}
 
     /**
      * @ngdoc method
@@ -164,10 +164,10 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @description Get the dataset list respecting a filter passed in the params
      * @returns {Promise} The GET call promise
      */
-    function getFilteredDatasets(filterParameters) {
-        const url = `${RestURLs.datasetUrl}?${filterParameters}`;
-        return $http.get(url).then((resp) => resp.data);
-    }
+	function getFilteredDatasets(filterParameters) {
+		const url = `${RestURLs.datasetUrl}?${filterParameters}`;
+		return $http.get(url).then(resp => resp.data);
+	}
 
     /**
      * @ngdoc method
@@ -177,9 +177,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {dataset} metadata The dataset infos to update
      * @returns {Promise} The PUT promise
      */
-    function updateMetadata(metadata) {
-        return $http.put(RestURLs.datasetUrl + '/' + metadata.id + '/metadata', metadata);
-    }
+	function updateMetadata(metadata) {
+		return $http.put(RestURLs.datasetUrl + '/' + metadata.id + '/metadata', metadata);
+	}
 
     /**
      * @ngdoc method
@@ -188,9 +188,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @description Ask certification for a dataset
      * @param {string} datasetId The dataset id
      */
-    function processCertification(datasetId) {
-        return $http.put(RestURLs.datasetUrl + '/' + datasetId + '/processcertification');
-    }
+	function processCertification(datasetId) {
+		return $http.put(RestURLs.datasetUrl + '/' + datasetId + '/processcertification');
+	}
 
 
     /**
@@ -203,10 +203,10 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {object} params The parameters containing typeId and/or domainId
      * @returns {Promise} The POST promise
      */
-    function updateColumn(datasetId, columnId, params) {
-        const url = RestURLs.datasetUrl + '/' + datasetId + '/column/' + columnId;
-        return $http.post(url, params);
-    }
+	function updateColumn(datasetId, columnId, params) {
+		const url = RestURLs.datasetUrl + '/' + datasetId + '/column/' + columnId;
+		return $http.post(url, params);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Content----------------------------------------------------
@@ -220,10 +220,10 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {boolean} metadata If false, the metadata will not be returned
      * @returns {Promise} The GET promise
      */
-    function getContent(datasetId, metadata) {
-        const url = RestURLs.datasetUrl + '/' + datasetId + '?metadata=' + metadata + '&includeTechnicalProperties=true';
-        return $http.get(url).then((response) => response.data);
-    }
+	function getContent(datasetId, metadata) {
+		const url = RestURLs.datasetUrl + '/' + datasetId + '?metadata=' + metadata + '&includeTechnicalProperties=true';
+		return $http.get(url).then(response => response.data);
+	}
 
     /**
      * @ngdoc method
@@ -233,10 +233,10 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {string} datasetId The dataset id
      * @returns {Promise} The GET promise
      */
-    function getMetadata(datasetId) {
-        const url = RestURLs.datasetUrl + '/' + datasetId + '/metadata';
-        return $http.get(url).then((response) => response.data);
-    }
+	function getMetadata(datasetId) {
+		const url = RestURLs.datasetUrl + '/' + datasetId + '/metadata';
+		return $http.get(url).then(response => response.data);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------Sheet Preview-------------------------------------------------
@@ -250,14 +250,14 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {string} sheetName The sheet to preview
      * @returns {Promise} The GET promise
      */
-    function getSheetPreview(datasetId, sheetName) {
-        $rootScope.$emit('talend.loading.start');
-        return $http.get(RestURLs.datasetUrl + '/preview/' + datasetId + '?metadata=true' + (sheetName ? '&sheetName=' + encodeURIComponent(sheetName) : ''))
-            .then((response) => response.data)
+	function getSheetPreview(datasetId, sheetName) {
+		$rootScope.$emit('talend.loading.start');
+		return $http.get(RestURLs.datasetUrl + '/preview/' + datasetId + '?metadata=true' + (sheetName ? '&sheetName=' + encodeURIComponent(sheetName) : ''))
+            .then(response => response.data)
             .finally(() => {
-                $rootScope.$emit('talend.loading.stop');
-            });
-    }
+	$rootScope.$emit('talend.loading.stop');
+});
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------Toggle Favorite-----------------------------------------------
@@ -270,9 +270,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @param {dataset} dataset The dataset to be toggled
      * @returns {Promise} The PUT promise
      */
-    function toggleFavorite(dataset) {
-        return $http.post(RestURLs.datasetUrl + '/favorite/' + dataset.id + '?unset=' + dataset.favorite);
-    }
+	function toggleFavorite(dataset) {
+		return $http.post(RestURLs.datasetUrl + '/favorite/' + dataset.id + '?unset=' + dataset.favorite);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------------Encodings--------------------------------------------------
@@ -284,10 +284,10 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @description Get the supported encoding list
      * @returns {Promise} The GET promise
      */
-    function getEncodings() {
-        return $http.get(RestURLs.datasetUrl + '/encodings')
-            .then((response) => response.data);
-    }
+	function getEncodings() {
+		return $http.get(RestURLs.datasetUrl + '/encodings')
+            .then(response => response.data);
+	}
 
     /**
      * @ngdoc method
@@ -296,8 +296,8 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @description Get the compatible preparation list for a given dataset
      * @returns {Promise} The GET promise
      */
-    function getCompatiblePreparations(datasetId) {
-        return $http.get(RestURLs.datasetUrl + '/' + datasetId + '/compatiblepreparations')
-            .then((response) => response.data);
-    }
+	function getCompatiblePreparations(datasetId) {
+		return $http.get(RestURLs.datasetUrl + '/' + datasetId + '/compatiblepreparations')
+            .then(response => response.data);
+	}
 }

@@ -28,28 +28,28 @@ import { COLUMN_INDEX_ID } from './datagrid-column-service';
  */
 export default class DatagridGridService {
 
-    constructor($timeout, state, StateService,
+	constructor($timeout, state, StateService,
         DatagridService, DatagridStyleService, DatagridColumnService,
         DatagridSizeService, DatagridExternalService, DatagridTooltipService) {
-        'ngInject';
+		'ngInject';
 
-        this.grid = null;
-        this.changeActiveTimeout = null;
+		this.grid = null;
+		this.changeActiveTimeout = null;
 
-        this.$timeout = $timeout;
-        this.state = state;
-        this.StateService = StateService;
-        this.DatagridService = DatagridService;
-        this.DatagridColumnService = DatagridColumnService;
+		this.$timeout = $timeout;
+		this.state = state;
+		this.StateService = StateService;
+		this.DatagridService = DatagridService;
+		this.DatagridColumnService = DatagridColumnService;
 
-        this.gridServices = [
-            DatagridColumnService,
-            DatagridStyleService,
-            DatagridSizeService,
-            DatagridExternalService,
-            DatagridTooltipService,
-        ];
-    }
+		this.gridServices = [
+			DatagridColumnService,
+			DatagridStyleService,
+			DatagridSizeService,
+			DatagridExternalService,
+			DatagridTooltipService,
+		];
+	}
 
     /**
      * @ngdoc method
@@ -57,16 +57,16 @@ export default class DatagridGridService {
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description Attaches listeners for data update to reRender the grid
      */
-    _attachLongTableListeners() {
-        this.state.playground.grid.dataView.onRowCountChanged.subscribe(() => {
-            this.grid.updateRowCount();
-            this.grid.render();
-        });
-        this.state.playground.grid.dataView.onRowsChanged.subscribe((e, args) => {
-            this.grid.invalidateRows(args.rows);
-            this.grid.render();
-        });
-    }
+	_attachLongTableListeners() {
+		this.state.playground.grid.dataView.onRowCountChanged.subscribe(() => {
+			this.grid.updateRowCount();
+			this.grid.render();
+		});
+		this.state.playground.grid.dataView.onRowsChanged.subscribe((e, args) => {
+			this.grid.invalidateRows(args.rows);
+			this.grid.render();
+		});
+	}
 
     /**
      * @ngdoc method
@@ -74,50 +74,50 @@ export default class DatagridGridService {
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description Attach listeners for saving the state of column id and line selection number
      */
-    _attachGridStateListeners() {
-        this.grid.onActiveCellChanged.subscribe((e, args) => {
-            this.$timeout.cancel(this.changeActiveTimeout);
-            this.changeActiveTimeout = this.$timeout(() => {
-                if (angular.isDefined(args.cell)) {
-                    const column = this.grid.getColumns()[args.cell];
-                    const columnMetadata = column && column.tdpColMetadata ? [column.tdpColMetadata] : [];
-                    this.StateService.setGridSelection(columnMetadata, args.row);
-                }
-            });
-        });
+	_attachGridStateListeners() {
+		this.grid.onActiveCellChanged.subscribe((e, args) => {
+			this.$timeout.cancel(this.changeActiveTimeout);
+			this.changeActiveTimeout = this.$timeout(() => {
+				if (angular.isDefined(args.cell)) {
+					const column = this.grid.getColumns()[args.cell];
+					const columnMetadata = column && column.tdpColMetadata ? [column.tdpColMetadata] : [];
+					this.StateService.setGridSelection(columnMetadata, args.row);
+				}
+			});
+		});
 
-        this.grid.onHeaderContextMenu.subscribe((e, args) => {
-            if (args.column.id === COLUMN_INDEX_ID) {
-                return;
-            }
-            this.$timeout(() => this.StateService.setGridSelection([args.column.tdpColMetadata], null));
-        });
+		this.grid.onHeaderContextMenu.subscribe((e, args) => {
+			if (args.column.id === COLUMN_INDEX_ID) {
+				return;
+			}
+			this.$timeout(() => this.StateService.setGridSelection([args.column.tdpColMetadata], null));
+		});
 
-        this.grid.onHeaderClick.subscribe((e, args) => {
-            this.$timeout(() => {
+		this.grid.onHeaderClick.subscribe((e, args) => {
+			this.$timeout(() => {
                 // multi selection disabled in lookup mode
-                const multiSelectionEnabled = !this.state.playground.lookup.visibility;
-                const column = args.column && args.column.tdpColMetadata;
-                if (!column) {
-                    return;
-                }
+				const multiSelectionEnabled = !this.state.playground.lookup.visibility;
+				const column = args.column && args.column.tdpColMetadata;
+				if (!column) {
+					return;
+				}
 
-                if (multiSelectionEnabled && (e.ctrlKey || e.metaKey)) {
-                    this.StateService.toggleColumnSelection(column);
-                }
-                else if (multiSelectionEnabled && e.shiftKey) {
-                    this.StateService.changeRangeSelection(column);
-                }
-                else {
-                    this.StateService.setGridSelection([column]);
-                }
-            });
-        });
+				if (multiSelectionEnabled && (e.ctrlKey || e.metaKey)) {
+					this.StateService.toggleColumnSelection(column);
+				}
+				else if (multiSelectionEnabled && e.shiftKey) {
+					this.StateService.changeRangeSelection(column);
+				}
+				else {
+					this.StateService.setGridSelection([column]);
+				}
+			});
+		});
 
-        this.grid.onColumnsReordered.subscribe((e, args) => {
-            this.$timeout(() => this.DatagridColumnService.columnsOrderChanged(args.grid.getColumns()));
-        });
-    }
+		this.grid.onColumnsReordered.subscribe((e, args) => {
+			this.$timeout(() => this.DatagridColumnService.columnsOrderChanged(args.grid.getColumns()));
+		});
+	}
 
     /**
      * @ngdoc method
@@ -125,14 +125,14 @@ export default class DatagridGridService {
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description navigates between columns
      */
-    navigateToFocusedColumn() {
-        if (this.DatagridService.focusedColumn) {
-            const columnIndex = _.findIndex(this.grid.getColumns(), { id: this.DatagridService.focusedColumn });
-            const renderedRows = this.grid.getRenderedRange();
-            const centerRow = +((renderedRows.bottom - renderedRows.top) / 2).toFixed(0);
-            this.grid.scrollCellIntoView(renderedRows.top + centerRow, columnIndex, false);
-        }
-    }
+	navigateToFocusedColumn() {
+		if (this.DatagridService.focusedColumn) {
+			const columnIndex = _.findIndex(this.grid.getColumns(), { id: this.DatagridService.focusedColumn });
+			const renderedRows = this.grid.getRenderedRange();
+			const centerRow = +((renderedRows.bottom - renderedRows.top) / 2).toFixed(0);
+			this.grid.scrollCellIntoView(renderedRows.top + centerRow, columnIndex, false);
+		}
+	}
 
     /**
      * @ngdoc method
@@ -140,11 +140,11 @@ export default class DatagridGridService {
      * @methodOf data-prep.datagrid.service:DatagridGridService
      * @description Init other grid services with the new created grid
      */
-    _initGridServices() {
-        _.forEach(this.gridServices, (service) => {
-            service.init(this.grid);
-        });
-    }
+	_initGridServices() {
+		_.forEach(this.gridServices, (service) => {
+			service.init(this.grid);
+		});
+	}
 
     /**
      * @ngdoc method
@@ -154,27 +154,27 @@ export default class DatagridGridService {
      The dataview is initiated and held by {@link data-prep.services.playground.service:DatagridService DatagridService}
      * @param {string} elementId The element where the grid will be inserted in the DOM. The element must exists
      */
-    initGrid(elementId) {
+	initGrid(elementId) {
         // create grid
-        const options = {
-            autoEdit: false,
-            editable: true,
-            enableAddRow: false,
-            enableCellNavigation: true,
-            enableTextSelectionOnCells: false,
-            syncColumnCellResize: false,
-            frozenColumn: 0,
-            asyncEditorLoading: true,
-            asyncEditorLoadDelay: 150,
-        };
-        this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{ id: 'tdpId' }], options);
+		const options = {
+			autoEdit: false,
+			editable: true,
+			enableAddRow: false,
+			enableCellNavigation: true,
+			enableTextSelectionOnCells: false,
+			syncColumnCellResize: false,
+			frozenColumn: 0,
+			asyncEditorLoading: true,
+			asyncEditorLoadDelay: 150,
+		};
+		this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{ id: 'tdpId' }], options);
 
         // listeners
-        this._attachLongTableListeners();
-        this._attachGridStateListeners();
+		this._attachLongTableListeners();
+		this._attachGridStateListeners();
 
         // init other services
-        this._initGridServices();
-        return this.grid;
-    }
+		this._initGridServices();
+		return this.grid;
+	}
 }

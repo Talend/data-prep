@@ -12,73 +12,73 @@
   ============================================================================*/
 
 export const filterState = {
-    gridFilters: [],
-    applyTransformationOnFilters: false,
-    enabled: true,
+	gridFilters: [],
+	applyTransformationOnFilters: false,
+	enabled: true,
 };
 
 export function FilterStateService() {
-    return {
+	return {
         // common
-        reset,
+		reset,
 
         // grid
-        addGridFilter,
-        updateGridFilter,
-        removeGridFilter,
-        removeAllGridFilters,
-        enableFilters,
-        disableFilters,
-    };
+		addGridFilter,
+		updateGridFilter,
+		removeGridFilter,
+		removeAllGridFilters,
+		enableFilters,
+		disableFilters,
+	};
 
     //--------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------GRID-----------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    function addGridFilter(filterInfo) {
-        const isFirstFilter = !filterState.gridFilters.length;
-        filterState.gridFilters = filterState.gridFilters.slice(0);
-        filterState.gridFilters.push(filterInfo);
+	function addGridFilter(filterInfo) {
+		const isFirstFilter = !filterState.gridFilters.length;
+		filterState.gridFilters = filterState.gridFilters.slice(0);
+		filterState.gridFilters.push(filterInfo);
 
-        if (isFirstFilter) {
-            filterState.applyTransformationOnFilters = true;
-        }
-    }
+		if (isFirstFilter) {
+			filterState.applyTransformationOnFilters = true;
+		}
+	}
 
-    function updateGridFilter(oldFilter, newFilter) {
-        const index = filterState.gridFilters.indexOf(oldFilter);
-        filterState.gridFilters = filterState.gridFilters.slice(0);
-        filterState.gridFilters[index] = newFilter;
-    }
+	function updateGridFilter(oldFilter, newFilter) {
+		const index = filterState.gridFilters.indexOf(oldFilter);
+		filterState.gridFilters = filterState.gridFilters.slice(0);
+		filterState.gridFilters[index] = newFilter;
+	}
 
-    function removeGridFilter(filterInfo) {
-        filterState.gridFilters = _.filter(filterState.gridFilters, function (nextFilter) {
-            return nextFilter !== filterInfo;
-        });
+	function removeGridFilter(filterInfo) {
+		filterState.gridFilters = _.filter(filterState.gridFilters, function (nextFilter) {
+			return nextFilter !== filterInfo;
+		});
 
-        if (filterState.gridFilters.length === 0) {
-            filterState.applyTransformationOnFilters = false;
-        }
-    }
+		if (filterState.gridFilters.length === 0) {
+			filterState.applyTransformationOnFilters = false;
+		}
+	}
 
-    function removeAllGridFilters() {
-        filterState.gridFilters = [];
-        filterState.applyTransformationOnFilters = false;
-    }
+	function removeAllGridFilters() {
+		filterState.gridFilters = [];
+		filterState.applyTransformationOnFilters = false;
+	}
 
-    function enableFilters() {
-        filterState.enabled = true;
-        filterState.applyTransformationOnFilters = true;
-    }
+	function enableFilters() {
+		filterState.enabled = true;
+		filterState.applyTransformationOnFilters = true;
+	}
 
-    function disableFilters() {
-        filterState.enabled = false;
-        filterState.applyTransformationOnFilters = false;
-    }
+	function disableFilters() {
+		filterState.enabled = false;
+		filterState.applyTransformationOnFilters = false;
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------COMMON-----------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    function reset() {
-        removeAllGridFilters();
-    }
+	function reset() {
+		removeAllGridFilters();
+	}
 }

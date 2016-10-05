@@ -23,15 +23,15 @@ import template from './dataset-upload-list.html';
  * @param {object[]} datasets The upload error datasets
  */
 export default function DatasetUploadList() {
-    return {
-        templateUrl: template,
-        restrict: 'E',
-        scope: {
-            datasets: '=',
-        },
-        bindToController: true,
-        controllerAs: 'uploadListCtrl',
-        controller: () => {
-        },
-    };
+	return {
+		templateUrl: template,
+		restrict: 'E',
+		scope: {
+			datasets: '=',
+		},
+		bindToController: true,
+		controllerAs: 'uploadListCtrl',
+		controller: () => {
+		},
+	};
 }

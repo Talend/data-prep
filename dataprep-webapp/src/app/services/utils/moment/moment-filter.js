@@ -19,7 +19,7 @@ import moment from 'moment';
  * @description Display message toasts
  */
 export default function TDPMoment() {
-    return (dateString, format = 'x') => {
-        return moment(dateString, format).fromNow();
-    };
+	return (dateString, format = 'x') => {
+		return moment(dateString, format).fromNow();
+	};
 }

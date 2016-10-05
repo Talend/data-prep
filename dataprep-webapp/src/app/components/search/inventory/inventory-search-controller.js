@@ -21,13 +21,13 @@
  */
 class InventorySearchCtrl {
 
-    constructor($q, InventoryService, DocumentationService, EasterEggsService) {
-        'ngInject';
-        this.$q = $q;
-        this.inventoryService = InventoryService;
-        this.documentationService = DocumentationService;
-        this.easterEggsService = EasterEggsService;
-    }
+	constructor($q, InventoryService, DocumentationService, EasterEggsService) {
+		'ngInject';
+		this.$q = $q;
+		this.inventoryService = InventoryService;
+		this.documentationService = DocumentationService;
+		this.easterEggsService = EasterEggsService;
+	}
 
     /**
      * @ngdoc method
@@ -35,26 +35,26 @@ class InventorySearchCtrl {
      * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
      * @description Search based on searchInput
      */
-    search(searchInput) {
-        this.results = null;
-        this.currentInput = searchInput;
+	search(searchInput) {
+		this.results = null;
+		this.currentInput = searchInput;
 
-        if (searchInput === 'star wars') {
-            this.easterEggsService.enableEasterEgg(searchInput);
-        }
+		if (searchInput === 'star wars') {
+			this.easterEggsService.enableEasterEgg(searchInput);
+		}
 
-        const inventoryPromise = this._searchDoc(searchInput);
-        const docPromise = this._searchInventory(searchInput);
+		const inventoryPromise = this._searchDoc(searchInput);
+		const docPromise = this._searchInventory(searchInput);
 
         // if results (doc + inventory) are empty, we create an empty array
         // the no-result message is based on the definition of results.
         // It must be an empty array to show the message.
-        return this.$q.all([inventoryPromise, docPromise])
+		return this.$q.all([inventoryPromise, docPromise])
             .then((responses) => {
-                this.results = this.results || (searchInput === this.currentInput && []);
-                return responses;
-            });
-    }
+	this.results = this.results || (searchInput === this.currentInput && []);
+	return responses;
+});
+	}
 
     /**
      * @ngdoc method
@@ -62,16 +62,16 @@ class InventorySearchCtrl {
      * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
      * @description Search documentation and populate results if not empty
      */
-    _searchDoc(searchInput) {
-        return this.inventoryService.search(searchInput)
+	_searchDoc(searchInput) {
+		return this.inventoryService.search(searchInput)
             .then((response) => {
-                if (searchInput === this.currentInput && response.length) {
-                    this.results = (this.results || []).concat(response);
-                }
+	if (searchInput === this.currentInput && response.length) {
+		this.results = (this.results || []).concat(response);
+	}
 
-                return response;
-            });
-    }
+	return response;
+});
+	}
 
     /**
      * @ngdoc method
@@ -79,16 +79,16 @@ class InventorySearchCtrl {
      * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
      * @description Search inventory and populate results if not empty
      */
-    _searchInventory(searchInput) {
-        return this.documentationService.search(searchInput)
+	_searchInventory(searchInput) {
+		return this.documentationService.search(searchInput)
             .then((response) => {
-                if (searchInput === this.currentInput && response.length) {
-                    this.results = response.concat(this.results || []);
-                }
+	if (searchInput === this.currentInput && response.length) {
+		this.results = response.concat(this.results || []);
+	}
 
-                return response;
-            });
-    }
+	return response;
+});
+	}
 }
 
 export default InventorySearchCtrl;

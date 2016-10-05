@@ -29,11 +29,11 @@ const MODULE_NAME = 'data-prep.services.early-preview';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_PREVIEW_MODULE,
-        SERVICES_RECIPE_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		SERVICES_PREVIEW_MODULE,
+		SERVICES_RECIPE_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .service('EarlyPreviewService', EarlyPreviewService);
 
 export default MODULE_NAME;

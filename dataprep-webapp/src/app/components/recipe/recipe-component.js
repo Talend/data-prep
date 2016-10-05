@@ -21,8 +21,8 @@ import RecipeCtrl from './recipe-controller';
  * @usage <recipe></recipe>
  */
 const Recipe = {
-    controller: RecipeCtrl,
-    templateUrl,
+	controller: RecipeCtrl,
+	templateUrl,
 };
 
 export default Recipe;

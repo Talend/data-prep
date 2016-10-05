@@ -12,7 +12,7 @@
   ============================================================================*/
 
 const SuggestionsStats = {
-    template: `
+	template: `
     <div id="suggestions-stats-details">
         <sc-splitter orientation="vertical">
             <sc-split-first-pane id="help-suggestions">

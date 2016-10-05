@@ -18,31 +18,31 @@
  */
 class TypeaheadCtrl {
 
-    constructor($q) {
-        'ngInject';
-        this.$q = $q;
-        this.searchString = '';
-    }
+	constructor($q) {
+		'ngInject';
+		this.$q = $q;
+		this.searchString = '';
+	}
 
-    onChange() {
-        this.showResults();
-        this.searching = true;
-        const searchInput = this.searchString;
+	onChange() {
+		this.showResults();
+		this.searching = true;
+		const searchInput = this.searchString;
 
-        this.$q.when(this.search({ value: this.searchString }))
+		this.$q.when(this.search({ value: this.searchString }))
             .then(() => {
-                if (searchInput === this.searchString) {
-                    this.searching = false;
-                }
-            });
-    }
+	if (searchInput === this.searchString) {
+		this.searching = false;
+	}
+});
+	}
 
-    hideResults() {
-        this.visible = false;
-    }
+	hideResults() {
+		this.visible = false;
+	}
 
-    showResults() {
-        this.visible = true;
-    }
+	showResults() {
+		this.visible = true;
+	}
 }
 export default TypeaheadCtrl;

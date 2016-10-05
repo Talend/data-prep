@@ -37,19 +37,19 @@ import template from './dataset-parameters.html';
  * @param {boolean} displayNbLines Display number of lines
  * */
 export default function DatasetParameters() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            processing: '=',
-            dataset: '=',
-            onParametersChange: '&',
-            configuration: '=',
-            parameters: '=',
-            displayNbLines: '<',
-        },
-        bindToController: true,
-        controller: 'DatasetParametersCtrl',
-        controllerAs: 'datasetParametersCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			processing: '=',
+			dataset: '=',
+			onParametersChange: '&',
+			configuration: '=',
+			parameters: '=',
+			displayNbLines: '<',
+		},
+		bindToController: true,
+		controller: 'DatasetParametersCtrl',
+		controllerAs: 'datasetParametersCtrl',
+	};
 }

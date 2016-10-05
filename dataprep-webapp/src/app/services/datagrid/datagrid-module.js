@@ -27,10 +27,10 @@ const MODULE_NAME = 'data-prep.services.datagrid';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('DatagridService', DatagridService);
 
 export default MODULE_NAME;

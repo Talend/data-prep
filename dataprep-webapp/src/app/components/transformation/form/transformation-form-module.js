@@ -46,12 +46,12 @@ const MODULE_NAME = 'data-prep.transformation-form';
  * @requires data-prep.validation
  */
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        VALIDATION_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		VALIDATION_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
 
     .controller('TransformChoiceParamCtrl', TransformChoiceParamCtrl)
     .directive('transformChoiceParam', TransformChoiceParam)

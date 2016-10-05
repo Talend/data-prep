@@ -33,13 +33,13 @@ import template from './folder-tree.html';
  */
 
 const FolderTreeComponent = {
-    bindings: {
-        level: '<',
-        node: '<',
-        onSelect: '&',
-        onToggle: '&',
-    },
-    templateUrl: template,
+	bindings: {
+		level: '<',
+		node: '<',
+		onSelect: '&',
+		onToggle: '&',
+	},
+	templateUrl: template,
 };
 
 export default FolderTreeComponent;

@@ -31,17 +31,17 @@ import template from './lookup-datagrid.html';
  */
 export default function LookupDatagrid($timeout, state, LookupDatagridGridService, LookupDatagridColumnService,
     LookupDatagridStyleService, LookupDatagridTooltipService) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'lookupDatagridCtrl',
-        controller: 'LookupDatagridCtrl',
-        link(scope, iElement, iAttrs, ctrl) {
-            let grid;
-            let columnTimeout;
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'lookupDatagridCtrl',
+		controller: 'LookupDatagridCtrl',
+		link(scope, iElement, iAttrs, ctrl) {
+			let grid;
+			let columnTimeout;
 
             //------------------------------------------------------------------------------------------------------
             // --------------------------------------------------GETTERS---------------------------------------------
@@ -53,9 +53,9 @@ export default function LookupDatagrid($timeout, state, LookupDatagridGridServic
              * @methodOf data-prep.lookup.directive:LookupDatagrid
              * @description [PRIVATE] Get the lookup loaded data
              */
-            const getData = function getData() {
-                return state.playground.lookup.data;
-            };
+			const getData = function getData() {
+				return state.playground.lookup.data;
+			};
 
             //------------------------------------------------------------------------------------------------------
             // ---------------------------------------------------UTILS----------------------------------------------
@@ -67,29 +67,29 @@ export default function LookupDatagrid($timeout, state, LookupDatagridGridServic
              * @methodOf data-prep.lookup.directive:LookupDatagrid
              * @description [PRIVATE] Update and resize the columns with its headers, set grid styles
              */
-            const onDataChange = function onDataChange(data) {
-                if (data) {
-                    if (grid) {
-                        grid.scrollRowToTop(0);
-                    }
+			const onDataChange = function onDataChange(data) {
+				if (data) {
+					if (grid) {
+						grid.scrollRowToTop(0);
+					}
 
-                    initGridIfNeeded();
-                    let columns;
-                    let selectedColumn;
-                    const stateSelectedColumn = ctrl.state.playground.lookup.selectedColumn;
+					initGridIfNeeded();
+					let columns;
+					let selectedColumn;
+					const stateSelectedColumn = ctrl.state.playground.lookup.selectedColumn;
 
                     // create columns, manage style and size, set columns in grid
-                    $timeout.cancel(columnTimeout);
-                    columnTimeout = $timeout(function () {
-                        columns = LookupDatagridColumnService.createColumns(data.metadata.columns);
+					$timeout.cancel(columnTimeout);
+					columnTimeout = $timeout(function () {
+						columns = LookupDatagridColumnService.createColumns(data.metadata.columns);
 
-                        selectedColumn = stateSelectedColumn ? _.find(columns, { id: stateSelectedColumn.id }) : null;
+						selectedColumn = stateSelectedColumn ? _.find(columns, { id: stateSelectedColumn.id }) : null;
 
-                        LookupDatagridStyleService.updateColumnClass(columns, selectedColumn);
-                        grid.setColumns(columns); // IMPORTANT : this set columns in the grid
-                    }, 0, false);
-                }
-            };
+						LookupDatagridStyleService.updateColumnClass(columns, selectedColumn);
+						grid.setColumns(columns); // IMPORTANT : this set columns in the grid
+					}, 0, false);
+				}
+			};
 
             //------------------------------------------------------------------------------------------------------
             // ---------------------------------------------------INIT-----------------------------------------------
@@ -100,15 +100,15 @@ export default function LookupDatagrid($timeout, state, LookupDatagridGridServic
              * @methodOf data-prep.lookup.directive:LookupDatagrid
              * @description [PRIVATE] Init Slick grid and init lookup-datagrid private services.
              */
-            const initGridIfNeeded = function () {
-                if (!grid) {
-                    grid = LookupDatagridGridService.initGrid('#lookup-datagrid');
+			const initGridIfNeeded = function () {
+				if (!grid) {
+					grid = LookupDatagridGridService.initGrid('#lookup-datagrid');
 
                     // the tooltip ruler is used compute a cell text regardless of the font and zoom used.
                     // To do so, the text is put into an invisible span so that the span can be measured.
-                    LookupDatagridTooltipService.tooltipRuler = iElement.find('#lookup-tooltip-ruler').eq(0);
-                }
-            };
+					LookupDatagridTooltipService.tooltipRuler = iElement.find('#lookup-tooltip-ruler').eq(0);
+				}
+			};
 
             //------------------------------------------------------------------------------------------------------
             // -------------------------------------------------WATCHERS---------------------------------------------
@@ -116,7 +116,7 @@ export default function LookupDatagrid($timeout, state, LookupDatagridGridServic
             /**
              * Update grid columns and invalidate grid on data change
              */
-            scope.$watch(getData, onDataChange);
-        },
-    };
+			scope.$watch(getData, onDataChange);
+		},
+	};
 }

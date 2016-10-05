@@ -23,11 +23,11 @@ const DATASET = 'dataset';
  * {@link data-prep.services.transformation.service:TransformationService TransformationService} must be the only entry point for transformation</b>
  */
 export default class TransformationRestService {
-    constructor($http, RestURLs) {
-        'ngInject';
-        this.$http = $http;
-        this.RestURLs = RestURLs;
-    }
+	constructor($http, RestURLs) {
+		'ngInject';
+		this.$http = $http;
+		this.RestURLs = RestURLs;
+	}
 
     /**
      * @ngdoc method
@@ -37,9 +37,9 @@ export default class TransformationRestService {
      * @param {string} datasetId The dataset id
      * @returns {Promise} The GET promise
      */
-    getDatasetTransformations(datasetId) {
-        return this.$http.get(`${this.RestURLs.datasetUrl}/${datasetId}/actions`);
-    }
+	getDatasetTransformations(datasetId) {
+		return this.$http.get(`${this.RestURLs.datasetUrl}/${datasetId}/actions`);
+	}
 
     /**
      * @ngdoc method
@@ -50,17 +50,17 @@ export default class TransformationRestService {
      * @description Fetch the transformations
      * @returns {Promise} The promise
      */
-    getTransformations(scope, entity) {
-        switch (scope) {
-        case LINE:
-        case DATASET:
-            return this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`)
-                .then((response) => response.data);
-        case COLUMN:
-            return this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity)
-                .then((response) => response.data);
-        }
-    }
+	getTransformations(scope, entity) {
+		switch (scope) {
+		case LINE:
+		case DATASET:
+			return this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`)
+                .then(response => response.data);
+		case COLUMN:
+			return this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity)
+                .then(response => response.data);
+		}
+	}
 
     /**
      * @ngdoc method
@@ -71,10 +71,10 @@ export default class TransformationRestService {
      * @description Fetch the suggestions on a column
      * @returns {Promise} The promise
      */
-    getSuggestions(scope, entity) {
-        return this.$http.post(`${this.RestURLs.transformUrl}/suggest/${scope}`, entity)
-            .then((response) => response.data);
-    }
+	getSuggestions(scope, entity) {
+		return this.$http.post(`${this.RestURLs.transformUrl}/suggest/${scope}`, entity)
+            .then(response => response.data);
+	}
 
     /**
      * @ngdoc method
@@ -88,13 +88,13 @@ export default class TransformationRestService {
      * @description Fetch the transformations dynamic params
      * @returns {Promise} The GET promise
      */
-    getDynamicParameters(action, columnId, datasetId, preparationId, stepId) {
-        let queryParams = preparationId ? 'preparationId=' + encodeURIComponent(preparationId) : 'datasetId=' + encodeURIComponent(datasetId);
-        queryParams += stepId ? '&stepId=' + encodeURIComponent(stepId) : '';
-        queryParams += '&columnId=' + encodeURIComponent(columnId);
+	getDynamicParameters(action, columnId, datasetId, preparationId, stepId) {
+		let queryParams = preparationId ? 'preparationId=' + encodeURIComponent(preparationId) : 'datasetId=' + encodeURIComponent(datasetId);
+		queryParams += stepId ? '&stepId=' + encodeURIComponent(stepId) : '';
+		queryParams += '&columnId=' + encodeURIComponent(columnId);
 
-        return this.$http
+		return this.$http
             .get(`${this.RestURLs.transformUrl}/suggest/${action}/params?${queryParams}`)
-            .then((response) => response.data);
-    }
+            .then(response => response.data);
+	}
 }

@@ -28,12 +28,12 @@ const MODULE_NAME = 'data-prep.services.folder';
  * @description This module contains the services to manipulate folders
  */
 angular.module(MODULE_NAME,
-    [
-        uiRouter,
-        SERVICES_DATASET_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		uiRouter,
+		SERVICES_DATASET_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('FolderRestService', FolderRestService)
     .service('FolderService', FolderService);
 

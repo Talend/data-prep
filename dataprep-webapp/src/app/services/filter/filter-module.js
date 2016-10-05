@@ -27,11 +27,11 @@ const MODULE_NAME = 'data-prep.services.filter';
  * It is responsible for the filter update within the SlickGrid grid
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_FILTER_ADAPTER_MODULE,
-        SERVICES_STATISTICS_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_FILTER_ADAPTER_MODULE,
+		SERVICES_STATISTICS_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('FilterService', FilterService);
 
 export default MODULE_NAME;

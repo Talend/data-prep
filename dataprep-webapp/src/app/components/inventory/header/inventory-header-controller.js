@@ -25,10 +25,10 @@ export default class InventoryHeaderCtrl {
      * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
      * @description Reset folder name and show folder modal
      */
-    openFolderModal() {
-        this.folderName = '';
-        this.folderNameModal = true;
-    }
+	openFolderModal() {
+		this.folderName = '';
+		this.folderNameModal = true;
+	}
 
     /**
      * @ngdoc method
@@ -36,13 +36,13 @@ export default class InventoryHeaderCtrl {
      * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
      * @description Create a new folder
      */
-    addFolder() {
-        this.folderNameForm.$commitViewValue();
-        this.onFolderCreation({ name: this.folderName })
+	addFolder() {
+		this.folderNameForm.$commitViewValue();
+		this.onFolderCreation({ name: this.folderName })
             .then(() => {
-                this.folderNameModal = false;
-            });
-    }
+	this.folderNameModal = false;
+});
+	}
 
     /**
      * @ngdoc method
@@ -50,7 +50,7 @@ export default class InventoryHeaderCtrl {
      * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
      * @description Opens add preparation Modal
      */
-    openAddPreparationModal() {
-        this.showAddPrepModal = true;
-    }
+	openAddPreparationModal() {
+		this.showAddPrepModal = true;
+	}
 }

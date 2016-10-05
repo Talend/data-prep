@@ -31,27 +31,27 @@ import template from './quality-bar.html';
  * @param {string} hasMenu Do not show the menu if hasMenu === 'false'
  */
 export default function QualityBar($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            enterAnimation: '@',
-            quality: '<',
-            isTrusted: '<',
-            hasMenu: '<',
-        },
-        transclude: {
-            'valid-quality-bar-menu': '?validMenuItems',
-            'empty-quality-bar-menu': '?emptyMenuItems',
-            'invalid-quality-bar-menu': '?invalidMenuItems',
-        },
-        bindToController: true,
-        controller: 'QualityBarCtrl',
-        controllerAs: 'qualityBarCtrl',
-        link(scope, iElement, iAttrs, ctrl) {
-            let initializing = true;
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			enterAnimation: '@',
+			quality: '<',
+			isTrusted: '<',
+			hasMenu: '<',
+		},
+		transclude: {
+			'valid-quality-bar-menu': '?validMenuItems',
+			'empty-quality-bar-menu': '?emptyMenuItems',
+			'invalid-quality-bar-menu': '?invalidMenuItems',
+		},
+		bindToController: true,
+		controller: 'QualityBarCtrl',
+		controllerAs: 'qualityBarCtrl',
+		link(scope, iElement, iAttrs, ctrl) {
+			let initializing = true;
 
             /**
              * @ngdoc method
@@ -59,9 +59,9 @@ export default function QualityBar($timeout) {
              * @methodOf talend.widget.directive:QualityBar
              * @description [PRIVATE] Enable animation
              */
-            const enableTransition = function enableTransition() {
-                ctrl.blockTransition = false;
-            };
+			const enableTransition = function enableTransition() {
+				ctrl.blockTransition = false;
+			};
 
             /**
              * @ngdoc method
@@ -69,21 +69,21 @@ export default function QualityBar($timeout) {
              * @methodOf talend.widget.directive:QualityBar
              * @description [PRIVATE] Block animation, reset width to 0 and calculate the new width with animation enabling
              */
-            const refreshBarsWithAnimation = function refreshBarsWithAnimation() {
-                ctrl.width = {
-                    invalid: 0,
-                    empty: 0,
-                    valid: 0,
-                };
+			const refreshBarsWithAnimation = function refreshBarsWithAnimation() {
+				ctrl.width = {
+					invalid: 0,
+					empty: 0,
+					valid: 0,
+				};
 
-                enableTransition();
+				enableTransition();
 
-                $timeout(function () {
-                    ctrl.computePercent();
-                    ctrl.computeQualityWidth();
-                    scope.$digest();
-                }, 300, false);
-            };
+				$timeout(function () {
+					ctrl.computePercent();
+					ctrl.computeQualityWidth();
+					scope.$digest();
+				}, 300, false);
+			};
 
             /**
              * @ngdoc method
@@ -92,20 +92,20 @@ export default function QualityBar($timeout) {
              * @description [PRIVATE] Refresh the quality bars infos (percent and width)
              * When enterAnimation === 'false', we do NOT animate on first render
              */
-            const refreshBars = function refreshBars() {
+			const refreshBars = function refreshBars() {
                 // Do NOT animate on first values and enterAnimation is false
-                if (initializing && ctrl.enterAnimation === 'false') {
-                    initializing = false;
-                    ctrl.blockTransition = true;
-                    ctrl.computePercent();
-                    ctrl.computeQualityWidth();
-                }
-                else {
-                    refreshBarsWithAnimation();
-                }
-            };
+				if (initializing && ctrl.enterAnimation === 'false') {
+					initializing = false;
+					ctrl.blockTransition = true;
+					ctrl.computePercent();
+					ctrl.computeQualityWidth();
+				}
+				else {
+					refreshBarsWithAnimation();
+				}
+			};
 
-            scope.$watch(ctrl.hashQuality, refreshBars);
-        },
-    };
+			scope.$watch(ctrl.hashQuality, refreshBars);
+		},
+	};
 }

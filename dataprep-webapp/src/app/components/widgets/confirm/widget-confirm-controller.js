@@ -22,9 +22,9 @@
  * @requires talend.widget.service:TalendConfirmService
  */
 export default function TalendConfirmCtrl($scope, TalendConfirmService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc property
@@ -32,7 +32,7 @@ export default function TalendConfirmCtrl($scope, TalendConfirmService) {
      * @propertyOf talend.widget.controller:TalendConfirmCtrl
      * @description Flag that controls the display of the confirm modal
      */
-    vm.modalState = true;
+	vm.modalState = true;
 
     /**
      * @ngdoc property
@@ -40,21 +40,21 @@ export default function TalendConfirmCtrl($scope, TalendConfirmService) {
      * @propertyOf talend.widget.controller:TalendConfirmCtrl
      * @description Flag that keep the state of the validation button click
      */
-    vm.buttonClicked = false;
+	vm.buttonClicked = false;
 
     /**
      * Watch the modal state to reject confirm promise on modal dismiss
      */
-    $scope.$watch(
+	$scope.$watch(
         function () {
-            return vm.modalState;
-        },
+	return vm.modalState;
+},
 
         function (newValue) {
-            if (!newValue && !vm.buttonClicked) {
-                TalendConfirmService.reject('dismiss');
-            }
-        }
+	if (!newValue && !vm.buttonClicked) {
+		TalendConfirmService.reject('dismiss');
+	}
+}
     );
 
     /**
@@ -63,10 +63,10 @@ export default function TalendConfirmCtrl($scope, TalendConfirmService) {
      * @methodOf talend.widget.controller:TalendConfirmCtrl
      * @description Validate the confirm choice and resolve the confirm promise
      */
-    vm.valid = function () {
-        vm.buttonClicked = true;
-        TalendConfirmService.resolve();
-    };
+	vm.valid = function () {
+		vm.buttonClicked = true;
+		TalendConfirmService.resolve();
+	};
 
     /**
      * @ngdoc method
@@ -74,8 +74,8 @@ export default function TalendConfirmCtrl($scope, TalendConfirmService) {
      * @methodOf talend.widget.controller:TalendConfirmCtrl
      * @description Cancel the confirm choice and reject the confirm promise
      */
-    vm.cancel = function () {
-        vm.buttonClicked = true;
-        TalendConfirmService.reject(null);
-    };
+	vm.cancel = function () {
+		vm.buttonClicked = true;
+		TalendConfirmService.reject(null);
+	};
 }

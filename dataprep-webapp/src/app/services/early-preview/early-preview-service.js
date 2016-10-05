@@ -29,20 +29,20 @@ const DELAY = 700;
  * @requires data-prep.services.playground.service:PreviewService
  */
 export default function EarlyPreviewService($timeout, state, RecipeService, PreviewService) {
-    'ngInject';
+	'ngInject';
 
-    let previewDisabled = false;
-    let previewTimeout;
-    let previewCancelerTimeout;
+	let previewDisabled = false;
+	let previewTimeout;
+	let previewCancelerTimeout;
 
-    return {
-        activatePreview,
-        deactivatePreview,
+	return {
+		activatePreview,
+		deactivatePreview,
 
-        cancelPendingPreview,
-        earlyPreview,
-        cancelEarlyPreview,
-    };
+		cancelPendingPreview,
+		earlyPreview,
+		cancelEarlyPreview,
+	};
 
     /**
      * @ngdoc method
@@ -50,9 +50,9 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @methodOf data-prep.services.early-preview.service:EarlyPreviewService
      * @description deactivates the preview
      */
-    function deactivatePreview() {
-        previewDisabled = true;
-    }
+	function deactivatePreview() {
+		previewDisabled = true;
+	}
 
     /**
      * @ngdoc method
@@ -60,9 +60,9 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @methodOf data-prep.services.early-preview.service:EarlyPreviewService
      * @description activates the preview
      */
-    function activatePreview() {
-        previewDisabled = false;
-    }
+	function activatePreview() {
+		previewDisabled = false;
+	}
 
     /**
      * @ngdoc method
@@ -70,10 +70,10 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @methodOf data-prep.services.early-preview.service:EarlyPreviewService
      * @description disables the pending previews
      */
-    function cancelPendingPreview() {
-        $timeout.cancel(previewTimeout);
-        $timeout.cancel(previewCancelerTimeout);
-    }
+	function cancelPendingPreview() {
+		$timeout.cancel(previewTimeout);
+		$timeout.cancel(previewCancelerTimeout);
+	}
 
     /**
      * @ngdoc method
@@ -83,49 +83,49 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @param {string} scope The transformation scope
      * @description Perform an early preview (preview before transformation application) after a 200ms delay
      */
-    function earlyPreview(action, scope) {
-        return (params) => {
-            if (previewDisabled) {
-                return;
-            }
+	function earlyPreview(action, scope) {
+		return (params) => {
+			if (previewDisabled) {
+				return;
+			}
 
-            cancelPendingPreview();
+			cancelPendingPreview();
 
-            previewTimeout = $timeout(() => {
-                const line = state.playground.grid.selectedLine;
-                const columns = state.playground.grid.selectedColumns;
-                const preparationId = state.playground.preparation ? state.playground.preparation.id : null;
+			previewTimeout = $timeout(() => {
+				const line = state.playground.grid.selectedLine;
+				const columns = state.playground.grid.selectedColumns;
+				const preparationId = state.playground.preparation ? state.playground.preparation.id : null;
 
-                let parameters;
-                switch (scope) {
-                case COLUMN :
-                case DATASET :
-                    parameters = map(columns, (col) => ({
-                        ... params,
-                        scope,
-                        column_id: col.id,
-                        column_name: col.name,
-                    }));
-                    break;
-                case LINE :
-                    parameters = [
-                        {
-                            ... params,
-                            scope,
-                            row_id: line.tdpId,
-                        },
-                    ];
-                    break;
-                default:
-                    parameters = [];
-                    break;
-                }
+				let parameters;
+				switch (scope) {
+				case COLUMN :
+				case DATASET :
+					parameters = map(columns, col => ({
+						...params,
+						scope,
+						column_id: col.id,
+						column_name: col.name,
+					}));
+					break;
+				case LINE :
+					parameters = [
+						{
+							...params,
+							scope,
+							row_id: line.tdpId,
+						},
+					];
+					break;
+				default:
+					parameters = [];
+					break;
+				}
 
-                PreviewService.getPreviewAddRecords(preparationId, state.playground.dataset.id, action.name, parameters)
+				PreviewService.getPreviewAddRecords(preparationId, state.playground.dataset.id, action.name, parameters)
                     .then(() => RecipeService.earlyPreview(action, parameters));
-            }, DELAY);
-        };
-    }
+			}, DELAY);
+		};
+	}
 
     /**
      * @ngdoc method
@@ -133,16 +133,16 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
      * @methodOf data-prep.services.early-preview.service:EarlyPreviewService
      * @description Cancel any current or pending early preview
      */
-    function cancelEarlyPreview() {
-        if (previewDisabled) {
-            return;
-        }
+	function cancelEarlyPreview() {
+		if (previewDisabled) {
+			return;
+		}
 
-        cancelPendingPreview();
+		cancelPendingPreview();
 
-        previewCancelerTimeout = $timeout(() => {
-            RecipeService.cancelEarlyPreview();
-            PreviewService.cancelPreview();
-        }, 100);
-    }
+		previewCancelerTimeout = $timeout(() => {
+			RecipeService.cancelEarlyPreview();
+			PreviewService.cancelPreview();
+		}, 100);
+	}
 }

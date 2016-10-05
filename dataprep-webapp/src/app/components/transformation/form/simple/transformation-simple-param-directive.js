@@ -36,20 +36,20 @@ import template from './transformation-simple-param.html';
  * @param {boolean} editableSelect If this parameter is an editable-select
  */
 export default function TransformSimpleParam() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            editableSelect: '=',
-            parameter: '=',
-            label: '@',
-        },
-        require: '^?form',
-        bindToController: true,
-        controllerAs: 'simpleParamCtrl',
-        controller: 'TransformSimpleParamCtrl',
-        link: (scope, element, attrs, form) => {
-            scope.parentForm = form;
-        },
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			editableSelect: '=',
+			parameter: '=',
+			label: '@',
+		},
+		require: '^?form',
+		bindToController: true,
+		controllerAs: 'simpleParamCtrl',
+		controller: 'TransformSimpleParamCtrl',
+		link: (scope, element, attrs, form) => {
+			scope.parentForm = form;
+		},
+	};
 }

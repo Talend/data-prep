@@ -22,8 +22,8 @@ import template from './dataset-list.html';
  * @restrict E
  */
 const DatasetListComponent = {
-    templateUrl: template,
-    controller: DatasetListCtrl,
+	templateUrl: template,
+	controller: DatasetListCtrl,
 };
 
 export default DatasetListComponent;

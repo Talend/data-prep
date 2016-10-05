@@ -23,12 +23,12 @@ import Export from './export-directive';
 const MODULE_NAME = 'data-prep.export';
 
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        SERVICES_EXPORT_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		SERVICES_EXPORT_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('ExportCtrl', ExportCtrl)
     .directive('export', Export);
 

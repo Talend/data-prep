@@ -34,17 +34,17 @@ const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
  */
 export default class OnboardingService {
 
-    constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour) {
-        'ngInject';
+	constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour) {
+		'ngInject';
 
-        this.$timeout = $timeout;
-        this.$state = $state;
-        this.$window = $window;
-        this.state = state;
-        this.recipeTour = recipeTour;
-        this.playgroundTour = playgroundTour;
-        this.preparationTour = preparationTour;
-    }
+		this.$timeout = $timeout;
+		this.$state = $state;
+		this.$window = $window;
+		this.state = state;
+		this.recipeTour = recipeTour;
+		this.playgroundTour = playgroundTour;
+		this.preparationTour = preparationTour;
+	}
 
     /**
      * @ngdoc method
@@ -54,13 +54,13 @@ export default class OnboardingService {
      * @description Create the Intro.js steps
      * @returns {Array} The Intro.js steps
      */
-    createIntroSteps(configs) {
-        return _.map(configs, (config) => ({
-            element: config.element,
-            position: config.position,
-            intro: _.template(template)(config),
-        }));
-    }
+	createIntroSteps(configs) {
+		return _.map(configs, config => ({
+			element: config.element,
+			position: config.position,
+			intro: _.template(template)(config),
+		}));
+	}
 
     /**
      * @ngdoc method
@@ -69,10 +69,10 @@ export default class OnboardingService {
      * @description Get options from localStorage
      * @returns {object} The saved tour config
      */
-    getTourOptions() {
-        const tourOptionsString = this.$window.localStorage.getItem(TOUR_OPTIONS_KEY);
-        return tourOptionsString ? JSON.parse(tourOptionsString) : {};
-    }
+	getTourOptions() {
+		const tourOptionsString = this.$window.localStorage.getItem(TOUR_OPTIONS_KEY);
+		return tourOptionsString ? JSON.parse(tourOptionsString) : {};
+	}
 
     /**
      * @ngdoc method
@@ -81,9 +81,9 @@ export default class OnboardingService {
      * @param {object} options The options to save
      * @description Set options in localStorage
      */
-    setTourOptions(options) {
-        this.$window.localStorage.setItem(TOUR_OPTIONS_KEY, JSON.stringify(options));
-    }
+	setTourOptions(options) {
+		this.$window.localStorage.setItem(TOUR_OPTIONS_KEY, JSON.stringify(options));
+	}
 
     /**
      * @ngdoc method
@@ -93,16 +93,16 @@ export default class OnboardingService {
      * @description Get tour details
      * @returns {Array} Tour details
      */
-    getTour(tour) {
-        switch (tour) {
-        case 'playground':
-            return this.playgroundTour;
-        case 'recipe':
-            return this.recipeTour;
-        case 'preparation':
-            return this.preparationTour;
-        }
-    }
+	getTour(tour) {
+		switch (tour) {
+		case 'playground':
+			return this.playgroundTour;
+		case 'recipe':
+			return this.recipeTour;
+		case 'preparation':
+			return this.preparationTour;
+		}
+	}
 
     /**
      * @ngdoc method
@@ -111,11 +111,11 @@ export default class OnboardingService {
      * @param {String} tour The tour Id
      * @description Set tour options as done in localStorage
      */
-    setTourDone(tour) {
-        const options = this.getTourOptions();
-        options[tour] = true;
-        this.setTourOptions(options);
-    }
+	setTourDone(tour) {
+		const options = this.getTourOptions();
+		options[tour] = true;
+		this.setTourOptions(options);
+	}
 
     /**
      * @ngdoc method
@@ -125,10 +125,10 @@ export default class OnboardingService {
      * @param {String} tour The tour Id
      * @return {boolean} True if the tour has not been completed yet
      */
-    shouldStartTour(tour) {
-        const tourOptions = this.getTourOptions();
-        return !tourOptions[tour];
-    }
+	shouldStartTour(tour) {
+		const tourOptions = this.getTourOptions();
+		return !tourOptions[tour];
+	}
 
     /**
      * @ngdoc method
@@ -137,33 +137,33 @@ export default class OnboardingService {
      * @param {String} tour The tour Id
      * @description Configure and start an onboarding tour
      */
-    startTour(tour) {
-        const isOnDatasetsRoute = this.$state.current.name === 'nav.index.datasets';
-        if (isOnDatasetsRoute) {
-            this.$state.go('nav.index.preparations', { folderId: this.state.inventory.homeFolderId });
-        }
+	startTour(tour) {
+		const isOnDatasetsRoute = this.$state.current.name === 'nav.index.datasets';
+		if (isOnDatasetsRoute) {
+			this.$state.go('nav.index.preparations', { folderId: this.state.inventory.homeFolderId });
+		}
 
-        this.$timeout(() => {
-            this.currentTour = introJs()
+		this.$timeout(() => {
+			this.currentTour = introJs()
                 .setOptions({
-                    nextLabel: 'NEXT',
-                    prevLabel: 'BACK',
-                    skipLabel: 'SKIP',
-                    doneLabel: 'LET ME TRY',
-                    steps: this.createIntroSteps(this.getTour(tour)),
-                })
+	nextLabel: 'NEXT',
+	prevLabel: 'BACK',
+	skipLabel: 'SKIP',
+	doneLabel: 'LET ME TRY',
+	steps: this.createIntroSteps(this.getTour(tour)),
+})
                 .oncomplete(() => {
-                    this.setTourDone(tour);
-                })
+	this.setTourDone(tour);
+})
                 .onexit(() => {
-                    this.setTourDone(tour);
-                    if (isOnDatasetsRoute) {
-                        this.$state.go('nav.index.datasets');
-                    }
+	this.setTourDone(tour);
+	if (isOnDatasetsRoute) {
+		this.$state.go('nav.index.datasets');
+	}
 
-                    this.currentTour = null;
-                });
-            this.currentTour.start();
-        }, 200, false);
-    }
+	this.currentTour = null;
+});
+			this.currentTour.start();
+		}, 200, false);
+	}
 }

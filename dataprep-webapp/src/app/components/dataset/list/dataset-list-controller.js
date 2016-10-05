@@ -27,39 +27,39 @@
  * @requires data-prep.services.utils.service:MessageService
  */
 export default class DatasetListCtrl {
-    constructor($q, state, StateService,                                // app state
+	constructor($q, state, StateService,                                // app state
         DatasetService, PreparationService,                 // inventory
         UploadWorkflowService, UpdateWorkflowService,       // inventory workflow
         TalendConfirmService, MessageService) {             // utils
-        'ngInject';
+		'ngInject';
 
-        this.$q = $q;
-        this.state = state;
-        this.StateService = StateService;
-        this.DatasetService = DatasetService;
-        this.PreparationService = PreparationService;
-        this.UploadWorkflowService = UploadWorkflowService;
-        this.UpdateWorkflowService = UpdateWorkflowService;
-        this.TalendConfirmService = TalendConfirmService;
-        this.MessageService = MessageService;
+		this.$q = $q;
+		this.state = state;
+		this.StateService = StateService;
+		this.DatasetService = DatasetService;
+		this.PreparationService = PreparationService;
+		this.UploadWorkflowService = UploadWorkflowService;
+		this.UpdateWorkflowService = UpdateWorkflowService;
+		this.TalendConfirmService = TalendConfirmService;
+		this.MessageService = MessageService;
 
         // TODO refacto inventory item to take function and remove this
-        this.uploadUpdatedDatasetFile = this.uploadUpdatedDatasetFile.bind(this);
-        this.processCertification = this.processCertification.bind(this);
-        this.remove = this.remove.bind(this);
-        this.rename = this.rename.bind(this);
-        this.clone = this.clone.bind(this);
+		this.uploadUpdatedDatasetFile = this.uploadUpdatedDatasetFile.bind(this);
+		this.processCertification = this.processCertification.bind(this);
+		this.remove = this.remove.bind(this);
+		this.rename = this.rename.bind(this);
+		this.clone = this.clone.bind(this);
 
-        this.renamingList = [];
-    }
+		this.renamingList = [];
+	}
 
-    $onInit() {
-        this.StateService.setPreviousRoute('nav.index.datasets');
-        this.StateService.setFetchingInventoryDatasets(true);
-        this.DatasetService.init().then(() => {
-            this.StateService.setFetchingInventoryDatasets(false);
-        });
-    }
+	$onInit() {
+		this.StateService.setPreviousRoute('nav.index.datasets');
+		this.StateService.setFetchingInventoryDatasets(true);
+		this.DatasetService.init().then(() => {
+			this.StateService.setFetchingInventoryDatasets(false);
+		});
+	}
 
     /**
      * @ngdoc method
@@ -68,9 +68,9 @@ export default class DatasetListCtrl {
      * @description updates the existing dataset with the uploaded one
      * @param {object} dataset The dataset to update
      */
-    uploadUpdatedDatasetFile(dataset) {
-        this.UpdateWorkflowService.updateDataset(this.updateDatasetFile[0], dataset);
-    }
+	uploadUpdatedDatasetFile(dataset) {
+		this.UpdateWorkflowService.updateDataset(this.updateDatasetFile[0], dataset);
+	}
 
     /**
      * @ngdoc method
@@ -79,8 +79,8 @@ export default class DatasetListCtrl {
      * @description Delete a dataset
      * @param {object} dataset The dataset to delete
      */
-    remove(dataset) {
-        this.TalendConfirmService
+	remove(dataset) {
+		this.TalendConfirmService
             .confirm(
                 { disableEnter: true },
                 ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
@@ -92,7 +92,7 @@ export default class DatasetListCtrl {
                 'REMOVE_SUCCESS',
                 { type: 'dataset', name: dataset.name }
             ));
-    }
+	}
 
     /**
      * @ngdoc method
@@ -102,42 +102,42 @@ export default class DatasetListCtrl {
      * @param {string} name The new name
      * @description Rename a dataset
      */
-    rename(dataset, name) {
-        const cleanName = name ? name.trim().toLowerCase() : '';
-        if (!cleanName) {
-            return;
-        }
+	rename(dataset, name) {
+		const cleanName = name ? name.trim().toLowerCase() : '';
+		if (!cleanName) {
+			return;
+		}
 
-        if (this.renamingList.indexOf(dataset) > -1) {
-            this.MessageService.warning(
+		if (this.renamingList.indexOf(dataset) > -1) {
+			this.MessageService.warning(
                 'DATASET_CURRENTLY_RENAMING_TITLE',
                 'DATASET_CURRENTLY_RENAMING'
             );
-            return;
-        }
+			return;
+		}
 
-        if (this.DatasetService.getDatasetByName(cleanName)) {
-            this.MessageService.error(
+		if (this.DatasetService.getDatasetByName(cleanName)) {
+			this.MessageService.error(
                 'DATASET_NAME_ALREADY_USED_TITLE',
                 'DATASET_NAME_ALREADY_USED'
             );
-            return;
-        }
+			return;
+		}
 
-        this.renamingList.push(dataset);
+		this.renamingList.push(dataset);
 
-        return this.DatasetService.rename(dataset, name)
+		return this.DatasetService.rename(dataset, name)
             .then(() => {
-                this.MessageService.success(
+	this.MessageService.success(
                     'DATASET_RENAME_SUCCESS_TITLE',
                     'DATASET_RENAME_SUCCESS'
                 );
-            })
+})
             .finally(() => {
-                const index = this.renamingList.indexOf(dataset);
-                this.renamingList.splice(index, 1);
-            });
-    }
+	const index = this.renamingList.indexOf(dataset);
+	this.renamingList.splice(index, 1);
+});
+	}
 
     /**
      * @ngdoc method
@@ -146,10 +146,10 @@ export default class DatasetListCtrl {
      * @description Ask certification for a dataset
      * @param {object[]} dataset Ask certification for the dataset
      */
-    processCertification(dataset) {
-        this.DatasetService
+	processCertification(dataset) {
+		this.DatasetService
             .processCertification(dataset);
-    }
+	}
 
     /**
      * @ngdoc method
@@ -158,8 +158,8 @@ export default class DatasetListCtrl {
      * @description makes a copy of a dataset
      * @param {object} dataset to move
      */
-    clone(dataset) {
-        return this.DatasetService.clone(dataset)
+	clone(dataset) {
+		return this.DatasetService.clone(dataset)
             .then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
-    }
+	}
 }

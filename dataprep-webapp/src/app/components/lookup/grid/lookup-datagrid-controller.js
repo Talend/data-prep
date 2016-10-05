@@ -19,10 +19,10 @@
  * @requires data-prep.lookup.service:DatagridTooltipService
  */
 export default function LookupDatagridCtrl(state, LookupDatagridTooltipService) {
-    'ngInject';
+	'ngInject';
 
-    this.datagridTooltipService = LookupDatagridTooltipService;
-    this.state = state;
+	this.datagridTooltipService = LookupDatagridTooltipService;
+	this.state = state;
 }
 
 /**
@@ -34,12 +34,12 @@ export default function LookupDatagridCtrl(state, LookupDatagridTooltipService) 
  */
 Object.defineProperty(LookupDatagridCtrl.prototype,
     'tooltip', {
-        enumerable: true,
-        configurable: false,
-        get() {
-            return this.datagridTooltipService.tooltip;
-        },
-    });
+	enumerable: true,
+	configurable: false,
+	get() {
+		return this.datagridTooltipService.tooltip;
+	},
+});
 
 /**
  * @ngdoc property
@@ -50,9 +50,9 @@ Object.defineProperty(LookupDatagridCtrl.prototype,
  */
 Object.defineProperty(LookupDatagridCtrl.prototype,
     'showTooltip', {
-        enumerable: true,
-        configurable: false,
-        get() {
-            return this.datagridTooltipService.showTooltip;
-        },
-    });
+	enumerable: true,
+	configurable: false,
+	get() {
+		return this.datagridTooltipService.showTooltip;
+	},
+});

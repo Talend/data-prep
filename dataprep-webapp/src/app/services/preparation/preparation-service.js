@@ -20,36 +20,36 @@
  * @requires data-prep.services.preparation.service:PreparationRestService
  */
 export default function PreparationService($q, $state, $window, $stateParams, StateService, StorageService, PreparationRestService) {
-    'ngInject';
+	'ngInject';
 
-    return {
+	return {
         // details, content
-        getContent: PreparationRestService.getContent,
-        getDetails: PreparationRestService.getDetails,
+		getContent: PreparationRestService.getContent,
+		getDetails: PreparationRestService.getDetails,
 
         // preparation lifecycle
-        create,
-        copy: PreparationRestService.copy,
-        move: PreparationRestService.move,
-        delete: deletePreparation,
-        setName,
-        open,
+		create,
+		copy: PreparationRestService.copy,
+		move: PreparationRestService.move,
+		delete: deletePreparation,
+		setName,
+		open,
 
         // preparation steps lifecycle
-        copyImplicitParameters,
-        paramsHasChanged,
-        appendStep: PreparationRestService.appendStep,
-        updateStep,
-        moveStep: PreparationRestService.moveStep,
-        removeStep: PreparationRestService.removeStep,
-        setHead: PreparationRestService.setHead,
-        copySteps: PreparationRestService.copySteps,
+		copyImplicitParameters,
+		paramsHasChanged,
+		appendStep: PreparationRestService.appendStep,
+		updateStep,
+		moveStep: PreparationRestService.moveStep,
+		removeStep: PreparationRestService.removeStep,
+		setHead: PreparationRestService.setHead,
+		copySteps: PreparationRestService.copySteps,
 
         // preview
-        getPreviewDiff: PreparationRestService.getPreviewDiff,
-        getPreviewUpdate: PreparationRestService.getPreviewUpdate,
-        getPreviewAdd: PreparationRestService.getPreviewAdd,
-    };
+		getPreviewDiff: PreparationRestService.getPreviewDiff,
+		getPreviewUpdate: PreparationRestService.getPreviewUpdate,
+		getPreviewAdd: PreparationRestService.getPreviewAdd,
+	};
     //---------------------------------------------------------------------------------
     // -----------------------------------------LIFE------------------------------------
     //---------------------------------------------------------------------------------
@@ -62,15 +62,15 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @description Create a new preparation
      * @returns {promise} The POST promise
      */
-    function create(datasetId, name, destinationFolder) {
-        StateService.setPreviousRoute('nav.index.preparations', { folderId: $stateParams.folderId });
-        return PreparationRestService.create(datasetId, name, destinationFolder)
-            .then(preparationId => {
+	function create(datasetId, name, destinationFolder) {
+		StateService.setPreviousRoute('nav.index.preparations', { folderId: $stateParams.folderId });
+		return PreparationRestService.create(datasetId, name, destinationFolder)
+            .then((preparationId) => {
                 // get all dataset aggregations per columns from localStorage and save them for the new preparation
-                StorageService.savePreparationAggregationsFromDataset(datasetId, preparationId);
-                return preparationId;
-            });
-    }
+	StorageService.savePreparationAggregationsFromDataset(datasetId, preparationId);
+	return preparationId;
+});
+	}
 
     /**
      * @ngdoc method
@@ -80,14 +80,14 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @description Delete a preparation
      * @returns {promise} The DELETE promise
      */
-    function deletePreparation(preparation) {
-        return PreparationRestService.delete(preparation.id)
+	function deletePreparation(preparation) {
+		return PreparationRestService.delete(preparation.id)
             .then((response) => {
                 // get remove all preparation aggregations per columns in localStorage
-                StorageService.removeAllAggregations(preparation.dataSetId, preparation.id);
-                return response;
-            });
-    }
+	StorageService.removeAllAggregations(preparation.dataSetId, preparation.id);
+	return response;
+});
+	}
 
     //---------------------------------------------------------------------------------
     // ----------------------------------------UPDATE-----------------------------------
@@ -102,14 +102,14 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @description Create a new preparation if no preparation is loaded, update the name otherwise
      * @returns {promise} The POST promise
      */
-    function setName(preparationId, name) {
-        return PreparationRestService.update(preparationId, { name })
-            .then((preparationId) => PreparationRestService.getDetails(preparationId))
+	function setName(preparationId, name) {
+		return PreparationRestService.update(preparationId, { name })
+            .then(preparationId => PreparationRestService.getDetails(preparationId))
             .then((preparation) => {
-                StorageService.moveAggregations(preparation.dataSetId, preparationId, preparation.id);
-                return preparation;
-            });
-    }
+	StorageService.moveAggregations(preparation.dataSetId, preparationId, preparation.id);
+	return preparation;
+});
+	}
 
     /**
      * @ngdoc method
@@ -119,25 +119,25 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @param {object} originalParameters The original parameters containing the implicit parameters values
      * @description Copy the original implicit parameters values into new parameters
      */
-    function copyImplicitParameters(parameters, originalParameters) {
-        parameters.scope = originalParameters.scope;
+	function copyImplicitParameters(parameters, originalParameters) {
+		parameters.scope = originalParameters.scope;
 
-        if ('column_id' in originalParameters) {
-            parameters.column_id = originalParameters.column_id;
-        }
+		if ('column_id' in originalParameters) {
+			parameters.column_id = originalParameters.column_id;
+		}
 
-        if ('column_name' in originalParameters) {
-            parameters.column_name = originalParameters.column_name;
-        }
+		if ('column_name' in originalParameters) {
+			parameters.column_name = originalParameters.column_name;
+		}
 
-        if ('row_id' in originalParameters) {
-            parameters.row_id = originalParameters.row_id;
-        }
+		if ('row_id' in originalParameters) {
+			parameters.row_id = originalParameters.row_id;
+		}
 
-        if ('filter' in originalParameters && !('filter' in parameters)) {
-            parameters.filter = originalParameters.filter;
-        }
-    }
+		if ('filter' in originalParameters && !('filter' in parameters)) {
+			parameters.filter = originalParameters.filter;
+		}
+	}
 
     /**
      * @ngdoc method
@@ -149,13 +149,13 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @description Update a step with new parameters
      * @returns {promise} The PUT promise
      */
-    function updateStep(preparationId, step, parameters) {
-        return PreparationRestService.updateStep(
+	function updateStep(preparationId, step, parameters) {
+		return PreparationRestService.updateStep(
             preparationId,
             step.transformation.stepId,
             { action: step.transformation.name, parameters }
         );
-    }
+	}
 
     /**
      * @ngdoc method
@@ -166,9 +166,9 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @description Check if the parameters has changed
      * @returns {boolean} true if parameters has changed, false otherwise
      */
-    function paramsHasChanged(step, newParams) {
-        return JSON.stringify(newParams) !== JSON.stringify(step.actionParameters.parameters);
-    }
+	function paramsHasChanged(step, newParams) {
+		return JSON.stringify(newParams) !== JSON.stringify(step.actionParameters.parameters);
+	}
 
 
     /**
@@ -178,7 +178,7 @@ export default function PreparationService($q, $state, $window, $stateParams, St
      * @param {object} preparation
      * @description open a preparation
      */
-    function open(preparation) {
-        $state.go('playground.preparation', { prepid: preparation.id });
-    }
+	function open(preparation) {
+		$state.go('playground.preparation', { prepid: preparation.id });
+	}
 }

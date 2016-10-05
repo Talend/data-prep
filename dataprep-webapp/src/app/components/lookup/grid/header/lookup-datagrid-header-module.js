@@ -35,13 +35,13 @@ const MODULE_NAME = 'data-prep.lookup-datagrid-header';
  * @requires data-prep.services.transformation
  */
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        TRANSFORMATION_MENU_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_TRANSFORMATION_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		TRANSFORMATION_MENU_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_TRANSFORMATION_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('LookupDatagridHeaderCtrl', LookupDatagridHeaderCtrl)
     .directive('lookupDatagridHeader', LookupDatagridHeader);
 

@@ -23,13 +23,13 @@ import SuggestionsStats from './suggestions-stats-directive';
 const MODULE_NAME = 'data-prep.suggestions-stats';
 
 angular.module(MODULE_NAME,
-    [
-        ACTIONS_LIST_MODULE,
-        ACTIONS_SUGGESTIONS_MODULE,
-        STATS_COLUMN_PROFILE,
-        STATS_DETAILS_MODULE,
-        TALEND_WIDGET_MODULE,
-    ])
+	[
+		ACTIONS_LIST_MODULE,
+		ACTIONS_SUGGESTIONS_MODULE,
+		STATS_COLUMN_PROFILE,
+		STATS_DETAILS_MODULE,
+		TALEND_WIDGET_MODULE,
+	])
     .component('suggestionsStats', SuggestionsStats);
 
 export default MODULE_NAME;

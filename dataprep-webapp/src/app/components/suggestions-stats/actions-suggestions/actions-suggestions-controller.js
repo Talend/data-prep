@@ -22,11 +22,11 @@ const SUGGESTION = 'suggestion';
  * @requires data-prep.services.transformation.service:TransformationService
  */
 export default function ActionsSuggestionsCtrl(state, TransformationService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.TransformationService = TransformationService;
-    vm.state = state;
+	const vm = this;
+	vm.TransformationService = TransformationService;
+	vm.state = state;
 
     /**
      * Predicate to define if a suggestion should be rendered
@@ -35,10 +35,10 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
      * @param action
      * @returns {*|boolean}
      */
-    function shouldRenderSuggestion(action) {
-        return state.playground.filter.applyTransformationOnFilters && (action.category === 'filtered') ||
-            state.playground.grid.selectedColumns.length === 1 && (action.category !== 'filtered');
-    }
+	function shouldRenderSuggestion(action) {
+		return (state.playground.filter.applyTransformationOnFilters && (action.category === 'filtered')) ||
+			(state.playground.grid.selectedColumns.length === 1 && (action.category !== 'filtered'));
+	}
 
     /**
      * @ngdoc method
@@ -50,12 +50,12 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
      * The 'filtered' category transformations are not rendered if the applyTransformationOnFilters flag is false
      * @returns {boolean} True if the transformation should be rendered, False otherwise
      */
-    vm.shouldRenderAction = function shouldRenderAction(categoryItem, action) {
-        if (categoryItem.category !== SUGGESTION) {
-            return true;
-        }
-        return shouldRenderSuggestion(action);
-    };
+	vm.shouldRenderAction = function shouldRenderAction(categoryItem, action) {
+		if (categoryItem.category !== SUGGESTION) {
+			return true;
+		}
+		return shouldRenderSuggestion(action);
+	};
 
     /**
      * @ngdoc method
@@ -66,10 +66,10 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
      * The 'suggestion' category is rendered if it has transformations to render
      * @returns {boolean} True if the category should be rendered, False otherwise
      */
-    vm.shouldRenderCategory = function shouldRenderCategory(categoryItem) {
+	vm.shouldRenderCategory = function shouldRenderCategory(categoryItem) {
         // render all non Suggestions category
         // render Suggestions if one of the transformations should be rendered
-        return categoryItem.category !== SUGGESTION ||
-            find(categoryItem.transformations, (action) => shouldRenderSuggestion(action));
-    };
+		return categoryItem.category !== SUGGESTION ||
+            find(categoryItem.transformations, action => shouldRenderSuggestion(action));
+	};
 }

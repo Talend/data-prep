@@ -12,8 +12,8 @@
  ============================================================================*/
 
 export const easterEggsState = {
-    currentEasterEgg: '',
-    displayEasterEgg: false,
+	currentEasterEgg: '',
+	displayEasterEgg: false,
 };
 
 /**
@@ -22,10 +22,10 @@ export const easterEggsState = {
  * @description Manage the state of the easter eggs
  */
 export function EasterEggsStateService() {
-    return {
-        enableEasterEgg,
-        disableEasterEgg,
-    };
+	return {
+		enableEasterEgg,
+		disableEasterEgg,
+	};
 
     /**
      * @ngdoc method
@@ -34,10 +34,10 @@ export function EasterEggsStateService() {
      * @description Set the easter egg to display
      * @param easterEgg the easter egg to display
      */
-    function enableEasterEgg(easterEgg) {
-        easterEggsState.currentEasterEgg = easterEgg;
-        easterEggsState.displayEasterEgg = true;
-    }
+	function enableEasterEgg(easterEgg) {
+		easterEggsState.currentEasterEgg = easterEgg;
+		easterEggsState.displayEasterEgg = true;
+	}
 
     /**
      * @ngdoc method
@@ -45,8 +45,8 @@ export function EasterEggsStateService() {
      * @methodOf data-prep.services.state.service:EasterEggsStateService
      * @description disable the easter egg to display
      */
-    function disableEasterEgg() {
-        easterEggsState.currentEasterEgg = '';
-        easterEggsState.displayEasterEgg = false;
-    }
+	function disableEasterEgg() {
+		easterEggsState.currentEasterEgg = '';
+		easterEggsState.displayEasterEgg = false;
+	}
 }

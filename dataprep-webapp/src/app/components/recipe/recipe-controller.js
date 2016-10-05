@@ -30,524 +30,524 @@ const CLUSTER_TYPE = 'CLUSTER';
  */
 export default class RecipeCtrl {
 
-    constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
-                PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
-        'ngInject';
+	constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
+				PlaygroundService, PreviewService, StateService, state, RecipeKnotService) {
+		'ngInject';
 
-        this.$timeout = $timeout;
-        this.FilterAdapterService = FilterAdapterService;
-        this.LookupService = LookupService;
-        this.MessageService = MessageService;
-        this.ParametersService = ParametersService;
-        this.PlaygroundService = PlaygroundService;
-        this.PreviewService = PreviewService;
-        this.StateService = StateService;
-        this.state = state;
-        this.RecipeKnotService = RecipeKnotService;
-        this.stepToBeDeleted = null;
-        this.showModal = {};
+		this.$timeout = $timeout;
+		this.FilterAdapterService = FilterAdapterService;
+		this.LookupService = LookupService;
+		this.MessageService = MessageService;
+		this.ParametersService = ParametersService;
+		this.PlaygroundService = PlaygroundService;
+		this.PreviewService = PreviewService;
+		this.StateService = StateService;
+		this.state = state;
+		this.RecipeKnotService = RecipeKnotService;
+		this.stepToBeDeleted = null;
+		this.showModal = {};
 
-        // Cancel current preview and restore original data
-        this.cancelPreview = this.PreviewService.cancelPreview;
+		// Cancel current preview and restore original data
+		this.cancelPreview = this.PreviewService.cancelPreview;
 
-        // Flag that indicates if a step update is in progress
-        this.updateStepInProgress = false;
+		// Flag that indicates if a step update is in progress
+		this.updateStepInProgress = false;
 
-        // Help to hide lines between step bullets while dragging
-        this.isDragStart = false;
-        this.dragControlListeners = {
-            containment: '.recipe',
-            dragStart: this.dragStart.bind(this),
-            dragEnd: this.dragEnd.bind(this),
-            orderChanged: this.orderChanged.bind(this),
-        };
-    }
+		// Help to hide lines between step bullets while dragging
+		this.isDragStart = false;
+		this.dragControlListeners = {
+			containment: '.recipe',
+			dragStart: this.dragStart.bind(this),
+			dragEnd: this.dragEnd.bind(this),
+			orderChanged: this.orderChanged.bind(this),
+		};
+	}
 
-    /**
-     * @ngdoc method
-     * @name resetParams
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to reset
-     * @description Reset the params of the step
-     * Called on param accordion open.
-     */
-    resetParams(step) {
-        // simple parameters
-        this.ParametersService.resetParamValue(step.transformation.parameters, null);
+	/**
+	 * @ngdoc method
+	 * @name resetParams
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to reset
+	 * @description Reset the params of the step
+	 * Called on param accordion open.
+	 */
+	resetParams(step) {
+		// simple parameters
+		this.ParametersService.resetParamValue(step.transformation.parameters, null);
 
-        // clusters
-        this.ParametersService.resetParamValue(step.transformation.cluster, CLUSTER_TYPE);
-    }
+		// clusters
+		this.ParametersService.resetParamValue(step.transformation.cluster, CLUSTER_TYPE);
+	}
 
-    //---------------------------------------------------------------------------------------------
-    // ------------------------------------------STEP KNOT DISPLAY----------------------------------------
-    //---------------------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------------
+	// ------------------------------------------STEP KNOT DISPLAY----------------------------------------
+	//---------------------------------------------------------------------------------------------
 
-    /**
-     * @ngdoc method
-     * @name isStartChain
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Test if step is the first element of the chain
-     * @returns {boolean} true if step is the first step
-     */
-    isStartChain(step) {
-        // DO NOT use StepUtilsService.isLastStep as it could use the recipe with the before preview steps
-        return step === this.state.playground.recipe.current.reorderedSteps[0];
-    }
+	/**
+	 * @ngdoc method
+	 * @name isStartChain
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Test if step is the first element of the chain
+	 * @returns {boolean} true if step is the first step
+	 */
+	isStartChain(step) {
+		// DO NOT use StepUtilsService.isLastStep as it could use the recipe with the before preview steps
+		return step === this.state.playground.recipe.current.reorderedSteps[0];
+	}
 
-    /**
-     * @ngdoc method
-     * @name isEndChain
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Test if step is the last element of the chain
-     * @returns {boolean} true if step is the last step
-     */
-    isEndChain(step) {
-        return step === this.state.playground.recipe.current.reorderedSteps[this.state.playground.recipe.current.reorderedSteps.length - 1];
-    }
+	/**
+	 * @ngdoc method
+	 * @name isEndChain
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Test if step is the last element of the chain
+	 * @returns {boolean} true if step is the last step
+	 */
+	isEndChain(step) {
+		return step === this.state.playground.recipe.current.reorderedSteps[this.state.playground.recipe.current.reorderedSteps.length - 1];
+	}
 
-    /**
-     * @ngdoc method
-     * @name isLastActive
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Test if step is the last active element of the chain
-     * @returns {boolean} true if step is the last active step
-     */
-    isLastActive(step) {
-        return this.state.playground.recipe.current.lastActiveStep === step;
-    }
+	/**
+	 * @ngdoc method
+	 * @name isLastActive
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Test if step is the last active element of the chain
+	 * @returns {boolean} true if step is the last active step
+	 */
+	isLastActive(step) {
+		return this.state.playground.recipe.current.lastActiveStep === step;
+	}
 
-    /**
-     * @ngdoc method
-     * @name showTopLine
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Test if the top line of the knot should be displayed
-     * @returns {boolean} true if the top line should be displayed
-     */
-    showTopLine(step) {
-        return (!this.isStartChain(step) && !step.inactive)
-            || (this._toBeActivated(step) && !this.isStartChain(step));
-    }
+	/**
+	 * @ngdoc method
+	 * @name showTopLine
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Test if the top line of the knot should be displayed
+	 * @returns {boolean} true if the top line should be displayed
+	 */
+	showTopLine(step) {
+		return (!this.isStartChain(step) && !step.inactive)
+			|| (this._toBeActivated(step) && !this.isStartChain(step));
+	}
 
-    /**
-     * @ngdoc method
-     * @name showBottomLine
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Test if the bottom line of the knot should be displayed
-     * @returns {boolean} true if the bottom line should be displayed
-     */
-    showBottomLine(step) {
-        return (!this.isEndChain(step) && !step.inactive && !this.isLastActive(step))
-            || (!this.isEndChain(step) && this._toBeActivated(step) && !this.isHoveredStep(step));
-    }
+	/**
+	 * @ngdoc method
+	 * @name showBottomLine
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Test if the bottom line of the knot should be displayed
+	 * @returns {boolean} true if the bottom line should be displayed
+	 */
+	showBottomLine(step) {
+		return (!this.isEndChain(step) && !step.inactive && !this.isLastActive(step))
+			|| (!this.isEndChain(step) && this._toBeActivated(step) && !this.isHoveredStep(step));
+	}
 
-    /**
-     * @ngdoc method
-     * @name _toBeActivated
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description checks if the active step is going to be activated
-     * @returns {boolean} true if the step will be activated
-     */
-    _toBeActivated(step) {
-        const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
-        const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
-        return hoveredStepPosition !== -1 && hoveredStepPosition >= stepPosition;
-    }
+	/**
+	 * @ngdoc method
+	 * @name _toBeActivated
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description checks if the active step is going to be activated
+	 * @returns {boolean} true if the step will be activated
+	 */
+	_toBeActivated(step) {
+		const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
+		const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
+		return hoveredStepPosition !== -1 && hoveredStepPosition >= stepPosition;
+	}
 
-    /**
-     * @ngdoc method
-     * @name _toBeDeactivated
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description checks if the active step is going to be deactivated
-     * @returns {boolean} true if the step will be deactivated
-     */
-    _toBeDeactivated(step) {
-        const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
-        const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
-        return hoveredStepPosition !== -1 && hoveredStepPosition <= stepPosition;
-    }
+	/**
+	 * @ngdoc method
+	 * @name _toBeDeactivated
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description checks if the active step is going to be deactivated
+	 * @returns {boolean} true if the step will be deactivated
+	 */
+	_toBeDeactivated(step) {
+		const hoveredStepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(this.state.playground.recipe.hoveredStep);
+		const stepPosition = this.state.playground.recipe.current.reorderedSteps.indexOf(step);
+		return hoveredStepPosition !== -1 && hoveredStepPosition <= stepPosition;
+	}
 
-    /**
-     * @ngdoc method
-     * @name toBeSwitched
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description checks the status of the knot: inactive and will be activated or active and it will be deactivated
-     * @param {object} step The step to be switched
-     * @returns {boolean} true if the knot will be activated or deactivated
-     */
-    toBeSwitched(step) {
-        return step.inactive ? this._toBeActivated(step) : this._toBeDeactivated(step);
-    }
+	/**
+	 * @ngdoc method
+	 * @name toBeSwitched
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description checks the status of the knot: inactive and will be activated or active and it will be deactivated
+	 * @param {object} step The step to be switched
+	 * @returns {boolean} true if the knot will be activated or deactivated
+	 */
+	toBeSwitched(step) {
+		return step.inactive ? this._toBeActivated(step) : this._toBeDeactivated(step);
+	}
 
-    /**
-     * @ngdoc method
-     * @name resetStepToBeDeleted
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description sets the step that will be deleted to null
-     */
-    resetStepToBeDeleted() {
-        this.stepToBeDeleted = null;
-    }
+	/**
+	 * @ngdoc method
+	 * @name resetStepToBeDeleted
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description sets the step that will be deleted to null
+	 */
+	resetStepToBeDeleted() {
+		this.stepToBeDeleted = null;
+	}
 
-    /**
-     * @ngdoc method
-     * @name setStepToBeDeleted
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to be deleted
-     * @description sets the step that will be deleted
-     */
-    setStepToBeDeleted(step) {
-        this.stepToBeDeleted = step;
-    }
+	/**
+	 * @ngdoc method
+	 * @name setStepToBeDeleted
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to be deleted
+	 * @description sets the step that will be deleted
+	 */
+	setStepToBeDeleted(step) {
+		this.stepToBeDeleted = step;
+	}
 
-    /**
-     * @ngdoc method
-     * @name shouldBeRemoved
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description checks if the step should be removed
-     * @param {object} step The step to be deleted
-     * @returns {boolean} true if the step will be removed from the recipe
-     */
-    shouldBeRemoved(step) {
-        return (this.stepToBeDeleted && this.stepToBeDeleted.transformation.stepId === step.transformation.stepId) ||
-            this.stepToBeDeleted && (this.stepToBeDeleted.diff.createdColumns.indexOf(step.actionParameters.parameters.column_id) > -1);
-    }
+	/**
+	 * @ngdoc method
+	 * @name shouldBeRemoved
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description checks if the step should be removed
+	 * @param {object} step The step to be deleted
+	 * @returns {boolean} true if the step will be removed from the recipe
+	 */
+	shouldBeRemoved(step) {
+		return ((this.stepToBeDeleted && this.stepToBeDeleted.transformation.stepId === step.transformation.stepId)) ||
+			(this.stepToBeDeleted && (this.stepToBeDeleted.diff.createdColumns.indexOf(step.actionParameters.parameters.column_id) > -1));
+	}
 
-    /**
-     * @ngdoc method
-     * @name isHoveredStep
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The hovered step
-     * @description checks if the step is beeing hovered
-     * @returns {boolean} true if the step is hovered
-     */
-    isHoveredStep(step) {
-        return step === this.state.playground.recipe.hoveredStep;
-    }
+	/**
+	 * @ngdoc method
+	 * @name isHoveredStep
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The hovered step
+	 * @description checks if the step is beeing hovered
+	 * @returns {boolean} true if the step is hovered
+	 */
+	isHoveredStep(step) {
+		return step === this.state.playground.recipe.hoveredStep;
+	}
 
-    /**
-     * @ngdoc method
-     * @name stepHoverStart
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The hovered start step
-     * @description Trigger actions called at mouse enter
-     */
-    stepHoverStart(step) {
-        this.StateService.setHoveredStep(step);
-        this.RecipeKnotService.stepHoverStart(step);
-    }
+	/**
+	 * @ngdoc method
+	 * @name stepHoverStart
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The hovered start step
+	 * @description Trigger actions called at mouse enter
+	 */
+	stepHoverStart(step) {
+		this.StateService.setHoveredStep(step);
+		this.RecipeKnotService.stepHoverStart(step);
+	}
 
-    /**
-     * @ngdoc method
-     * @name stepHoverEnd
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The hovered end step
-     * @description Trigger actions called at mouse leave
-     */
-    stepHoverEnd(step) {
-        this.StateService.setHoveredStep(null);
-        this.RecipeKnotService.stepHoverEnd(step);
-    }
+	/**
+	 * @ngdoc method
+	 * @name stepHoverEnd
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The hovered end step
+	 * @description Trigger actions called at mouse leave
+	 */
+	stepHoverEnd(step) {
+		this.StateService.setHoveredStep(null);
+		this.RecipeKnotService.stepHoverEnd(step);
+	}
 
-    /**
-     * @ngdoc method
-     * @name toggleStep
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to toggle
-     * @description Enable/disable step
-     */
-    toggleStep(step) {
-        this.PlaygroundService.toggleStep(step);
-    }
+	/**
+	 * @ngdoc method
+	 * @name toggleStep
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to toggle
+	 * @description Enable/disable step
+	 */
+	toggleStep(step) {
+		this.PlaygroundService.toggleStep(step);
+	}
 
-    //---------------------------------------------------------------------------------------------
-    // --------------------------------------------REORDER----------------------------------------
-    //---------------------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------------
+	// --------------------------------------------REORDER----------------------------------------
+	//---------------------------------------------------------------------------------------------
 
-    /**
-     * @ngdoc method
-     * @name moveUp
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {number} stepPosition Current position of step to move up
-     * @param {object} $event The click event
-     * @description Move step up in recipe
-     */
-    moveUp(stepPosition, $event) {
-        $event.stopPropagation();
-        const previousPosition = stepPosition;
-        const nextPosition = stepPosition - 1;
-        this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
-    }
+	/**
+	 * @ngdoc method
+	 * @name moveUp
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {number} stepPosition Current position of step to move up
+	 * @param {object} $event The click event
+	 * @description Move step up in recipe
+	 */
+	moveUp(stepPosition, $event) {
+		$event.stopPropagation();
+		const previousPosition = stepPosition;
+		const nextPosition = stepPosition - 1;
+		this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+	}
 
-    /**
-     * @ngdoc method
-     * @name moveDown
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {number} stepPosition Current position of step to move down
-     * @param {object} $event The click event
-     * @description Move step down in recipe
-     */
-    moveDown(stepPosition, $event) {
-        $event.stopPropagation();
-        const previousPosition = stepPosition;
-        const nextPosition = stepPosition + 1;
-        this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
-    }
+	/**
+	 * @ngdoc method
+	 * @name moveDown
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {number} stepPosition Current position of step to move down
+	 * @param {object} $event The click event
+	 * @description Move step down in recipe
+	 */
+	moveDown(stepPosition, $event) {
+		$event.stopPropagation();
+		const previousPosition = stepPosition;
+		const nextPosition = stepPosition + 1;
+		this.PlaygroundService.updateStepOrder(previousPosition, nextPosition);
+	}
 
-    /**
-     * @ngdoc method
-     * @name dragStart
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Callback on drag start
-     */
-    dragStart() {
-        this.isDragStart = true;
-    }
+	/**
+	 * @ngdoc method
+	 * @name dragStart
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Callback on drag start
+	 */
+	dragStart() {
+		this.isDragStart = true;
+	}
 
-    /**
-     * @ngdoc method
-     * @name dragEnd
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description Callback on drag end
-     */
-    dragEnd() {
-        this.isDragStart = false;
-    }
+	/**
+	 * @ngdoc method
+	 * @name dragEnd
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description Callback on drag end
+	 */
+	dragEnd() {
+		this.isDragStart = false;
+	}
 
-    /**
-     * @ngdoc method
-     * @name orderChanged
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} event Data embedded into drag and drop event
-     * @description Callback when step order is changed within the step list
-     */
-    orderChanged(event) {
-        const { source, dest } = event;
-        const previousPosition = source.index;
-        const nextPosition = dest.index;
-        this.PlaygroundService
-            .updateStepOrder(previousPosition, nextPosition, true)
-            .catch(() => {
-                // Must manually reset order if reorder request fails
-                dest.sortableScope.removeItem(dest.index);
-                source.itemScope.sortableScope.insertItem(source.index, source.itemScope.step);
-            });
-    }
+	/**
+	 * @ngdoc method
+	 * @name orderChanged
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} event Data embedded into drag and drop event
+	 * @description Callback when step order is changed within the step list
+	 */
+	orderChanged(event) {
+		const { source, dest } = event;
+		const previousPosition = source.index;
+		const nextPosition = dest.index;
+		this.PlaygroundService
+			.updateStepOrder(previousPosition, nextPosition, true)
+			.catch(() => {
+				// Must manually reset order if reorder request fails
+				dest.sortableScope.removeItem(dest.index);
+				source.itemScope.sortableScope.insertItem(source.index, source.itemScope.step);
+			});
+	}
 
-    //---------------------------------------------------------------------------------------------
-    // ------------------------------------------UPDATE STEP----------------------------------------
-    //---------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name stepUpdateClosure
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to bind the closure
-     * @description Create a closure function that call the step update with the provided step id
-     * @returns {Function} The function closure binded with the provided step id
-     */
-    stepUpdateClosure(step) {
-        return (newParams) => {
-            if (!this.updateStepInProgress) {
-                this.updateStepInProgress = true;
-                this.updateStep(step, newParams)
-                    .finally(() => {
-                        this.$timeout(() => {
-                            this.updateStepInProgress = false;
-                        }, 500, false);
-                    });
-            }
-        };
-    }
+	//---------------------------------------------------------------------------------------------
+	// ------------------------------------------UPDATE STEP----------------------------------------
+	//---------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name stepUpdateClosure
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to bind the closure
+	 * @description Create a closure function that call the step update with the provided step id
+	 * @returns {Function} The function closure binded with the provided step id
+	 */
+	stepUpdateClosure(step) {
+		return (newParams) => {
+			if (!this.updateStepInProgress) {
+				this.updateStepInProgress = true;
+				this.updateStep(step, newParams)
+					.finally(() => {
+						this.$timeout(() => {
+							this.updateStepInProgress = false;
+						}, 500, false);
+					});
+			}
+		};
+	}
 
-    /**
-     * @ngdoc method
-     * @name updateStep
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {string} step The step id to update
-     * @param {object} newParams the new step parameters
-     * @description Update a step parameters in the loaded preparation
-     */
-    updateStep(step, newParams) {
-        return this.PlaygroundService.updateStep(step, newParams)
-            .then(() => {
-                this.showModal = {};
-            });
-    }
+	/**
+	 * @ngdoc method
+	 * @name updateStep
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {string} step The step id to update
+	 * @param {object} newParams the new step parameters
+	 * @description Update a step parameters in the loaded preparation
+	 */
+	updateStep(step, newParams) {
+		return this.PlaygroundService.updateStep(step, newParams)
+			.then(() => {
+				this.showModal = {};
+			});
+	}
 
-    /**
-     * @ngdoc method
-     * @name updateStepFilter
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @description update a step
-     * @param {Object} step The step to update
-     * @param {Object} filter The filter to update
-     * @param {Object} value The new filter value
-     */
-    updateStepFilter(step, filter, value) {
-        const adaptedFilter = this.FilterAdapterService.createFilter(filter.type, filter.colId, filter.colName, filter.editable, filter.args);
-        adaptedFilter.args = { ... filter.args };
-        adaptedFilter.value = value;
+	/**
+	 * @ngdoc method
+	 * @name updateStepFilter
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description update a step
+	 * @param {Object} step The step to update
+	 * @param {Object} filter The filter to update
+	 * @param {Object} value The new filter value
+	 */
+	updateStepFilter(step, filter, value) {
+		const adaptedFilter = this.FilterAdapterService.createFilter(filter.type, filter.colId, filter.colName, filter.editable, filter.args);
+		adaptedFilter.args = { ...filter.args };
+		adaptedFilter.value = value;
 
-        const adaptedFilterList = step.filters.map((nextFilter) => {
-            return nextFilter === filter ? adaptedFilter : nextFilter;
-        });
-        const stepFiltersTree = this.FilterAdapterService.toTree(adaptedFilterList);
+		const adaptedFilterList = step.filters.map((nextFilter) => {
+			return nextFilter === filter ? adaptedFilter : nextFilter;
+		});
+		const stepFiltersTree = this.FilterAdapterService.toTree(adaptedFilterList);
 
-        const updatedParameters = {
-            ...step.actionParameters.parameters,
-            filter: stepFiltersTree.filter,
-        };
-        this.updateStep(step, updatedParameters);
-    }
+		const updatedParameters = {
+			...step.actionParameters.parameters,
+			filter: stepFiltersTree.filter,
+		};
+		this.updateStep(step, updatedParameters);
+	}
 
-    /**
-     * @ngdoc method
-     * @name removeStepFilter
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {string} step The step id to update
-     * @param {object} filter the filter to be removed
-     * @description removes a filter in the step and updates the step
-     */
-    removeStepFilter(step, filter) {
-        if (step.actionParameters.action === 'delete_lines' && step.filters.length === 1) {
-            this.MessageService.warning('REMOVE_LAST_STEP_FILTER_TITLE', 'REMOVE_LAST_STEP_FILTER_CONTENT', null);
-        }
-        else {
-            const updatedFilters = step.filters.filter((nextFilter) => nextFilter !== filter);
-            const stepFiltersTree = this.FilterAdapterService.toTree(updatedFilters);
+	/**
+	 * @ngdoc method
+	 * @name removeStepFilter
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {string} step The step id to update
+	 * @param {object} filter the filter to be removed
+	 * @description removes a filter in the step and updates the step
+	 */
+	removeStepFilter(step, filter) {
+		if (step.actionParameters.action === 'delete_lines' && step.filters.length === 1) {
+			this.MessageService.warning('REMOVE_LAST_STEP_FILTER_TITLE', 'REMOVE_LAST_STEP_FILTER_CONTENT', null);
+		}
+		else {
+			const updatedFilters = step.filters.filter(nextFilter => nextFilter !== filter);
+			const stepFiltersTree = this.FilterAdapterService.toTree(updatedFilters);
 
-            // get step parameters and replace filter field (it is removed when there is no filter anymore)
-            const updatedParameters = {
-                ...step.actionParameters.parameters,
-                filter: stepFiltersTree.filter,
-            };
-            this.updateStep(step, updatedParameters);
-        }
-    }
+			// get step parameters and replace filter field (it is removed when there is no filter anymore)
+			const updatedParameters = {
+				...step.actionParameters.parameters,
+				filter: stepFiltersTree.filter,
+			};
+			this.updateStep(step, updatedParameters);
+		}
+	}
 
-    /**
-     * @ngdoc method
-     * @name select
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The selected step
-     * @description Action on step selection.
-     * It display dynamic parameters modal and treat specific params (ex: lookup)
-     */
-    select(step) {
-        this._toggleDynamicParams(step);
-        this._toggleSpecificParams(step);
-    }
+	/**
+	 * @ngdoc method
+	 * @name select
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The selected step
+	 * @description Action on step selection.
+	 * It display dynamic parameters modal and treat specific params (ex: lookup)
+	 */
+	select(step) {
+		this._toggleDynamicParams(step);
+		this._toggleSpecificParams(step);
+	}
 
-    _toggleDynamicParams(step) {
-        this.showModal[step.transformation.stepId] = !!this.hasDynamicParams(step);
-    }
+	_toggleDynamicParams(step) {
+		this.showModal[step.transformation.stepId] = !!this.hasDynamicParams(step);
+	}
 
-    _toggleSpecificParams(step) {
-        if (this.state.playground.lookup.visibility && this.state.playground.lookup.step === step) {
-            this.StateService.setLookupVisibility(false);
-        }
-        else if (step.transformation.name === 'lookup') {
-            this.LookupService.loadFromStep(step)
-                .then(this.StateService.setLookupVisibility.bind(null, true));
-        }
-    }
+	_toggleSpecificParams(step) {
+		if (this.state.playground.lookup.visibility && this.state.playground.lookup.step === step) {
+			this.StateService.setLookupVisibility(false);
+		}
+		else if (step.transformation.name === 'lookup') {
+			this.LookupService.loadFromStep(step)
+				.then(this.StateService.setLookupVisibility.bind(null, true));
+		}
+	}
 
-    //---------------------------------------------------------------------------------------------
-    // ------------------------------------------DELETE STEP----------------------------------------
-    //---------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name remove
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to remove
-     * @param {object} $event The click event
-     * @description Show a popup to confirm the removal and remove it when user confirms
-     */
-    remove(step, $event) {
-        $event.stopPropagation();
-        this.PlaygroundService.removeStep(step)
-            .then(() => {
-                this.resetStepToBeDeleted();// otherwise it will wrongly appear when undo
-                if (this.state.playground.lookup.visibility && this.state.playground.lookup.step) {
-                    this.StateService.setLookupVisibility(false);
-                }
-            });
-    }
+	//---------------------------------------------------------------------------------------------
+	// ------------------------------------------DELETE STEP----------------------------------------
+	//---------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name remove
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to remove
+	 * @param {object} $event The click event
+	 * @description Show a popup to confirm the removal and remove it when user confirms
+	 */
+	remove(step, $event) {
+		$event.stopPropagation();
+		this.PlaygroundService.removeStep(step)
+			.then(() => {
+				this.resetStepToBeDeleted();// otherwise it will wrongly appear when undo
+				if (this.state.playground.lookup.visibility && this.state.playground.lookup.step) {
+					this.StateService.setLookupVisibility(false);
+				}
+			});
+	}
 
-    //---------------------------------------------------------------------------------------------
-    // ------------------------------------------PARAMETERS-----------------------------------------
-    //---------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name hasParameters
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to test
-     * @description Return if the step has parameters
-     */
-    hasParameters(step) {
-        return !this._isSpecificParams(step) && (this.hasStaticParams(step) || this.hasDynamicParams(step));
-    }
+	//---------------------------------------------------------------------------------------------
+	// ------------------------------------------PARAMETERS-----------------------------------------
+	//---------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name hasParameters
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to test
+	 * @description Return if the step has parameters
+	 */
+	hasParameters(step) {
+		return !this._isSpecificParams(step) && (this.hasStaticParams(step) || this.hasDynamicParams(step));
+	}
 
-    /**
-     * @ngdoc method
-     * @name hasStaticParams
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to test
-     * @description Return if the step has static parameters
-     */
-    hasStaticParams(step) {
-        return (step.transformation.parameters && step.transformation.parameters.length) ||
-            (step.transformation.items && step.transformation.items.length);
-    }
+	/**
+	 * @ngdoc method
+	 * @name hasStaticParams
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to test
+	 * @description Return if the step has static parameters
+	 */
+	hasStaticParams(step) {
+		return (step.transformation.parameters && step.transformation.parameters.length) ||
+			(step.transformation.items && step.transformation.items.length);
+	}
 
-    /**
-     * @ngdoc method
-     * @name hasDynamicParams
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to test
-     * @description Return if the step has dynamic parameters
-     */
-    hasDynamicParams(step) {
-        return step.transformation.cluster;
-    }
+	/**
+	 * @ngdoc method
+	 * @name hasDynamicParams
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to test
+	 * @description Return if the step has dynamic parameters
+	 */
+	hasDynamicParams(step) {
+		return step.transformation.cluster;
+	}
 
-    /**
-     * @ngdoc method
-     * @name _isSpecificParams
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to test
-     * @description Return if the step has parameters that will be treated specifically
-     */
-    _isSpecificParams(step) {
-        return step.transformation.name === 'lookup';
-    }
+	/**
+	 * @ngdoc method
+	 * @name _isSpecificParams
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to test
+	 * @description Return if the step has parameters that will be treated specifically
+	 */
+	_isSpecificParams(step) {
+		return step.transformation.name === 'lookup';
+	}
 
-    //---------------------------------------------------------------------------------------------
-    // ---------------------------------------------Preview-----------------------------------------
-    //---------------------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------------
+	// ---------------------------------------------Preview-----------------------------------------
+	//---------------------------------------------------------------------------------------------
 
-    /**
-     * @ngdoc method
-     * @name previewUpdateClosure
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {object} step The step to update
-     * @description Create a closure with a target step that call the update preview on execution
-     */
-    previewUpdateClosure(step) {
-        return (params) => {
-            this.PreviewService.updatePreview(step, params);
-        };
-    }
+	/**
+	 * @ngdoc method
+	 * @name previewUpdateClosure
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {object} step The step to update
+	 * @description Create a closure with a target step that call the update preview on execution
+	 */
+	previewUpdateClosure(step) {
+		return (params) => {
+			this.PreviewService.updatePreview(step, params);
+		};
+	}
 
-    /**
-     * @ngdoc method
-     * @name getAllFiltersNames
-     * @methodOf data-prep.recipe.controller:RecipeCtrl
-     * @param {array} stepFilters The step filters
-     * @description Get all filters names
-     */
-    getAllFiltersNames(stepFilters) {
-        return '(' + _.pluck(stepFilters, 'colName').join(', ').toUpperCase() + ')';
-    }
+	/**
+	 * @ngdoc method
+	 * @name getAllFiltersNames
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @param {array} stepFilters The step filters
+	 * @description Get all filters names
+	 */
+	getAllFiltersNames(stepFilters) {
+		return '(' + _.pluck(stepFilters, 'colName').join(', ').toUpperCase() + ')';
+	}
 
 }

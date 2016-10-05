@@ -40,35 +40,35 @@ import TalendEditableTextCtrl from './widget-editable-text-controller';
  * @param {any} validateOnlyOnChange If this attribute is present, the onValidate callback is triggered only when value has changed
  */
 export default function TalendEditableText() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            placeholder: '@',
-            text: '<',
-            textTitle: '@',
-            textClass: '@',
-            editionMode: '=?',
-            link: '@',
-            onTextClick: '&',
-            onValidate: '&',
-            onCancel: '&',
-            validateOnlyOnChange: '@',
-        },
-        bindToController: true,
-        controller: TalendEditableTextCtrl,
-        controllerAs: 'editableTextCtrl',
-        link(scope, iElement, iAttrs, ctrl) {
-            const inputElement = iElement.find('.edition-text-input').eq(0);
-            inputElement.keydown((e) => {
-                if (e.keyCode === 27) {
-                    ctrl.cancel();
-                    scope.$digest();
-                }
-            });
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			placeholder: '@',
+			text: '<',
+			textTitle: '@',
+			textClass: '@',
+			editionMode: '=?',
+			link: '@',
+			onTextClick: '&',
+			onValidate: '&',
+			onCancel: '&',
+			validateOnlyOnChange: '@',
+		},
+		bindToController: true,
+		controller: TalendEditableTextCtrl,
+		controllerAs: 'editableTextCtrl',
+		link(scope, iElement, iAttrs, ctrl) {
+			const inputElement = iElement.find('.edition-text-input').eq(0);
+			inputElement.keydown((e) => {
+				if (e.keyCode === 27) {
+					ctrl.cancel();
+					scope.$digest();
+				}
+			});
 
-            const editBtn = iElement.find('.edit-btn').eq(0);
-            editBtn.click(() => inputElement.select());
-        },
-    };
+			const editBtn = iElement.find('.edit-btn').eq(0);
+			editBtn.click(() => inputElement.select());
+		},
+	};
 }

@@ -47,74 +47,74 @@ import template from './slidable.html';
  * Resize feature is disabled by default and enabled if the attribute si set
  */
 export default function TalendSlidable($window) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        transclude: true,
-        templateUrl: template,
-        scope: {
-            side: '@',
-            visible: '=',
-            resizable: '@',
-            controlBar: '@',
-        },
-        bindToController: true,
-        controllerAs: 'slidableCtrl',
-        controller() {
-            const vm = this;
+	return {
+		restrict: 'E',
+		transclude: true,
+		templateUrl: template,
+		scope: {
+			side: '@',
+			visible: '=',
+			resizable: '@',
+			controlBar: '@',
+		},
+		bindToController: true,
+		controllerAs: 'slidableCtrl',
+		controller() {
+			const vm = this;
 
-            vm.cssClass = 'slide-' + vm.side;
-            vm.actionCssClass = vm.side;
-            vm.hasControlButton = vm.controlBar !== 'false';
+			vm.cssClass = 'slide-' + vm.side;
+			vm.actionCssClass = vm.side;
+			vm.hasControlButton = vm.controlBar !== 'false';
 
-            vm.toggle = function () {
-                vm.visible = !vm.visible;
-            };
-        },
+			vm.toggle = function () {
+				vm.visible = !vm.visible;
+			};
+		},
 
-        link(scope, iElement, iAttrs, ctrl) {
-            iElement.addClass('slidable');
-            iElement.addClass('slide-' + (ctrl.side ? ctrl.side : 'left'));
+		link(scope, iElement, iAttrs, ctrl) {
+			iElement.addClass('slidable');
+			iElement.addClass('slide-' + (ctrl.side ? ctrl.side : 'left'));
 
-            if (ctrl.resizable) {
-                const localStorageWidthKey = 'org.talend.dataprep.' + ctrl.resizable + '.width';
-                let width = $window.localStorage.getItem(localStorageWidthKey);
-                if (width) {
-                    iElement.css('flex', '0 0 ' + width);
-                }
+			if (ctrl.resizable) {
+				const localStorageWidthKey = 'org.talend.dataprep.' + ctrl.resizable + '.width';
+				let width = $window.localStorage.getItem(localStorageWidthKey);
+				if (width) {
+					iElement.css('flex', '0 0 ' + width);
+				}
 
-                iElement.resizable({
-                    handles: ctrl.side === 'right' ? 'w' : 'e',
-                    start() {
-                        iElement.addClass('no-transition');
-                    },
+				iElement.resizable({
+					handles: ctrl.side === 'right' ? 'w' : 'e',
+					start() {
+						iElement.addClass('no-transition');
+					},
 
-                    stop(event, ui) {
-                        iElement.removeClass('no-transition');
-                        width = ui.size.width + 'px';
-                        $window.localStorage.setItem(localStorageWidthKey, width);
-                    },
+					stop(event, ui) {
+						iElement.removeClass('no-transition');
+						width = ui.size.width + 'px';
+						$window.localStorage.setItem(localStorageWidthKey, width);
+					},
 
-                    resize(event, ui) {
-                        iElement.css('left', 'auto');
-                        iElement.css('right', 'auto');
-                        iElement.css('flex', '0 0 ' + ui.size.width + 'px');
-                    },
-                });
-            }
+					resize(event, ui) {
+						iElement.css('left', 'auto');
+						iElement.css('right', 'auto');
+						iElement.css('flex', '0 0 ' + ui.size.width + 'px');
+					},
+				});
+			}
 
-            scope.$watch(
+			scope.$watch(
                 () => ctrl.visible,
                 (visible) => {
-                    if (visible) {
-                        iElement.removeClass('slide-hide');
-                    }
-                    else {
-                        iElement.addClass('slide-hide');
-                    }
-                }
+	if (visible) {
+		iElement.removeClass('slide-hide');
+	}
+	else {
+		iElement.addClass('slide-hide');
+	}
+}
             );
-        },
-    };
+		},
+	};
 }

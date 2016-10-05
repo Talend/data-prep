@@ -31,128 +31,128 @@ import d3 from 'd3';
  * */
 
 export default function BoxplotChart($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        scope: {
-            boxplotData: '=',
-        },
-        link(scope, element, attrs) {
-            let renderTimeout;
-            const container = attrs.id;
-            const w = +attrs.width;
-            const h = +attrs.height;
+	return {
+		restrict: 'E',
+		scope: {
+			boxplotData: '=',
+		},
+		link(scope, element, attrs) {
+			let renderTimeout;
+			const container = attrs.id;
+			const w = +attrs.width;
+			const h = +attrs.height;
 
-            function renderBoxplotchart(boxValues) {
-                const margin = { top: 30, right: 80, bottom: 70, left: 80 };
-                const width = w - margin.left - margin.right;
-                const height = h - margin.top - margin.bottom;
+			function renderBoxplotchart(boxValues) {
+				const margin = { top: 30, right: 80, bottom: 70, left: 80 };
+				const width = w - margin.left - margin.right;
+				const height = h - margin.top - margin.bottom;
 
-                const duration = 1000;
+				const duration = 1000;
 
-                const svg = d3.select('#' + container).append('svg')
+				const svg = d3.select('#' + container).append('svg')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', height + margin.top + margin.bottom)
                     .attr('class', 'box')
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                const quartileData = [boxValues.q1, boxValues.median, boxValues.q2];
+				const quartileData = [boxValues.q1, boxValues.median, boxValues.q2];
 
                 // Compute the new vertical-scale.
-                const vScale = d3.scale.linear()
+				const vScale = d3.scale.linear()
                     .domain([boxValues.min, boxValues.max])
                     .range([height, 0]);
 
                 // central vertical Axis
-                const center = svg.append('g');
-                center.append('line')
+				const center = svg.append('g');
+				center.append('line')
                     .attr('class', 'center')
                     .attr('x1', width / 2)
                     .attr('y1', function () {
-                        return vScale(boxValues.min);
-                    })
+	return vScale(boxValues.min);
+})
                     .attr('x2', width / 2)
                     .attr('y2', function () {
-                        return vScale(boxValues.max);
-                    })
+	return vScale(boxValues.max);
+})
                     .style('opacity', 1e-6)
                     .transition()
                     .duration(duration)
                     .style('opacity', 1);
 
                 // box plot
-                const boxPlot = svg.append('g');
+				const boxPlot = svg.append('g');
 
                 // top box
-                const boxTop = boxPlot.append('g').selectAll('rect')
+				const boxTop = boxPlot.append('g').selectAll('rect')
                     .data([quartileData]);
 
-                boxTop.enter().append('rect')
+				boxTop.enter().append('rect')
                     .attr('x', 0)
                     .attr('y', function (d) {
-                        return vScale(d[2]);
-                    })
+	return vScale(d[2]);
+})
                     .attr('width', width)
                     .attr('height', function () {
-                        return vScale(boxValues.q2);
-                    });
+	return vScale(boxValues.q2);
+});
 
-                boxTop.transition()
+				boxTop.transition()
                     .duration(duration)
                     .attr('height', function (d) {
-                        return vScale(d[1]) - vScale(d[2]);
-                    });
+	return vScale(d[1]) - vScale(d[2]);
+});
 
                 // bottom box.
-                const boxBottom = boxPlot.append('g').selectAll('rect')
+				const boxBottom = boxPlot.append('g').selectAll('rect')
                     .data([quartileData]);
 
-                boxBottom.enter().append('rect')
+				boxBottom.enter().append('rect')
                     .attr('x', 0)
                     .attr('y', function () {
-                        return vScale(boxValues.q2);
-                    })
+	return vScale(boxValues.q2);
+})
                     .attr('width', width)
                     .attr('height', function (d) {
-                        return vScale(d[0]) - vScale(d[2]);
-                    });
+	return vScale(d[0]) - vScale(d[2]);
+});
 
-                boxBottom.transition()
+				boxBottom.transition()
                     .duration(duration * 1.5)
                     .ease('bounce')
                     .attr('y', function (d) {
-                        return vScale(d[1]);
-                    })
+	return vScale(d[1]);
+})
                     .attr('height', function (d) {
-                        return vScale(d[0]) - vScale(d[1]);
-                    });
+	return vScale(d[0]) - vScale(d[1]);
+});
 
                 // whiskers
-                const topWhiskerPolyg = function (max) {
-                    return 0 + ',' + vScale(max) + ' ' +
+				const topWhiskerPolyg = function (max) {
+					return 0 + ',' + vScale(max) + ' ' +
                         width + ',' + vScale(max) + ' ' +
                         (width - 20) + ',' + (vScale(max) - 20) + ' ' +
                         (vScale(max) + 20) + ',' + (vScale(max) - 20);
-                };
+				};
 
-                const bottomWhiskerPolyg = function (min) {
-                    return 0 + ',' + vScale(min) + ' ' +
+				const bottomWhiskerPolyg = function (min) {
+					return 0 + ',' + vScale(min) + ' ' +
                         width + ',' + vScale(min) + ' ' +
                         (width - 20) + ',' + (vScale(min) + 20) + ' ' +
                         20 + ',' + (vScale(min) + 20);
-                };
+				};
 
-                const gWhisker = svg.append('g');
+				const gWhisker = svg.append('g');
 
-                const gWhiskerTop = gWhisker.append('g');
+				const gWhiskerTop = gWhisker.append('g');
 
-                gWhiskerTop.append('polygon')
+				gWhiskerTop.append('polygon')
                     .attr('class', 'whiskerPolyg')
                     .attr('points', topWhiskerPolyg(boxValues.max));
 
-                gWhiskerTop.append('text')
+				gWhiskerTop.append('text')
                     .attr('class', 'max-min-labels')
                     .attr('x', width / 2)
                     .attr('y', vScale(boxValues.max) / 2)
@@ -164,13 +164,13 @@ export default function BoxplotChart($timeout) {
                     .attr('y', -22)
                     .style('opacity', 1);
 
-                const gWhiskerBottom = gWhisker.append('g');
+				const gWhiskerBottom = gWhisker.append('g');
 
-                gWhiskerBottom.append('polygon')
+				gWhiskerBottom.append('polygon')
                     .attr('class', 'whiskerPolyg')
                     .attr('points', bottomWhiskerPolyg(boxValues.min));
 
-                gWhiskerBottom.append('text')
+				gWhiskerBottom.append('text')
                     .attr('class', 'max-min-labels')
                     .attr('x', width / 2)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -182,14 +182,14 @@ export default function BoxplotChart($timeout) {
                     .attr('y', vScale(boxValues.min) + 30);
 
                 // mean circle
-                const gMean = svg.insert('g');
-                gMean.append('circle')
+				const gMean = svg.insert('g');
+				gMean.append('circle')
                     .attr('class', 'mean')
                     .attr('r', 17)
                     .attr('cx', width / 2)
                     .attr('cy', function () {
-                        return vScale(boxValues.mean);
-                    })
+	return vScale(boxValues.mean);
+})
                     .style('opacity', 1)
                     .transition()
                     .duration(duration * 2)
@@ -197,12 +197,12 @@ export default function BoxplotChart($timeout) {
                     .style('opacity', 1)
                 ;
 
-                gMean.append('circle')
+				gMean.append('circle')
                     .attr('r', 1.5)
                     .attr('cx', width / 2)
                     .attr('cy', function () {
-                        return vScale(boxValues.mean);
-                    })
+	return vScale(boxValues.mean);
+})
                     .style('opacity', 1e-6)
                     .style('shape-rendering', 'geometricPrecision')
                     .transition()
@@ -210,9 +210,9 @@ export default function BoxplotChart($timeout) {
                     .style('opacity', 1);
 
                 // text values
-                const gTexts = svg.append('g');
+				const gTexts = svg.append('g');
                 // max
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'max-min-labels')
                     .attr('x', width / 2)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -224,7 +224,7 @@ export default function BoxplotChart($timeout) {
                     .attr('y', vScale(boxValues.max) - 10);
 
                 // min
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'max-min-labels')
                     .attr('x', width / 2)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -235,20 +235,20 @@ export default function BoxplotChart($timeout) {
                     .duration(duration)
                     .attr('y', vScale(boxValues.min) + 17);
 
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'mean-labels')
                     .attr('x', width / 2)
                     .attr('y', function () {
-                        if (height - vScale(boxValues.mean - boxValues.min) < 15) {
-                            return vScale(boxValues.mean) - 10;
-                        }
-                        else if (height - vScale(boxValues.max - boxValues.mean) < 15) {
-                            return vScale(boxValues.mean) + 15;
-                        }
-                        else {
-                            return vScale(boxValues.mean) - 10;
-                        }
-                    })
+	if (height - vScale(boxValues.mean - boxValues.min) < 15) {
+		return vScale(boxValues.mean) - 10;
+	}
+	else if (height - vScale(boxValues.max - boxValues.mean) < 15) {
+		return vScale(boxValues.mean) + 15;
+	}
+	else {
+		return vScale(boxValues.mean) - 10;
+	}
+})
                     .text('Mean : ' + d3.format(',')(boxValues.mean))
                     .style('opacity', 1e-6)
                     .attr('text-anchor', 'middle')
@@ -257,7 +257,7 @@ export default function BoxplotChart($timeout) {
                     .style('opacity', 1);
 
                 // lower quantile value
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'low-quantile-labels')
                     .attr('x', width + 5)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -269,7 +269,7 @@ export default function BoxplotChart($timeout) {
                     .attr('y', vScale(boxValues.q1) + 10);
 
                 // lower quantile text
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'low-quantile-labels')
                     .attr('x', -5)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -281,7 +281,7 @@ export default function BoxplotChart($timeout) {
                     .attr('y', vScale(boxValues.q1) + 10);
 
                 // upper quantile value
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'up-quantile-labels')
                     .attr('x', -5)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -293,7 +293,7 @@ export default function BoxplotChart($timeout) {
                     .attr('y', vScale(boxValues.q2));
 
                 // upper quantile text
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('class', 'up-quantile-labels')
                     .attr('x', width + 5)
                     .attr('y', vScale(boxValues.min) / 2)
@@ -305,45 +305,45 @@ export default function BoxplotChart($timeout) {
                     .attr('y', vScale(boxValues.q2));
 
                 // median value
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('x', width - 5)
                     .text(d3.format(',')(boxValues.median))
                     .style('opacity', 1e-6)
                     .attr('text-anchor', 'end')
                     .attr('y', function () {
-                        return boxValues.median >= boxValues.mean ? vScale(boxValues.median) + 15 : vScale(boxValues.median) - 5;
-                    })
+	return boxValues.median >= boxValues.mean ? vScale(boxValues.median) + 15 : vScale(boxValues.median) - 5;
+})
                     .transition()
                     .duration(duration * 3)
                     .style('opacity', 1);
 
                 // median text
-                gTexts.append('text')
+				gTexts.append('text')
                     .attr('x', 5)
                     .text('Median')
                     .style('opacity', 1e-6)
                     .attr('text-anchor', 'start')
                     .attr('y', function () {
-                        return boxValues.median >= boxValues.mean ? vScale(boxValues.median) + 15 : vScale(boxValues.median) - 5;
-                    })
+	return boxValues.median >= boxValues.mean ? vScale(boxValues.median) + 15 : vScale(boxValues.median) - 5;
+})
                     .transition()
                     .duration(duration * 3)
                     .style('opacity', 1);
-            }
+			}
 
-            scope.$watch('boxplotData',
+			scope.$watch('boxplotData',
                 function (boxData) {
-                    element.empty();
-                    if (boxData) {
-                        $timeout.cancel(renderTimeout);
-                        renderTimeout = $timeout(renderBoxplotchart.bind(this, boxData), 100, false);
-                    }
-                }
+	element.empty();
+	if (boxData) {
+		$timeout.cancel(renderTimeout);
+		renderTimeout = $timeout(renderBoxplotchart.bind(this, boxData), 100, false);
+	}
+}
             );
 
-            scope.$on('$destroy', function () {
-                $timeout.cancel(renderTimeout);
-            });
-        },
-    };
+			scope.$on('$destroy', function () {
+				$timeout.cancel(renderTimeout);
+			});
+		},
+	};
 }

@@ -17,9 +17,9 @@
  * @description Statistics REST service.
  */
 export default function StatisticsRestService($q, $http, $cacheFactory, RestURLs) {
-    'ngInject';
+	'ngInject';
 
-    const aggregationCache = $cacheFactory('aggregationStatistics', { capacity: 5 });
+	const aggregationCache = $cacheFactory('aggregationStatistics', { capacity: 5 });
 
     /**
      * @ngdoc method
@@ -27,9 +27,9 @@ export default function StatisticsRestService($q, $http, $cacheFactory, RestURLs
      * @methodOf data-prep.services.statistics.service:StatisticsRestService
      * @description Reset the cache
      */
-    this.resetCache = function resetCache() {
-        aggregationCache.removeAll();
-    };
+	this.resetCache = function resetCache() {
+		aggregationCache.removeAll();
+	};
 
     /**
      * @ngdoc method
@@ -39,16 +39,16 @@ export default function StatisticsRestService($q, $http, $cacheFactory, RestURLs
      * @description Fetch the aggregation on a column of the dataset
      * @returns {Promise} The POST promise
      */
-    this.getAggregations = function (parameters) {
-        const cacheKey = JSON.stringify(parameters);
-        const resultFromCache = aggregationCache.get(cacheKey);
+	this.getAggregations = function (parameters) {
+		const cacheKey = JSON.stringify(parameters);
+		const resultFromCache = aggregationCache.get(cacheKey);
 
-        return resultFromCache ?
+		return resultFromCache ?
             $q.when(resultFromCache) :
             $http.post(RestURLs.aggregationUrl, parameters)
                 .then((response) => {
-                    aggregationCache.put(cacheKey, response.data);
-                    return response.data;
-                });
-    };
+	aggregationCache.put(cacheKey, response.data);
+	return response.data;
+});
+	};
 }

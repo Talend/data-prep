@@ -31,11 +31,11 @@ const MODULE_NAME = 'data-prep.services.statistics';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_FILTER_ADAPTER_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_FILTER_ADAPTER_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('StatisticsTooltipService', StatisticsTooltipService)
     .service('StatisticsRestService', StatisticsRestService)
     .service('StatisticsService', StatisticsService);

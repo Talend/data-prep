@@ -12,24 +12,24 @@
   ============================================================================*/
 
 export const datasetState = {
-    uploadingDatasets: [],
+	uploadingDatasets: [],
 };
 
 export function DatasetStateService() {
-    return {
+	return {
         // uploading datasets
-        startUploadingDataset,
-        finishUploadingDataset,
-    };
+		startUploadingDataset,
+		finishUploadingDataset,
+	};
 
     // --------------------------------------------------------------------------------------------
     // ------------------------------------------UPLOADING DATASETS--------------------------------
     // --------------------------------------------------------------------------------------------
-    function startUploadingDataset(dataset) {
-        datasetState.uploadingDatasets.push(dataset);
-    }
+	function startUploadingDataset(dataset) {
+		datasetState.uploadingDatasets.push(dataset);
+	}
 
-    function finishUploadingDataset(dataset) {
-        datasetState.uploadingDatasets.splice(datasetState.uploadingDatasets.indexOf(dataset), 1);
-    }
+	function finishUploadingDataset(dataset) {
+		datasetState.uploadingDatasets.splice(datasetState.uploadingDatasets.indexOf(dataset), 1);
+	}
 }

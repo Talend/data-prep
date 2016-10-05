@@ -20,33 +20,33 @@ import template from './history-control.html';
  * @restrict E
  */
 export default function HistoryControl($document, HistoryService) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        controller() {
-            this.service = HistoryService;
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		controller() {
+			this.service = HistoryService;
+		},
 
-        controllerAs: 'historyCtrl',
-        link(scope) {
-            function historyListener(event) {
+		controllerAs: 'historyCtrl',
+		link(scope) {
+			function historyListener(event) {
                 // CTRL+Z
-                if (event.keyCode === 90 && event.ctrlKey) {
-                    HistoryService.undo();
-                }
+				if (event.keyCode === 90 && event.ctrlKey) {
+					HistoryService.undo();
+				}
                 // Ctrl+Y
-                else if (event.keyCode === 89 && event.ctrlKey) {
-                    HistoryService.redo();
-                }
-            }
+				else if (event.keyCode === 89 && event.ctrlKey) {
+					HistoryService.redo();
+				}
+			}
 
-            $document.on('keydown', historyListener);
+			$document.on('keydown', historyListener);
 
-            scope.$on('$destroy', () => {
-                $document.off('keydown', historyListener);
-            });
-        },
-    };
+			scope.$on('$destroy', () => {
+				$document.off('keydown', historyListener);
+			});
+		},
+	};
 }

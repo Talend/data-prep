@@ -17,9 +17,9 @@
  * @description Filter search controller.
  */
 export default function FilterSearchCtrl(FilterService, DatagridService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc method
@@ -29,16 +29,16 @@ export default function FilterSearchCtrl(FilterService, DatagridService) {
      * @description [PRIVATE] Return a closure function that create a suggestion item from column id
      * @returns {function} the item creation closure
      */
-    function createSuggestionItem(term) {
-        return (col) => {
-            return {
-                label: term + ' in <b>' + col.name + '</b>',
-                value: term,
-                columnId: col.id,
-                columnName: col.name,
-            };
-        };
-    }
+	function createSuggestionItem(term) {
+		return (col) => {
+			return {
+				label: term + ' in <b>' + col.name + '</b>',
+				value: term,
+				columnId: col.id,
+				columnName: col.name,
+			};
+		};
+	}
 
     /**
      * @ngdoc method
@@ -48,15 +48,15 @@ export default function FilterSearchCtrl(FilterService, DatagridService) {
      * @description [PRIVATE] Create filter suggestions based on the typed term
      * @returns {function[]} the suggestion list
      */
-    function filterSuggestion(term) {
-        const cleanTerm = term.toLowerCase().trim();
-        const colContainingTerm = DatagridService.getColumnsContaining(cleanTerm);
+	function filterSuggestion(term) {
+		const cleanTerm = term.toLowerCase().trim();
+		const colContainingTerm = DatagridService.getColumnsContaining(cleanTerm);
 
-        return _.chain(colContainingTerm)
-            .sortBy((col) => col.name.toLowerCase())
+		return _.chain(colContainingTerm)
+            .sortBy(col => col.name.toLowerCase())
             .map(createSuggestionItem(cleanTerm))
             .value();
-    }
+	}
 
     /**
      * @ngdoc method
@@ -65,12 +65,12 @@ export default function FilterSearchCtrl(FilterService, DatagridService) {
      * @param {object} item - the filter infos
      * @description Action when user select a suggestion:  create the filter and reset the input
      */
-    function suggestionSelect(item) {
-        FilterService.addFilter('contains', item.columnId, item.columnName, {
-            phrase: [{ value: item.value }],
-        });
-        vm.filterSearch = '';
-    }
+	function suggestionSelect(item) {
+		FilterService.addFilter('contains', item.columnId, item.columnName, {
+			phrase: [{ value: item.value }],
+		});
+		vm.filterSearch = '';
+	}
 
     /**
      * @ngdoc property
@@ -78,8 +78,8 @@ export default function FilterSearchCtrl(FilterService, DatagridService) {
      * @propertyOf data-prep.filter-search.controller:FilterSearchCtrl
      * @description Mass auto complete suggestions options and callbacks
      */
-    vm.filterSuggestOptions = {
-        suggest: filterSuggestion,
-        on_select: suggestionSelect,
-    };
+	vm.filterSuggestOptions = {
+		suggest: filterSuggestion,
+		on_select: suggestionSelect,
+	};
 }

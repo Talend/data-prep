@@ -31,12 +31,12 @@ const MODULE_NAME = 'data-prep.filter-search';
  * @requires data-prep.services.datagrid
  */
 angular.module(MODULE_NAME,
-    [
-        'MassAutoComplete',
-        ngTranslate,
-        SERVICES_DATAGRID_MODULE,
-        SERVICES_FILTER_MODULE,
-    ])
+	[
+		'MassAutoComplete',
+		ngTranslate,
+		SERVICES_DATAGRID_MODULE,
+		SERVICES_FILTER_MODULE,
+	])
     .controller('FilterSearchCtrl', FilterSearchCtrl)
     .directive('filterSearch', FilterSearch);
 

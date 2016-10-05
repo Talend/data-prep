@@ -12,15 +12,15 @@
  ============================================================================*/
 
 export const importState = {
-    importTypes: [],
+	importTypes: [],
 };
 
 export function ImportStateService() {
-    return {
-        setImportTypes,
-    };
+	return {
+		setImportTypes,
+	};
 
-    function setImportTypes(importTypes) {
-        importState.importTypes = importTypes;
-    }
+	function setImportTypes(importTypes) {
+		importState.importTypes = importTypes;
+	}
 }

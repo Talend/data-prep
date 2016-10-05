@@ -29,11 +29,11 @@ const MODULE_NAME = 'data-prep.services.export';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_PARAMETERS_MODULE,
-        SERVICES_UTILS_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		SERVICES_PARAMETERS_MODULE,
+		SERVICES_UTILS_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .service('ExportRestService', ExportRestService)
     .service('ExportService', ExportService);
 

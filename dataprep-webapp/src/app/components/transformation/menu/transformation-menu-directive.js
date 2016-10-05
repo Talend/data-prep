@@ -23,15 +23,15 @@ import template from './transformation-menu.html';
  * @param {object} menu The menu item to display
  */
 export default function TransformMenu() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            column: '=',
-            menuItems: '=',
-        },
-        bindToController: true,
-        controllerAs: 'menuCtrl',
-        controller: 'TransformMenuCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			column: '=',
+			menuItems: '=',
+		},
+		bindToController: true,
+		controllerAs: 'menuCtrl',
+		controller: 'TransformMenuCtrl',
+	};
 }

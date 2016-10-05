@@ -33,94 +33,94 @@ import template from './navigation-list.html';
  * @param {function} onAddItem The function is called when the add button is clicked
  */
 export default function NavigationList($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            list: '=',
-            selectedItem: '=',
-            onClick: '&',
-            getLabel: '&',
-            onAddItem: '&',
-        },
-        bindToController: true,
-        controllerAs: 'navigationListCtrl',
-        controller() {},
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			list: '=',
+			selectedItem: '=',
+			onClick: '&',
+			getLabel: '&',
+			onAddItem: '&',
+		},
+		bindToController: true,
+		controllerAs: 'navigationListCtrl',
+		controller() {},
 
-        link(scope, iElement, iAttrs, ctrl) {
-            const ITEM_WIDTH = 200;
-            ctrl.showAddButton = !!iAttrs.onAddItem;
+		link(scope, iElement, iAttrs, ctrl) {
+			const ITEM_WIDTH = 200;
+			ctrl.showAddButton = !!iAttrs.onAddItem;
 
-            $timeout(function () {
-                const leftButton = iElement.find('.arrow-left').eq(0);
-                const rightButton = iElement.find('.arrow-right').eq(0);
-                const wrapper = iElement.find('.items-list-wrapper').eq(0);
-                const itemsList = iElement.find('.items-list').eq(0);
-                let posLeft = 0;
+			$timeout(function () {
+				const leftButton = iElement.find('.arrow-left').eq(0);
+				const rightButton = iElement.find('.arrow-right').eq(0);
+				const wrapper = iElement.find('.items-list-wrapper').eq(0);
+				const itemsList = iElement.find('.items-list').eq(0);
+				let posLeft = 0;
 
-                function translate(leftPosition) {
-                    itemsList.css('transform', 'translateX(' + leftPosition + 'px)');
-                }
+				function translate(leftPosition) {
+					itemsList.css('transform', 'translateX(' + leftPosition + 'px)');
+				}
 
-                function itemIsVisible(item) {
-                    const itemPosition = ctrl.list.indexOf(item) * ITEM_WIDTH;
-                    const actualPosition = posLeft + itemPosition;
-                    return actualPosition >= 0 && actualPosition <= (wrapper.width() - ITEM_WIDTH);
-                }
+				function itemIsVisible(item) {
+					const itemPosition = ctrl.list.indexOf(item) * ITEM_WIDTH;
+					const actualPosition = posLeft + itemPosition;
+					return actualPosition >= 0 && actualPosition <= (wrapper.width() - ITEM_WIDTH);
+				}
 
-                function getVisiblePosition(item) {
-                    const itemIndex = ctrl.list.indexOf(item);
-                    const itemPosition = itemIndex * ITEM_WIDTH;
-                    const actualPosition = posLeft + itemPosition;
+				function getVisiblePosition(item) {
+					const itemIndex = ctrl.list.indexOf(item);
+					const itemPosition = itemIndex * ITEM_WIDTH;
+					const actualPosition = posLeft + itemPosition;
 
                     // is not visible on the left
-                    if (actualPosition < 0) {
-                        return -itemPosition;
-                    }
+					if (actualPosition < 0) {
+						return -itemPosition;
+					}
 
                     // is not visible on the right
-                    const nbVisibleItems = Math.floor(wrapper.width() / ITEM_WIDTH) || 1;
-                    return -(itemIndex + 1 - nbVisibleItems) * ITEM_WIDTH;
-                }
+					const nbVisibleItems = Math.floor(wrapper.width() / ITEM_WIDTH) || 1;
+					return -((itemIndex + 1) - nbVisibleItems) * ITEM_WIDTH;
+				}
 
-                leftButton.on('click', function () {
-                    if (posLeft < 0) {
-                        posLeft += ITEM_WIDTH;
-                        translate(posLeft);
-                    }
-                });
+				leftButton.on('click', function () {
+					if (posLeft < 0) {
+						posLeft += ITEM_WIDTH;
+						translate(posLeft);
+					}
+				});
 
-                rightButton.on('click', function () {
-                    if ((posLeft + ctrl.list.length * ITEM_WIDTH) >= wrapper.width()) {
-                        posLeft -= ITEM_WIDTH;
-                        translate(posLeft);
-                    }
-                });
+				rightButton.on('click', function () {
+					if ((posLeft + (ctrl.list.length * ITEM_WIDTH)) >= wrapper.width()) {
+						posLeft -= ITEM_WIDTH;
+						translate(posLeft);
+					}
+				});
 
-                function getSelectedItem() {
-                    return ctrl.selectedItem;
-                }
+				function getSelectedItem() {
+					return ctrl.selectedItem;
+				}
 
-                function getList() {
-                    return ctrl.list;
-                }
+				function getList() {
+					return ctrl.list;
+				}
 
-                scope.$watchGroup([getList, getSelectedItem],
+				scope.$watchGroup([getList, getSelectedItem],
                     function () {
-                        const hasCorrectSelectedItem = ctrl.list && ctrl.selectedItem && ctrl.list.indexOf(ctrl.selectedItem) > -1;
-                        if (!hasCorrectSelectedItem) {
-                            posLeft = 0;
-                            translate(posLeft);
-                        }
-                        else if (!itemIsVisible(ctrl.selectedItem)) {
-                            posLeft = getVisiblePosition(ctrl.selectedItem);
-                            translate(posLeft);
-                        }
-                    }
+	const hasCorrectSelectedItem = ctrl.list && ctrl.selectedItem && ctrl.list.indexOf(ctrl.selectedItem) > -1;
+	if (!hasCorrectSelectedItem) {
+		posLeft = 0;
+		translate(posLeft);
+	}
+	else if (!itemIsVisible(ctrl.selectedItem)) {
+		posLeft = getVisiblePosition(ctrl.selectedItem);
+		translate(posLeft);
+	}
+}
                 );
-            }, 500, false);
-        },
-    };
+			}, 500, false);
+		},
+	};
 }

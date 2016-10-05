@@ -32,13 +32,13 @@ const MODULE_NAME = 'data-prep.dataset-header';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        INVENTORY_HEADER_MODULE,
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		ngTranslate,
+		INVENTORY_HEADER_MODULE,
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .component('datasetHeader', DatasetHeader);
 
 export default MODULE_NAME;

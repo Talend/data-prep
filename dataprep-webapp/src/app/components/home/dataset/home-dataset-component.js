@@ -12,16 +12,16 @@
  ============================================================================*/
 
 const HomeDatasetComponent = {
-    template: `
+	template: `
         <div class="home-main">
             <dataset-upload-list class="upload-list-container" ng-if="$ctrl.state.dataset.uploadingDatasets.length" datasets="$ctrl.state.dataset.uploadingDatasets"></dataset-upload-list>
             <dataset-header ng-if="!$ctrl.state.inventory.isFetchingDatasets" class="inventory-list-header"></dataset-header>
             <dataset-list class="inventory-list-container"></dataset-list>
         </div>
     `,
-    controller(state) {
-        'ngInject';
-        this.state = state;
-    },
+	controller(state) {
+		'ngInject';
+		this.state = state;
+	},
 };
 export default HomeDatasetComponent;

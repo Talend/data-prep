@@ -28,63 +28,63 @@
  * @param {string} datetimepickerStyle Component style
  */
 export default function TalendDatetimePicker($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        template: `
+	return {
+		restrict: 'E',
+		template: `
             <input type="text" 
                    class="datetimepicker" 
                    ng-model="ctrl.value"
                    ng-blur="ctrl.onBlur()" />
         `,
-        scope: {
-            value: '=ngModel',
-            onSelect: '&',
-            onBlur: '&',
-            datetimepickerStyle: '@',
-        },
-        bindToController: true,
-        controller: () => {
-        },
-        controllerAs: 'ctrl',
-        link(scope, iElement, iAttrs, ctrl) {
+		scope: {
+			value: '=ngModel',
+			onSelect: '&',
+			onBlur: '&',
+			datetimepickerStyle: '@',
+		},
+		bindToController: true,
+		controller: () => {
+		},
+		controllerAs: 'ctrl',
+		link(scope, iElement, iAttrs, ctrl) {
             // datetimepicker uses unix-like date format
             // @see http://www.xaprb.com/media/2005/12/date-formatting-demo
-            const timepicker = _.has(iAttrs, 'isDateTime');
-            const formatTime = iAttrs.unixFormatTime || 'H:i';
-            const formatDate = iAttrs.unixFormatDate || 'Y-m-d';
-            const format = iAttrs.unixFormat || timepicker ? `${formatDate} ${formatTime}` : formatDate;
-            const style = ctrl.datetimepickerStyle || '';
+			const timepicker = _.has(iAttrs, 'isDateTime');
+			const formatTime = iAttrs.unixFormatTime || 'H:i';
+			const formatDate = iAttrs.unixFormatDate || 'Y-m-d';
+			const format = iAttrs.unixFormat || timepicker ? `${formatDate} ${formatTime}` : formatDate;
+			const style = ctrl.datetimepickerStyle || '';
 
-            function onSelectDate() {
-                $timeout(() => {
-                    ctrl.onSelect();
-                });
-            }
+			function onSelectDate() {
+				$timeout(() => {
+					ctrl.onSelect();
+				});
+			}
 
-            const input = iElement.find('.datetimepicker');
-            input.datetimepicker({
-                lang: 'en',
-                format,
-                formatDate,
-                formatTime,
-                timepicker,
-                style,
-                onSelectDate,
-            });
+			const input = iElement.find('.datetimepicker');
+			input.datetimepicker({
+				lang: 'en',
+				format,
+				formatDate,
+				formatTime,
+				timepicker,
+				style,
+				onSelectDate,
+			});
 
-            input.bind('keydown', (event) => {
+			input.bind('keydown', (event) => {
                 // hide calendar on 'ESC' keydown
-                if (event.keyCode === 27) {
-                    input.datetimepicker('hide');
-                    event.stopPropagation();
-                }
-            });
+				if (event.keyCode === 27) {
+					input.datetimepicker('hide');
+					event.stopPropagation();
+				}
+			});
 
-            scope.$on('$destroy', () => {
-                input.datetimepicker('destroy');
-            });
-        },
-    };
+			scope.$on('$destroy', () => {
+				input.datetimepicker('destroy');
+			});
+		},
+	};
 }

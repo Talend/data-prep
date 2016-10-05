@@ -19,17 +19,17 @@
  * {@link data-prep.services.folder.service:FolderService FolderService} must be the only entry point for folder</b>
  */
 export default function FolderRestService($http, RestURLs) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        children,
-        create,
-        getContent,
-        rename,
-        remove,
-        tree,
-        getById,
-    };
+	return {
+		children,
+		create,
+		getContent,
+		rename,
+		remove,
+		tree,
+		getById,
+	};
 
     /**
      * @ngdoc method
@@ -39,10 +39,10 @@ export default function FolderRestService($http, RestURLs) {
      * @param {string} parentId The parent id
      * @returns {Promise} The GET promise
      */
-    function children(parentId) {
-        const url = `${RestURLs.folderUrl}?parentId=${encodeURIComponent(parentId)}`;
-        return $http.get(url).then((res) => res.data);
-    }
+	function children(parentId) {
+		const url = `${RestURLs.folderUrl}?parentId=${encodeURIComponent(parentId)}`;
+		return $http.get(url).then(res => res.data);
+	}
 
     /**
      * @ngdoc method
@@ -53,9 +53,9 @@ export default function FolderRestService($http, RestURLs) {
      * @param {string} path The relative path to create (from parent)
      * @returns {Promise} The PUT promise
      */
-    function create(parentId, path) {
-        return $http.put(`${RestURLs.folderUrl}?parentId=${encodeURIComponent(parentId)}&path=${encodeURIComponent(path)}`);
-    }
+	function create(parentId, path) {
+		return $http.put(`${RestURLs.folderUrl}?parentId=${encodeURIComponent(parentId)}&path=${encodeURIComponent(path)}`);
+	}
 
     /**
      * @ngdoc method
@@ -67,24 +67,24 @@ export default function FolderRestService($http, RestURLs) {
      * @param {string} sortOrder Sort in specified order
      * @returns {Promise} The GET promise
      */
-    function getContent(folderId, sortType, sortOrder) {
-        let url = `${RestURLs.folderUrl}/${encodeURIComponent(folderId)}/preparations`;
+	function getContent(folderId, sortType, sortOrder) {
+		let url = `${RestURLs.folderUrl}/${encodeURIComponent(folderId)}/preparations`;
 
-        const options = [];
-        if (sortType) {
-            options.push(`sort=${sortType}`);
-        }
+		const options = [];
+		if (sortType) {
+			options.push(`sort=${sortType}`);
+		}
 
-        if (sortOrder) {
-            options.push(`order=${sortOrder}`);
-        }
+		if (sortOrder) {
+			options.push(`order=${sortOrder}`);
+		}
 
-        if (options.length) {
-            url = `${url}?${options.join('&')}`;
-        }
+		if (options.length) {
+			url = `${url}?${options.join('&')}`;
+		}
 
-        return $http.get(url).then((result) => result.data);
-    }
+		return $http.get(url).then(result => result.data);
+	}
 
     /**
      * @ngdoc method
@@ -94,9 +94,9 @@ export default function FolderRestService($http, RestURLs) {
      * @param {string} folderId the folder id to remove
      * @returns {Promise} The DELETE promise
      */
-    function remove(folderId) {
-        return $http.delete(`${RestURLs.folderUrl}/${encodeURIComponent(folderId)}`);
-    }
+	function remove(folderId) {
+		return $http.delete(`${RestURLs.folderUrl}/${encodeURIComponent(folderId)}`);
+	}
 
     /**
      * @ngdoc method
@@ -107,9 +107,9 @@ export default function FolderRestService($http, RestURLs) {
      * @param {string} newName The new name
      * @returns {Promise} The PUT promise
      */
-    function rename(folderId, newName) {
-        return $http.put(`${RestURLs.folderUrl}/${encodeURIComponent(folderId)}/name`, newName);
-    }
+	function rename(folderId, newName) {
+		return $http.put(`${RestURLs.folderUrl}/${encodeURIComponent(folderId)}/name`, newName);
+	}
 
     /**
      * @ngdoc method
@@ -118,9 +118,9 @@ export default function FolderRestService($http, RestURLs) {
      * @description Get the whole folder tree
      * @returns {Promise} The GET promise
      */
-    function tree() {
-        return $http.get(`${RestURLs.folderUrl}/tree`).then((res) => res.data);
-    }
+	function tree() {
+		return $http.get(`${RestURLs.folderUrl}/tree`).then(res => res.data);
+	}
 
     /**
      * @ngdoc method
@@ -130,7 +130,7 @@ export default function FolderRestService($http, RestURLs) {
      * @param {string} id the folder id
      * @returns {Promise} The GET promise
      */
-    function getById(id) {
-        return $http.get(`${RestURLs.folderUrl}/${id}`).then((res) => res.data);
-    }
+	function getById(id) {
+		return $http.get(`${RestURLs.folderUrl}/${id}`).then(res => res.data);
+	}
 }

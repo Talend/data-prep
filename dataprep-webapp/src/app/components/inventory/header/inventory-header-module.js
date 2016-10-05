@@ -30,12 +30,12 @@ const MODULE_NAME = 'data-prep.inventory-header';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        PREPARATION_CREATOR,
-        TALEND_WIDGET_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		ngTranslate,
+		PREPARATION_CREATOR,
+		TALEND_WIDGET_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('InventoryHeaderCtrl', InventoryHeaderCtrl)
     .directive('inventoryHeader', InventoryHeaderDirective);
 

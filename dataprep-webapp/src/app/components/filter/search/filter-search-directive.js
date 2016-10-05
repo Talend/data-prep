@@ -21,24 +21,24 @@ import template from './filter-search.html';
  * @restrict E
  */
 export default function FilterSearch() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {},
-        bindToController: true,
-        controllerAs: 'filterCtrl',
-        controller: 'FilterSearchCtrl',
-        link: (scope, iElement, attrs, ctrl) => {
-            iElement.bind('keydown', (e) => {
-                if (e.keyCode === 27) {
-                    e.stopPropagation();
-                }
-            });
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {},
+		bindToController: true,
+		controllerAs: 'filterCtrl',
+		controller: 'FilterSearchCtrl',
+		link: (scope, iElement, attrs, ctrl) => {
+			iElement.bind('keydown', (e) => {
+				if (e.keyCode === 27) {
+					e.stopPropagation();
+				}
+			});
 
-            const inputElement = iElement.find('input');
-            inputElement[0].onblur = () => {
-                ctrl.filterSearch = '';
-            };
-        },
-    };
+			const inputElement = iElement.find('input');
+			inputElement[0].onblur = () => {
+				ctrl.filterSearch = '';
+			};
+		},
+	};
 }

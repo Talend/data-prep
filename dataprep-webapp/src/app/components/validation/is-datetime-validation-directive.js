@@ -22,16 +22,16 @@ import moment from 'moment';
  * @usage <input ... is-date-time />
  */
 export default function IsDateTimeValidation() {
-    return {
-        require: 'ngModel',
-        link(scope, elm, attributes, ctrl) {
-            ctrl.$validators.isDateTimeValidation = function (modelValue) {
-                if (ctrl.$isEmpty(modelValue)) {
-                    return false;
-                }
-                const format = attributes.format || 'YYYY-MM-DD HH:mm';
-                return moment(modelValue, format, true).isValid();
-            };
-        },
-    };
+	return {
+		require: 'ngModel',
+		link(scope, elm, attributes, ctrl) {
+			ctrl.$validators.isDateTimeValidation = function (modelValue) {
+				if (ctrl.$isEmpty(modelValue)) {
+					return false;
+				}
+				const format = attributes.format || 'YYYY-MM-DD HH:mm';
+				return moment(modelValue, format, true).isValid();
+			};
+		},
+	};
 }

@@ -11,10 +11,10 @@
 
  ============================================================================*/
 class UpgradeVersionCtrl {
-    constructor(UpgradeVersionService) {
-        'ngInject';
-        this.UpgradeVersionService = UpgradeVersionService;
-    }
+	constructor(UpgradeVersionService) {
+		'ngInject';
+		this.UpgradeVersionService = UpgradeVersionService;
+	}
 
     /**
      * @ngdoc method
@@ -22,17 +22,17 @@ class UpgradeVersionCtrl {
      * @methodOf data-prep.upgrade-version.controller:UpgradeVersionCtrl
      * @description Contact the back end service and checks whether new version is available or not.
      **/
-    $onInit() {
-        this.UpgradeVersionService.retrieveNewVersions()
+	$onInit() {
+		this.UpgradeVersionService.retrieveNewVersions()
             .then((data) => {
-                this.visible = data.length;
-                this.newVersion = data.pop();
-            });
-    }
+	this.visible = data.length;
+	this.newVersion = data.pop();
+});
+	}
 
-    close() {
-        this.visible = false;
-    }
+	close() {
+		this.visible = false;
+	}
 
 }
 

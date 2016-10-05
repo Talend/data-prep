@@ -12,13 +12,13 @@
   ============================================================================*/
 
 export default function FilterListCtrl() {
-    const vm = this;
+	const vm = this;
 
-    vm.changeFilter = function changeFilter(filter, value) {
-        vm.onFilterChange({ filter, value });
-    };
+	vm.changeFilter = function changeFilter(filter, value) {
+		vm.onFilterChange({ filter, value });
+	};
 
-    vm.removeFilter = function removeFilter(filter) {
-        vm.onFilterRemove({ filter });
-    };
+	vm.removeFilter = function removeFilter(filter) {
+		vm.onFilterRemove({ filter });
+	};
 }

@@ -28,17 +28,17 @@ import template from './filter-list.html';
  * @param {boolean} enabled Filters are enabled or disabled
  */
 export default function FilterList() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            filters: '=',
-            onFilterChange: '&',
-            onFilterRemove: '&',
-            enabled: '<',
-        },
-        bindToController: true,
-        controllerAs: 'filterCtrl',
-        controller: 'FilterListCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			filters: '=',
+			onFilterChange: '&',
+			onFilterRemove: '&',
+			enabled: '<',
+		},
+		bindToController: true,
+		controllerAs: 'filterCtrl',
+		controller: 'FilterListCtrl',
+	};
 }

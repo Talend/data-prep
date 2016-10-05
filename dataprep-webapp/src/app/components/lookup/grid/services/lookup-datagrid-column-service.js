@@ -25,15 +25,15 @@
  * @requires data-prep.services.state.constant:state
  */
 export default function LookupDatagridColumnService(state, $rootScope, $compile, LookupDatagridStyleService) {
-    'ngInject';
+	'ngInject';
 
-    let grid;
-    const colIndexName = 'tdpId';
+	let grid;
+	const colIndexName = 'tdpId';
 
-    return {
-        init,
-        createColumns,
-    };
+	return {
+		init,
+		createColumns,
+	};
 
     //------------------------------------------------------------------------------------------------------
     // -----------------------------------------------GRID COLUMNS-------------------------------------------
@@ -46,16 +46,16 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      * @description Adapt column metadata to slick column.
      * @returns {object} The adapted column item
      */
-    function createColumnDefinition(col) {
-        return {
-            id: col.id,
-            field: col.id,
-            name: '',
-            formatter: LookupDatagridStyleService.columnFormatter(col),
-            minWidth: 120,
-            tdpColMetadata: col,
-        };
-    }
+	function createColumnDefinition(col) {
+		return {
+			id: col.id,
+			field: col.id,
+			name: '',
+			formatter: LookupDatagridStyleService.columnFormatter(col),
+			minWidth: 120,
+			tdpColMetadata: col,
+		};
+	}
 
     /**
      * @ngdoc method
@@ -69,29 +69,29 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      * </ul>
      */
 
-    function createColumns(columnsMetadata) {
+	function createColumns(columnsMetadata) {
         // create new SlickGrid columns
-        const colIndexArray = [];
-        const colIndexNameTemplate = '<div class="lookup-slick-header-column-index">#</div>';
+		const colIndexArray = [];
+		const colIndexNameTemplate = '<div class="lookup-slick-header-column-index">#</div>';
 
         // Add index column
-        colIndexArray.push({
-            id: colIndexName,
-            name: colIndexNameTemplate,
-            field: colIndexName,
-            maxWidth: 45,
-            formatter: function formatterIndex(row, cell, value) {
-                return '<div class="index-cell">' + value + '</div>';
-            },
+		colIndexArray.push({
+			id: colIndexName,
+			name: colIndexNameTemplate,
+			field: colIndexName,
+			maxWidth: 45,
+			formatter: function formatterIndex(row, cell, value) {
+				return '<div class="index-cell">' + value + '</div>';
+			},
 
-            resizable: false,
-            selectable: false,
-        });
+			resizable: false,
+			selectable: false,
+		});
 
-        return _.union(colIndexArray, _.map(columnsMetadata, function (col) {
-            return createColumnDefinition(col);
-        }));
-    }
+		return _.union(colIndexArray, _.map(columnsMetadata, function (col) {
+			return createColumnDefinition(col);
+		}));
+	}
 
     //------------------------------------------------------------------------------------------------------
     // -----------------------------------------------GRID HEADERS-------------------------------------------
@@ -107,19 +107,19 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      *     <li>The column metadata</li>
      * </ul>
      */
-    function createHeader(col) {
-        const headerScope = $rootScope.$new(true);
-        headerScope.column = col;
-        headerScope.added = _.find(state.playground.lookup.columnCheckboxes, { id: col.id });
-        const headerElement = angular.element('<lookup-datagrid-header column="column" added="added"></lookup-datagrid-header>');
-        $compile(headerElement)(headerScope);
+	function createHeader(col) {
+		const headerScope = $rootScope.$new(true);
+		headerScope.column = col;
+		headerScope.added = _.find(state.playground.lookup.columnCheckboxes, { id: col.id });
+		const headerElement = angular.element('<lookup-datagrid-header column="column" added="added"></lookup-datagrid-header>');
+		$compile(headerElement)(headerScope);
 
-        return {
-            id: col.id,
-            scope: headerScope,
-            header: headerElement,
-        };
-    }
+		return {
+			id: col.id,
+			scope: headerScope,
+			header: headerElement,
+		};
+	}
 
     /**
      * @ngdoc method
@@ -130,18 +130,18 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      * @description creates and attaches column header
      * The existing header is then updated with the new column metadata.
      */
-    function createAndAttachHeader(event, columnsArgs) {
-        const columnDef = columnsArgs.column;
-        if (columnDef.id === colIndexName) {
-            return;
-        }
+	function createAndAttachHeader(event, columnsArgs) {
+		const columnDef = columnsArgs.column;
+		if (columnDef.id === colIndexName) {
+			return;
+		}
 
-        const headerDefinition = createHeader(columnDef.tdpColMetadata);
+		const headerDefinition = createHeader(columnDef.tdpColMetadata);
 
         // Append the header
-        const node = angular.element(columnsArgs.node);
-        node.append(headerDefinition.header);
-    }
+		const node = angular.element(columnsArgs.node);
+		node.append(headerDefinition.header);
+	}
 
     //------------------------------------------------------------------------------------------------------
     // --------------------------------------------------INIT------------------------------------------------
@@ -153,9 +153,9 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      * @description Attach listeners for header creation/destroy. The handler detachs and save headers on destroy,
      * attach (create them if necessary) and update them on render
      */
-    function attachColumnHeaderEvents() {
-        grid.onHeaderCellRendered.subscribe(createAndAttachHeader);
-    }
+	function attachColumnHeaderEvents() {
+		grid.onHeaderCellRendered.subscribe(createAndAttachHeader);
+	}
 
     /**
      * @ngdoc method
@@ -164,8 +164,8 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      * @param {object} newGrid The new grid
      * @description Initializes the grid and attach the column listeners
      */
-    function init(newGrid) {
-        grid = newGrid;
-        attachColumnHeaderEvents();
-    }
+	function init(newGrid) {
+		grid = newGrid;
+		attachColumnHeaderEvents();
+	}
 }

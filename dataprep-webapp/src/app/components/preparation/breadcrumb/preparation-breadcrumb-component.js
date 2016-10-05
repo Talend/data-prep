@@ -14,13 +14,13 @@
 import PreparationBreadcrumbController from './preparation-breadcrumb-controller';
 
 const PreparationBreadcrumbComponent = {
-    template: `
+	template: `
         <breadcrumb items="$ctrl.state.inventory.breadcrumb"
                     children="$ctrl.state.inventory.breadcrumbChildren"
                     on-select="$ctrl.go(item)"
                     on-list-open="$ctrl.fetchChildren(item)"></breadcrumb>
     `,
-    controller: PreparationBreadcrumbController,
+	controller: PreparationBreadcrumbController,
 };
 
 export default PreparationBreadcrumbComponent;

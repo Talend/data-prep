@@ -22,14 +22,14 @@ import template from './editable-regex.html';
  * @param {object} ngModel The model to bind
  */
 export default function TalendEditableRegex() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            value: '=ngModel',
-        },
-        bindToController: true,
-        controller: 'TalendEditableRegexCtrl',
-        controllerAs: 'editableRegexCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			value: '=ngModel',
+		},
+		bindToController: true,
+		controller: 'TalendEditableRegexCtrl',
+		controllerAs: 'editableRegexCtrl',
+	};
 }

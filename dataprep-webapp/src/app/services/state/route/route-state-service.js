@@ -12,43 +12,43 @@
  ============================================================================*/
 
 export const routeState = {
-    previous: 'nav.index.preparations',
-    previousOptions: { folderId: '' },
-    next: 'nav.index.preparations',
-    nextOptions: { folderId: '' },
+	previous: 'nav.index.preparations',
+	previousOptions: { folderId: '' },
+	next: 'nav.index.preparations',
+	nextOptions: { folderId: '' },
 };
 
 export class RouteStateService {
-    setPrevious(route, routeOptions) {
-        if (!route) {
-            return;
-        }
+	setPrevious(route, routeOptions) {
+		if (!route) {
+			return;
+		}
 
-        routeState.previous = route;
-        routeState.previousOptions = routeOptions;
-    }
+		routeState.previous = route;
+		routeState.previousOptions = routeOptions;
+	}
 
-    setNext(route, routeOptions) {
-        if (!route) {
-            return;
-        }
+	setNext(route, routeOptions) {
+		if (!route) {
+			return;
+		}
 
-        routeState.next = route;
-        routeState.nextOptions = routeOptions;
-    }
+		routeState.next = route;
+		routeState.nextOptions = routeOptions;
+	}
 
-    resetPrevious() {
-        routeState.previous = 'nav.index.preparations';
-        routeState.previousOptions = { folderId: '' };
-    }
+	resetPrevious() {
+		routeState.previous = 'nav.index.preparations';
+		routeState.previousOptions = { folderId: '' };
+	}
 
-    resetNext() {
-        routeState.next = 'nav.index.preparations';
-        routeState.nextOptions = { folderId: '' };
-    }
+	resetNext() {
+		routeState.next = 'nav.index.preparations';
+		routeState.nextOptions = { folderId: '' };
+	}
 
-    reset() {
-        this.resetPrevious();
-        this.resetNext();
-    }
+	reset() {
+		this.resetPrevious();
+		this.resetNext();
+	}
 }

@@ -14,11 +14,11 @@
  ============================================================================*/
 
 const HomePreparationComponent = {
-    template: '<div class="home-main"><preparation-header ng-if="!$ctrl.state.inventory.isFetchingPreparations" class="inventory-list-header"></preparation-header>' +
+	template: '<div class="home-main"><preparation-header ng-if="!$ctrl.state.inventory.isFetchingPreparations" class="inventory-list-header"></preparation-header>' +
         '<preparation-list class="inventory-list-container"></preparation-list></div>',
-    controller(state) {
-        'ngInject';
-        this.state = state;
-    },
+	controller(state) {
+		'ngInject';
+		this.state = state;
+	},
 };
 export default HomePreparationComponent;

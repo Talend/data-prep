@@ -28,10 +28,10 @@ const MODULE_NAME = 'data-prep.services.onboarding';
  * @description This module contains the services to manage onboarding tours
  */
 angular.module(MODULE_NAME,
-    [
-        uiRouter,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		uiRouter,
+		SERVICES_STATE_MODULE,
+	])
     .constant('playgroundTour', playgroundTour)
     .constant('recipeTour', recipeTour)
     .constant('preparationTour', preparationTour)

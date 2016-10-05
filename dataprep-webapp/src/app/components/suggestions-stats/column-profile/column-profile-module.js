@@ -26,15 +26,15 @@ import ColumnProfile from './column-profile-directive';
 const MODULE_NAME = 'data-prep.column-profile';
 
 angular.module(MODULE_NAME,
-    [
-        COLUMN_PROFILE_OPTIONS_MODULE,
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_FILTER_MODULE,
-        SERVICES_RECIPE_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_STATISTICS_MODULE,
-    ])
+	[
+		COLUMN_PROFILE_OPTIONS_MODULE,
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_FILTER_MODULE,
+		SERVICES_RECIPE_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_STATISTICS_MODULE,
+	])
     .controller('ColumnProfileCtrl', ColumnProfileCtrl)
     .directive('columnProfile', ColumnProfile);
 

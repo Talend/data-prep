@@ -39,15 +39,15 @@ const MODULE_NAME = 'data-prep.transformation-menu';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        TRANSFORMATION_FORM_MODULE,
-        TYPE_TRANSFORMATION_MENU,
-        SERVICES_PARAMETERS_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_TRANSFORMATION_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		TRANSFORMATION_FORM_MODULE,
+		TYPE_TRANSFORMATION_MENU,
+		SERVICES_PARAMETERS_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_TRANSFORMATION_MODULE,
+	])
     .controller('TransformMenuCtrl', TransformMenuCtrl)
     .directive('transformMenu', TransformMenu);
 

@@ -31,31 +31,31 @@ import template from './button-switch.html';
  * @param {function} button-action The action that is triggered on switch
  */
 export default function TalendButtonSwitch() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            currentValue: '=',
-            displayKey: '@',
-            values: '=',
-            changeAction: '&',
-        },
-        bindToController: true,
-        controller: () => {
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			currentValue: '=',
+			displayKey: '@',
+			values: '=',
+			changeAction: '&',
+		},
+		bindToController: true,
+		controller: () => {
+		},
 
-        controllerAs: 'buttonSwitchCtrl',
-        link: (scope, iElement, attrs, ctrl) => {
-            function next() {
-                const index = ctrl.values.indexOf(ctrl.currentValue);
-                return (index === -1 || index >= ctrl.values.length - 1) ?
+		controllerAs: 'buttonSwitchCtrl',
+		link: (scope, iElement, attrs, ctrl) => {
+			function next() {
+				const index = ctrl.values.indexOf(ctrl.currentValue);
+				return (index === -1 || index >= ctrl.values.length - 1) ?
                     ctrl.values[0] :
                     ctrl.values[index + 1];
-            }
+			}
 
-            iElement.on('click', () => {
-                ctrl.changeAction({ selected: next() });
-            });
-        },
-    };
+			iElement.on('click', () => {
+				ctrl.changeAction({ selected: next() });
+			});
+		},
+	};
 }

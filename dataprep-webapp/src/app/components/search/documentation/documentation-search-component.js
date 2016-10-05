@@ -24,8 +24,8 @@ import template from './documentation-search.html';
 import DocumentationSearchCtrl from './documentation-search-controller';
 
 const DocumentationSearch = {
-    templateUrl: template,
-    controller: DocumentationSearchCtrl,
+	templateUrl: template,
+	controller: DocumentationSearchCtrl,
 };
 
 export default DocumentationSearch;

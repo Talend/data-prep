@@ -25,14 +25,14 @@ import Navbar from './navbar-directive';
 const MODULE_NAME = 'data-prep.navbar';
 
 angular.module(MODULE_NAME,
-    [
-        uiRouter,
-        INVENTORY_SEARCH_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_FEEDBACK_MODULE,
-        SERVICES_ONBOARDING_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		uiRouter,
+		INVENTORY_SEARCH_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_FEEDBACK_MODULE,
+		SERVICES_ONBOARDING_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('NavbarCtrl', NavbarCtrl)
     .directive('navbar', Navbar);
 

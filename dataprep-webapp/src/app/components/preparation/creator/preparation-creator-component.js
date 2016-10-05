@@ -28,7 +28,7 @@ import PreparationCreatorCtrl from './preparation-creator-controller';
 import template from './preparation-creator.html';
 
 export default {
-    templateUrl: template,
-    bindings: { onCreation: '&' },
-    controller: PreparationCreatorCtrl,
+	templateUrl: template,
+	bindings: { onCreation: '&' },
+	controller: PreparationCreatorCtrl,
 };

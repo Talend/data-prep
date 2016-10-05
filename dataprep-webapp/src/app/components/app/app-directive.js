@@ -14,8 +14,8 @@
 import template from './app.html';
 
 export default function DatagridHeaderCtrl() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+	};
 }

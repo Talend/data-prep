@@ -24,19 +24,19 @@ import { chain } from 'lodash';
  * @requires data-prep.services.utils.service:StorageService
  */
 export default class ExportCtrl {
-    constructor($timeout, state, RestURLs, StepUtilsService, ExportService, StorageService) {
-        'ngInject';
+	constructor($timeout, state, RestURLs, StepUtilsService, ExportService, StorageService) {
+		'ngInject';
 
-        this.$timeout = $timeout;
-        this.state = state;
-        this.RestURLs = RestURLs;
-        this.ExportService = ExportService;
-        this.StorageService = StorageService;
-        this.StepUtilsService = StepUtilsService;
+		this.$timeout = $timeout;
+		this.state = state;
+		this.RestURLs = RestURLs;
+		this.ExportService = ExportService;
+		this.StorageService = StorageService;
+		this.StepUtilsService = StepUtilsService;
 
-        this.exportParams = this.state.export.defaultExportType;
-        this.selectedType = ExportService.getType(this.exportParams.exportType);
-    }
+		this.exportParams = this.state.export.defaultExportType;
+		this.selectedType = ExportService.getType(this.exportParams.exportType);
+	}
 
     /**
      * @ngdoc method
@@ -45,11 +45,11 @@ export default class ExportCtrl {
      * @param {object} type The selected type
      * @description Init parameters and display the params modal
      */
-    selectType(type) {
-        this._initExportParameters(type);
-        this.selectedType = type;
-        this.showModal = true;
-    }
+	selectType(type) {
+		this._initExportParameters(type);
+		this.selectedType = type;
+		this.showModal = true;
+	}
 
     /**
      * @ngdoc method
@@ -57,11 +57,11 @@ export default class ExportCtrl {
      * @methodOf data-prep.export.controller:ExportCtrl
      * @description Init parameters and display the params modal
      */
-    saveAndExport() {
-        const params = this._extractParameters(this.selectedType);
-        this.ExportService.setExportParams(params);
-        this.launchExport();
-    }
+	saveAndExport() {
+		const params = this._extractParameters(this.selectedType);
+		this.ExportService.setExportParams(params);
+		this.launchExport();
+	}
 
     /**
      * @ngdoc method
@@ -69,10 +69,10 @@ export default class ExportCtrl {
      * @methodOf data-prep.export.controller:ExportCtrl
      * @description launches default export without export type selection
      */
-    launchDefaultExport() {
-        this._initExportParameters(this.selectedType);
-        this.launchExport();
-    }
+	launchDefaultExport() {
+		this._initExportParameters(this.selectedType);
+		this.launchExport();
+	}
 
     /**
      * @ngdoc method
@@ -80,14 +80,14 @@ export default class ExportCtrl {
      * @methodOf data-prep.export.controller:ExportCtrl
      * @description Save the current parameters and launch an export
      */
-    launchExport() {
-        this.exportParams = this._extractParameters(this.selectedType);
+	launchExport() {
+		this.exportParams = this._extractParameters(this.selectedType);
 
-        this.$timeout(() => {
-            this.form.action = this.RestURLs.exportUrl;
-            this.form.submit();
-        }, 0, false);
-    }
+		this.$timeout(() => {
+			this.form.action = this.RestURLs.exportUrl;
+			this.form.submit();
+		}, 0, false);
+	}
 
     /**
      * @ngdoc method
@@ -96,16 +96,16 @@ export default class ExportCtrl {
      * @param {object} exportType The type to init
      * @description Change the fileName of the type parameters to fit the current prep/dataset
      */
-    _initExportParameters(exportType) {
-        chain(exportType.parameters)
+	_initExportParameters(exportType) {
+		chain(exportType.parameters)
             .filter({ name: 'fileName' })
             .forEach((param) => {
-                param.value = this.state.playground.preparation ?
+	param.value = this.state.playground.preparation ?
                     this.state.playground.preparation.name :
                     this.state.playground.dataset.name;
-            })
+})
             .value();
-    }
+	}
 
     /**
      * @ngdoc method
@@ -114,14 +114,14 @@ export default class ExportCtrl {
      * @param {object} exportType The type to extract
      * @description Extract the parameters of the selected type
      */
-    _extractParameters(exportType) {
-        const parameters = { exportType: exportType.id };
-        exportType.parameters.forEach((param) => {
-            parameters['exportParameters.' + param.name] = param.value ? param.value : param.default;
-        });
+	_extractParameters(exportType) {
+		const parameters = { exportType: exportType.id };
+		exportType.parameters.forEach((param) => {
+			parameters['exportParameters.' + param.name] = param.value ? param.value : param.default;
+		});
 
-        return parameters;
-    }
+		return parameters;
+	}
 }
 
 /**
@@ -132,10 +132,10 @@ export default class ExportCtrl {
  */
 Object.defineProperty(ExportCtrl.prototype,
     'stepId', {
-        enumerable: true,
-        configurable: false,
-        get() {
-            const step = this.StepUtilsService.getLastActiveStep(this.state.playground.recipe);
-            return step ? step.transformation.stepId : '';
-        },
-    });
+	enumerable: true,
+	configurable: false,
+	get() {
+		const step = this.StepUtilsService.getLastActiveStep(this.state.playground.recipe);
+		return step ? step.transformation.stepId : '';
+	},
+});

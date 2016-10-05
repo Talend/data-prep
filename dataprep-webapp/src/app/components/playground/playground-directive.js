@@ -20,31 +20,31 @@ import template from './playground.html';
  * @restrict E
  */
 export default function Playground($timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'playgroundCtrl',
-        controller: 'PlaygroundCtrl',
-        link: (scope, iElement, iAttrs, ctrl) => {
-            const container = iElement.find('.playground-container').eq(0);
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'playgroundCtrl',
+		controller: 'PlaygroundCtrl',
+		link: (scope, iElement, iAttrs, ctrl) => {
+			const container = iElement.find('.playground-container').eq(0);
 
-            container.bind('keydown', (e) => {
-                if (e.keyCode !== 27) {
-                    return;
-                }
+			container.bind('keydown', (e) => {
+				if (e.keyCode !== 27) {
+					return;
+				}
 
-                if (e.target.nodeName === 'INPUT') {
-                    container.focus();
-                }
-                else {
-                    $timeout(ctrl.beforeClose);
-                }
-            });
+				if (e.target.nodeName === 'INPUT') {
+					container.focus();
+				}
+				else {
+					$timeout(ctrl.beforeClose);
+				}
+			});
 
-            container.focus();
-        },
-    };
+			container.focus();
+		},
+	};
 }

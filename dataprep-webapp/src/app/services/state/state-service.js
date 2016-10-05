@@ -26,132 +26,132 @@ export function StateService(RouteStateService, routeState,
                              FeedbackStateService, feedbackState,
                              ImportStateService, importState,
                              ExportStateService, exportState) {
-    'ngInject';
+	'ngInject';
 
-    state.route = routeState;
-    state.playground = playgroundState;
-    state.dataset = datasetState;
-    state.easterEggsState = easterEggsState;
-    state.inventory = inventoryState;
-    state.feedback = feedbackState;
-    state.import = importState;
-    state.export = exportState;
+	state.route = routeState;
+	state.playground = playgroundState;
+	state.dataset = datasetState;
+	state.easterEggsState = easterEggsState;
+	state.inventory = inventoryState;
+	state.feedback = feedbackState;
+	state.import = importState;
+	state.export = exportState;
 
-    return {
+	return {
         // route
-        setPreviousRoute: RouteStateService.setPrevious,
-        setNextRoute: RouteStateService.setNext,
-        resetPreviousRoute: RouteStateService.resetPrevious,
-        resetNextRoute: RouteStateService.resetNext,
-        resetRoute: RouteStateService.reset.bind(RouteStateService),
+		setPreviousRoute: RouteStateService.setPrevious,
+		setNextRoute: RouteStateService.setNext,
+		resetPreviousRoute: RouteStateService.resetPrevious,
+		resetNextRoute: RouteStateService.resetNext,
+		resetRoute: RouteStateService.reset.bind(RouteStateService),
 
         // playground
-        resetPlayground: PlaygroundStateService.reset,
-        setCurrentDataset: PlaygroundStateService.setDataset,
-        setCurrentData: PlaygroundStateService.setData,
-        setCurrentPreparation: PlaygroundStateService.setPreparation,
-        setIsFetchingStats: PlaygroundStateService.setIsFetchingStats,
-        setIsSavingPreparation: PlaygroundStateService.setIsSavingPreparation,
-        setNameEditionMode: PlaygroundStateService.setNameEditionMode,
-        setPreparationName: PlaygroundStateService.setPreparationName,
-        updateDatasetStatistics: PlaygroundStateService.updateDatasetStatistics,
-        updateDatasetRecord: PlaygroundStateService.updateDatasetRecord,
-        setCurrentSampleType: PlaygroundStateService.setSampleType,
+		resetPlayground: PlaygroundStateService.reset,
+		setCurrentDataset: PlaygroundStateService.setDataset,
+		setCurrentData: PlaygroundStateService.setData,
+		setCurrentPreparation: PlaygroundStateService.setPreparation,
+		setIsFetchingStats: PlaygroundStateService.setIsFetchingStats,
+		setIsSavingPreparation: PlaygroundStateService.setIsSavingPreparation,
+		setNameEditionMode: PlaygroundStateService.setNameEditionMode,
+		setPreparationName: PlaygroundStateService.setPreparationName,
+		updateDatasetStatistics: PlaygroundStateService.updateDatasetStatistics,
+		updateDatasetRecord: PlaygroundStateService.updateDatasetRecord,
+		setCurrentSampleType: PlaygroundStateService.setSampleType,
 
         // playground - dataset parameters
-        toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
-        hideDatasetParameters: PlaygroundStateService.hideDatasetParameters,
-        setIsSendingDatasetParameters: PlaygroundStateService.setIsSendingDatasetParameters,
-        setDatasetEncodings: PlaygroundStateService.setDatasetEncodings,
+		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
+		hideDatasetParameters: PlaygroundStateService.hideDatasetParameters,
+		setIsSendingDatasetParameters: PlaygroundStateService.setIsSendingDatasetParameters,
+		setDatasetEncodings: PlaygroundStateService.setDatasetEncodings,
 
         // playground - recipe
-        hideRecipe: PlaygroundStateService.hideRecipe,
-        showRecipe: PlaygroundStateService.showRecipe,
-        setHoveredStep: PlaygroundStateService.setHoveredStep,
-        setRecipeSteps: PlaygroundStateService.setRecipeSteps,
-        setRecipePreviewSteps: PlaygroundStateService.setRecipePreviewSteps,
-        restoreRecipeBeforePreview: PlaygroundStateService.restoreRecipeBeforePreview,
-        disableRecipeStepsAfter: PlaygroundStateService.disableRecipeStepsAfter,
+		hideRecipe: PlaygroundStateService.hideRecipe,
+		showRecipe: PlaygroundStateService.showRecipe,
+		setHoveredStep: PlaygroundStateService.setHoveredStep,
+		setRecipeSteps: PlaygroundStateService.setRecipeSteps,
+		setRecipePreviewSteps: PlaygroundStateService.setRecipePreviewSteps,
+		restoreRecipeBeforePreview: PlaygroundStateService.restoreRecipeBeforePreview,
+		disableRecipeStepsAfter: PlaygroundStateService.disableRecipeStepsAfter,
 
         // playground - grid
-        setColumnFocus: PlaygroundStateService.setColumnFocus,
-        setGridSelection: PlaygroundStateService.setGridSelection,
-        toggleColumnSelection: PlaygroundStateService.toggleColumnSelection,
-        changeRangeSelection: PlaygroundStateService.changeRangeSelection,
+		setColumnFocus: PlaygroundStateService.setColumnFocus,
+		setGridSelection: PlaygroundStateService.setGridSelection,
+		toggleColumnSelection: PlaygroundStateService.toggleColumnSelection,
+		changeRangeSelection: PlaygroundStateService.changeRangeSelection,
 
         // playground - lookup
-        setLookupActions: PlaygroundStateService.setLookupActions,
-        setLookupAddedActions: PlaygroundStateService.setLookupAddedActions,
-        setLookupDatasets: PlaygroundStateService.setLookupDatasets,
-        setLookupAddMode: PlaygroundStateService.setLookupAddMode,
-        setLookupSelectedColumn: PlaygroundStateService.setLookupSelectedColumn,
-        setLookupUpdateMode: PlaygroundStateService.setLookupUpdateMode,
-        setLookupVisibility: PlaygroundStateService.setLookupVisibility,
-        updateLookupColumnsToAdd: PlaygroundStateService.updateLookupColumnsToAdd,
-        setLookupDatasetsSort: PlaygroundStateService.setLookupDatasetsSort,
-        setLookupDatasetsOrder: PlaygroundStateService.setLookupDatasetsOrder,
+		setLookupActions: PlaygroundStateService.setLookupActions,
+		setLookupAddedActions: PlaygroundStateService.setLookupAddedActions,
+		setLookupDatasets: PlaygroundStateService.setLookupDatasets,
+		setLookupAddMode: PlaygroundStateService.setLookupAddMode,
+		setLookupSelectedColumn: PlaygroundStateService.setLookupSelectedColumn,
+		setLookupUpdateMode: PlaygroundStateService.setLookupUpdateMode,
+		setLookupVisibility: PlaygroundStateService.setLookupVisibility,
+		updateLookupColumnsToAdd: PlaygroundStateService.updateLookupColumnsToAdd,
+		setLookupDatasetsSort: PlaygroundStateService.setLookupDatasetsSort,
+		setLookupDatasetsOrder: PlaygroundStateService.setLookupDatasetsOrder,
 
         // playground - filters
-        addGridFilter: PlaygroundStateService.addGridFilter,
-        removeGridFilter: PlaygroundStateService.removeGridFilter,
-        removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
-        updateGridFilter: PlaygroundStateService.updateGridFilter,
-        enableFilters: PlaygroundStateService.enableFilters,
-        disableFilters: PlaygroundStateService.disableFilters,
+		addGridFilter: PlaygroundStateService.addGridFilter,
+		removeGridFilter: PlaygroundStateService.removeGridFilter,
+		removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
+		updateGridFilter: PlaygroundStateService.updateGridFilter,
+		enableFilters: PlaygroundStateService.enableFilters,
+		disableFilters: PlaygroundStateService.disableFilters,
 
         // playground - Actions
-        selectTransformationsTab: PlaygroundStateService.selectTransformationsTab,
-        setTransformations: PlaygroundStateService.setTransformations,
-        setTransformationsLoading: PlaygroundStateService.setTransformationsLoading,
-        setTransformationsForEmptyCells: PlaygroundStateService.setTransformationsForEmptyCells,
-        setTransformationsForInvalidCells: PlaygroundStateService.setTransformationsForInvalidCells,
-        updateFilteredTransformations: PlaygroundStateService.updateFilteredTransformations,
+		selectTransformationsTab: PlaygroundStateService.selectTransformationsTab,
+		setTransformations: PlaygroundStateService.setTransformations,
+		setTransformationsLoading: PlaygroundStateService.setTransformationsLoading,
+		setTransformationsForEmptyCells: PlaygroundStateService.setTransformationsForEmptyCells,
+		setTransformationsForInvalidCells: PlaygroundStateService.setTransformationsForInvalidCells,
+		updateFilteredTransformations: PlaygroundStateService.updateFilteredTransformations,
 
         // playground - Statistics
-        setStatisticsBoxPlot: PlaygroundStateService.setStatisticsBoxPlot,
-        setStatisticsDetails: PlaygroundStateService.setStatisticsDetails,
-        setStatisticsRangeLimits: PlaygroundStateService.setStatisticsRangeLimits,
-        setStatisticsHistogram: PlaygroundStateService.setStatisticsHistogram,
-        setStatisticsFilteredHistogram: PlaygroundStateService.setStatisticsFilteredHistogram,
-        setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
-        setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
-        setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
+		setStatisticsBoxPlot: PlaygroundStateService.setStatisticsBoxPlot,
+		setStatisticsDetails: PlaygroundStateService.setStatisticsDetails,
+		setStatisticsRangeLimits: PlaygroundStateService.setStatisticsRangeLimits,
+		setStatisticsHistogram: PlaygroundStateService.setStatisticsHistogram,
+		setStatisticsFilteredHistogram: PlaygroundStateService.setStatisticsFilteredHistogram,
+		setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
+		setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
+		setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
 
         // dataset
-        startUploadingDataset: DatasetStateService.startUploadingDataset,
-        finishUploadingDataset: DatasetStateService.finishUploadingDataset,
+		startUploadingDataset: DatasetStateService.startUploadingDataset,
+		finishUploadingDataset: DatasetStateService.finishUploadingDataset,
 
         // easter eggs
-        enableEasterEgg: EasterEggsStateService.enableEasterEgg,
-        disableEasterEgg: EasterEggsStateService.disableEasterEgg,
+		enableEasterEgg: EasterEggsStateService.enableEasterEgg,
+		disableEasterEgg: EasterEggsStateService.disableEasterEgg,
 
         // inventory
-        setDatasetName: InventoryStateService.setDatasetName,
-        setDatasets: InventoryStateService.setDatasets,
-        removeDataset: InventoryStateService.removeDataset,
-        setDatasetsSort: InventoryStateService.setDatasetsSort,
-        setDatasetsOrder: InventoryStateService.setDatasetsOrder,
-        setPreparationsSort: InventoryStateService.setPreparationsSort,
-        setPreparationsOrder: InventoryStateService.setPreparationsOrder,
-        setHomeFolderId: InventoryStateService.setHomeFolderId,
+		setDatasetName: InventoryStateService.setDatasetName,
+		setDatasets: InventoryStateService.setDatasets,
+		removeDataset: InventoryStateService.removeDataset,
+		setDatasetsSort: InventoryStateService.setDatasetsSort,
+		setDatasetsOrder: InventoryStateService.setDatasetsOrder,
+		setPreparationsSort: InventoryStateService.setPreparationsSort,
+		setPreparationsOrder: InventoryStateService.setPreparationsOrder,
+		setHomeFolderId: InventoryStateService.setHomeFolderId,
 
-        setFolder: InventoryStateService.setFolder,
-        setBreadcrumb: InventoryStateService.setBreadcrumb,
-        setBreadcrumbChildren: InventoryStateService.setBreadcrumbChildren,
+		setFolder: InventoryStateService.setFolder,
+		setBreadcrumb: InventoryStateService.setBreadcrumb,
+		setBreadcrumbChildren: InventoryStateService.setBreadcrumbChildren,
 
-        setFetchingInventoryDatasets: InventoryStateService.setFetchingDatasets,
-        setFetchingInventoryPreparations: InventoryStateService.setFetchingPreparations,
+		setFetchingInventoryDatasets: InventoryStateService.setFetchingDatasets,
+		setFetchingInventoryPreparations: InventoryStateService.setFetchingPreparations,
 
         // feedback
-        showFeedback: FeedbackStateService.show,
-        hideFeedback: FeedbackStateService.hide,
+		showFeedback: FeedbackStateService.show,
+		hideFeedback: FeedbackStateService.hide,
 
         // import
-        setImportTypes: ImportStateService.setImportTypes,
-        setCurrentImportType: ImportStateService.setCurrentImportType,
+		setImportTypes: ImportStateService.setImportTypes,
+		setCurrentImportType: ImportStateService.setCurrentImportType,
 
         // export
-        setExportTypes: ExportStateService.setExportTypes,
-        setDefaultExportType: ExportStateService.setDefaultExportType,
-    };
+		setExportTypes: ExportStateService.setExportTypes,
+		setDefaultExportType: ExportStateService.setDefaultExportType,
+	};
 }

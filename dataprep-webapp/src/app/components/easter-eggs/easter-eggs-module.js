@@ -31,11 +31,11 @@ const MODULE_NAME = 'data-prep.easter-eggs';
  * @requires 'data-prep.services.utils'
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_EASTER_EGG_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_EASTER_EGG_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('EasterEggsCtrl', EasterEggsCtrl)
     .directive('starWars', StarWars)
     .directive('easterEggs', EasterEggs);

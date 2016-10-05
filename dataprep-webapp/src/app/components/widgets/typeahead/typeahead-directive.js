@@ -25,127 +25,127 @@ import template from './typeahead.html';
  * @param {string} customRender If 'true' then typeahead will not render result, the rendering is done by user and transcluded
  */
 export default function Typeahead($timeout, $window) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        transclude: true,
-        templateUrl: template,
-        scope: {
-            search: '&',
-            placeholder: '@',
-            searchingText: '@',
-            customRender: '@',
-        },
-        bindToController: true,
-        controller: TypeaheadCtrl,
-        controllerAs: 'typeaheadCtrl',
-        link: {
-            post: (scope, iElement, iAttrs, ctrl) => {
-                const body = angular.element('body').eq(0);
-                const input = iElement.find('.input-search');
-                const selectedClass = 'selected';
+	return {
+		restrict: 'E',
+		transclude: true,
+		templateUrl: template,
+		scope: {
+			search: '&',
+			placeholder: '@',
+			searchingText: '@',
+			customRender: '@',
+		},
+		bindToController: true,
+		controller: TypeaheadCtrl,
+		controllerAs: 'typeaheadCtrl',
+		link: {
+			post: (scope, iElement, iAttrs, ctrl) => {
+				const body = angular.element('body').eq(0);
+				const input = iElement.find('.input-search');
+				const selectedClass = 'selected';
 
-                function hideResults() {
-                    $timeout(() => ctrl.hideResults());
-                }
+				function hideResults() {
+					$timeout(() => ctrl.hideResults());
+				}
 
-                function showResults() {
-                    $timeout(() => ctrl.showResults());
-                }
+				function showResults() {
+					$timeout(() => ctrl.showResults());
+				}
 
-                function scrollToSelectedItem(container, next) {
-                    container.stop();
+				function scrollToSelectedItem(container, next) {
+					container.stop();
 
-                    const nextTop = next.offset().top;
-                    const containerTop = container.offset().top;
-                    if (nextTop < containerTop) {
-                        container.animate({
-                            scrollTop: container.scrollTop() - (containerTop - nextTop),
-                        }, 'fast');
-                    }
+					const nextTop = next.offset().top;
+					const containerTop = container.offset().top;
+					if (nextTop < containerTop) {
+						container.animate({
+							scrollTop: container.scrollTop() - (containerTop - nextTop),
+						}, 'fast');
+					}
 
-                    const nextBottom = nextTop + next.height();
-                    const containerBottom = containerTop + container.height();
-                    if (nextBottom > containerBottom) {
-                        container.animate({
-                            scrollTop: container.scrollTop() + (nextBottom - containerBottom),
-                        }, 'fast');
-                    }
-                }
+					const nextBottom = nextTop + next.height();
+					const containerBottom = containerTop + container.height();
+					if (nextBottom > containerBottom) {
+						container.animate({
+							scrollTop: container.scrollTop() + (nextBottom - containerBottom),
+						}, 'fast');
+					}
+				}
 
-                function getItemList() {
-                    return iElement.find('ul').eq(0).find('>li');
-                }
+				function getItemList() {
+					return iElement.find('ul').eq(0).find('>li');
+				}
 
-                function getCurrentItem() {
-                    return iElement.find('ul')
+				function getCurrentItem() {
+					return iElement.find('ul')
                         .eq(0)
                         .find('li.' + selectedClass)
                         .eq(0);
-                }
+				}
 
-                input.keydown((event) => {
-                    let current;
-                    let next;
+				input.keydown((event) => {
+					let current;
+					let next;
 
-                    switch (event.keyCode) {
-                    case 27: // ESC
-                        ctrl.hideResults();
-                        scope.$digest();
-                        break;
-                    case 38: // UP
-                        current = getCurrentItem();
-                        next = (!current.length || current.is(':first-child')) ?
+					switch (event.keyCode) {
+					case 27: // ESC
+						ctrl.hideResults();
+						scope.$digest();
+						break;
+					case 38: // UP
+						current = getCurrentItem();
+						next = (!current.length || current.is(':first-child')) ?
                                 getItemList().last() :
                                 current.prev();
-                        break;
-                    case 40: // DOWN
-                        if (!ctrl.visible) {
-                            showResults();
-                            break;
-                        }
+						break;
+					case 40: // DOWN
+						if (!ctrl.visible) {
+							showResults();
+							break;
+						}
 
-                        current = getCurrentItem();
-                        next = (!current.length || current.is(':last-child')) ?
+						current = getCurrentItem();
+						next = (!current.length || current.is(':last-child')) ?
                                 getItemList().eq(0) :
                                 current.next();
-                        break;
-                    case 13: // ENTER
-                        if (!ctrl.visible) {
-                            showResults();
-                            break;
-                        }
+						break;
+					case 13: // ENTER
+						if (!ctrl.visible) {
+							showResults();
+							break;
+						}
 
-                        current = getCurrentItem();
-                        if (current.length) {
-                            if (current.children().eq(0).is('a')) {
-                                $window.open(current.children().eq(0).attr('href'), current.children().eq(0).attr('target'));
-                                ctrl.hideResults();
-                            }
-                            else {
-                                current.children().click();
-                            }
-                        }
+						current = getCurrentItem();
+						if (current.length) {
+							if (current.children().eq(0).is('a')) {
+								$window.open(current.children().eq(0).attr('href'), current.children().eq(0).attr('target'));
+								ctrl.hideResults();
+							}
+							else {
+								current.children().click();
+							}
+						}
 
-                        break;
-                    }
+						break;
+					}
 
-                    if (next) {
-                        current.removeClass(selectedClass);
-                        next.addClass(selectedClass);
+					if (next) {
+						current.removeClass(selectedClass);
+						next.addClass(selectedClass);
 
-                        const container = iElement.find('> .typeahead-result').eq(0);
-                        scrollToSelectedItem(container, next);
-                    }
-                });
+						const container = iElement.find('> .typeahead-result').eq(0);
+						scrollToSelectedItem(container, next);
+					}
+				});
 
-                input.click((event) => event.stopPropagation());
-                body.click(hideResults);
+				input.click(event => event.stopPropagation());
+				body.click(hideResults);
 
-                iElement.on('$destroy', () => scope.$destroy());
-                scope.$on('$destroy', () => body.off('click', hideResults));
-            },
-        },
-    };
+				iElement.on('$destroy', () => scope.$destroy());
+				scope.$on('$destroy', () => body.off('click', hideResults));
+			},
+		},
+	};
 }

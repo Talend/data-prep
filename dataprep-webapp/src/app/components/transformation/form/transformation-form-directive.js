@@ -33,18 +33,18 @@ import template from './transformation-form.html';
  * @param {boolean} isTransformationInProgress The flag indicate whether the transformation is in progress
  */
 export default function TransformForm() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            transformation: '=',
-            onSubmit: '&',
-            onSubmitHoverOn: '&',
-            onSubmitHoverOff: '&',
-            isTransformationInProgress: '<',
-        },
-        bindToController: true,
-        controllerAs: 'formCtrl',
-        controller: 'TransformFormCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			transformation: '=',
+			onSubmit: '&',
+			onSubmitHoverOn: '&',
+			onSubmitHoverOff: '&',
+			isTransformationInProgress: '<',
+		},
+		bindToController: true,
+		controllerAs: 'formCtrl',
+		controller: 'TransformFormCtrl',
+	};
 }

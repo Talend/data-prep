@@ -20,22 +20,22 @@
  * @param {string} unique-folder List of existing folders
  */
 export default function UniqueFolderValidation() {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        scope: {
-            uniqueFolder: '=',
-        },
-        link(scope, elm, attrs, ctrl) {
-            ctrl.$validators.uniqueFolderValidation = (name) => {
-                if (name === '') {
-                    return false;
-                }
+	return {
+		restrict: 'A',
+		require: 'ngModel',
+		scope: {
+			uniqueFolder: '=',
+		},
+		link(scope, elm, attrs, ctrl) {
+			ctrl.$validators.uniqueFolderValidation = (name) => {
+				if (name === '') {
+					return false;
+				}
 
-                return !_.find(scope.uniqueFolder, (folder) => {
-                    return folder.name.toLowerCase() === name.toLowerCase();
-                });
-            };
-        },
-    };
+				return !_.find(scope.uniqueFolder, (folder) => {
+					return folder.name.toLowerCase() === name.toLowerCase();
+				});
+			};
+		},
+	};
 }

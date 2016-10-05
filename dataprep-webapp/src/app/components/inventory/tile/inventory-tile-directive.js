@@ -40,29 +40,29 @@ import template from './inventory-tile.html';
  * @param {function}    onTitleClick callback function when the title is clocked
  */
 export default function inventoryTile() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'inventoryTileCtrl',
-        controller: () => {
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'inventoryTileCtrl',
+		controller: () => {
+		},
 
-        scope: {
-            dataset: '<',
-            preparation: '<',
-            onClick: '&',
-            onClone: '&',
-            onFavorite: '&',
-            onRemove: '&',
-            onRename: '&',
-            onTitleClick: '&',
-        },
-        link: (scope, iElement, iAttrs, ctrl) => {
-            ctrl.editableTitle = iAttrs.onRename;
-            ctrl.showFavoriteIcon = iAttrs.onFavorite;
-            ctrl.showCloneIcon = iAttrs.onClone;
-            ctrl.showRemoveIcon = iAttrs.onRemove;
-        },
-    };
+		scope: {
+			dataset: '<',
+			preparation: '<',
+			onClick: '&',
+			onClone: '&',
+			onFavorite: '&',
+			onRemove: '&',
+			onRename: '&',
+			onTitleClick: '&',
+		},
+		link: (scope, iElement, iAttrs, ctrl) => {
+			ctrl.editableTitle = iAttrs.onRename;
+			ctrl.showFavoriteIcon = iAttrs.onFavorite;
+			ctrl.showCloneIcon = iAttrs.onClone;
+			ctrl.showRemoveIcon = iAttrs.onRemove;
+		},
+	};
 }

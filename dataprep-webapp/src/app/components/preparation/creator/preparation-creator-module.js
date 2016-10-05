@@ -30,15 +30,15 @@ const MODULE_NAME = 'data-prep.preparation-creator';
  * @description This module creates directly a preparation from a dataset
  */
 angular.module(MODULE_NAME,
-    [
-        DATASET_UPDLOAD_LIST_MODULE,
-        IMPORT_MODULE,
-        INVENTORY_ITEM_MODULE,
-        THEME_FILTERS,
-        SERVICES_DATASET_MODULE,
-        SERVICES_PREPARATION_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		DATASET_UPDLOAD_LIST_MODULE,
+		IMPORT_MODULE,
+		INVENTORY_ITEM_MODULE,
+		THEME_FILTERS,
+		SERVICES_DATASET_MODULE,
+		SERVICES_PREPARATION_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .component('preparationCreator', PreparationCreatorComponent);
 
 export default MODULE_NAME;

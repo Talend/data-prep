@@ -32,13 +32,13 @@ const MODULE_NAME = 'data-prep.preparation-header';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        INVENTORY_HEADER_MODULE,
-        TALEND_WIDGET_MODULE,
-        SERVICES_FOLDER_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		ngTranslate,
+		INVENTORY_HEADER_MODULE,
+		TALEND_WIDGET_MODULE,
+		SERVICES_FOLDER_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .component('preparationHeader', PreparationHeaderComponent);
 
 export default MODULE_NAME;

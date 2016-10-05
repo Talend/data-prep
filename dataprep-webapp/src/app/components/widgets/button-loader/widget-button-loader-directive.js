@@ -32,20 +32,20 @@ import template from './button-loader.html';
  * @param {string} loading-class The class to add to the loader
  */
 export default function TalendButtonLoader() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        transclude: true,
-        scope: {
-            buttonClass: '@',
-            disableCondition: '=',
-            loading: '=',
-            loadingClass: '@',
-        },
-        bindToController: true,
-        controller: () => {
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		transclude: true,
+		scope: {
+			buttonClass: '@',
+			disableCondition: '=',
+			loading: '=',
+			loadingClass: '@',
+		},
+		bindToController: true,
+		controller: () => {
+		},
 
-        controllerAs: 'buttonLoaderCtrl',
-    };
+		controllerAs: 'buttonLoaderCtrl',
+	};
 }

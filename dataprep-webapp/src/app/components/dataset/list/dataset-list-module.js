@@ -43,19 +43,19 @@ const MODULE_NAME = 'data-prep.dataset-list';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        uiRouter,
-        DATASET_XLS_PREVIEW_MODULE,
-        INVENTORY_COPY_MOVE_MODULE,
-        INVENTORY_ITEM_MODULE,
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_DATASET_WORKFLOW_MODULE,
-        SERVICES_FOLDER_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		ngTranslate,
+		uiRouter,
+		DATASET_XLS_PREVIEW_MODULE,
+		INVENTORY_COPY_MOVE_MODULE,
+		INVENTORY_ITEM_MODULE,
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_DATASET_WORKFLOW_MODULE,
+		SERVICES_FOLDER_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .component('datasetList', DatasetList);
 
 export default MODULE_NAME;

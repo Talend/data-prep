@@ -17,11 +17,11 @@
  * @description Feedback service. This service provide the entry point to feedback
  */
 export default class FeedbackRestService {
-    constructor($http, RestURLs) {
-        'ngInject';
-        this.$http = $http;
-        this.url = RestURLs.mailUrl;
-    }
+	constructor($http, RestURLs) {
+		'ngInject';
+		this.$http = $http;
+		this.url = RestURLs.mailUrl;
+	}
 
     /**
      * @ngdoc method
@@ -30,13 +30,13 @@ export default class FeedbackRestService {
      * @param {string} feedback The feedback information
      * @description Send a feedback
      */
-    sendFeedback(feedback) {
-        const request = {
-            method: 'PUT',
-            url: this.url,
-            data: feedback,
-        };
+	sendFeedback(feedback) {
+		const request = {
+			method: 'PUT',
+			url: this.url,
+			data: feedback,
+		};
 
-        return this.$http(request);
-    }
+		return this.$http(request);
+	}
 }

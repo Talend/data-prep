@@ -21,8 +21,8 @@ import template from './star-wars.html';
  * @usage <star-wars></star-wars>
  */
 export default function StarWars() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+	};
 }

@@ -36,15 +36,15 @@ const MODULE_NAME = 'data-prep.dataset-xls-preview';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        uiRouter,
-        TALEND_WIDGET_MODULE,
-        SERVICES_DATASET_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		ngTranslate,
+		uiRouter,
+		TALEND_WIDGET_MODULE,
+		SERVICES_DATASET_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('DatasetXlsPreviewCtrl', DatasetXlsPreviewCtrl)
     .directive('datasetXlsPreview', DatasetXlsPreview);
 

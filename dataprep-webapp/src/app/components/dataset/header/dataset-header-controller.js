@@ -22,13 +22,13 @@
  * @requires data-prep.services.folder.service:DatasetService
  */
 export default class DatasetHeaderCtrl {
-    constructor(state, StateService, StorageService, DatasetService) {
-        'ngInject';
-        this.state = state;
-        this.StateService = StateService;
-        this.StorageService = StorageService;
-        this.DatasetService = DatasetService;
-    }
+	constructor(state, StateService, StorageService, DatasetService) {
+		'ngInject';
+		this.state = state;
+		this.StateService = StateService;
+		this.StorageService = StorageService;
+		this.DatasetService = DatasetService;
+	}
 
     /**
      * @ngdoc method
@@ -37,18 +37,18 @@ export default class DatasetHeaderCtrl {
      * @description sort dataset by sortType by calling refreshDatasets from DatasetService
      * @param {object} sortType Criteria to sort
      */
-    updateSortBy(sortType) {
-        const oldSort = this.state.inventory.datasetsSort;
+	updateSortBy(sortType) {
+		const oldSort = this.state.inventory.datasetsSort;
 
-        this.StateService.setDatasetsSort(sortType);
-        this.StorageService.setDatasetsSort(sortType.id);
+		this.StateService.setDatasetsSort(sortType);
+		this.StorageService.setDatasetsSort(sortType.id);
 
-        return this.DatasetService.refreshDatasets()
+		return this.DatasetService.refreshDatasets()
             .catch(() => {
-                this.StateService.setDatasetsSort(oldSort);
-                this.StorageService.setDatasetsSort(oldSort.id);
-            });
-    }
+	this.StateService.setDatasetsSort(oldSort);
+	this.StorageService.setDatasetsSort(oldSort.id);
+});
+	}
 
     /**
      * @ngdoc method
@@ -58,16 +58,16 @@ export default class DatasetHeaderCtrl {
      * by calling refreshDatasets from DatasetService
      * @param {object} order Sort order ASC(ascending) or DESC(descending)
      */
-    updateSortOrder(order) {
-        const oldOrder = this.state.inventory.datasetsOrder;
+	updateSortOrder(order) {
+		const oldOrder = this.state.inventory.datasetsOrder;
 
-        this.StateService.setDatasetsOrder(order);
-        this.StorageService.setDatasetsOrder(order.id);
+		this.StateService.setDatasetsOrder(order);
+		this.StorageService.setDatasetsOrder(order.id);
 
-        return this.DatasetService.refreshDatasets()
+		return this.DatasetService.refreshDatasets()
             .catch(() => {
-                this.StateService.setDatasetsOrder(oldOrder);
-                this.StorageService.setDatasetsOrder(oldOrder.id);
-            });
-    }
+	this.StateService.setDatasetsOrder(oldOrder);
+	this.StorageService.setDatasetsOrder(oldOrder.id);
+});
+	}
 }

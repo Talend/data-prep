@@ -23,12 +23,12 @@ import template from './badge.html';
  * @param {Function} onRemove The callback that is triggered on badge close
  */
 const TalendBadge = {
-    bindings: {
-        removable: '<',
-        onRemove: '&',
-    },
-    templateUrl: template,
-    transclude: true,
+	bindings: {
+		removable: '<',
+		onRemove: '&',
+	},
+	templateUrl: template,
+	transclude: true,
 };
 
 export default TalendBadge;

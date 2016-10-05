@@ -33,14 +33,14 @@ const MODULE_NAME = 'data-prep.inventory-search';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        SEARCH_BAR_MODULE,
-        SERVICES_DOCUMENTATION_MODULE,
-        SERVICES_EASTER_EGG_MODULE,
-        SERVICES_INVENTORY_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		ngTranslate,
+		SEARCH_BAR_MODULE,
+		SERVICES_DOCUMENTATION_MODULE,
+		SERVICES_EASTER_EGG_MODULE,
+		SERVICES_INVENTORY_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .component('inventorySearch', InventorySearch);
 
 export default MODULE_NAME;

@@ -23,19 +23,19 @@ import template from './transformation-date-param.html';
  * @param {object} label Do NOT display label if 'false'. Display it otherwise (by default).
  */
 export default function TransformDateParam() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            parameter: '=',
-            label: '@',
-        },
-        require: '^?form',
-        bindToController: true,
-        controllerAs: 'dateParamCtrl',
-        controller: 'TransformDateParamCtrl',
-        link: (scope, element, attrs, form) => {
-            scope.parentForm = form;
-        },
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			parameter: '=',
+			label: '@',
+		},
+		require: '^?form',
+		bindToController: true,
+		controllerAs: 'dateParamCtrl',
+		controller: 'TransformDateParamCtrl',
+		link: (scope, element, attrs, form) => {
+			scope.parentForm = form;
+		},
+	};
 }

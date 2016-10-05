@@ -34,15 +34,15 @@ import ColumnProfileOptionsCtrl from './column-profile-options-controller';
  * @param {function} onAggregationChange Aggregation change callback
  */
 const ColumnProfileOptionsComponent = {
-    templateUrl: template,
-    bindings: {
-        numericColumns: '<',
-        aggregation: '<',
-        column: '<',
-        group: '<',
-        onAggregationChange: '&',
-    },
-    controller: ColumnProfileOptionsCtrl,
+	templateUrl: template,
+	bindings: {
+		numericColumns: '<',
+		aggregation: '<',
+		column: '<',
+		group: '<',
+		onAggregationChange: '&',
+	},
+	controller: ColumnProfileOptionsCtrl,
 };
 
 export default ColumnProfileOptionsComponent;

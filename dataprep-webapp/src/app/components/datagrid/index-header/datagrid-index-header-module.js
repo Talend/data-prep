@@ -26,10 +26,10 @@ const MODULE_NAME = 'data-prep.datagrid-index-header';
  * @requires data-prep.services.filter
  */
 angular.module(MODULE_NAME,
-    [
-        sunchoke.dropdown,
-        SERVICES_FILTER_MODULE,
-    ])
+	[
+		sunchoke.dropdown,
+		SERVICES_FILTER_MODULE,
+	])
     .component('datagridIndexHeader', DatagridIndexHeader);
 
 export default MODULE_NAME;

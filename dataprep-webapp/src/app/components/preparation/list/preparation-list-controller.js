@@ -23,37 +23,37 @@
  * @requires talend.widget.service:TalendConfirmService
  */
 export default class PreparationListCtrl {
-    constructor($state, $stateParams, state, StateService,
+	constructor($state, $stateParams, state, StateService,
         FolderService, PreparationService, MessageService, TalendConfirmService) {
-        'ngInject';
+		'ngInject';
 
-        this.$state = $state;
-        this.$stateParams = $stateParams;
-        this.state = state;
-        this.StateService = StateService;
-        this.FolderService = FolderService;
-        this.PreparationService = PreparationService;
-        this.MessageService = MessageService;
-        this.TalendConfirmService = TalendConfirmService;
+		this.$state = $state;
+		this.$stateParams = $stateParams;
+		this.state = state;
+		this.StateService = StateService;
+		this.FolderService = FolderService;
+		this.PreparationService = PreparationService;
+		this.MessageService = MessageService;
+		this.TalendConfirmService = TalendConfirmService;
 
-        this.remove = this.remove.bind(this);
-        this.rename = this.rename.bind(this);
-        this.openCopyMoveModal = this.openCopyMoveModal.bind(this);
-        this.copy = this.copy.bind(this);
-        this.remove = this.remove.bind(this);
-        this.goToFolder = this.goToFolder.bind(this);
-        this.renameFolder = this.renameFolder.bind(this);
-        this.removeFolder = this.removeFolder.bind(this);
-    }
+		this.remove = this.remove.bind(this);
+		this.rename = this.rename.bind(this);
+		this.openCopyMoveModal = this.openCopyMoveModal.bind(this);
+		this.copy = this.copy.bind(this);
+		this.remove = this.remove.bind(this);
+		this.goToFolder = this.goToFolder.bind(this);
+		this.renameFolder = this.renameFolder.bind(this);
+		this.removeFolder = this.removeFolder.bind(this);
+	}
 
-    $onInit() {
-        this.StateService.setPreviousRoute('nav.index.preparations', { folderId: this.$stateParams.folderId });
-        this.StateService.setFetchingInventoryPreparations(true);
-        this.FolderService.init(this.$stateParams.folderId)
+	$onInit() {
+		this.StateService.setPreviousRoute('nav.index.preparations', { folderId: this.$stateParams.folderId });
+		this.StateService.setFetchingInventoryPreparations(true);
+		this.FolderService.init(this.$stateParams.folderId)
             .then(() => {
-                this.StateService.setFetchingInventoryPreparations(false);
-            });
-    }
+	this.StateService.setFetchingInventoryPreparations(false);
+});
+	}
 
     /**
      * @ngdoc method
@@ -62,26 +62,26 @@ export default class PreparationListCtrl {
      * @param {object} preparation - the preparation to delete
      * @description Delete a preparation
      */
-    remove(preparation) {
-        this.TalendConfirmService.confirm(
+	remove(preparation) {
+		this.TalendConfirmService.confirm(
             { disableEnter: true },
             ['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-            {
-                type: 'preparation',
-                name: preparation.name,
-            })
+			{
+				type: 'preparation',
+				name: preparation.name,
+			})
             .then(() => this.PreparationService.delete(preparation))
             .then(() => {
-                this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-            })
+	this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+})
             .then(() => {
-                this.MessageService.success(
+	this.MessageService.success(
                     'REMOVE_SUCCESS_TITLE',
                     'REMOVE_SUCCESS',
                     { type: 'preparation', name: preparation.name }
                 );
-            });
-    }
+});
+	}
 
     /**
      * @ngdoc method
@@ -91,21 +91,21 @@ export default class PreparationListCtrl {
      * @param {string} newName The new name for the given preparation
      * @description Trigger backend call to update preparation name
      */
-    rename(preparation, newName) {
-        const cleanName = newName ? newName.trim() : '';
-        if (cleanName) {
-            return this.PreparationService.setName(preparation.id, newName)
+	rename(preparation, newName) {
+		const cleanName = newName ? newName.trim() : '';
+		if (cleanName) {
+			return this.PreparationService.setName(preparation.id, newName)
                 .then(() => {
-                    this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-                })
+	this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+})
                 .then(() => {
-                    this.MessageService.success(
+	this.MessageService.success(
                         'PREPARATION_RENAME_SUCCESS_TITLE',
                         'PREPARATION_RENAME_SUCCESS'
                     );
-                });
-        }
-    }
+});
+		}
+	}
 
     /**
      * @ngdoc method
@@ -114,10 +114,10 @@ export default class PreparationListCtrl {
      * @param {object} preparation The preparation to copy/move
      * @description Trigger backend call to clone preparation
      */
-    openCopyMoveModal(preparation) {
-        this.preparationToCopyMove = preparation;
-        this.copyMoveModal = true;
-    }
+	openCopyMoveModal(preparation) {
+		this.preparationToCopyMove = preparation;
+		this.copyMoveModal = true;
+	}
 
     /**
      * @ngdoc method
@@ -128,21 +128,21 @@ export default class PreparationListCtrl {
      * @param {string} name The new preparation name
      * @description Trigger backend call to clone preparation
      */
-    copy(preparation, destination, name) {
-        return this.PreparationService.copy(preparation.id, destination.id, name)
+	copy(preparation, destination, name) {
+		return this.PreparationService.copy(preparation.id, destination.id, name)
             .then(() => {
-                this.MessageService.success(
+	this.MessageService.success(
                     'PREPARATION_COPYING_SUCCESS_TITLE',
                     'PREPARATION_COPYING_SUCCESS'
                 );
-            })
+})
             .then(() => {
-                this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-            })
+	this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+})
             .then(() => {
-                this.copyMoveModal = false;
-            });
-    }
+	this.copyMoveModal = false;
+});
+	}
 
     /**
      * @ngdoc method
@@ -153,22 +153,22 @@ export default class PreparationListCtrl {
      * @param {string} name The new preparation name
      * @description Trigger backend call to clone preparation
      */
-    move(preparation, destination, name) {
-        const currentId = this.state.inventory.folder.metadata.id;
-        return this.PreparationService.move(preparation.id, currentId, destination.id, name)
+	move(preparation, destination, name) {
+		const currentId = this.state.inventory.folder.metadata.id;
+		return this.PreparationService.move(preparation.id, currentId, destination.id, name)
             .then(() => {
-                this.MessageService.success(
+	this.MessageService.success(
                     'PREPARATION_MOVING_SUCCESS_TITLE',
                     'PREPARATION_MOVING_SUCCESS'
                 );
-            })
+})
             .then(() => {
-                this.FolderService.refresh(currentId);
-            })
+	this.FolderService.refresh(currentId);
+})
             .then(() => {
-                this.copyMoveModal = false;
-            });
-    }
+	this.copyMoveModal = false;
+});
+	}
 
     // --------------------------------------------------------------------------------------------
     // -------------------------------------------FOLDER-------------------------------------------
@@ -180,9 +180,9 @@ export default class PreparationListCtrl {
      * @description Redirect to folder
      * @param {object} folder The target folder
      */
-    goToFolder(folder) {
-        this.$state.go('nav.index.preparations', { folderId: folder.id });
-    }
+	goToFolder(folder) {
+		this.$state.go('nav.index.preparations', { folderId: folder.id });
+	}
 
     /**
      * @ngdoc method
@@ -192,12 +192,12 @@ export default class PreparationListCtrl {
      * @param {object} folder the folder to rename
      * @param {string} newName the new name
      */
-    renameFolder(folder, newName) {
-        this.FolderService.rename(folder.id, newName)
+	renameFolder(folder, newName) {
+		this.FolderService.rename(folder.id, newName)
             .then(() => {
-                this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-            });
-    }
+	this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+});
+	}
 
     /**
      * @ngdoc method
@@ -206,10 +206,10 @@ export default class PreparationListCtrl {
      * @description Remove a folder
      * @param {object} folder The folder to remove
      */
-    removeFolder(folder) {
-        this.FolderService.remove(folder.id)
+	removeFolder(folder) {
+		this.FolderService.remove(folder.id)
             .then(() => {
-                this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-            });
-    }
+	this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+});
+	}
 }

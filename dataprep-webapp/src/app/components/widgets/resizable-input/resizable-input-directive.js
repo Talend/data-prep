@@ -27,42 +27,42 @@
  resizable-input-offset="10" />
  */
 const InputResizable = () => {
-    return {
-        restrict: 'A',
-        scope: {
-            resizableInputOffset: '<',
-        },
-        require: 'ngModel',
-        link: (scope, element, attrs, ngModel) => {
-            /**
-             * @type {number} Minimum input width in px
-             */
-            const minInputWidth = 30;
+	return {
+		restrict: 'A',
+		scope: {
+			resizableInputOffset: '<',
+		},
+		require: 'ngModel',
+		link: (scope, element, attrs, ngModel) => {
+			/**
+			 * @type {number} Minimum input width in px
+			 */
+			const minInputWidth = 30;
 
-            /**
-             * Adjust input width
-             */
-            function updateSize() {
-                const input = element;
-                const inputValue = input.val();
-                if (!inputValue || !inputValue.length) {
-                    return;
-                }
+			/**
+			 * Adjust input width
+			 */
+			function updateSize() {
+				const input = element;
+				const inputValue = input.val();
+				if (!inputValue || !inputValue.length) {
+					return;
+				}
 
-                const resizableInputOffset = scope.resizableInputOffset;
-                const inputWidth = ((inputValue.length + 1 + (inputValue.split('\t').length - 1) * 8) * 7) + (resizableInputOffset);
-                input.css('width', (inputWidth < minInputWidth ? minInputWidth : inputWidth) + 'px');
-            }
+				const resizableInputOffset = scope.resizableInputOffset;
+				const inputWidth = ((inputValue.length + 1 + ((inputValue.split('\t').length - 1) * 8)) * 7) + (resizableInputOffset);
+				input.css('width', (inputWidth < minInputWidth ? minInputWidth : inputWidth) + 'px');
+			}
 
-            scope.$watchGroup(
-                [
-                    () => ngModel.$modelValue,
-                    () => scope.resizableInputOffset,
-                ],
-                updateSize
-            );
-        },
-    };
+			scope.$watchGroup(
+				[
+					() => ngModel.$modelValue,
+					() => scope.resizableInputOffset,
+				],
+				updateSize
+			);
+		},
+	};
 };
 
 export default InputResizable;

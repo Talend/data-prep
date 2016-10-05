@@ -17,9 +17,9 @@
  * @description Dataset sheet preview service
  */
 export default function DatasetSheetPreviewService(DatasetService) {
-    'ngInject';
+	'ngInject';
 
-    const self = this;
+	const self = this;
 
     /**
      * @ngdoc property
@@ -28,7 +28,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @description The current metadata to preview
      * @type {Object}
      */
-    self.currentMetadata = null;
+	self.currentMetadata = null;
 
     /**
      * @ngdoc property
@@ -37,7 +37,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @description The loaded sheet name
      * @type {Object}
      */
-    self.selectedSheetName = null;
+	self.selectedSheetName = null;
 
     /**
      * @ngdoc property
@@ -46,7 +46,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @description The Slickgrid that will contains the data
      * @type {Object}
      */
-    self.grid = null;
+	self.grid = null;
 
     /**
      * @ngdoc property
@@ -55,7 +55,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @description The flag that display preview modal
      * @type {boolean}
      */
-    self.showModal = false;
+	self.showModal = false;
 
     /**
      * @ngdoc property
@@ -64,7 +64,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @description The flag that indicates if the dataset draft is used to add a preparation
      * @type {boolean}
      */
-    self.addPreparation = false;
+	self.addPreparation = false;
 
     /**
      * @ngdoc property
@@ -72,7 +72,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @propertyOf data-prep.services.dataset.service:DatasetSheetPreviewService
      * @description The preparation to be created
      */
-    self.preparationName = '';
+	self.preparationName = '';
 
     /**
      * @ngdoc method
@@ -80,9 +80,9 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @methodOf data-prep.services.dataset.service:DatasetSheetPreviewService
      * @description Set the display flag to true
      */
-    this.display = function () {
-        self.showModal = true;
-    };
+	this.display = function () {
+		self.showModal = true;
+	};
 
     /**
      * @ngdoc method
@@ -90,10 +90,10 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @methodOf data-prep.services.dataset.service:DatasetSheetPreviewService
      * @description Remove all grid content
      */
-    const resetGrid = function () {
-        self.grid.setColumns([]);
-        self.grid.setData([]);
-    };
+	const resetGrid = function () {
+		self.grid.setColumns([]);
+		self.grid.setData([]);
+	};
 
     /**
      * @ngdoc method
@@ -102,23 +102,23 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @param {object} data The new data containing columns and records
      * @description Set new grid content
      */
-    const setGridData = function (data) {
-        const columns = _.map(data.metadata.columns, function (col) {
-            return {
-                id: col.id,
-                name: '<div class="grid-header">' +
+	const setGridData = function (data) {
+		const columns = _.map(data.metadata.columns, function (col) {
+			return {
+				id: col.id,
+				name: '<div class="grid-header">' +
                     '<div class="grid-header-title dropdown-button ng-binding">' + col.name + '</div>' +
                     '</div>',
-                field: col.id,
-                minWidth: 100,
-            };
-        });
+				field: col.id,
+				minWidth: 100,
+			};
+		});
 
-        self.grid.setColumns(columns);
-        self.grid.setData(data.records);
-        self.grid.autosizeColumns();
-        self.grid.render();
-    };
+		self.grid.setColumns(columns);
+		self.grid.setData(data.records);
+		self.grid.autosizeColumns();
+		self.grid.render();
+	};
 
     /**
      * @ngdoc method
@@ -129,19 +129,19 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @param {string} preparationName The preparation name
      * @description Set the metadata containing the dataset sheets, and get the preview of the default (last) selected sheet
      */
-    this.loadPreview = function (dataset, addPreparation, preparationName) {
-        self.currentMetadata = null;
-        self.selectedSheetName = null;
-        self.addPreparation = addPreparation;
-        self.preparationName = preparationName;
-        resetGrid();
-        return DatasetService.getSheetPreview(dataset)
+	this.loadPreview = function (dataset, addPreparation, preparationName) {
+		self.currentMetadata = null;
+		self.selectedSheetName = null;
+		self.addPreparation = addPreparation;
+		self.preparationName = preparationName;
+		resetGrid();
+		return DatasetService.getSheetPreview(dataset)
             .then(function (response) {
-                self.currentMetadata = response.metadata;
-                self.selectedSheetName = response.metadata.sheetName;
-                setGridData(response);
-            });
-    };
+	self.currentMetadata = response.metadata;
+	self.selectedSheetName = response.metadata.sheetName;
+	setGridData(response);
+});
+	};
 
     /**
      * @ngdoc method
@@ -150,13 +150,13 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @param {string} sheetName The sheet name to load on the current dataset
      * @description Get and load the sheet preview
      */
-    this.loadSheet = function (sheetName) {
-        resetGrid();
-        return DatasetService.getSheetPreview(self.currentMetadata, sheetName)
+	this.loadSheet = function (sheetName) {
+		resetGrid();
+		return DatasetService.getSheetPreview(self.currentMetadata, sheetName)
             .then(function (response) {
-                setGridData(response);
-            });
-    };
+	setGridData(response);
+});
+	};
 
     /**
      * @ngdoc method
@@ -165,7 +165,7 @@ export default function DatasetSheetPreviewService(DatasetService) {
      * @param {string} sheetName The sheet name to set in the dataset
      * @description Select a sheet in the current dataset. We update the metadata
      */
-    this.setDatasetSheet = function (sheetName) {
-        return DatasetService.setDatasetSheet(self.currentMetadata, sheetName);
-    };
+	this.setDatasetSheet = function (sheetName) {
+		return DatasetService.setDatasetSheet(self.currentMetadata, sheetName);
+	};
 }

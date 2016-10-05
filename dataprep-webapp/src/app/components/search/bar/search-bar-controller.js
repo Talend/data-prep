@@ -21,11 +21,11 @@
  */
 class SearchBarCtrl {
 
-    constructor(UploadWorkflowService, PreparationService) {
-        'ngInject';
-        this.uploadWorkflowService = UploadWorkflowService;
-        this.preparationService = PreparationService;
-    }
+	constructor(UploadWorkflowService, PreparationService) {
+		'ngInject';
+		this.uploadWorkflowService = UploadWorkflowService;
+		this.preparationService = PreparationService;
+	}
 
     /**
      * @ngdoc method
@@ -33,15 +33,15 @@ class SearchBarCtrl {
      * @methodOf data-prep.data-prep.search-bar.controller:DocumentationSearchCtrl
      * @description Trigger search implementation based on searchInput
      */
-    triggerSearch(searchInput) {
-        this.results = null;
+	triggerSearch(searchInput) {
+		this.results = null;
 
-        if (searchInput) {
-            return this.search({ value: searchInput });
-        }
+		if (searchInput) {
+			return this.search({ value: searchInput });
+		}
 
-        return [];
-    }
+		return [];
+	}
 }
 
 export default SearchBarCtrl;

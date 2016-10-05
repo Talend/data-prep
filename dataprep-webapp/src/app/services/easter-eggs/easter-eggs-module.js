@@ -27,10 +27,10 @@ const MODULE_NAME = 'data-prep.services.easter-eggs';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('EasterEggsService', EasterEggsService);
 
 export default MODULE_NAME;

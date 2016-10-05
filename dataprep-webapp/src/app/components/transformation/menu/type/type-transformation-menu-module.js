@@ -32,11 +32,11 @@ const MODULE_NAME = 'data-prep.type-transformation-menu';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_DATASET_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_DATASET_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('TypeTransformMenuCtrl', TypeTransformMenuCtrl)
     .directive('typeTransformMenu', TypeTransformMenu);
 

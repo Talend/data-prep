@@ -33,11 +33,11 @@ const MODULE_NAME = 'data-prep.services.dataset';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        'angularFileUpload', // file upload with progress support
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		'angularFileUpload', // file upload with progress support
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('ColumnTypesService', ColumnTypesService)
     .service('DatasetSheetPreviewService', DatasetSheetPreviewService)
     .service('DatasetRestService', DatasetRestService)

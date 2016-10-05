@@ -17,11 +17,11 @@
  * @description Tooltip directive
  */
 export default function TalendTooltipCtrl($scope) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    let blocked = false;
-    vm.innerState = vm.requestedState;
+	const vm = this;
+	let blocked = false;
+	vm.innerState = vm.requestedState;
 
     /**
      * @ngdoc method
@@ -29,9 +29,9 @@ export default function TalendTooltipCtrl($scope) {
      * @methodOf talend.widget.controller:TalendTooltipCtrl
      * @description Block the display
      */
-    vm.blockState = function blockState() {
-        blocked = true;
-    };
+	vm.blockState = function blockState() {
+		blocked = true;
+	};
 
     /**
      * @ngdoc method
@@ -39,10 +39,10 @@ export default function TalendTooltipCtrl($scope) {
      * @methodOf talend.widget.controller:TalendTooltipCtrl
      * @description Unblock the display
      */
-    vm.unblockState = function unblockState() {
-        blocked = false;
-        vm.innerState = vm.requestedState;
-    };
+	vm.unblockState = function unblockState() {
+		blocked = false;
+		vm.innerState = vm.requestedState;
+	};
 
     /**
      * @ngdoc method
@@ -52,27 +52,27 @@ export default function TalendTooltipCtrl($scope) {
      * @param {object} verticalPosition - {top: (number | string); bottom: (number | string)}
      * @description Change the position of the tooltip
      */
-    vm.updatePosition = function updatePosition(horizontalPosition, verticalPosition) {
-        vm.style = {
-            left: horizontalPosition.left,
-            right: horizontalPosition.right,
-            top: verticalPosition.top,
-            bottom: verticalPosition.bottom,
-        };
-    };
+	vm.updatePosition = function updatePosition(horizontalPosition, verticalPosition) {
+		vm.style = {
+			left: horizontalPosition.left,
+			right: horizontalPosition.right,
+			top: verticalPosition.top,
+			bottom: verticalPosition.bottom,
+		};
+	};
 
     /**
      * Update visibility state if not blocked when requested state change
      */
-    $scope.$watch(
+	$scope.$watch(
         () => {
-            return vm.requestedState;
-        },
+	return vm.requestedState;
+},
 
         (newValue) => {
-            if (!blocked) {
-                vm.innerState = newValue;
-            }
-        }
+	if (!blocked) {
+		vm.innerState = newValue;
+	}
+}
     );
 }

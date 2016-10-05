@@ -28,31 +28,31 @@ import template from './loading.html';
  * @usage <talend-loading></talend-loading>
  */
 export default function TalendLoading($rootScope, $timeout) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        link: (scope, iElement) => {
-            let loadingTimeout;
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		link: (scope, iElement) => {
+			let loadingTimeout;
 
-            const unregisterStartFn = $rootScope.$on('talend.loading.start', () => {
-                $timeout.cancel(loadingTimeout);
-                iElement[0].className = 'is-loading';
+			const unregisterStartFn = $rootScope.$on('talend.loading.start', () => {
+				$timeout.cancel(loadingTimeout);
+				iElement[0].className = 'is-loading';
 
-                loadingTimeout = $timeout(() => {
-                    iElement[0].className = 'is-loading show-loading';
-                }, 200, false);
-            });
-            const unregisterStopFn = $rootScope.$on('talend.loading.stop', () => {
-                $timeout.cancel(loadingTimeout);
-                iElement[0].className = '';
-            });
+				loadingTimeout = $timeout(() => {
+					iElement[0].className = 'is-loading show-loading';
+				}, 200, false);
+			});
+			const unregisterStopFn = $rootScope.$on('talend.loading.stop', () => {
+				$timeout.cancel(loadingTimeout);
+				iElement[0].className = '';
+			});
 
-            scope.$on('$destroy', () => {
-                unregisterStartFn();
-                unregisterStopFn();
-            });
-        },
-    };
+			scope.$on('$destroy', () => {
+				unregisterStartFn();
+				unregisterStopFn();
+			});
+		},
+	};
 }

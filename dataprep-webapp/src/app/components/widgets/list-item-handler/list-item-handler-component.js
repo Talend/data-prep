@@ -27,13 +27,13 @@ import templateUrl from './list-item-handler.html';
  * @param {function} onBottomClick The callback that is triggered on bottom button click
  */
 const ListItemHandler = {
-    bindings: {
-        showTopButton: '<',
-        showBottomButton: '<',
-        onTopClick: '&',
-        onBottomClick: '&',
-    },
-    templateUrl,
+	bindings: {
+		showTopButton: '<',
+		showBottomButton: '<',
+		onTopClick: '&',
+		onBottomClick: '&',
+	},
+	templateUrl,
 };
 
 export default ListItemHandler;

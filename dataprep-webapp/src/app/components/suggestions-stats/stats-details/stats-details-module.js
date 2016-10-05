@@ -30,11 +30,11 @@ const MODULE_NAME = 'data-prep.stats-details';
  * @requires data-prep.services.filter
  */
 angular.module(MODULE_NAME,
-    [
-        TALEND_WIDGET_MODULE,
-        SERVICES_FILTER_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		TALEND_WIDGET_MODULE,
+		SERVICES_FILTER_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .controller('StatsDetailsCtrl', StatsDetailsCtrl)
     .directive('statsDetails', StatsDetails);
 

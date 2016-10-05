@@ -21,11 +21,11 @@ import template from './feedback.html';
  * @usage <feedback></feedback>
  */
 export default function Feedback() {
-    return {
-        templateUrl: template,
-        restrict: 'E',
-        bindToController: true,
-        controllerAs: 'feedbackCtrl',
-        controller: 'FeedbackCtrl',
-    };
+	return {
+		templateUrl: template,
+		restrict: 'E',
+		bindToController: true,
+		controllerAs: 'feedbackCtrl',
+		controller: 'FeedbackCtrl',
+	};
 }

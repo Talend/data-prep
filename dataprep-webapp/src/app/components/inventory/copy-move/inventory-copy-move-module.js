@@ -26,10 +26,10 @@ const MODULE_NAME = 'data-prep.inventory-copy-move';
  * @requires data-prep.folder-selection
  */
 angular.module(MODULE_NAME,
-    [
-        FOLDER_SELECTION,
-        TALEND_WIDGET_MODULE,
-    ])
+	[
+		FOLDER_SELECTION,
+		TALEND_WIDGET_MODULE,
+	])
     .component('inventoryCopyMove', InventoryCopyMoveComponent);
 
 export default MODULE_NAME;

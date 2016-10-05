@@ -13,14 +13,14 @@
 import template from './datagrid-message.html';
 
 const DatagridMessageComponent = {
-    templateUrl: template,
-    bindings: {
-        nbLines: '<',
-        filters: '<',
-        removeFilters: '&',
-    },
-    bindToController: true,
-    controllerAs: '$ctrl',
+	templateUrl: template,
+	bindings: {
+		nbLines: '<',
+		filters: '<',
+		removeFilters: '&',
+	},
+	bindToController: true,
+	controllerAs: '$ctrl',
 };
 
 export default DatagridMessageComponent;

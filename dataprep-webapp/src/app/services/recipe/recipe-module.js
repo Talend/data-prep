@@ -37,15 +37,15 @@ const MODULE_NAME = 'data-prep.services.recipe';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_FILTER_MODULE,
-        SERVICES_PARAMETERS_MODULE,
-        SERVICES_PREPARATION_MODULE,
-        SERVICES_PREVIEW_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_TRANSFORMATION_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_FILTER_MODULE,
+		SERVICES_PARAMETERS_MODULE,
+		SERVICES_PREPARATION_MODULE,
+		SERVICES_PREVIEW_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_TRANSFORMATION_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('RecipeKnotService', RecipeKnotService)
     .service('RecipeService', RecipeService);
 

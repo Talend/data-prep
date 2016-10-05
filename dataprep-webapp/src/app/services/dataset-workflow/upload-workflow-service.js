@@ -21,9 +21,9 @@
  * @requires data-prep.services.utils.service:MessageService
  */
 export default function UploadWorkflowService($state, $window, StateService, DatasetSheetPreviewService, DatasetService, MessageService) {
-    'ngInject';
+	'ngInject';
 
-    const self = this;
+	const self = this;
 
     /**
      * @ngdoc method
@@ -39,19 +39,19 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
      * @param {boolean} addPreparation The dataset draft is used to add a preparation
      * @param {string} preparationName The preparation name
      */
-    this.openDraft = function openDraft(dataset, addPreparation, preparationName) {
-        if (dataset.type === 'application/vnd.ms-excel') {
-            DatasetSheetPreviewService.loadPreview(dataset, addPreparation, preparationName)
+	this.openDraft = function openDraft(dataset, addPreparation, preparationName) {
+		if (dataset.type === 'application/vnd.ms-excel') {
+			DatasetSheetPreviewService.loadPreview(dataset, addPreparation, preparationName)
                 .then(DatasetSheetPreviewService.display);
-        }
-        else if (dataset.type) {
-            MessageService.error('PREVIEW_NOT_IMPLEMENTED_FOR_TYPE_TITLE', 'PREVIEW_NOT_IMPLEMENTED_FOR_TYPE_TITLE');
-        }
-        else {
-            DatasetService.refreshDatasets();
-            MessageService.error('FILE_FORMAT_ANALYSIS_NOT_READY_TITLE', 'FILE_FORMAT_ANALYSIS_NOT_READY_CONTENT');
-        }
-    };
+		}
+		else if (dataset.type) {
+			MessageService.error('PREVIEW_NOT_IMPLEMENTED_FOR_TYPE_TITLE', 'PREVIEW_NOT_IMPLEMENTED_FOR_TYPE_TITLE');
+		}
+		else {
+			DatasetService.refreshDatasets();
+			MessageService.error('FILE_FORMAT_ANALYSIS_NOT_READY_TITLE', 'FILE_FORMAT_ANALYSIS_NOT_READY_CONTENT');
+		}
+	};
 
     /**
      * @ngdoc method
@@ -60,12 +60,12 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
      * @description Try to open a dataset. If it is a draft, we open the draft import wizard instead.
      * @param {object} dataset The dataset to open
      */
-    this.openDataset = function openDataset(dataset) {
-        if (dataset.draft) {
-            self.openDraft(dataset, false, '');
-        }
-        else {
-            $state.go('playground.dataset', { datasetid: dataset.id });
-        }
-    };
+	this.openDataset = function openDataset(dataset) {
+		if (dataset.draft) {
+			self.openDraft(dataset, false, '');
+		}
+		else {
+			$state.go('playground.dataset', { datasetid: dataset.id });
+		}
+	};
 }

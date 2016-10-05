@@ -24,17 +24,17 @@ export default function RestURLs() {
      * @description Init the api urls with a provided server url
      * @param {string} serverUrl The server url
      */
-    this.setServerUrl = function setServerUrl(serverUrl) {
-        this.datasetUrl = serverUrl + '/api/datasets';
-        this.transformUrl = serverUrl + '/api/transform';
-        this.preparationUrl = serverUrl + '/api/preparations';
-        this.previewUrl = serverUrl + '/api/preparations/preview';
-        this.exportUrl = serverUrl + '/api/export';
-        this.aggregationUrl = serverUrl + '/api/aggregate';
-        this.typesUrl = serverUrl + '/api/types';
-        this.folderUrl = serverUrl + '/api/folders';
-        this.mailUrl = serverUrl + '/api/mail';
-        this.searchUrl = serverUrl + '/api/search';
-        this.upgradeVersion = serverUrl + '/api/upgrade/check';
-    };
+	this.setServerUrl = function setServerUrl(serverUrl) {
+		this.datasetUrl = serverUrl + '/api/datasets';
+		this.transformUrl = serverUrl + '/api/transform';
+		this.preparationUrl = serverUrl + '/api/preparations';
+		this.previewUrl = serverUrl + '/api/preparations/preview';
+		this.exportUrl = serverUrl + '/api/export';
+		this.aggregationUrl = serverUrl + '/api/aggregate';
+		this.typesUrl = serverUrl + '/api/types';
+		this.folderUrl = serverUrl + '/api/folders';
+		this.mailUrl = serverUrl + '/api/mail';
+		this.searchUrl = serverUrl + '/api/search';
+		this.upgradeVersion = serverUrl + '/api/upgrade/check';
+	};
 }

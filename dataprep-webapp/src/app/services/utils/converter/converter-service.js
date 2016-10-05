@@ -17,14 +17,14 @@
  * @description Converter service. This service help to convert data
  */
 export default function ConverterService() {
-    return {
-        isNumber,
+	return {
+		isNumber,
 
         // types
-        toInputType,
-        simplifyType,
-        adaptValue,
-    };
+		toInputType,
+		simplifyType,
+		adaptValue,
+	};
 
     /**
      * @ngdoc method
@@ -34,9 +34,9 @@ export default function ConverterService() {
      * @description Check if the entered string is valid number
      * @return {boolean}
      */
-    function isNumber(value) {
-        return /^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/.test(value);
-    }
+	function isNumber(value) {
+		return /^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/.test(value);
+	}
 
     // --------------------------------------------------------------------------------------------
     // ----------------------------------------------TYPES-----------------------------------------
@@ -49,21 +49,21 @@ export default function ConverterService() {
      * @description Convert backend type to HTML input type
      * @returns {string} The converted type
      */
-    function toInputType(type) {
-        switch (type) {
-        case 'numeric':
-        case 'integer':
-        case 'double':
-        case 'float':
-            return 'number';
-        case 'boolean':
-            return 'checkbox';
-        case 'password':
-            return 'password';
-        default:
-            return 'text';
-        }
-    }
+	function toInputType(type) {
+		switch (type) {
+		case 'numeric':
+		case 'integer':
+		case 'double':
+		case 'float':
+			return 'number';
+		case 'boolean':
+			return 'checkbox';
+		case 'password':
+			return 'password';
+		default:
+			return 'text';
+		}
+	}
 
     /**
      * @ngdoc method
@@ -73,26 +73,26 @@ export default function ConverterService() {
      * @description Convert backend type to a simplified, more user friendly, one
      * @returns {string} The simplified type
      */
-    function simplifyType(type) {
-        switch (type.toLowerCase()) {
-        case 'numeric':
-        case 'integer':
-            return 'integer';
-        case 'double':
-        case 'float':
-        case 'decimal':
-            return 'decimal';
-        case 'boolean':
-            return 'boolean';
-        case 'string':
-        case 'char':
-            return 'text';
-        case 'date':
-            return 'date';
-        default:
-            return 'unknown';
-        }
-    }
+	function simplifyType(type) {
+		switch (type.toLowerCase()) {
+		case 'numeric':
+		case 'integer':
+			return 'integer';
+		case 'double':
+		case 'float':
+		case 'decimal':
+			return 'decimal';
+		case 'boolean':
+			return 'boolean';
+		case 'string':
+		case 'char':
+			return 'text';
+		case 'date':
+			return 'date';
+		default:
+			return 'unknown';
+		}
+	}
 
     /**
      * @ngdoc method
@@ -103,17 +103,17 @@ export default function ConverterService() {
      * @description [PRIVATE] Adapt the given value to the target type
      * @returns {Object} The adapted value
      */
-    function adaptValue(type, value) {
-        switch (type) {
-        case 'numeric':
-        case 'integer':
-        case 'double':
-        case 'float':
-            return parseFloat(value) || 0;
-        case 'boolean':
-            return value === 'true' || value === true;
-        default:
-            return value;
-        }
-    }
+	function adaptValue(type, value) {
+		switch (type) {
+		case 'numeric':
+		case 'integer':
+		case 'double':
+		case 'float':
+			return parseFloat(value) || 0;
+		case 'boolean':
+			return value === 'true' || value === true;
+		default:
+			return value;
+		}
+	}
 }

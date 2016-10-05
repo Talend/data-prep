@@ -61,26 +61,26 @@ const MODULE_NAME = 'data-prep.playground';
  * @requires data-prep.suggestions-stats
  */
 angular.module(MODULE_NAME,
-    [
-        ngTranslate,
-        uiRouter,
-        DATAGRID_MODULE,
-        DATASET_PARAMETERS_MODULE,
-        DOCUMENTATION_SEARCH_MODULE,
-        EXPORT_MODULE,
-        FILTER_BAR,
-        HISTORY_CONTROL,
-        LOOKUP_MODULE,
-        PREPARATION_PICKER_MODULE,
-        RECIPE_MODULE,
-        SUGGESTION_STATS_MODULE,
-        TALEND_WIDGET_MODULE,
-        SERVICES_ONBOARDING_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_PREVIEW_MODULE,
-        SERVICES_PREPARATION_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		ngTranslate,
+		uiRouter,
+		DATAGRID_MODULE,
+		DATASET_PARAMETERS_MODULE,
+		DOCUMENTATION_SEARCH_MODULE,
+		EXPORT_MODULE,
+		FILTER_BAR,
+		HISTORY_CONTROL,
+		LOOKUP_MODULE,
+		PREPARATION_PICKER_MODULE,
+		RECIPE_MODULE,
+		SUGGESTION_STATS_MODULE,
+		TALEND_WIDGET_MODULE,
+		SERVICES_ONBOARDING_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_PREVIEW_MODULE,
+		SERVICES_PREPARATION_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .controller('PlaygroundCtrl', PlaygroundCtrl)
     .directive('playground', Playground)
     .component('playgroundHeader', PlaygroundHeader);

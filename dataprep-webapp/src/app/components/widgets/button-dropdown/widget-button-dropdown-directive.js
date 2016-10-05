@@ -29,11 +29,11 @@
  * @param {function} buttonAction The callback to execute on main button click
  */
 export default function TalendButtonDropdown($timeout) {
-    'ngInject';
-    return {
-        restrict: 'E',
-        transclude: true,
-        template: '<div class="button-dropdown">' +
+	'ngInject';
+	return {
+		restrict: 'E',
+		transclude: true,
+		template: '<div class="button-dropdown">' +
             '<button class="button-dropdown-main" ng-click="buttonDropdownCtrl.buttonAction()" title="{{buttonDropdownCtrl.buttonTitle}}">' +
             '<div class="button-dropdown-main-container">' +
             '<i   ng-if="::buttonDropdownCtrl.buttonIcon" class="button-dropdown-main-icon" data-icon="{{::buttonDropdownCtrl.buttonIcon}}"></i>' +
@@ -46,29 +46,29 @@ export default function TalendButtonDropdown($timeout) {
             '<ng-transclude class="dropdown-menu"></ng-transclude>' +
             '</talend-dropdown>' +
             '</div>',
-        scope: {
-            buttonIcon: '@',
-            buttonText: '@',
-            buttonTitle: '@',
-            buttonAction: '&',
-            closeOnSelect: '<',
-        },
-        bindToController: true,
-        controller: () => {
-        },
+		scope: {
+			buttonIcon: '@',
+			buttonText: '@',
+			buttonTitle: '@',
+			buttonAction: '&',
+			closeOnSelect: '<',
+		},
+		bindToController: true,
+		controller: () => {
+		},
 
-        controllerAs: 'buttonDropdownCtrl',
-        link: (scope, iElement, attrs) => {
-            if (!attrs.buttonAction) {
-                $timeout(function () {
-                    const action = iElement.find('.dropdown-action').eq(0);
+		controllerAs: 'buttonDropdownCtrl',
+		link: (scope, iElement, attrs) => {
+			if (!attrs.buttonAction) {
+				$timeout(function () {
+					const action = iElement.find('.dropdown-action').eq(0);
 
-                    iElement.find('.button-dropdown-main')
+					iElement.find('.button-dropdown-main')
                         .on('click', function () {
-                            action.click();
-                        });
-                });
-            }
-        },
-    };
+	action.click();
+});
+				});
+			}
+		},
+	};
 }

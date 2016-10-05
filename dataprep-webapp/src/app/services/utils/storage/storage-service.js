@@ -30,10 +30,10 @@ const PREFIX_FILTER = 'org.talend.dataprep.filter_';
  * @description Local storage service
  */
 export default class StorageService {
-    constructor($window) {
-        'ngInject';
-        this.$window = $window;
-    }
+	constructor($window) {
+		'ngInject';
+		this.$window = $window;
+	}
 
     // --------------------------------------------------------------------------------------------
     // ---------------------------------------Common-----------------------------------------------
@@ -47,9 +47,9 @@ export default class StorageService {
      * @description Save the value with the provided key in localStorage.
      * The value us stringified to get back the same type.
      */
-    setItem(key, value) {
-        this.$window.localStorage.setItem(key, JSON.stringify(value));
-    }
+	setItem(key, value) {
+		this.$window.localStorage.setItem(key, JSON.stringify(value));
+	}
 
     /**
      * @ngdoc method
@@ -61,10 +61,10 @@ export default class StorageService {
      * The result have the same type as the saved value.
      * @returns {any} The value associated to the provided key.
      */
-    getItem(key, defaultValue) {
-        const value = this.$window.localStorage.getItem(key);
-        return value ? JSON.parse(value) : defaultValue;
-    }
+	getItem(key, defaultValue) {
+		const value = this.$window.localStorage.getItem(key);
+		return value ? JSON.parse(value) : defaultValue;
+	}
 
     /**
      * @ngdoc method
@@ -73,9 +73,9 @@ export default class StorageService {
      * @param {string} key The localStorage key
      * @description Remove the entry associated to the provided key.
      */
-    removeItem(key) {
-        this.$window.localStorage.removeItem(key);
-    }
+	removeItem(key) {
+		this.$window.localStorage.removeItem(key);
+	}
 
 
     // --------------------------------------------------------------------------------------------
@@ -89,9 +89,9 @@ export default class StorageService {
      * @param {any} value The value to save
      * @description Save the value with the provided key in localStorage.
      */
-    saveFilter(entityId, value) {
-        this.setItem(PREFIX_FILTER + entityId, value);
-    }
+	saveFilter(entityId, value) {
+		this.setItem(PREFIX_FILTER + entityId, value);
+	}
 
     /**
      * @ngdoc method
@@ -101,9 +101,9 @@ export default class StorageService {
      * @description Get the saved filters for the entity.
      * @returns {array} The filters or an empty array is no saved filter found.
      */
-    getFilter(entityId) {
-        return this.getItem(PREFIX_FILTER + entityId, []);
-    }
+	getFilter(entityId) {
+		return this.getItem(PREFIX_FILTER + entityId, []);
+	}
 
     /**
      * @ngdoc method
@@ -112,9 +112,9 @@ export default class StorageService {
      * @param {string} entityId The dataset/preparation Id
      * @description Remove the saved filters associated to the entity.
      */
-    removeFilter(entityId) {
-        return this.removeItem(PREFIX_FILTER + entityId);
-    }
+	removeFilter(entityId) {
+		return this.removeItem(PREFIX_FILTER + entityId);
+	}
 
     // --------------------------------------------------------------------------------------------
     // -------------------------------------------Feedback-----------------------------------------
@@ -127,9 +127,9 @@ export default class StorageService {
      * @description Save the value with the provided key in localStorage.
      * The value us stringified to get back the same type.
      */
-    saveFeedbackUserMail(value) {
-        this.setItem(FEEDBACK_USER_MAIL_KEY, value);
-    }
+	saveFeedbackUserMail(value) {
+		this.setItem(FEEDBACK_USER_MAIL_KEY, value);
+	}
 
     /**
      * @ngdoc method
@@ -139,9 +139,9 @@ export default class StorageService {
      * The result have the same type as the saved value.
      * @returns {string} The value associated to the provided key.
      */
-    getFeedbackUserMail() {
-        return this.getItem(FEEDBACK_USER_MAIL_KEY, '');
-    }
+	getFeedbackUserMail() {
+		return this.getItem(FEEDBACK_USER_MAIL_KEY, '');
+	}
 
     // --------------------------------------------------------------------------------------------
     // ------------------------------------------Export--------------------------------------------
@@ -153,9 +153,9 @@ export default class StorageService {
      * @param {any} value The value to save
      * @description Save the value with the provided key in localStorage. The value us stringified to get back the same type.
      */
-    saveExportParams(value) {
-        this.setItem(EXPORT_PARAMS_KEY, value);
-    }
+	saveExportParams(value) {
+		this.setItem(EXPORT_PARAMS_KEY, value);
+	}
 
     /**
      * @ngdoc method
@@ -164,9 +164,9 @@ export default class StorageService {
      * @description Get the value associated to the provided key. The result have the same type as the saved value.
      * @returns {object} The value associated to the provided key.
      */
-    getExportParams() {
-        return this.getItem(EXPORT_PARAMS_KEY);
-    }
+	getExportParams() {
+		return this.getItem(EXPORT_PARAMS_KEY);
+	}
 
     // --------------------------------------------------------------------------------------------
     // -------------------------------------------Aggregation--------------------------------------
@@ -180,14 +180,14 @@ export default class StorageService {
      * @param {string} columnId The column id
      * @description Create a localStorage key for aggregation
      */
-    getAggregationKey(datasetId, preparationId, columnId) {
-        let key = PREFIX + 'aggregation.';
-        key += (datasetId || '') + '.';
-        key += (preparationId || '') + '.';
-        key += columnId;
+	getAggregationKey(datasetId, preparationId, columnId) {
+		let key = PREFIX + 'aggregation.';
+		key += (datasetId || '') + '.';
+		key += (preparationId || '') + '.';
+		key += columnId;
 
-        return key;
-    }
+		return key;
+	}
 
     /**
      * @ngdoc method
@@ -199,10 +199,10 @@ export default class StorageService {
      * @param {object} aggregation The aggregation to save
      * @description Save the aggregation with a generated key from the other parameters.
      */
-    setAggregation(datasetId, preparationId, columnId, aggregation) {
-        const key = this.getAggregationKey(datasetId, preparationId, columnId);
-        this.setItem(key, aggregation);
-    }
+	setAggregation(datasetId, preparationId, columnId, aggregation) {
+		const key = this.getAggregationKey(datasetId, preparationId, columnId);
+		this.setItem(key, aggregation);
+	}
 
     /**
      * @ngdoc method
@@ -213,10 +213,10 @@ export default class StorageService {
      * @param {string} columnId The column id
      * @description Get the aggregation with a generated key.
      */
-    getAggregation(datasetId, preparationId, columnId) {
-        const key = this.getAggregationKey(datasetId, preparationId, columnId);
-        return this.getItem(key);
-    }
+	getAggregation(datasetId, preparationId, columnId) {
+		const key = this.getAggregationKey(datasetId, preparationId, columnId);
+		return this.getItem(key);
+	}
 
     /**
      * @ngdoc method
@@ -227,10 +227,10 @@ export default class StorageService {
      * @param {string} columnId The column id
      * @description Remove the aggregation on a generated key.
      */
-    removeAggregation(datasetId, preparationId, columnId) {
-        const key = this.getAggregationKey(datasetId, preparationId, columnId);
-        this.removeItem(key);
-    }
+	removeAggregation(datasetId, preparationId, columnId) {
+		const key = this.getAggregationKey(datasetId, preparationId, columnId);
+		this.removeItem(key);
+	}
 
     /**
      * @ngdoc method
@@ -240,21 +240,21 @@ export default class StorageService {
      * @param {string} preparationId The preparation id
      * @description Remove all aggregations on the dataset/preparation.
      */
-    removeAllAggregations(datasetId, preparationId) {
-        const keyAggregationPrefix = this.getAggregationKey(datasetId, preparationId, '');
-        const aggregationsToRemove = [];
+	removeAllAggregations(datasetId, preparationId) {
+		const keyAggregationPrefix = this.getAggregationKey(datasetId, preparationId, '');
+		const aggregationsToRemove = [];
 
-        for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
-            const key = this.$window.localStorage.key(i);
-            if (key.indexOf(keyAggregationPrefix) === 0) {
-                aggregationsToRemove.push(key);
-            }
-        }
+		for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
+			const key = this.$window.localStorage.key(i);
+			if (key.indexOf(keyAggregationPrefix) === 0) {
+				aggregationsToRemove.push(key);
+			}
+		}
 
-        aggregationsToRemove.forEach((key) => {
-            this.removeItem(key);
-        });
-    }
+		aggregationsToRemove.forEach((key) => {
+			this.removeItem(key);
+		});
+	}
 
     /**
      * @ngdoc method
@@ -265,29 +265,29 @@ export default class StorageService {
      * @description Get all the saved aggregations on the dataset
      * and save them for the preparation.
      */
-    savePreparationAggregationsFromDataset(datasetId, preparationId) {
-        const datasetAggregationPrefix = this.getAggregationKey(datasetId, '', '');
-        const aggregationsToAdd = [];
+	savePreparationAggregationsFromDataset(datasetId, preparationId) {
+		const datasetAggregationPrefix = this.getAggregationKey(datasetId, '', '');
+		const aggregationsToAdd = [];
 
-        for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
-            const key = this.$window.localStorage.key(i);
-            if (key.indexOf(datasetAggregationPrefix) === 0) {
-                aggregationsToAdd.push({
-                    columnId: key.substring(key.lastIndexOf('.') + 1),
-                    aggregation: this.getItem(key),
-                });
-            }
-        }
+		for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
+			const key = this.$window.localStorage.key(i);
+			if (key.indexOf(datasetAggregationPrefix) === 0) {
+				aggregationsToAdd.push({
+					columnId: key.substring(key.lastIndexOf('.') + 1),
+					aggregation: this.getItem(key),
+				});
+			}
+		}
 
-        aggregationsToAdd.forEach((aggregDef) => {
-            this.setAggregation(
+		aggregationsToAdd.forEach((aggregDef) => {
+			this.setAggregation(
                 datasetId,
                 preparationId,
                 aggregDef.columnId,
                 aggregDef.aggregation
             );
-        });
-    }
+		});
+	}
 
     /**
      * @ngdoc method
@@ -298,34 +298,34 @@ export default class StorageService {
      * @param {string} newPreparationId The old preparation id
      * @description Move all preparation aggregation to another preparation id
      */
-    moveAggregations(datasetId, oldPreparationId, newPreparationId) {
-        const preparationAggregationPrefix = this.getAggregationKey(
+	moveAggregations(datasetId, oldPreparationId, newPreparationId) {
+		const preparationAggregationPrefix = this.getAggregationKey(
             datasetId,
             oldPreparationId,
             ''
         );
-        const aggregationsToMove = [];
+		const aggregationsToMove = [];
 
-        for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
-            const key = this.$window.localStorage.key(i);
-            if (key.indexOf(preparationAggregationPrefix) === 0) {
-                aggregationsToMove.push({
-                    columnId: key.substring(key.lastIndexOf('.') + 1),
-                    aggregation: this.getItem(key),
-                });
-            }
-        }
+		for (let i = 0, len = this.$window.localStorage.length; i < len; i++) {
+			const key = this.$window.localStorage.key(i);
+			if (key.indexOf(preparationAggregationPrefix) === 0) {
+				aggregationsToMove.push({
+					columnId: key.substring(key.lastIndexOf('.') + 1),
+					aggregation: this.getItem(key),
+				});
+			}
+		}
 
-        aggregationsToMove.forEach((aggregDef) => {
-            this.setAggregation(
+		aggregationsToMove.forEach((aggregDef) => {
+			this.setAggregation(
                 datasetId,
                 newPreparationId,
                 aggregDef.columnId,
                 aggregDef.aggregation
             );
-            this.removeAggregation(datasetId, oldPreparationId, aggregDef.columnId);
-        });
-    }
+			this.removeAggregation(datasetId, oldPreparationId, aggregDef.columnId);
+		});
+	}
 
     // --------------------------------------------------------------------------------------------
     // -------------------------------------------Lookup-------------------------------------------
@@ -336,9 +336,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the lookup datasets from localStorage
      */
-    getLookupDatasets() {
-        return this.getItem(LOOKUP_DATASETS_KEY, []);
-    }
+	getLookupDatasets() {
+		return this.getItem(LOOKUP_DATASETS_KEY, []);
+	}
 
     /**
      * @ngdoc method
@@ -346,9 +346,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the lookup datasets in localStorage
      */
-    setLookupDatasets(datasets) {
-        this.setItem(LOOKUP_DATASETS_KEY, datasets);
-    }
+	setLookupDatasets(datasets) {
+		this.setItem(LOOKUP_DATASETS_KEY, datasets);
+	}
 
     /**
      * @ngdoc method
@@ -356,9 +356,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the Lookup datasets sort from localStorage
      */
-    getLookupDatasetsSort() {
-        return this.getItem(LOOKUP_DATASETS_SORT_KEY);
-    }
+	getLookupDatasetsSort() {
+		return this.getItem(LOOKUP_DATASETS_SORT_KEY);
+	}
 
     /**
      * @ngdoc method
@@ -366,9 +366,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the Lookup datasets sort in localStorage
      */
-    setLookupDatasetsSort(sort) {
-        this.setItem(LOOKUP_DATASETS_SORT_KEY, sort);
-    }
+	setLookupDatasetsSort(sort) {
+		this.setItem(LOOKUP_DATASETS_SORT_KEY, sort);
+	}
 
     /**
      * @ngdoc method
@@ -376,9 +376,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the Lookup datasets order from localStorage
      */
-    getLookupDatasetsOrder() {
-        return this.getItem(LOOKUP_DATASETS_ORDER_KEY);
-    }
+	getLookupDatasetsOrder() {
+		return this.getItem(LOOKUP_DATASETS_ORDER_KEY);
+	}
 
     /**
      * @ngdoc method
@@ -386,9 +386,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the Lookup datasets order in localStorage
      */
-    setLookupDatasetsOrder(order) {
-        this.setItem(LOOKUP_DATASETS_ORDER_KEY, order);
-    }
+	setLookupDatasetsOrder(order) {
+		this.setItem(LOOKUP_DATASETS_ORDER_KEY, order);
+	}
 
     // --------------------------------------------------------------------------------------------
     // ---------------------------------------------Sort/Order-------------------------------------
@@ -399,9 +399,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the datasets sort from localStorage
      */
-    getDatasetsSort() {
-        return this.getItem(DATASETS_SORT_KEY);
-    }
+	getDatasetsSort() {
+		return this.getItem(DATASETS_SORT_KEY);
+	}
 
     /**
      * @ngdoc method
@@ -409,9 +409,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the datasets sort in localStorage
      */
-    setDatasetsSort(sort) {
-        this.setItem(DATASETS_SORT_KEY, sort);
-    }
+	setDatasetsSort(sort) {
+		this.setItem(DATASETS_SORT_KEY, sort);
+	}
 
     /**
      * @ngdoc method
@@ -419,9 +419,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the datasets order from localStorage
      */
-    getDatasetsOrder() {
-        return this.getItem(DATASETS_ORDER_KEY);
-    }
+	getDatasetsOrder() {
+		return this.getItem(DATASETS_ORDER_KEY);
+	}
 
     /**
      * @ngdoc method
@@ -429,9 +429,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the datasets order in localStorage
      */
-    setDatasetsOrder(order) {
-        this.setItem(DATASETS_ORDER_KEY, order);
-    }
+	setDatasetsOrder(order) {
+		this.setItem(DATASETS_ORDER_KEY, order);
+	}
 
     /**
      * @ngdoc method
@@ -439,9 +439,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the preparations sort from localStorage
      */
-    getPreparationsSort() {
-        return this.getItem(PREPARATIONS_SORT_KEY);
-    }
+	getPreparationsSort() {
+		return this.getItem(PREPARATIONS_SORT_KEY);
+	}
 
     /**
      * @ngdoc method
@@ -449,9 +449,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the preparations sort in localStorage
      */
-    setPreparationsSort(sort) {
-        this.setItem(PREPARATIONS_SORT_KEY, sort);
-    }
+	setPreparationsSort(sort) {
+		this.setItem(PREPARATIONS_SORT_KEY, sort);
+	}
 
     /**
      * @ngdoc method
@@ -459,9 +459,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Get the preparations order from localStorage
      */
-    getPreparationsOrder() {
-        return this.getItem(PREPARATIONS_ORDER_KEY);
-    }
+	getPreparationsOrder() {
+		return this.getItem(PREPARATIONS_ORDER_KEY);
+	}
 
     /**
      * @ngdoc method
@@ -469,9 +469,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the preparations order in localStorage
      */
-    setPreparationsOrder(order) {
-        this.setItem(PREPARATIONS_ORDER_KEY, order);
-    }
+	setPreparationsOrder(order) {
+		this.setItem(PREPARATIONS_ORDER_KEY, order);
+	}
 
 
     // --------------------------------------------------------------------------------------------
@@ -484,9 +484,9 @@ export default class StorageService {
      * @param {string} id The id of the preparation or dataset
      * @description Get the least selected columns of a preparation/detaset from localStorage
      */
-    getSelectedColumns(id) {
-        return this.getItem(PREFIX_SELECTED_COLUMNS_KEY + id, []);
-    }
+	getSelectedColumns(id) {
+		return this.getItem(PREFIX_SELECTED_COLUMNS_KEY + id, []);
+	}
 
     /**
      * @ngdoc method
@@ -496,7 +496,7 @@ export default class StorageService {
      * @param {array} selectedColumns The selected columns of the preparation or dataset
      * @description  Set the least selected columns of a preparation/detaset to localStorage
      */
-    setSelectedColumns(id, selectedColumns) {
-        this.setItem(PREFIX_SELECTED_COLUMNS_KEY + id, selectedColumns);
-    }
+	setSelectedColumns(id, selectedColumns) {
+		this.setItem(PREFIX_SELECTED_COLUMNS_KEY + id, selectedColumns);
+	}
 }

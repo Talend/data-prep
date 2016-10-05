@@ -35,16 +35,16 @@
  */
 
 const RecipeKnot = {
-    bindings: {
-        inactive: '<',
-        onHoverEnd: '&',
-        onHoverStart: '&',
-        showBottomLine: '<',
-        showTopLine: '<',
-        toBeSwitched: '<',
-        toggleStep: '&',
-    },
-    template: `
+	bindings: {
+		inactive: '<',
+		onHoverEnd: '&',
+		onHoverStart: '&',
+		showBottomLine: '<',
+		showTopLine: '<',
+		toBeSwitched: '<',
+		toggleStep: '&',
+	},
+	template: `
     <div class="knot"
         role="checkbox"
         aria-checked="{{ $ctrl.inactive ? $ctrl.toBeSwitched : !$ctrl.toBeSwitched }}"

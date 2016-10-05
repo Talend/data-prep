@@ -27,8 +27,8 @@ const MODULE_NAME = 'data-prep.services.rest';
 angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
     .factory('RestErrorMessageHandler', RestErrorMessageHandler)
     .config(($httpProvider) => {
-        'ngInject';
-        $httpProvider.interceptors.push('RestErrorMessageHandler');
-    });
+	'ngInject';
+	$httpProvider.interceptors.push('RestErrorMessageHandler');
+});
 
 export default MODULE_NAME;

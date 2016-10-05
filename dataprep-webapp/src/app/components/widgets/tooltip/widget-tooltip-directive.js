@@ -29,58 +29,58 @@ import template from './tooltip.html';
  * @param {boolean} requestedState Show/hide tooltip if not blocked
  */
 export default function TalendTooltip($window, $document) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        transclude: true,
-        scope: {
-            position: '=',
-            requestedState: '=',
-        },
-        bindToController: true,
-        controller: 'TalendTooltipCtrl',
-        controllerAs: 'talendTooltipCtrl',
-        link(scope, iElement, iAttrs, ctrl) {
-            let hasFocus;
-            let isOver;
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		transclude: true,
+		scope: {
+			position: '=',
+			requestedState: '=',
+		},
+		bindToController: true,
+		controller: 'TalendTooltipCtrl',
+		controllerAs: 'talendTooltipCtrl',
+		link(scope, iElement, iAttrs, ctrl) {
+			let hasFocus;
+			let isOver;
             /**
              * @ngdoc method
              * @name processBlockUnblock
              * @methodOf talend.widget.directive:TalendTooltip
              * @description [PRIVATE] Block (mouse over || focus in) or unblock (mouse leave && focus out) the visibility change
              */
-            const processBlockUnblock = function () {
-                if (hasFocus || isOver) {
-                    ctrl.blockState();
-                }
-                else {
-                    ctrl.unblockState();
-                    scope.$digest();
-                }
-            };
+			const processBlockUnblock = function () {
+				if (hasFocus || isOver) {
+					ctrl.blockState();
+				}
+				else {
+					ctrl.unblockState();
+					scope.$digest();
+				}
+			};
 
-            iElement.hover(
+			iElement.hover(
                 function () {
-                    isOver = true;
-                    processBlockUnblock();
-                },
+	isOver = true;
+	processBlockUnblock();
+},
 
                 function () {
-                    isOver = false;
-                    processBlockUnblock();
-                });
+	isOver = false;
+	processBlockUnblock();
+});
 
-            iElement.focusin(function () {
-                hasFocus = true;
-                processBlockUnblock();
-            });
+			iElement.focusin(function () {
+				hasFocus = true;
+				processBlockUnblock();
+			});
 
-            iElement.focusout(function () {
-                hasFocus = false;
-                processBlockUnblock();
-            });
+			iElement.focusout(function () {
+				hasFocus = false;
+				processBlockUnblock();
+			});
 
             /**
              * @ngdoc method
@@ -92,22 +92,22 @@ export default function TalendTooltip($window, $document) {
              * Otherwise, the tooltip is displayed on the left
              * @returns {object} {left: string, right: string} The calculated left and right css
              */
-            const calculateHorizontalPosition = function (position) {
-                const windowWidth = $window.innerWidth || $document.documentElement.clientWidth || $document.body.clientWidth;
+			const calculateHorizontalPosition = function (position) {
+				const windowWidth = $window.innerWidth || $document.documentElement.clientWidth || $document.body.clientWidth;
 
-                if (position.x < windowWidth / 2) {
-                    return {
-                        left: position.x + 'px',
-                        right: 'auto',
-                    };
-                }
-                else {
-                    return {
-                        left: 'auto',
-                        right: (windowWidth - position.x) + 'px',
-                    };
-                }
-            };
+				if (position.x < windowWidth / 2) {
+					return {
+						left: position.x + 'px',
+						right: 'auto',
+					};
+				}
+				else {
+					return {
+						left: 'auto',
+						right: (windowWidth - position.x) + 'px',
+					};
+				}
+			};
 
             /**
              * Calculate top/bottom position.
@@ -126,40 +126,40 @@ export default function TalendTooltip($window, $document) {
              * Otherwise, the tooltip is displayed on the top
              * @returns {object} {{top: String, bottom: String}} The calculated top and bottom css
              */
-            const calculateVerticalPosition = function (position) {
-                const windowHeight = $window.innerHeight || $document.documentElement.clientHeight || $document.body.clientHeight;
+			const calculateVerticalPosition = function (position) {
+				const windowHeight = $window.innerHeight || $document.documentElement.clientHeight || $document.body.clientHeight;
 
-                if (position.y < windowHeight / 2) {
-                    return {
-                        top: position.y,
-                        bottom: 'auto',
-                    };
-                }
-                else {
-                    return {
-                        top: 'auto',
-                        bottom: (windowHeight - position.y) + 'px',
-                    };
-                }
-            };
+				if (position.y < windowHeight / 2) {
+					return {
+						top: position.y,
+						bottom: 'auto',
+					};
+				}
+				else {
+					return {
+						top: 'auto',
+						bottom: (windowHeight - position.y) + 'px',
+					};
+				}
+			};
 
             /**
              * Calculate css and update tooltip on requested position change
              */
-            scope.$watch(
+			scope.$watch(
                 function () {
-                    return ctrl.position;
-                },
+	return ctrl.position;
+},
 
                 function (position) {
-                    if (position) {
-                        const horizontalPosition = calculateHorizontalPosition(position);
-                        const verticalPosition = calculateVerticalPosition(position);
+	if (position) {
+		const horizontalPosition = calculateHorizontalPosition(position);
+		const verticalPosition = calculateVerticalPosition(position);
 
-                        ctrl.updatePosition(horizontalPosition, verticalPosition);
-                    }
-                }
+		ctrl.updatePosition(horizontalPosition, verticalPosition);
+	}
+}
             );
-        },
-    };
+		},
+	};
 }

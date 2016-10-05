@@ -25,10 +25,10 @@ const MODULE_NAME = 'data-prep.step-description';
  * @description This module creates the recipe step details
  */
 angular.module(MODULE_NAME,
-    [
-        ngSanitize,
-        ngTranslate,
-    ])
+	[
+		ngSanitize,
+		ngTranslate,
+	])
     .component('stepDescription', StepDescription);
 
 export default MODULE_NAME;

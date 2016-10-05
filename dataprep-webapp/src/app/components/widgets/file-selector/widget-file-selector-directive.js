@@ -28,24 +28,24 @@ import template from './file-selector.html';
  * @param {function} onFileChange The file selection change callback
  */
 export default function TalendFileSelector() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            buttonDataIcon: '@',
-            buttonTitle: '@',
-            fileModel: '=',
-            onFileChange: '&',
-        },
-        bindToController: true,
-        controllerAs: 'talendFileSelectorCtrl',
-        controller: () => {
-        },
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			buttonDataIcon: '@',
+			buttonTitle: '@',
+			fileModel: '=',
+			onFileChange: '&',
+		},
+		bindToController: true,
+		controllerAs: 'talendFileSelectorCtrl',
+		controller: () => {
+		},
 
-        link: (scope, element) => {
-            element.find('span').bind('click', () => {
-                element.find('input').click();
-            });
-        },
-    };
+		link: (scope, element) => {
+			element.find('span').bind('click', () => {
+				element.find('input').click();
+			});
+		},
+	};
 }

@@ -32,18 +32,18 @@ import template from './actions-list.html';
  * @param {string} scope The action scope (LINE, COLUMN, ...)
  * */
 export default function ActionsList() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        bindToController: true,
-        controllerAs: 'actionsListCtrl',
-        controller: 'ActionsListCtrl',
-        scope: {
-            actions: '=',
-            shouldRenderCategory: '=',
-            shouldRenderAction: '=',
-            scrollToBottom: '=',
-            scope: '@',
-        },
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		bindToController: true,
+		controllerAs: 'actionsListCtrl',
+		controller: 'ActionsListCtrl',
+		scope: {
+			actions: '=',
+			shouldRenderCategory: '=',
+			shouldRenderAction: '=',
+			scrollToBottom: '=',
+			scope: '@',
+		},
+	};
 }

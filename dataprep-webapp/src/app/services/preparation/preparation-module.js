@@ -30,12 +30,12 @@ const MODULE_NAME = 'data-prep.services.preparation';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        uiRouter,
-        SERVICES_FOLDER_MODULE,
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		uiRouter,
+		SERVICES_FOLDER_MODULE,
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('PreparationRestService', PreparationRestService)
     .service('PreparationService', PreparationService);
 

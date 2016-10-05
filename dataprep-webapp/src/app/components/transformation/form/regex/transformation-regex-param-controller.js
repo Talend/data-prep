@@ -17,7 +17,7 @@
  * @description Regex transformation parameter controller.
  */
 export default function TransformRegexParamCtrl() {
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc method
@@ -25,11 +25,11 @@ export default function TransformRegexParamCtrl() {
      * @methodOf data-prep.transformation-form.controller:TransformRegexParamCtrl
      * @description [PRIVATE] Init param values to default
      */
-    function initParamValues() {
-        if (angular.isUndefined(vm.parameter.value) && angular.isDefined(vm.parameter.default)) {
-            vm.parameter.value = vm.parameter.default;
-        }
-    }
+	function initParamValues() {
+		if (angular.isUndefined(vm.parameter.value) && angular.isDefined(vm.parameter.default)) {
+			vm.parameter.value = vm.parameter.default;
+		}
+	}
 
-    initParamValues();
+	initParamValues();
 }

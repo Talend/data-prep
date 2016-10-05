@@ -11,15 +11,15 @@
 
  ============================================================================*/
 class UpgradeVersionService {
-    constructor($http, RestURLs) {
-        'ngInject';
-        this.$http = $http;
-        this.RestURLs = RestURLs;
-    }
+	constructor($http, RestURLs) {
+		'ngInject';
+		this.$http = $http;
+		this.RestURLs = RestURLs;
+	}
 
-    retrieveNewVersions() {
-        return this.$http.get(this.RestURLs.upgradeVersion).then((response) => response.data);
-    }
+	retrieveNewVersions() {
+		return this.$http.get(this.RestURLs.upgradeVersion).then(response => response.data);
+	}
 }
 
 export default UpgradeVersionService;

@@ -12,11 +12,11 @@
  ============================================================================*/
 class DocumentationRestService {
 
-    constructor($http, documentationSearchURL) {
-        'ngInject';
-        this.$http = $http;
-        this.documentationSearchURL = documentationSearchURL;
-    }
+	constructor($http, documentationSearchURL) {
+		'ngInject';
+		this.$http = $http;
+		this.documentationSearchURL = documentationSearchURL;
+	}
 
     /**
      * @ngdoc method
@@ -24,12 +24,12 @@ class DocumentationRestService {
      * @methodOf data-prep.services.documentation.service:DocumentationRestService
      * @description search documentation with keyword
      */
-    search(keyword) {
-        return this.$http({
-            method: 'GET',
-            url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword),
-        });
-    }
+	search(keyword) {
+		return this.$http({
+			method: 'GET',
+			url: this.documentationSearchURL + '&keywords=' + encodeURIComponent(keyword),
+		});
+	}
 }
 
 export default DocumentationRestService;

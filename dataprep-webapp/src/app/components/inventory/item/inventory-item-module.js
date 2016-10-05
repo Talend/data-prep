@@ -30,12 +30,12 @@ const MODULE_NAME = 'data-prep.inventory-item';
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
-    [
-        ngSanitize,
-        ngTranslate,
-        TALEND_WIDGET_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		ngSanitize,
+		ngTranslate,
+		TALEND_WIDGET_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .controller('InventoryItemCtrl', InventoryItemCtrl)
     .component('inventoryItem', InventoryItemComponent);
 

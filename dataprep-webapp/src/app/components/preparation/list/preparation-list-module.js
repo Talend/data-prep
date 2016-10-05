@@ -38,16 +38,16 @@ const MODULE_NAME = 'data-prep.preparation-list';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        uiRouter,
-        INVENTORY_ITEM_MODULE,
-        INVENTORY_TILE_MODULE,
-        TALEND_WIDGET_MODULE,
-        SERVICES_FOLDER_MODULE,
-        SERVICES_PREPARATION_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		uiRouter,
+		INVENTORY_ITEM_MODULE,
+		INVENTORY_TILE_MODULE,
+		TALEND_WIDGET_MODULE,
+		SERVICES_FOLDER_MODULE,
+		SERVICES_PREPARATION_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .component('preparationList', PreparationListComponent);
 
 export default MODULE_NAME;

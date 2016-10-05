@@ -26,10 +26,10 @@ const MODULE_NAME = 'data-prep.services.import';
  * @description This module contains the services for import
  */
 angular.module(MODULE_NAME,
-    [
-        SERVICES_STATE_MODULE,
-        SERVICES_UTILS_MODULE,
-    ])
+	[
+		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
+	])
     .service('ImportRestService', ImportRestService)
     .service('ImportService', ImportService);
 

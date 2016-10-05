@@ -19,7 +19,7 @@ import moment from 'moment';
  * @description Transformation date parameter controller.
  */
 export default function TransformDateParamCtrl() {
-    const vm = this;
+	const vm = this;
 
     /**
      * @ngdoc method
@@ -27,12 +27,12 @@ export default function TransformDateParamCtrl() {
      * @methodOf data-prep.transformation-form.controller:TransformDateParamCtrl
      * @description [PRIVATE] Init date parameter values to default
      */
-    function initParamValue() {
-        const param = vm.parameter;
-        if (!param.value) {
-            param.value = param.default || moment(new Date()).format('YYYY-MM-DD HH:mm');
-        }
-    }
+	function initParamValue() {
+		const param = vm.parameter;
+		if (!param.value) {
+			param.value = param.default || moment(new Date()).format('YYYY-MM-DD HH:mm');
+		}
+	}
 
-    initParamValue();
+	initParamValue();
 }

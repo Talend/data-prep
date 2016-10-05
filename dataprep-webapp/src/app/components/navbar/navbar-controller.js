@@ -23,27 +23,27 @@
  */
 
 export default function NavbarCtrl($timeout, $state, state, version, copyRights, OnboardingService, DatasetService, StateService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    const tourId = 'preparation';
-    this.state = state;
+	const vm = this;
+	const tourId = 'preparation';
+	this.state = state;
     //--------------------------------------------------------------------------------------------------------------
     // -------------------------------------------ONBOARDING---------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    this.startTour = (tourId) => OnboardingService.startTour(tourId);
-    this.version = version;
-    this.copyRights = copyRights;
+	this.startTour = tourId => OnboardingService.startTour(tourId);
+	this.version = version;
+	this.copyRights = copyRights;
 
-    if (($state.current.name === 'nav.index.preparations' || $state.current.name === 'nav.index.datasets') &&
+	if (($state.current.name === 'nav.index.preparations' || $state.current.name === 'nav.index.datasets') &&
         !$state.params.prepid &&
         !$state.params.datasetid &&
         OnboardingService.shouldStartTour(tourId)) {
-        OnboardingService.startTour(tourId);
-    }
+		OnboardingService.startTour(tourId);
+	}
 
     //--------------------------------------------------------------------------------------------------------------
     // ---------------------------------------------FEEDBACK---------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    vm.openFeedbackForm = StateService.showFeedback;
+	vm.openFeedbackForm = StateService.showFeedback;
 }

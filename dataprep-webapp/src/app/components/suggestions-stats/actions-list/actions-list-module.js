@@ -33,13 +33,13 @@ const MODULE_NAME = 'data-prep.actions-list';
  * @requires data-prep.services.state
  */
 angular.module(MODULE_NAME,
-    [
-        sunchoke.all,
-        TALEND_WIDGET_MODULE,
-        SERVICES_PLAYGROUND_MODULE,
-        SERVICES_EARLY_PREVIEW_MODULE,
-        SERVICES_STATE_MODULE,
-    ])
+	[
+		sunchoke.all,
+		TALEND_WIDGET_MODULE,
+		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_EARLY_PREVIEW_MODULE,
+		SERVICES_STATE_MODULE,
+	])
     .controller('ActionsListCtrl', ActionsListCtrl)
     .directive('actionsList', ActionsList);
 

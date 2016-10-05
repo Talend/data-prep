@@ -21,34 +21,34 @@
  * @requires data-prep.services.filter.service:FilterService
  */
 export default function ColumnProfileCtrl($translate, $timeout, state, StatisticsService, StatisticsTooltipService, FilterService) {
-    'ngInject';
+	'ngInject';
 
-    const vm = this;
-    vm.chartConfig = {};
-    vm.state = state;
-    vm.statisticsService = StatisticsService;
-    vm.statisticsTooltipService = StatisticsTooltipService;
-    vm.addBarchartFilter = addBarchartFilter;
-    vm.addRangeFilter = addRangeFilter;
-    vm.changeAggregation = changeAggregation;
+	const vm = this;
+	vm.chartConfig = {};
+	vm.state = state;
+	vm.statisticsService = StatisticsService;
+	vm.statisticsTooltipService = StatisticsTooltipService;
+	vm.addBarchartFilter = addBarchartFilter;
+	vm.addRangeFilter = addRangeFilter;
+	vm.changeAggregation = changeAggregation;
 
     //------------------------------------------------------------------------------------------------------
     // ------------------------------------------------FILTER------------------------------------------------
     //------------------------------------------------------------------------------------------------------
-    function addExactFilter(value, keyName = null) {
-        const column = state.playground.grid.selectedColumns[0];
-        const args = {
-            phrase: [
-                {
-                    value,
-                },
-            ],
-            caseSensitive: true,
-        };
-        return value.length || keyName === FilterService.CTRL_KEY_NAME ?
+	function addExactFilter(value, keyName = null) {
+		const column = state.playground.grid.selectedColumns[0];
+		const args = {
+			phrase: [
+				{
+					value,
+				},
+			],
+			caseSensitive: true,
+		};
+		return value.length || keyName === FilterService.CTRL_KEY_NAME ?
             FilterService.addFilterAndDigest('exact', column.id, column.name, args, null, keyName) :
             FilterService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
-    }
+	}
 
     /**
      * @ngdoc property
@@ -57,9 +57,9 @@ export default function ColumnProfileCtrl($translate, $timeout, state, Statistic
      * @description Add an "exact" case sensitive filter if the value is not empty, an "empty_records" filter otherwise
      * @type {array}
      */
-    function addBarchartFilter(item, keyName) {
-        return addExactFilter(item.data, keyName);
-    }
+	function addBarchartFilter(item, keyName) {
+		return addExactFilter(item.data, keyName);
+	}
 
     /**
      * @ngdoc method
@@ -68,31 +68,31 @@ export default function ColumnProfileCtrl($translate, $timeout, state, Statistic
      * @description Add an "range" filter
      * @param {object} interval The interval [min, max] to filter
      */
-    function addRangeFilter(interval, keyName = null) {
-        const selectedColumn = state.playground.grid.selectedColumns[0];
-        const min = interval.min;
-        const max = interval.max;
-        const isDateRange = selectedColumn.type === 'date';
-        const removeFilterFn = StatisticsService.getRangeFilterRemoveFn();
-        const args = {
-            intervals: [
-                {
-                    label: interval.label || FilterService.getRangeLabelFor(interval, isDateRange),
-                    value: [min, max],
-                    isMaxReached: interval.isMaxReached,
-                },
-            ],
-            type: selectedColumn.type,
-        };
-        FilterService.addFilterAndDigest('inside_range', selectedColumn.id, selectedColumn.name, args, removeFilterFn, keyName);
-    }
+	function addRangeFilter(interval, keyName = null) {
+		const selectedColumn = state.playground.grid.selectedColumns[0];
+		const min = interval.min;
+		const max = interval.max;
+		const isDateRange = selectedColumn.type === 'date';
+		const removeFilterFn = StatisticsService.getRangeFilterRemoveFn();
+		const args = {
+			intervals: [
+				{
+					label: interval.label || FilterService.getRangeLabelFor(interval, isDateRange),
+					value: [min, max],
+					isMaxReached: interval.isMaxReached,
+				},
+			],
+			type: selectedColumn.type,
+		};
+		FilterService.addFilterAndDigest('inside_range', selectedColumn.id, selectedColumn.name, args, removeFilterFn, keyName);
+	}
 
-    function changeAggregation(column, aggregation) {
-        if (aggregation) {
-            StatisticsService.processAggregation(column, aggregation);
-        }
-        else {
-            StatisticsService.processClassicChart();
-        }
-    }
+	function changeAggregation(column, aggregation) {
+		if (aggregation) {
+			StatisticsService.processAggregation(column, aggregation);
+		}
+		else {
+			StatisticsService.processClassicChart();
+		}
+	}
 }

@@ -22,14 +22,14 @@ import template from './transformation-column-param.html';
  * @param {object} parameter The column parameter
  */
 export default function TransformColumnParam() {
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            parameter: '=',
-        },
-        bindToController: true,
-        controllerAs: 'columnParamCtrl',
-        controller: 'TransformColumnParamCtrl',
-    };
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			parameter: '=',
+		},
+		bindToController: true,
+		controllerAs: 'columnParamCtrl',
+		controller: 'TransformColumnParamCtrl',
+	};
 }

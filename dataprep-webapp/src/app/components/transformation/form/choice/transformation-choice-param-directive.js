@@ -22,40 +22,40 @@ import template from './transformation-choice-param.html';
  * @param {object} parameter The transformation choices parameter
  */
 export default function TransformChoiceParam($rootScope, $compile) {
-    'ngInject';
+	'ngInject';
 
-    return {
-        restrict: 'E',
-        templateUrl: template,
-        scope: {
-            parameter: '=',
-        },
-        bindToController: true,
-        controllerAs: 'choiceParamCtrl',
-        controller: 'TransformChoiceParamCtrl',
-        link: (scope, iElement, iAttrs, ctrl) => {
-            _.chain(ctrl.parameter.configuration.values)
+	return {
+		restrict: 'E',
+		templateUrl: template,
+		scope: {
+			parameter: '=',
+		},
+		bindToController: true,
+		controllerAs: 'choiceParamCtrl',
+		controller: 'TransformChoiceParamCtrl',
+		link: (scope, iElement, iAttrs, ctrl) => {
+			_.chain(ctrl.parameter.configuration.values)
                 .filter(function (optionValue) {
-                    return optionValue.parameters && optionValue.parameters.length;
-                })
+	return optionValue.parameters && optionValue.parameters.length;
+})
                 .forEach(function (optionValue) {
-                    const isolatedScope = $rootScope.$new(true);
-                    isolatedScope.parameter = ctrl.parameter;
-                    isolatedScope.optionValue = optionValue;
+	const isolatedScope = $rootScope.$new(true);
+	isolatedScope.parameter = ctrl.parameter;
+	isolatedScope.optionValue = optionValue;
 
-                    const template = '<transform-params ' +
+	const template = '<transform-params ' +
                         'parameters="optionValue.parameters" ' +
                         'ng-if="parameter.value === optionValue.value" ' +
                         '></transform-params>';
-                    $compile(template)(isolatedScope, function (cloned) {
-                        iElement.append(cloned);
-                    });
+	$compile(template)(isolatedScope, function (cloned) {
+		iElement.append(cloned);
+	});
 
-                    scope.$on('$destroy', () => {
-                        isolatedScope.$destroy();
-                    });
-                })
+	scope.$on('$destroy', () => {
+		isolatedScope.$destroy();
+	});
+})
                 .value();
-        },
-    };
+		},
+	};
 }

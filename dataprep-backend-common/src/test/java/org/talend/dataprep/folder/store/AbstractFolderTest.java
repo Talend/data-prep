@@ -101,7 +101,11 @@ public abstract class AbstractFolderTest {
         assertEquals("/foo/beer", bar.getPath());
 
         final Iterable<Folder> homeChildren = getFolderRepository().children(homeFolderId);
-        Assertions.assertThat(homeChildren).isNotNull().isNotEmpty().contains(foo);
+
+        Assertions.assertThat(homeChildren).isNotNull().isNotEmpty().hasSize(1);
+        Folder firstChild = homeChildren.iterator().next();
+        // When moving a folder, it is its parent that is modified in the UNIX filesystem, not itself.
+        Assertions.assertThat(firstChild).isEqualToIgnoringGivenFields(foo, "creationDate", "lastModificationDate");
 
         Iterable<Folder> barChildren = getFolderRepository().children(bar.getId());
         Assertions.assertThat(barChildren).isNotNull().isNotEmpty().hasSize(1);

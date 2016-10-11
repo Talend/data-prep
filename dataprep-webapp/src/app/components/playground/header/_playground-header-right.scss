@@ -1,4 +1,4 @@
-$navigation-height: 50px;
+$navigation-height: 48px;
 
 @include keyframes(fadeIn) {
   from {
@@ -19,6 +19,49 @@ $navigation-height: 50px;
 }
 
 &-right {
+  @include display(flex);
+  @include flex-row-center();
+
+  li.nav-link {
+    @include flex-column();
+    @include justify-content(center);
+
+    padding: 0 15px;
+    height: 48px;
+
+    a {
+      color: $white;
+
+      &:hover,&:focus {
+        text-decoration: none;
+      }
+    }
+    &:hover{
+      background-color: darken($blue, 25);
+    }
+  }
+
+  .playground-help-menu{
+    @include display(flex);
+    @include flex-row-center();
+  }
+
+  .history-control > li {
+    @include flex-column();
+    @include justify-content(center);
+
+    padding: 0 15px;
+    height: 48px;
+
+    &:hover {
+      background-color: darken($blue, 25);
+    }
+  }
+
+  #export-data, #documentation-search-container {
+    padding: 0 15px;
+  }
+
   #playground-lookup-icon {
     > img {
       vertical-align: middle;

@@ -1,12 +1,10 @@
 &-left {
+  @include flex-row();
+  @include align-items(center);
+  @include justify-content(flex-end);
+
   #dataset-header-details{
     @include flex-grow(0);
-    height: 50px;
     padding: 10px;
-
-    #playground-gear-icon {
-      font-size: 0.9em;
-      padding: 5px;
-    }
   }
 }

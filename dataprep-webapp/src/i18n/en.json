@@ -3,6 +3,8 @@
   "COLON": ": ",
 
   "_comment": "Navbar",
+  "TALEND": "Talend",
+  "DATA_PREPARATION": "Data Preparation",
   "EDIT_PROFIL": "Edit profil",
   "LOGOUT": "Logout",
   "MENU": "MENU",

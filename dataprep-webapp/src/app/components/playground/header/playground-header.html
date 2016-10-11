@@ -12,81 +12,87 @@
   ~
   ~ ============================================================================
   -->
-
 <header class="playground-header">
-    <h1><span class="sr-only">Talend</span> Data Preparation</h1>
-
-    <nav>
-        <ul class="playground-header-left" insertion-playground-left-header>
-            <li id="dataset-header-details">
-                <a id="playground-gear-icon"
-                   class="icon"
-                   data-icon="L"
-                   ng-click="$ctrl.onParameters()"
-                   ng-class="{pressed: $ctrl.parametersVisible}"
-                   translate-once-title="DATAGRID_PARAMETERS_GEAR"></a>
-            </li>
-        </ul>
-
-        <ul class="playground-header-right">
-            <li ng-if="$ctrl.preparationPicker">
-                <a id="playground-preparation-picker-icon"
-                   class="icon"
-                   data-icon="c"
-                   translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
-                   ng-click="$ctrl.onPreparationPicker()"></a>
-            </li>
-            <li>
-                <a id="playground-lookup-icon"
-                   class="icon"
-                   ng-click="$ctrl.onLookup()"
-                   ng-class="{pressed: $ctrl.lookupVisible}"
-                   translate-once-title="LOOKUP_ICON_TOOLTIP">
-                    <img ng-src="assets/images/header/lookup.png">
-                </a>
-            </li>
-            <li id="export-data"
-                ng-if="$ctrl.enableExport"
-                insertion-export>
-                <export/>
-            </li>
-            <li>
-                <ul class="playground-help-menu">
-                    <li class="nav-link">
-                        <a id="playground-onboarding-icon"
-                           class="icon"
-                           data-icon="y"
-                           translate-once-title="ONBOARDING"
-                           ng-click="$ctrl.onOnboarding()"></a>
-                    </li>
-                    <li ng-if="$ctrl.feedbackVisible"
-                        class="nav-link" >
-                        <a id="playground-feedback-icon"
-                           class="icon"
-                           data-icon="H"
-                           translate-once-title="FEEDBACK_TOOLTIP"
-                           ng-click="$ctrl.onFeedback()"></a>
-                    </li>
-                    <li class="nav-link">
-                        <a id="playground-online-help-icon"
-                           class="icon"
-                           data-icon="l"
-                           translate-once-title="ONLINE_HELP_TOOLTIP"
-                           href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
-                           target="_blank">
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li><documentation-search></documentation-search></li>
-            <li id="help-history"><history-control></history-control></li>
-            <li id="playground-close-container">
-                <a id="playground-close"
-                   class="btn btn-link"
-                   translate-once-title="CLOSE_ICON_TOOLTIP"
-                   ng-click="$ctrl.onClose()"></a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-default">
+        <div class="navbar-header">
+            <a class="navbar-brand">
+                <span class="sr-only" translate-once="TALEND"></span>
+                <span translate-once="DATA_PREPARATION"></span>
+            </a>
+        </div>
+        <div class="navbar-content">
+            <ul class="playground-header-left" insertion-playground-left-header></ul>
+            <ul class="playground-header-right">
+                <li id="dataset-header-details" class="nav-link">
+                    <a id="playground-gear-icon"
+                       class="icon"
+                       data-icon="L"
+                       ng-click="$ctrl.onParameters()"
+                       ng-class="{pressed: $ctrl.parametersVisible}"
+                       translate-once-title="DATAGRID_PARAMETERS_GEAR"></a>
+                </li>
+                <li ng-if="$ctrl.preparationPicker" class="nav-link">
+                    <a id="playground-preparation-picker-icon"
+                       class="icon"
+                       data-icon="c"
+                       translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
+                       ng-click="$ctrl.onPreparationPicker()"></a>
+                </li>
+                <li class="nav-link">
+                    <a id="playground-lookup-icon"
+                       class="icon"
+                       ng-click="$ctrl.onLookup()"
+                       ng-class="{pressed: $ctrl.lookupVisible}"
+                       translate-once-title="LOOKUP_ICON_TOOLTIP">
+                        <img ng-src="assets/images/header/lookup.png">
+                    </a>
+                </li>
+                <li id="export-data"
+                    ng-if="$ctrl.enableExport"
+                    insertion-export>
+                    <export/>
+                </li>
+                <li class="playground-help">
+                    <ul class="playground-help-menu">
+                        <li class="nav-link">
+                            <a id="playground-onboarding-icon"
+                               class="icon"
+                               data-icon="y"
+                               translate-once-title="ONBOARDING"
+                               ng-click="$ctrl.onOnboarding()"></a>
+                        </li>
+                        <li ng-if="$ctrl.feedbackVisible"
+                            class="nav-link">
+                            <a id="playground-feedback-icon"
+                               class="icon"
+                               data-icon="H"
+                               translate-once-title="FEEDBACK_TOOLTIP"
+                               ng-click="$ctrl.onFeedback()"></a>
+                        </li>
+                        <li class="nav-link">
+                            <a id="playground-online-help-icon"
+                               class="icon"
+                               data-icon="l"
+                               translate-once-title="ONLINE_HELP_TOOLTIP"
+                               href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
+                               target="_blank">
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li id="documentation-search-container">
+                    <documentation-search></documentation-search>
+                </li>
+                <li id="help-history">
+                    <history-control></history-control>
+                </li>
+                <li id="playground-close-container" class="nav-link">
+                    <a id="playground-close"
+                       translate-once-title="CLOSE_ICON_TOOLTIP"
+                       ng-click="$ctrl.onClose()"></a>
+                </li>
+            </ul>
+        </div>
     </nav>
 
     <div class="preview" ng-if="$ctrl.preview">

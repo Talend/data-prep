@@ -16,13 +16,14 @@ package org.talend.dataprep.dataset.service.analysis.asynchronous;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.dataset.event.AsyncApplicationListener;
 import org.talend.dataprep.dataset.event.DataSetImportedEvent;
+import org.talend.dataprep.event.AsyncApplicationListener;
 import org.talend.dataprep.security.SecurityProxy;
 
 /**
  * Compute statistics analysis on the full dataset.
  */
+@SuppressWarnings("InsufficientBranchCoverage")
 @Component
 @ConditionalOnProperty(name = "dataset.asynchronous.analysis", havingValue = "true", matchIfMissing = true)
 public class AsyncBackgroundAnalysis implements AsyncApplicationListener<DataSetImportedEvent> {

@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset.configuration;
+package org.talend.dataprep.configuration;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +20,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.talend.dataprep.configuration.AuthenticatedTaskExecutor;
-import org.talend.dataprep.dataset.event.DataSetEventsCaster;
+import org.talend.dataprep.event.DataPrepEventsCaster;
 
 /**
- * Setup the events management in dataset.
+ * Setup the events management in data prep.
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 @Configuration
-public class DataSetEvents {
+public class DataPrepEvents {
 
     @Autowired
     private BeanFactory beanFactory;
@@ -38,14 +37,14 @@ public class DataSetEvents {
      */
     // do NOT change the name as it is important to replace the default application context event multi caster
     @Bean(name = "applicationEventMulticaster")
-    public ApplicationEventMulticaster getDataSetEventsCaster() {
-        return new DataSetEventsCaster(dataSetImportTaskExecutor(), beanFactory);
+    public ApplicationEventMulticaster getDataPrepEventsCaster() {
+        return new DataPrepEventsCaster(dataPrepAsyncTaskExecutor(), beanFactory);
     }
 
     /**
      * @return an Authenticated task executor ready to run.
      */
-    private AsyncListenableTaskExecutor dataSetImportTaskExecutor() {
+    private AsyncListenableTaskExecutor dataPrepAsyncTaskExecutor() {
         final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(2);
         taskExecutor.setMaxPoolSize(10);

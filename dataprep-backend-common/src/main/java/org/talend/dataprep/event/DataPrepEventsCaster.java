@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset.event;
+package org.talend.dataprep.event;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -28,10 +28,11 @@ import org.springframework.core.task.TaskExecutor;
  *
  * It wraps both a synchronous and an asynchronous ApplicationEventMulticasters.
  */
-public class DataSetEventsCaster extends SimpleApplicationEventMulticaster {
+@SuppressWarnings("InsufficientBranchCoverage")
+public class DataPrepEventsCaster extends SimpleApplicationEventMulticaster {
 
     /** This class' logger. */
-    private static final Logger LOGGER = getLogger(DataSetEventsCaster.class);
+    private static final Logger LOGGER = getLogger(DataPrepEventsCaster.class);
 
     /**
      * Default constructor.
@@ -39,7 +40,7 @@ public class DataSetEventsCaster extends SimpleApplicationEventMulticaster {
      * @param taskExecutor the task executor for asynchronous event managing.
      * @param beanFactory the spring bean factory.
      */
-    public DataSetEventsCaster(TaskExecutor taskExecutor, BeanFactory beanFactory) {
+    public DataPrepEventsCaster(TaskExecutor taskExecutor, BeanFactory beanFactory) {
         super(beanFactory);
         setTaskExecutor(taskExecutor);
     }

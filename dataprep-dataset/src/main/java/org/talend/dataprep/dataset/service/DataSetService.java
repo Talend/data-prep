@@ -223,7 +223,7 @@ public class DataSetService extends BaseDataSetService {
             LOG.info("Done running {}", synchronousDataSetAnalyzer.getClass());
         }
 
-        // Then use JMS queue for all optional analysis
+        // perform async analysis
         if (performAsyncBackgroundAnalysis) {
             LOG.debug("starting async background analysis");
             publisher.publishEvent(new DataSetImportedEvent(id));

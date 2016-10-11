@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset.event;
+package org.talend.dataprep.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;

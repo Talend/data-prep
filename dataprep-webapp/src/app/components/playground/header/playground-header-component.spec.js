@@ -73,14 +73,6 @@ describe('Playground header component', () => {
     });
 
     describe('left header', () => {
-        it('should render insertion playground left header', () => {
-            //when
-            createElement();
-
-            //then
-            expect(element.find('.playground-header-left').eq(0)[0].hasAttribute('insertion-playground-left-header')).toBe(true);
-        });
-
         it('should dataset parameters toggle button looks inactive by default', () => {
             //given
             createElement();

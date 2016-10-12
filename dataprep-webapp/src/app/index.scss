@@ -20,6 +20,9 @@ body {
 
   $brand-primary: $blue;
   $brand-success: $green;
+
+  $navbar-margin-bottom: 0;
+
   @import "~bootstrap-tlnd-theme/src/theme/bootstrap";
 }
 
@@ -68,7 +71,6 @@ body {
 @import "components/inventory/item/_inventory-item.scss";
 @import "components/inventory/tile/_inventory-tile.scss";
 @import "components/lookup/grid/_lookup-datagrid.scss";
-@import "components/playground/header/_playground-header-left.scss";
 @import "components/playground/header/_playground-header-right.scss";
 @import "components/playground/header/_playground-header.scss";
 @import "components/preparation/breadcrumb/_preparation-breadcrumb.scss";

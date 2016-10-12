@@ -19,8 +19,19 @@ $navigation-height: 48px;
 }
 
 &-right {
-  @include display(flex);
-  @include flex-row-center();
+  @include flex-row();
+  @include align-items(center);
+  @include justify-content(flex-end);
+  margin: 0;
+
+  a {
+    color: $white;
+
+    &:hover, &:focus {
+      color: $white;
+      text-decoration: none;
+    }
+  }
 
   li.nav-link {
     @include flex-column();
@@ -29,13 +40,6 @@ $navigation-height: 48px;
     padding: 0 15px;
     height: 48px;
 
-    a {
-      color: $white;
-
-      &:hover,&:focus {
-        text-decoration: none;
-      }
-    }
     &:hover{
       background-color: darken($blue, 25);
     }

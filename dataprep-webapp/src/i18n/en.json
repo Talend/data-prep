@@ -35,6 +35,7 @@
   "REDO_ICON_TOOLTIP": "Redo",
   "ONBOARDING": "Click here to discover the application",
   "OTHER": "Other",
+  "PREVIEW": "Preview",
 
   "_comment": "Left side menu",
   "ALL_FOLDERS": "Datasets",

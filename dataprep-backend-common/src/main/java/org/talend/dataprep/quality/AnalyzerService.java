@@ -167,16 +167,7 @@ public class AnalyzerService implements DisposableBean {
             ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
         }
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
-        try {
-            final URI ddPath = AnalyzerService.class.getResource("/luceneIdx/dictionary").toURI(); //$NON-NLS-1$
-            final URI kwPath = AnalyzerService.class.getResource("/luceneIdx/keyword").toURI(); //$NON-NLS-1$
-            builder = CategoryRecognizerBuilder.newBuilder() //
-                    .ddPath(ddPath) //
-                    .kwPath(kwPath) //
-                    .lucene();
-        } catch (URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
+        builder = CategoryRecognizerBuilder.newBuilder().lucene();
     }
 
     /**

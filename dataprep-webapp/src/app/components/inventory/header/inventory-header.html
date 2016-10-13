@@ -41,15 +41,14 @@
 
     <div class="preparations-list-header"
          ng-if="$ctrl.canCreateFolder">
-        <button id="add-folder-button"
-                class="add-folder"
-                ng-click="$ctrl.openFolderModal()"
-                translate-once="CREATE_FOLDER"></button>
-
         <button id="add-preparation"
-                class="add-preparation"
+                class="btn btn-success"
                 ng-click="$ctrl.openAddPreparationModal()"
                 translate-once="ADD_PREPARATION"></button>
+        <button id="add-folder-button"
+                class="btn btn-default"
+                ng-click="$ctrl.openFolderModal()"
+                translate-once="CREATE_FOLDER"></button>
     </div>
 </div>
 
@@ -69,9 +68,9 @@
 
         <div class="modal-buttons">
             <button type="button"
-                    class="talend-modal-close btn-secondary modal-secondary-button"
+                    class="btn talend-modal-close btn-default modal-secondary-button"
                     translate-once="CANCEL"></button>
-            <button class="btn-primary modal-primary-button"
+            <button class="btn btn-primary modal-primary-button"
                     translate-once="OK"
                     ng-disabled="$ctrl.folderNameForm.$invalid"></button>
         </div>

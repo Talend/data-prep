@@ -47,7 +47,7 @@
                     ng-disabled="!lookupCtrl.state.playground.lookup.columnsToAdd.length ||
                                 !lookupCtrl.state.playground.lookup.selectedColumn ||
                                 !lookupCtrl.state.playground.grid.selectedColumns.length"
-                    class="param-primary-button btn-primary"
+                    class="btn btn-primary"
                     ng-click="lookupCtrl.submit()"
                     ng-mouseenter="lookupCtrl.hoverSubmitBtn()"
                     ng-mouseleave="lookupCtrl.cancelEarlyPreview()"
@@ -112,9 +112,9 @@
         </div>
         <div class="modal-buttons">
             <button type="button"
-                    class="talend-modal-close btn-secondary modal-secondary-button"
+                    class="btn talend-modal-close btn-default modal-secondary-button"
                     translate-once="CANCEL"></button>
-            <button class="btn-primary modal-primary-button"
+            <button class="btn btn-primary modal-primary-button"
                     translate-once="ADD_LOOKUP_DATASET"></button>
         </div>
     </form>

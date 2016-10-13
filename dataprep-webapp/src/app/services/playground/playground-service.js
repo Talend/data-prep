@@ -82,7 +82,6 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		createAppendStepClosure,
 		completeParamsAndAppend,
 		toggleStep,
-		toggleRecipe,
 
         // parameters
 		changeDatasetParameters,
@@ -689,30 +688,6 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
             StepUtilsService.getPreviousStep(state.playground.recipe, step);
 		service.loadStep(stepToLoad);
 	}
-
-    /**
-     * @ngdoc method
-     * @name toggleRecipe
-     * @methodOf data-prep.services.playground.service:PlaygroundService
-     * @description Enable/disable the recipe.
-     * When it is enabled, the last active step before disabling action is loaded
-     */
-	function toggleRecipe() {
-		const steps = state.playground.recipe.current.steps;
-		const firstStep = steps[0];
-		let stepToLoad;
-
-		if (!firstStep.inactive) {
-			service.lastToggled = StepUtilsService.getLastActiveStep(state.playground.recipe);
-			stepToLoad = firstStep;
-		}
-		else {
-			stepToLoad = service.lastToggled || steps[steps.length - 1];
-		}
-
-		service.toggleStep(stepToLoad);
-	}
-
     // --------------------------------------------------------------------------------------------
     // ---------------------------------------PARAMETERS-------------------------------------------
     // --------------------------------------------------------------------------------------------

@@ -23,8 +23,8 @@ const InventoryCopyMoveComponent = {
 	controller: InventoryCopyMoveCtrl,
 	template: `
     <div>
-        <div class="modal-title" 
-             translate-once="CHOOSE_FOLDER_DESTINATION" 
+        <div class="modal-title"
+             translate-once="CHOOSE_FOLDER_DESTINATION"
              translate-values="{type: 'item', name: item.name}"></div>
 
         <form name="$ctrl.copyMoveForm">
@@ -40,14 +40,14 @@ const InventoryCopyMoveComponent = {
             <div class="modal-buttons">
                 <button id="copy-move-cancel-btn"
                         type="button"
-                        class="talend-modal-close btn-secondary modal-secondary-button"
+                        class="btn talend-modal-close btn-default modal-secondary-button"
                         ng-disabled="$ctrl.isMoving || $ctrl.isCopying"
                         translate-once="CANCEL">
                 </button>
 
                 <talend-button-loader
                         id="copy-move-move-btn"
-                        button-class="btn-primary modal-primary-button separated-button"
+                        button-class="btn btn-primary modal-primary-button separated-button"
                         disable-condition="$ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
                         loading="$ctrl.isMoving"
                         loading-class="icon"
@@ -57,7 +57,7 @@ const InventoryCopyMoveComponent = {
 
                 <talend-button-loader
                         id="copy-move-copy-btn"
-                        button-class="btn-primary modal-primary-button"
+                        button-class="btn btn-primary modal-primary-button"
                         disable-condition="$ctrl.copyMoveForm.$invalid || $ctrl.isMoving || $ctrl.isCopying"
                         loading="$ctrl.isCopying"
                         loading-class="icon"

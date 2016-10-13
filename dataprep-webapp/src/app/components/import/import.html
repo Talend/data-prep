@@ -1,13 +1,15 @@
 <div id="help-import" ng-if="$ctrl.importTypes.length > 0">
-    <talend-button-dropdown button-icon="m"
-                            button-text="{{'IMPORT_DATASET' | translate }}"
-                            button-action="$ctrl.startDefaultImport()"
-                            close-on-select="true">
-        <ul>
-            <li ng-repeat="importType in $ctrl.importTypes track by importType.locationType" ng-click="$ctrl.startImport(importType)">
-                {{importType.label}}
-            </li>
-        </ul>
+    <talend-button-dropdown
+            button-icon="m"
+            button-text="{{'IMPORT_DATASET' | translate }}"
+            button-additional-class="btn btn-success"
+            button-action="$ctrl.startDefaultImport()"
+            close-on-select="true">
+        <div class="list-group">
+            <button  type="button" class="list-group-item" ng-repeat="importType in $ctrl.importTypes track by importType.locationType"
+                ng-click="$ctrl.startImport(importType)"> {{importType.label}}
+            </button>
+        </div>
     </talend-button-dropdown>
 </div>
 <input type="file"
@@ -31,10 +33,10 @@
             <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
 
             <div class="modal-buttons">
-                <button class="talend-modal-close btn-secondary modal-secondary-button"
+                <button class="btn talend-modal-close btn-default modal-secondary-button"
                         type="button"
                         translate-once="CANCEL"></button>
-                <button class="btn-primary modal-primary-button"
+                <button class="btn btn-primary modal-primary-button"
                         ng-disabled="$ctrl.datasetForm.$invalid"
                         translate-once="OK"></button>
             </div>
@@ -63,10 +65,10 @@
                ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
 
         <div class="modal-buttons">
-            <button class="talend-modal-close btn-secondary modal-secondary-button"
+            <button class="btn talend-modal-close btn-default modal-secondary-button"
                     type="button"
                     translate-once="CANCEL"></button>
-            <button class="talend-modal-close btn-primary modal-primary-button"
+            <button class="btn talend-modal-close btn-primary modal-primary-button"
                     ng-disabled="$ctrl.datasetNameForm.$invalid"
                     translate-once="OK"></button>
         </div>

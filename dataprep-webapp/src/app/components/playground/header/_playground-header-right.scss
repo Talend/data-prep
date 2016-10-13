@@ -66,6 +66,13 @@ $navigation-height: 48px;
     padding: 0 15px;
   }
 
+  #export-data {
+    button {
+      border-radius: 0;
+      height: 48px;
+    }
+  }
+
   #playground-lookup-icon {
     > img {
       vertical-align: middle;

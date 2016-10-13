@@ -40,16 +40,6 @@
                                       text="playgroundCtrl.state.playground.preparationName"
                                       text-class="steps-header-preparation-text"
                                       text-title="{{playgroundCtrl.state.playground.preparationName}}"></talend-editable-text>
-
-                <label class="label-switch"
-                       ng-if="playgroundCtrl.state.playground.recipe.current.steps.length"
-                       title="{{::'ENABLE_DISABLE_STEPS' | translate}}">
-                    <input type="checkbox"
-                           ng-model='playgroundCtrl.hasActiveStep'
-                           ng-change='playgroundCtrl.toggleRecipe()'/>
-
-                    <div id="recipe-toggle-switch" class="checkbox"></div>
-                </label>
             </div>
 
             <!-- Recipe -->

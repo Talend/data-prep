@@ -37,7 +37,6 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	vm.openFeedbackForm = () => StateService.showFeedback();
 	vm.toggleParameters = () => StateService.toggleDatasetParameters();
 	vm.previewInProgress = () => PreviewService.previewInProgress();
-	vm.toggleRecipe = () => PlaygroundService.toggleRecipe();
 	vm.startOnBoarding = tourId => OnboardingService.startTour(tourId);
 	vm.fetchCompatiblePreparations = datasetId => DatasetService.getCompatiblePreparations(datasetId);
 	vm.removeAllFilters = () => FilterService.removeAllFilters();

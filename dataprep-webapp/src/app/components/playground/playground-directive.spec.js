@@ -215,33 +215,6 @@ describe('Playground directive', () => {
             expect(title.length).toBe(1);
         });
 
-        it('should toggle recipe on click on the On/Off switch', inject((PlaygroundService) => {
-            //given
-            const step = {
-                inactive: false,
-                transformation: {
-                    stepId: '92771a304130e9',
-                    name: 'propercase',
-                    parameters: [],
-                    items: [],
-                    dynamic: false,
-                },
-            };
-            stateMock.playground.recipe.visible = true;
-            stateMock.playground.recipe.current.steps.push(step);
-
-            spyOn(PlaygroundService, 'toggleRecipe').and.returnValue();
-
-            createElement();
-            const chkboxOnOff = element.find('.label-switch > input[type="checkbox"]');
-
-            //when
-            chkboxOnOff.trigger('click');
-
-            //then
-            expect(PlaygroundService.toggleRecipe).toHaveBeenCalled();
-        }));
-
         it('should switch OFF the On/Off switch when the 1st step is INACTIVE', () => {
             //given
             stateMock.playground.dataset = metadata;

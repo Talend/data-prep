@@ -893,18 +893,4 @@ describe('Playground controller', () => {
             expect(PreviewService.previewInProgress).toHaveBeenCalled();
         }));
     });
-
-    describe('toggle recipe', () => {
-        it('should toggle recipe', inject((PlaygroundService) => {
-            // given
-            spyOn(PlaygroundService, 'toggleRecipe').and.returnValue();
-            const ctrl = createController();
-
-            // when
-            ctrl.toggleRecipe();
-
-            // then
-            expect(PlaygroundService.toggleRecipe).toHaveBeenCalled();
-        }));
-    });
 });

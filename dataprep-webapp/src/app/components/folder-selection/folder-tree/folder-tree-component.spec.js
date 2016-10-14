@@ -73,7 +73,7 @@ describe('Folder Tree Component', () => {
         expect(element.find('.folder-tree-node').eq(0).hasClass('folder-selected')).toBe(true);
         expect(element.find('.folder-tree-node').eq(0).text().trim()).toBe('toto'); // name
         expect(element.find('.folder-tree-node').eq(0).css('padding-left')).toBe(20 * 2 + 'px'); // level
-        expect(element.find('.folder-tree-node').eq(0).find('.caret-right').length).toBe(1); // caret
+        expect(element.find('.folder-tree-node').eq(0).find('.caret').length).toBe(1); // caret
     });
 
     describe('children', () => {

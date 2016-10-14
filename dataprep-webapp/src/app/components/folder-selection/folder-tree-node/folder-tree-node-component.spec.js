@@ -108,9 +108,7 @@ describe('Folder Tree Node Component', () => {
             createElement();
 
             //then
-            expect(element.find('.caret-down').length).toBe(0);
-            expect(element.find('.caret-right').length).toBe(0);
-            expect(element.find('.empty-caret').length).toBe(1);
+            expect(element.find('.folder-caret').hasClass('caret')).toBe(false);
         });
 
         it('should render a collapsed caret', () => {
@@ -122,9 +120,8 @@ describe('Folder Tree Node Component', () => {
             createElement();
 
             //then
-            expect(element.find('.caret-right').length).toBe(1);
-            expect(element.find('.caret-down').length).toBe(0);
-            expect(element.find('.empty-caret').length).toBe(0);
+            expect(element.find('.folder-caret').hasClass('closed')).toBe(true);
+            expect(element.find('.folder-caret').hasClass('caret')).toBe(true);
         });
 
         it('should render an opened caret', () => {
@@ -136,9 +133,8 @@ describe('Folder Tree Node Component', () => {
             createElement();
 
             //then
-            expect(element.find('.caret-right').length).toBe(0);
-            expect(element.find('.caret-down').length).toBe(1);
-            expect(element.find('.empty-caret').length).toBe(0);
+            expect(element.find('.folder-caret').hasClass('closed')).toBe(false);
+            expect(element.find('.folder-caret').hasClass('caret')).toBe(true);
         });
     });
 
@@ -180,7 +176,7 @@ describe('Folder Tree Node Component', () => {
     });
 
     describe('toggle', () => {
-        it('should trigger callback on opened caret simple click', () => {
+        it('should trigger callback on caret simple click', () => {
             //given
             scope.onToggle = jasmine.createSpy('onToggle');
             scope.hasChildren = true;
@@ -190,23 +186,7 @@ describe('Folder Tree Node Component', () => {
             expect(scope.onToggle).not.toHaveBeenCalled();
 
             //when
-            element.find('.caret-down').eq(0).click();
-
-            //then
-            expect(scope.onToggle).toHaveBeenCalled();
-        });
-
-        it('should trigger callback on closed caret simple click', () => {
-            //given
-            scope.onToggle = jasmine.createSpy('onToggle');
-            scope.hasChildren = true;
-            scope.isOpened = false;
-            createElement();
-
-            expect(scope.onToggle).not.toHaveBeenCalled();
-
-            //when
-            element.find('.caret-right').eq(0).click();
+            element.find('.caret').eq(0).click();
 
             //then
             expect(scope.onToggle).toHaveBeenCalled();

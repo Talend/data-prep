@@ -40,7 +40,6 @@
         <junit.version>4.12</junit.version>
         <elasticsearch.version>1.5.2</elasticsearch.version>
         <org.talend.daikon.version>0.6.0</org.talend.daikon.version>
-        <org.talend.dataquality.version>1.5.3</org.talend.dataquality.version>
         <org.talend.dataquality.common.version>1.5.3</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>1.5.3</org.talend.dataquality.semantic.version>
         <org.talend.dataquality.statistics.version>1.5.3</org.talend.dataquality.statistics.version>

@@ -11,6 +11,8 @@
 
   ============================================================================*/
 
+$folder-tree-node-btn-click-area:    10px !default;
+
 .folder-tree-node {
   @include display(flex);
   @include align-items(center);
@@ -21,7 +23,33 @@
     background-color: $light-gray;
   }
 
-  .caret,
+  .folder-caret {
+    position: relative;
+    margin-right: 5px;
+    width: 8px;
+    height: 8px;
+
+    &.caret {
+      border-top: 8px dashed;
+      border-right: 6px solid transparent;
+      border-left: 6px solid transparent
+    }
+
+    &.closed {
+      @include transform(rotate(-90deg));
+    }
+
+    // increase click area
+    &:before {
+      content: '';
+      position: absolute;
+      top: -$folder-tree-node-btn-click-area;
+      bottom: -$folder-tree-node-btn-click-area;
+      left: -$folder-tree-node-btn-click-area;
+      right: -$folder-tree-node-btn-click-area;
+    }
+  }
+
   .folder-icon {
     @include flex-basis(30px);
     @include flex-grow(0);
@@ -37,11 +65,5 @@
       color: grey;
       font-size: 0.75em;
     }
-  }
-
-  .caret-down:before,
-  .caret-right:before {
-    color: grey;
-    font-size: 1.2em;
   }
 }

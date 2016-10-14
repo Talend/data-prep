@@ -54,6 +54,7 @@ $list-item-handler-btn-click-area:    10px !default;
     height: $list-item-handler-btn-width;
     width: $list-item-handler-btn-width;
     border: solid $list-item-handler-color;
+    padding: 0;
 
     // Increase click area size
     &:before {

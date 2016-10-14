@@ -18,14 +18,9 @@
      ng-class="{'folder-selected': $ctrl.isSelected}"
      ng-dblclick="$ctrl.onToggle()" >
 
-    <div class="caret">
-        <span ng-if="$ctrl.hasChildren"
-              ng-switch="!!$ctrl.isOpened"
-              ng-click="$ctrl.onToggle()">
-            <i data-icon="J" ng-switch-when="true" class="caret-down"></i>
-            <i data-icon="I" ng-switch-when="false" class="caret-right"></i>
-        </span>
-        <i ng-if="! $ctrl.hasChildren" class="empty-caret"></i>
+    <div class="folder-caret"
+         ng-class="{closed: !$ctrl.isOpened, caret: $ctrl.hasChildren}"
+         ng-click="$ctrl.hasChildren && $ctrl.onToggle()">
     </div>
 
     <div class="folder-icon"

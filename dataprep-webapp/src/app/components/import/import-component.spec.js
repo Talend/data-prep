@@ -93,8 +93,6 @@ describe('Import directive', () => {
         expect(element.find('talend-button-dropdown').length).toBe(1);
 
         expect(element.find('#datasetFile').length).toBe(1);
-
-        expect(angular.element('body').find('talend-modal').length).toBe(2);
     }));
 
     it('should render import types list', inject(() => {
@@ -105,7 +103,7 @@ describe('Import directive', () => {
         scope.$digest();
 
         //then
-        expect(element.find('talend-button-dropdown li').length).toBe(1);
-        expect(element.find('talend-button-dropdown li').text().trim()).toBe('From HDFS');
+        expect(element.find('talend-button-dropdown button').length).toBe(1);
+        expect(element.find('talend-button-dropdown button').text().trim()).toBe('From HDFS');
     }));
 });

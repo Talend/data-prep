@@ -214,60 +214,6 @@ describe('Playground directive', () => {
             const title = element.find('.steps-header').eq(0).find('talend-editable-text');
             expect(title.length).toBe(1);
         });
-
-        it('should switch OFF the On/Off switch when the 1st step is INACTIVE', () => {
-            //given
-            stateMock.playground.dataset = metadata;
-            const step = {
-                inactive: false,
-                transformation: {
-                    stepId: '92771a304130e9',
-                    name: 'propercase',
-                    parameters: [],
-                    items: [],
-                    dynamic: false,
-                },
-            };
-            stateMock.playground.recipe.current.steps.push(step);
-            createElement();
-
-            const chkboxOnOff = element.find('.label-switch > input[type="checkbox"]');
-            expect(chkboxOnOff.prop('checked')).toBe(true);
-
-            //when
-            step.inactive = true;
-            scope.$digest();
-
-            //then
-            expect(chkboxOnOff.prop('checked')).toBe(false);
-        });
-
-        it('should switch ON the On/Off switch when the 1st step is ACTIVE', inject((RecipeService) => {
-            //given
-            stateMock.playground.dataset = metadata;
-            const step = {
-                inactive: true,
-                transformation: {
-                    stepId: '92771a304130e9',
-                    name: 'propercase',
-                    parameters: [],
-                    items: [],
-                    dynamic: false,
-                },
-            };
-            stateMock.playground.recipe.current.steps.push(step);
-            createElement();
-
-            const chkboxOnOff = element.find('.label-switch > input[type="checkbox"]');
-            expect(chkboxOnOff.prop('checked')).toBe(false);
-
-            //when
-            step.inactive = false;
-            scope.$digest();
-
-            //then
-            expect(chkboxOnOff.prop('checked')).toBe(true);
-        }));
     });
 
     describe('dataset parameters', () => {

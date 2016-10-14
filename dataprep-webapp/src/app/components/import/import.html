@@ -1,6 +1,5 @@
 <div id="help-import" ng-if="$ctrl.importTypes.length > 0">
     <talend-button-dropdown
-            button-icon="m"
             button-text="{{'IMPORT_DATASET' | translate }}"
             button-additional-class="btn btn-success"
             button-action="$ctrl.startDefaultImport()"
@@ -23,6 +22,7 @@
 
 <talend-modal fullscreen="false"
               state="$ctrl.showModal"
+              ng-if="$ctrl.showModal"
               close-button="true"
               disable-enter="true">
     <div ng-show="$ctrl.isFetchingParameters === false">
@@ -55,6 +55,7 @@
 <talend-modal fullscreen="false"
               close-button="true"
               state="$ctrl.datasetNameModal"
+              ng-if="$ctrl.datasetNameModal"
               disable-enter="true">
     <span translate-once="ENTER_DATASET_NAME"></span>
     <form name="$ctrl.datasetNameForm"

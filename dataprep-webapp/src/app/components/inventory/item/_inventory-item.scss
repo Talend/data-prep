@@ -128,62 +128,65 @@
         .btn {
           padding: 0;
           font-size: 1.0em;
+          color: $white;
+          &:hover {
+            background-color: $background-blue;
+          }
         }
 
-        //.button-dropdown,
-        //.button-dropdown button.button-dropdown-main,
-        //.button-dropdown button.button-dropdown-side {
-        //  border: none;
-        //  background: transparent;
-        //  padding: 0;
-        //
-        //  .button-dropdown-side {
-        //    width: 20px;
-        //  }
-        //
-        //  .button-dropdown-main-icon {
-        //    @include flex-row-center();
-        //    @include filter(none);
-        //    font-size: 1em;
-        //    padding: 0;
-        //  }
-        //
-        //  .dropdown-menu {
-        //    width: auto;
-        //
-        //    &:before {
-        //      top: -1.2em;
-        //    }
-        //
-        //    ul.inventory-actions-related-item-menu {
-        //      font-family: $sourcesanspro;
-        //      color: $black;
-        //
-        //      > li {
-        //        border: none;
-        //        font-size: 0.8em;
-        //
-        //        &:not(:first-child) {
-        //          padding-left: 15px;
-        //        }
-        //
-        //        &.divider {
-        //          border-bottom: 1px solid #e5e5e5;
-        //          padding: 0;
-        //          margin: 0;
-        //        }
-        //
-        //        .inventory-actions-related-item-name {
-        //          font-size: 1.15em;
-        //          font-weight: bold;
-        //          text-transform: uppercase;
-        //          @include ellipsis(350px);
-        //          vertical-align: bottom;
-        //        }
-        //      }
-        //    }
-        //  }
-        //}
+        .button-dropdown-main-icon, .caret {
+          color: $white;
+        }
+        .button-dropdown,
+        .button-dropdown button.button-dropdown-main,
+        .button-dropdown button.button-dropdown-side {
+          border: none;
+          background: transparent;
+          padding: 0;
+
+          .button-dropdown-side {
+            width: 20px;
+          }
+
+          .button-dropdown-main-icon {
+            @include flex-row-center();
+            @include filter(none);
+            font-size: 1em;
+            padding: 0;
+          }
+
+          .dropdown-menu {
+            min-width: 500px;
+
+            &:before {
+              top: -1.2em;
+            }
+
+            ul.inventory-actions-related-item-menu {
+              font-family: $sourcesanspro;
+              color: $black;
+
+              > li {
+                border: none;
+                font-size: 0.8em;
+                padding: 10px;
+
+                &:hover {
+                  cursor: pointer;
+                  background-color: $light-gray;
+                }
+
+                .inventory-actions-related-item-name {
+                  font-size: 1.15em;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  @include ellipsis(350px);
+                  vertical-align: bottom;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

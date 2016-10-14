@@ -22,12 +22,11 @@
         </div>
         <ul class="navbar-collapse playground-header-right">
             <li insertion-playground-left-header></li>
-            <li id="dataset-header-details" class="nav-link">
+            <li id="dataset-header-details" class="nav-link" ng-class="{pressed: $ctrl.parametersVisible}">
                 <a id="playground-gear-icon"
                    class="icon"
                    data-icon="L"
                    ng-click="$ctrl.onParameters()"
-                   ng-class="{pressed: $ctrl.parametersVisible}"
                    translate-once-title="DATAGRID_PARAMETERS_GEAR"></a>
             </li>
             <li ng-if="$ctrl.preparationPicker" class="nav-link">
@@ -37,11 +36,10 @@
                    translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
                    ng-click="$ctrl.onPreparationPicker()"></a>
             </li>
-            <li class="nav-link">
+            <li class="nav-link"  ng-class="{pressed: $ctrl.lookupVisible}">
                 <a id="playground-lookup-icon"
                    class="icon"
                    ng-click="$ctrl.onLookup()"
-                   ng-class="{pressed: $ctrl.lookupVisible}"
                    translate-once-title="LOOKUP_ICON_TOOLTIP">
                     <img ng-src="assets/images/header/lookup.png">
                 </a>

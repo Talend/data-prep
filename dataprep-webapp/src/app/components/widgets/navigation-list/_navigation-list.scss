@@ -35,16 +35,21 @@
   }
 
   .back-forth-btn {
+    @include display(flex);
+    @include align-items(center);
     @include flex-basis(50px);
     @include flex-shrink(0);
     @include flex-grow(0);
 
     text-align: center;
 
-    button {
+    div {
       padding: 0;
       margin: 0 5px;
       background-color: transparent;
+      vertical-align: middle;
+      width: 0;
+      height: 0;
 
       &.arrow-left {
         border-top: 8px solid transparent;
@@ -78,6 +83,11 @@
     @include flex-grow(1);
 
     overflow: hidden;
+
+    ul {
+      margin: 0;
+
+    }
   }
 
   .items-list {

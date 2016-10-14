@@ -26,6 +26,7 @@ $navigation-height: 48px;
 
   a {
     color: $white;
+    cursor: pointer;
 
     &:hover, &:focus {
       color: $white;
@@ -39,6 +40,10 @@ $navigation-height: 48px;
 
     padding: 0 15px;
     height: 48px;
+
+    &.pressed {
+      background-color: darken($blue, 25);
+    }
 
     &:hover{
       background-color: darken($blue, 25);
@@ -78,10 +83,6 @@ $navigation-height: 48px;
       vertical-align: middle;
       min-width: 42px;
       max-width: 42px;
-    }
-
-    &.pressed {
-      @include background(linear-gradient(#4D4D50, #6E6D71) left repeat);
     }
   }
 

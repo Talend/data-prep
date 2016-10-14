@@ -31,6 +31,7 @@ import template from './button-dropdown.html';
  * @param {string} buttonText The text to display in the main button
  * @param {string} buttonDropdownTitle The text to display in the main button
  * @param {string} buttonTitle The tooltip to display in the main button
+ * @param {string} appendToBody The dropdown is appended to the body
  * @param {function} buttonAction The callback to execute on main button click
  */
 export default function TalendButtonDropdown($window, $timeout) {
@@ -48,6 +49,7 @@ export default function TalendButtonDropdown($window, $timeout) {
             buttonDropdownTitle: '@',
             buttonAction: '&',
             closeOnSelect: '<',
+            appendToBody: '<',
         },
         bindToController: true,
         controller: () => {
@@ -65,29 +67,6 @@ export default function TalendButtonDropdown($window, $timeout) {
                             });
                     });
                 }
-
-                //TODO: QUICKFIX
-                const windowElement = angular.element($window);
-                const buttonDropdownSide = iElement.find('.button-dropdown-side');
-                const menu = iElement.find('.dropdown-menu');
-
-                function positionMenu() {
-                    if (menu.attr('display') !== 'none') {
-                        const position = buttonDropdownSide[0].getBoundingClientRect();
-                        const menuMinHeight = 100;
-                        let menuTopPosition = position.bottom;
-
-                        // when menu bottom is outside of the window, we position the menu at the top of the button
-                        if (menuTopPosition + menuMinHeight > (windowElement.height() - 50)) {
-                            menu.css('top', - menuMinHeight);
-                        } else {
-                            menu.css('top', '100%');
-                        }
-                    }
-                }
-
-                // Click : hide/show menu on left click
-                buttonDropdownSide.click(positionMenu);
             }
         },
     };

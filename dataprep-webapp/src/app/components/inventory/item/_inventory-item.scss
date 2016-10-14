@@ -10,7 +10,39 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+body {
+  > .dropdown-menu {
+    min-width: 500px;
 
+    &:before {
+      top: -1.2em;
+    }
+
+    ul.inventory-actions-related-item-menu {
+      font-family: $sourcesanspro;
+      color: $black;
+
+      > li {
+        border: none;
+        font-size: 0.8em;
+        padding: 10px;
+
+        &:hover {
+          cursor: pointer;
+          background-color: $light-gray;
+        }
+
+        .inventory-actions-related-item-name {
+          font-size: 1.15em;
+          font-weight: bold;
+          text-transform: uppercase;
+          @include ellipsis(350px);
+          vertical-align: bottom;
+        }
+      }
+    }
+  }
+}
 .inventory-list {
   @include flex-column();
   overflow: auto;
@@ -155,38 +187,6 @@
             @include filter(none);
             font-size: 1em;
             padding: 0;
-          }
-
-          .dropdown-menu {
-            min-width: 500px;
-
-            &:before {
-              top: -1.2em;
-            }
-
-            ul.inventory-actions-related-item-menu {
-              font-family: $sourcesanspro;
-              color: $black;
-
-              > li {
-                border: none;
-                font-size: 0.8em;
-                padding: 10px;
-
-                &:hover {
-                  cursor: pointer;
-                  background-color: $light-gray;
-                }
-
-                .inventory-actions-related-item-name {
-                  font-size: 1.15em;
-                  font-weight: bold;
-                  text-transform: uppercase;
-                  @include ellipsis(350px);
-                  vertical-align: bottom;
-                }
-              }
-            }
           }
         }
       }

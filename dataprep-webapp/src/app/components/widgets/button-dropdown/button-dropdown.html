@@ -13,8 +13,37 @@
   ~ ============================================================================
   -->
 
-<div class="btn-group button-dropdown"
+<div ng-if="!buttonDropdownCtrl.appendToBody"
+     class="btn-group button-dropdown"
      uib-dropdown>
+    <a class="{{::buttonDropdownCtrl.buttonAdditionalClass || 'btn btn-link'}} button-dropdown-main button-dropdown-main-container"
+       id="{{::buttonDropdownCtrl.buttonId}}"
+       title="{{::buttonDropdownCtrl.buttonTitle}}"
+       ng-click="buttonDropdownCtrl.buttonAction()">
+        <i ng-if="::buttonDropdownCtrl.buttonIcon"
+           class="button-dropdown-main-icon"
+           data-icon="{{::buttonDropdownCtrl.buttonIcon}}"></i>
+        <span ng-if="::buttonDropdownCtrl.buttonText"
+              class="button-dropdown-main-text"
+              ng-bind="buttonDropdownCtrl.buttonText"></span>
+    </a>
+    <a class="{{::buttonDropdownCtrl.buttonAdditionalClass || 'btn btn-link'}} dropdown-toggle button-dropdown-side dropdown-action dropdown-container"
+       uib-dropdown-toggle>
+        <span class="caret"></span>
+        <span class="sr-only">{{::buttonDropdownCtrl.buttonDropdownTitle}}</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-right"
+        role="menu"
+        aria-labelledby="{{buttonDropdownCtrl.buttonId}}"
+        uib-dropdown-menu>
+        <ng-transclude></ng-transclude>
+    </ul>
+</div>
+
+<div ng-if="buttonDropdownCtrl.appendToBody"
+     class="btn-group button-dropdown"
+     uib-dropdown
+     dropdown-append-to-body>
     <a class="{{::buttonDropdownCtrl.buttonAdditionalClass || 'btn btn-link'}} button-dropdown-main button-dropdown-main-container"
        id="{{::buttonDropdownCtrl.buttonId}}"
        title="{{::buttonDropdownCtrl.buttonTitle}}"

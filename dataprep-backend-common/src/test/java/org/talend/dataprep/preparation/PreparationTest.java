@@ -14,7 +14,6 @@
 package org.talend.dataprep.preparation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
@@ -70,13 +69,14 @@ public class PreparationTest {
 
     @Test
     public void rootObjects() throws Exception {
-        PreparationActions rootPreparationActions = new PreparationActions(Collections.emptyList(),
-                versionService.version().getVersionId());
-        assertThat(repository.get(rootPreparationActions.getId(), PreparationActions.class), notNullValue());
-        assertThat(repository.get("cdcd5c9a3a475f2298b5ee3f4258f8207ba10879", Step.class), nullValue());
-        assertThat(repository.get("f6e172c33bdacbc69bca9d32b2bd78174712a171", PreparationActions.class), nullValue());
-        Step rootStep = new Step(null, rootPreparationActions.id(), versionService.version().getVersionId());
+        assertThat(repository.get(rootContent.getId(), PreparationActions.class), notNullValue());
+        assertThat(repository.get(rootContent.getId(), PreparationActions.class).getId(),
+                is("cdcd5c9a3a475f2298b5ee3f4258f8207ba10879"));
+        assertThat(repository.get(rootContent.getId(), Step.class), nullValue());
+
+        assertThat(repository.get(rootStep.getId(), PreparationActions.class), nullValue());
         assertThat(repository.get(rootStep.getId(), Step.class), notNullValue());
+        assertThat(repository.get(rootStep.getId(), Step.class).getId(), is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
     }
 
     @Test

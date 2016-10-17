@@ -13,6 +13,9 @@
 
 package org.talend.dataprep.configuration;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,14 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
-import java.io.IOException;
-import java.util.Collections;
-
 /**
  * Provide instance for root/initial content with current application version.
  */
 @Configuration
 public class BaseContent {
+
+    /** Kept here for compatibility between versions. **/
+    private static final String CONSTANT_ROOT_STEP_PREPARATION_ACTIONS_ID = "cdcd5c9a3a475f2298b5ee3f4258f8207ba10879";
 
     /** The version service. */
     @Autowired
@@ -59,7 +62,10 @@ public class BaseContent {
      */
     @Bean(name = "rootContent")
     public PreparationActions initRootContent() {
-        return new PreparationActions(Collections.emptyList(), versionService.version().getVersionId());
+        PreparationActions preparationActions = new PreparationActions(Collections.emptyList(),
+                versionService.version().getVersionId());
+        preparationActions.setId(CONSTANT_ROOT_STEP_PREPARATION_ACTIONS_ID);
+        return preparationActions;
     }
 
     /**

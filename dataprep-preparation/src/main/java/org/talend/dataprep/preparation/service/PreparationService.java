@@ -861,15 +861,6 @@ public class PreparationService {
         }
     }
 
-    private List<Action> extractActionsAtStep(final Step step) {
-
-        Step parentStep = getStep(step.getParent());
-        List<Action> current = getActions(step);
-        int numberOfActionsBeforeStep = getActions(parentStep).size();
-
-        return current.subList(numberOfActionsBeforeStep, current.size());
-    }
-
     /**
      * Get the steps ids from a specific step to the head. The specific step MUST be defined as an existing step of the
      * preparation

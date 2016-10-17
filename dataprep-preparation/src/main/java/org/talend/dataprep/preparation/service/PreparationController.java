@@ -20,8 +20,6 @@ import java.util.List;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +39,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
 public class PreparationController {
-
-    private static final Logger log = LoggerFactory.getLogger(PreparationController.class);
 
     @Autowired
     private PreparationService preparationService;

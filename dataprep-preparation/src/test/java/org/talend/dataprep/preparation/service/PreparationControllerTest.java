@@ -90,7 +90,7 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .body(sameJSONAs("[{\"id\":\"#548425458\"," + "\"dataSetId\":\"1234\"," + "\"author\":null," + "\"name\":null,"
                         + "\"creationDate\":0," + "\"lastModificationDate\":12345,"
                         + "\"owner\":null,"
-                        + "\"steps\":[\"82dd02de41717cec1cd234fdbd9edb64f5fe2fc0\"]," + "\"diff\":[]," + "\"actions\":[],"
+                        + "\"steps\":[\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"]," + "\"diff\":[]," + "\"actions\":[],"
                         + "\"metadata\":[]" + "}]"));
 
         // given
@@ -116,7 +116,7 @@ public class PreparationControllerTest extends BasePreparationTest {
                                 "\"creationDate\":0," +
                                 "\"lastModificationDate\":12345," +
                                 "\"owner\":null," +
-                                "\"steps\":[\"82dd02de41717cec1cd234fdbd9edb64f5fe2fc0\"]," +
+                                "\"steps\":[\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"]," +
                                 "\"diff\":[]," +
                                 "\"actions\":[]," +
                                 "\"metadata\":[]" +
@@ -128,7 +128,7 @@ public class PreparationControllerTest extends BasePreparationTest {
                                 "\"creationDate\":500," +
                                 "\"lastModificationDate\":456789," +
                                 "\"owner\":null," +
-                                "\"steps\":[\"82dd02de41717cec1cd234fdbd9edb64f5fe2fc0\"]," +
+                                "\"steps\":[\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"]," +
                                 "\"diff\":[]," +
                                 "\"actions\":[]," +
                                 "\"metadata\":[]" +

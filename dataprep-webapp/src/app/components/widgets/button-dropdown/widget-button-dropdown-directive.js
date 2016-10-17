@@ -35,39 +35,39 @@ import template from './button-dropdown.html';
  * @param {function} buttonAction The callback to execute on main button click
  */
 export default function TalendButtonDropdown($window, $timeout) {
-    'ngInject';
-    return {
-        restrict: 'E',
-        transclude: true,
-        templateUrl: template,
-        scope: {
-            buttonId: '@id',
-            buttonAdditionalClass: '@',
-            buttonTitle: '@',
-            buttonIcon: '@',
-            buttonText: '@',
-            buttonDropdownTitle: '@',
-            buttonAction: '&',
-            closeOnSelect: '<',
-            appendToBody: '<',
-        },
-        bindToController: true,
-        controller: () => {
-        },
-        controllerAs: 'buttonDropdownCtrl',
-        link: {
-            post: (scope, iElement, attrs) => {
-                if (!attrs.buttonAction) {
-                    $timeout(function () {
-                        const action = iElement.find('.dropdown-action').eq(0);
+	'ngInject';
+	return {
+		restrict: 'E',
+		transclude: true,
+		templateUrl: template,
+		scope: {
+			buttonId: '@id',
+			buttonAdditionalClass: '@',
+			buttonTitle: '@',
+			buttonIcon: '@',
+			buttonText: '@',
+			buttonDropdownTitle: '@',
+			buttonAction: '&',
+			closeOnSelect: '<',
+			appendToBody: '<',
+		},
+		bindToController: true,
+		controller: () => {
+		},
+		controllerAs: 'buttonDropdownCtrl',
+		link: {
+			post: (scope, iElement, attrs) => {
+				if (!attrs.buttonAction) {
+					$timeout(function () {
+						const action = iElement.find('.dropdown-action').eq(0);
 
-                        iElement.find('.button-dropdown-main')
+						iElement.find('.button-dropdown-main')
                             .on('click', function () {
-                                action.click();
-                            });
-                    });
-                }
-            }
-        },
-    };
+	action.click();
+});
+					});
+				}
+			},
+		},
+	};
 }

@@ -20,6 +20,7 @@ describe('DatasetList component', () => {
     let createElement;
     let element;
     let stateMock;
+    let body = angular.element('body');
     const datasets = [
         {
             id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
@@ -83,7 +84,6 @@ describe('DatasetList component', () => {
             $compile(element)(scope);
             scope.$digest();
         };
-
         spyOn(StateService, 'setFetchingInventoryDatasets').and.returnValue();
         spyOn(DatasetService, 'init').and.returnValue($q.when());
     }));
@@ -126,12 +126,6 @@ describe('DatasetList component', () => {
         expect(strEndsWith(certificationIcon, '/assets/images/inventory/certification-certified.png')).toBe(true);
         expect(element.find('.inventory-title').eq(2).text().indexOf('Customers 2')).toBe(0);
         expect(element.find('.inventory-description').eq(2).text()).toBe('owned by anonymousUser, created ' + momentize('14370202197') + ', contains  lines');
-    }));
-
-    it('should create related preparations list', inject(() => {
-        expect(element.find('.inventory-item').eq(0).find('.inventory-actions-related-item-menu > li').length).toBe(3);
-        expect(element.find('.inventory-item').eq(1).find('.inventory-actions-related-item-menu > li').length).toBe(2);
-        expect(element.find('.inventory-item').eq(2).find('.inventory-actions-related-item-menu > li').length).toBe(0);
     }));
 
     it('should not render loading flask', inject(() => {

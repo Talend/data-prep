@@ -59,10 +59,10 @@ const MODULE_NAME = 'talend.widget';
  * @description This module contains all the reusable widgets
  */
 angular.module(MODULE_NAME, [
-    ngTranslate,
-    ngAnimate,
-    BOOTSTRAP_DROPDOWN,
-    BOOTSTRAP_MODAL,
+	ngTranslate,
+	ngAnimate,
+	BOOTSTRAP_DROPDOWN,
+	BOOTSTRAP_MODAL,
 ])
     .component('talendBadge', TalendBadge)
     .directive('resizableInput', ResizableInput)

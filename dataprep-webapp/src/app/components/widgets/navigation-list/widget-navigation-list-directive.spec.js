@@ -58,7 +58,7 @@ describe('navigationList directive', function () {
         createElement();
 
         //then
-        expect(element.find('button').length).toBe(2);
+        expect(element.find('.back-forth-btn div').length).toBe(2);
         expect(element.find('.item-label').length).toBe(3);
         expect(element.find('.item-label').eq(0).text().trim()).toBe('us-customers-500');
         expect(element.find('.item-label').eq(1).text().trim()).toBe('dates');

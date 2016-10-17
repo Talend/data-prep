@@ -47,18 +47,18 @@
 export default function TalendDropdown($window, $timeout) {
 	'ngInject';
 
-    return {
-        restrict: 'EA',
-        transclude: true,
-        template: '<ng-transclude class="dropdown"></ng-transclude>',
-        scope: {
-            closeOnSelect: '=',
-            onOpen: '&',
-            forceSide: '@',
-        },
-        bindToController: true,
-        controller: () => {
-        },
+	return {
+		restrict: 'EA',
+		transclude: true,
+		template: '<ng-transclude class="talend-dropdown"></ng-transclude>',
+		scope: {
+			closeOnSelect: '=',
+			onOpen: '&',
+			forceSide: '@',
+		},
+		bindToController: true,
+		controller: () => {
+		},
 
 		controllerAs: 'ctrl',
 		link: {

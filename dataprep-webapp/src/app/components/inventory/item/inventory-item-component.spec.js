@@ -317,10 +317,6 @@ describe('InventoryItem component', () => {
 
                 // then
                 expect(element.find('.inventory-actions-related-item').length).toBe(1);
-                const menuItems = element.find('.inventory-actions-related-item-menu > li');
-                expect(menuItems.length).toBe(3);
-                const relatedPrepsList = menuItems.eq(2).text().trim();
-                expect(relatedPrepsList.indexOf(dataset.preparations[1].name) > -1).toBeTruthy();
             });
 
             it('should display update icon', () => {
@@ -533,31 +529,6 @@ describe('InventoryItem component', () => {
 
                 // then
                 expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[0]);
-            });
-            it('should open new inventory item and not the related inventory', () => {
-                // given
-                scope.preparations = [{}, {}];
-                createElement();
-                const newPreparation = element.find('.inventory-actions-related-item-menu > li').eq(0);
-                const event = angular.element.Event('click');
-
-                // when
-                newPreparation.trigger(event);
-
-                // then
-                expect(ctrl.open).toHaveBeenCalledWith(dataset);
-            });
-            it('should open 2nd related inventory item', () => {
-                // given
-                scope.preparations = [{}, {}];
-                createElement();
-                const secRelatedInv = element.find('.inventory-actions-related-item-menu > li').eq(2);
-
-                // when
-                secRelatedInv.click();
-
-                // then
-                expect(ctrl.openRelatedInventory).toHaveBeenCalledWith(scope.preparations[1]);
             });
 
             it('should copy/clone inventory item on clone button click', () => {

@@ -94,7 +94,7 @@ describe('Playground header component', () => {
             playgroundGearIcon.click();
 
             //then
-            expect(playgroundGearIcon.hasClass('pressed')).toBe(true);
+            expect(playgroundGearIcon.parent().hasClass('pressed')).toBe(true);
         });
 
         it('should call parameters callback', () => {
@@ -132,7 +132,7 @@ describe('Playground header component', () => {
             playgroundLookupIcon.click();
 
             //then
-            expect(playgroundLookupIcon.hasClass('pressed')).toBe(true);
+            expect(playgroundLookupIcon.parent().hasClass('pressed')).toBe(true);
         });
 
         it('should call lookup callback', () => {

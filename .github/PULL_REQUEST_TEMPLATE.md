@@ -19,20 +19,12 @@ e.g. https://jira.talendforge.org/browse/TDP-XXXX
 - [ ] Build / CI related changes
 - [ ] Other... Please describe:
 
-**What is the current behavior?**
+**(Optional) What is the current behavior?**
+(Additional information to the Jira)
 
 
-
-**What is the new behavior?**
-
-
-
-**Does this PR introduce a breaking change?**
-
-- [ ] Yes
-- [ ] No
-
-If this PR contains a breaking change, please describe the impact and migration path for existing applications: ...
+**(Optional) What is the new behavior?**
+(Additional information to the Jira)
 
 
-**Other information**:
+**(Optional) Other information**:

@@ -15,8 +15,6 @@ package org.talend.dataprep.quality;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +35,6 @@ import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramStatis
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramAnalyzer;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.type.TypeUtils;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataquality.common.inference.Analyzer;
@@ -168,6 +164,20 @@ public class AnalyzerService implements DisposableBean {
         }
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
         builder = CategoryRecognizerBuilder.newBuilder().lucene();
+    }
+
+    /**
+     * Called at startup to define location where to extract DataQuality indexes.
+     *
+     * @param dataqualityIndexesLocation path location to extract indexes.
+     */
+    @Autowired
+    public void setDataQualityIndexesFolder(@Value("${dataquality.indexes.file.location}") String dataqualityIndexesLocation) {
+        try {
+            ClassPathDirectory.setLocalIndexFolder(dataqualityIndexesLocation);
+        } catch (Exception exc) {
+            LOGGER.warn("Error when setting DataQuality indexes extract folder", exc);
+        }
     }
 
     /**

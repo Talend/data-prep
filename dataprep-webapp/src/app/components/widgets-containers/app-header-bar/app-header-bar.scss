@@ -1,0 +1,12 @@
+.nav {
+	&.navbar-nav {
+		[data-icon] {
+			padding-top: 12px;
+			padding-bottom: 12px;
+
+			&:before {
+				font-size: 1.5em;
+			}
+		}
+	}
+}

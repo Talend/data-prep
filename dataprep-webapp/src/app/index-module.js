@@ -98,7 +98,7 @@ const app = angular.module(MODULE_NAME,
 			})
 			.state('reactHome', {
 				url: '/react',
-				template: '<home-common></home-common>',
+				template: '<react-home></react-home>',
 			})
 			.state('playground', {
 				url: '/playground',

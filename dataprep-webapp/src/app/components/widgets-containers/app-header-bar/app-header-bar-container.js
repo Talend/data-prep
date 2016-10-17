@@ -11,12 +11,17 @@
 
  ============================================================================*/
 
-import angular from 'angular';
-import AppBar from './AppBar.component';
+import AppHeaderBarCtrl from './app-header-bar-controller';
+import './app-header-bar.scss';
 
-const MODULE_NAME = 'data-prep.app-bar';
-
-angular.module(MODULE_NAME, ['react'])
-    .directive('appBar', ['reactDirective', reactDirective => reactDirective(AppBar)]);
-
-export default MODULE_NAME;
+const AppHeaderBarContainer = {
+	template: `
+		<pure-app-header-bar 
+		 	app="$ctrl.app"
+		 	brand-link="$ctrl.brandLink"
+		 	content="$ctrl.content"
+		/>
+	`,
+	controller: AppHeaderBarCtrl,
+};
+export default AppHeaderBarContainer;

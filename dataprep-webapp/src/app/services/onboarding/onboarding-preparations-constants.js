@@ -34,13 +34,13 @@ const preparationTour = [
 		tooltipPosition: 'right',
 	},
 	{
-		element: '#onboarding-icon > a',
+		element: '#onboarding-icon',
 		title: '<center>Guided tour</center>',
 		content: 'Click here to play this tour again.',
 		position: 'left',
 	},
 	{
-		element: '#online-help-icon > a',
+		element: '#online-help-icon',
 		title: '<center>Online Documentation</center>',
 		content: 'Click here to access the <a href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=on_boarding" target="_blank">online help</a>.',
 		position: 'left',

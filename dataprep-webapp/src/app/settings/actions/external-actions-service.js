@@ -11,27 +11,19 @@
 
  ============================================================================*/
 
-export default class SettingsActionsService {
-	constructor($rootScope, SettingsActionsHandlers) {
+export default class ExternalActionsService {
+	constructor($window) {
 		'ngInject';
-		this.$rootScope = $rootScope;
-		this.SettingsActionsHandlers = SettingsActionsHandlers;
-	}
-
-	createDispatcher(action) {
-		return (event, model) => {
-			const adaptedAction = {
-				...action,
-				payload: {
-					...action.payload,
-					...model,
-				},
-			};
-			this.$rootScope.$apply(this.dispatch(adaptedAction));
-		};
+		this.$window = $window;
 	}
 
 	dispatch(action) {
-		this.SettingsActionsHandlers.forEach(handler => handler.dispatch(action));
+		switch (action.type) {
+		case '@@external/OPEN_WINDOW': {
+			const { method, args } = action.payload;
+			this.$window[method](...args);
+			break;
+		}
+		}
 	}
 }

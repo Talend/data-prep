@@ -15,11 +15,11 @@ const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
 
 export default class AppHeaderBarCtrl {
-	constructor($element, $translate, AppSettings, SettingsActionsService) {
+	constructor($element, $translate, appSettings, SettingsActionsService) {
 		'ngInject';
 		this.$element = $element;
 		this.$translate = $translate;
-		this.AppSettings = AppSettings;
+		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
 
 		this.init();
@@ -27,14 +27,9 @@ export default class AppHeaderBarCtrl {
 
 	$postLink() {
 		this.$element[0].addEventListener('click', (e) => {
-			if (e.target.tagName === 'A') {
-				e.preventDefault();
-			}
+			// block the native click action to avoid home redirection on empty href
+			e.preventDefault();
 		});
-	}
-
-	createDispatcher(type) {
-		return this.SettingsActionsService.createDispatcher(type);
 	}
 
 	init() {
@@ -44,69 +39,73 @@ export default class AppHeaderBarCtrl {
 	}
 
 	initApp() {
-		this.app = this.AppSettings.views.appheaderbar.app;
+		this.app = this.appSettings.views.appheaderbar.app;
 	}
 
 	adaptBrandLink() {
-		const settingsBrandLink = this.AppSettings.views.appheaderbar.brandLink;
+		const settingsBrandLink = this.appSettings.views.appheaderbar.brandLink;
+		const clickAction = this.appSettings.actions[settingsBrandLink.onClick];
 		this.brandLink = {
 			...settingsBrandLink,
-			onClick: this.createDispatcher(settingsBrandLink.onClick),
+			onClick: this.SettingsActionsService.createDispatcher(clickAction),
 		};
 	}
 
 	adaptContent() {
-		const settingsContent = this.AppSettings.views.appheaderbar.content;
-		this.content = settingsContent.map(nextContent => ({
-			...nextContent,
-			navs: nextContent.navs.map(nav => this.adaptNav(nav)),
-		}));
+		const navItems = this.appSettings.views.appheaderbar.actions ?
+			this.adaptActions() :
+			[];
+		const userMenu = this.appSettings.views.appheaderbar.userMenuActions ?
+			this.adaptUserMenu() :
+			[];
+
+		this.content = [{
+			navs: [{
+				nav: { pullRight: true },
+				navItems: navItems.concat(userMenu),
+			}],
+		}];
 	}
 
-	adaptNav(nav) {
-		const adaptedNavItems = nav.navItems.map((navItem) => {
-			switch (navItem.type) {
-			case NAV_ITEM:
-				return this.adaptNavItem(navItem);
-			case DROPDOWN:
-				return this.adaptDropdown(navItem);
-			}
-			return navItem;
-		});
-
-		return {
-			...nav,
-			navItems: adaptedNavItems,
-		};
-	}
-
-	adaptNavItem(navItem) {
-		return {
-			...navItem,
-			item: {
-				...navItem.item,
-				name: this.$translate.instant(navItem.item.name),
-				onClick: this.createDispatcher(navItem.item.onClick),
-			},
-		};
-	}
-
-	adaptDropdown(navItem) {
-		return {
-			...navItem,
-			item: {
-				...navItem.item,
-				dropdown: {
-					...navItem.item.dropdown,
-					onSelect: this.createDispatcher(navItem.item.dropdown.onSelect),
+	adaptActions() {
+		return this.appSettings
+			.views
+			.appheaderbar
+			.actions
+			.map(actionName => this.appSettings.actions[actionName])
+			.map(action => ({
+				type: NAV_ITEM,
+				item: {
+					id: action.id,
+					name: this.$translate.instant(action.name),
+					icon: action.icon,
+					onClick: this.SettingsActionsService.createDispatcher(action),
 				},
-				items: navItem.item.items.map((dropItem) => {
-					return {
-						...dropItem,
-						name: this.$translate.instant(dropItem.name),
-						onClick: this.createDispatcher(dropItem.onClick),
-					};
-				}),
+			}));
+	}
+
+	adaptUserMenu() {
+		const { id, name, icon, menu } = this.appSettings
+			.views
+			.appheaderbar
+			.userMenuActions;
+
+		return {
+			type: DROPDOWN,
+			item: {
+				dropdown: {
+					id,
+					icon,
+					title: name,
+				},
+				items: menu
+					.map(actionName => this.appSettings.actions[actionName])
+					.map(action => ({
+						id: action.id,
+						icon: action.icon,
+						name: action.name,
+						onClick: this.SettingsActionsService.createDispatcher(action),
+					})),
 			},
 		};
 	}

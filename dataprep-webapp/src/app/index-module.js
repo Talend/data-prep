@@ -24,6 +24,7 @@ import SERVICES_EXPORT_MODULE from './services/export/export-module';
 import SERVICES_IMPORT_MODULE from './services/import/import-module';
 import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
+import SETTINGS_MODULE from './settings/settings-module';
 
 const MODULE_NAME = 'data-prep';
 
@@ -39,10 +40,11 @@ const app = angular.module(MODULE_NAME,
 		SERVICES_EXPORT_MODULE, // for configuration
 		SERVICES_IMPORT_MODULE, // for configuration
 		SERVICES_UTILS_MODULE, // for configuration
+		SETTINGS_MODULE, // app dynamic settings
 		APP_MODULE, // app root
 	])
 
-	// Performance config
+// Performance config
 	.config(($httpProvider) => {
 		'ngInject';
 		$httpProvider.useApplyAsync(true);
@@ -119,10 +121,15 @@ const app = angular.module(MODULE_NAME,
 window.fetchConfiguration = function fetchConfiguration() {
 	const initInjector = angular.injector(['ng']);
 	const $http = initInjector.get('$http');
+	const $q = initInjector.get('$q');
 
-	return $http.get('/assets/config/config.json')
-		.then(config => config.data)
-		.then((config) => {
+	return $q.all(
+		[
+			$http.get('/assets/config/config.json'),
+			$http.get('/assets/config/app-settings.json'),
+		])
+		.then(result => result.map(res => res.data))
+		.then(([config, appSettings]) => {
 			app
 			// Debug config
 				.config(($compileProvider) => {
@@ -135,8 +142,9 @@ window.fetchConfiguration = function fetchConfiguration() {
 					RestURLs.setServerUrl(config.serverUrl);
 				})
 				// Fetch dynamic configuration (export types, supported encodings, ...)
-				.run((ImportService, ExportService, DatasetService) => {
+				.run((SettingsService, ImportService, ExportService, DatasetService) => {
 					'ngInject';
+					SettingsService.setSettings(appSettings);
 					ImportService.initImport();
 					ExportService.refreshTypes();
 					DatasetService.refreshSupportedEncodings();

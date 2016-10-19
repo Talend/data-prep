@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import settings from '../../../../mocks/Settings.mock';
 
 describe('App header bar container', () => {
 	let scope;
@@ -30,12 +31,7 @@ describe('App header bar container', () => {
 		$translateProvider.preferredLanguage('en');
 	}));
 
-	afterEach(() => {
-		scope.$destroy();
-		element.remove();
-	});
-
-	beforeEach(inject(($rootScope, $compile) => {
+	beforeEach(inject(($rootScope, $compile, SettingsService) => {
 		scope = $rootScope.$new();
 
 		createElement = () => {
@@ -44,6 +40,14 @@ describe('App header bar container', () => {
 			$compile(element)(scope);
 			scope.$digest();
 		};
+
+		SettingsService.setSettings(settings);
+	}));
+
+	afterEach(inject((SettingsService) => {
+		SettingsService.clearSettings();
+		scope.$destroy();
+		element.remove();
 	}));
 
 	describe('render', () => {
@@ -62,9 +66,9 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const onboardingIcon = element.find('a#onboarding-icon');
-			expect(onboardingIcon.attr('data-icon')).toBe('y');
-			expect(onboardingIcon.attr('name')).toBe('OnBoarding');
+			const onboardingIcon = element.find('#onboarding\\:preparation');
+			expect(onboardingIcon.attr('name')).toBe('Click here to discover the application');
+			expect(onboardingIcon.find('>i').eq(0).hasClass('icon-student-user-2')).toBe(true);
 		});
 
 		it('should create feedback icon', () => {
@@ -72,9 +76,9 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const onboardingIcon = element.find('a#message-icon');
-			expect(onboardingIcon.attr('data-icon')).toBe('H');
-			expect(onboardingIcon.attr('name')).toBe('Feedback');
+			const onboardingIcon = element.find('#modal\\:feedback');
+			expect(onboardingIcon.attr('name')).toBe('Send feedback to Talend');
+			expect(onboardingIcon.find('>i').eq(0).hasClass('icon-bubbles-talk-1')).toBe(true);
 		});
 
 		it('should create help icon', () => {
@@ -82,9 +86,9 @@ describe('App header bar container', () => {
 			createElement();
 
 			// then
-			const onboardingIcon = element.find('a#online-help-icon');
-			expect(onboardingIcon.attr('data-icon')).toBe('l');
-			expect(onboardingIcon.attr('name')).toBe('Help');
+			const onboardingIcon = element.find('#external\\:help');
+			expect(onboardingIcon.attr('name')).toBe('Open Online Help');
+			expect(onboardingIcon.find('>i').eq(0).hasClass('icon-help')).toBe(true);
 		});
 	});
 
@@ -98,13 +102,13 @@ describe('App header bar container', () => {
 			createElement();
 
 			// when
-			const onboardingIcon = element.find('a#onboarding-icon');
+			const onboardingIcon = element.find('#onboarding\\:preparation');
 			onboardingIcon.click((e) => { e.preventDefault(); });
 			onboardingIcon[0].click();
 			
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('bar:preparation-onboarding');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@onboarding/START_TOUR');
 
 		}));
 
@@ -113,13 +117,13 @@ describe('App header bar container', () => {
 			createElement();
 
 			// when
-			const feedbackIcon = element.find('a#message-icon');
+			const feedbackIcon = element.find('#modal\\:feedback');
 			feedbackIcon.click((e) => { e.preventDefault(); });
 			feedbackIcon[0].click();
 
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('bar:feedback');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@modal/SHOW');
 		}));
 
 		it('should dispatch help icon click', inject((SettingsActionsService) => {
@@ -127,13 +131,13 @@ describe('App header bar container', () => {
 			createElement();
 
 			// when
-			const helpIcon = element.find('a#online-help-icon');
+			const helpIcon = element.find('#external\\:help');
 			helpIcon.click((e) => { e.preventDefault(); });
 			helpIcon[0].click();
 
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('bar:help');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@external/OPEN_WINDOW');
 		}));
 	});
 });

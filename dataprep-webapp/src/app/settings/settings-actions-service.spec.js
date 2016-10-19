@@ -16,13 +16,14 @@ import angular from 'angular';
 describe('Settings actions service', () => {
 	beforeEach(angular.mock.module('app.settings'));
 
-	beforeEach(inject((AppHeaderActionsService, MenuActionsService) => {
-		spyOn(AppHeaderActionsService, 'dispatch').and.returnValue();
-		spyOn(MenuActionsService, 'dispatch').and.returnValue();
+	beforeEach(inject((SettingsActionsHandlers) => {
+		SettingsActionsHandlers.forEach((handler) => {
+			spyOn(handler, 'dispatch').and.returnValue();
+		});
 	}));
 
 	describe('dispatch', () => {
-		it('should dispatch to all action handlers', inject((SettingsActionsService, AppHeaderActionsService, MenuActionsService) => {
+		it('should dispatch to all action handlers', inject((SettingsActionsService, SettingsActionsHandlers) => {
 			// given
 			const action = { type: 'menu:preparation' };
 
@@ -30,35 +31,44 @@ describe('Settings actions service', () => {
 			SettingsActionsService.dispatch(action);
 
 			// then
-			expect(AppHeaderActionsService.dispatch).toHaveBeenCalledWith(action);
-			expect(MenuActionsService.dispatch).toHaveBeenCalledWith(action);
+			SettingsActionsHandlers.forEach((handler) => {
+				expect(handler.dispatch).toHaveBeenCalledWith(action);
+			});
 		}));
 	});
-	
+
 	describe('createDispatcher', () => {
-		it('should create a function that dispatch', inject((SettingsActionsService, AppHeaderActionsService, MenuActionsService) => {
+		it('should create a function that dispatch', inject((SettingsActionsService, SettingsActionsHandlers) => {
 			// given
-			const type = 'menu:preparation';
-			const dispatcher = SettingsActionsService.createDispatcher(type);
+			const action = {
+				type: 'menu:preparation',
+				payload: {
+					arg0: 'titi',
+					arg1: 'default toto',
+				}
+			};
+			const dispatcher = SettingsActionsService.createDispatcher(action);
 			const payload = {
 				arg1: 'toto',
 				arg2: 'tata',
 			};
-			
+
 			const expectedPayload = {
 				type: 'menu:preparation',
 				payload: {
+					arg0: 'titi',
 					arg1: 'toto',
 					arg2: 'tata',
 				},
 			};
 
 			// when
-			dispatcher(payload);
+			dispatcher(null, payload);
 
 			// then
-			expect(AppHeaderActionsService.dispatch).toHaveBeenCalledWith(expectedPayload);
-			expect(MenuActionsService.dispatch).toHaveBeenCalledWith(expectedPayload);
+			SettingsActionsHandlers.forEach((handler) => {
+				expect(handler.dispatch).toHaveBeenCalledWith(expectedPayload);
+			});
 		}));
 	});
 });

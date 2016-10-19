@@ -13,26 +13,26 @@
 
 import angular from 'angular';
 
-describe('Menu actions service', () => {
+describe('External actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions'));
 
 	describe('dispatch', () => {
-		it('should change route', inject(($state, MenuActionsService) => {
+		it('should open window', inject(($window, ExternalActionsService) => {
 			// given
 			const action = { 
-				type: '@@router/GO',
+				type: '@@external/OPEN_WINDOW',
 				payload: {
-					method: 'go',
-					args: ['nav.index.preparations']
+					method: 'open',
+					args: ['http://www.google.fr']
 				}
 			};
-			spyOn($state, 'go').and.returnValue();
-
+			spyOn($window, 'open').and.returnValue();
+			
 			// when
-			MenuActionsService.dispatch(action);
-
+			ExternalActionsService.dispatch(action);
+			
 			// then
-			expect($state.go).toHaveBeenCalledWith('nav.index.preparations');
+			expect($window.open).toHaveBeenCalledWith('http://www.google.fr');
 		}));
 	});
 });

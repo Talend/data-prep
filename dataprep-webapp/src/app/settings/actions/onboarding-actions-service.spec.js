@@ -13,26 +13,28 @@
 
 import angular from 'angular';
 
-describe('Menu actions service', () => {
+describe('Onboarding actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions'));
 
 	describe('dispatch', () => {
-		it('should change route', inject(($state, MenuActionsService) => {
+		it('should trigger onboarding', inject((OnboardingService, OnboardingActionsService) => {
 			// given
-			const action = { 
-				type: '@@router/GO',
+			const action = {
+				type: '@@onboarding/START_TOUR',
 				payload: {
-					method: 'go',
-					args: ['nav.index.preparations']
+					method: 'startTour',
+					args: [
+						'preparation',
+					],
 				}
 			};
-			spyOn($state, 'go').and.returnValue();
+			spyOn(OnboardingService, 'startTour').and.returnValue();
 
 			// when
-			MenuActionsService.dispatch(action);
+			OnboardingActionsService.dispatch(action);
 
 			// then
-			expect($state.go).toHaveBeenCalledWith('nav.index.preparations');
+			expect(OnboardingService.startTour).toHaveBeenCalledWith('preparation');
 		}));
 	});
 });

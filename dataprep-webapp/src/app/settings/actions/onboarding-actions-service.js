@@ -11,27 +11,19 @@
 
  ============================================================================*/
 
-export default class SettingsActionsService {
-	constructor($rootScope, SettingsActionsHandlers) {
+export default class OnboardingActionsService {
+	constructor(OnboardingService) {
 		'ngInject';
-		this.$rootScope = $rootScope;
-		this.SettingsActionsHandlers = SettingsActionsHandlers;
-	}
-
-	createDispatcher(action) {
-		return (event, model) => {
-			const adaptedAction = {
-				...action,
-				payload: {
-					...action.payload,
-					...model,
-				},
-			};
-			this.$rootScope.$apply(this.dispatch(adaptedAction));
-		};
+		this.OnboardingService = OnboardingService;
 	}
 
 	dispatch(action) {
-		this.SettingsActionsHandlers.forEach(handler => handler.dispatch(action));
+		switch (action.type) {
+		case '@@onboarding/START_TOUR': {
+			const { method, args } = action.payload;
+			this.OnboardingService[method](...args);
+			break;
+		}
+		}
 	}
 }

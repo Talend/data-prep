@@ -13,26 +13,25 @@
 
 import angular from 'angular';
 
-describe('Menu actions service', () => {
+describe('Modal actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions'));
 
 	describe('dispatch', () => {
-		it('should change route', inject(($state, MenuActionsService) => {
+		it('should trigger state', inject((StateService, ModalActionsService) => {
 			// given
 			const action = { 
-				type: '@@router/GO',
+				type: '@@modal/SHOW',
 				payload: {
-					method: 'go',
-					args: ['nav.index.preparations']
+					method: 'showFeedback',
 				}
 			};
-			spyOn($state, 'go').and.returnValue();
-
+			spyOn(StateService, 'showFeedback').and.returnValue();
+			
 			// when
-			MenuActionsService.dispatch(action);
-
+			ModalActionsService.dispatch(action);
+			
 			// then
-			expect($state.go).toHaveBeenCalledWith('nav.index.preparations');
+			expect(StateService.showFeedback).toHaveBeenCalled();
 		}));
 	});
 });

@@ -1,9 +1,11 @@
-.nav {
-	&.navbar-nav {
-		[data-icon] {
+.nav.navbar-nav {
+	li[role="presentation"] {
+		a[role="button"] {
 			padding-top: 12px;
 			padding-bottom: 12px;
+		}
 
+		i[class^="icon-"] {
 			&:before {
 				font-size: 1.5em;
 			}

@@ -15,8 +15,10 @@ import angular from 'angular';
 import SERVICES_ONBOARDING_MODULE from '../../services/onboarding/onboarding-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
 
-import AppHeaderActionsService from './app-header-actions-service';
+import ExternalActionsService from './external-actions-service';
 import MenuActionsService from './menu-actions-service';
+import ModalActionsService from './modal-actions-service';
+import OnboardingActionsService from './onboarding-actions-service';
 
 const MODULE_NAME = 'app.settings.actions';
 
@@ -25,13 +27,21 @@ angular.module(MODULE_NAME,
 		SERVICES_ONBOARDING_MODULE,
 		SERVICES_STATE_MODULE,
 	])
-	.service('AppHeaderActionsService', AppHeaderActionsService)
+	.service('ExternalActionsService', ExternalActionsService)
 	.service('MenuActionsService', MenuActionsService)
-	.factory('SettingsActionsHandlers', function (AppHeaderActionsService, MenuActionsService) {
+	.service('ModalActionsService', ModalActionsService)
+	.service('OnboardingActionsService', OnboardingActionsService)
+	.factory('SettingsActionsHandlers', function (
+		ExternalActionsService,
+		MenuActionsService,
+		ModalActionsService,
+		OnboardingActionsService) {
 		'ngInject';
 		return [
-			AppHeaderActionsService,
+			ExternalActionsService,
 			MenuActionsService,
+			ModalActionsService,
+			OnboardingActionsService,
 		];
 	});
 

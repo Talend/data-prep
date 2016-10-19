@@ -11,27 +11,17 @@
 
  ============================================================================*/
 
-export default class SettingsActionsService {
-	constructor($rootScope, SettingsActionsHandlers) {
+export default class ModalActionsService {
+	constructor(StateService) {
 		'ngInject';
-		this.$rootScope = $rootScope;
-		this.SettingsActionsHandlers = SettingsActionsHandlers;
-	}
-
-	createDispatcher(action) {
-		return (event, model) => {
-			const adaptedAction = {
-				...action,
-				payload: {
-					...action.payload,
-					...model,
-				},
-			};
-			this.$rootScope.$apply(this.dispatch(adaptedAction));
-		};
+		this.StateService = StateService;
 	}
 
 	dispatch(action) {
-		this.SettingsActionsHandlers.forEach(handler => handler.dispatch(action));
+		switch (action.type) {
+		case '@@modal/SHOW':
+			this.StateService[action.payload.method]();
+			break;
+		}
 	}
 }

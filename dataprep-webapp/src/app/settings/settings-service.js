@@ -11,19 +11,30 @@
 
  ============================================================================*/
 
-export default class MenuActionsService {
-	constructor($state) {
+export const appSettings = {
+	actions: [],
+	views: [],
+};
+
+export class SettingsService {
+	constructor($http) {
 		'ngInject';
-		this.$state = $state;
+		this.$http = $http;
 	}
 
-	dispatch(action) {
-		switch (action.type) {
-		case '@@router/GO': {
-			const { method, args } = action.payload;
-			this.$state[method](...args);
-			break;
-		}
-		}
+	refreshSettings() {
+		return this.$http.get('/assets/config/app-settings.json')
+			.then(settings => settings.data)
+			.then((settings => this.setSettings(settings)));
+	}
+
+	setSettings(settings) {
+		this.clearSettings();
+		Object.assign(appSettings, settings);
+	}
+
+	clearSettings() {
+		appSettings.views = [];
+		appSettings.actions = [];
 	}
 }

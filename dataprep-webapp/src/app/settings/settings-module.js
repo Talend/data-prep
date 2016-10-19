@@ -14,13 +14,14 @@
 import angular from 'angular';
 import SETTINGS_ACTIONS_MODULE from './actions/settings-actions-module';
 
+import { appSettings, SettingsService } from './settings-service';
 import SettingsActionsService from './settings-actions-service';
-import settings from './settings';
 
 const MODULE_NAME = 'app.settings';
 
 angular.module(MODULE_NAME, [SETTINGS_ACTIONS_MODULE])
-	.value('AppSettings', settings)
-	.service('SettingsActionsService', SettingsActionsService);
+	.service('SettingsActionsService', SettingsActionsService)
+	.service('SettingsService', SettingsService)
+	.constant('appSettings', appSettings);
 
 export default MODULE_NAME;

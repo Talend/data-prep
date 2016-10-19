@@ -19,7 +19,6 @@ body {
     }
 
     ul.inventory-actions-related-item-menu {
-      font-family: $sourcesanspro;
       color: $black;
 
       > li {
@@ -163,7 +162,8 @@ body {
           padding: 0;
           font-size: 1.0em;
           color: $white;
-          &:hover {
+
+          &:hover, &:focus {
             background-color: $background-blue;
           }
         }
@@ -192,7 +192,6 @@ body {
       }
     }
   }
-
 
   .inventory-icon {
     @include display(flex);

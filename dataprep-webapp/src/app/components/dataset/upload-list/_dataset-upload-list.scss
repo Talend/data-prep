@@ -12,6 +12,10 @@
   ============================================================================*/
 
 .dataset-upload-list {
+  .progress-bar {
+    width: 100%;
+  }
+
   .inventory-text {
     @include flex-grow(1);
   }

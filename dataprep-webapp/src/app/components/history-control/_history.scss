@@ -24,7 +24,8 @@
       pointer-events: none; 
       cursor: default;
     }
-    &:hover,&:focus {
+
+    &:hover, &:focus, &:active {
       color: $white;
       text-decoration: none;
     }

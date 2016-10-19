@@ -73,24 +73,26 @@ describe('Dataset Sheet Preview Service', function () {
             DatasetSheetPreviewService.grid = slickGridMock;
         }));
 
-        it('should reset grid content', inject(function (DatasetSheetPreviewService) {
+        it('should reset grid content', inject(function ($timeout, DatasetSheetPreviewService) {
             //given
             var metadata = { id: '74a856ef486b', name: 'my dataset' };
 
             //when
             DatasetSheetPreviewService.loadPreview(metadata);
+            $timeout.flush();
 
             //then
             expect(slickGridMock.setColumns).toHaveBeenCalledWith([]);
             expect(slickGridMock.setData).toHaveBeenCalledWith([]);
         }));
 
-        it('should set current metadata', inject(function (DatasetSheetPreviewService) {
+        it('should set current metadata', inject(function ($timeout, DatasetSheetPreviewService) {
             //given
             var metadata = { id: '74a856ef486b', name: 'my dataset' };
 
             //when
             DatasetSheetPreviewService.loadPreview(metadata);
+            $timeout.flush();
 
             //then
             expect(slickGridMock.setColumns).toHaveBeenCalledWith([]);
@@ -121,18 +123,19 @@ describe('Dataset Sheet Preview Service', function () {
             expect(DatasetSheetPreviewService.currentMetadata).toBeFalsy();
         }));
 
-        it('should set addPreparation', inject(function (DatasetSheetPreviewService) {
+        it('should set addPreparation', inject(function ($timeout, DatasetSheetPreviewService) {
             //given
             var metadata = { id: '74a856ef486b', name: 'my dataset' };
 
             //when
             DatasetSheetPreviewService.loadPreview(metadata, true);
+            $timeout.flush();
 
             //then
             expect(DatasetSheetPreviewService.addPreparation).toBeTruthy();
         }));
 
-        it('should call sheet preview service and set selected sheet name', inject(function ($rootScope, DatasetSheetPreviewService) {
+        it('should call sheet preview service and set selected sheet name', inject(function ($timeout, $rootScope, DatasetSheetPreviewService) {
             //given
             var metadata = { id: '74a856ef486b', name: 'my dataset' };
             var expectedSheetName = previewResponse.metadata.sheetName;
@@ -140,12 +143,13 @@ describe('Dataset Sheet Preview Service', function () {
             //when
             DatasetSheetPreviewService.loadPreview(metadata);
             $rootScope.$digest();
+            $timeout.flush();
 
             //then
             expect(DatasetSheetPreviewService.selectedSheetName).toBe(expectedSheetName);
         }));
 
-        it('should call sheet preview service and set current metadata', inject(function ($rootScope, DatasetSheetPreviewService) {
+        it('should call sheet preview service and set current metadata', inject(function ($timeout, $rootScope, DatasetSheetPreviewService) {
             //given
             var metadata = { id: '74a856ef486b', name: 'my dataset' };
             var expectedMetadata = previewResponse.metadata;
@@ -153,12 +157,13 @@ describe('Dataset Sheet Preview Service', function () {
             //when
             DatasetSheetPreviewService.loadPreview(metadata);
             $rootScope.$digest();
+            $timeout.flush();
 
             //then
             expect(DatasetSheetPreviewService.currentMetadata).toBe(expectedMetadata);
         }));
 
-        it('should call sheet preview service and update grid', inject(function ($rootScope, DatasetService, DatasetSheetPreviewService) {
+        it('should call sheet preview service and update grid', inject(function ($timeout, $rootScope, DatasetService, DatasetSheetPreviewService) {
             //given
             var metadata = { id: '74a856ef486b', name: 'my dataset' };
             var expectedData = previewResponse.records;
@@ -166,6 +171,7 @@ describe('Dataset Sheet Preview Service', function () {
             //when
             DatasetSheetPreviewService.loadPreview(metadata);
             $rootScope.$digest();
+            $timeout.flush();
 
             //then
             expect(DatasetService.getSheetPreview).toHaveBeenCalledWith(metadata);

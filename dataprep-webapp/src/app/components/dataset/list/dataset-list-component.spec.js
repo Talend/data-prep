@@ -20,7 +20,6 @@ describe('DatasetList component', () => {
     let createElement;
     let element;
     let stateMock;
-    let body = angular.element('body');
     const datasets = [
         {
             id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',

@@ -1565,6 +1565,34 @@ describe('Playground Service', () => {
                 expect(PlaygroundService.appendStep).toHaveBeenCalledWith(actions);
             }));
         });
+
+        describe('toggle step', () => {
+            beforeEach(inject((PlaygroundService) => {
+                spyOn(PlaygroundService, 'loadStep').and.returnValue();
+            }));
+
+            it('should load current step content if the step is first inactive', inject((PlaygroundService) => {
+                // given
+                const step = { inactive: true, column: { id: '0001' } };
+
+                // when
+                PlaygroundService.toggleStep(step);
+
+                // then
+                expect(PlaygroundService.loadStep).toHaveBeenCalledWith(step);
+            }));
+
+            it('should load previous step content if the step is first active', inject((PlaygroundService) => {
+                // given
+                const step = { inactive: false, column: { id: '0001' } };
+
+                // when
+                PlaygroundService.toggleStep(step);
+
+                // then
+                expect(PlaygroundService.loadStep).toHaveBeenCalledWith(previousStep);
+            }));
+        });
     });
 
     describe('preparation name edition mode', () => {

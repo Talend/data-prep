@@ -16,7 +16,7 @@
  * @name data-prep.services.dataset.service:DatasetSheetPreviewService
  * @description Dataset sheet preview service
  */
-export default function DatasetSheetPreviewService(DatasetService) {
+export default function DatasetSheetPreviewService(DatasetService, $timeout) {
 	'ngInject';
 
 	const self = this;
@@ -107,8 +107,8 @@ export default function DatasetSheetPreviewService(DatasetService) {
 			return {
 				id: col.id,
 				name: '<div class="grid-header">' +
-                    '<div class="grid-header-title dropdown-button ng-binding">' + col.name + '</div>' +
-                    '</div>',
+                '<div class="grid-header-title dropdown-button ng-binding">' + col.name + '</div>' +
+                '</div>',
 				field: col.id,
 				minWidth: 100,
 			};
@@ -139,7 +139,9 @@ export default function DatasetSheetPreviewService(DatasetService) {
             .then(function (response) {
 	self.currentMetadata = response.metadata;
 	self.selectedSheetName = response.metadata.sheetName;
-	setGridData(response);
+	$timeout(() => {
+		setGridData(response);
+	});
 });
 	};
 

@@ -1,3 +1,15 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
 $navigation-height: 48px;
 
 @include keyframes(fadeIn) {
@@ -25,108 +37,110 @@ $navigation-height: 48px;
   margin: 0;
 
   a {
-    color: $white;
-    cursor: pointer;
+    height: $navigation-height;
+    width: 20px;
+    padding: 14px 0;
 
-    &:hover, &:focus {
-      color: $white;
-      text-decoration: none;
+    svg {
+      height: 20px;
+      width: 20px;
+      shape-rendering: auto;
+      fill: $white;
     }
   }
 
-  li.nav-link {
-    @include flex-column();
-    @include justify-content(center);
+  li {
+    &.nav-link {
+      @include flex-column();
+      @include justify-content(center);
 
-    padding: 0 15px;
-    height: 48px;
+      cursor: pointer;
+      padding: 0 15px;
+      height: $navigation-height;
 
-    &.pressed {
-      background-color: darken($blue, 25);
-    }
+      &.inactive {
+        cursor: default;
 
-    &:hover{
-      background-color: darken($blue, 25);
+        svg {
+          fill: darken($white, 25%);
+        }
+      }
+
+      &.pressed {
+        background-color: darken($blue, 25);
+      }
+
+      &:hover {
+        background-color: darken($blue, 25);
+      }
     }
   }
 
-  .playground-help-menu{
+  .playground-help-menu {
     @include display(flex);
     @include flex-row-center();
   }
 
-  .history-control > li {
-    @include flex-column();
-    @include justify-content(center);
+  #documentation-search-container {
+    .inner-addon {
+      height: $navigation-height;
+      cursor: pointer;
 
-    padding: 0 15px;
-    height: 48px;
+      &:hover {
+        background-color: darken($blue, 25);
+      }
 
-    &:hover {
-      background-color: darken($blue, 25);
+      .searchInputIcon {
+        padding: 0 15px;
+      }
+
+      .searchInput {
+        padding: 0 15px 0 45px;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
+        width: 250px;
+        opacity: 1;
+      }
+
+      .searchInput.ng-hide {
+        width: 0;
+        opacity: 0;
+      }
     }
-  }
 
-  #export-data, #documentation-search-container {
-    padding: 0 15px;
+    .typeahead-result {
+      width: 500px;
+
+      a {
+        &:hover, &:focus {
+          text-decoration: none;
+        }
+      }
+
+      &.ng-enter {
+        @include animation(fadeIn 0.25s ease-in, slide 0.25s ease);
+      }
+    }
   }
 
   #export-data {
+    padding: 0 15px;
+
+    a {
+      height: auto;
+      width: auto;
+
+      &:hover, &:focus {
+        text-decoration: none;
+      }
+    }
+
     button {
       border-radius: 0;
-      height: 48px;
-      text-transform: uppercase;
-    }
-  }
-
-  #playground-lookup-icon {
-    > img {
-      vertical-align: middle;
-      min-width: 42px;
-      max-width: 42px;
-    }
-  }
-
-  #search-documentation {
-    typeahead {
-      .typeahead-result {
-        width: 500px;
-
-        &.ng-enter {
-          @include animation(fadeIn 0.25s ease-in, slide 0.25s ease);
-        }
-      }
-    }
-  }
-
-  #playground-close-container {
-    padding: 0;
-
-    #playground-close {
-      width: $navigation-height;
       height: $navigation-height;
-      cursor: pointer;
-      position: relative;
-      margin: 0;
-
-      &:after,
-      &:before {
-        @include position(absolute, $navigation-height/4 0 0 $navigation-height/2-2px);
-        @include transform(rotate(45deg));
-        @include size(0.15em 1.5em);
-        background: $light-gray;
-        content: '';
-        display: block;
-      }
-
-      &:hover:after,
-      &:hover:before {
-        background: darken($light-gray, 10%);
-      }
-
-      &:before {
-        @include transform(rotate(-45deg));
-      }
+      text-transform: uppercase;
     }
   }
 }

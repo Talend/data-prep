@@ -13,21 +13,4 @@
 
 .history-control {
   @include display(flex);
-  @include filter(drop-shadow(0px 1px 1px #1f2024));
-
-  a {
-    color: $white;
-    font-size: 0.9em;
-
-    &.inactive {
-      color: $medium-gray;
-      pointer-events: none; 
-      cursor: default;
-    }
-
-    &:hover, &:focus, &:active {
-      color: $white;
-      text-decoration: none;
-    }
-  }
 }

@@ -20,28 +20,36 @@
                 <span translate-once="DATA_PREPARATION"></span>
             </a>
         </div>
-        <ul class="navbar-collapse playground-header-right">
+        <ul class="playground-header-right">
             <li insertion-playground-left-header></li>
-            <li id="dataset-header-details" class="nav-link" ng-class="{pressed: $ctrl.parametersVisible}">
+            <li id="documentation-search-container">
+                <documentation-search></documentation-search>
+            </li>
+            <li id="dataset-header-details"
+                class="nav-link"
+                ng-class="{pressed: $ctrl.parametersVisible}"
+                ng-click="$ctrl.onParameters()">
                 <a id="playground-gear-icon"
-                   class="icon"
-                   data-icon="L"
-                   ng-click="$ctrl.onParameters()"
-                   translate-once-title="DATAGRID_PARAMETERS_GEAR"></a>
+                   translate-once-title="DATAGRID_PARAMETERS_GEAR"
+                   ng-include="'assets/images/header/edit.svg'">
+                </a>
             </li>
-            <li ng-if="$ctrl.preparationPicker" class="nav-link">
+            <li ng-if="$ctrl.preparationPicker"
+                id="apply-preparation-container"
+                class="nav-link"
+                ng-click="$ctrl.onPreparationPicker()">
                 <a id="playground-preparation-picker-icon"
-                   class="icon"
-                   data-icon="c"
                    translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
-                   ng-click="$ctrl.onPreparationPicker()"></a>
+                   ng-include="'assets/images/header/dataprep.svg'">
+                </a>
             </li>
-            <li class="nav-link"  ng-class="{pressed: $ctrl.lookupVisible}">
+            <li id="lookup-container"
+                class="nav-link"
+                ng-class="{pressed: $ctrl.lookupVisible}"
+                ng-click="$ctrl.onLookup()">
                 <a id="playground-lookup-icon"
-                   class="icon"
-                   ng-click="$ctrl.onLookup()"
-                   translate-once-title="LOOKUP_ICON_TOOLTIP">
-                    <img ng-src="assets/images/header/lookup.png">
+                   translate-once-title="LOOKUP_ICON_TOOLTIP"
+                   ng-include="'assets/images/header/lookup.svg'">
                 </a>
             </li>
             <li id="export-data"
@@ -51,47 +59,46 @@
             </li>
             <li class="playground-help">
                 <ul class="playground-help-menu">
-                    <li class="nav-link">
-                        <a id="playground-onboarding-icon"
-                           class="icon"
-                           data-icon="y"
-                           translate-once-title="ONBOARDING"
-                           ng-click="$ctrl.onOnboarding()"></a>
+                    <li id="playground-onboarding-icon"
+                        class="nav-link"
+                        ng-click="$ctrl.onOnboarding()">
+                        <a translate-once-title="ONBOARDING"
+                           ng-include="'assets/images/header/board.svg'">
+                        </a>
                     </li>
-                    <li ng-if="$ctrl.feedbackVisible"
+                    <li id="playground-feedback-icon"
+                        ng-if="$ctrl.feedbackVisible"
+                        class="nav-link"
+                        ng-click="$ctrl.onFeedback()">
+                        <a translate-once-title="FEEDBACK_TOOLTIP"
+                           ng-include="'assets/images/header/bubble.svg'">
+                        </a>
+                    </li>
+                    <li id="playground-online-help-icon"
                         class="nav-link">
-                        <a id="playground-feedback-icon"
-                           class="icon"
-                           data-icon="H"
-                           translate-once-title="FEEDBACK_TOOLTIP"
-                           ng-click="$ctrl.onFeedback()"></a>
-                    </li>
-                    <li class="nav-link">
-                        <a id="playground-online-help-icon"
-                           class="icon"
-                           data-icon="l"
-                           translate-once-title="ONLINE_HELP_TOOLTIP"
+                        <a translate-once-title="ONLINE_HELP_TOOLTIP"
                            href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
-                           target="_blank">
+                           target="_blank"
+                           ng-include="'assets/images/header/info.svg'">
                         </a>
                     </li>
                 </ul>
             </li>
-            <li id="documentation-search-container">
-                <documentation-search></documentation-search>
-            </li>
             <li id="help-history">
                 <history-control></history-control>
             </li>
-            <li id="playground-close-container" class="nav-link">
-                <a id="playground-close"
-                   translate-once-title="CLOSE_ICON_TOOLTIP"
-                   ng-click="$ctrl.onClose()"></a>
+            <li id="playground-close-container"
+                class="nav-link"
+                ng-click="$ctrl.onClose()">
+                <a translate-once-title="CLOSE_ICON_TOOLTIP"
+                   ng-include="'assets/images/header/close_big.svg'">
+                </a>
             </li>
         </ul>
-        <ul class="preview" ng-if="$ctrl.preview">
+        <ul id="preview-container" class="preview" ng-if="$ctrl.preview">
             <li>
-                <img ng-src="assets/images/header/eye.svg" alt="" height="24px"/> <span translate-once="PREVIEW"></span>
+                <span ng-include="'assets/images/header/visible.svg'"></span>
+                <span translate-once="PREVIEW"></span>
             </li>
         </ul>
     </nav>

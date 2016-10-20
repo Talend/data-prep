@@ -55,8 +55,16 @@ header.navigation {
     padding-left: $navigation-padding;
     padding-right: 2em;
     height: $navigation-height;
+
+    .logo {
+      float: left;
+      background: url('/assets/images/talend_logo.png') no-repeat;
+      background-size: contain;
+      width: 130px;
+      height: $navigation-height - 10;
+    }
   }
-  
+
 
   // Mobile view
 
@@ -104,9 +112,56 @@ header.navigation {
     }
 
     @include media ($horizontal-bar-mode) {
-      display: inline-block;
+      @include display(flex);
       margin: 0;
       padding: 0;
+    }
+
+    .icon {
+      @include display(flex);
+
+      padding: 0 15px;
+      cursor: pointer;
+
+      svg {
+        height: 20px;
+        width: 20px;
+        shape-rendering: auto;
+        fill: $white;
+      }
+    }
+
+    #search-inventory-list {
+      .inner-addon {
+        @include display(flex);
+        @include align-items(center);
+
+        height: 55px;
+        cursor: pointer;
+
+        .searchInputIcon {
+          padding: 0 15px;
+        }
+
+        .searchInput {
+          padding: 0 15px 0 45px;
+          border: none;
+          border-radius: 0;
+          box-shadow: none;
+          transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
+          width: 500px;
+          opacity: 1;
+        }
+
+        .searchInput.ng-hide {
+          width: 0;
+          opacity: 0;
+        }
+      }
+
+      .typeahead-result {
+        text-align: left;
+      }
     }
   }
 
@@ -117,20 +172,21 @@ header.navigation {
     display: block;
     line-height: $navigation-height;
     overflow: hidden;
-    padding: 0 12px;
     text-align: right;
     width: 100%;
 
     @include media ($horizontal-bar-mode) {
+      @include display(flex);
+      @include align-items(center);
+
       background: transparent;
-      display: inline;
       line-height: $navigation-height;
       text-decoration: none;
       width: auto;
     }
 
     a {
-      color: $navigation-color;
+      color: $white;
       display: inline-block;
       vertical-align: middle;
       font-weight: 400;
@@ -158,7 +214,7 @@ header.navigation {
 
     a {
       font-size: 0.9em;
-      
+
       &:hover {
         background-color: $navigation-submenu-background-hover;
       }
@@ -256,7 +312,7 @@ header.navigation {
           width: $navigation-submenu-width;
         }
       }
-      
+
       &.divider {
         height: 0;
         margin: 0;
@@ -267,52 +323,6 @@ header.navigation {
           overflow: hidden;
           background-color: #e5e5e5;
         }
-      }
-    }
-  }
-
-  .navigation-tools {
-    background: #505050;
-    clear: both;
-    display: block;
-    height: $navigation-height;
-    padding: 0 $navigation-padding;
-
-    @include media($large-screen) {
-      background: transparent;
-      clear: none;
-      float: right;
-      width: 50%;
-    }
-  }
-
-  // Search bar
-  .search-bar {
-    $search-bar-border-color: $base-border-color;
-    $search-bar-border: 1px solid $search-bar-border-color;
-
-    float: left;
-    padding: 0.7em 0.6em;
-    width: 100%;
-
-    input[type=search] {
-      color: $navigation-color;
-      font-style: italic;
-      margin: 0;
-
-      @include media($large-screen) {
-        width: 100%;
-      }
-    }
-
-    @include media($horizontal-bar-mode) {
-      display: inline-block;
-      position: relative;
-      width: 100%;
-
-      input {
-        box-sizing: border-box;
-        display: block;
       }
     }
   }

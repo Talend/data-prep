@@ -17,8 +17,24 @@ describe('Playground header component', () => {
     let scope;
     let createElement;
     let element;
+    let $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.playground'));
+
+    beforeEach(inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        $httpBackend.whenGET('assets/images/header/edit.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/board.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/info.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/close_big.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/search.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/dataprep.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/visible.svg').respond(200, '');
+    }));
 
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
@@ -72,29 +88,29 @@ describe('Playground header component', () => {
         });
     });
 
-    describe('left header', () => {
-        it('should dataset parameters toggle button looks inactive by default', () => {
+    describe('right header', () => {
+        it('dataset parameters toggle button looks inactive by default', () => {
             //given
             createElement();
 
             //when
-            let playgroundGearIcon = element.find('#playground-gear-icon');
+            let playgroundGearIcon = element.find('#dataset-header-details').eq(1);
 
             //then
             expect(playgroundGearIcon.hasClass('pressed')).toBe(false);
         });
 
-        it('should dataset parameters toggle button looks active when its panel is shown', () => {
+        it('dataset parameters toggle button looks active when its panel is shown', () => {
             //given
             scope.parametersVisible = true;
             createElement();
 
             //when
-            let playgroundGearIcon = element.find('#playground-gear-icon');
+            let playgroundGearIcon = element.find('#dataset-header-details').eq(0);
             playgroundGearIcon.click();
 
             //then
-            expect(playgroundGearIcon.parent().hasClass('pressed')).toBe(true);
+            expect(playgroundGearIcon.hasClass('pressed')).toBe(true);
         });
 
         it('should call parameters callback', () => {
@@ -103,36 +119,34 @@ describe('Playground header component', () => {
             createElement();
 
             //when
-            element.find('#playground-gear-icon').click();
+            element.find('#dataset-header-details').eq(0).click();
 
             //then
             expect(scope.onParameters).toHaveBeenCalled();
         });
-    });
 
-    describe('right header', () => {
-        it('should lookup toggle button looks inactive by default', () => {
+        it('lookup toggle button looks inactive by default', () => {
             //given
             createElement();
 
             //when
-            let playgroundLookupIcon = element.find('#playground-lookup-icon');
+            let playgroundLookupIcon = element.find('#lookup-container').eq(0);
 
             //then
             expect(playgroundLookupIcon.hasClass('pressed')).toBe(false);
         });
 
-        it('should lookup toggle button looks active when its panel is shown', () => {
+        it('lookup toggle button looks active when its panel is shown', () => {
             //given
             scope.lookupVisible = true;
             createElement();
 
             //when
-            let playgroundLookupIcon = element.find('#playground-lookup-icon');
+            let playgroundLookupIcon = element.find('#lookup-container').eq(0);
             playgroundLookupIcon.click();
 
             //then
-            expect(playgroundLookupIcon.parent().hasClass('pressed')).toBe(true);
+            expect(playgroundLookupIcon.hasClass('pressed')).toBe(true);
         });
 
         it('should call lookup callback', () => {
@@ -141,7 +155,7 @@ describe('Playground header component', () => {
             createElement();
 
             //when
-            element.find('#playground-lookup-icon').click();
+            element.find('#lookup-container').eq(0).click();
 
             //then
             expect(scope.onLookup).toHaveBeenCalled();
@@ -153,7 +167,7 @@ describe('Playground header component', () => {
             createElement();
 
             //when
-            element.find('#playground-onboarding-icon').click();
+            element.find('#playground-onboarding-icon').eq(0).click();
 
             //then
             expect(scope.onOnboarding).toHaveBeenCalled();
@@ -183,7 +197,7 @@ describe('Playground header component', () => {
             createElement();
 
             //then
-            expect(element.find('#playground-preparation-picker-icon').length).toBe(1);
+            expect(element.find('#apply-preparation-container').length).toBe(1);
         });
 
         it('should call showPreparationPicker callback', () => {
@@ -191,7 +205,7 @@ describe('Playground header component', () => {
             scope.showPreparationPicker = jasmine.createSpy('showPreparationPicker');
             scope.preparationPicker = true;
             createElement();
-            const icon = element.find('#playground-preparation-picker-icon').eq(0);
+            const icon = element.find('#apply-preparation-container').eq(0);
 
             //when
             icon.click();
@@ -207,7 +221,7 @@ describe('Playground header component', () => {
             createElement();
 
             //when
-            element.find('#playground-feedback-icon').click();
+            element.find('#playground-feedback-icon').eq(0).click();
 
             //then
             expect(scope.onFeedback).toHaveBeenCalled();
@@ -219,7 +233,7 @@ describe('Playground header component', () => {
             createElement();
 
             //when
-            element.find('#playground-close').click();
+            element.find('#playground-close-container').eq(0).click();
 
             //then
             expect(scope.onClose).toHaveBeenCalled();

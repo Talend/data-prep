@@ -43,8 +43,9 @@ export default function Typeahead($timeout, $window) {
 		link: {
 			post: (scope, iElement, iAttrs, ctrl) => {
 				const body = angular.element('body').eq(0);
-				const input = iElement.find('.input-search');
+				const input = iElement.find('.searchInput');
 				const selectedClass = 'selected';
+				let icon;
 
 				function hideResults() {
 					$timeout(() => ctrl.hideResults());
@@ -139,6 +140,16 @@ export default function Typeahead($timeout, $window) {
 						scrollToSelectedItem(container, next);
 					}
 				});
+
+				$timeout(() => {
+					icon = iElement.find('.searchInputIcon');
+					icon.click(() => {
+						$timeout(() => {
+							input.focus();
+							input.select();
+						}, 100, false);
+					});
+				}, 500, false);
 
 				input.click(event => event.stopPropagation());
 				body.click(hideResults);

@@ -20,34 +20,35 @@
     <a href="javascript:void(0)" class="navigation-menu-button" translate-once="MENU"></a>
     <nav role="navigation" class="navigation-items" insertion-home-right-header>
         <ul class="navigation-menu show">
-            <li id="onboarding-icon" class="nav-link" translate-once-title="ONBOARDING">
+            <li>
+                <inventory-search></inventory-search>
+            </li>
+            <li id="onboarding-icon"
+                class="nav-link"
+                translate-once-title="ONBOARDING"
+                ng-click="navbarCtrl.startTour('preparation')">
                 <a class="icon enabled"
-                   data-icon="y"
-                   ng-click="navbarCtrl.startTour('preparation')">
+                   ng-include="'assets/images/header/board.svg'">
                 </a>
             </li>
-            <li id="message-icon" ng-if="!navbarCtrl.state.ee" class="nav-link" translate-once-title="FEEDBACK_TOOLTIP">
+            <li id="message-icon"
+                ng-if="!navbarCtrl.state.ee"
+                class="nav-link"
+                translate-once-title="FEEDBACK_TOOLTIP"
+                ng-click="navbarCtrl.openFeedbackForm()">
                 <a class="icon enabled"
-                   data-icon="H"
-                   ng-click="navbarCtrl.openFeedbackForm()">
+                   ng-include="'assets/images/header/bubble.svg'">
                 </a>
             </li>
             <li id="online-help-icon" class="nav-link" translate-once-title="ONLINE_HELP_TOOLTIP">
                 <a class="icon enabled"
-                   data-icon="l"
                    href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
-                   target="_blank">
+                   target="_blank"
+                   ng-include="'assets/images/header/info.svg'">
                 </a>
             </li>
         </ul>
     </nav>
-    <div class="navigation-tools">
-        <div class="search-bar">
-            <inventory-search></inventory-search>
-        </div>
-    </div>
-
-
 </talend-navbar>
 
 <ui-view class="content"></ui-view>

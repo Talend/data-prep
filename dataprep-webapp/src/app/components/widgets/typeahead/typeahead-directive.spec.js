@@ -20,10 +20,12 @@ describe('Typeahead directive', () => {
 
     beforeEach(angular.mock.module('talend.widget'));
 
-    beforeEach(inject(($rootScope, $compile) => {
+    beforeEach(inject(($rootScope, $compile, $templateCache) => {
         scope = $rootScope.$new();
         scope.search = jasmine.createSpy('search');
         scope.clickOnItem1 = jasmine.createSpy('clickOnItem1');
+
+        $templateCache.put('assets/images/header/search.svg', '<svg></svg>');
 
         var html = `
             <typeahead search="search"
@@ -53,9 +55,41 @@ describe('Typeahead directive', () => {
     });
 
     describe('render', () => {
-        it('should render input', () => {
+        it('should render icon', () => {
             //then
-            expect(element.find('input[type="search"]').length).toBe(1);
+            expect(element.find('.searchInputIcon').length).toBe(1);
+        });
+
+        it('should change isSearching flag when clicking on the icon', () => {
+            //when
+            expect(ctrl.isSearching).toBe(false);
+            element.find('i').eq(0).click();
+            scope.$digest();
+
+            //then
+            expect(ctrl.isSearching).toBe(true);
+        });
+
+        it('should render input', () => {
+            //given
+            ctrl.isSearching = true;
+
+            //when
+            scope.$digest();
+
+            //then
+            expect(element.find('.searchInput').hasClass('ng-hide')).toBe(false);
+        });
+
+        it('should NOT render input', () => {
+            //given
+            ctrl.isSearching = false;
+
+            //when
+            scope.$digest();
+
+            //then
+            expect(element.find('.searchInput').hasClass('ng-hide')).toBe(true);
         });
 
         it('should render searching message', () => {
@@ -90,7 +124,7 @@ describe('Typeahead directive', () => {
     describe('input keydown', () => {
         it('should hide results on ESC', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const event = angular.element.Event('keydown');
             event.keyCode = 27;
 
@@ -105,7 +139,7 @@ describe('Typeahead directive', () => {
 
         it('should NOT hide results on non ESC', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const event = angular.element.Event('keydown');
             event.keyCode = 13;
 
@@ -120,7 +154,7 @@ describe('Typeahead directive', () => {
 
         it('should select first item on a keydown arrow down', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const down = angular.element.Event('keydown');
             down.keyCode = 40;
 
@@ -135,7 +169,7 @@ describe('Typeahead directive', () => {
 
         it('should select item on keydown up/down', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const down = angular.element.Event('keydown');
             down.keyCode = 40;
 
@@ -157,7 +191,7 @@ describe('Typeahead directive', () => {
 
         it('should select 1st item on keydown arrow down on last item', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const down = angular.element.Event('keydown');
             down.keyCode = 40;
 
@@ -180,7 +214,7 @@ describe('Typeahead directive', () => {
 
         it('should select last item on keydown arrow up on first item', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const event = angular.element.Event('keydown');
             event.keyCode = 40;
 
@@ -204,7 +238,7 @@ describe('Typeahead directive', () => {
 
         it('should click on item on keydown enter', () => {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const down = angular.element.Event('keydown');
             down.keyCode = 40;
 
@@ -226,7 +260,7 @@ describe('Typeahead directive', () => {
             //given
             spyOn($window, 'open');
 
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const down = angular.element.Event('keydown');
             down.keyCode = 40;
 
@@ -247,7 +281,7 @@ describe('Typeahead directive', () => {
 
         it('should show results on keydown enter', inject(($timeout)=> {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const enter = angular.element.Event('keydown');
             enter.keyCode = 13;
 
@@ -263,7 +297,7 @@ describe('Typeahead directive', () => {
 
         it('should show results on keydown arrow down', inject(($timeout)=> {
             //given
-            const input = element.find('.input-search');
+            const input = element.find('.searchInput');
             const down = angular.element.Event('keydown');
             down.keyCode = 40;
 

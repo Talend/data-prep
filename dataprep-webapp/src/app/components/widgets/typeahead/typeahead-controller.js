@@ -22,6 +22,7 @@ class TypeaheadCtrl {
 		'ngInject';
 		this.$q = $q;
 		this.searchString = '';
+		this.isSearching = false;
 	}
 
 	onChange() {
@@ -30,11 +31,15 @@ class TypeaheadCtrl {
 		const searchInput = this.searchString;
 
 		this.$q.when(this.search({ value: this.searchString }))
-            .then(() => {
-	if (searchInput === this.searchString) {
-		this.searching = false;
+			.then(() => {
+				if (searchInput === this.searchString) {
+					this.searching = false;
+				}
+			});
 	}
-});
+
+	toogleSearchInput() {
+		this.isSearching = !this.isSearching;
 	}
 
 	hideResults() {

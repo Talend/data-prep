@@ -15,8 +15,14 @@ describe('Search bar component', () => {
     let scope;
     let createElement;
     let element;
+    let $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.search-bar'));
+
+    beforeEach(inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        $httpBackend.whenGET('assets/images/header/search.svg').respond(200, '');
+    }));
 
     beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();

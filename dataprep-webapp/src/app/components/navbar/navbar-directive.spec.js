@@ -18,12 +18,21 @@ describe('Navbar directive', function () {
     var createElement;
     var element;
     var stateMock;
+    let $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.navbar', ($provide) => {
         stateMock = {
             ee: false,
         };
         $provide.constant('state', stateMock);
+    }));
+
+    beforeEach(inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        $httpBackend.whenGET('assets/images/header/board.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/info.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/search.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '');
     }));
 
     beforeEach(inject(function ($rootScope, $compile) {
@@ -104,7 +113,7 @@ describe('Navbar directive', function () {
             spyOn(ctrl, 'startTour').and.returnValue();
 
             //when
-            element.find('#onboarding-icon > a').eq(0).click();
+            element.find('#onboarding-icon').eq(0).click();
             scope.$digest();
 
             //then

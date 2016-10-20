@@ -10,12 +10,14 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+$navigation-height: 48px;
+
 .playground-header {
   @import 'playground-header-right';
   @import 'playground-header-preview';
 
   .navbar {
     border: none;
-    height: 48px; //IE11
+    height: $navigation-height; //IE11
   }
 }

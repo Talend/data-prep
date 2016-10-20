@@ -12,7 +12,7 @@
   ============================================================================*/
 
 $gray: #F2F2F2;
-$blue: #607d8b;
+$blue: #4f93a7;
 $dark-blue: #3F5159;
 $light-green: #D6D88F;
 $green: #B9BF15;
@@ -43,7 +43,6 @@ $navbar-margin-bottom: 0;
 @import "components/home/_subheader.scss";
 @import "components/import/import.scss";
 @import "components/lookup/_lookup.scss";
-@import "components/navbar/_navigation.scss";
 @import "components/playground/_playground.scss";
 @import "components/recipe/_recipe.scss";
 @import "components/suggestions-stats/_suggestions-stats.scss";

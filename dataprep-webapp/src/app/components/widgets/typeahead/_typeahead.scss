@@ -15,6 +15,55 @@ typeahead {
   display: block;
   position: relative;
 
+  svg {
+    height: 20px;
+    width: 20px;
+    fill: $black;
+    shape-rendering: auto;
+  }
+
+  .inner-addon {
+    position: relative;
+
+    .searchInputIcon {
+      @include display(flex);
+      @include align-items(center);
+
+      background-color: transparent;
+      border: none;
+      height: 100%;
+
+      svg {
+        fill: $white;
+      }
+
+      &.isSearching {
+        position: absolute;
+        top: 0;
+
+        svg {
+          fill: $black;
+        }
+      }
+    }
+
+    input {
+      margin: 0;
+      padding: 0;
+
+      &::-ms-clear {
+        display: none;
+      }
+
+      &.searchInput  {
+        padding-left:  25px;
+        color: $black;
+        height: 100%;
+      }
+    }
+  }
+
+
   .typeahead-result {
     @include menu-shape;
     border-radius: 3px;

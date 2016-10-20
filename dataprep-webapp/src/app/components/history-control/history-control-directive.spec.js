@@ -18,10 +18,18 @@ describe('History control directive', function () {
     var element;
     var scope;
     var body;
+    var $httpBackend;
 
     beforeEach(angular.mock.module('data-prep.history-control'));
 
+    beforeEach(inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        $httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '');
+        $httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '');
+    }));
+
     beforeEach(inject(function ($rootScope, $compile, HistoryService) {
+
         body = angular.element('body');
         scope = $rootScope.$new();
 

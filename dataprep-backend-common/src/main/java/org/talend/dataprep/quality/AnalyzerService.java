@@ -86,9 +86,37 @@ public class AnalyzerService implements DisposableBean {
     @Value("#{'${luceneIndexStrategy:singleton}'}")
     private String luceneIndexStrategy;
 
+    /** Where the data quality indexes are extracted (default to ${java.io.tmpdir}/org.talend.dataquality.semantic). */
+    @Value("${dataquality.indexes.file.location:${java.io.tmpdir}/org.talend.dataquality.semantic}")
+    private String dataqualityIndexesLocation;
+
     private Set<Analyzer> openedAnalyzers = new HashSet<>();
 
     private CategoryRecognizerBuilder builder;
+
+    /**
+     * Initialize the AnalyzerService.
+     */
+    @PostConstruct
+    public void init() {
+
+        LOGGER.info("DataQuality indexes location : '{}'", dataqualityIndexesLocation);
+        ClassPathDirectory.setLocalIndexFolder(dataqualityIndexesLocation);
+
+        // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
+        LOGGER.info("Analyzer service lucene index strategy set to '{}'", luceneIndexStrategy);
+        if ("basic".equals(luceneIndexStrategy)) {
+            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
+        } else if ("singleton".equals(luceneIndexStrategy)) {
+            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
+        } else {
+            // Default
+            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", luceneIndexStrategy);
+            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
+        }
+        // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
+        builder = CategoryRecognizerBuilder.newBuilder().lucene();
+    }
 
     /**
      * In case of a date column, return the most used pattern.
@@ -147,37 +175,6 @@ public class AnalyzerService implements DisposableBean {
         }
 
         return patterns;
-    }
-
-    @PostConstruct
-    public void init() {
-        // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
-        LOGGER.info("Analyzer service lucene index strategy set to '{}'", luceneIndexStrategy);
-        if ("basic".equals(luceneIndexStrategy)) {
-            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
-        } else if ("singleton".equals(luceneIndexStrategy)) {
-            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
-        } else {
-            // Default
-            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", luceneIndexStrategy);
-            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
-        }
-        // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
-        builder = CategoryRecognizerBuilder.newBuilder().lucene();
-    }
-
-    /**
-     * Called at startup to define location where to extract DataQuality indexes.
-     *
-     * @param dataqualityIndexesLocation path location to extract indexes.
-     */
-    @Autowired
-    public void setDataQualityIndexesFolder(@Value("${dataquality.indexes.file.location}") String dataqualityIndexesLocation) {
-        try {
-            ClassPathDirectory.setLocalIndexFolder(dataqualityIndexesLocation);
-        } catch (Exception exc) {
-            LOGGER.warn("Error when setting DataQuality indexes extract folder", exc);
-        }
     }
 
     /**
@@ -458,13 +455,16 @@ public class AnalyzerService implements DisposableBean {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append(analyzer.toString()).append(' ').append(" last used (").append(System.currentTimeMillis() - lastCall)
+            StringBuilder toStringBuilder = new StringBuilder();
+            toStringBuilder //
+                    .append(analyzer.toString()).append(' ') //
+                    .append(" last used (").append(System.currentTimeMillis() - lastCall) //
                     .append(" ms ago) ");
-            final StringWriter caller = new StringWriter();
-            this.caller.printStackTrace(new PrintWriter(caller));
-            builder.append("caller: ").append(caller.toString());
-            return builder.toString();
+
+            final StringWriter toStringCaller = new StringWriter();
+            this.caller.printStackTrace(new PrintWriter(toStringCaller)); // NOSONAR (stacktrace printed in a String)
+            toStringBuilder.append("caller: ").append(toStringCaller.toString());
+            return toStringBuilder.toString();
         }
     }
 

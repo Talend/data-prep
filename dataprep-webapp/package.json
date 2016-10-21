@@ -38,7 +38,7 @@
     "angular-ui-router": "^0.2.15",
     "angularjs-toaster": "^0.4.10",
     "animate.css": "^3.5.1",
-    "bootstrap-talend-theme": "^0.x.x",
+    "bootstrap-talend-theme": "^0.6.x",
     "bourbon": "^4.2.7",
     "bourbon-neat": "^1.8.0",
     "d3": "^3.5.5",

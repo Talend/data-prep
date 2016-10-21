@@ -4,15 +4,9 @@
       "app": "Data Preparation",
       "brandLink": {
         "title": "Talend Data Preparation",
-        "onClick": "menu:home"
+        "onClick": "menu:preparations"
       },
-      "actions": ["onboarding:preparation", "modal:feedback", "external:help"],
-      "userMenuActions": {
-        "id": "user-menu",
-        "name": "Mike Tuchen",
-        "icon": "icon-profile",
-        "menu" : ["user:logout"]
-      }
+      "actions": ["onboarding:preparation", "modal:feedback", "external:help"]
     }
   },
   "actions": {
@@ -26,27 +20,6 @@
         "args": [
           "nav.index.preparations"
         ]
-      }
-    },
-    "menu:datasets": {
-      "id": "menu:datasets",
-      "name": "Datasets",
-      "icon": "icon-copy-duplicate-files",
-      "type": "@@router/GO",
-      "payload": {
-        "method": "go",
-        "args": [
-          "nav.index.datasets"
-        ]
-      }
-    },
-    "user:logout": {
-      "id": "user:logout",
-      "name": "Logout",
-      "icon": "icon-logout",
-      "type": "@@user/logout",
-      "payload": {
-        "method": "logout"
       }
     },
     "onboarding:preparation": {

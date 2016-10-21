@@ -13,89 +13,90 @@
 
 .suggestions-part {
 
-  .actions-suggestions{
-    @include flex-column();
-    height: 100%;
+	.actions-suggestions {
+		@include flex-column();
+		height: 100%;
 
-    .suggestions-title {
-      @include flex-basis(58px);
-      @include flex-grow(0);
-      @include flex-shrink(0);
+		.suggestions-title {
+			@include flex-basis(58px);
+			@include flex-grow(0);
+			@include flex-shrink(0);
 
-      background-color: #F1F1F1;
-      padding-right: 20px;
+			background-color: #F1F1F1;
+			padding-right: 20px;
 
-      .title{
-        @include ellipsis(320px);
-        font-size: 1.2em;
-        font-weight: 600;
-        padding: 25px 10px 5px 10px;
-        text-transform: uppercase;
-      }
-    }
+			.title {
+				@include ellipsis(320px);
+				font-size: 1.2em;
+				font-weight: 600;
+				padding: 25px 10px 5px 10px;
+				text-transform: uppercase;
+			}
+		}
 
-    .actions-scope {
-      @include flex-grow(1);
-      @include flex-shrink(1);
-      position: relative;
+		.actions-scope {
+			@include flex-grow(1);
+			@include flex-shrink(1);
+			position: relative;
 
-      .action-search {
-        width: 94%;
-        height: 25px;
-        font-size: 0.8em;
-        padding: 0 20px 0 5px;
-        margin: 5px 10px 5px 10px;
-        border-top: 1px solid transparent;
-        border-right: 1px solid transparent;
-        border-left: 1px solid transparent;
-        box-shadow: none;
+			.action-search {
+				width: 94%;
+				height: 25px;
+				font-size: 0.8em;
+				padding: 0 20px 0 5px;
+				margin: 5px 10px 5px 10px;
+				border-top: 1px solid transparent;
+				border-right: 1px solid transparent;
+				border-left: 1px solid transparent;
+				box-shadow: none;
 
-        &::-ms-clear {
-          display: none;
-        }
-      };
+				&::-ms-clear {
+					display: none;
+				}
+			}
+		;
 
-      .action-suggestion-tab-items {
-        height: calc(100% - 75px);
-        overflow-y: auto;
-        overflow-x: hidden;
-        position: absolute;
-        width: 100%;
-      }
-    }
+			.action-suggestion-tab-items {
+				height: calc(100% - 75px);
+				overflow-y: auto;
+				overflow-x: hidden;
+				position: absolute;
+				width: 100%;
+			}
+		}
 
-    .filters-actions-form{
-      @include flex-basis(30px);
-      @include flex-grow(0);
-      @include flex-shrink(0);
+		.filters-actions-form {
+			@include flex-basis(30px);
+			@include flex-grow(0);
+			@include flex-shrink(0);
 
-      &.ng-enter {
-        @include animation(fadeIn 0.25s);
-      }
+			&.ng-enter {
+				@include animation(fadeIn 0.25s);
+			}
 
-      &.ng-leave {
-        @include animation(fadeOut 0.25s);
-      }
+			&.ng-leave {
+				@include animation(fadeOut 0.25s);
+			}
 
-      background-color: #DDDDDD;
-      font-size: 0.8em;
-      font-weight: 600;
-      right: 10px;
-      padding: 5px;
+			background-color: #DDDDDD;
+			right: 10px;
+			padding: 5px;
 
-      input {
-        margin-left: 0.7em;
-        margin-right: 0;
-      }
-      label {
-        display: inline-block;
-        cursor: pointer;
-        vertical-align: middle;
-      }
+			input {
+				margin-left: 0.7em;
+				margin-right: 0;
+			}
+			label {
+				display: inline-block;
+				cursor: pointer;
+				vertical-align: middle;
+				font-weight: 600;
+				font-size: 0.8em;
+			}
 
-      .filters-actions-form-span {
-        cursor: default;
-      }
-    }
-  }
+			.filters-actions-form-span {
+				cursor: default;
+			}
+		}
+	}
 }

@@ -12,41 +12,42 @@
   ============================================================================*/
 
 .param {
-  @include display(flex);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
-  @include align-items(stretch);
+	@include display(flex);
+	@include flex-direction(column);
+	@include justify-content(flex-start);
+	@include align-items(stretch);
 
-  div:hover {
-    position: relative;
-  }
+	div:hover {
+		position: relative;
+	}
 
-  &.param-no-space {
-    padding: 0;
-  }
+	&.param-no-space {
+		padding: 0;
+	}
 
-  .param-row {
-    @include display(flex);
-    @include flex-direction(row);
-    @include flex-wrap(wrap);
-    @include align-items(center);
+	.param-row {
+		@include display(flex);
+		@include flex-direction(row);
+		@include flex-wrap(wrap);
+		@include align-items(center);
 
-    padding: 10px;
+		padding: 10px;
+		font-size: .9em;
 
-    .param-name {
-      @include flex-basis(45px);
-      @include flex-grow(1);
+		.param-name {
+			@include flex-basis(45px);
+			@include flex-grow(1);
 
-      padding-right: 5px;
-    }
+			padding-right: 5px;
+		}
 
-    .param-input {
-      @include flex-basis(120px);
-      @include flex-grow(2);
-    }
+		.param-input {
+			@include flex-basis(120px);
+			@include flex-grow(2);
+		}
 
-    .param-error {
-      @include flex-basis(100%);
-    }
-  }
+		.param-error {
+			@include flex-basis(100%);
+		}
+	}
 }

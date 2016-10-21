@@ -13,9 +13,7 @@
 
 // Vendors scss only contains Third party css libs
 
-@import "normalize"; //reset : http://necolas.github.io/normalize.css/
 @import '~bourbon/app/assets/stylesheets/bourbon';
 @import '~sunchoke/src/sunchoke';
 @import '~bourbon-neat/app/assets/stylesheets/_neat';
-@import '~bourbon-neat/app/assets/stylesheets/_neat-helpers';
 @import "base/base"; //http://bitters.bourbon.io/

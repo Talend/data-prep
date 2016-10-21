@@ -11,24 +11,20 @@
 
   ============================================================================*/
 
-body {
-  $gray:          #F2F2F2;
-  $blue:          #607d8b;
-  $dark-blue:     #3F5159;
-  $light-green:   #D6D88F;
-  $green:         #B9BF15;
+$gray: #F2F2F2;
+$blue: #607d8b;
+$dark-blue: #3F5159;
+$light-green: #D6D88F;
+$green: #B9BF15;
 
-  $brand-primary: $blue;
-  $brand-success: $green;
+$brand-primary: $blue;
+$brand-success: $green;
 
-  $navbar-margin-bottom: 0;
-
-  @import "~bootstrap-talend-theme/src/theme/bootstrap";
-}
-
+$navbar-margin-bottom: 0;
+@import "~bootstrap-talend-theme/src/theme/bootstrap";
 @import "css/vendors/customisation/sunchoke";
-
 @import "css/vendors/libs/libs";
+
 @import "css/utils/utils";
 
 @import "css/base/base";
@@ -106,10 +102,7 @@ body {
 @import "components/filter/item/value/_filter-value.scss";
 @import "components/lookup/grid/header/_lookup-datagrid-header.scss";
 @import "components/preparation/creator/theme-filters/theme-filters-component";
-@import "components/transformation/form/choice/_transformation-choice-param.scss";
-@import "components/transformation/form/cluster/_transformation-cluster-params.scss";
-@import "components/transformation/form/date/_transformation-date-param.scss";
-@import "components/transformation/form/simple/_transformation-simple-param.scss";
+@import "components/transformation/form/transformation-form";
 @import "components/widgets/charts/boxplot-chart/boxplot-chart.scss";
 @import "components/widgets/charts/horizontal-barchart/horizontal-barchart.scss";
 @import "components/widgets/charts/range-slider/range-slider.scss";

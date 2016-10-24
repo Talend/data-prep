@@ -60,7 +60,7 @@
     "react-cmf-bootstrap": "^0.1.0",
     "react-css-themr": "^1.4.0",
     "react-dom": "^15.3.2",
-    "react-talend-components": "^0.4.0",
+    "react-talend-components": "^0.7.0",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#1.0.0"
   },
   "devDependencies": {

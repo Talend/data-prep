@@ -38,7 +38,7 @@
       "id": "modal:feedback",
       "name": "Send feedback to Talend",
       "icon": "icon-bubbles-talk-1",
-      "type": "@@modal/FEEDBACK",
+      "type": "@@modal/SHOW",
       "payload": {
         "method": "showFeedback"
       }

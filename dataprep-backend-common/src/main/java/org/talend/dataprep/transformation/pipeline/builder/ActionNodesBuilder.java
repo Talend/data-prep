@@ -1,5 +1,8 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -12,9 +15,6 @@ import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.CleanUpNode;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ActionNodesBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionNodesBuilder.class);
@@ -115,7 +115,7 @@ public class ActionNodesBuilder {
             // some actions need fresh statistics
             // in those cases, we gather the rows in a reservoir node that triggers statistics computation
             // before dispatching each row to the next node
-            if (actionIndex != 0) {
+            if (actionIndex != 0 || needStatisticsBefore) {
                 final Node neededReservoir = statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
                 if (neededReservoir != null) {
                     builder.to(neededReservoir);

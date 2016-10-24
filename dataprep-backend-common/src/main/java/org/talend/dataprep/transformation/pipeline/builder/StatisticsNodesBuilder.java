@@ -124,9 +124,9 @@ public class StatisticsNodesBuilder {
         if (needIntermediateStatistics(nextAction)) {
             final Set<ActionMetadata.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
             if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
+                return NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
             } else if (behavior.contains(ActionMetadata.Behavior.NEED_STATISTICS_INVALID)) {
-                NodeBuilder
+                return NodeBuilder
                         .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
                         .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
                         .build();

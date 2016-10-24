@@ -23,7 +23,7 @@
               title="{{editableTextCtrl.textTitle}}"
               ng-click="editableTextCtrl.onTextClick({event: $event})"
               ng-bind="editableTextCtrl.text"></span>
-        <button class="edit-btn" data-icon="a" ng-click="editableTextCtrl.edit()"></button>
+        <button class="btn btn-link edit-btn" data-icon="a" ng-click="editableTextCtrl.edit()"></button>
     </div>
 
     <form class="editable-text-container" ng-show="editableTextCtrl.editionMode" ng-submit="editableTextCtrl.validate()">
@@ -32,7 +32,7 @@
                translate-once-placeholder="{{editableTextCtrl.placeholder}}"
                ng-model="editableTextCtrl.editionText"
                ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
-        <button class="valid-btn" data-icon="b"></button>
-        <button type='button' class="cancel-btn" data-icon="d" ng-click="editableTextCtrl.cancel()"></button>
+        <button class="btn valid-btn" data-icon="b"></button>
+        <button type='button' class="btn cancel-btn" data-icon="d" ng-click="editableTextCtrl.cancel()"></button>
     </form>
 </div>

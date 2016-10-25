@@ -45,7 +45,6 @@ describe('Settings service', () => {
 		}));
 	});
 
-
 	describe('setSettings', () => {
 		it('should merge settings', inject((appSettings, SettingsService) => {
 			// given
@@ -63,6 +62,21 @@ describe('Settings service', () => {
 
 			// then
 			expect(appSettings).toEqual(newSettings);
+		}));
+	});
+	
+	describe('clearSettings', () => {
+		it('should reset settings', inject((appSettings, SettingsService) => {
+			// given
+			appSettings.views.push({});
+			appSettings.actions.push({});
+
+			// when
+			SettingsService.clearSettings();
+
+			// then
+			expect(appSettings.views).toEqual([]);
+			expect(appSettings.actions).toEqual([]);
 		}));
 	});
 });

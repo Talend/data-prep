@@ -21,12 +21,7 @@
                     nb-lines="filterBarCtrl.state.playground.grid.nbLines"
                     nb-total-lines="filterBarCtrl.state.playground.grid.nbTotalLines"
                     percentage="filterBarCtrl.state.playground.grid.displayLinesPercentage"></filter-monitor>
-    <a id="reset-filters"
-       class="filters-remove"
-       data-icon="e"
-       ng-click="filterBarCtrl.filterService.removeAllFilters()"
-       title="{{::'REMOVE_ALL_FILTERS' | translate}}"
-       ng-if="filterBarCtrl.state.playground.filter.gridFilters.length"></a>
+
     <div class="filter-line">
         <filter-search class="search"></filter-search>
 
@@ -35,5 +30,12 @@
                      on-filter-change="filterBarCtrl.filterService.updateFilter(filter, value)"
                      on-filter-remove="filterBarCtrl.filterService.removeFilter(filter)"
                      enabled="filterBarCtrl.state.playground.filter.enabled"></filter-list>
+
+        <a id="reset-filters"
+           class="filters-remove"
+           ng-click="filterBarCtrl.filterService.removeAllFilters()"
+           title="{{::'REMOVE_ALL_FILTERS' | translate}}"
+           ng-if="filterBarCtrl.state.playground.filter.gridFilters.length"
+           ng-include="'assets/images/filter/delete.svg'"></a>
     </div>
 </div>

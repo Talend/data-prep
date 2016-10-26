@@ -29,21 +29,18 @@ $slide-action-background: $base-background-color;
     position: relative;
 
     #playground-dataset-parameters {
-      box-shadow: $box-shadow-to-bottom;
       @include slidable-top(200px, 0px);
       > * {
         margin: 10px;
       }
     }
 
-    #playground-filter-bar > * {
-      margin: 10px;
-    }
-
     #playground-datagrid-container {
-      margin: 10px;
       @include calc(height, "100vh - 150px");
+
+      padding: 0 30px;
       position: relative;
+      background-color: $shadow-gray;
     }
 
     .lookup-slide {
@@ -58,7 +55,6 @@ $slide-action-background: $base-background-color;
 @mixin recipe-layout {
   .playground-recipe {
     @include slidable-action-bar();
-    box-shadow: $box-shadow-to-right;
 
     > .content {
       overflow: hidden;
@@ -115,7 +111,6 @@ $slide-action-background: $base-background-color;
 @mixin suggestions-layout {
   .playground-suggestions {
     @include slidable-action-bar();
-    box-shadow: $box-shadow-to-left;
   }
 }
 

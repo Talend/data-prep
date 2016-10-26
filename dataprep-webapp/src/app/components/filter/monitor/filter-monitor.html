@@ -13,17 +13,23 @@
   ~ ============================================================================
   -->
 
-<div id="filter-monitor" insertion-filter-monitor>
-    <label class="label-switch" ng-if="filterMonitorCtrl.filters.length"
-           title="{{::'TOOGLE_ALL_FILTERS' | translate}}">
-        <input type="checkbox"
-               ng-model="filterMonitorCtrl.state"
-               ng-change="filterMonitorCtrl.onToogle()"/>
-        <div id="filter-toggle-switch" class="checkbox"></div>
-    </label>
-
-    <span id="filters-monitor-stats"
-         title="{{ 'NB_LINES_MATCHING_FILTERS' | translate:{percentage: filterMonitorCtrl.percentage} }}">
-        {{filterMonitorCtrl.nbLines}}/{{filterMonitorCtrl.nbTotalLines}}
-    </span>
+<div id="filter-monitor">
+    <div id="filter-monitor-left"
+         class="pull-left"
+         ng-if="filterMonitorCtrl.filters.length">
+        <span class="filters" translate-once="FILTERS"></span>
+        <label class="label-switch"
+               title="{{::'TOOGLE_ALL_FILTERS' | translate}}">
+            <input type="checkbox"
+                   ng-model="filterMonitorCtrl.state"
+                   ng-change="filterMonitorCtrl.onToogle()"/>
+            <div id="filter-toggle-switch" class="checkbox"></div>
+        </label>
+    </div>
+    <div id="filter-monitor-right"  class="pull-right" insertion-filter-monitor>
+         <span id="filters-monitor-stats"
+               title="{{ 'NB_LINES_MATCHING_FILTERS' | translate:{percentage: filterMonitorCtrl.percentage} }}">
+              <span class="nbLines">{{filterMonitorCtrl.nbLines}}</span>/<span>{{filterMonitorCtrl.nbTotalLines}}</span>
+         </span>
+    </div>
 </div>

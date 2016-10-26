@@ -13,9 +13,9 @@
 $base-background-color: white !default;
 
 $action-color: #b6be00 !important;
-$switch-width: 42px;
+$switch-width: 34px;
 $switch-padding: 2px;
-$switch-height: 22px;
+$switch-height: 17px;
 $switch-radius: $switch-height;
 $knob-size: $switch-height - ($switch-padding * 2);
 $knob-radius: $switch-height - ($switch-padding * 2);
@@ -44,7 +44,6 @@ $slide-action-background: $base-background-color;
       border: none;
       cursor: pointer;
       height: $switch-height;
-      margin-top: 7px;
       padding: 0;
       position: relative;
       width: $switch-width;

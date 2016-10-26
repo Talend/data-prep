@@ -12,26 +12,29 @@
   ============================================================================*/
 
 #filter-monitor {
-  @include display(flex);
-  @include flex-direction(row);
-  @include justify-content(center);
-  @include align-items(center);
-  @include align-content(center);
+  #filter-monitor-left {
+    @include display(flex);
+    @include align-items(center);
 
-  .label-switch {
-    input[type="checkbox"] + .checkbox {
+    .checkbox {
       margin: 0;
     }
 
-    margin-right: 10px;
+    .filters {
+      font-weight: bold;
+      padding-right: 10px;
+    }
   }
 
-  #reset-filters{
-    font-size: 0.7em;
-    color: $white;
+  #filter-monitor-right {
+    #filters-monitor-stats {
+      font-size: 0.9em;
+      padding-right: 10px;
 
-    &:hover{
-      color: $blue;
+      .nbLines {
+        font-weight: bold;
+        color: $blue;
+      }
     }
   }
 }

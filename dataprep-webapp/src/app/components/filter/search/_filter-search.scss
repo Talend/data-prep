@@ -13,12 +13,19 @@
 
 #filter-search {
   input[type="search"] {
-    background-color: $white;
+    background-color: $shadow-gray;
     color: $dark-gray;
-    font-family: $base-font-family;
     font-size: 0.85em;
     margin: 0;
-    border: 1px solid darken($light-gray, 10%);
+    padding: 5px 10px;
+    border-bottom: 1px solid $dark-gray;
+    box-shadow: none;
+
+    &:focus {
+      box-shadow: none;
+      border-color: $shadow-gray;
+      border-bottom: 1px solid $dark-gray;
+    }
   }
 
   .ac-container {

@@ -187,6 +187,13 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
 					DatagridStyleService.resetCellStyles();
 					grid.scrollRowToTop(0);
 					DatagridExternalService.updateGridRangeIndex();
+
+					//const filterBarHeight = angular.element('#filter-bar')[0].clientHeight;
+					//const navBarHeight = 48;
+					//const offset = filterBarHeight + navBarHeight;
+					//
+					//angular.element('#playground-datagrid-container').css('height', '"calc(100vh - ' + offset + 'px)"');
+					$timeout(grid.resizeCanvas, 0, false);
 				}
 			};
 

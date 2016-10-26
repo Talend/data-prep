@@ -11,22 +11,19 @@
 
   ============================================================================*/
 
-$badge-font-size: 0.85em !default;
+$badge-font-size: 1em !default;
 $badge-color: $white !default;
-$badge-background-color: $dark-blue !default;
+$badge-background-color: $blue !default;
 
 @mixin badge($background-color: $badge-background-color) {
   display: inline-block;
-  padding: 2px 5px 1px 5px;
-  font-family: $base-font-family;
+  padding: 1px 10px;
   font-size: $badge-font-size;
   font-weight: 300;
   line-height: 24px;
   color: $badge-color;
   background-color: $background-color;
-  border: 2px solid $white;
-  border-radius: 7px;
-  box-shadow: 5px 4px 6px -4px $dark-gray;
+  border-radius: 14px;
 }
 
 .badge {
@@ -43,8 +40,9 @@ $badge-background-color: $dark-blue !default;
     font-weight: bolder;
     color: $white;
 
-    &:hover {
+    &:hover, &:focus {
       color: darken($white, 10%);
+      text-decoration: none
     }
   }
 }

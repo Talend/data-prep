@@ -43,7 +43,7 @@ export default function Typeahead($timeout, $window) {
 		link: {
 			post: (scope, iElement, iAttrs, ctrl) => {
 				const body = angular.element('body').eq(0);
-				const input = iElement.find('.searchInput');
+				const input = iElement.find('.search-input');
 				const selectedClass = 'selected';
 				let icon;
 
@@ -142,7 +142,7 @@ export default function Typeahead($timeout, $window) {
 				});
 
 				$timeout(() => {
-					icon = iElement.find('.searchInputIcon');
+					icon = iElement.find('.search-icon');
 					icon.click(() => {
 						$timeout(() => {
 							input.focus();

@@ -12,94 +12,95 @@
   ~
   ~ ============================================================================
   -->
-<header class="playground-header">
-    <nav class="navbar navbar-inverse">
+
+<nav class="playground-header navbar navbar-inverse">
+    <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand">
-                <span class="sr-only" translate-once="TALEND"></span>
-                <span translate-once="DATA_PREPARATION"></span>
-            </a>
+            <button type="button" class="navbar-toggle collapsed" ng-click="isPGNavCollapsed = !isPGNavCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand"><span class="sr-only">Talend</span>Data Preparation</a>
         </div>
-        <ul class="playground-header-right">
-            <li insertion-playground-left-header></li>
-            <li id="documentation-search-container">
-                <documentation-search></documentation-search>
-            </li>
-            <li id="dataset-header-details"
-                class="nav-link"
-                ng-class="{pressed: $ctrl.parametersVisible}"
-                ng-click="$ctrl.onParameters()">
-                <a id="playground-gear-icon"
-                   translate-once-title="DATAGRID_PARAMETERS_GEAR"
-                   ng-include="'assets/images/header/edit.svg'">
-                </a>
-            </li>
-            <li ng-if="$ctrl.preparationPicker"
-                id="apply-preparation-container"
-                class="nav-link"
-                ng-click="$ctrl.onPreparationPicker()">
-                <a id="playground-preparation-picker-icon"
-                   translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
-                   ng-include="'assets/images/header/dataprep.svg'">
-                </a>
-            </li>
-            <li id="lookup-container"
-                class="nav-link"
-                ng-class="{pressed: $ctrl.lookupVisible}"
-                ng-click="$ctrl.onLookup()">
-                <a id="playground-lookup-icon"
-                   translate-once-title="LOOKUP_ICON_TOOLTIP"
-                   ng-include="'assets/images/header/lookup.svg'">
-                </a>
-            </li>
-            <li id="export-data"
-                ng-if="$ctrl.enableExport"
-                insertion-export>
-                <export/>
-            </li>
-            <li class="playground-help">
-                <ul class="playground-help-menu">
-                    <li id="playground-onboarding-icon"
-                        class="nav-link"
-                        ng-click="$ctrl.onOnboarding()">
-                        <a translate-once-title="ONBOARDING"
-                           ng-include="'assets/images/header/board.svg'">
-                        </a>
-                    </li>
-                    <li id="playground-feedback-icon"
-                        ng-if="$ctrl.feedbackVisible"
-                        class="nav-link"
-                        ng-click="$ctrl.onFeedback()">
-                        <a translate-once-title="FEEDBACK_TOOLTIP"
-                           ng-include="'assets/images/header/bubble.svg'">
-                        </a>
-                    </li>
-                    <li id="playground-online-help-icon"
-                        class="nav-link">
-                        <a translate-once-title="ONLINE_HELP_TOOLTIP"
-                           href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
-                           target="_blank"
-                           ng-include="'assets/images/header/info.svg'">
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li id="help-history">
-                <history-control></history-control>
-            </li>
-            <li id="playground-close-container"
-                class="nav-link"
-                ng-click="$ctrl.onClose()">
-                <a translate-once-title="CLOSE_ICON_TOOLTIP"
-                   ng-include="'assets/images/header/close_big.svg'">
-                </a>
-            </li>
-        </ul>
-        <ul id="preview-container" class="preview" ng-if="$ctrl.preview">
-            <li>
-                <span ng-include="'assets/images/header/visible.svg'"></span>
+
+        <div class="collapse navbar-collapse" uib-collapse="isPGNavCollapsed" insertion-playground-left-header>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a id="playground-close-icon"
+                       ng-click="$ctrl.onClose()"
+                       translate-once-title="CLOSE_ICON_TOOLTIP"
+                       ng-include="'assets/images/header/close_big.svg'">
+                    </a>
+                </li>
+            </ul>
+
+            <history-control id="help-history" class="navbar-right""></history-control>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a id="playground-onboarding-icon"
+                       translate-once-title="ONBOARDING"
+                       ng-click="$ctrl.onOnboarding()"
+                       ng-include="'assets/images/header/board.svg'">
+                    </a>
+                </li>
+                <li ng-if="$ctrl.feedbackVisible">
+                    <a id="playground-feedback-icon"
+                       ng-click="$ctrl.onFeedback()"
+                       translate-once-title="FEEDBACK_TOOLTIP"
+                       ng-include="'assets/images/header/bubble.svg'">
+                    </a>
+                </li>
+                <li>
+                    <a id="playground-online-help-icon"
+                       translate-once-title="ONLINE_HELP_TOOLTIP"
+                       href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
+                       target="_blank"
+                       ng-include="'assets/images/header/info.svg'">
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li id="documentation-search-container">
+                    <documentation-search></documentation-search>
+                </li>
+                <li>
+                    <a id="playground-gear-icon"
+                       ng-click="$ctrl.onParameters()"
+                       ng-class="{pressed: $ctrl.parametersVisible}"
+                       translate-once-title="DATAGRID_PARAMETERS_GEAR"
+                       ng-include="'assets/images/header/edit.svg'">
+                    </a>
+                </li>
+                <li ng-if="$ctrl.preparationPicker">
+                    <a id="playground-preparation-picker-icon"
+                       ng-click="$ctrl.onPreparationPicker()"
+                       translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
+                       ng-include="'assets/images/header/dataprep.svg'">
+                    </a>
+                </li>
+                <li>
+                    <a id="playground-lookup-icon"
+                       ng-click="$ctrl.onLookup()"
+                       ng-class="{pressed: $ctrl.lookupVisible}"
+                       translate-once-title="LOOKUP_ICON_TOOLTIP"
+                       ng-include="'assets/images/header/lookup.svg'">
+                    </a>
+                </li>
+                <li id="export-data"
+                    ng-if="$ctrl.enableExport"
+                    insertion-export>
+                    <export id="export-types-dropdown"/>
+                </li>
+            </ul>
+
+            <div id="preview-container" class="preview" ng-if="$ctrl.preview">
+                <span class="preview-icon" ng-include="'assets/images/header/visible.svg'"></span>
                 <span translate-once="PREVIEW"></span>
-            </li>
-        </ul>
-    </nav>
-</header>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -13,15 +13,18 @@
 @import "menu";
 @import "subheader";
 
-$header-height: 56px;
+$subheader-height: 56px;
 $footer-height: 49px;
+$navbars-height: $navbar-height + $subheader-height + $footer-height;
+$list-header-height: 49px;
+$list-navbars-height: $navbars-height + $list-header-height;
 
 .home {
 
     /* -------------------------------------------------------------------------------------------------------------------
                                                           Layout
     --------------------------------------------------------------------------------------------------------------------*/
-    @include calc(height, "100vh - 2 * " + $header-height + " - " + $footer-height);
+    @include calc(height, "100vh - " +  $navbars-height);
     width: 1140px;
     margin: auto;
 
@@ -62,7 +65,7 @@ $footer-height: 49px;
             }
 
             .inventory-list-container {
-                @include calc('height', '100vh - 210px');
+                @include calc('height', '100vh - ' + $list-navbars-height);
                 position: relative;
                 overflow: auto;
             }

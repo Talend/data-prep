@@ -1,123 +1,124 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
-describe('Navbar directive', function () {
-    'use strict';
+describe('Navbar directive', () => {
+	'use strict';
 
-    var scope;
-    var createElement;
-    var element;
-    var stateMock;
-    let $httpBackend;
+	let scope;
+	let createElement;
+	let element;
+	let stateMock;
+	let $httpBackend;
 
-    beforeEach(angular.mock.module('data-prep.navbar', ($provide) => {
-        stateMock = {
-            ee: false,
-        };
-        $provide.constant('state', stateMock);
-    }));
+	beforeEach(angular.mock.module('data-prep.navbar', ($provide) => {
+		stateMock = {
+			ee: false,
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-    beforeEach(inject(($injector) => {
-        $httpBackend = $injector.get('$httpBackend');
-        $httpBackend.whenGET('assets/images/header/board.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/info.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/search.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '');
-    }));
+	beforeEach(inject(($injector) => {
+		$httpBackend = $injector.get('$httpBackend');
+		$httpBackend.whenGET('assets/images/header/board.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/info.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/search.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '<svg></svg>');
+	}));
 
-    beforeEach(inject(function ($rootScope, $compile) {
-        scope = $rootScope.$new();
-        createElement = function () {
-            element = angular.element('<navbar></navbar>');
-            $compile(element)(scope);
-            scope.$digest();
-            return element;
-        };
-    }));
+	beforeEach(inject(($rootScope, $compile, $httpBackend) => {
+		scope = $rootScope.$new();
+		createElement = () => {
+			element = angular.element('<navbar></navbar>');
+			$compile(element)(scope);
+			$httpBackend.flush(); // resolve svg files
+			scope.$digest();
+			return element;
+		};
+	}));
 
-    describe('rendering elements', () => {
-        it('should render navigation bar', function () {
-            //when
-            createElement();
+	describe('rendering elements', () => {
+		it('should render navigation bar', () => {
+			//when
+			createElement();
 
-            //then
-            expect(element.find('talend-navbar').length).toBe(1);
-        });
+			//then
+			expect(element.find('.navbar').length).toBe(1);
+		});
 
-        it('should render footer bar', function () {
-            //when
-            createElement();
+		it('should render footer bar', () => {
+			//when
+			createElement();
 
-            //then
-            expect(element.find('footer').length).toBe(1);
-        });
+			//then
+			expect(element.find('footer').length).toBe(1);
+		});
 
-        it('should render content insertion point', function () {
-            //when
-            createElement();
+		it('should render content insertion point', () => {
+			//when
+			createElement();
 
-            //then
-            expect(element.find('ui-view.content').length).toBe(1);
-        });
+			//then
+			expect(element.find('ui-view.content').length).toBe(1);
+		});
 
-        it('should render navigation items insertion point', function () {
-            //when
-            createElement();
+		it('should render navigation items insertion point', () => {
+			//when
+			createElement();
 
-            //then
-            expect(element.find('.navigation-items[insertion-home-right-header]').length).toBe(1);
-        });
+			//then
+			expect(element.find('div[insertion-home-right-header]').length).toBe(1);
+		});
 
-        it('should render feedback form', function () {
-            //when
-            stateMock.ee = undefined;
-            createElement();
+		it('should render feedback form', () => {
+			//when
+			stateMock.ee = undefined;
+			createElement();
 
-            //then
-            expect(element.find('#message-icon').length).toBe(1);
-        });
+			//then
+			expect(element.find('#message-icon').length).toBe(1);
+		});
 
-        it('should render onboarding icon', function () {
-            //when
-            createElement();
+		it('should render onboarding icon', () => {
+			//when
+			createElement();
 
-            //then
-            expect(element.find('#onboarding-icon').length).toBe(1);
-        });
+			//then
+			expect(element.find('#onboarding-icon').length).toBe(1);
+		});
 
-        it('should not render feedback form', function () {
-            //when
-            stateMock.ee = true;
-            createElement();
+		it('should not render feedback form', () => {
+			//when
+			stateMock.ee = true;
+			createElement();
 
-            //then
-            expect(element.find('#message-icon').length).toBe(0);
-        });
-    });
+			//then
+			expect(element.find('#message-icon').length).toBe(0);
+		});
+	});
 
-    describe('events', () => {
-        it('should launch onboarding storytelling on icon click', () => {
-            //given
-            createElement();
-            var ctrl = element.controller('navbar');
-            spyOn(ctrl, 'startTour').and.returnValue();
+	describe('events', () => {
+		it('should launch onboarding storytelling on icon click', () => {
+			//given
+			createElement();
+			const ctrl = element.controller('navbar');
+			spyOn(ctrl, 'startTour').and.returnValue();
 
-            //when
-            element.find('#onboarding-icon').eq(0).click();
-            scope.$digest();
+			//when
+			element.find('#onboarding-icon').eq(0).click();
+			scope.$digest();
 
-            //then
-            expect(ctrl.startTour).toHaveBeenCalledWith('preparation');
-        });
-    });
+			//then
+			expect(ctrl.startTour).toHaveBeenCalledWith('preparation');
+		});
+	});
 });

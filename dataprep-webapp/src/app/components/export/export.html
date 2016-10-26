@@ -12,22 +12,30 @@
   ~
   ~ ============================================================================
   -->
-<div id="export-types-dropdown">
-    <talend-button-dropdown
-            button-text="{{'EXPORT' | translate }}"
-            button-additional-class="btn-lg btn-success"
-            button-action="exportCtrl.launchDefaultExport()"
-            close-on-select="true">
-        <div class="list-group">
-            <button type="button" class="list-group-item"
-                    ng-repeat="exportType in exportCtrl.state.export.exportTypes track by exportType.id"
-                    ng-class="{'disabled' : !exportType.enabled}"
-                    ng-click="exportCtrl.selectType(exportType)">
+<div class="export-dropdown btn-group" uib-dropdown>
+    <button id="export-button"
+            type="button"
+            class="btn btn-success"
+            ng-click="exportCtrl.launchDefaultExport()"
+            translate-once="EXPORT"></button>
+    <button type="button" class="btn btn-success" uib-dropdown-toggle>
+        <span class="caret"></span>
+        <span class="sr-only">Select Export</span>
+    </button>
+    <ul class="dropdown-menu"
+        uib-dropdown-menu
+        role="menu"
+        aria-labelledby="export-button">
+        <li role="menuitem"
+            ng-repeat="exportType in exportCtrl.state.export.exportTypes track by exportType.id">
+            <a ng-class="{'disabled' : !exportType.enabled}"
+               ng-click="exportCtrl.selectType(exportType)">
                 {{exportType.id}}<span ng-if="!exportType.enabled"> - {{exportType.disableReason}}</span>
-            </button>
-        </div>
-    </talend-button-dropdown>
+            </a>
+        </li>
+    </ul>
 </div>
+
 <talend-modal fullscreen="false"
               state="exportCtrl.showModal"
               close-button="true">

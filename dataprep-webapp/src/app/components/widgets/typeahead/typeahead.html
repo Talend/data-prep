@@ -12,15 +12,15 @@
   ~
   ~ ============================================================================
   -->
-<div class="inner-addon" >
-    <i  class="searchInputIcon"
+<div class="typeahead-container" >
+    <i  class="search-icon"
         ng-include="'assets/images/header/search.svg'"
-        ng-class="{isSearching: typeaheadCtrl.isSearching}"
+        ng-class="{inverse: typeaheadCtrl.inputVisible}"
         ng-click="typeaheadCtrl.toogleSearchInput()"></i>
-    <input ng-show="typeaheadCtrl.isSearching"
-           type="text"
-           class="form-control searchInput"
+    <input type="text"
+           class="search-input"
            placeholder="{{typeaheadCtrl.placeholder}}"
+           ng-show="typeaheadCtrl.inputVisible"
            ng-model="typeaheadCtrl.searchString"
            ng-model-options="{debounce: { default: 300, blur: 0 }}"
            ng-change="typeaheadCtrl.onChange()"

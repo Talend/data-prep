@@ -15,6 +15,7 @@ import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import ngAnimate from 'angular-animate';
 
+import BOOTSTRAP_COLLAPSE from 'angular-ui-bootstrap/src/collapse';
 import BOOTSTRAP_DROPDOWN from 'angular-ui-bootstrap/src/dropdown/index-nocss';
 import BOOTSTRAP_MODAL from 'angular-ui-bootstrap/src/modal/index-nocss';
 
@@ -40,7 +41,6 @@ import TalendEditableText from './editable-text/widget-editable-text-directive';
 import TalendFileSelector from './file-selector/widget-file-selector-directive';
 import TalendLoading from './loading/widget-loading-directive';
 import TalendModal from './modal/widget-modal-directive';
-import TalendNavbar from './navbar/widget-navbar-directive';
 import NavigationList from './navigation-list/widget-navigation-list-directive';
 import QualityBarCtrl from './quality-bar/widget-quality-bar-controller';
 import QualityBar from './quality-bar/widget-quality-bar-directive';
@@ -62,6 +62,7 @@ const MODULE_NAME = 'talend.widget';
 angular.module(MODULE_NAME, [
 	ngTranslate,
 	ngAnimate,
+	BOOTSTRAP_COLLAPSE,
 	BOOTSTRAP_DROPDOWN,
 	BOOTSTRAP_MODAL,
 ])
@@ -100,8 +101,6 @@ angular.module(MODULE_NAME, [
     .directive('talendLoading', TalendLoading)
 
     .directive('talendModal', TalendModal)
-
-    .directive('talendNavbar', TalendNavbar)
 
     .directive('navigationList', NavigationList)
 

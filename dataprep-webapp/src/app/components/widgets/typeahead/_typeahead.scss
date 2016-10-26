@@ -11,87 +11,126 @@
 
   ============================================================================*/
 
+$typeahead-height: 48px !default;
+$typeahead-padding: 15px !default;
+
+$typeahead-icon-color: $white !default;
+$typeahead-icon-hover-color: $black !default;
+$typeahead-icon-size: 20px !default;
+$typeahead-z-index: 1 !default;
+
+$typeahead-input-width: 250px !default;
+$typeahead-input-color: $black !default;
+
+@include keyframes(fadeIn) {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@include keyframes(slide) {
+	from {
+		right: -100vw;
+	}
+	to {
+		right: 0;
+	}
+}
+
 typeahead {
-  display: block;
-  position: relative;
+	display: block;
+	position: relative;
 
-  svg {
-    height: 20px;
-    width: 20px;
-    fill: $black;
-    shape-rendering: auto;
-  }
+	.typeahead-container {
+		@include display(flex);
+		position: relative;
+		height: $typeahead-height;
+	}
 
-  .inner-addon {
-    position: relative;
+	.search-icon {
+		cursor: pointer;
+		padding: ($typeahead-height - $typeahead-icon-size)/2 $typeahead-padding;
 
-    .searchInputIcon {
-      @include display(flex);
-      @include align-items(center);
+		svg {
+			height: $typeahead-icon-size;
+			width: $typeahead-icon-size;
+			fill: $typeahead-icon-color;
+			shape-rendering: auto;
+		}
 
-      background-color: transparent;
-      border: none;
-      height: 100%;
+		&.inverse {
+			position: absolute;
+			z-index: $typeahead-z-index;
 
-      svg {
-        fill: $white;
-      }
+			svg {
+				fill: $typeahead-input-color;
+			}
+		}
 
-      &.isSearching {
-        position: absolute;
-        top: 0;
+		&:not(.inverse):hover {
+			background: rgba(0, 0, 0, 0.25);
+		}
+	}
 
-        svg {
-          fill: $black;
-        }
-      }
-    }
+	.search-input {
+		padding: 0 15px 0 45px;
+		border: none;
+		border-radius: 0;
+		box-shadow: none;
+		color: $black;
+		height: 100%;
+		opacity: 1;
+		transition: 0.4s all cubic-bezier(0.4, 0, 0.2, 1);
+		width: $typeahead-input-width;
 
-    input {
-      margin: 0;
-      padding: 0;
+		&.ng-hide {
+			width: 0;
+			opacity: 0;
+		}
+	}
 
-      &::-ms-clear {
-        display: none;
-      }
+	.typeahead-result {
+		@include menu-shape;
+		border-radius: 3px;
+		box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+		max-height: 85vh;
+		overflow: auto;
+		width: 500px;
+		z-index: 20;
 
-      &.searchInput  {
-        padding-left:  25px;
-        color: $black;
-        height: 100%;
-      }
-    }
-  }
+		position: absolute;
+		top: 100%;
+		right: 0;
 
+		.highlighted {
+			font-weight: 900;
+		}
 
-  .typeahead-result {
-    @include menu-shape;
-    border-radius: 3px;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    max-height: 85vh;
-    overflow: auto;
-    z-index: 20;
+		.no-results,
+		.searching {
+			@include display(flex);
+			@include justify-content(center);
+			color: $black;
+			font-weight: 900;
+			padding: 10px;
+		}
 
-    position: absolute;
-    top: 100%;
-    right: 0;
+		a {
+			&:hover, &:focus {
+				text-decoration: none;
+			}
+		}
 
-    .highlighted {
-      font-weight: 900;
-    }
+		&.ng-enter {
+			@include animation(fadeIn 0.25s ease-in, slide 0.25s ease);
+		}
+	}
 
-    .no-results,
-    .searching {
-      @include display(flex);
-      @include justify-content(center);
-      color: $black;
-      font-weight: 900;
-      padding: 10px;
-    }
-  }
-
-  .selected{
-    background-color: #c9d7e4;
-  }
+	.selected {
+		background-color: #c9d7e4;
+	}
 }

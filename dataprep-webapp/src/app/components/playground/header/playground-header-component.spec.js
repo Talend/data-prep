@@ -12,35 +12,35 @@
  ============================================================================*/
 
 describe('Playground header component', () => {
-    'use strict';
+	'use strict';
 
-    let scope;
-    let createElement;
-    let element;
-    let $httpBackend;
+	let scope;
+	let createElement;
+	let element;
+	let $httpBackend;
 
-    beforeEach(angular.mock.module('data-prep.playground'));
+	beforeEach(angular.mock.module('data-prep.playground'));
 
-    beforeEach(inject(($injector) => {
-        $httpBackend = $injector.get('$httpBackend');
-        $httpBackend.whenGET('assets/images/header/edit.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/board.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/info.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/close_big.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/search.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/dataprep.svg').respond(200, '');
-        $httpBackend.whenGET('assets/images/header/visible.svg').respond(200, '');
-    }));
+	beforeEach(inject(($injector) => {
+		$httpBackend = $injector.get('$httpBackend');
+		$httpBackend.whenGET('assets/images/header/edit.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/board.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/info.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/close_big.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/search.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/dataprep.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/visible.svg').respond(200, '<svg></svg>');
+	}));
 
-    beforeEach(inject(($rootScope, $compile) => {
-        scope = $rootScope.$new();
+	beforeEach(inject(($rootScope, $compile, $httpBackend) => {
+		scope = $rootScope.$new();
 
-        createElement = () => {
-            element = angular.element(`
+		createElement = () => {
+			element = angular.element(`
                 <playground-header
                     preview="preview"
                     lookup-visible="lookupVisible"
@@ -54,230 +54,231 @@ describe('Playground header component', () => {
                     on-feedback="onFeedback()"
                     on-close="onClose()"
                     on-preparation-picker="showPreparationPicker()"></playground-header>`);
-            $compile(element)(scope);
-            scope.$digest();
-        };
-    }));
+			$compile(element)(scope);
+			$httpBackend.flush(); // to resolve svg files
+			scope.$digest();
+		};
+	}));
 
-    afterEach(() => {
-        scope.$destroy();
-        element.remove();
-    });
+	afterEach(() => {
+		scope.$destroy();
+		element.remove();
+	});
 
-    describe('preview badge', () => {
-        it('should NOT be rendered', () => {
-            //given
-            scope.preview = false;
+	describe('preview badge', () => {
+		it('should NOT be rendered', () => {
+			// given
+			scope.preview = false;
 
-            //when
-            createElement();
+			// when
+			createElement();
 
-            //then
-            expect(element.find('#preview').length).toBe(0);
-        });
+			// then
+			expect(element.find('#preview').length).toBe(0);
+		});
 
-        it('should be rendered', () => {
-            //given
-            scope.preview = true;
+		it('should be rendered', () => {
+			// given
+			scope.preview = true;
 
-            //when
-            createElement();
+			// when
+			createElement();
 
-            //then
-            expect(element.find('.preview').length).toBe(1);
-        });
-    });
+			// then
+			expect(element.find('.preview').length).toBe(1);
+		});
+	});
 
-    describe('right header', () => {
-        it('dataset parameters toggle button looks inactive by default', () => {
-            //given
-            createElement();
+	describe('right header', () => {
+		it('dataset parameters toggle button looks inactive by default', () => {
+			// given
+			createElement();
 
-            //when
-            let playgroundGearIcon = element.find('#dataset-header-details').eq(1);
+			// when
+			const playgroundGearIcon = element.find('#playground-gear-icon').eq(1);
 
-            //then
-            expect(playgroundGearIcon.hasClass('pressed')).toBe(false);
-        });
+			// then
+			expect(playgroundGearIcon.hasClass('pressed')).toBe(false);
+		});
 
-        it('dataset parameters toggle button looks active when its panel is shown', () => {
-            //given
-            scope.parametersVisible = true;
-            createElement();
+		it('dataset parameters toggle button looks active when its panel is shown', () => {
+			// given
+			scope.parametersVisible = true;
+			createElement();
+			const playgroundGearIcon = element.find('#playground-gear-icon').eq(0);
 
-            //when
-            let playgroundGearIcon = element.find('#dataset-header-details').eq(0);
-            playgroundGearIcon.click();
+			// when
+			playgroundGearIcon.click();
 
-            //then
-            expect(playgroundGearIcon.hasClass('pressed')).toBe(true);
-        });
+			// then
+			expect(playgroundGearIcon.hasClass('pressed')).toBe(true);
+		});
 
-        it('should call parameters callback', () => {
-            //given
-            scope.onParameters = jasmine.createSpy('onParameters');
-            createElement();
+		it('should call parameters callback', () => {
+			// given
+			scope.onParameters = jasmine.createSpy('onParameters');
+			createElement();
 
-            //when
-            element.find('#dataset-header-details').eq(0).click();
+			// when
+			element.find('#playground-gear-icon').eq(0).click();
 
-            //then
-            expect(scope.onParameters).toHaveBeenCalled();
-        });
+			// then
+			expect(scope.onParameters).toHaveBeenCalled();
+		});
 
-        it('lookup toggle button looks inactive by default', () => {
-            //given
-            createElement();
+		it('lookup toggle button looks inactive by default', () => {
+			// given
+			createElement();
 
-            //when
-            let playgroundLookupIcon = element.find('#lookup-container').eq(0);
+			// when
+			let playgroundLookupIcon = element.find('#playground-lookup-icon').eq(0);
 
-            //then
-            expect(playgroundLookupIcon.hasClass('pressed')).toBe(false);
-        });
+			// then
+			expect(playgroundLookupIcon.hasClass('pressed')).toBe(false);
+		});
 
-        it('lookup toggle button looks active when its panel is shown', () => {
-            //given
-            scope.lookupVisible = true;
-            createElement();
+		it('lookup toggle button looks active when its panel is shown', () => {
+			// given
+			scope.lookupVisible = true;
+			createElement();
 
-            //when
-            let playgroundLookupIcon = element.find('#lookup-container').eq(0);
-            playgroundLookupIcon.click();
+			// when
+			let playgroundLookupIcon = element.find('#playground-lookup-icon').eq(0);
+			playgroundLookupIcon.click();
 
-            //then
-            expect(playgroundLookupIcon.hasClass('pressed')).toBe(true);
-        });
+			// then
+			expect(playgroundLookupIcon.hasClass('pressed')).toBe(true);
+		});
 
-        it('should call lookup callback', () => {
-            //given
-            scope.onLookup = jasmine.createSpy('onLookup');
-            createElement();
+		it('should call lookup callback', () => {
+			// given
+			scope.onLookup = jasmine.createSpy('onLookup');
+			createElement();
 
-            //when
-            element.find('#lookup-container').eq(0).click();
+			// when
+			element.find('#playground-lookup-icon').eq(0).click();
 
-            //then
-            expect(scope.onLookup).toHaveBeenCalled();
-        });
+			// then
+			expect(scope.onLookup).toHaveBeenCalled();
+		});
 
-        it('should call onboarding callback', () => {
-            //given
-            scope.onOnboarding = jasmine.createSpy('onOnboarding');
-            createElement();
+		it('should call onboarding callback', () => {
+			// given
+			scope.onOnboarding = jasmine.createSpy('onOnboarding');
+			createElement();
 
-            //when
-            element.find('#playground-onboarding-icon').eq(0).click();
+			// when
+			element.find('#playground-onboarding-icon').eq(0).click();
 
-            //then
-            expect(scope.onOnboarding).toHaveBeenCalled();
-        });
+			// then
+			expect(scope.onOnboarding).toHaveBeenCalled();
+		});
 
-        it('should not render feedback icon', () => {
-            //when
-            scope.feedbackVisible = false;
-            createElement();
+		it('should not render feedback icon', () => {
+			// when
+			scope.feedbackVisible = false;
+			createElement();
 
-            //then
-            expect(element.find('#playground-feedback-icon').length).toBe(0);
-        });
+			// then
+			expect(element.find('#playground-feedback-icon').length).toBe(0);
+		});
 
-        it('should render feedback icon', () => {
-            //when
-            scope.feedbackVisible = true;
-            createElement();
+		it('should render feedback icon', () => {
+			// when
+			scope.feedbackVisible = true;
+			createElement();
 
-            //then
-            expect(element.find('#playground-feedback-icon').length).toBe(1);
-        });
+			// then
+			expect(element.find('#playground-feedback-icon').length).toBe(1);
+		});
 
-        it('should render preparation picker icon', () => {
-            //when
-            scope.preparationPicker = true;
-            createElement();
+		it('should render preparation picker icon', () => {
+			// when
+			scope.preparationPicker = true;
+			createElement();
 
-            //then
-            expect(element.find('#apply-preparation-container').length).toBe(1);
-        });
+			// then
+			expect(element.find('#playground-preparation-picker-icon').length).toBe(1);
+		});
 
-        it('should call showPreparationPicker callback', () => {
-            //given
-            scope.showPreparationPicker = jasmine.createSpy('showPreparationPicker');
-            scope.preparationPicker = true;
-            createElement();
-            const icon = element.find('#apply-preparation-container').eq(0);
+		it('should call showPreparationPicker callback', () => {
+			// given
+			scope.showPreparationPicker = jasmine.createSpy('showPreparationPicker');
+			scope.preparationPicker = true;
+			createElement();
+			const icon = element.find('#playground-preparation-picker-icon').eq(0);
 
-            //when
-            icon.click();
+			// when
+			icon.click();
 
-            //then
-            expect(scope.showPreparationPicker).toHaveBeenCalled();
-        });
+			// then
+			expect(scope.showPreparationPicker).toHaveBeenCalled();
+		});
 
-        it('should call feedback callback', () => {
-            //given
-            scope.onFeedback = jasmine.createSpy('onFeedback');
-            scope.feedbackVisible = true;
-            createElement();
+		it('should call feedback callback', () => {
+			// given
+			scope.onFeedback = jasmine.createSpy('onFeedback');
+			scope.feedbackVisible = true;
+			createElement();
 
-            //when
-            element.find('#playground-feedback-icon').eq(0).click();
+			// when
+			element.find('#playground-feedback-icon').eq(0).click();
 
-            //then
-            expect(scope.onFeedback).toHaveBeenCalled();
-        });
+			// then
+			expect(scope.onFeedback).toHaveBeenCalled();
+		});
 
-        it('should call close callback', () => {
-            //given
-            scope.onClose = jasmine.createSpy('onClose');
-            createElement();
+		it('should call close callback', () => {
+			// given
+			scope.onClose = jasmine.createSpy('onClose');
+			createElement();
 
-            //when
-            element.find('#playground-close-container').eq(0).click();
+			// when
+			element.find('#playground-close-icon').eq(0).click();
 
-            //then
-            expect(scope.onClose).toHaveBeenCalled();
-        });
+			// then
+			expect(scope.onClose).toHaveBeenCalled();
+		});
 
-        it('should render export', () => {
-            //given
-            scope.enableExport = true;
+		it('should render export', () => {
+			// given
+			scope.enableExport = true;
 
-            //when
-            createElement();
+			// when
+			createElement();
 
-            //then
-            expect(element.find('export').length).toBe(1);
-        });
+			// then
+			expect(element.find('export').length).toBe(1);
+		});
 
-        it('should NOT render export', () => {
-            //given
-            scope.enableExport = false;
+		it('should NOT render export', () => {
+			// given
+			scope.enableExport = false;
 
-            //when
-            createElement();
+			// when
+			createElement();
 
-            //then
-            expect(element.find('export').length).toBe(0);
-        });
+			// then
+			expect(element.find('export').length).toBe(0);
+		});
 
-        it('should render history control', () => {
-            //when
-            createElement();
+		it('should render history control', () => {
+			// when
+			createElement();
 
-            //then
-            expect(element.find('history-control').length).toBe(1);
-        });
+			// then
+			expect(element.find('history-control').length).toBe(1);
+		});
 
-        it('should NOT render preview badge', () => {
-            //given
-            scope.preview = false;
+		it('should NOT render preview badge', () => {
+			// given
+			scope.preview = false;
 
-            //when
-            createElement();
+			// when
+			createElement();
 
-            //then
-            expect(element.find('#preview').length).toBe(0);
-        });
-    });
+			// then
+			expect(element.find('#preview').length).toBe(0);
+		});
+	});
 });

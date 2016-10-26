@@ -10,14 +10,32 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-$navigation-height: 48px;
+
+$playground-preview-icon-size: 20px !default;
+$playground-preview-icon-color: $black !default;
+$playground-preview-icon-padding: 10px !default;
 
 .playground-header {
-  @import 'playground-header-right';
-  @import 'playground-header-preview';
+	.preview {
+		@include flex-row-center();
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		color: $dark-gray;
+		background: rgba(255, 255, 255, 0.9);
 
-  .navbar {
-    border: none;
-    height: $navigation-height; //IE11
-  }
+		.preview-icon {
+			height: $navbar-height;
+			padding: ($navbar-height - $playground-preview-icon-size)/2 $playground-preview-icon-padding;
+
+			svg {
+				height: $playground-preview-icon-size;
+				width: $playground-preview-icon-size;
+				fill: $playground-preview-icon-color;
+				shape-rendering: auto;
+			}
+		}
+	}
 }

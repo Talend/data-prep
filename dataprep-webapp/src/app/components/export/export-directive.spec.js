@@ -203,7 +203,7 @@ describe('Export directive', () => {
             };
 
             //when
-            element.find('.list-group').find('button').eq(0).click();
+            element.find('.dropdown-menu').find('a').eq(0).click();
             scope.$digest();
 
             //then
@@ -222,7 +222,7 @@ describe('Export directive', () => {
             scope.$digest();
 
             //then
-            expect(element.find('.list-group').find('button').eq(1).hasClass('disabled')).toBe(true);
+            expect(element.find('.dropdown-menu').find('a').eq(1).hasClass('disabled')).toBe(true);
         });
 
         it('should have disabled message', () => {
@@ -233,7 +233,7 @@ describe('Export directive', () => {
             scope.$digest();
 
             //then
-            expect(element.find('.list-group').find('button').eq(1).text().trim()).toBe('XLSX -');//disabledReason is empty
+            expect(element.find('.dropdown-menu').find('a').eq(1).text().trim()).toBe('XLSX -');//disabledReason is empty
         });
     });
 });

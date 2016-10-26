@@ -35,8 +35,10 @@ describe('Filter bar directive', function () {
         $translateProvider.preferredLanguage('en');
     }));
 
-    beforeEach(inject(function ($rootScope, $compile) {
+    beforeEach(inject(function ($rootScope, $compile, $templateCache) {
         scope = $rootScope.$new();
+        $templateCache.put('assets/images/filter/delete.svg', '<svg></svg>');
+
         createElement = function () {
             element = angular.element('<filter-bar></filter-bar>');
             $compile(element)(scope);

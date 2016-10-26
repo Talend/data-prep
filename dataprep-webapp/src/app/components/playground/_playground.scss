@@ -26,7 +26,15 @@ $slide-action-background: $base-background-color;
 @mixin playground-center-layout {
   .playground-center {
     @extend .flex-center;
+    @include display(flex);
+    @include flex-direction(column);
+
     position: relative;
+
+    #playground-filter-bar {
+      @include flex-grow(0);
+      @include flex-shrink(0);
+    }
 
     #playground-dataset-parameters {
       @include slidable-top(200px, 0px);
@@ -36,11 +44,18 @@ $slide-action-background: $base-background-color;
     }
 
     #playground-datagrid-container {
-      @include calc(height, "100vh - 150px");
+      @include display(flex);
+      @include flex-grow(1);
+      @include flex-shrink(1);
+      @include flex-basis(500px);
 
       padding: 0 30px;
       position: relative;
       background-color: $shadow-gray;
+
+      .datagrid-container {
+        width: 100%;
+      }
     }
 
     .lookup-slide {

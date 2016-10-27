@@ -1,9 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
-import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.NEED_STATISTICS_INVALID;
-import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.NEED_STATISTICS_PATTERN;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -17,7 +13,6 @@ import org.talend.dataprep.api.dataset.statistics.StatisticsAdapter;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.common.ActionMetadata;
-import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
@@ -27,10 +22,13 @@ import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
+import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.NEED_STATISTICS_INVALID;
+import static org.talend.dataprep.transformation.actions.common.ActionMetadata.Behavior.NEED_STATISTICS_PATTERN;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+
 public class StatisticsNodesBuilder {
-    private Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> NO_OP_ANALYZER =
-            l -> Analyzers.with(NullAnalyzer.INSTANCE);
-    private Predicate<ColumnMetadata> ALL_COLUMNS = c -> true;
+
+    private static final Predicate<ColumnMetadata> ALL_COLUMNS = c -> true;
 
     private AnalyzerService analyzerService;
     private ActionRegistry actionRegistry;
@@ -113,28 +111,32 @@ public class StatisticsNodesBuilder {
         return new BasicNode();
     }
 
+    /**
+     * Insert statistics computing nodes before the supplied action node if needed.
+     *
+     * @param nextAction action needing
+     * @return
+     */
     public Node buildIntermediateStatistics(final Action nextAction) {
+        Node node = null;
         //TODO remove this and fix tests
-        if(analyzerService == null) {
-            return new BasicNode();
-        }
+        if (analyzerService == null) {
+            node = new BasicNode();
+        } else {
+            performActionsProfiling();
 
-        performActionsProfiling();
-
-        if (needIntermediateStatistics(nextAction)) {
-            final Set<ActionMetadata.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
-            if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                return NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
-            } else if (behavior.contains(ActionMetadata.Behavior.NEED_STATISTICS_INVALID)) {
-                return NodeBuilder
-                        .from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
-                        .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                        .build();
-            } else {
-                return null;
+            if (needIntermediateStatistics(nextAction)) {
+                final Set<ActionMetadata.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+                if (behavior.contains(NEED_STATISTICS_PATTERN)) {
+                    node = NodeBuilder.from(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
+                } else if (behavior.contains(ActionMetadata.Behavior.NEED_STATISTICS_INVALID)) {
+                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
+                            .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
+                            .build();
+                }
             }
         }
-        return null;
+        return node;
     }
 
     private boolean needIntermediateStatistics(final Action nextAction) {
@@ -184,14 +186,14 @@ public class StatisticsNodesBuilder {
      * Create a full analyzer
      */
     private Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getQualityAnalyzer() {
-        return columns -> analyzerService.build(columns, AnalyzerService.Analysis.QUALITY);
+        return c -> analyzerService.build(c, AnalyzerService.Analysis.QUALITY);
     }
 
     /**
      * Create a full analyzer
      */
     private Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getFullAnalyzer() {
-        return columns -> analyzerService.build(columns, //
+        return c -> analyzerService.build(c, //
                         AnalyzerService.Analysis.QUALITY, //
                         AnalyzerService.Analysis.CARDINALITY, //
                         AnalyzerService.Analysis.FREQUENCY, //

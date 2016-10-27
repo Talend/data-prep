@@ -51,8 +51,9 @@
       margin: 0 15px;
       position: absolute;
       right: 5px;
-      top: 7px;
-      cursor: pointer;
+      top: 8px;
+      background-color: $shadow-gray;
+      border: none;
 
       svg {
         height: 20px;

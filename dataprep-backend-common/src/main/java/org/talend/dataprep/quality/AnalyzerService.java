@@ -32,6 +32,7 @@ import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
+import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
 import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
@@ -83,8 +84,7 @@ public class AnalyzerService {
 
     public AnalyzerService(String indexesLocation, String indexStrategy) {
         LOGGER.info("DataQuality indexes location : '{}'", indexesLocation);
-        ClassPathDirectory.setLocalIndexFolder(indexesLocation);
-
+        CategoryRegistryManager.setLocalRegistryPath(indexesLocation);
         // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
         LOGGER.info("Analyzer service lucene index strategy set to '{}'", indexStrategy);
         if ("basic".equalsIgnoreCase(indexStrategy)) {
@@ -186,10 +186,8 @@ public class AnalyzerService {
         DataTypeEnum[] types = TypeUtils.convert(columns);
         // Semantic domains
         List<String> domainList = columns.stream() //
-                .map(c -> {
-                    final SemanticCategoryEnum category = SemanticCategoryEnum.getCategoryById(c.getDomain().toUpperCase());
-                    return category == null ? SemanticCategoryEnum.UNKNOWN.getId() : category.getId();
-                }) //
+                .map(ColumnMetadata::getDomain) //
+                .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
                 .collect(Collectors.toList());
         final String[] domains = domainList.toArray(new String[domainList.size()]);
 

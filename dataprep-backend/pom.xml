@@ -29,12 +29,12 @@
         <junit.version>4.12</junit.version>
         <tika.version>1.12</tika.version>
         <org.talend.daikon.version>0.13.0</org.talend.daikon.version>
-        <org.talend.dataquality.common.version>1.5.4-SNAPSHOT</org.talend.dataquality.common.version>
-        <org.talend.dataquality.semantic.version>1.5.4-SNAPSHOT</org.talend.dataquality.semantic.version>
-        <org.talend.dataquality.statistics.version>1.5.4-SNAPSHOT</org.talend.dataquality.statistics.version>
-        <org.talend.dataquality.record.linkage.version>3.2.4-SNAPSHOT</org.talend.dataquality.record.linkage.version>
-        <org.talend.dataquality.sampling.version>2.3.4-SNAPSHOT</org.talend.dataquality.sampling.version>
-        <org.talend.dataquality.standardization.version>3.2.4-SNAPSHOT</org.talend.dataquality.standardization.version>
+        <org.talend.dataquality.common.version>1.5.5-SNAPSHOT</org.talend.dataquality.common.version>
+        <org.talend.dataquality.semantic.version>1.5.5-SNAPSHOT</org.talend.dataquality.semantic.version>
+        <org.talend.dataquality.statistics.version>1.5.5-SNAPSHOT</org.talend.dataquality.statistics.version>
+        <org.talend.dataquality.record.linkage.version>3.2.5-SNAPSHOT</org.talend.dataquality.record.linkage.version>
+        <org.talend.dataquality.sampling.version>2.3.5-SNAPSHOT</org.talend.dataquality.sampling.version>
+        <org.talend.dataquality.standardization.version>3.2.5-SNAPSHOT</org.talend.dataquality.standardization.version>
         <spring-boot.version>1.4.2.RELEASE</spring-boot.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>

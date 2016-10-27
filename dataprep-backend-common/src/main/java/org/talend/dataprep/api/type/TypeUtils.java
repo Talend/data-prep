@@ -17,7 +17,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+import org.talend.dataquality.semantic.model.DQCategory;
 import org.talend.dataquality.semantic.statistics.SemanticType;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 
@@ -93,8 +95,8 @@ public class TypeUtils {
         if (categoryId == null) {
             return StringUtils.EMPTY;
         } else {
-            final SemanticCategoryEnum category = SemanticCategoryEnum.getCategoryById(categoryId.toUpperCase());
-            return category == null ? StringUtils.EMPTY : category.getDisplayName();
+            final DQCategory category = CategoryRegistryManager.getInstance().getCategoryMetadataByName(categoryId);
+            return category == null ? StringUtils.EMPTY : category.getLabel();
         }
     }
 

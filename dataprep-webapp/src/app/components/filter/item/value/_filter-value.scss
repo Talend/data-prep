@@ -21,5 +21,10 @@
   &-btn-remove {
     margin-left: 5px;
     color: $white;
+
+    &:hover, &:focus {
+      color: darken($white, 10%);
+      text-decoration: none
+    }
   }
 }

@@ -39,20 +39,20 @@
 
       max-height: 100px;
       overflow-y: auto;
+      margin-right: 30px;
 
       #filter-list {
         padding: 5px 10px;
-        margin-right: 20px;
       }
     }
 
     .filters-remove {
-      font-size: 0.7em;
+      font-size: 10px;
       margin: 0 15px;
       position: absolute;
-      right: 5px;
-      top: 8px;
-      background-color: $shadow-gray;
+      right: -23px;
+      top: 10px;
+      background-color: transparent;
       border: none;
 
       svg {

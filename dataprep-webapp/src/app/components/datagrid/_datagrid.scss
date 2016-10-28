@@ -123,6 +123,10 @@ $datagrid-cell-font-size: .80em;
   //not frozen viewport should fit its container size (slick-pane-right)
   .slick-viewport-right {
     width: 100% !important;
+    background-color: $white;
+  }
+  .slick-viewport-left {
+    background-color: $white;
   }
 
   //set the reorder placeholder height to fit column height

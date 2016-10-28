@@ -59,12 +59,10 @@
 
 	.grid-header-menu {
 		@include menu-list;
-		box-shadow: none;
-		font-family: $base-font-family;
 		padding: 0;
-		li {
-			height: 20px;
-		}
+		font-family: $base-font-family;
+		overflow: visible;
+		box-shadow: none;
 	}
 
 	.grid-header-title-input {

@@ -12,9 +12,7 @@
  ============================================================================*/
 
 const HomeComponent = {
-	template: `
-		<app-header-bar>
-	`,
+	template:  `<app-layout>`,
 };
 
 export default HomeComponent;

@@ -32,7 +32,8 @@ function getDefaultConfig(options) {
 			preLoaders: [],
 			loaders: [
 				{ test: /\.js$/, loaders: ['ng-annotate', 'babel'], exclude: /node_modules/ },
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'resolve-url', 'sass?sourceMap']) },
+				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-components/,},
+				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-components/, }, //css moodules  local scope
 				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
 				{ test: /\.html$/, loaders: ['ngtemplate', 'html'], exclude: INDEX_TEMPLATE_PATH },
 

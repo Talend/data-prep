@@ -12,9 +12,10 @@
  ============================================================================*/
 
 export default class SettingsActionsService {
-	constructor($rootScope, SettingsActionsHandlers) {
+	constructor($timeout, SettingsActionsHandlers) {
 		'ngInject';
-		this.$rootScope = $rootScope;
+
+		this.$timeout = $timeout;
 		this.SettingsActionsHandlers = SettingsActionsHandlers;
 	}
 
@@ -27,7 +28,7 @@ export default class SettingsActionsService {
 					...model,
 				},
 			};
-			this.$rootScope.$apply(this.dispatch(adaptedAction));
+			this.$timeout(this.dispatch(adaptedAction));
 		};
 	}
 

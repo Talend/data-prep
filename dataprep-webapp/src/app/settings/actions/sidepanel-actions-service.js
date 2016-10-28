@@ -10,14 +10,18 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import AppHeaderBarCtrl from './app-header-bar-controller';
 
-const AppHeaderBarContainer = {
-	template: `<pure-app-header-bar
-		 	app="$ctrl.app"
-		 	brand-link="$ctrl.brandLink"
-		 	content="$ctrl.content"
-		/>`,
-	controller: AppHeaderBarCtrl,
-};
-export default AppHeaderBarContainer;
+export default class SidePanelActionsService {
+	constructor(StateService) {
+		'ngInject';
+		this.StateService = StateService;
+	}
+
+	dispatch(action) {
+		switch (action.type) {
+		case '@@sidepanel/TOGGLE':
+			this.StateService[action.payload.method]();
+			break;
+		}
+	}
+}

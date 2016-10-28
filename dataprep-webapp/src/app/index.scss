@@ -12,7 +12,7 @@
   ============================================================================*/
 
 $gray: #F2F2F2;
-$blue: #607d8b;
+$blue: #4f93a7;
 $dark-blue: #3F5159;
 $light-green: #D6D88F;
 $green: #B9BF15;
@@ -21,6 +21,7 @@ $brand-primary: $blue;
 $brand-success: $green;
 
 $navbar-margin-bottom: 0;
+
 @import "~bootstrap-talend-theme/src/theme/bootstrap";
 @import "css/vendors/customisation/sunchoke";
 @import "css/vendors/libs/libs";
@@ -107,3 +108,5 @@ $navbar-margin-bottom: 0;
 @import "components/widgets/charts/horizontal-barchart/horizontal-barchart.scss";
 @import "components/widgets/charts/range-slider/range-slider.scss";
 @import "components/widgets/charts/vertical-barchart/vertical-barchart.scss";
+@import "components/widgets-containers/app-layout/app-layout.scss";
+@import "components/widgets-containers/app-header-bar/app-header-bar.scss";

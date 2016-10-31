@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc directive
@@ -23,7 +23,7 @@ export default function TalendSearchInput() {
 		restrict: 'A',
 		require: 'ngModel',
 		link(scope, iElement, iAttrs, ngModel) {
-            // var margin = 5;
+			// var margin = 5;
 			const wrapper = angular.element('<div class="search-input"></div>');
 			iElement.wrap(wrapper);
 
@@ -33,28 +33,21 @@ export default function TalendSearchInput() {
 			iElement.parent().append(clearButton);
 			iElement.parent().append(searchIcon);
 
-			iElement.bind('keydown', function (e) {
-                // hide modal on 'ESC' keydown
-				if (e.keyCode === 27) {
-					e.stopPropagation();
-				}
-			});
-
 			scope.$watch(
-                function () {
-	return ngModel.$modelValue;
-},
+				function () {
+					return ngModel.$modelValue;
+				},
 
-                function (value) {
-	if (value) {
-		clearButton.css('display', 'block');
-		searchIcon.css('display', 'none');
-	}
-	else {
-		searchIcon.css('display', 'block');
-		clearButton.css('display', 'none');
-	}
-});
+				function (value) {
+					if (value) {
+						clearButton.css('display', 'block');
+						searchIcon.css('display', 'none');
+					}
+					else {
+						searchIcon.css('display', 'block');
+						clearButton.css('display', 'none');
+					}
+				});
 
 			clearButton.on('click', function () {
 				scope.$apply(function () {

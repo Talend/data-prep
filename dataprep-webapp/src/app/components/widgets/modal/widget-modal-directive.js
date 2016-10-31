@@ -145,14 +145,14 @@ export default function TalendModal($timeout) {
 				const primaryButton = iElement.find('.modal-primary-button').eq(0);
 				const hasBeforeEachFn = angular.isDefined(iAttrs.beforeClose);
 
-                /**
-                 * @ngdoc method
-                 * @name hideModal
-                 * @methodOf talend.widget.directive:TalendModal
-                 * @description [PRIVATE] Hide modal action
-                 */
-				const hideModal = function () {
-					$timeout(function () {
+				/**
+				 * @ngdoc method
+				 * @name hideModal
+				 * @methodOf talend.widget.directive:TalendModal
+				 * @description [PRIVATE] Hide modal action
+				 */
+				const hideModal = () => {
+					$timeout(() => {
 						if (hasBeforeEachFn && !ctrl.beforeClose()) {
 							return;
 						}
@@ -161,13 +161,13 @@ export default function TalendModal($timeout) {
 					});
 				};
 
-                /**
-                 * @ngdoc method
-                 * @name deregisterAndFocusOnLastModal
-                 * @methodOf talend.widget.directive:TalendModal
-                 * @description [PRIVATE] Deregister modal from list of shown modal and focus on the last shown modal
-                 */
-				const deregisterAndFocusOnLastModal = function (innerElement) {
+				/**
+				 * @ngdoc method
+				 * @name deregisterAndFocusOnLastModal
+				 * @methodOf talend.widget.directive:TalendModal
+				 * @description [PRIVATE] Deregister modal from list of shown modal and focus on the last shown modal
+				 */
+				const deregisterAndFocusOnLastModal = (innerElement) => {
 					deregisterShownElement(innerElement);
 					const mostAdvancedModal = getLastRegisteredInnerElement();
 					if (mostAdvancedModal) {
@@ -178,58 +178,63 @@ export default function TalendModal($timeout) {
 					}
 				};
 
-                /**
-                 * @ngdoc method
-                 * @name attachListeners
-                 * @methodOf talend.widget.directive:TalendModal
-                 * @description [PRIVATE] Attach click listeners to elements that has `talend-modal-close` class
-                 * and stop click propagation in inner modal to avoid a click on the dismiss screen
-                 */
-				const attachListeners = function () {
-					innerElement.on('click', function (e) {
+				/**
+				 * @ngdoc method
+				 * @name attachListeners
+				 * @methodOf talend.widget.directive:TalendModal
+				 * @description [PRIVATE] Attach click listeners to elements that has `talend-modal-close` class
+				 * and stop click propagation in inner modal to avoid a click on the dismiss screen
+				 */
+				const attachListeners = () => {
+					innerElement.on('click', (e) => {
 						e.stopPropagation();
 						if (e.target.classList.contains('talend-modal-close')) {
 							hideModal();
 						}
 					});
 
-                    // Close action on modal background click
+					// Close action on modal background click
 					if (!ctrl.disableCloseOnBackgroundClick) {
 						iElement.find('.modal-window').on('click', hideModal);
 					}
 				};
 
-                /**
-                 * @ngdoc method
-                 * @name attachKeyMap
-                 * @methodOf talend.widget.directive:TalendModal
-                 * @description [PRIVATE] Attach ESC and ENTER actions
-                 * <ul>
-                 *     <li>ESC : dismiss the modal</li>
-                 *     <li>ENTER : click on the primary button (with `modal-primary-button` class)</li>
-                 * </ul>
-                 */
-				const attachKeyMap = function () {
-					innerElement.bind('keydown', function (e) {
-                        // hide modal on 'ESC' keydown
+				/**
+				 * @ngdoc method
+				 * @name attachKeyMap
+				 * @methodOf talend.widget.directive:TalendModal
+				 * @description [PRIVATE] Attach ESC and ENTER actions
+				 * <ul>
+				 *     <li>ESC : dismiss the modal</li>
+				 *     <li>ENTER : click on the primary button (with `modal-primary-button` class)</li>
+				 * </ul>
+				 */
+				const attachKeyMap = () => {
+					innerElement.bind('keydown', (e) => {
+						// hide modal on 'ESC' keydown
 						if (e.keyCode === 27 && !ctrl.disableCloseOnBackgroundClick) {
-							hideModal();
+							if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+								innerElement.focus();
+							}
+							else {
+								hideModal();
+							}
 						}
 
-                        // click on primary button on 'ENTER' keydown
+						// click on primary button on 'ENTER' keydown
 						else if (e.keyCode === 13 && !ctrl.disableEnter && primaryButton.length) {
 							primaryButton.click();
 						}
 					});
 				};
 
-                /**
-                 * @ngdoc method
-                 * @name attachModalToBody
-                 * @methodOf talend.widget.directive:TalendModal
-                 * @description [PRIVATE] Attach element to body directly to avoid parent styling
-                 */
-				const attachModalToBody = function () {
+				/**
+				 * @ngdoc method
+				 * @name attachModalToBody
+				 * @methodOf talend.widget.directive:TalendModal
+				 * @description [PRIVATE] Attach element to body directly to avoid parent styling
+				 */
+				const attachModalToBody = () => {
 					iElement.detach();
 					body.append(iElement);
 				};
@@ -238,37 +243,37 @@ export default function TalendModal($timeout) {
 				attachKeyMap();
 				attachModalToBody();
 
-                // remove element on destroy
-				scope.$on('$destroy', function () {
+				// remove element on destroy
+				scope.$on('$destroy', () => {
 					deregisterAndFocusOnLastModal(innerElement);
 					iElement.remove();
 				});
 
-                // enable/disable scroll on main body depending on modal display
-                // on show : modal focus
-                // on close : close callback and focus on last opened modal
+				// enable/disable scroll on main body depending on modal display
+				// on show : modal focus
+				// on close : close callback and focus on last opened modal
 				scope.$watch(() => ctrl.state,
-                    (newValue, oldValue) => {
-	if (newValue) {
-                            // register modal in shown modal list and focus on inner element
-		body.addClass('modal-open');
-		registerShownElement(innerElement);
-		innerElement.focus();
+					(newValue, oldValue) => {
+						if (newValue) {
+							// register modal in shown modal list and focus on inner element
+							body.addClass('modal-open');
+							registerShownElement(innerElement);
+							innerElement.focus();
 
-		$timeout(function () {
-                                // focus on first input (ignore first because it's the state checkbox)
-			const inputs = iElement.find('input:not(".no-focus")').eq(1);
-			if (inputs.length) {
-				inputs.focus();
-				inputs.select();
-			}
-		}, 0, false);
-	}
-	else if (oldValue) {
-		ctrl.onClose();
-		deregisterAndFocusOnLastModal(innerElement);
-	}
-});
+							$timeout(() => {
+								// focus on first input (ignore first because it's the state checkbox)
+								const inputs = iElement.find('input:not(".no-focus")').eq(1);
+								if (inputs.length) {
+									inputs.focus();
+									inputs.select();
+								}
+							}, 0, false);
+						}
+						else if (oldValue) {
+							ctrl.onClose();
+							deregisterAndFocusOnLastModal(innerElement);
+						}
+					});
 			},
 		},
 	};

@@ -15,13 +15,12 @@ package org.talend.dataprep.format.export;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.format.export.json.ExportFormatSerializer;
-import org.talend.dataprep.parameters.Parameterizable;
+import org.talend.dataprep.i18n.DataprepBundle;
 import org.talend.dataprep.parameters.Parameter;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.talend.dataprep.util.MessagesBundleContext;
+import org.talend.dataprep.parameters.Parameterizable;
 
 /**
  * Models a type of format.
@@ -150,7 +149,7 @@ public abstract class ExportFormat extends Parameterizable {
     }
 
     public String getTitle() {
-        return MessagesBundleContext.get().getString("export." + name + ".title");
+        return DataprepBundle.message("export." + name + ".title");
     }
 
 }

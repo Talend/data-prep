@@ -12,10 +12,8 @@
 //  ============================================================================
 package org.talend.dataprep.i18n;
 
-import java.util.Locale;
+import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
@@ -24,69 +22,38 @@ import org.springframework.stereotype.Component;
  * Spring context.
  *
  * @see org.talend.dataprep.util.MessagesBundleContext To get the current message bundle when serving a request.
+ * @deprecated this class is for compatibility, please use {@link DataprepBundle} instead.
  */
 @Component
+@Deprecated
 public class MessagesBundle {
 
-    /**
-     * SourceType resource bundle that holds all the actions name and parameters name.
-     */
-    @Autowired
-    private ResourceBundleMessageSource source;
+    public MessagesBundle() {}
 
     /**
-     * Private constructor.
-     */
-    private MessagesBundle() {
-    }
-
-    /**
-     * Returns the i18n string that corresponds to <code>code</code>. If no i18n string is to be found, returns
-     * <code>code</code>.
-     * 
-     * @param code A i18n key.
-     * @return The i18n message associated with <code>code</code>. Returns <code>null</code> if <code>code</code> is
-     * <code>null</code>. Returns <code>code</code> as is if message does not exist.
-     * @see LocaleContextHolder#getLocale()
-     * @see I18N#getResourceBundle()
+     * Redirect to {@link DataprepBundle#message(String, Object...)}.
      */
     public String getString(String code) {
-        return getString(code, new Object[0]);
+        return DataprepBundle.message(code);
     }
 
     /**
-     * Returns the i18n string that corresponds to <code>code</code>. If no i18n string is to be found, returns
-     * <code>defaultMessage</code>.
-     *
-     * @param code A i18n key.
-     * @param defaultMessage the default message to use if <code>code</code> is not present
-     * @return The i18n message associated with <code>code</code>. Returns <code>null</code> if <code>code</code> is
-     * <code>null</code>.
-     * @see LocaleContextHolder#getLocale()
+     * Redirect to {@link DataprepBundle#message(String, Object...)} but returns the default if no value message is returned.
+     * Using a default in i18n is bad practice as there should always be at least one default message and if not, it is a bug.
      */
     public String getString(String code, String defaultMessage) {
-        Locale locale = LocaleContextHolder.getLocale();
-        return source.getMessage(code, new String[0], defaultMessage, locale);
+        String message = DataprepBundle.message(code);
+        if (Objects.equals(message, code)) {
+            message = defaultMessage;
+        }
+        return message;
     }
 
     /**
-     * <p>
-     * Similarly to {@link #getString(String)}, returns the i18n string that corresponds to <code>code</code>. If no
-     * i18n string is to be found, returns <code>code</code>.
-     * </p>
-     * <p>
-     * This overload takes arguments in case the i18n message specifies arguments (in the form of "{0}", "{1}"...).
-     * </p>
-     *
-     * @param code A i18n key.
-     * @return The i18n message associated with <code>code</code>. Returns <code>null</code> if <code>code</code> is
-     * <code>null</code>.
-     * @see LocaleContextHolder#getLocale()
-     * @see java.text.MessageFormat
+     * Redirect to {@link DataprepBundle#message(String, Object...)}.
      */
     public String getString(String code, Object... args) {
-        Locale locale = LocaleContextHolder.getLocale();
-        return source.getMessage(code, args, locale);
+        return DataprepBundle.message(code, args);
     }
 
 }

@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
-import org.talend.dataprep.dataset.HdfsLocation;
 
 /**
  * Unit test for the HdfsLocation

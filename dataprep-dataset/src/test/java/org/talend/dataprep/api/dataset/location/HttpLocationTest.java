@@ -18,7 +18,6 @@ import static org.junit.Assert.assertNull;
 
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
-import org.talend.dataprep.dataset.HttpLocation;
 
 /**
  * Unit test for the HttpLocation

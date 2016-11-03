@@ -11,7 +11,7 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.dataset;
+package org.talend.dataprep.api.dataset.location.locator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.api.dataset.location.locator.DataSetLocator;
+import org.talend.dataprep.api.dataset.location.HdfsLocation;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,5 +66,4 @@ public class HdfsDataSetLocator implements DataSetLocator {
     public Class<? extends DataSetLocation> getLocationClass() {
         return HdfsLocation.class;
     }
-
 }

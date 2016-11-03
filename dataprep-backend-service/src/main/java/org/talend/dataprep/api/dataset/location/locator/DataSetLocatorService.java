@@ -11,10 +11,11 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset;
+package org.talend.dataprep.api.dataset.location.locator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -22,11 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.api.dataset.location.locator.DataSetLocator;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 
 /**
  * Service that retrieve dataset location from dataset locators.
- * 
+ *
  * @see DataSetLocator
  */
 @Service
@@ -36,8 +37,8 @@ public class DataSetLocatorService {
     private static final Logger LOG = LoggerFactory.getLogger(DataSetLocatorService.class);
 
     /** Available locators. */
-    @Autowired
-    private List<DataSetLocator> locators;
+    @Autowired(required = false)
+    private List<DataSetLocator> locators = new ArrayList<>();
 
     /**
      * Return the dataset location from the content type and the connection parameters.

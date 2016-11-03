@@ -28,9 +28,8 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.HttpLocation;
-import org.talend.dataprep.dataset.LocalStoreLocation;
 import org.talend.dataprep.schema.Schema;
 
 public class DataSetMetadataBuilderTest extends ServiceBaseTests {
@@ -149,8 +148,8 @@ public class DataSetMetadataBuilderTest extends ServiceBaseTests {
 
     @Test
     public void testLocation() throws Exception {
-        final DataSetMetadata metadata = builder.metadata().id("1234").location(new HttpLocation()).build();
-        assertEquals(HttpLocation.class, metadata.getLocation().getClass());
+        final DataSetMetadata metadata = builder.metadata().id("1234").location(new LocalStoreLocation()).build();
+        assertEquals(LocalStoreLocation.class, metadata.getLocation().getClass());
     }
 
     @Test

@@ -1,4 +1,5 @@
 // ============================================================================
+//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -10,20 +11,27 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.configuration;
+package org.talend.dataprep.api.dataset.location;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 
-@Configuration
-public class LocalImportLocation {
+/**
+ * Service to use to access the available dataset locations.
+ */
+@Service
+public class DataSetLocationService {
 
-    @Bean
-    public DataSetLocation localDataSetLocation() {
-        // LocalStoreLocation is not a @Component, hence the required Configuration to make available to Spring code.
-        return new LocalStoreLocation();
+    @Autowired
+    private List<DataSetLocation> locations;
+
+    /**
+     * @return the available dataset locations.
+     */
+    public List<DataSetLocation> getAvailableLocations() {
+        return locations;
     }
-
 }

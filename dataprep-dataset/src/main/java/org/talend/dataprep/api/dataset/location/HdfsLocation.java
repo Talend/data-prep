@@ -11,7 +11,7 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.dataset;
+package org.talend.dataprep.api.dataset.location;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,22 +19,21 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.api.dataset.location.AbstractUrlLocation;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.schema.FormatFamily;
 
 /**
- * Location used for remote http dataset.
+ * Location used for remote hdfs dataset.
  */
 @Component
-public class HttpLocation extends AbstractUrlLocation implements DataSetLocation {
+public class HdfsLocation extends AbstractUrlLocation implements DataSetLocation {
+
+    /** DataSet media type for remote hdfs datasets. */
+    public static final String MEDIA_TYPE = "application/vnd.remote-ds.hdfs";
 
     /** Name of the http location. */
-    public static final String NAME = "http";
-
-    /** DataSet media type for remote http datasets. */
-    public static final String MEDIA_TYPE = "application/vnd.remote-ds.http";
+    public static final String NAME = "hdfs";
 
     @Override
     public boolean isDynamic() {
@@ -53,7 +52,7 @@ public class HttpLocation extends AbstractUrlLocation implements DataSetLocation
     public List<Parameter> getParameters() {
         return Arrays.asList(
                 new Parameter("name", ParameterType.STRING, "", false, false), //
-                new Parameter("url", ParameterType.STRING, "", false, false, "http://")
+                new Parameter("url", ParameterType.STRING, "", false, false, "hdfs://host:port/file")
         );
     }
 
@@ -77,7 +76,7 @@ public class HttpLocation extends AbstractUrlLocation implements DataSetLocation
      */
     @Override
     public String toString() {
-        return "HttpLocation{" + "url='" + url + '\'' + '}';
+        return "HdfsLocation{" + "url='" + url + '\'' + '}';
     }
 
     /**
@@ -89,7 +88,7 @@ public class HttpLocation extends AbstractUrlLocation implements DataSetLocation
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        HttpLocation that = (HttpLocation) o;
+        HdfsLocation that = (HdfsLocation) o;
         return Objects.equals(url, that.url);
     }
 

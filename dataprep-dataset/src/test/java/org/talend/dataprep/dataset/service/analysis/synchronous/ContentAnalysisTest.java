@@ -22,8 +22,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.dataset.DataSetBaseTest;
-import org.talend.dataprep.dataset.LocalStoreLocation;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
 public class ContentAnalysisTest extends DataSetBaseTest {

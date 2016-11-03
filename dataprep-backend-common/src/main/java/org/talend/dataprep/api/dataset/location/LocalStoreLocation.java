@@ -11,7 +11,7 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.dataset;
+package org.talend.dataprep.api.dataset.location;
 
 import java.util.Collections;
 import java.util.List;

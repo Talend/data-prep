@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.HttpLocation;
+import org.talend.dataprep.api.dataset.location.HttpLocation;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;

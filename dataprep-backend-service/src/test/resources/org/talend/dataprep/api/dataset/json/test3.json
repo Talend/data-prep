@@ -7,10 +7,7 @@
     "nbLinesHeader": 1,
     "nbLinesFooter": 0,
     "type": "text/csv",
-    "location": {
-      "type": "http",
-      "url": "http://estcequecestbientotleweekend.fr"
-    },
+    "location": {},
     "columns": [
       {
         "id": "0000",

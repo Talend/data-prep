@@ -16,7 +16,7 @@ package org.talend.dataprep.api.dataset;
 import java.io.Serializable;
 import java.util.List;
 
-import org.talend.dataprep.dataset.LocalStoreLocation;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.schema.FormatFamily;
 

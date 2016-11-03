@@ -1,15 +1,15 @@
-// ============================================================================
+//  ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// This source code is available under agreement available at
-// https://github.com/Talend/data-prep/blob/master/LICENSE
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
 //
-// ============================================================================
+//  ============================================================================
 
 package org.talend.dataprep.api.dataset.location.locator;
 
@@ -19,18 +19,23 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.dataset.HdfsDataSetLocator;
-import org.talend.dataprep.dataset.HdfsLocation;
+import org.talend.dataprep.api.dataset.location.HdfsLocation;
 
 /**
  * Unit test for the HdfsDataSetLocator.
  * 
  * @see HdfsDataSetLocator
  */
-public class HdfsDataSetLocatorTest extends ServiceBaseTests {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = HdfsDataSetLocatorTest.class)
+@ComponentScan(basePackages = "org.talend.dataprep")
+public class HdfsDataSetLocatorTest {
 
     /** The dataset locator to test. */
     @Autowired

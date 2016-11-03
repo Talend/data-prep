@@ -3,6 +3,7 @@ package org.talend.dataprep.dataset;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.json.DataSetLocationMapping;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 
 @Component
 public class LocalStoreLocationMapping implements DataSetLocationMapping {

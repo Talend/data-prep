@@ -49,15 +49,16 @@ import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
+import org.talend.dataprep.api.dataset.location.DataSetLocationService;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
+import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
-import org.talend.dataprep.dataset.DataSetLocatorService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.LocalStoreLocation;
 import org.talend.dataprep.dataset.event.DataSetImportedEvent;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
 import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
@@ -94,20 +95,16 @@ import io.swagger.annotations.ApiParam;
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")
 public class DataSetService extends BaseDataSetService {
 
-    /**
-     * This class' logger.
-     */
+    /** This class' logger. */
     private static final Logger LOG = LoggerFactory.getLogger(DataSetService.class);
 
-    /**
-     * Date format to use.
-     */
+    /** Date format to use. */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-YYYY HH:mm"); // $NON-NLS-1
 
     private static final String CONTENT_TYPE = "Content-Type";
 
     static {
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC")); //$NON-NLS-1$
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -177,7 +174,7 @@ public class DataSetService extends BaseDataSetService {
      * All possible data set locations.
      */
     @Autowired
-    private List<DataSetLocation> locations;
+    private DataSetLocationService locationsService;
 
     /**
      * DataSet metadata builder.
@@ -1045,7 +1042,7 @@ public class DataSetService extends BaseDataSetService {
         if (StringUtils.isEmpty(importType)) {
             return emptyList();
         }
-        for (DataSetLocation location : locations) {
+        for (DataSetLocation location : locationsService.getAvailableLocations()) {
             if (importType.equals(location.getLocationType())) {
                 return location.getParameters();
             }
@@ -1058,7 +1055,7 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @PublicAPI
     public List<Import> listSupportedImports() {
-        final List<Import> supportedImports = locations.stream() //
+        final List<Import> supportedImports = locationsService.getAvailableLocations().stream() //
                 .filter(l -> enabledImports.contains(l.getLocationType())) //
                 .filter(DataSetLocation::isEnabled) //
                 .map(l -> { //

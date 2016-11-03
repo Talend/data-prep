@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.*;
+import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.schema.Schema;
@@ -31,7 +32,7 @@ import org.talend.dataprep.schema.Schema;
  * <p>
  * This class is <b>not</b> thread safe ! Use the metadata() to get as single instance.
  * </p>
- * 
+ *
  * @see #metadata()
  */
 @Component
@@ -338,7 +339,7 @@ public class DataSetMetadataBuilder {
 
     /**
      * Copies fields of the specified data set metadata that are not related to the content of the data set.
-     * 
+     *
      * @param original the specified data set metadata
      * @return the data set metadata builder obtained from the non-content-related fields of the specified data set metadata
      */
@@ -357,7 +358,7 @@ public class DataSetMetadataBuilder {
 
     /**
      * Copies fields of the specified data set metadata that are related to the content of the data set.
-     * 
+     *
      * @param original the specified data set metadata
      * @return the data set metadata builder obtained from the content-related fields of the specified data set metadata
      */
@@ -396,7 +397,7 @@ public class DataSetMetadataBuilder {
 
     /**
      * Initializes a data set metadata builder obtained from the specified data set metadata.
-     * 
+     *
      * @param original the specified data set metadata
      * @return the data set metadata builder obtained from the specified data set metadata
      */

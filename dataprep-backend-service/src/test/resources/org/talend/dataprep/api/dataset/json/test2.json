@@ -20,10 +20,7 @@
     },
     "formatGuess": "formatGuess#csv",
     "certificationStep": "NONE",
-    "location": {
-      "type": "http",
-      "url": "http://estcequecestbientotleweekend.fr"
-    },
+    "location": {},
     "columns": [
       {
         "id": "0005",

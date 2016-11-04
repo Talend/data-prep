@@ -26,7 +26,7 @@ export function StateService(RouteStateService, routeState,
                              FeedbackStateService, feedbackState,
                              ImportStateService, importState,
                              ExportStateService, exportState,
-							 SidepanelStateService, sidepanelState) {
+							 HomeStateService, homeState) {
 	'ngInject';
 
 	state.route = routeState;
@@ -37,7 +37,7 @@ export function StateService(RouteStateService, routeState,
 	state.feedback = feedbackState;
 	state.import = importState;
 	state.export = exportState;
-	state.sidepanel = sidepanelState;
+	state.home = homeState;
 
 	return {
         // route
@@ -48,7 +48,7 @@ export function StateService(RouteStateService, routeState,
 		resetRoute: RouteStateService.reset.bind(RouteStateService),
 
 		//SidePanel
-		toogleSidepanel: SidepanelStateService.toogle,
+		toogleHomeSidepanel: HomeStateService.toogleSidepanel,
 
         // playground
 		resetPlayground: PlaygroundStateService.reset,

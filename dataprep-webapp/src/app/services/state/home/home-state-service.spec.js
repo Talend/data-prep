@@ -11,16 +11,20 @@
 
  ============================================================================*/
 
-export const sidepanelState = {
-	docked: false,
-};
+describe('home state', function () {
+	'use strict';
 
-export function SidepanelStateService() {
-	return {
-		toogle,
-	};
+	beforeEach(angular.mock.module('data-prep.services.state'));
 
-	function toogle() {
-		sidepanelState.docked = !sidepanelState.docked;
-	}
-}
+
+	it('should toogle sidepanel', inject(function (homeState, HomeStateService) {
+		//given
+		homeState.sidePanelDocked = false;
+
+		//when
+		HomeStateService.toogleSidepanel();
+
+		//then
+		expect(homeState.sidePanelDocked).toBe(true);
+	}));
+});

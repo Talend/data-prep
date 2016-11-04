@@ -19,7 +19,7 @@
 	 template: `<pure-app-side-panel
 		 	actions="$ctrl.actions"
 			on-toggle-dock="$ctrl.toggle"
-			docked="$ctrl.state.sidepanel.docked"
+			docked="$ctrl.state.home.sidePanelDocked"
 		/>`,
 	 controller: SidePanelCtrl,
  };

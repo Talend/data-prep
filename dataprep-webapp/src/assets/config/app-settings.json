@@ -59,7 +59,7 @@
       "icon": "",
       "type": "@@sidepanel/TOGGLE",
       "payload": {
-        "method": "toogleSidepanel",
+        "method": "toogleHomeSidepanel",
         "args": []
       }
     },

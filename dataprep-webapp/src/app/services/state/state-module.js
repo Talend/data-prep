@@ -28,7 +28,7 @@ import { suggestionsState, SuggestionsStateService } from './suggestions/suggest
 import { routeState, RouteStateService } from './route/route-state-service';
 import { importState, ImportStateService } from './import/import-state-service';
 import { exportState, ExportStateService } from './export/export-state-service';
-import { sidepanelState, SidepanelStateService } from './sidepanel/sidepanel-state-service';
+import { homeState, HomeStateService } from './home/home-state-service';
 import { state, StateService } from './state-service';
 
 const MODULE_NAME = 'data-prep.services.state';
@@ -84,8 +84,8 @@ angular.module(MODULE_NAME, [])
     .service('ExportStateService', ExportStateService)
     .constant('exportState', exportState)
 
-	.service('SidepanelStateService', SidepanelStateService)
-	.constant('sidepanelState', sidepanelState)
+	.service('HomeStateService', HomeStateService)
+	.constant('homeState', homeState)
 
     .service('StateService', StateService)
     .constant('state', state);

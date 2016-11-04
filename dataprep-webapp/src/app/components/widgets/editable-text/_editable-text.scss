@@ -46,6 +46,12 @@
 
     &.edit-btn {
       @include editable-button-color($medium-gray, transparent, $dark-gray, transparent);
+
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: none;
+      }
     }
 
     &.cancel-btn {

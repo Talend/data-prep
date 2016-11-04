@@ -79,3 +79,7 @@ import 'sunchoke';
 // ngReact
 import 'react';
 import 'ngreact';
+
+// Babel
+import "babel-polyfill";
+

@@ -12,6 +12,9 @@
         "external:help"
       ]
     },
+    "breadcrumb": {
+      "onItemClick": "menu:folders"
+    },
     "sidepanel": {
       "onToggleDock": "sidepanel:toggle",
       "actions": [
@@ -34,6 +37,18 @@
       "name": "Preparations",
       "icon": "icon-lab-mix",
       "type": "@@router/GO",
+      "payload": {
+        "method": "go",
+        "args": [
+          "nav.index.preparations"
+        ]
+      }
+    },
+    "menu:folders": {
+      "id": "menu:folders",
+      "name": "folders",
+      "icon": "icon-folder",
+      "type": "@@router/GO_FOLDER",
       "payload": {
         "method": "go",
         "args": [

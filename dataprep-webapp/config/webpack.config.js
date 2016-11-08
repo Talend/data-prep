@@ -36,7 +36,6 @@ function getDefaultConfig(options) {
 				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-components/, }, //css moodules  local scope
 				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
 				{ test: /\.html$/, loaders: ['ngtemplate', 'html'], exclude: INDEX_TEMPLATE_PATH },
-
 				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,  loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff" },
 				{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,       loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream" },
 				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,       loader: "file?name=/assets/fonts/[name].[ext]" },

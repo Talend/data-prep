@@ -22,17 +22,17 @@ describe('Sidepanel actions service', () => {
 			const action = {
 				"type": "@@sidepanel/TOGGLE",
 				"payload": {
-					"method": "toogleHomeSidepanel",
+					"method": "toggleHomeSidepanel",
 					"args": []
 				}
 			};
-			spyOn(StateService, 'toogleHomeSidepanel').and.returnValue();
+			spyOn(StateService, 'toggleHomeSidepanel').and.returnValue();
 
 			// when
 			SidePanelActionsService.dispatch(action);
 
 			// then
-			expect(StateService.toogleHomeSidepanel).toHaveBeenCalled();
+			expect(StateService.toggleHomeSidepanel).toHaveBeenCalled();
 		}));
 	});
 });

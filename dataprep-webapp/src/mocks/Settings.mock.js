@@ -28,7 +28,7 @@ const settingsMock = {
 			},
 		},
 		"sidepanel": {
-			"onToggleDock": "sidepanel:toogle",
+			"onToggleDock": "sidepanel:toggle",
 			"actions": [
 				{
 					"label": "Preparations",
@@ -68,13 +68,13 @@ const settingsMock = {
 				],
 			},
 		},
-		"sidepanel:toogle": {
-			"id": "sidepanel:toogle",
-			"name": "Click here to toogle the side panel",
+		"sidepanel:toggle": {
+			"id": "sidepanel:toggle",
+			"name": "Click here to toggle the side panel",
 			"icon": "",
 			"type": "@@sidepanel/TOGGLE",
 			"payload": {
-				"method": "toogleHomeSidepanel",
+				"method": "toggleHomeSidepanel",
 				"args": []
 			}
 		},

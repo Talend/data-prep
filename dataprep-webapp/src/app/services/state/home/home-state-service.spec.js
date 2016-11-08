@@ -22,7 +22,7 @@ describe('home state', function () {
 		homeState.sidePanelDocked = false;
 
 		//when
-		HomeStateService.toogleSidepanel();
+		HomeStateService.toggleSidepanel();
 
 		//then
 		expect(homeState.sidePanelDocked).toBe(true);

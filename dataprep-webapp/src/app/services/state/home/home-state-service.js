@@ -17,10 +17,10 @@ export const homeState = {
 
 export function HomeStateService() {
 	return {
-		toogleSidepanel,
+		toggleSidepanel,
 	};
 
-	function toogleSidepanel() {
+	function toggleSidepanel() {
 		homeState.sidePanelDocked = !homeState.sidePanelDocked;
 	}
 }

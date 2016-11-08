@@ -42,7 +42,7 @@ describe('App Side Panel container', () => {
 	}));
 
 	describe('render', () => {
-		it('should create toogle button', () => {
+		it('should create toggle button', () => {
 			// when
 			createElement();
 

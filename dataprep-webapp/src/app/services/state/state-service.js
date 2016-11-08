@@ -48,7 +48,7 @@ export function StateService(RouteStateService, routeState,
 		resetRoute: RouteStateService.reset.bind(RouteStateService),
 
 		//SidePanel
-		toogleHomeSidepanel: HomeStateService.toogleSidepanel,
+		toggleHomeSidepanel: HomeStateService.toggleSidepanel,
 
         // playground
 		resetPlayground: PlaygroundStateService.reset,

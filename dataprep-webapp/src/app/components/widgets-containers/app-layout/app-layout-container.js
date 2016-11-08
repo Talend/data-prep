@@ -11,7 +11,7 @@
 
  ============================================================================*/
 const AppLayoutContainer = {
-	template:  `<div class="app">
+	template: `<div class="app">
 					<div class="header">
 						<app-header-bar><app-header-bar/>
 					</div>

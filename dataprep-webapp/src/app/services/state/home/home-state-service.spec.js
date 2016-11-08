@@ -17,7 +17,7 @@ describe('home state', function () {
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
 
-	it('should toogle sidepanel', inject(function (homeState, HomeStateService) {
+	it('should toggle sidepanel', inject(function (homeState, HomeStateService) {
 		//given
 		homeState.sidePanelDocked = false;
 

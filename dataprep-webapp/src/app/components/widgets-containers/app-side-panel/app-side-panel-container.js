@@ -13,14 +13,14 @@
 
   ============================================================================*/
 
- import SidePanelCtrl from './app-side-panel-controller';
+import SidePanelCtrl from './app-side-panel-controller';
 
- const SidePanelContainer = {
-	 template: `<pure-app-side-panel
+const SidePanelContainer = {
+	template: `<pure-app-side-panel
 		 	actions="$ctrl.actions"
 			on-toggle-dock="$ctrl.toggle"
 			docked="$ctrl.state.home.sidePanelDocked"
 		/>`,
-	 controller: SidePanelCtrl,
- };
- export default SidePanelContainer;
+	controller: SidePanelCtrl,
+};
+export default SidePanelContainer;

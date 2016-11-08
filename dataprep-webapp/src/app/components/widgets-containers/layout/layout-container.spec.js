@@ -47,6 +47,6 @@ describe('Layout Container', () => {
 		expect(element.find('.app').length).toBe(1);
 		expect(element.find('.header app-header-bar').length).toBe(1);
 		expect(element.find('.content .sidemenu side-panel').length).toBe(1);
-		expect(element.find('.content .main').length).toBe(1);
+		expect(element.find('.content .main react-preparation-breadcrumb').length).toBe(1);
 	}));
 });

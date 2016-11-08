@@ -20,7 +20,9 @@ const LayoutContainer = {
 				<div class="sidemenu">
 					<side-panel><side-panel/>
 				</div>
-				<div class="main"></div>
+				<div class="main">
+					<react-preparation-breadcrumb></react-preparation-breadcrumb>
+				</div>
 			</div>
 		</div>
 	`,

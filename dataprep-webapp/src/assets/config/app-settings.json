@@ -13,6 +13,7 @@
       ]
     },
     "breadcrumb": {
+      "maxItems": 5,
       "onItemClick": "menu:folders"
     },
     "sidepanel": {

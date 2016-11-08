@@ -19,7 +19,7 @@ describe('Menu actions service', () => {
 	describe('dispatch', () => {
 		it('should change route', inject(($state, MenuActionsService) => {
 			// given
-			const action = { 
+			const action = {
 				type: '@@router/GO',
 				payload: {
 					method: 'go',
@@ -33,6 +33,25 @@ describe('Menu actions service', () => {
 
 			// then
 			expect($state.go).toHaveBeenCalledWith('nav.index.preparations');
+		}));
+
+		it('should change route with folder parameters', inject(($state, MenuActionsService) => {
+			// given
+			const action = {
+				type: '@@router/GO_FOLDER',
+				payload: {
+					method: 'go',
+					args: ['nav.index.preparations'],
+					id: 'acbd'
+				},
+			};
+			spyOn($state, 'go').and.returnValue();
+
+			// when
+			MenuActionsService.dispatch(action);
+
+			// then
+			expect($state.go).toHaveBeenCalledWith('nav.index.preparations', { folderId: 'acbd' });
 		}));
 	});
 });

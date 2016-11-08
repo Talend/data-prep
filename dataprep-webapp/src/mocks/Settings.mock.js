@@ -27,6 +27,10 @@ const settingsMock = {
 				menu: ['user:logout'],
 			},
 		},
+		"breadcrumb": {
+			"maxItems": 5,
+			"onItemClick": "menu:folders"
+		},
 		"sidepanel": {
 			"onToggleDock": "sidepanel:toggle",
 			"actions": [
@@ -67,6 +71,18 @@ const settingsMock = {
 					'nav.index.datasets',
 				],
 			},
+		},
+		"menu:folders": {
+			"id": "menu:folders",
+			"name": "folders",
+			"icon": "icon-folder",
+			"type": "@@router/GO_FOLDER",
+			"payload": {
+				"method": "go",
+				"args": [
+					"nav.index.preparations"
+				]
+			}
 		},
 		"sidepanel:toggle": {
 			"id": "sidepanel:toggle",

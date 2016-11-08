@@ -15,7 +15,7 @@ $tc-layout-header-height: 48px;
 .app {
   @include display(flex);
   @include flex-direction(column);
-  min-height: 100vh;
+  height: 100vh;
 
   .header {
     @include flex-grow(0);

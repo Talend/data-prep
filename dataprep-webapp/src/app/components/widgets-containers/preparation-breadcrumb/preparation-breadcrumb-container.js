@@ -14,7 +14,7 @@
 import PreparationBreadcrumbCtrl from './preparation-breadcrumb-controller';
 
 const PreparationBreadcrumbContainer = {
-	template: `<pure-breadcrumb items="$ctrl.items"></pure-breadcrumb>`,
+	template: '<pure-breadcrumb items="$ctrl.items" max-items="$ctrl.maxItems"></pure-breadcrumb>',
 	controller: PreparationBreadcrumbCtrl,
 };
 export default PreparationBreadcrumbContainer;

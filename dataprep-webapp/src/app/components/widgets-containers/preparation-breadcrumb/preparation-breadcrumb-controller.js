@@ -23,6 +23,7 @@ export default class PreparationBreadcrumbCtrl {
 	}
 
 	init() {
+		this.maxItems = this.appSettings.views.breadcrumb.maxItems;
 		this.items = this.adaptItems();
 	}
 

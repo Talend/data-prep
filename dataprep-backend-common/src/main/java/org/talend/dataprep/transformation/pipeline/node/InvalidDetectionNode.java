@@ -17,6 +17,9 @@ import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
+/**
+ * Allow to mark (and unmark) invalid values in rows that go through the pipeline.
+ */
 public class InvalidDetectionNode extends ColumnFilteredNode implements Monitored {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidDetectionNode.class);

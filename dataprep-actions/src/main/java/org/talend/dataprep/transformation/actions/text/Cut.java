@@ -27,6 +27,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
@@ -62,7 +63,7 @@ public class Cut extends AbstractActionMetadata implements ColumnAction {
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
         parameters.add(new Parameter(PATTERN_PARAMETER, REGEX, EMPTY));
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

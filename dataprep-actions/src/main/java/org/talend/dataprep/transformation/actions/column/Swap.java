@@ -25,6 +25,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -68,7 +69,7 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
 
         parameters.add(new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, false, false));
 
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class ActionContext implements Serializable {
      * @param parent the parent transformation context.
      */
     public ActionContext(TransformationContext parent) {
-        this.parent = parent;
+        this(parent, new RowMetadata());
     }
 
     public ActionContext(TransformationContext parent, RowMetadata rowMetadata) {
@@ -281,7 +281,7 @@ public class ActionContext implements Serializable {
         private final ActionContext delegate;
 
         private ImmutableActionContext(ActionContext delegate) {
-            super(delegate.parent);
+            super(delegate.parent, delegate.getRowMetadata());
             this.delegate = delegate;
         }
 

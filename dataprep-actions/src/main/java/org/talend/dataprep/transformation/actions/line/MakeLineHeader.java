@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -75,7 +76,7 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
 
     @Override
     public List<Parameter> getParameters() {
-        return Collections.singletonList(new Parameter(SKIP_UNTIL, BOOLEAN, Boolean.TRUE.toString()));
+        return ActionsBundle.attachToAction(Collections.singletonList(new Parameter(SKIP_UNTIL, BOOLEAN, Boolean.TRUE.toString())), this);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CHANGE_NAME, Behavior.VALUES_ALL, Behavior.FORBID_DISTRIBUTED);
+        return EnumSet.of(Behavior.METADATA_CHANGE_NAME, Behavior.VALUES_ALL, Behavior.FORBID_DISTRIBUTED, Behavior.VALUES_DELETE_ROWS);
     }
 
 }

@@ -172,6 +172,10 @@ public interface ActionDefinition extends Serializable {
          */
         METADATA_DELETE_COLUMNS,
         /**
+         * Action deletes rows
+         */
+        VALUES_DELETE_ROWS,
+        /**
          * Action modifies values in this working column.
          */
         VALUES_COLUMN,

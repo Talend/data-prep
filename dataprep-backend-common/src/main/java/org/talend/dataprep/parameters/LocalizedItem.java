@@ -35,6 +35,8 @@ public class LocalizedItem implements Item {
     /** the item label. */
     private String label;
 
+    private Object parent;
+
     /**
      * Create a select Item. The item's label will be by default looked up with key ("choice." + value).
      *
@@ -58,8 +60,14 @@ public class LocalizedItem implements Item {
     }
 
     @Override
+    public Item attach(Object parent) {
+        this.parent = parent;
+        return this;
+    }
+
+    @Override
     public String getLabel() {
-        return ActionsBundle.INSTANCE.choice(Locale.ENGLISH, label);
+        return ActionsBundle.INSTANCE.choice(parent, Locale.ENGLISH, label);
     }
 
 }

@@ -89,7 +89,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public String getLabel() {
-        return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, getName());
     }
 
     /**
@@ -98,7 +98,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      */
     @Override
     public String getDescription() {
-        return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, getName());
     }
 
     /**
@@ -195,17 +195,12 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
      **/
     @Override
     public List<Parameter> getParameters() {
-        return ImplicitParameters.getParameters();
+        return ActionsBundle.attachToAction(ImplicitParameters.getParameters(), this);
     }
 
     @JsonIgnore
     @Override
     public abstract Set<ActionDefinition.Behavior> getBehavior();
-
-    @JsonIgnore
-    protected MessagesBundle getMessagesBundle() {
-        return ActionsBundle.INSTANCE;
-    }
 
     @Override
     public Function<GenericRecord, GenericRecord> action(List<Parameter> parameters) {

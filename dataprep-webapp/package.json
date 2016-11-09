@@ -52,7 +52,7 @@
     "moment": "^2.13.0",
     "moment-jdateformatparser": "github:zhaozhiming/moment-jdateformatparser",
     "ng-file-upload": "2.2.2",
-    "ng-sortable": "^1.3.6",
+    "ng-sortable": "1.3.6",
     "ngreact": "^0.3.0",
     "react": "^15.3.2",
     "react-bootstrap": "^0.30.3",

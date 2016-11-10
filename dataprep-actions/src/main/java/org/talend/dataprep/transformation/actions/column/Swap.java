@@ -123,7 +123,7 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_MULTIPLE_COLUMNS, Behavior.METADATA_CHANGE_TYPE);
+        return EnumSet.of(Behavior.VALUES_MULTIPLE_COLUMNS, Behavior.METADATA_CHANGE_TYPE, Behavior.METADATA_CHANGE_ROW);
     }
 
 }

@@ -148,6 +148,10 @@ public interface ActionDefinition extends Serializable {
          */
         VALUES_ALL,
         /**
+         * Action change only the metadata of the row (not its data) like reorder columns.
+         */
+        METADATA_CHANGE_ROW,
+        /**
          * Action change only the type of the column (not its data) like changing type.
          */
         METADATA_CHANGE_TYPE,

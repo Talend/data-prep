@@ -1,0 +1,31 @@
+{
+  "name": "action numeric ops",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "integer"
+      },
+      {
+        "id": "0001",
+        "name": "a2",
+        "type": "integer"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "numeric_ops",
+      "parameters": {
+        "column_id": "0000",
+        "column_name": "a1",
+        "scope": "column",
+        "operator": "+",
+        "mode":"Another column",
+        "selected_column": "0001",
+        "operand": "2"
+      }
+    }
+  ]
+}

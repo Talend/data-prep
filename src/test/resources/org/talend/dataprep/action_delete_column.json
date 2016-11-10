@@ -1,0 +1,27 @@
+{
+  "name": "action delete column",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "string"
+      },
+      {
+        "id": "0001",
+        "name": "a2",
+        "type": "string"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "delete_column",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "a2",
+        "scope": "column"
+      }
+    }
+  ]
+}

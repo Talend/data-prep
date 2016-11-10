@@ -1,0 +1,86 @@
+{
+  "name": "action sample 1",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "string"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "copy",
+      "parameters": {
+        "column_id": "0004",
+        "scope": "column",
+        "column_name": "mobile"
+      }
+    },
+    {
+      "action": "rename_column",
+      "parameters": {
+        "column_id": "0005",
+        "scope": "column",
+        "column_name": "mobile_copy",
+        "new_column_name": "PHONE NUMBER TO USE"
+      }
+    },
+    {
+      "action": "fillemptywithdefault",
+      "parameters": {
+        "mode": "other_column_mode",
+        "selected_column": "0003",
+        "column_id": "0005",
+        "scope": "column",
+        "column_name": "PHONE NUMBER TO USE"
+      }
+    },
+    {
+      "action": "matches_pattern",
+      "parameters": {
+        "column_id": "0003",
+        "proposed_pattern": "custom",
+        "scope": "column",
+        "column_name": "phone",
+        "manual_pattern": {
+          "token": "06",
+          "operator": "starts_with"
+        }
+      }
+    },
+    {
+      "action": "fill_with_value",
+      "parameters": {
+        "mode": "other_column_mode",
+        "selected_column": "0003",
+        "column_id": "0005",
+        "filter": {
+          "contains": {
+            "field": "0006",
+            "value": "true"
+          }
+        },
+        "scope": "column",
+        "column_name": "PHONE NUMBER TO USE"
+      }
+    },
+    {
+      "action": "delete_column",
+      "parameters": {
+        "column_id": "0006",
+        "scope": "column",
+        "column_name": "phone_matching"
+      }
+    },
+    {
+      "action": "delete_empty",
+      "parameters": {
+        "column_id": "0005",
+        "scope": "column",
+        "column_name": "PHONE NUMBER TO USE"
+      }
+    }
+  ]
+}

@@ -57,9 +57,9 @@
     "react": "^15.3.2",
     "react-bootstrap": "^0.30.3",
     "react-dom": "^15.3.2",
-    "react-talend-components": "^0.8.5",
+    "react-talend-components": "^0.13.0",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#1.0.0",
-    "talend-icons": "0.0.2",
+    "talend-icons": "0.3.0",
     "uuid": "^2.0.3"
   },
   "devDependencies": {

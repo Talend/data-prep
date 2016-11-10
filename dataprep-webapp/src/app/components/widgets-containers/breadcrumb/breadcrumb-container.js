@@ -11,10 +11,13 @@
 
  ============================================================================*/
 
-import PreparationBreadcrumbCtrl from './preparation-breadcrumb-controller';
+import BreadcrumbCtrl from './breadcrumb-controller';
 
-const PreparationBreadcrumbContainer = {
-	template: '<pure-breadcrumb items="$ctrl.items" max-items="$ctrl.maxItems"></pure-breadcrumb>',
-	controller: PreparationBreadcrumbCtrl,
+const BreadcrumbContainer = {
+	template: '<pure-breadcrumb items="$ctrl.breadcrumbItems" max-items="$ctrl.maxItems"></pure-breadcrumb>',
+	controller: BreadcrumbCtrl,
+	bindings: {
+		items: '<',
+	},
 };
-export default PreparationBreadcrumbContainer;
+export default BreadcrumbContainer;

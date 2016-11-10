@@ -11,25 +11,27 @@
 
  ============================================================================*/
 
-export default class PreparationBreadcrumbCtrl {
-	constructor($timeout, state, appSettings, SettingsActionsService) {
+export default class BreadcrumbCtrl {
+	constructor(state, appSettings, SettingsActionsService) {
 		'ngInject';
-		this.$timeout = $timeout;
 		this.state = state;
 
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
-		this.init();
 	}
 
-	init() {
+	$onInit() {
 		this.maxItems = this.appSettings.views.breadcrumb.maxItems;
-		this.items = this.adaptItems();
+		this.breadcrumbItems = this.adaptItems();
+	}
+
+	$onChanges() {
+		this.breadcrumbItems = this.adaptItems();
 	}
 
 	adaptItems() {
 		const onItemClick = this.appSettings.views.breadcrumb.onItemClick;
-		return this.state.inventory.breadcrumb
+		return this.items
 			.map(item => ({
 				id: item.id,
 				text: item.name,

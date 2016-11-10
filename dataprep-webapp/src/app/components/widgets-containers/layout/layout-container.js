@@ -21,11 +21,14 @@ const LayoutContainer = {
 					<side-panel><side-panel/>
 				</div>
 				<div class="main">
-					<react-preparation-breadcrumb></react-preparation-breadcrumb>
+					<breadcrumbs items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
 				</div>
 			</div>
 		</div>
 	`,
+	controller(state) {
+		this.state = state;
+	},
 };
 
 export default LayoutContainer;

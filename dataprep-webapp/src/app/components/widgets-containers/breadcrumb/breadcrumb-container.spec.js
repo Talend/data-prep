@@ -14,36 +14,31 @@
 import angular from 'angular';
 import settings from '../../../../mocks/Settings.mock';
 
-describe('Preparation Breadcrumb container', () => {
+describe('Breadcrumb container', () => {
 	let scope;
 	let createElement;
 	let element;
-	let stateMock;
+
 	const body = angular.element('body');
 
-	beforeEach(angular.mock.module('react-talend-components.containers', ($provide) => {
-		stateMock = {
-			inventory: {
-				breadcrumb: [
-					{
-						id: 'abcd',
-						name: 'HOME'
-					},
-					{
-						id: 'abce',
-						name: 'CHARLES'
-					}
-				]
-			}
-		};
-		$provide.constant('state', stateMock);
-	}));
+	const breadcrumb = [
+		{
+			id: 'abcd',
+			name: 'HOME'
+		},
+		{
+			id: 'abce',
+			name: 'CHARLES'
+		}
+	];
+	beforeEach(angular.mock.module('react-talend-components.containers'));
 
 	beforeEach(inject(($rootScope, $compile, SettingsService) => {
 		scope = $rootScope.$new();
 
 		createElement = () => {
-			element = angular.element('<react-preparation-breadcrumb></react-preparation-breadcrumb>');
+			scope.breadcrumb = breadcrumb;
+			element = angular.element('<breadcrumbs items="breadcrumb"></breadcrumbs>');
 			body.append(element);
 			$compile(element)(scope);
 			scope.$digest();
@@ -92,6 +87,7 @@ describe('Preparation Breadcrumb container', () => {
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO_FOLDER');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.id).toBe('abcd');
 		}));
 	});
 });

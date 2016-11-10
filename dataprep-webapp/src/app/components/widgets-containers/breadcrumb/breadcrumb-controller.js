@@ -12,17 +12,14 @@
  ============================================================================*/
 
 export default class BreadcrumbCtrl {
-	constructor(state, appSettings, SettingsActionsService) {
+	constructor(appSettings, SettingsActionsService) {
 		'ngInject';
-		this.state = state;
-
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
 	}
 
 	$onInit() {
 		this.maxItems = this.appSettings.views.breadcrumb.maxItems;
-		this.breadcrumbItems = this.adaptItems();
 	}
 
 	$onChanges() {

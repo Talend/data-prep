@@ -14,7 +14,7 @@
 import angular from 'angular';
 import settings from '../../../../mocks/Settings.mock';
 
-describe('App Side Panel container', () => {
+describe('Side Panel container', () => {
 	let scope;
 	let createElement;
 	let element;

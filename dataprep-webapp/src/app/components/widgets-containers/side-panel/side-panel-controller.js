@@ -11,11 +11,10 @@
 
  ============================================================================*/
 
-export default class AppSidePanelCtrl {
-	constructor($rootScope, state, appSettings, SettingsActionsService) {
+export default class SidePanelCtrl {
+	constructor(state, appSettings, SettingsActionsService) {
 		'ngInject';
 
-		this.$rootScope = $rootScope;
 		this.state = state;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;

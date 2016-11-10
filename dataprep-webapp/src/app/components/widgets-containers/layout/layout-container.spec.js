@@ -13,10 +13,7 @@
 import angular from 'angular';
 import settings from '../../../../mocks/Settings.mock';
 
-
-describe('App Layout Container', () => {
-	'use strict';
-
+describe('Layout Container', () => {
 	let scope;
 	let createElement;
 	let element;
@@ -24,9 +21,10 @@ describe('App Layout Container', () => {
 	beforeEach(angular.mock.module('react-talend-components.containers'));
 
 	beforeEach(inject(($rootScope, $compile, SettingsService) => {
-		scope = $rootScope.$new();
+		scope = $rootScope.$new(true);
+		
 		createElement = () => {
-			element = angular.element('<app-layout></app-layout>');
+			element = angular.element('<layout></layout>');
 			$compile(element)(scope);
 			scope.$digest();
 			return element;

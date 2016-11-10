@@ -15,8 +15,8 @@ import angular from 'angular';
 
 import { AppHeaderBar, SidePanel } from 'react-talend-components';
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
-import SidePanelContainer from './app-side-panel/app-side-panel-container';
-import AppLayoutContainer from './app-layout/app-layout-container';
+import SidePanelContainer from './side-panel/side-panel-container';
+import LayoutContainer from './layout/layout-container';
 
 
 import SETTINGS_MODULE from '../../settings/settings-module';
@@ -33,6 +33,6 @@ angular.module(MODULE_NAME,
 	.directive('pureAppSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('sidePanel', SidePanelContainer)
-	.component('appLayout', AppLayoutContainer);
+	.component('layout', LayoutContainer);
 
 export default MODULE_NAME;

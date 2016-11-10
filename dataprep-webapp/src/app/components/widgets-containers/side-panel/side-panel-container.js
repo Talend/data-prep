@@ -1,5 +1,3 @@
-
-
  /*  ============================================================================
 
   Copyright (C) 2006-2016 Talend Inc. - www.talend.com
@@ -13,7 +11,7 @@
 
   ============================================================================*/
 
-import SidePanelCtrl from './app-side-panel-controller';
+import SidePanelCtrl from './side-panel-controller';
 
 const SidePanelContainer = {
 	template: `<pure-app-side-panel

@@ -10,19 +10,20 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-const AppLayoutContainer = {
-	template: `<div class="app">
-					<div class="header">
-						<app-header-bar><app-header-bar/>
-					</div>
-					<div class="content">
-						<div class="sidemenu">
-							<side-panel><side-panel/>
-						</div>
-						<div class="main"></div>
-					</div>
+const LayoutContainer = {
+	template: `
+		<div class="app">
+			<div class="header">
+				<app-header-bar><app-header-bar/>
+			</div>
+			<div class="content">
+				<div class="sidemenu">
+					<side-panel><side-panel/>
 				</div>
+				<div class="main"></div>
+			</div>
+		</div>
 	`,
 };
 
-export default AppLayoutContainer;
+export default LayoutContainer;

@@ -81,5 +81,5 @@ import 'react';
 import 'ngreact';
 
 // Babel
-import "babel-polyfill";
+import 'babel-polyfill'; // eslint-disable-line import/no-extraneous-dependencies
 

@@ -16,10 +16,9 @@ package org.talend.dataprep.api.preparation.json;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -57,11 +57,10 @@ public class PreparationDetailsJsonSerializer extends JsonSerializer<Preparation
     @Lazy
     private PreparationRepository versionRepository;
 
-    /** The list of actions to apply in preparations. */
     @Autowired(required = false)
-    private Collection<ActionDefinition> actionMetadata;
+    ActionRegistry actionRegistry;
 
-    final Predicate<Step> isNotRootStep = step -> !rootStep.id().equals(step.id());
+    private final Predicate<Step> isNotRootStep = step -> !rootStep.id().equals(step.id());
 
     /**
      * @see JsonSerializer#serialize(Object, JsonGenerator, SerializerProvider)
@@ -98,6 +97,17 @@ public class PreparationDetailsJsonSerializer extends JsonSerializer<Preparation
                 final List<Action> actions = prepActions.getActions();
                 generator.writeObjectField("actions", actions); //$NON-NLS-1$
 
+                // Allow distributed run
+                boolean allowDistributedRun = true;
+                for (Action action : actions) {
+                    final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
+                    if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                        allowDistributedRun = false;
+                        break;
+                    }
+                }
+                generator.writeBooleanField("allowDistributedRun", allowDistributedRun);
+
                 // Actions metadata
                 writeActionMetadata(generator, actions, preparation);
 
@@ -118,23 +128,14 @@ public class PreparationDetailsJsonSerializer extends JsonSerializer<Preparation
      * @throws IOException if an error occurs.
      */
     private void writeActionMetadata(JsonGenerator generator, List<Action> actions, Preparation preparation) throws IOException {
-
-        if (actionMetadata == null) {
+        if (actionRegistry == null) {
             LOGGER.debug("No action metadata available, unable to serialize action metadata for preparation {}.",
                     preparation.id());
             return;
         }
-
-        List<ActionDefinition> metadataList = new ArrayList<>(actions.size());
-        for (Action action : actions) {
-            String actionName = action.getName();
-            for (org.talend.dataprep.api.action.ActionDefinition metadata : actionMetadata) {
-                if (metadata.getName().equals(actionName)) {
-                    metadataList.add(metadata);
-                    break;
-                }
-            }
-        }
+        List<ActionDefinition> metadataList = actions.stream() //
+                .map(a -> actionRegistry.get(a.getName())) //
+                .collect(Collectors.toList());
         generator.writeObjectField("metadata", metadataList); //$NON-NLS-1$
     }
 }

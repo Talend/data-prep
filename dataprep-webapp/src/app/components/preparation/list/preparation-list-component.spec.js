@@ -12,251 +12,252 @@
  ============================================================================*/
 
 describe('Preparation list component', () => {
-    'use strict';
+	'use strict';
 
-    let scope;
-    let createElement;
-    let element;
-    let stateMock;
+	let scope;
+	let createElement;
+	let element;
+	let stateMock;
 
-    const preparations = [
-        {
-            id: 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
-            dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-            name: 'preparation 1',
-            author: 'anonymousUser',
-            creationDate: 1427447300000,
-            lastModificationDate: 1427447300300,
-            steps: [
-                '35890aabcf9115e4309d4ce93367bf5e4e77b82a',
-                '4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
-                '8a1c49d1b64270482e8db8232357c6815615b7cf',
-                '599725f0e1331d5f8aae24f22cd1ec768b10348d',
-            ],
-            actions: [
-                {
-                    action: 'lowercase',
-                    parameters: { column_name: 'birth' },
-                },
-                {
-                    action: 'uppercase',
-                    parameters: { column_name: 'country' },
-                },
-                {
-                    action: 'cut',
-                    parameters: {
-                        pattern: '.',
-                        column_name: 'first_item',
-                    },
-                },
-            ],
-        },
-        {
-            id: 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
-            dataSetId: '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
-            name: 'preparation 2',
-            author: 'anonymousUser',
-            creationDate: 1427447330000,
-            lastModificationDate: 1427447330693,
-            steps: [
-                '47e2444dd1301120b539804507fd307072294048',
-                'ae1aebf4b3fa9b983c895486612c02c766305410',
-                '24dcd68f2117b9f93662cb58cc31bf36d6e2867a',
-                '599725f0e1331d5f8aae24f22cd1ec768b10348d',
-            ],
-            actions: [
-                {
-                    action: 'cut',
-                    parameters: {
-                        pattern: '-',
-                        column_name: 'birth',
-                    },
-                },
-                {
-                    action: 'fillemptywithdefault',
-                    parameters: {
-                        default_value: 'N/A',
-                        column_name: 'state',
-                    },
-                },
-                {
-                    action: 'uppercase',
-                    parameters: { column_name: 'lastname' },
-                },
-            ],
-        },
-    ];
+	const preparationsModels = [
+		{
+			id: 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
+			dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+			name: 'preparation 1',
+			author: 'anonymousUser',
+			creationDate: 1427447300000,
+			lastModificationDate: 1427447300300,
+			steps: [
+				'35890aabcf9115e4309d4ce93367bf5e4e77b82a',
+				'4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
+				'8a1c49d1b64270482e8db8232357c6815615b7cf',
+				'599725f0e1331d5f8aae24f22cd1ec768b10348d',
+			],
+			actions: [
+				{
+					action: 'lowercase',
+					parameters: { column_name: 'birth' },
+				},
+				{
+					action: 'uppercase',
+					parameters: { column_name: 'country' },
+				},
+				{
+					action: 'cut',
+					parameters: {
+						pattern: '.',
+						column_name: 'first_item',
+					},
+				},
+			],
+		},
+		{
+			id: 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
+			dataSetId: '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
+			name: 'preparation 2',
+			author: 'anonymousUser',
+			creationDate: 1427447330000,
+			lastModificationDate: 1427447330693,
+			steps: [
+				'47e2444dd1301120b539804507fd307072294048',
+				'ae1aebf4b3fa9b983c895486612c02c766305410',
+				'24dcd68f2117b9f93662cb58cc31bf36d6e2867a',
+				'599725f0e1331d5f8aae24f22cd1ec768b10348d',
+			],
+			actions: [
+				{
+					action: 'cut',
+					parameters: {
+						pattern: '-',
+						column_name: 'birth',
+					},
+				},
+				{
+					action: 'fillemptywithdefault',
+					parameters: {
+						default_value: 'N/A',
+						column_name: 'state',
+					},
+				},
+				{
+					action: 'uppercase',
+					parameters: { column_name: 'lastname' },
+				},
+			],
+		},
+	];
+	const preparations = preparationsModels.map((model) => ({ model }));
 
-    const folders = [
-        { id: '001', path: '/tata/titi', name: 'titi' },
-        { id: '002', path: '/tata/toto', name: 'toto' },
-        { id: '003', path: '/tata/tutu', name: 'tutu' },
-    ];
+	const folders = [
+		{ id: '001', path: '/tata/titi', name: 'titi' },
+		{ id: '002', path: '/tata/toto', name: 'toto' },
+		{ id: '003', path: '/tata/tutu', name: 'tutu' },
+	];
 
-    beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
-        stateMock = {
-            inventory: {
-                isFetchingPreparations: false,
-                folder: {
-                    content: {
-                        folders: folders,
-                        preparations: preparations,
-                    },
-                },
-            },
-        };
-        $provide.constant('state', stateMock);
-    }));
+	beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
+		stateMock = {
+			inventory: {
+				isFetchingPreparations: false,
+				folder: {
+					content: {
+						folders: folders,
+						preparations: preparations,
+					},
+				},
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-    beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService) => {
-        scope = $rootScope.$new();
-        createElement = () => {
-            element = angular.element('<preparation-list></preparation-list>');
-            $compile(element)(scope);
-            scope.$digest();
-        };
+	beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService) => {
+		scope = $rootScope.$new();
+		createElement = () => {
+			element = angular.element('<preparation-list></preparation-list>');
+			$compile(element)(scope);
+			scope.$digest();
+		};
 
-        spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
-        spyOn(FolderService, 'init').and.returnValue($q.when());
-    }));
+		spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
+		spyOn(FolderService, 'init').and.returnValue($q.when());
+	}));
 
-    afterEach(inject(() => {
-        scope.$destroy();
-        element.remove();
-    }));
+	afterEach(inject(() => {
+		scope.$destroy();
+		element.remove();
+	}));
 
-    it('should render folder\'s content preparation', inject(() => {
-        //when
-        createElement();
+	it('should render folder\'s content preparation', inject(() => {
+		//when
+		createElement();
 
-        //then
-        expect(element.find('#preparation-inventory-list').length).toBe(1);
-        expect(element.find('inventory-item[type="preparation"]').length).toBe(2);
+		//then
+		expect(element.find('#preparation-inventory-list').length).toBe(1);
+		expect(element.find('inventory-item[type="preparation"]').length).toBe(2);
 
-        const itemTitles = element.find('inventory-item[type="preparation"] .inventory-title');
-        expect(itemTitles.eq(0).text()).toBe('preparation 1');
-        expect(itemTitles.eq(1).text()).toBe('preparation 2');
-    }));
+		const itemTitles = element.find('inventory-item[type="preparation"] .inventory-title');
+		expect(itemTitles.eq(0).text()).toBe('preparation 1');
+		expect(itemTitles.eq(1).text()).toBe('preparation 2');
+	}));
 
-    it('should render folder\'s content children folders', inject(() => {
-        //when
-        createElement();
+	it('should render folder\'s content children folders', inject(() => {
+		//when
+		createElement();
 
-        //then
-        expect(element.find('#preparation-inventory-list').length).toBe(1);
-        expect(element.find('inventory-item[type="folder"]').length).toBe(3);
+		//then
+		expect(element.find('#preparation-inventory-list').length).toBe(1);
+		expect(element.find('inventory-item[type="folder"]').length).toBe(3);
 
-        const itemTitles = element.find('inventory-item[type="folder"] .inventory-title');
-        expect(itemTitles.eq(0).text()).toBe('titi');
-        expect(itemTitles.eq(1).text()).toBe('toto');
-        expect(itemTitles.eq(2).text()).toBe('tutu');
-    }));
+		const itemTitles = element.find('inventory-item[type="folder"] .inventory-title');
+		expect(itemTitles.eq(0).text()).toBe('titi');
+		expect(itemTitles.eq(1).text()).toBe('toto');
+		expect(itemTitles.eq(2).text()).toBe('tutu');
+	}));
 });
 
 describe('Preparation list component loading', () => {
-    'use strict';
-    let scope;
-    let createElement;
-    let element;
-    let stateMock;
+	'use strict';
+	let scope;
+	let createElement;
+	let element;
+	let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
-        stateMock = {
-            inventory: {
-                isFetchingPreparations: true,
-            },
-        };
-        $provide.constant('state', stateMock);
-    }));
+	beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
+		stateMock = {
+			inventory: {
+				isFetchingPreparations: true,
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-    beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService) => {
-        scope = $rootScope.$new();
-        createElement = () => {
-            element = angular.element('<preparation-list></preparation-list>');
-            $compile(element)(scope);
-            scope.$digest();
-        };
+	beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService) => {
+		scope = $rootScope.$new();
+		createElement = () => {
+			element = angular.element('<preparation-list></preparation-list>');
+			$compile(element)(scope);
+			scope.$digest();
+		};
 
-        spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
-        spyOn(FolderService, 'init').and.returnValue($q.when());
-    }));
+		spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
+		spyOn(FolderService, 'init').and.returnValue($q.when());
+	}));
 
-    afterEach(inject(() => {
-        scope.$destroy();
-        element.remove();
-    }));
+	afterEach(inject(() => {
+		scope.$destroy();
+		element.remove();
+	}));
 
-    it('should render loading flask', inject(() => {
-        //when
-        createElement();
+	it('should render loading flask', inject(() => {
+		//when
+		createElement();
 
-        //then
-        expect(element.find('.continuous-rotate').length).toBe(1);
-        expect(element.find('.continuous-rotate-text').length).toBe(1);
-    }));
+		//then
+		expect(element.find('.continuous-rotate').length).toBe(1);
+		expect(element.find('.continuous-rotate-text').length).toBe(1);
+	}));
 
-    it('should hide loading flask when fetching finishes', inject(() => {
-        //given
-        createElement();
-        expect(element.find('.continuous-rotate').length).toBe(1);
-        expect(element.find('.continuous-rotate-text').length).toBe(1);
+	it('should hide loading flask when fetching finishes', inject(() => {
+		//given
+		createElement();
+		expect(element.find('.continuous-rotate').length).toBe(1);
+		expect(element.find('.continuous-rotate-text').length).toBe(1);
 
-        //when
-        stateMock.inventory.isFetchingPreparations = false;
-        scope.$digest();
+		//when
+		stateMock.inventory.isFetchingPreparations = false;
+		scope.$digest();
 
-        //then
-        expect(element.find('.continuous-rotate').length).toBe(0);
-        expect(element.find('.continuous-rotate-text').length).toBe(0);
-    }));
+		//then
+		expect(element.find('.continuous-rotate').length).toBe(0);
+		expect(element.find('.continuous-rotate-text').length).toBe(0);
+	}));
 });
 
 describe('Preparation list component with no preparations', () => {
-    'use strict';
-    let scope;
-    let createElement;
-    let element;
-    let stateMock;
+	'use strict';
+	let scope;
+	let createElement;
+	let element;
+	let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
-        stateMock = {
-            inventory: {
-                isFetchingPreparations: false,
-            },
-        };
-        $provide.constant('state', stateMock);
-    }));
+	beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
+		stateMock = {
+			inventory: {
+				isFetchingPreparations: false,
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-        $translateProvider.translations('en', {
-            CLICK_ADD_PREPARATIONS: 'There are no preparations in this folder. Click on \'Add Preparation\' to add a preparation.',
-        });
-        $translateProvider.preferredLanguage('en');
-    }));
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
+			CLICK_ADD_PREPARATIONS: 'There are no preparations in this folder. Click on \'Add Preparation\' to add a preparation.',
+		});
+		$translateProvider.preferredLanguage('en');
+	}));
 
-    beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService) => {
-        scope = $rootScope.$new();
-        createElement = () => {
-            element = angular.element('<preparation-list></preparation-list>');
-            $compile(element)(scope);
-            scope.$digest();
-        };
+	beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService) => {
+		scope = $rootScope.$new();
+		createElement = () => {
+			element = angular.element('<preparation-list></preparation-list>');
+			$compile(element)(scope);
+			scope.$digest();
+		};
 
-        spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
-        spyOn(FolderService, 'init').and.returnValue($q.when());
-    }));
+		spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
+		spyOn(FolderService, 'init').and.returnValue($q.when());
+	}));
 
-    afterEach(inject(() => {
-        scope.$destroy();
-        element.remove();
-    }));
+	afterEach(inject(() => {
+		scope.$destroy();
+		element.remove();
+	}));
 
-    it('should render no preparation message', inject(() => {
-        //when
-        createElement();
+	it('should render no preparation message', inject(() => {
+		//when
+		createElement();
 
-        //then
-        expect(element.find('.inventory-info-content').length).toBe(1);
-        expect(element.find('.inventory-info-content').eq(0).text()).toBe('There are no preparations in this folder. Click on \'Add Preparation\' to add a preparation.');
-    }));
+		//then
+		expect(element.find('.inventory-info-content').length).toBe(1);
+		expect(element.find('.inventory-info-content').eq(0).text()).toBe('There are no preparations in this folder. Click on \'Add Preparation\' to add a preparation.');
+	}));
 });

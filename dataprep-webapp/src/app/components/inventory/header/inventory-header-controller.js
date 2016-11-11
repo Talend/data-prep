@@ -18,39 +18,28 @@
  * @description Inventory list header controller.
  */
 export default class InventoryHeaderCtrl {
-
-    /**
-     * @ngdoc method
-     * @name openFolderModal
-     * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
-     * @description Reset folder name and show folder modal
-     */
+	/**
+	 * @ngdoc method
+	 * @name openFolderModal
+	 * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
+	 * @description Reset folder name and show folder modal
+	 */
 	openFolderModal() {
 		this.folderName = '';
 		this.folderNameModal = true;
 	}
 
-    /**
-     * @ngdoc method
-     * @name addFolder
-     * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
-     * @description Create a new folder
-     */
+	/**
+	 * @ngdoc method
+	 * @name addFolder
+	 * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
+	 * @description Create a new folder
+	 */
 	addFolder() {
 		this.folderNameForm.$commitViewValue();
 		this.onFolderCreation({ name: this.folderName })
-            .then(() => {
-	this.folderNameModal = false;
-});
-	}
-
-    /**
-     * @ngdoc method
-     * @name openAddPreparationModal
-     * @methodOf data-prep.inventory-header.controller:InventoryHeaderCtrl
-     * @description Opens add preparation Modal
-     */
-	openAddPreparationModal() {
-		this.showAddPrepModal = true;
+			.then(() => {
+				this.folderNameModal = false;
+			});
 	}
 }

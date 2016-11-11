@@ -37,6 +37,8 @@ export const inventoryState = {
 	preparationsSort: sortList[1],
 	preparationsOrder: orderList[1],
 
+	preparationsDisplayMode: 'table',
+
 	homeFolderId: HOME_FOLDER.id,
 	folder: {
 		metadata: HOME_FOLDER,
@@ -68,6 +70,7 @@ export function InventoryStateService() {
 
 		setPreparationsSort,
 		setPreparationsOrder,
+		setPreparationsDisplayMode,
 
 		setFetchingDatasets,
 		setFetchingPreparations,
@@ -215,5 +218,16 @@ export function InventoryStateService() {
      */
 	function setPreparationsOrder(order) {
 		inventoryState.preparationsOrder = order;
+	}
+
+    /**
+     * @ngdoc method
+     * @name setPreparationsDisplayMode
+     * @methodOf data-prep.services.state.service:InventoryStateService
+     * @param {string} displayMode The display mode
+     * @description Set the preparation display mode
+     */
+	function setPreparationsDisplayMode(displayMode) {
+		inventoryState.preparationsDisplayMode = displayMode;
 	}
 }

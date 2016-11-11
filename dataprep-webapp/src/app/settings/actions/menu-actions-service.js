@@ -29,6 +29,11 @@ export default class MenuActionsService {
 			this.$state[method](...args, { folderId: id });
 			break;
 		}
+		case '@@router/GO_PREPARATION': {
+			const { method, args, id } = action.payload;
+			this.$state[method](...args, { prepid: id });
+			break;
+		}
 		}
 	}
 }

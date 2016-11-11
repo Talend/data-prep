@@ -43,7 +43,7 @@
          ng-if="$ctrl.canCreateFolder">
         <button id="add-preparation"
                 class="btn btn-success"
-                ng-click="$ctrl.openAddPreparationModal()"
+                ng-click="$ctrl.onAddPreparation()"
                 translate-once="ADD_PREPARATION"></button>
         <button id="add-folder-button"
                 class="btn btn-default"
@@ -75,16 +75,4 @@
                     ng-disabled="$ctrl.folderNameForm.$invalid"></button>
         </div>
     </form>
-</talend-modal>
-
-<talend-modal id="add-preparation-modal"
-              fullscreen="false"
-              close-button="true"
-              state="$ctrl.showAddPrepModal"
-              ng-if="$ctrl.showAddPrepModal"
-              disable-enter="false">
-    <div class="modal-title"
-         translate-once="ADD_PREPARATION_MODAL_TITLE"></div>
-
-    <preparation-creator on-creation="$ctrl.showAddPrepModal = false"></preparation-creator>
 </talend-modal>

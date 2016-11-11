@@ -30,6 +30,33 @@
           "onClick": "menu:datasets"
         }
       ]
+    },
+    "listview:preparations": {
+      "didMountActionCreator": "preparations:folder:fetch",
+      "list": {
+        "columns":[
+          { "key": "name", "label": "Name" },
+          { "key": "author", "label": "Author" },
+          { "key": "lastModificationDate", "label": "Last change" },
+          { "key": "dataset", "label": "Dataset" },
+          { "key": "nbLines", "label": "Nb lines" },
+          { "key": "nbSteps", "label": "Nb steps" }
+        ],
+        "items": [],
+        "iconKey": "icon",
+        "titleKey": "name",
+        "onTitleClick": "menu:playground:preparation"
+      },
+      "toolbar": {
+        "sortBy": [
+          { "id": "name", "name": "Name", "selected": true },
+          { "id": "lastModificationDate", "name": "Date" }
+        ],
+        "actions": ["preparation:create:folder"],
+        "onClickAdd": "preparation:create",
+        "onSelectDisplayMode": "preparation:display-mode",
+        "searchLabel": "Find a preparation"
+      }
     }
   },
   "actions": {
@@ -66,6 +93,18 @@
         "method": "go",
         "args": [
           "nav.index.datasets"
+        ]
+      }
+    },
+    "menu:playground:preparation": {
+      "id": "menu:playground:preparation",
+      "name": "Preparation Playground",
+      "icon": "talend-dataprep",
+      "type": "@@router/GO_PREPARATION",
+      "payload": {
+        "method": "go",
+        "args": [
+          "playground.preparation"
         ]
       }
     },
@@ -110,6 +149,66 @@
         "args": [
           "https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
         ]
+      }
+    },
+    "preparation:display-mode": {
+      "id": "preparation:display-mode",
+      "name": "Change preparation display mode",
+      "icon": "",
+      "type": "@@preparation/DISPLAY_MODE",
+      "payload": {
+        "method": "setPreparationsDisplayMode",
+        "args": []
+      }
+    },
+    "preparation:create": {
+      "id": "preparation:create",
+      "name": "Create a preparation",
+      "icon": "talend-dataprep",
+      "type": "@@preparation/CREATE",
+      "payload": {
+        "method": "togglePreparationCreator",
+        "args": []
+      }
+    },
+    "preparation:create:folder": {
+      "id": "preparation:create:folder",
+      "name": "Create a folder",
+      "icon": "talend-folder",
+      "type": "@@preparation/CREATE_FOLDER",
+      "payload": {
+        "method": "createFolder",
+        "args": []
+      }
+    },
+    "preparations:folder:fetch": {
+      "id": "preparations:folder:fetch",
+      "name": "Fetch preparations from current folder",
+      "icon": "talend-dataprep",
+      "type": "@@preparation/FOLDER_FETCH",
+      "payload": {
+        "method": "init",
+        "args": []
+      }
+    },
+    "preparation:copy-move": {
+      "id": "preparation:copy-move",
+      "name": "Copy/Move preparation",
+      "icon": "talend-copy_dataset",
+      "type": "@@preparation/COPY_MOVE",
+      "payload": {
+        "method": "copyMove",
+        "args": []
+      }
+    },
+    "preparation:remove": {
+      "id": "preparation:remove",
+      "name": "Remove preparation",
+      "icon": "talend-delete",
+      "type": "@@preparation/REMOVE",
+      "payload": {
+        "method": "remove",
+        "args": []
       }
     }
   }

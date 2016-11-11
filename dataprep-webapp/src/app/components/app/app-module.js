@@ -18,6 +18,7 @@ import HOME_MODULE from '../home/home-module';
 import NAVBAR_MODULE from '../navbar/navbar-module';
 import PLAYGROUND_MODULE from '../playground/playground-module';
 import UPGRADE_VERSION_MODULE from '../upgrade-version/upgrade-version-module';
+import WIDGET_CONTAINERS from '../widgets-containers/widgets-containers-module';
 
 import DataPrepApp from './app-directive';
 
@@ -31,6 +32,7 @@ angular.module(MODULE_NAME,
 		NAVBAR_MODULE,
 		PLAYGROUND_MODULE,
 		UPGRADE_VERSION_MODULE,
+		WIDGET_CONTAINERS,
 	])
     .directive('dataprepApp', DataPrepApp);
 

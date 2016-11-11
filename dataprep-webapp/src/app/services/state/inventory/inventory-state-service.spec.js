@@ -12,212 +12,227 @@
  ============================================================================*/
 
 describe('Inventory state service', () => {
-    'use strict';
+	'use strict';
 
-    let datasets;
-    let preparations;
+	let datasets;
+	let preparations;
 
-    beforeEach(angular.mock.module('data-prep.services.state'));
+	beforeEach(angular.mock.module('data-prep.services.state'));
 
-    beforeEach(() => {
-        datasets = [
-            {
-                id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-                name: 'customers_jso_light',
-                author: 'anonymousUser',
-                records: 15,
-                nbLinesHeader: 1,
-                nbLinesFooter: 0,
-                created: '03-30-2015 08:06',
-            },
-            {
-                id: '3b21388c-f54a-4334-9bef-748912d0806f',
-                name: 'customers_jso',
-                author: 'anonymousUser',
-                records: 1000,
-                nbLinesHeader: 1,
-                nbLinesFooter: 0,
-                created: '03-30-2015 07:35',
-            },
-            {
-                id: '124568124-8da46-6635-6b5e-7845748fc54',
-                name: 'dataset_without_preparations',
-                author: 'anonymousUser',
-                records: 1000,
-                nbLinesHeader: 1,
-                nbLinesFooter: 0,
-                created: '03-30-2015 07:35',
-            },
-        ];
-        preparations = [
-            {
-                id: 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
-                dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-                author: 'anonymousUser',
-                creationDate: 1427447300300,
-            },
-            {
-                id: 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
-                dataSetId: '3b21388c-f54a-4334-9bef-748912d0806f',
-                author: 'anonymousUser',
-                creationDate: 1427447330693,
-            },
-        ];
-    });
-    describe('datasets', () => {
-        it('should set datasets', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.preparations = null;
-            inventoryState.datasets = null;
+	beforeEach(() => {
+		datasets = [
+			{
+				id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+				name: 'customers_jso_light',
+				author: 'anonymousUser',
+				records: 15,
+				nbLinesHeader: 1,
+				nbLinesFooter: 0,
+				created: '03-30-2015 08:06',
+			},
+			{
+				id: '3b21388c-f54a-4334-9bef-748912d0806f',
+				name: 'customers_jso',
+				author: 'anonymousUser',
+				records: 1000,
+				nbLinesHeader: 1,
+				nbLinesFooter: 0,
+				created: '03-30-2015 07:35',
+			},
+			{
+				id: '124568124-8da46-6635-6b5e-7845748fc54',
+				name: 'dataset_without_preparations',
+				author: 'anonymousUser',
+				records: 1000,
+				nbLinesHeader: 1,
+				nbLinesFooter: 0,
+				created: '03-30-2015 07:35',
+			},
+		];
+		preparations = [
+			{
+				id: 'ab136cbf0923a7f11bea713adb74ecf919e05cfa',
+				dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+				author: 'anonymousUser',
+				creationDate: 1427447300300,
+			},
+			{
+				id: 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
+				dataSetId: '3b21388c-f54a-4334-9bef-748912d0806f',
+				author: 'anonymousUser',
+				creationDate: 1427447330693,
+			},
+		];
+	});
 
-            //when
-            InventoryStateService.setDatasets(datasets);
+	describe('datasets', () => {
+		it('should set datasets', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.preparations = null;
+			inventoryState.datasets = null;
 
-            //then
-            expect(inventoryState.datasets).toBe(datasets);
-        }));
+			//when
+			InventoryStateService.setDatasets(datasets);
 
-        it('should remove a dataset from datasets list', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.datasets = datasets;
-            expect(inventoryState.datasets.length).toBe(3);
+			//then
+			expect(inventoryState.datasets).toBe(datasets);
+		}));
 
-            //when
-            InventoryStateService.removeDataset(datasets[0]);
+		it('should remove a dataset from datasets list', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.datasets = datasets;
+			expect(inventoryState.datasets.length).toBe(3);
 
-            //then
-            expect(inventoryState.datasets.length).toBe(2);
-            expect(inventoryState.datasets[0].id).toBe('3b21388c-f54a-4334-9bef-748912d0806f');
-            expect(inventoryState.datasets[1].id).toBe('124568124-8da46-6635-6b5e-7845748fc54');
-        }));
+			//when
+			InventoryStateService.removeDataset(datasets[0]);
 
-        it('should update dataset name', inject((inventoryState, InventoryStateService) => {
-            // given
-            inventoryState.datasets = [
-                { id: '1', name: 'toto' },
-                { id: '2', name: 'tata' },
-                { id: '3', name: 'titi' },
-                { id: '4', name: 'tutu' },
-            ];
+			//then
+			expect(inventoryState.datasets.length).toBe(2);
+			expect(inventoryState.datasets[0].id).toBe('3b21388c-f54a-4334-9bef-748912d0806f');
+			expect(inventoryState.datasets[1].id).toBe('124568124-8da46-6635-6b5e-7845748fc54');
+		}));
 
-            // when
-            InventoryStateService.setDatasetName('2', 'tonton');
+		it('should update dataset name', inject((inventoryState, InventoryStateService) => {
+			// given
+			inventoryState.datasets = [
+				{ id: '1', name: 'toto' },
+				{ id: '2', name: 'tata' },
+				{ id: '3', name: 'titi' },
+				{ id: '4', name: 'tutu' },
+			];
 
-            // then
-            expect(inventoryState.datasets[1].name).toBe('tonton');
-        }));
-    });
+			// when
+			InventoryStateService.setDatasetName('2', 'tonton');
 
-    describe('folder', () => {
-        it('should set folder metadata', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.folder = {};
-            const folderMetadata = {
-                id: 'L215L3BlcnNvbmFsL2ZvbGRlcg==',
-            };
+			// then
+			expect(inventoryState.datasets[1].name).toBe('tonton');
+		}));
+	});
 
-            //when
-            InventoryStateService.setFolder(folderMetadata);
+	describe('preparation', () => {
+		it('should set display mode', inject((inventoryState, InventoryStateService) => {
+			// given
+			expect(inventoryState.preparationsDisplayMode).toBe('table');
+			const displayMode = 'tile';
 
-            //then
-            expect(inventoryState.folder.metadata).toBe(folderMetadata);
-        }));
+			// when
+			InventoryStateService.setPreparationsDisplayMode(displayMode);
 
-        it('should set content', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.folder = {};
-            const content = {
-                folders: [],
-                preparations: [],
-            };
+			// then
+			expect(inventoryState.preparationsDisplayMode).toBe('tile');
+		}));
+	});
 
-            //when
-            InventoryStateService.setFolder(undefined, content);
+	describe('folder', () => {
+		it('should set folder metadata', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.folder = {};
+			const folderMetadata = {
+				id: 'L215L3BlcnNvbmFsL2ZvbGRlcg==',
+			};
 
-            //then
-            expect(inventoryState.folder.content).toBe(content);
-        }));
+			//when
+			InventoryStateService.setFolder(folderMetadata);
 
-        it('should set user\'s home folder id', inject((inventoryState, InventoryStateService) => {
-            //given
-            expect(inventoryState.homeFolderId).toBe('Lw==');
-            const homeId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
+			//then
+			expect(inventoryState.folder.metadata).toBe(folderMetadata);
+		}));
 
-            //when
-            InventoryStateService.setHomeFolderId(homeId);
+		it('should set content', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.folder = {};
+			const content = {
+				folders: [],
+				preparations: [],
+			};
 
-            //then
-            expect(inventoryState.homeFolderId).toBe(homeId);
-        }));
-    });
+			//when
+			InventoryStateService.setFolder(undefined, content);
 
-    describe('sort/order', () => {
-        it('should set datasets sort', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.datasetsSort = '';
+			//then
+			expect(inventoryState.folder.content).toBe(content);
+		}));
 
-            //when
-            InventoryStateService.setDatasetsSort('name');
+		it('should set user\'s home folder id', inject((inventoryState, InventoryStateService) => {
+			//given
+			expect(inventoryState.homeFolderId).toBe('Lw==');
+			const homeId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
 
-            //then
-            expect(inventoryState.datasetsSort).toBe('name');
-        }));
+			//when
+			InventoryStateService.setHomeFolderId(homeId);
 
-        it('should set datasets order', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.datasetsOrder = '';
+			//then
+			expect(inventoryState.homeFolderId).toBe(homeId);
+		}));
+	});
 
-            //when
-            InventoryStateService.setDatasetsOrder('desc');
+	describe('sort/order', () => {
+		it('should set datasets sort', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.datasetsSort = '';
 
-            //then
-            expect(inventoryState.datasetsOrder).toBe('desc');
-        }));
+			//when
+			InventoryStateService.setDatasetsSort('name');
 
-        it('should set preparations sort', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.preparationsSort = '';
+			//then
+			expect(inventoryState.datasetsSort).toBe('name');
+		}));
 
-            //when
-            InventoryStateService.setPreparationsSort('name');
+		it('should set datasets order', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.datasetsOrder = '';
 
-            //then
-            expect(inventoryState.preparationsSort).toBe('name');
-        }));
+			//when
+			InventoryStateService.setDatasetsOrder('desc');
 
-        it('should set preparations order', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.preparationsOrder = '';
+			//then
+			expect(inventoryState.datasetsOrder).toBe('desc');
+		}));
 
-            //when
-            InventoryStateService.setPreparationsOrder('desc');
+		it('should set preparations sort', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.preparationsSort = '';
 
-            //then
-            expect(inventoryState.preparationsOrder).toBe('desc');
-        }));
-    });
+			//when
+			InventoryStateService.setPreparationsSort('name');
 
-    describe('loading', () => {
-        it('should set FetchingDatasets', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.isFetchingDatasets = false;
+			//then
+			expect(inventoryState.preparationsSort).toBe('name');
+		}));
 
-            //when
-            InventoryStateService.setFetchingDatasets(true);
+		it('should set preparations order', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.preparationsOrder = '';
 
-            //then
-            expect(inventoryState.isFetchingDatasets).toBe(true);
-        }));
+			//when
+			InventoryStateService.setPreparationsOrder('desc');
 
-        it('should set FetchingPreparations', inject((inventoryState, InventoryStateService) => {
-            //given
-            inventoryState.isFetchingPreparations = false;
+			//then
+			expect(inventoryState.preparationsOrder).toBe('desc');
+		}));
+	});
 
-            //when
-            InventoryStateService.setFetchingPreparations(true);
+	describe('loading', () => {
+		it('should set FetchingDatasets', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.isFetchingDatasets = false;
 
-            //then
-            expect(inventoryState.isFetchingPreparations).toBe(true);
-        }));
-    });
+			//when
+			InventoryStateService.setFetchingDatasets(true);
+
+			//then
+			expect(inventoryState.isFetchingDatasets).toBe(true);
+		}));
+
+		it('should set FetchingPreparations', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.isFetchingPreparations = false;
+
+			//when
+			InventoryStateService.setFetchingPreparations(true);
+
+			//then
+			expect(inventoryState.isFetchingPreparations).toBe(true);
+		}));
+	});
 });

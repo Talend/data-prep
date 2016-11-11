@@ -11,20 +11,65 @@
 
  ============================================================================*/
 
-describe('home state', function () {
-	'use strict';
+describe('home state', () => {
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
+	describe('toggleSidepanel', () => {
+		it('should toggle sidepanel', inject((homeState, HomeStateService) => {
+			//given
+			homeState.sidePanelDocked = false;
 
-	it('should toggle sidepanel', inject(function (homeState, HomeStateService) {
-		//given
-		homeState.sidePanelDocked = false;
+			//when
+			HomeStateService.toggleSidepanel();
 
-		//when
-		HomeStateService.toggleSidepanel();
+			//then
+			expect(homeState.sidePanelDocked).toBe(true);
+		}));
+	});
 
-		//then
-		expect(homeState.sidePanelDocked).toBe(true);
-	}));
+	describe('toggleCopyMovePreparation', () => {
+		it('should toggle copy/move preparation', inject((homeState, HomeStateService) => {
+			//given
+			homeState.preparations.copyMove.isVisible = false;
+
+			//when
+			HomeStateService.toggleCopyMovePreparation();
+
+			//then
+			expect(homeState.preparations.copyMove.isVisible).toBe(true);
+		}));
+
+		it('should set preparation and its initial folder',
+			inject((homeState, HomeStateService) => {
+				//given
+				homeState.preparations.copyMove.initialFolder = { id: 'folder 1' };
+				homeState.preparations.copyMove.preparation = { id: 'prep 1' };
+
+				const initialFolder = { id: 'folder 2' };
+				const preparation = { id: 'prep 2' };
+
+				//when
+				HomeStateService.toggleCopyMovePreparation(initialFolder, preparation);
+
+				//then
+				expect(homeState.preparations.copyMove.initialFolder).toBe(initialFolder);
+				expect(homeState.preparations.copyMove.preparation).toBe(preparation);
+			})
+		);
+	});
+
+	describe('togglePreparationCreator', () => {
+		it('should toggle preparation creator', inject((homeState, HomeStateService) => {
+			//given
+			homeState.preparations.creator.isVisible = false;
+
+			//when
+			HomeStateService.togglePreparationCreator();
+
+			//then
+			expect(homeState.preparations.creator.isVisible).toBe(true);
+		}));
+	});
+
 });

@@ -11,14 +11,15 @@
 
  ============================================================================*/
 
-export default class PreparationCreatorCtrl {
-	constructor($document, $state, $translate, state,
+export default class PreparationCreatorFormCtrl {
+	constructor($document, $state, $translate, state, StateService,
 				PreparationService, DatasetService, UploadWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
 		this.$state = $state;
 		this.state = state;
+		this.stateService = StateService;
 		this.preparationService = PreparationService;
 		this.datasetService = DatasetService;
 		this.uploadWorkflowService = UploadWorkflowService;
@@ -41,7 +42,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name loadDatasets
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description loads the filtered datasets
 	 * @params {Object} filter the chosen filter
 	 */
@@ -61,7 +62,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name import
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description imports the chosen dataset
 	 */
 	import() {
@@ -86,7 +87,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _createDataset
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description [PRIVATE] creates a dataset and manages the progress bar
 	 * @params {Object} file to create
 	 * @params {String} name of the dataset
@@ -125,7 +126,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name _getUniquePrepName
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description [PRIVATE] generates a unique preparation name
 	 * @params {Number} index the index to increment
 	 */
@@ -146,7 +147,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name createPreparation
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description created the preparation
 	 */
 	createPreparation() {
@@ -163,7 +164,7 @@ export default class PreparationCreatorCtrl {
 
 		let promise;
 		if (configuration.dataset.draft) {
-			this.onCreation();
+			this.stateService.togglePreparationCreator();
 			promise = this.uploadWorkflowService.openDraft(
 				configuration.dataset.metadata,
 				true,
@@ -179,7 +180,7 @@ export default class PreparationCreatorCtrl {
 					configuration.preparation.folder
 				)
 				.then((prepid) => {
-					this.onCreation();
+					this.stateService.togglePreparationCreator();
 					this.$state.go('playground.preparation', { prepid });
 				});
 		}
@@ -189,7 +190,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name checkExistingPrepName
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description creates a dataset and manages the progress bar
 	 * @params {String} from the caller
 	 */
@@ -207,7 +208,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name applyNameFilter
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description generates a unique preparation name
 	 */
 	applyNameFilter() {
@@ -217,7 +218,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name selectBaseDataset
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description selects the base dataset to be used in the preparation
 	 * @params {Object} dataset the base dataset
 	 */
@@ -237,7 +238,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name anyMissingEntries
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description checks if there is a unique preparation name
 	 * and there is a selected base dataset
 	 * @returns boolean
@@ -249,7 +250,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name importFile
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description triggers the click on the upload input
 	 */
 	importFile() {
@@ -261,7 +262,7 @@ export default class PreparationCreatorCtrl {
 	/**
 	 * @ngdoc method
 	 * @name getImportTitle
-	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorCtrl
+	 * @methodOf data-prep.preparation-creator.controller:PreparationCreatorFormCtrl
 	 * @description creates the tooltip content
 	 * @returns {String} the tooltip content
 	 */

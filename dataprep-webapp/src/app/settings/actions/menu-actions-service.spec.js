@@ -53,5 +53,24 @@ describe('Menu actions service', () => {
 			// then
 			expect($state.go).toHaveBeenCalledWith('nav.index.preparations', { folderId: 'acbd' });
 		}));
+
+		it('should change route with preparation id', inject(($state, MenuActionsService) => {
+			// given
+			const action = {
+				type: '@@router/GO_PREPARATION',
+				payload: {
+					method: 'go',
+					args: ['playground.preparation'],
+					id: 'acbd'
+				},
+			};
+			spyOn($state, 'go').and.returnValue();
+
+			// when
+			MenuActionsService.dispatch(action);
+
+			// then
+			expect($state.go).toHaveBeenCalledWith('playground.preparation', { prepid: 'acbd' });
+		}));
 	});
 });

@@ -10,23 +10,20 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-const LayoutContainer = {
-	transclude: true,
+const HomePreparationContainer = {
 	template: `
-		<div class="app">
-			<div class="header">
-				<app-header-bar><app-header-bar/>
-			</div>
-			<div class="content">
-				<div class="sidemenu">
-					<side-panel><side-panel/>
-				</div>
-				<div class="main">
-					<ng-transclude></ng-transclude>
-				</div>
-			</div>
+		<div class="home-content">
+			<breadcrumbs items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
+			<react-preparation-list 
+				display-mode="$ctrl.state.inventory.preparationsDisplayMode"
+				items="$ctrl.state.inventory.folder.content.preparations"
+			/>
 		</div>
 	`,
+	controller(state) {
+		'ngInject';
+		this.state = state;
+	},
 };
 
-export default LayoutContainer;
+export default HomePreparationContainer;

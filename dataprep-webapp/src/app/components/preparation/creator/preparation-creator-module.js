@@ -15,12 +15,13 @@ import angular from 'angular';
 import DATASET_UPDLOAD_LIST_MODULE from '../../dataset/upload-list/dataset-upload-list-module';
 import IMPORT_MODULE from '../../import/import-module';
 import INVENTORY_ITEM_MODULE from '../../inventory/item/inventory-item-module';
-import THEME_FILTERS from './theme-filters/theme-filters-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
 import SERVICES_PREPARATION_MODULE from '../../../services/preparation/preparation-module';
 import SERVICES_UTILS_MODULE from '../../../services/utils/utils-module';
 
-import PreparationCreatorComponent from './preparation-creator-component';
+import ThemeFiltersComponent from './theme-filters/theme-filters-component';
+import PreparationCreatorFormComponent from './form/preparation-creator-form-component';
+import PreparationCreatorContainer from './preparation-creator-container';
 
 const MODULE_NAME = 'data-prep.preparation-creator';
 
@@ -34,11 +35,12 @@ angular.module(MODULE_NAME,
 		DATASET_UPDLOAD_LIST_MODULE,
 		IMPORT_MODULE,
 		INVENTORY_ITEM_MODULE,
-		THEME_FILTERS,
 		SERVICES_DATASET_MODULE,
 		SERVICES_PREPARATION_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .component('preparationCreator', PreparationCreatorComponent);
+	.component('themeFilters', ThemeFiltersComponent)
+    .component('preparationCreatorForm', PreparationCreatorFormComponent)
+    .component('preparationCreator', PreparationCreatorContainer);
 
 export default MODULE_NAME;

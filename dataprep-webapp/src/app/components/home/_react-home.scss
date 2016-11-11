@@ -11,18 +11,7 @@
 
   ============================================================================*/
 
-table.no-border {
-  border:none;
-
-  tbody {
-    border: none;
-
-    tr {
-      border: none;
-
-      td {
-        border: none;
-      }
-    }
-  }
+.home-content {
+    @include display(flex);
+    @include flex-direction(column);
 }

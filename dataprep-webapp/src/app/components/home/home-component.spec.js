@@ -11,46 +11,60 @@
 
  ============================================================================*/
 
-describe('Home directive', () => {
-    'use strict';
+describe('Home component', () => {
+	let scope;
+	let createElement;
+	let element;
 
-    let scope;
-    let createElement;
-    let element;
+	beforeEach(angular.mock.module('data-prep.home'));
 
-    beforeEach(angular.mock.module('data-prep.home'));
+	beforeEach(inject(($rootScope, $compile) => {
+		scope = $rootScope.$new(true);
+		createElement = () => {
+			element = angular.element('<home></home>');
+			$compile(element)(scope);
+			scope.$digest();
+			return element;
+		};
+	}));
 
-    beforeEach(inject(($rootScope, $compile) => {
-        scope = $rootScope.$new();
-        createElement = () => {
-            element = angular.element('<home></home>');
-            $compile(element)(scope);
-            scope.$digest();
-            return element;
-        };
-    }));
+	afterEach(() => {
+		scope.$destroy();
+		element.remove();
+	});
 
-    afterEach(() => {
-        scope.$destroy();
-        element.remove();
-    });
+	it('should render subheader bar', () => {
+		//when
+		createElement();
 
-    it('should render subheader bar', inject(() => {
-        //when
-        createElement();
+		//then
+		expect(element.find('header.subheader').length).toBe(1);
+	});
 
-        //then
-        expect(element.find('header.subheader').length).toBe(1);
-    }));
+	it('should render home main panel', () => {
+		//when
+		createElement();
 
-    it('should render home main panel', inject(() => {
-        //when
-        createElement();
+		//then
+		const home = element.find('.home');
+		expect(home.length).toBe(1);
+		expect(home.find('.side-menu').length).toBe(1);
+		expect(home.find('ui-view[name="home-content"]').length).toBe(1);
+	});
 
-        //then
-        const home = element.find('.home');
-        expect(home.length).toBe(1);
-        expect(home.find('.side-menu').length).toBe(1);
-        expect(home.find('ui-view[name="home-content"]').length).toBe(1);
-    }));
+	it('should hold dataset-xls-preview', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('dataset-xls-preview').length).toBe(1);
+	});
+
+	it('should hold preparation-creator', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('preparation-creator').length).toBe(1);
+	});
 });

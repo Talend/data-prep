@@ -17,6 +17,8 @@ import DATASET_LIST_MODULE from '../dataset/list/dataset-list-module';
 import DATASET_UPDLOAD_LIST_MODULE from '../dataset/upload-list/dataset-upload-list-module';
 import IMPORT_MODULE from '../import/import-module';
 import PREPARATION_BREADCRUMB_MODULE from '../preparation/breadcrumb/preparation-breadcrumb-module';
+import PREPARATION_CREATOR_MODULE from '../preparation/creator/preparation-creator-module';
+import PREPARATION_COPY_MOVE_MODULE from '../preparation/copy-move/preparation-copy-move-module';
 import PREPARATION_HEADER_MODULE from '../preparation/header/preparation-header-module';
 import PREPARATION_LIST from '../preparation/list/preparation-list-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
@@ -30,8 +32,11 @@ import HomePreparationComponent from './preparation/home-preparation-component';
 // React home page
 import WIDGETS_CONTAINERS_MODULE from '../widgets-containers/widgets-containers-module';
 import ReactHomeComponent from './react-home-component';
+import ReactHomePreparationContainer from './preparation/react-home-preparation-container';
 
 const MODULE_NAME = 'data-prep.home';
+
+export default MODULE_NAME;
 
 /**
  * @ngdoc object
@@ -42,6 +47,8 @@ const MODULE_NAME = 'data-prep.home';
  * @requires data-prep.dataset-header
  * @requires data-prep.dataset-list
  * @requires data-prep.import
+ * @requires data-prep.preparation-creator
+ * @requires data-prep.preparation-copy-move
  * @requires data-prep.preparation-header
  * @requires data-prep.preparation-list
  * @requires data-prep.services.dataset
@@ -57,6 +64,8 @@ angular.module(MODULE_NAME,
 		DATASET_LIST_MODULE,
 		IMPORT_MODULE,
 		PREPARATION_BREADCRUMB_MODULE,
+		PREPARATION_CREATOR_MODULE,
+		PREPARATION_COPY_MOVE_MODULE,
 		PREPARATION_HEADER_MODULE,
 		PREPARATION_LIST,
 		TALEND_WIDGET_MODULE,
@@ -69,6 +78,5 @@ angular.module(MODULE_NAME,
 	.component('home', HomeComponent)
 	.component('homeDataset', HomeDatasetComponent)
 	.component('homePreparation', HomePreparationComponent)
-	.component('reactHome', ReactHomeComponent);
-
-export default MODULE_NAME;
+	.component('reactHome', ReactHomeComponent)
+	.component('reactHomePreparation', ReactHomePreparationContainer);

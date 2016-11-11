@@ -43,8 +43,10 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 		resetNextRoute: RouteStateService.resetNext,
 		resetRoute: RouteStateService.reset.bind(RouteStateService),
 
-		// SidePanel
+		// home
 		toggleHomeSidepanel: HomeStateService.toggleSidepanel,
+		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,
+		togglePreparationCreator: HomeStateService.togglePreparationCreator,
 
 		// playground
 		resetPlayground: PlaygroundStateService.reset,
@@ -134,6 +136,7 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 		setDatasetsOrder: InventoryStateService.setDatasetsOrder,
 		setPreparationsSort: InventoryStateService.setPreparationsSort,
 		setPreparationsOrder: InventoryStateService.setPreparationsOrder,
+		setPreparationsDisplayMode: InventoryStateService.setPreparationsDisplayMode,
 		setHomeFolderId: InventoryStateService.setHomeFolderId,
 
 		setFolder: InventoryStateService.setFolder,

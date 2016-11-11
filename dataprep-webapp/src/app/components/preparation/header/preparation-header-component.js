@@ -13,10 +13,20 @@
 
 import PreparationHeaderCtrl from './preparation-header-controller';
 
-import template from './preparation-header.html';
-
 const PreparationHeaderComponent = {
-	templateUrl: template,
+	template: `
+		<inventory-header
+			id="preparation-inventory-header"
+			sort="$ctrl.state.inventory.preparationsSort"
+			order="$ctrl.state.inventory.preparationsOrder"
+			sort-list="$ctrl.state.inventory.sortList"
+			order-list="$ctrl.state.inventory.orderList"
+			folder-list="$ctrl.state.inventory.folder.content.folders"
+			on-sort-change="$ctrl.updateSortBy(sort)"
+			on-order-change="$ctrl.updateSortOrder(order)"
+			on-folder-creation="$ctrl.createFolder(name)"
+			on-add-preparation="$ctrl.StateService.togglePreparationCreator()"></inventory-header>
+	`,
 	controller: PreparationHeaderCtrl,
 };
 

@@ -10,23 +10,26 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-const LayoutContainer = {
-	transclude: true,
+
+import PreparationListCtrl from './preparation-list-controller';
+
+/**
+ * Preparation list container
+ * @restrict E
+ */
+const PreparationListContainer = {
 	template: `
-		<div class="app">
-			<div class="header">
-				<app-header-bar><app-header-bar/>
-			</div>
-			<div class="content">
-				<div class="sidemenu">
-					<side-panel><side-panel/>
-				</div>
-				<div class="main">
-					<ng-transclude></ng-transclude>
-				</div>
-			</div>
-		</div>
+		<pure-list
+			display-mode="$ctrl.displayMode"
+			list="$ctrl.listProps"
+			toolbar="$ctrl.toolbarProps"
+		/>
 	`,
+	bindings: {
+		displayMode: '<',
+		items: '<',
+	},
+	controller: PreparationListCtrl,
 };
 
-export default LayoutContainer;
+export default PreparationListContainer;

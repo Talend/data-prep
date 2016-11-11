@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import moment from 'moment';
+
 /**
  * @ngdoc service
  * @name data-prep.services.folder.service:FolderService
@@ -24,6 +26,8 @@ export default function FolderService($q, state, StateService, FolderRestService
 	'ngInject';
 
 	return {
+		adaptPreparations,
+		getPreparationActions,
 		init,
 		refresh,
 		refreshBreadcrumbChildren,
@@ -34,27 +38,27 @@ export default function FolderService($q, state, StateService, FolderRestService
 		tree: FolderRestService.tree,
 	};
 
-    /**
-     * @ngdoc method
-     * @name init
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @param {string} id The folder id to init
-     * @description Init the sort parameters and folder content
-     */
+	/**
+	 * @ngdoc method
+	 * @name init
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @param {string} id The folder id to init
+	 * @description Init the sort parameters and folder content
+	 */
 	function init(id) {
 		refreshPreparationsSort();
 		refreshPreparationsOrder();
-		return refresh(id);
+		return this.refresh(id);
 	}
 
-    /**
-     * @ngdoc method
-     * @name refresh
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @description Refresh the actual folder
-     * @param {string} id The folder to init
-     * @returns {Promise} The GET promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name refresh
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Refresh the actual folder
+	 * @param {string} id The folder to init
+	 * @returns {Promise} The GET promise
+	 */
 	function refresh(id) {
 		const folderId = id || state.inventory.homeFolderId;
 
@@ -62,36 +66,75 @@ export default function FolderService($q, state, StateService, FolderRestService
 		const order = state.inventory.preparationsOrder.id;
 
 		const breadcrumbPromise = FolderRestService.getById(folderId);
-		const contentPromise = FolderRestService.getContent(folderId, sort, order);
+		const contentPromise = FolderRestService
+			.getContent(folderId, sort, order)
+			.then(content => ({
+				folders: content.folders,
+				preparations: this.adaptPreparations(content.preparations),
+			}));
 		return $q.all([breadcrumbPromise, contentPromise])
-            .then(([breadcrumb, content]) => {
-	const currentFolder = breadcrumb.folder;
-	const fullBreadcrumb = breadcrumb.hierarchy.concat(currentFolder);
-	StateService.setFolder(currentFolder, content);
-	StateService.setBreadcrumb(fullBreadcrumb);
-});
+			.then(([breadcrumb, content]) => {
+				const currentFolder = breadcrumb.folder;
+				const fullBreadcrumb = breadcrumb.hierarchy.concat(currentFolder);
+				StateService.setFolder(currentFolder, content);
+				StateService.setBreadcrumb(fullBreadcrumb);
+			});
 	}
 
-    /**
-     * @ngdoc method
-     * @name refreshBreadcrumbChildren
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @param {string} id The folder to refresh
-     * @returns {Promise} The process promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name adaptPreparations
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Adapt preparation for UI components
+	 * @param {object[]} preparations The preparation
+	 * @returns {object[]} The adapted preparations
+	 */
+	function adaptPreparations(preparations) {
+		return preparations.map(item => ({
+			id: item.id,
+			name: item.name,
+			author: item.author,
+			lastModificationDate: moment(item.lastModificationDate).fromNow(),
+			dataset: item.dataset.dataSetName,
+			nbLines: item.dataset.dataSetNbRow,
+			nbSteps: item.steps.length - 1, // remove root step
+			icon: 'talend-dataprep',
+			actions: this.getPreparationActions(item),
+			model: item,
+		}));
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getPreparationActions
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Get the preparation available actions
+	 * @returns {string[]} The array of actions available on the preparation
+	 */
+	function getPreparationActions() {
+		return ['preparation:copy-move', 'preparation:remove'];
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshBreadcrumbChildren
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @param {string} id The folder to refresh
+	 * @returns {Promise} The process promise
+	 */
 	function refreshBreadcrumbChildren(id) {
 		return FolderRestService.children(id)
-            .then((children) => {
-	StateService.setBreadcrumbChildren(id, children);
-});
+			.then((children) => {
+				StateService.setBreadcrumbChildren(id, children);
+			});
 	}
 
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @name refreshPreparationsSort
-     * @description Refresh the actual sort parameter
-     * */
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @name refreshPreparationsSort
+	 * @description Refresh the actual sort parameter
+	 * */
 	function refreshPreparationsSort() {
 		const savedSort = StorageService.getPreparationsSort();
 		if (savedSort) {
@@ -99,12 +142,12 @@ export default function FolderService($q, state, StateService, FolderRestService
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @name refreshPreparationsOrder
-     * @description Refresh the actual order parameter
-     */
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @name refreshPreparationsOrder
+	 * @description Refresh the actual order parameter
+	 */
 	function refreshPreparationsOrder() {
 		const savedSortOrder = StorageService.getPreparationsOrder();
 		if (savedSortOrder) {
@@ -112,40 +155,40 @@ export default function FolderService($q, state, StateService, FolderRestService
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name children
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @description Get a folder's children
-     * @param {string} parentId The parent id
-     * @returns {Promise} The GET promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name children
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Get a folder's children
+	 * @param {string} parentId The parent id
+	 * @returns {Promise} The GET promise
+	 */
 	function children(parentId = state.inventory.homeFolderId) {
 		return FolderRestService.children(parentId);
 	}
 
-    /**
-     * @ngdoc method
-     * @name create
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @description Create a folder
-     * @param {string} parentId The parent id
-     * @param {string} path The relative path to create (from parent)
-     * @returns {Promise} The PUT promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name create
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Create a folder
+	 * @param {string} parentId The parent id
+	 * @param {string} path The relative path to create (from parent)
+	 * @returns {Promise} The PUT promise
+	 */
 	function create(parentId = state.inventory.homeFolderId, path) {
 		return FolderRestService.create(parentId, path);
 	}
 
-    /**
-     * @ngdoc method
-     * @name rename
-     * @methodOf data-prep.services.folder.service:FolderService
-     * @description Rename a folder
-     * @param {string} folderId The folder id to rename
-     * @param {string} newName The new name
-     * @returns {Promise} The PUT promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name rename
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Rename a folder
+	 * @param {string} folderId The folder id to rename
+	 * @param {string} newName The new name
+	 * @returns {Promise} The PUT promise
+	 */
 	function rename(folderId = state.inventory.homeFolderId, newName) {
 		return FolderRestService.rename(folderId, newName);
 	}

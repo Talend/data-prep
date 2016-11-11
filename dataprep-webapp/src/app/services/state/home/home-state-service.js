@@ -13,14 +13,36 @@
 
 export const homeState = {
 	sidePanelDocked: false,
+	preparations: {
+		creator: {
+			isVisible: false,
+		},
+		copyMove: {
+			isVisible: false,
+			initialFolder: undefined,
+			preparation: undefined,
+		},
+	},
 };
 
 export function HomeStateService() {
 	return {
 		toggleSidepanel,
+		toggleCopyMovePreparation,
+		togglePreparationCreator,
 	};
 
 	function toggleSidepanel() {
 		homeState.sidePanelDocked = !homeState.sidePanelDocked;
+	}
+
+	function toggleCopyMovePreparation(initialFolder, preparation) {
+		homeState.preparations.copyMove.isVisible = !homeState.preparations.copyMove.isVisible;
+		homeState.preparations.copyMove.initialFolder = initialFolder;
+		homeState.preparations.copyMove.preparation = preparation;
+	}
+
+	function togglePreparationCreator() {
+		homeState.preparations.creator.isVisible = !homeState.preparations.creator.isVisible;
 	}
 }

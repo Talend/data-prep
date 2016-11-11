@@ -11,36 +11,21 @@
 
  ============================================================================*/
 
-import DataPrepAppModule from './app-module';
-
-describe('App directive', () => {
-	'use strict';
-
+describe('Home component', () => {
 	let scope;
 	let createElement;
 	let element;
 
-	beforeEach(window.module(DataPrepAppModule));
+	beforeEach(angular.mock.module('data-prep.home'));
 
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);
 		createElement = () => {
-			element = angular.element('<dataprep-app></dataprep-app>');
+			element = angular.element('<react-home></react-home>');
 			$compile(element)(scope);
 			scope.$digest();
 			return element;
 		};
-	}));
-
-	beforeEach(inject(($injector, $q, RestURLs, UpgradeVersionService) => {
-		RestURLs.setServerUrl('');
-
-		const $httpBackend = $injector.get('$httpBackend');
-		$httpBackend
-			.expectGET(RestURLs.exportUrl + '/formats')
-			.respond(200, {});
-
-		spyOn(UpgradeVersionService, 'retrieveNewVersions').and.returnValue($q.when([]));
 	}));
 
 	afterEach(() => {
@@ -48,35 +33,36 @@ describe('App directive', () => {
 		element.remove();
 	});
 
-	it('should hold toaster container', () => {
+	it('should hold dataset-xls-preview', () => {
 		//when
 		createElement();
 
 		//then
-		expect(element.find('#toast-container').length).toBe(1);
+		expect(element.find('dataset-xls-preview').length).toBe(1);
 	});
 
-	it('should hold loader element', () => {
+	it('should hold preparation-copy-move', () => {
 		//when
 		createElement();
 
 		//then
-		expect(element.find('talend-loading').length).toBe(1);
+		expect(element.find('preparation-copy-move').length).toBe(1);
 	});
 
-	it('should hold svg icons', () => {
+	it('should hold preparation-creator', () => {
 		//when
 		createElement();
 
 		//then
-		expect(element.find('icons-provider').length).toBe(1);
+		expect(element.find('preparation-creator').length).toBe(1);
 	});
 
-	it('should render router insertion point', () => {
+	it('should instanciate app layout with an ui insertion point', () => {
 		//when
 		createElement();
 
 		//then
-		expect(element.find('ui-view.main-layout').length).toBe(1);
+		expect(element.find('layout').length).toBe(1);
+		expect(element.find('layout').eq(0).find('ui-view[name="home-content"]').length).toBe(1);
 	});
 });

@@ -17,8 +17,8 @@ describe('Inventory Header controller', () => {
 
     beforeEach(angular.mock.module('data-prep.inventory-header'));
 
-    beforeEach(inject(function ($rootScope, $controller, $q) {
-        scope = $rootScope.$new();
+    beforeEach(inject(($rootScope, $controller, $q) => {
+        scope = $rootScope.$new(true);
 
         createController = () => {
             const ctrl = $controller(
@@ -96,19 +96,5 @@ describe('Inventory Header controller', () => {
             // then
             expect(ctrl.folderNameModal).toBe(false);
         }));
-    });
-
-    describe('add preparation modal', () => {
-        it('should update modal visibility', () => {
-            //given
-            const ctrl = createController();
-            expect(ctrl.showAddPrepModal).toBeFalsy();
-
-            //when
-            ctrl.openAddPreparationModal();
-
-            //then
-            expect(ctrl.showAddPrepModal).toBe(true);
-        });
     });
 });

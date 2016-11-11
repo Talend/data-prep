@@ -1,0 +1,208 @@
+/*  ============================================================================
+
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
+
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
+
+ ============================================================================*/
+
+import angular from 'angular';
+
+describe('Preparation actions service', () => {
+	let stateMock;
+
+	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
+		stateMock = {
+			inventory: {
+				folder: {
+					metadata: { id: 'folder 1' }
+				},
+			}
+		};
+		$provide.constant('state', stateMock);
+	}));
+
+	describe('dispatch @@preparation/DISPLAY_MODE', () => {
+		it('should change display mode', inject((StateService, PreparationActionsService) => {
+			// given
+			const nextMode = 'tile';
+			const action = {
+				type: '@@preparation/DISPLAY_MODE',
+				payload: {
+					method: 'setPreparationsDisplayMode',
+					args: [],
+					mode: nextMode,
+				}
+			};
+			spyOn(StateService, 'setPreparationsDisplayMode').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.setPreparationsDisplayMode)
+				.toHaveBeenCalledWith(nextMode);
+		}));
+	});
+
+	describe('dispatch @@preparation/CREATE', () => {
+		it('should toggle preparation creator', inject((StateService, PreparationActionsService) => {
+			// given
+			const action = {
+				type: '@@preparation/CREATE',
+				payload: {
+					method: 'togglePreparationCreator',
+					args: [],
+				}
+			};
+			spyOn(StateService, 'togglePreparationCreator').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.togglePreparationCreator).toHaveBeenCalled();
+		}));
+	});
+
+	describe('dispatch @@preparation/FOLDER_FETCH', () => {
+		const folderId = '';
+
+		beforeEach(inject(($q, $stateParams, StateService, FolderService, PreparationActionsService) => {
+			// given
+			$stateParams.folderId = folderId;
+			spyOn(StateService, 'setPreviousRoute').and.returnValue();
+			spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
+			spyOn(FolderService, 'init').and.returnValue($q.when());
+
+			const action = {
+				type: '@@preparation/FOLDER_FETCH',
+				payload: {
+					method: 'init',
+					args: [],
+				}
+			};
+
+			// when
+			PreparationActionsService.dispatch(action);
+		}));
+
+		it('should set current folder as the previous route for redirection',
+			inject((StateService) => {
+				// then
+				expect(StateService.setPreviousRoute).toHaveBeenCalledWith(
+					'nav.index.preparations',
+					{ folderId }
+				);
+			})
+		);
+
+		it('should init the folder which id is in url param',
+			inject((FolderService) => {
+				// then
+				expect(FolderService.init).toHaveBeenCalledWith(folderId);
+			})
+		);
+
+		it('should manage fetching flag',
+			inject(($rootScope, StateService) => {
+				// then
+				expect(StateService.setFetchingInventoryPreparations)
+					.toHaveBeenCalledWith(true);
+
+				// when
+				$rootScope.$digest();
+
+				// then
+				expect(StateService.setFetchingInventoryPreparations)
+					.toHaveBeenCalledWith(false);
+			})
+		);
+	});
+
+	describe('dispatch @@preparation/COPY_MOVE', () => {
+		it('should toggle preparation copy move', inject((StateService, PreparationActionsService) => {
+			// given
+			const folder = stateMock.inventory.folder.metadata;
+			const preparation = { id: 'prep 1' };
+			const action = {
+				type: '@@preparation/COPY_MOVE',
+				payload: {
+					method: 'toggleCopyMovePreparation',
+					args: [],
+					model: preparation,
+				}
+			};
+			spyOn(StateService, 'toggleCopyMovePreparation').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.toggleCopyMovePreparation)
+				.toHaveBeenCalledWith(folder, preparation);
+		}));
+	});
+
+	describe('dispatch @@preparation/REMOVE', () => {
+		const preparation = { id: 'prep 1' };
+
+		beforeEach(inject(($rootScope, $q, MessageService, TalendConfirmService,
+		                   FolderService, PreparationService, PreparationActionsService) => {
+			// given
+			spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when());
+			spyOn(PreparationService, 'delete').and.returnValue();
+			spyOn(FolderService, 'refresh').and.returnValue();
+			spyOn(MessageService, 'success').and.returnValue();
+
+			const action = {
+				type: '@@preparation/REMOVE',
+				payload: {
+					method: 'delete',
+					args: [],
+					model: preparation,
+				}
+			};
+
+			// when
+			PreparationActionsService.dispatch(action);
+			$rootScope.$digest();
+		}));
+
+		it('should ask confirmation', inject((TalendConfirmService) => {
+			// then
+			expect(TalendConfirmService.confirm).toHaveBeenCalledWith(
+				{ disableEnter: true },
+				['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
+				{ type: 'preparation', name: preparation.name }
+			);
+		}));
+
+		it('should remove preparation', inject((PreparationService) => {
+			// then
+			expect(PreparationService.delete).toHaveBeenCalledWith(preparation);
+		}));
+
+		it('should manage fetching flag', inject((FolderService) => {
+			// given
+			const currentFolderId = stateMock.inventory.folder.metadata.id;
+
+			// then
+			expect(FolderService.refresh).toHaveBeenCalledWith(currentFolderId);
+		}));
+
+		it('should display success message', inject((MessageService) => {
+			// then
+			expect(MessageService.success).toHaveBeenCalledWith(
+				'REMOVE_SUCCESS_TITLE',
+				'REMOVE_SUCCESS',
+				{ type: 'preparation', name: preparation.name }
+			);
+		}));
+	});
+});

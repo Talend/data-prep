@@ -33,8 +33,8 @@
 
     <inventory-item
             id="preparation_{{$index}}"
-            ng-repeat="preparation in $ctrl.state.inventory.folder.content.preparations track by preparation.id"
-            item="preparation"
+            ng-repeat="preparation in $ctrl.state.inventory.folder.content.preparations track by preparation.model.id"
+            item="preparation.model"
             type="preparation"
             details="PREPARATION_DETAILS"
             open="$ctrl.PreparationService.open"

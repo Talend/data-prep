@@ -16,19 +16,22 @@
  * @name data-prep.preparation-creator:preparationCreator
  * @description This component renders add preparation modal content
  * @usage
- *      <preparation-creator
- *      <preparation-creator
- *          show-add-prep-modal="$ctrl.showAddPrepModal">
- *       </preparation-creator>
- * @param {Boolean} showAddPrepModal show/hide the whole modal
+ *      <preparation-creator></preparation-creator>
  * */
 
-import PreparationCreatorCtrl from './preparation-creator-controller';
-
-import template from './preparation-creator.html';
-
 export default {
-	templateUrl: template,
-	bindings: { onCreation: '&' },
-	controller: PreparationCreatorCtrl,
+	template: `
+		<talend-modal id="add-preparation-modal"
+			fullscreen="false"
+			close-button="true"
+			state="$ctrl.state.home.preparations.creator.isVisible"
+			ng-if="$ctrl.state.home.preparations.creator.isVisible"
+			disable-enter="false">
+			<preparation-creator-form />
+		</talend-modal>
+	`,
+	controller(state) {
+		'ngInject';
+		this.state = state;
+	},
 };

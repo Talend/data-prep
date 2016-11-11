@@ -26,6 +26,7 @@ export default function InventoryHeaderDirective() {
 			onSortChange: '&',
 			onOrderChange: '&',
 			onFolderCreation: '&',
+			onAddPreparation: '&',
 		},
 		controllerAs: '$ctrl',
 		controller: 'InventoryHeaderCtrl',

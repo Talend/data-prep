@@ -27,24 +27,51 @@ const settingsMock = {
 				menu: ['user:logout'],
 			},
 		},
-		"breadcrumb": {
-			"maxItems": 5,
-			"onItemClick": "menu:folders"
+		breadcrumb: {
+			maxItems: 5,
+			onItemClick: 'menu:folders',
 		},
-		"sidepanel": {
-			"onToggleDock": "sidepanel:toggle",
-			"actions": [
+		sidepanel: {
+			onToggleDock: 'sidepanel:toggle',
+			actions: [
 				{
-					"label": "Preparations",
-					"icon": "icon-lab-mix",
-					"onClick": "menu:preparations"
+					label: 'Preparations',
+					icon: 'icon-lab-mix',
+					onClick: 'menu:preparations',
 				},
 				{
-					"label": "Datasets",
-					"icon": "icon-dataset",
-					"onClick": "menu:datasets"
-				}
-			]
+					label: 'Datasets',
+					icon: 'icon-dataset',
+					onClick: 'menu:datasets',
+				},
+			],
+		},
+		'listview:preparations': {
+			didMountActionCreator: 'preparations:fetch',
+			list: {
+				columns: [
+					{ key: 'name', label: 'Name' },
+					{ key: 'author', label: 'Author' },
+					{ key: 'lastModificationDate', label: 'Last change' },
+					{ key: 'dataset', label: 'Dataset' },
+					{ key: 'nbLines', label: 'Nb lines' },
+					{ key: 'nbSteps', label: 'Nb steps' },
+				],
+				items: [],
+				iconKey: 'icon',
+				titleKey: 'name',
+				onTitleClick: 'menu:playground:preparation',
+			},
+			toolbar: {
+				sortBy: [
+					{ id: 'name', name: 'Name', selected: true },
+					{ id: 'lastModificationDate', name: 'Date' },
+				],
+				actions: ['preparation:create:folder'],
+				onClickAdd: 'preparation:create',
+				onSelectDisplayMode: 'preparation:display-mode',
+				searchLabel: 'Find a preparation',
+			},
 		},
 	},
 	actions: {
@@ -67,40 +94,37 @@ const settingsMock = {
 			type: '@@router/GO',
 			payload: {
 				method: 'go',
-				args: [
-					'nav.index.datasets',
-				],
+				args: ['nav.index.datasets'],
 			},
 		},
-		"menu:folders": {
-			"id": "menu:folders",
-			"name": "folders",
-			"icon": "icon-folder",
-			"type": "@@router/GO_FOLDER",
-			"payload": {
-				"method": "go",
-				"args": [
-					"nav.index.preparations"
-				]
-			}
-		},
-		"sidepanel:toggle": {
-			"id": "sidepanel:toggle",
-			"name": "Click here to toggle the side panel",
-			"icon": "",
-			"type": "@@sidepanel/TOGGLE",
-			"payload": {
-				"method": "toggleHomeSidepanel",
-				"args": []
-			}
-		},
-		'user:logout': {
-			id: 'user:logout',
-			name: 'Logout',
-			icon: 'icon-logout',
-			type: '@@user/logout',
+		'menu:folders': {
+			id: 'menu:folders',
+			name: 'folders',
+			icon: 'icon-folder',
+			type: '@@router/GO_FOLDER',
 			payload: {
-				method: 'logout',
+				method: 'go',
+				args: ['nav.index.preparations'],
+			},
+		},
+		'menu:playground:preparation': {
+			id: 'menu:playground:preparation',
+			name: 'Preparation Playground',
+			icon: 'talend-dataprep',
+			type: '@@router/GO_PREPARATION',
+			payload: {
+				method: 'go',
+				args: ['playground.preparation'],
+			},
+		},
+		'sidepanel:toggle': {
+			id: 'sidepanel:toggle',
+			name: 'Click here to toggle the side panel',
+			icon: '',
+			type: '@@sidepanel/TOGGLE',
+			payload: {
+				method: 'toggleHomeSidepanel',
+				args: [],
 			},
 		},
 		'onboarding:preparation': {
@@ -134,6 +158,75 @@ const settingsMock = {
 				args: [
 					'https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header',
 				],
+			},
+		},
+		'user:logout': {
+			id: 'user:logout',
+			name: 'Logout',
+			icon: 'icon-logout',
+			type: '@@user/logout',
+			payload: {
+				method: 'logout',
+			},
+		},
+		'preparation:display-mode': {
+			id: 'preparation:display-mode',
+			name: 'Change preparation display mode',
+			icon: '',
+			type: '@@preparation/DISPLAY_MODE',
+			payload: {
+				method: 'setPreparationsDisplayMode',
+				args: [],
+			},
+		},
+		'preparation:create': {
+			id: 'preparation:create',
+			name: 'Create a preparation',
+			icon: 'talend-dataprep',
+			type: '@@preparation/CREATE',
+			payload: {
+				method: 'togglePreparationCreator',
+				args: [],
+			},
+		},
+		'preparation:create:folder': {
+			id: 'preparation:create:folder',
+			name: 'Create a folder',
+			icon: 'talend-folder',
+			type: '@@preparation/CREATE_FOLDER',
+			payload: {
+				method: 'createFolder',
+				args: [],
+			},
+		},
+		'preparations:fetch': {
+			id: 'preparations:fetch',
+			name: 'Fetch preparations from current folder',
+			icon: 'talend-dataprep',
+			type: '@@preparation/FETCH',
+			payload: {
+				method: 'init',
+				args: [],
+			},
+		},
+		'preparation:copy-move': {
+			id: 'preparation:copy-move',
+			name: 'Copy/Move preparation',
+			icon: 'talend-copy_dataset',
+			type: '@@preparation/COPY_MOVE',
+			payload: {
+				method: 'copyMove',
+				args: [],
+			},
+		},
+		'preparation:remove': {
+			id: 'preparation:remove',
+			name: 'Remove preparation',
+			icon: 'talend-delete',
+			type: '@@preparation/REMOVE',
+			payload: {
+				method: 'remove',
+				args: [],
 			},
 		},
 	},

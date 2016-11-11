@@ -10,43 +10,57 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import angular from 'angular';
+
 import settings from '../../../../mocks/Settings.mock';
 
-describe('Layout Container', () => {
+describe('Home Preparation Container', () => {
 	let scope;
 	let createElement;
 	let element;
+	let StateMock;
 
-	beforeEach(angular.mock.module('react-talend-components.containers'));
+	beforeEach(angular.mock.module('data-prep.home', ($provide) => {
+		StateMock = {
+			inventory: {
+				breadcrumb: []
+			},
+		};
+		$provide.constant('state', StateMock);
+	}));
 
-	beforeEach(inject(($rootScope, $compile, SettingsService) => {
+	beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService, SettingsService) => {
 		scope = $rootScope.$new(true);
-		
 		createElement = () => {
-			element = angular.element('<layout><div id="myContent"></div></layout>');
+			element = angular.element('<react-home-preparation></react-home-preparation>');
 			$compile(element)(scope);
 			scope.$digest();
 			return element;
 		};
 
+		spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
+		spyOn(FolderService, 'init').and.returnValue($q.when());
+
 		SettingsService.setSettings(settings);
 	}));
 
-	afterEach(inject((SettingsService) => {
-		SettingsService.clearSettings();
+	afterEach(() => {
 		scope.$destroy();
 		element.remove();
-	}));
+	});
 
-	it('should render app layout', () => {
+	it('should render breadcrumbs', () => {
 		//when
 		createElement();
 
 		//then
-		expect(element.find('.app').length).toBe(1);
-		expect(element.find('.header app-header-bar').length).toBe(1);
-		expect(element.find('.content .sidemenu side-panel').length).toBe(1);
-		expect(element.find('.content .main #myContent').length).toBe(1);
+		expect(element.find('breadcrumbs').length).toBe(1);
+	});
+
+	it('should render preparation-list', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('react-preparation-list ').length).toBe(1);
 	});
 });

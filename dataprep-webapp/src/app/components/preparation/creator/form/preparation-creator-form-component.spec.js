@@ -13,7 +13,7 @@
 
 import angular from 'angular';
 
-describe('Preparation creator component', () => {
+describe('Preparation creator form component', () => {
     let scope;
     let createElement;
     let element;
@@ -31,16 +31,15 @@ describe('Preparation creator component', () => {
     }));
 
     beforeEach(inject(($rootScope, $compile, $q, DatasetService) => {
-        scope = $rootScope.$new();
-        scope.onCreation = jasmine.createSpy('onCreation');
+        scope = $rootScope.$new(true);
 
         createElement = () => {
-            element = angular.element(`<preparation-creator on-creation="onCreation()"></preparation-creator>`);
+            element = angular.element(`<preparation-creator-form></preparation-creator-form>`);
 
             $compile(element)(scope);
             scope.$digest();
 
-            controller = element.controller('preparationCreator');
+            controller = element.controller('preparationCreatorForm');
         };
 
         spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.when([

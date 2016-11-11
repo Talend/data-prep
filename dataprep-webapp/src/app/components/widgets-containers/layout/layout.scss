@@ -33,6 +33,7 @@ $tc-layout-header-height: 48px;
     .main {
       @include flex-grow(1);
       @include flex-shrink(0);
+      @include flex-basis(500px);
     }
 
     .sidemenu {
@@ -40,12 +41,6 @@ $tc-layout-header-height: 48px;
       @include flex-shrink(1);
 
       background-color: $blue;
-
-      //HACK: to remove after PR react-talend-components
-      .fa-arrow-left:before {
-        content: "\2190";
-        font-size: 20px;
-      }
     }
   }
 

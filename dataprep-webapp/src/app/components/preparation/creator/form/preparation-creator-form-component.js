@@ -11,18 +11,19 @@
 
  ============================================================================*/
 
-import angular from 'angular';
-
-import ThemeFiltersComponent from './theme-filters-component';
-
-const MODULE_NAME = 'data-prep.theme-filters';
-
 /**
- * @ngdoc object
- * @name data-prep.theme-filter
- * @description Theme filter component module
- */
-angular.module(MODULE_NAME, [])
-    .component('themeFilters', ThemeFiltersComponent);
+ * @ngdoc component
+ * @name data-prep.preparation-creator:preparationCreatorForm
+ * @description This component renders add preparation modal content
+ * @usage
+ *      <preparation-creator-form></preparation-creator-form>
+ * */
 
-export default MODULE_NAME;
+import PreparationCreatorCtrl from './preparation-creator-form-controller';
+
+import template from './preparation-creator-form.html';
+
+export default {
+	templateUrl: template,
+	controller: PreparationCreatorCtrl,
+};

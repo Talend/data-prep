@@ -88,7 +88,7 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
 
-        parameters.add(new Parameter(PARAMETER_REGEX, STRING, "#(\\w+)"));
+        parameters.add(new Parameter(PARAMETER_REGEX, STRING, "(\\w+)"));
 
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()

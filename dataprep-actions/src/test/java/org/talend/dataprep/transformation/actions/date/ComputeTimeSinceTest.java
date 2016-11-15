@@ -43,6 +43,8 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -76,6 +78,18 @@ public class ComputeTimeSinceTest extends BaseDateTests {
     @Test
     public void testCategory() throws Exception {
         Assert.assertThat(action.getCategory(), is(ActionCategory.DATE.getDisplayName()));
+    }
+
+    @Test
+    public void testParameters() throws Exception {
+        final List<Parameter> parameters = action.getParameters();
+        Assert.assertThat(parameters.size(), is(6));
+
+        // Test on items label for TDP-2943:
+        final SelectParameter selectParameter = (SelectParameter) parameters.get(5);
+        assertEquals("Now", selectParameter.getItems().get(0).getLabel());
+        assertEquals("Specific date", selectParameter.getItems().get(1).getLabel());
+        assertEquals("Another column", selectParameter.getItems().get(2).getLabel());
     }
 
     @Test

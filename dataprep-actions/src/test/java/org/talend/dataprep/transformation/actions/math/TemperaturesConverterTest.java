@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -96,6 +97,9 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest {
                 .filter(n -> !parameterNames.contains(n)) //
                 .collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
+
+        // Test on items label for TDP-2943:
+        assertEquals("Fahrenheit", ((SelectParameter) parameters.get(5)).getItems().get(0).getLabel());
     }
 
     @Test

@@ -163,7 +163,7 @@ public class SelectParameter extends Parameter {
          * @return the builder to carry on building the column.
          */
         public Builder item(String value, Parameter... parameter) {
-            this.items.add(Item.Builder.builder().value(value).inlineParameters(Arrays.asList(parameter)).build());
+            this.items.add(Item.Builder.builder().value(value).label(value).inlineParameters(Arrays.asList(parameter)).build());
             return this;
         }
 
@@ -173,7 +173,7 @@ public class SelectParameter extends Parameter {
          * @param value the item value.
          */
         public Builder item(String value) {
-            final Item item = Item.Builder.builder().value(value).build();
+            final Item item = Item.Builder.builder().value(value).label(value).build();
             this.items.add(item);
             return this;
         }

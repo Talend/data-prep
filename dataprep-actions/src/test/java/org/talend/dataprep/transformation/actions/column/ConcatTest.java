@@ -22,6 +22,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
@@ -32,6 +33,8 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -67,6 +70,17 @@ public class ConcatTest extends AbstractMetadataBaseTest {
     @Test
     public void testCategory() throws Exception {
         assertThat(action.getCategory(), is(ActionCategory.COLUMNS.getDisplayName()));
+    }
+
+    @Test
+    public void testParameters() throws Exception {
+        final List<Parameter> parameters = action.getParameters();
+        assertThat(parameters.size(), is(7));
+
+        // Test on items label for TDP-2943:
+        final SelectParameter selectParameter = (SelectParameter) parameters.get(5);
+        assertEquals("Another column", selectParameter.getItems().get(0).getLabel());
+        assertEquals("No other column", selectParameter.getItems().get(1).getLabel());
     }
 
     @Test

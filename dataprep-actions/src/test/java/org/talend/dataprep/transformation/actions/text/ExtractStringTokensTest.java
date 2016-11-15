@@ -20,10 +20,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.text.ExtractStringTokens.MODE_PARAMETER;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -35,6 +32,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -52,7 +50,9 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
      */
     private ExtractStringTokens action = new ExtractStringTokens();
 
-    /** The action parameters. */
+    /**
+     * The action parameters.
+     */
     private Map<String, String> parameters;
 
     @Before
@@ -70,6 +70,9 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest {
         final List<Parameter> parameters = action.getParameters();
         assertThat(parameters.size(), is(6));
         assertThat(parameters.stream().filter(p -> StringUtils.equals(p.getName(), MODE_PARAMETER)).count(), is(1L));
+
+        // Test on items label for TDP-2943:
+        assertEquals("Multiple columns", ((SelectParameter) parameters.get(5)).getItems().get(0).getLabel());
     }
 
     @Test

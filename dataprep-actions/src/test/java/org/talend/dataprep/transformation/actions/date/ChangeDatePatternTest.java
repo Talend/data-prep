@@ -32,6 +32,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -63,6 +64,10 @@ public class ChangeDatePatternTest extends BaseDateTests {
     public void testParameters() throws Exception {
         // 4 predefined patterns + custom = 6
         assertThat(action.getParameters().size(), is(6));
+
+        // Test on items label for TDP-2944:
+        final SelectParameter newFormatParam = (SelectParameter) action.getParameters().get(5);
+        assertEquals("American standard", newFormatParam.getItems().get(0).getLabel());
     }
 
     @Test

@@ -83,7 +83,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
         assertEquals("No other column", useWithParam.getItems().get(1).getLabel());
 
         final SelectParameter regionsListParam =(SelectParameter) useWithParam.getItems().get(1).getParameters().get(0);
-        assertEquals("United States", regionsListParam.getItems().get(0).getLabel());
+        assertEquals("American standard", regionsListParam.getItems().get(0).getLabel());
     }
 
     @Test

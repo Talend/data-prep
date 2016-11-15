@@ -18,6 +18,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Item;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -65,7 +66,7 @@ public interface DatePatternParamModel {
             String value = patterns.getString(key);
             Item item = Item.Builder.builder()
                     .value(value)
-                    //.label(ActionsBundle.INSTANCE.choice(Locale.ENGLISH, "choice." + key, key + " (" + value + ")"))
+                    .label(ActionsBundle.INSTANCE.getString(Locale.ENGLISH, "choice." + key, key + " (" + value + ")"))
                     .build();
             items.add(item);
 

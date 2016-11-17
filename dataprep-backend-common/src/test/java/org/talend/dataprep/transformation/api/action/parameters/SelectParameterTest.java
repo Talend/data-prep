@@ -21,7 +21,9 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
+import org.talend.dataprep.parameters.LocalizedItem;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -52,5 +54,27 @@ public class SelectParameterTest extends ParameterBaseTest {
 
         // then
         assertThat(out.toString(), sameJSONAs(IOUtils.toString(this.getClass().getResourceAsStream("selectParameter.json"))));
+    }
+
+    @Test
+    public void shouldCreateLocalizedItem() {
+        // when
+        final SelectParameter params = SelectParameter.Builder.builder().item("key").build();
+
+        // then
+        assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(LocalizedItem.class));
+    }
+
+    @Test
+    public void shouldCreateLocalizedItemWithInlineParameters() {
+        // when
+        final SelectParameter params = SelectParameter
+                .Builder
+                .builder()
+                .item("key", new Parameter())
+                .build();
+
+        // then
+        assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(LocalizedItem.class));
     }
 }

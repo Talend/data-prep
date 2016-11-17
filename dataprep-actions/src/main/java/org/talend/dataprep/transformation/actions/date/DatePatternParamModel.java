@@ -66,7 +66,7 @@ public interface DatePatternParamModel {
             String value = patterns.getString(key);
             Item item = Item.Builder.builder()
                     .value(value)
-                    .label(ActionsBundle.INSTANCE.getString(Locale.ENGLISH, "choice." + key, key + " (" + value + ")"))
+                    .label(ActionsBundle.INSTANCE.choice(Locale.ENGLISH, key))
                     .build();
             items.add(item);
 

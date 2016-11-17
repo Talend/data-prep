@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * Models a select item.
  */
-class LocalizedItem implements Item {
+public class LocalizedItem implements Item {
 
     /** the item value. */
     private final String value;

@@ -15,7 +15,7 @@ import { chain, forEach, filter, map, find } from 'lodash';
 
 const COLUMN_CATEGORY = 'column_metadata';
 const CATEGORY = 'category';
-const SUGGESTION_CATEGORY = 'suggestion';
+const SUGGESTION_CATEGORY = 'suggestions';
 const FILTERED_CATEGORY = 'filtered';
 const HIGHLIGHT_CLASS = 'highlighted';
 

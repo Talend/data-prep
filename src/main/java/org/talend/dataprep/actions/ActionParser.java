@@ -26,19 +26,9 @@ public interface ActionParser {
     /**
      * Returns a function able to transform an {@link IndexedRecord record} using preparation specified in <code>preparation</code>.
      *
-     * @param preparation A JSON of a Data Prep preparation to be applied to {@link IndexedRecord records}.
-     * @param encoding The encoding to be used for reading action description.
-     * @return A {@link Function} able to apply all <code>preparation</code> to the {@link IndexedRecord record}.
-     * @throws UnsupportedEncodingException If encoding is not supported.
-     */
-    Function<IndexedRecord, IndexedRecord> parse(String preparation, String encoding) throws UnsupportedEncodingException;
-
-    /**
-     * Returns a function able to transform an {@link IndexedRecord record} using preparation specified in <code>preparation</code>.
-     *
-     * @param preparation A JSON of a Data Prep preparation to be applied to {@link IndexedRecord records}.
+     * @param preparationId A JSON of a Data Prep preparation to be applied to {@link IndexedRecord records}.
      * @return A {@link Function} able to apply all <code>preparation</code> to the {@link IndexedRecord record}.
      */
-    Function<IndexedRecord, IndexedRecord> parse(InputStream preparation);
+    Function<IndexedRecord, IndexedRecord> parse(String preparationId);
 
 }

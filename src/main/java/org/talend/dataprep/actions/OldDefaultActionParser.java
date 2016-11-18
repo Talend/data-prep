@@ -14,9 +14,7 @@ package org.talend.dataprep.actions;
 
 import static java.util.function.Function.identity;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -25,7 +23,6 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.IndexedRecord;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.slf4j.Logger;
@@ -51,15 +48,11 @@ import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DefaultActionParser implements ActionParser {
+public class OldDefaultActionParser  {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultActionParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OldDefaultActionParser.class);
 
-    private final String apiUrl;
-
-    private final String login;
-
-    private final String password;
+    private static final String API_URL = "http://127.0.0.1:9999";
 
     private static final ActionRegistry actionRegistry = new ClassPathActionRegistry(
             "org.talend.dataprep.transformation.actions");
@@ -67,21 +60,6 @@ public class DefaultActionParser implements ActionParser {
     private static final ActionFactory actionFactory = new ActionFactory();
 
     private static final ObjectMapper mapper = new ObjectMapper();
-
-    public DefaultActionParser(String apiUrl, String login, String password) {
-        this.apiUrl = apiUrl;
-        this.login = login;
-        this.password = password;
-    }
-
-    /**
-     * TODO the class representing the DQ library
-     *
-     * @return
-     */
-    private  Object retrieveDQDictionnary() {
-        return null;
-    }
 
     private static void assertPreparation(Object actions) {
         if (actions == null) {
@@ -95,7 +73,7 @@ public class DefaultActionParser implements ActionParser {
      * @param actionsAsString the json representation of the list of action
      * @return a list of actions from its json representation
      */
-    private List<Action> getActions(String actionsAsString) {
+    private static List<Action> getActions(String actionsAsString) {
         try {
             final JsonNode jsonNode = mapper.readTree(actionsAsString);
             if (!jsonNode.isArray()) {
@@ -121,7 +99,7 @@ public class DefaultActionParser implements ActionParser {
      * @param n a json node corresponding to an action
      * @return returns the Action instance corresponding to the specified json node
      */
-    private Action parseAction(JsonNode n) {
+    private static Action parseAction(JsonNode n) {
         String actionName = n.get("action").asText();
         LOGGER.info("New action: {}", actionName);
         final ActionDefinition actionMetadata = actionRegistry.get(actionName);
@@ -156,11 +134,13 @@ public class DefaultActionParser implements ActionParser {
      * @param value the json node to be parsed
      * @return the string version of a parameter field from a json node
      */
-    private String parseParameter(final JsonNode value) {
+    private static String parseParameter(final JsonNode value) {
         final String result;
         if (value.isTextual()) {
             result = value.asText();
         } else if (value.isArray()) {
+            ObjectMapper mapper = new ObjectMapper();
+
             try {
                 result = mapper.writeValueAsString(value);
             } catch (IOException e) {
@@ -177,18 +157,16 @@ public class DefaultActionParser implements ActionParser {
         return result;
     }
 
-    private HashMap<String, DataSetRow> getLookupDataset(RemoteResourceGetter clientFormLogin, String dataSetId,
-            String joinOnColumn) {
-        LOGGER.debug("Retrieving lookup dataset '{}'", dataSetId);
-        return (HashMap<String, DataSetRow>) clientFormLogin.retrieveLookupDataSet(apiUrl, login, password, dataSetId, joinOnColumn);
+    private static HashMap<String, DataSetRow> getLookupDataset(String dataSetId, String joinOnColumn) {
+        LOGGER.info("Trying to retrieve the lookup dataset Bouba: ");
+
+            RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
+        Header jwt = clientFormLogin.login(API_URL+"/login?client-app=STUDIO", "boubacar@dataprep.com", "boubacar");
+
+        return (HashMap<String, DataSetRow>) clientFormLogin.retrieveLookupDataSet(API_URL, "boubacar@dataprep.com", "boubacar", dataSetId, joinOnColumn);
     }
 
-    private String getPreparation(RemoteResourceGetter clientFormLogin, String preparationId) {
-        LOGGER.debug("Retrieving preparation '{}'", preparationId);
-                return clientFormLogin.retrievePreparation(apiUrl, login, password, preparationId);
-    }
-
-    private HashMap<String, DataSetRow> retrieveLookupDataSetFromAction(RemoteResourceGetter clientFormLogin, Action action) {
+    private static HashMap<String, DataSetRow> retrieveLookupDataSetFromAction(Action action) {
         final HashMap<String, DataSetRow> result;
 
         if (StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) {
@@ -197,8 +175,7 @@ public class DefaultActionParser implements ActionParser {
                 throw new IllegalArgumentException("A lookup action must have a lookup dataset id: " + action);
             } else {
                 final String joinOn = action.getParameters().get(Lookup.Parameters.LOOKUP_JOIN_ON.getKey());
-
-                result = getLookupDataset(clientFormLogin, dataSetId, joinOn);
+                result = getLookupDataset(dataSetId, joinOn);
             }
         } else {
             throw new IllegalArgumentException(
@@ -207,17 +184,17 @@ public class DefaultActionParser implements ActionParser {
         return result;
     }
 
-    private HashMap<String, HashMap<String, DataSetRow>> retrieveLookupDataSets(List<Action> actions) {
+    private static HashMap<String, HashMap<String, DataSetRow>> retrieveLookupDataSets(List<Action> actions) {
         final HashMap<String, HashMap<String, DataSetRow>> result = new HashMap<>();
-        final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
-        actions.stream().filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME))
-                .forEach(action -> result.put(action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey()),
-                        retrieveLookupDataSetFromAction(clientFormLogin, action)));
+        actions.stream().filter(a -> StringUtils.equals(a.getName(), Lookup.LOOKUP_ACTION_NAME))
+                .forEach(a -> result.put(a.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey()),
+                        retrieveLookupDataSetFromAction(a)));
         return result;
     }
 
-    private Function<IndexedRecord, IndexedRecord> internalParse(InputStream preparation) {
+    private static Function<IndexedRecord, IndexedRecord> internalParse(InputStream preparation) {
         assertPreparation(preparation);
+        ObjectMapper mapper = new ObjectMapper();
 
         // Parse preparation JSON
         final JsonNode preparationNode;
@@ -253,10 +230,7 @@ public class DefaultActionParser implements ActionParser {
         // Get the list of actions
         List<Action> actions = getActions(actionNode.toString());
 
-        // get the list of lookup data sets
         HashMap<String, HashMap<String, DataSetRow>> lookupDataSets = retrieveLookupDataSets(actions);
-
-        // get the DQ dictionary
 
         // Build internal transformation pipeline
         final StackedNode stackedNode = new StackedNode();
@@ -273,15 +247,13 @@ public class DefaultActionParser implements ActionParser {
         return new SerializableFunction(pipeline, stackedNode, rowMetadata, lookupDataSets);
     }
 
-    public Function<IndexedRecord, IndexedRecord> parse(InputStream preparation) {
-        return internalParse(preparation);
+    public Function<IndexedRecord, IndexedRecord> parse(String preparation, String encoding) throws UnsupportedEncodingException {
+        assertPreparation(preparation);
+        return parse(new ByteArrayInputStream(preparation.getBytes(encoding)));
     }
 
-    @Override
-    public Function<IndexedRecord, IndexedRecord> parse(String preparationId) {
-        final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
-        String preparation = getPreparation(clientFormLogin, preparationId);
-        return internalParse(IOUtils.toInputStream(preparation));
+    public Function<IndexedRecord, IndexedRecord> parse(InputStream preparation) {
+        return internalParse(preparation);
     }
 
     private static class StackedNode extends BasicNode {
@@ -333,14 +305,13 @@ public class DefaultActionParser implements ActionParser {
 
         @Override
         public IndexedRecord apply(IndexedRecord indexedRecord) {
-            if (!loaded) {
-                LOG.debug("Adding cached data sets to LookupDataSetManager");
-                lookupDataSets.entrySet().stream().forEach(entry -> {
-                    if (LookupDatasetsManager.put(entry.getKey(), entry.getValue()))
-                        LOG.debug("Added {} to the lookup data sets", entry.getKey());
-                });
+            if (!loaded){
+                LOG.info("Adding cached data sets to LookupDataSetManager");
+                lookupDataSets.entrySet().stream().forEach(entry -> LookupDatasetsManager.put(entry.getKey(), entry.getValue()));
+                lookupDataSets.entrySet().stream().forEach(entry -> LOG.info("cached a dataset with id: "+entry.getKey()));
                 loaded = true;
             }
+            LOG.info("Bouba");
             Map<String, String> values = new HashMap<>();
             final List<Schema.Field> fields = indexedRecord.getSchema().getFields();
             DecimalFormat decimalFormat = new DecimalFormat("0000");

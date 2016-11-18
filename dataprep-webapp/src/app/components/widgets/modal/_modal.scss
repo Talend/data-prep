@@ -333,22 +333,18 @@
 }
 
 .modal-open {
-  overflow: hidden;
-
   .modal {
     display: block;
 
-    .modal-window {
+    &-window {
       margin: 0;
       padding: 0;
+      width: auto;
+      overflow: auto;
     }
 
-    .modal-dialog {
-      width: auto;
+    &-content {
+      margin: 1rem auto;
     }
   }
-}
-
-.modal-closed {
-  overflow: auto;
 }

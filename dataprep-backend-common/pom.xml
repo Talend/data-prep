@@ -66,6 +66,10 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jsonSchema</artifactId>
+        </dependency>
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>
             <groupId>junit</groupId>

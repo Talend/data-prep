@@ -79,6 +79,7 @@ import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.DraftValidator;
 import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.schema.FormatFamilyFactory;
@@ -1039,15 +1040,30 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @PublicAPI
     public List<Parameter> getImportParameters(@PathVariable("import") final String importType) {
-        if (StringUtils.isEmpty(importType)) {
-            return emptyList();
-        }
-        for (DataSetLocation location : locationsService.getAvailableLocations()) {
-            if (importType.equals(location.getLocationType())) {
-                return location.getParameters();
+        DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
+        return matchingDatasetLocation == null ? emptyList() : matchingDatasetLocation.getParameters();
+    }
+
+    @RequestMapping(value = "/datasets/imports/{import}/jsonschemaparameters", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
+    @Timed
+    @PublicAPI
+    public ComponentProperties getImportJsonSchemaParameters(@PathVariable("import") final String importType) {
+        DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
+        return matchingDatasetLocation == null ? null : matchingDatasetLocation.getParametersAsSchema();
+    }
+
+    private DataSetLocation findDataSetLocation(String importType) {
+        DataSetLocation matchingDatasetLocation = null;
+        if (!StringUtils.isEmpty(importType)) {
+            for (DataSetLocation location : locationsService.getAvailableLocations()) {
+                if (importType.equals(location.getLocationType())) {
+                    matchingDatasetLocation = location;
+                    break;
+                }
             }
         }
-        return emptyList();
+        return matchingDatasetLocation;
     }
 
     @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

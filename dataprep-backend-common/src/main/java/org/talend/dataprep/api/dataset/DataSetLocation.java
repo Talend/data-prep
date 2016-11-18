@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.FormatFamily;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,8 +45,13 @@ public interface DataSetLocation extends Serializable {
      * @return All needed parameters for this location (data set id, url, job name...).
      */
     @JsonIgnore
-    // Ignored so it not stored in JSON
     List<Parameter> getParameters();
+
+    /**
+     * If available, the json schema representation of the parameters.
+     */
+    @JsonIgnore
+    default ComponentProperties getParametersAsSchema() { return null; }
 
     @JsonIgnore
     // Ignored so it not stored in JSON

@@ -14,6 +14,8 @@
 import angular from 'angular';
 
 import { AppHeaderBar, Breadcrumbs,	SidePanel } from 'react-talend-components';
+import Form from 'react-talend-forms';
+
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
 import LayoutContainer from './layout/layout-container';
@@ -32,6 +34,7 @@ angular.module(MODULE_NAME,
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureAppSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
+	.directive('reactTalendForm', ['reactDirective', reactDirective => reactDirective(Form)])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
 	.component('sidePanel', SidePanelContainer)

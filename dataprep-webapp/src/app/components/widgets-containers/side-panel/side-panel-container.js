@@ -16,6 +16,7 @@ import SidePanelCtrl from './side-panel-controller';
 const SidePanelContainer = {
 	template: `<pure-app-side-panel
 		 	actions="$ctrl.actions"
+		 	toggle-icon="$ctrl.toggleIcon"
 			on-toggle-dock="$ctrl.toggle"
 			docked="$ctrl.state.home.sidePanelDocked"
 		/>`,

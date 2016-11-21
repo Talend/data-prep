@@ -21,12 +21,12 @@
       "actions": [
         {
           "label": "Preparations",
-          "icon": "icon-lab-mix",
+          "icon": "talend-dataprep",
           "onClick": "menu:preparations"
         },
         {
           "label": "Datasets",
-          "icon": "icon-dataset",
+          "icon": "talend-cluster",
           "onClick": "menu:datasets"
         }
       ]
@@ -63,7 +63,7 @@
     "menu:preparations": {
       "id": "menu:preparations",
       "name": "Preparations",
-      "icon": "icon-lab-mix",
+      "icon": "talend-cluster",
       "type": "@@router/GO",
       "payload": {
         "method": "go",
@@ -87,7 +87,7 @@
     "menu:datasets": {
       "id": "menu:datasets",
       "name": "Datasets",
-      "icon": "icon-lab-mix",
+      "icon": "talend-dataprep",
       "type": "@@router/GO",
       "payload": {
         "method": "go",
@@ -111,7 +111,7 @@
     "sidepanel:toggle": {
       "id": "sidepanel:toggle",
       "name": "Click here to toggle the side panel",
-      "icon": "",
+      "icon": "talend-arrow-left",
       "type": "@@sidepanel/TOGGLE",
       "payload": {
         "method": "toggleHomeSidepanel",
@@ -121,7 +121,7 @@
     "onboarding:preparation": {
       "id": "onboarding:preparation",
       "name": "Click here to discover the application",
-      "icon": "icon-student-user-2",
+      "icon": "talend-board",
       "type": "@@onboarding/START_TOUR",
       "payload": {
         "method": "startTour",
@@ -133,7 +133,7 @@
     "modal:feedback": {
       "id": "modal:feedback",
       "name": "Send feedback to Talend",
-      "icon": "icon-bubbles-talk-1",
+      "icon": "talend-bubbles",
       "type": "@@modal/SHOW",
       "payload": {
         "method": "showFeedback"
@@ -142,7 +142,7 @@
     "external:help": {
       "id": "external:help",
       "name": "Open Online Help",
-      "icon": "icon-help",
+      "icon": "talend-question-circle",
       "type": "@@external/OPEN_WINDOW",
       "payload": {
         "method": "open",
@@ -194,7 +194,7 @@
     "preparation:copy-move": {
       "id": "preparation:copy-move",
       "name": "Copy/Move preparation",
-      "icon": "talend-copy_dataset",
+      "icon": "talend-files-o",
       "type": "@@preparation/COPY_MOVE",
       "payload": {
         "method": "copyMove",
@@ -204,7 +204,7 @@
     "preparation:remove": {
       "id": "preparation:remove",
       "name": "Remove preparation",
-      "icon": "talend-delete",
+      "icon": "talend-trash",
       "type": "@@preparation/REMOVE",
       "payload": {
         "method": "remove",

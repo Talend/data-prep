@@ -22,12 +22,12 @@ export default class SidePanelCtrl {
 	}
 
 	init() {
-		this.actions = this.adaptActions();
-		this.toggle = this.adaptToggle();
+		this.adaptActions();
+		this.adaptToggle();
 	}
 
 	adaptActions() {
-		return this.appSettings
+		this.actions = this.appSettings
 			.views
 			.sidepanel
 			.actions
@@ -39,6 +39,8 @@ export default class SidePanelCtrl {
 	}
 
 	adaptToggle() {
-		return this.SettingsActionsService.createDispatcher(this.appSettings.actions[this.appSettings.views.sidepanel.onToggleDock]);
+		const action = this.appSettings.actions[this.appSettings.views.sidepanel.onToggleDock];
+		this.toggle = this.SettingsActionsService.createDispatcher(action);
+		this.toggleIcon = action.icon;
 	}
 }

@@ -10,12 +10,14 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-$tc-layout-header-height: 48px;
+$tc-layout-header-height: $navbar-height;
+$tc-layout-min-width: 1330px;
 
 .app {
 	@include display(flex);
 	@include flex-direction(column);
 	height: 100vh;
+	overflow-x: auto;
 
 	.header {
 		@include flex-grow(0);
@@ -30,6 +32,7 @@ $tc-layout-header-height: 48px;
 		@include flex-shrink(0);
 		@include flex-basis(0px);
 		@include align-items(stretch);
+		min-width: $tc-layout-min-width;
 		overflow: auto;
 
 		.main {

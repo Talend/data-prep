@@ -11,13 +11,12 @@
 
  ============================================================================*/
 $tc-layout-header-height: $navbar-height;
-$tc-layout-min-width: 1330px;
+$tc-layout-main-min-width: 1000px;
 
 .app {
 	@include display(flex);
 	@include flex-direction(column);
 	height: 100vh;
-	overflow-x: auto;
 
 	.header {
 		@include flex-grow(0);
@@ -32,7 +31,6 @@ $tc-layout-min-width: 1330px;
 		@include flex-shrink(0);
 		@include flex-basis(0px);
 		@include align-items(stretch);
-		min-width: $tc-layout-min-width;
 		overflow: auto;
 
 		.main {
@@ -40,6 +38,10 @@ $tc-layout-min-width: 1330px;
 			@include flex-shrink(0);
 			@include flex-basis(200px);
 			overflow: auto;
+
+			.main-wrapper {
+				min-width:$tc-layout-main-min-width;
+			}
 		}
 
 		.sidemenu {

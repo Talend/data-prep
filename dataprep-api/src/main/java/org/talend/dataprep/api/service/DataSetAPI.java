@@ -13,10 +13,6 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.springframework.http.MediaType.*;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +23,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
@@ -46,7 +48,6 @@ import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -54,13 +55,9 @@ import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.exception.HystrixRuntimeException;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static org.springframework.http.MediaType.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -463,28 +460,15 @@ public class DataSetAPI extends APIService {
     @Timed
     @PublicAPI
     public StreamingResponseBody listEncodings() {
-        HystrixCommand<InputStream> retrieveEncodings = getCommand(DataSetGetEncodings.class);
-        return CommandHelper.toStreaming(retrieveEncodings);
+        return CommandHelper.toStreaming(getCommand(DataSetGetEncodings.class));
     }
 
     @RequestMapping(value = "/api/datasets/imports/{import}/parameters", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List supported imports for a dataset.", notes = "Returns the supported import types.")
+    @ApiOperation(value = "Fetch the parameters needed to imports a dataset.", notes = "Returns the parameters needed to imports a dataset.")
     @Timed
     @PublicAPI
-    public void listImportParameters(@PathVariable("import") final String importType, final OutputStream output) {
-
-        // Get dataset metadata
-        HystrixCommand<InputStream> retrieveImportParameters = getCommand(DataSetGetImportParameters.class, importType);
-
-        try (InputStream content = retrieveImportParameters.execute()) {
-            IOUtils.copyLarge(content, output);
-            output.flush();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Listing import parameters (pool: {}) done.", getConnectionStats());
-            }
-        } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
+    public StreamingResponseBody getImportParameters(@PathVariable("import") final String importType) {
+        return CommandHelper.toStreaming(getCommand(DataSetGetImportParameters.class, importType));
     }
 
     @RequestMapping(value = "/api/datasets/imports", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -492,7 +476,6 @@ public class DataSetAPI extends APIService {
     @Timed
     @PublicAPI
     public StreamingResponseBody listImports() {
-        HystrixCommand<InputStream> retrieveImports = getCommand(DataSetGetImports.class);
-        return CommandHelper.toStreaming(retrieveImports);
+        return CommandHelper.toStreaming(getCommand(DataSetGetImports.class));
     }
 }

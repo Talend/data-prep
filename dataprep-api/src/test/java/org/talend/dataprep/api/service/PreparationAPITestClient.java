@@ -1,19 +1,21 @@
 package org.talend.dataprep.api.service;
 
+import static com.jayway.restassured.RestAssured.given;
+
 import java.util.List;
 import java.util.Map;
+
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.StepDiff;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.response.Response;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.StepDiff;
-
-import static com.jayway.restassured.RestAssured.given;
 
 /**
  * Java client for testings.
@@ -68,6 +70,8 @@ public class PreparationAPITestClient {
         public String lastModificationDate;
 
         public String owner;
+
+        public RowMetadata rowMetadata;
 
         public List<String> steps;
 

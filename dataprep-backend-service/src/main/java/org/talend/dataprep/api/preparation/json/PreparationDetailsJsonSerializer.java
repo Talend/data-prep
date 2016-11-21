@@ -80,6 +80,7 @@ public class PreparationDetailsJsonSerializer extends JsonSerializer<Preparation
             generator.writeNumberField("creationDate", preparation.getCreationDate()); //$NON-NLS-1$
             generator.writeNumberField("lastModificationDate", preparation.getLastModificationDate()); //$NON-NLS-1$
             generator.writeObjectField("owner", preparation.getOwner());
+            generator.writeObjectField("rowMetadata", preparation.getRowMetadata());
             if (preparation.getHeadId() != null && versionRepository != null) {
                 final List<Step> steps = preparationUtils.listSteps(preparation.getHeadId(), versionRepository);
 

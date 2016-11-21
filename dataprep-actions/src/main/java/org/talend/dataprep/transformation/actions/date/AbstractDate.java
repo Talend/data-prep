@@ -35,17 +35,17 @@ public abstract class AbstractDate extends AbstractActionMetadata {
     /**
      * Name of the new date pattern parameter.
      */
-    String NEW_PATTERN = "new_pattern"; //$NON-NLS-1$
+    public static String NEW_PATTERN = "new_pattern"; //$NON-NLS-1$
 
     /**
      * The parameter object for the custom new pattern.
      */
-    String CUSTOM_PATTERN = "custom_date_pattern"; //$NON-NLS-1$
+    public static String CUSTOM_PATTERN = "custom_date_pattern"; //$NON-NLS-1$
 
     /**
      * Key to store compiled pattern in action context.
      */
-    String COMPILED_DATE_PATTERN = "compiled_datePattern";
+    public static String COMPILED_DATE_PATTERN = "compiled_datePattern";
 
     /**
      * The parameter object for the custom new pattern.

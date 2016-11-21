@@ -39,7 +39,7 @@ $tc-layout-main-min-width: 1000px;
 			@include flex-basis(200px);
 			overflow: auto;
 
-			.main-wrapper {
+			&-wrapper {
 				min-width:$tc-layout-main-min-width;
 			}
 		}

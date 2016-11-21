@@ -68,8 +68,6 @@ import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.DraftValidator;
 import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.schema.FormatFamilyFactory;
@@ -1037,18 +1035,15 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
+    // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented ComponentProperties
     public Object getImportParameters(@PathVariable("import") final String importType) {
         DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
         Object parametersToReturn = null;
         if (matchingDatasetLocation != null) {
-            List<Parameter> parameters = matchingDatasetLocation.getParameters();
-            if (parameters == null) {
-                ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema();
-                if (parametersAsSchema != null) {
-                    parametersToReturn = parametersAsSchema;
-                }
+            if (matchingDatasetLocation.isSchemaOriented()) {
+                parametersToReturn = matchingDatasetLocation.getParametersAsSchema();
             } else {
-                parametersToReturn = parameters;
+                parametersToReturn = matchingDatasetLocation.getParameters();
             }
         }
         return parametersToReturn;

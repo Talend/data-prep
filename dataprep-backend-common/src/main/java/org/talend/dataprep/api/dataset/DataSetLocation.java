@@ -42,6 +42,9 @@ public interface DataSetLocation extends Serializable {
     String getLocationType();
 
     /**
+     * All needed parameters to use this location. Returns {@code null} if not relevant, when {@link #getParametersAsSchema} should
+     * be used for instance.
+     *
      * @return All needed parameters for this location (data set id, url, job name...).
      */
     @JsonIgnore

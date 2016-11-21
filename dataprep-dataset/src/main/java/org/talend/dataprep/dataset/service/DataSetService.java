@@ -13,18 +13,6 @@
 
 package org.talend.dataprep.dataset.service;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
-import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -33,9 +21,11 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.PostConstruct;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,9 +78,17 @@ import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
 @RestController
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")
@@ -1039,18 +1037,21 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
-    public List<Parameter> getImportParameters(@PathVariable("import") final String importType) {
+    public Object getImportParameters(@PathVariable("import") final String importType) {
         DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
-        return matchingDatasetLocation == null ? emptyList() : matchingDatasetLocation.getParameters();
-    }
-
-    @RequestMapping(value = "/datasets/imports/{import}/jsonschemaparameters", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
-    @Timed
-    @PublicAPI
-    public ComponentProperties getImportJsonSchemaParameters(@PathVariable("import") final String importType) {
-        DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
-        return matchingDatasetLocation == null ? null : matchingDatasetLocation.getParametersAsSchema();
+        Object parametersToReturn = null;
+        if (matchingDatasetLocation != null) {
+            List<Parameter> parameters = matchingDatasetLocation.getParameters();
+            if (parameters == null) {
+                ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema();
+                if (parametersAsSchema != null) {
+                    parametersToReturn = parametersAsSchema;
+                }
+            } else {
+                parametersToReturn = parameters;
+            }
+        }
+        return parametersToReturn;
     }
 
     private DataSetLocation findDataSetLocation(String importType) {

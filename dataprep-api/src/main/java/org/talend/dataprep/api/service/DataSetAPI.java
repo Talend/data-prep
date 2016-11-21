@@ -471,14 +471,6 @@ public class DataSetAPI extends APIService {
         return CommandHelper.toStreaming(getCommand(DataSetGetImportParameters.class, importType));
     }
 
-    @RequestMapping(value = "/api/datasets/imports/{import}/jsonschemaparameters", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Fetch the parameters needed to imports a dataset in the JSon schema structure.", notes = "Returns the parameters needed to imports a dataset in the JSon schema structure.")
-    @Timed
-    @PublicAPI
-    public StreamingResponseBody getImportJsonSchemaParameters(@PathVariable("import") final String importType) {
-        return CommandHelper.toStreaming(getCommand(DataSetGetImportSchemaParameters.class, importType));
-    }
-
     @RequestMapping(value = "/api/datasets/imports", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List supported imports for a dataset.", notes = "Returns the supported import types.")
     @Timed

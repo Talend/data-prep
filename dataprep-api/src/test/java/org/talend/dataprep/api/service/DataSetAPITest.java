@@ -700,10 +700,10 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testGetImportJsonSchemaParameters() throws JsonProcessingException {
         String importType = "tcomp-toto";
-        ValidatableResponse validatableResponse = given().accept(ContentType.JSON)
+        given().accept(ContentType.JSON)
                 .port(port)
                 .when()
-                .get("/api/datasets/imports/{import}/jsonschemaparameters", importType)
+                .get("/api/datasets/imports/{import}/parameters", importType)
                 .then()
                 .statusCode(200)
                 .content(equalTo(mapper.writeValueAsString(new TCOMPLocationTest().getParametersAsSchema())));

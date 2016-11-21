@@ -103,7 +103,7 @@ const app = angular.module(MODULE_NAME,
 				template: '<react-home></react-home>',
 			})
 			.state('reactHome.preparations', {
-				url: '/preparations/{folderId:.*}',
+				url: '/preparations/{folderId}',
 				views: {
 					'home-content': { template: '<react-home-preparation></react-home-preparation>' },
 				},

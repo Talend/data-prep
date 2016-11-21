@@ -93,7 +93,7 @@ const app = angular.module(MODULE_NAME,
 				},
 			})
 			.state('nav.index.preparations', {
-				url: '/preparations/{folderId:.*}',
+				url: '/preparations/{folderId}',
 				views: {
 					'home-content': { template: '<home-preparation></home-preparation>' },
 				},

@@ -22,7 +22,7 @@ public class ComponentProperties {
     /**
      * Schema that describe the structure of the properties object.
      */
-    private JsonSchema jsonSchema;
+    private ObjectNode jsonSchema;
 
     /**
      * Data container describe by the schema. Can contains any structure of data but will be used by TComp to recreate a
@@ -35,11 +35,11 @@ public class ComponentProperties {
      */
     private UiSchema uiSchema;
 
-    public JsonSchema getJsonSchema() {
+    public ObjectNode getJsonSchema() {
         return jsonSchema;
     }
 
-    public void setJsonSchema(JsonSchema jsonSchema) {
+    public void setJsonSchema(ObjectNode jsonSchema) {
         this.jsonSchema = jsonSchema;
     }
 

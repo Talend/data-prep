@@ -56,4 +56,21 @@
 			}
 		}
 	}
+
+	.datastore {
+		text-align: center;
+
+		legend,
+		.field-description {
+			text-align: left;
+		}
+
+		fieldset fieldset legend {
+			display: none;
+		}
+		fieldset > div > div {
+			// !important is needed to override element style attr
+			width: 75% !important;
+		}
+	}
 }

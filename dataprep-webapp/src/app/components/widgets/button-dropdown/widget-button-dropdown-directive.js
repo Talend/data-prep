@@ -50,6 +50,7 @@ export default function TalendButtonDropdown($window, $timeout) {
 			buttonAction: '&',
 			closeOnSelect: '<',
 			appendToBody: '<',
+			dropdownMenuDirection: '@',
 		},
 		bindToController: true,
 		controller: () => {
@@ -62,9 +63,9 @@ export default function TalendButtonDropdown($window, $timeout) {
 						const action = iElement.find('.dropdown-action').eq(0);
 
 						iElement.find('.button-dropdown-main')
-                            .on('click', function () {
-	action.click();
-});
+							.on('click', function () {
+								action.click();
+							});
 					});
 				}
 			},

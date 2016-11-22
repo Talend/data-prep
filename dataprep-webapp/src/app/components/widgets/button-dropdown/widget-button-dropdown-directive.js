@@ -50,7 +50,7 @@ export default function TalendButtonDropdown($window, $timeout) {
 			buttonAction: '&',
 			closeOnSelect: '<',
 			appendToBody: '<',
-			dropdownMenuDirection: '<',
+			dropdownMenuDirection: '@',
 		},
 		bindToController: true,
 		controller: () => {

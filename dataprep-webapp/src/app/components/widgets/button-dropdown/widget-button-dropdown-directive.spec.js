@@ -12,10 +12,10 @@
  ============================================================================*/
 
 describe('Button Dropdown directive', () => {
+
 	let scope;
 	let element;
-	let createElementWithAction;
-	let createElementWithoutAction;
+	let createElement;
 
 	beforeEach(angular.mock.module('talend.widget'));
 
@@ -29,34 +29,19 @@ describe('Button Dropdown directive', () => {
 		jasmine.clock().install();
 		scope = $rootScope.$new();
 
-		createElementWithAction = () => {
+		createElement = () => {
 			scope.buttonAction = jasmine.createSpy('buttonAction');
-
-			const html = `
+			element = angular.element(`
                 <talend-button-dropdown button-icon="m" 
                                         button-text="Click Me" 
                                         button-action="buttonAction()" 
                                         button-title="test"
-                                        dropdown-menu-direction="dropdownMenuDirection">
+                                        dropdown-menu-direction="{{dropdownMenuDirection}}">
                    <li>Menu 1</li>
                    <li>Menu 2</li>
                 </talend-button-dropdown>
-            `;
-			element = $compile(html)(scope);
-			$timeout.flush();
-			scope.$digest();
-		};
-
-		createElementWithoutAction = () => {
-			const html = `
-				<talend-button-dropdown button-icon="m" button-text="Click Me" button-action="">
-				   <ul>
-				       <li>Menu 1</li>
-				       <li>Menu 2</li>
-				   </ul>
-				</talend-button-dropdown>
-				`;
-			element = $compile(html)(scope);
+            `);
+			$compile(element)(scope);
 			$timeout.flush();
 			scope.$digest();
 		};
@@ -64,7 +49,7 @@ describe('Button Dropdown directive', () => {
 
 	it('should call action on main button click', () => {
 		// given
-		createElementWithAction();
+		createElement();
 
 		// when
 		element.find('.button-dropdown-main').eq(0).click();
@@ -75,7 +60,7 @@ describe('Button Dropdown directive', () => {
 
 	it('should render button title', () => {
 		// when
-		createElementWithAction();
+		createElement();
 
 		// then
 		const button = element.find('.btn').eq(0);
@@ -84,7 +69,20 @@ describe('Button Dropdown directive', () => {
 
 	it('should render dropdown menu at right by default', () => {
 		// when
-		createElementWithAction();
+		createElement();
+
+		// then
+		const dropdownMenu = element.find('.dropdown-menu').eq(0);
+		expect(dropdownMenu.hasClass('dropdown-menu-right')).toBeTruthy();
+		expect(dropdownMenu.hasClass('dropdown-menu-left')).toBeFalsy();
+	});
+
+	it('should render dropdown menu at right', () => {
+		// given
+		scope.dropdownMenuDirection = 'right';
+
+		// when
+		createElement();
 
 		// then
 		const dropdownMenu = element.find('.dropdown-menu').eq(0);
@@ -97,11 +95,11 @@ describe('Button Dropdown directive', () => {
 		scope.dropdownMenuDirection = 'left';
 
 		// when
-		createElementWithAction();
+		createElement();
 
 		// then
 		const dropdownMenu = element.find('.dropdown-menu').eq(0);
-		expect(dropdownMenu.hasClass('dropdown-menu-left')).toBeTruthy();
 		expect(dropdownMenu.hasClass('dropdown-menu-right')).toBeFalsy();
+		expect(dropdownMenu.hasClass('dropdown-menu-left')).toBeTruthy();
 	});
 });

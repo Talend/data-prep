@@ -80,7 +80,7 @@ export default class ImportCtrl {
 				if (this.currentInputType.dynamic) {
 					this.isFetchingParameters = true;
 
-					if (importType.locationType.split('-')[0] === 'tcomp') {
+					if (this._isTCOMP(importType.locationType)) {
 						this.datastoreFormActions = [
 							{
 								style: 'success',
@@ -118,7 +118,22 @@ export default class ImportCtrl {
 	}
 
 	/**
-	 * Cancel action for modal
+	 * @ngdoc method
+	 * @name _isTCOMP
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Know if location type comes from TCOMP
+	 * @param locationType Import location type
+	 * @returns {boolean} true if locationType starts with tcomp
+	 */
+	_isTCOMP(locationType) {
+		return (locationType.indexOf('tcomp') === 0);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onCancel
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Cancel action for modal
 	 */
 	onCancel() {
 		this.showModal = false;
@@ -126,10 +141,13 @@ export default class ImportCtrl {
 	}
 
 	/**
-	 * Generic form change handler
-	 * @param formData
-	 * @param formId
-	 * @param propertyName
+	 * @ngdoc method
+	 * @name onFormChange
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Generic form change handler
+	 * @param formData All data as form properties
+	 * @param formId ID attached to the form
+	 * @param propertyName Property which has triggered change handler
 	 */
 	onFormChange(formData, formId, propertyName) {
 		this.isFetchingParameters = true;

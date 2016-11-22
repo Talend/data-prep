@@ -3,6 +3,7 @@
             button-text="{{'IMPORT_DATASET' | translate }}"
             button-additional-class="btn btn-success"
             button-action="$ctrl.startDefaultImport()"
+            dropdown-menu-direction="left"
             close-on-select="true">
         <div class="list-group">
             <button type="button" class="list-group-item"
@@ -30,7 +31,7 @@
         <div class="modal-title">{{$ctrl.currentInputType.title}}</div>
         <br/>
         <form name="$ctrl.datasetForm"
-              ng-if="!$ctrl.currentInputType.datastore"
+              ng-if="!$ctrl.currentInputType.datastoreForm"
               ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
 
             <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
@@ -46,13 +47,19 @@
         </form>
         <div class="tcomp">
             <div class="datastore"
-                 ng-if="$ctrl.currentInputType.datastore">
-                <react-talend-form data="$ctrl.currentInputType.datastore"
-                                   actions="$ctrl.datastoreActions"
-                                   on-change="$ctrl.onDatastoreChange"
-                                   on-submit="$ctrl.onDatastoreSubmit"/>
+                 ng-if="$ctrl.currentInputType.datastoreForm">
+                <react-talend-form data="$ctrl.currentInputType.datastoreForm"
+                                   buttonBlockClass="form-actions"
+                                   actions="$ctrl.datastoreFormActions"
+                                   on-change="$ctrl.onDatastoreFormChange"
+                                   on-submit="$ctrl.onDatastoreFormSubmit"/>
             </div>
+            <p class="text-center text-success"
+               ng-if="$ctrl.currentInputType.datasetForm"
+               translate-once="IMPORT_DATASTORE_CONNECTION_SUCCESSFUL">
+            </p>
         </div>
+    </div>
     </div>
     <div id="import-ghost"
          ng-show="$ctrl.isFetchingParameters === true"

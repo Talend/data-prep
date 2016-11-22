@@ -33,7 +33,7 @@ public class ComponentProperties {
     /**
      * Front-end behavior description.
      */
-    private UiSchema uiSchema;
+    private ObjectNode uiSchema;
 
     public ObjectNode getJsonSchema() {
         return jsonSchema;
@@ -51,11 +51,11 @@ public class ComponentProperties {
         this.properties = properties;
     }
 
-    public UiSchema getUiSchema() {
+    public ObjectNode getUiSchema() {
         return uiSchema;
     }
 
-    public void setUiSchema(UiSchema uiSchema) {
+    public void setUiSchema(ObjectNode uiSchema) {
         this.uiSchema = uiSchema;
     }
 }

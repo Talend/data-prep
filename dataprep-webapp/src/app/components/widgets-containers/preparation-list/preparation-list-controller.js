@@ -19,11 +19,11 @@ export default class PreparationListCtrl {
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
+		this.initState();
 	}
 
 	$onInit() {
 		this.didMountAction();
-		this.initState();
 	}
 
 	$postLink() {
@@ -38,6 +38,26 @@ export default class PreparationListCtrl {
 			this.listProps = {
 				...this.listProps,
 				items: this.adaptActions(changes.items.currentValue || []),
+			};
+		}
+		if (changes.sortBy) {
+			const currentValue = changes.sortBy.currentValue;
+			const sortBy = this.toolbarProps.sortBy.map((sort) => {
+				const isSelected = sort.selected;
+				const shouldBeSelected = sort.id === currentValue;
+				return isSelected === shouldBeSelected ?
+					sort :
+					{ ...sort, selected: shouldBeSelected };
+			});
+			this.toolbarProps = {
+				...this.toolbarProps,
+				sortBy,
+			};
+		}
+		if (changes.sortDesc) {
+			this.toolbarProps = {
+				...this.toolbarProps,
+				sortDesc: changes.sortDesc.currentValue,
 			};
 		}
 	}
@@ -67,6 +87,7 @@ export default class PreparationListCtrl {
 		const toolbarSettings = listViewSettings.toolbar;
 		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
+		const sortAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
 		const dispatchDisplayMode = this.SettingsActionsService.createDispatcher(displayModeAction);
 		this.toolbarProps = {
 			...toolbarSettings,
@@ -75,6 +96,7 @@ export default class PreparationListCtrl {
 				.map(action => this.SettingsActionsService.createDispatcher(action)),
 			onClickAdd: this.SettingsActionsService.createDispatcher(clickAddAction),
 			onSelectDisplayMode: (event, mode) => dispatchDisplayMode(event, { mode }),
+			onSelectSortBy: this.SettingsActionsService.createDispatcher(sortAction),
 		};
 	}
 

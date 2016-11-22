@@ -11,6 +11,37 @@
 
  ============================================================================*/
 
+const preparation = {
+	id: '1',
+	dataset: {
+		dataSetName: 'US states',
+		dataSetNbRow: 400,
+	},
+	name: 'JSO prep 1',
+	author: 'anonymousUser',
+	creationDate: new Date().getTime(),
+	lastModificationDate: new Date().getTime(),
+	steps: [
+		'35890aabcf9115e4309d4ce93367bf5e4e77b82a',
+		'4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
+		'8a1c49d1b64270482e8db8232357c6815615b7cf',
+		'599725f0e1331d5f8aae24f22cd1ec768b10348d',
+	],
+};
+const adaptedPreparation = {
+	id: '1',
+	name: 'JSO prep 1',
+	author: 'anonymousUser',
+	creationDate: 'a few seconds ago',
+	lastModificationDate: 'a few seconds ago',
+	dataset: 'US states',
+	nbLines: 400,
+	nbSteps: 3,
+	icon: 'talend-dataprep',
+	actions: ['preparation:copy-move', 'preparation:remove'],
+	model: preparation,
+};
+
 describe('Folder services', () => {
 
 	let stateMock;
@@ -199,36 +230,6 @@ describe('Folder services', () => {
 	});
 
 	describe('refresh', () => {
-		const preparation = {
-			id: '1',
-			dataset: {
-				dataSetName: 'US states',
-				dataSetNbRow: 400,
-			},
-			name: 'JSO prep 1',
-			author: 'anonymousUser',
-			creationDate: 1427447300000,
-			lastModificationDate: new Date().getTime(),
-			steps: [
-				'35890aabcf9115e4309d4ce93367bf5e4e77b82a',
-				'4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
-				'8a1c49d1b64270482e8db8232357c6815615b7cf',
-				'599725f0e1331d5f8aae24f22cd1ec768b10348d',
-			],
-		};
-		const adaptedPreparation = {
-			id: preparation.id,
-			name: preparation.name,
-			author: preparation.author,
-			lastModificationDate: 'a few seconds ago',
-			dataset: preparation.dataset.dataSetName,
-			nbLines: preparation.dataset.dataSetNbRow,
-			nbSteps: preparation.steps.length - 1, // remove root step
-			icon: 'talend-dataprep',
-			actions: ['preparation:copy-move', 'preparation:remove'],
-			model: preparation,
-		};
-
 		const folderMetadata = {
 			folder: { id: 'L215L3BlcnNvbmFsL2ZvbGRlcg==' },
 			hierarchy: [
@@ -355,42 +356,11 @@ describe('Folder services', () => {
 
 	describe('adaptPreparations', () => {
 		it('should wrap preparation', inject((FolderService) => {
-			// given
-			const preparation = {
-				id: '1',
-				dataset: {
-					dataSetName: 'US states',
-					dataSetNbRow: 400,
-				},
-				name: 'JSO prep 1',
-				author: 'anonymousUser',
-				creationDate: 1427447300000,
-				lastModificationDate: new Date().getTime(),
-				steps: [
-					'35890aabcf9115e4309d4ce93367bf5e4e77b82a',
-					'4ff5d9a6ca2e75ebe3579740a4297fbdb9b7894f',
-					'8a1c49d1b64270482e8db8232357c6815615b7cf',
-					'599725f0e1331d5f8aae24f22cd1ec768b10348d',
-				],
-			};
-			const expected = {
-				id: '1',
-				name: 'JSO prep 1',
-				author: 'anonymousUser',
-				lastModificationDate: 'a few seconds ago',
-				dataset: 'US states',
-				nbLines: 400,
-				nbSteps: 3,
-				icon: 'talend-dataprep',
-				actions: ['preparation:copy-move', 'preparation:remove'],
-				model: preparation,
-			};
-
 			// when
-			const adaptedPreparation = FolderService.adaptPreparations([preparation]);
+			const actualAdaption = FolderService.adaptPreparations([preparation]);
 
 			// then
-			expect(adaptedPreparation).toEqual([expected]);
+			expect(actualAdaption).toEqual([adaptedPreparation]);
 		}));
 	});
 

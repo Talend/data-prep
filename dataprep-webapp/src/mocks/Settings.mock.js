@@ -52,6 +52,7 @@ const settingsMock = {
 				columns: [
 					{ key: 'name', label: 'Name' },
 					{ key: 'author', label: 'Author' },
+					{ key: 'creationDate', label: 'Created' },
 					{ key: 'lastModificationDate', label: 'Last change' },
 					{ key: 'dataset', label: 'Dataset' },
 					{ key: 'nbLines', label: 'Nb lines' },
@@ -64,12 +65,13 @@ const settingsMock = {
 			},
 			toolbar: {
 				sortBy: [
-					{ id: 'name', name: 'Name', selected: true },
-					{ id: 'lastModificationDate', name: 'Date' },
+					{ id: 'name', name: 'Name', field: 'name' },
+					{ id: 'date', name: 'Date', field: 'creationDate' },
 				],
 				actions: ['preparation:create:folder'],
 				onClickAdd: 'preparation:create',
 				onSelectDisplayMode: 'preparation:display-mode',
+				onSelectSortBy: 'preparation:sort',
 				searchLabel: 'Find a preparation',
 			},
 		},
@@ -176,6 +178,16 @@ const settingsMock = {
 			type: '@@preparation/DISPLAY_MODE',
 			payload: {
 				method: 'setPreparationsDisplayMode',
+				args: [],
+			},
+		},
+		'preparation:sort': {
+			id: 'preparation:sort',
+			name: 'Change preparation sort',
+			icon: '',
+			type: '@@preparation/SORT',
+			payload: {
+				method: 'setPreparationsSortFromIds',
 				args: [],
 			},
 		},

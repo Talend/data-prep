@@ -12,7 +12,8 @@
  ============================================================================*/
 
 export default class PreparationActionsService {
-	constructor($stateParams, state, FolderService, MessageService, PreparationService, StateService, TalendConfirmService) {
+	constructor($stateParams, state, FolderService, MessageService, PreparationService,
+				StateService, StorageService, TalendConfirmService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
@@ -20,6 +21,7 @@ export default class PreparationActionsService {
 		this.MessageService = MessageService;
 		this.PreparationService = PreparationService;
 		this.StateService = StateService;
+		this.StorageService = StorageService;
 		this.TalendConfirmService = TalendConfirmService;
 	}
 
@@ -28,6 +30,24 @@ export default class PreparationActionsService {
 		case '@@preparation/DISPLAY_MODE':
 			this.StateService.setPreparationsDisplayMode(action.payload.mode);
 			break;
+		case '@@preparation/SORT': {
+			const oldSort = this.state.inventory.preparationsSort;
+			const oldOrder = this.state.inventory.preparationsOrder;
+
+			const { sortBy, sortDesc } = action.payload;
+			const sortOrder = sortDesc ? 'desc' : 'asc';
+
+			this.StateService.setPreparationsSortFromIds(sortBy, sortOrder);
+
+			this.FolderService
+				.refresh(this.state.inventory.folder.metadata.id)
+				.then(() => this.StorageService.setPreparationsSort(sortBy))
+				.then(() => this.StorageService.setPreparationsOrder(sortOrder))
+				.catch(() => {
+					this.StateService.setPreparationsSortFromIds(oldSort.id, oldOrder.id);
+				});
+			break;
+		}
 		case '@@preparation/CREATE':
 			this.StateService.togglePreparationCreator();
 			break;

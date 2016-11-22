@@ -94,6 +94,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 			id: item.id,
 			name: item.name,
 			author: item.author,
+			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			dataset: item.dataset.dataSetName,
 			nbLines: item.dataset.dataSetNbRow,

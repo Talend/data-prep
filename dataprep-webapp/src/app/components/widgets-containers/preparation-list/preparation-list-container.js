@@ -28,6 +28,8 @@ const PreparationListContainer = {
 	bindings: {
 		displayMode: '<',
 		items: '<',
+		sortBy: '<',
+		sortDesc: '<',
 	},
 	controller: PreparationListCtrl,
 };

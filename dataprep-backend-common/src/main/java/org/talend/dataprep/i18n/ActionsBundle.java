@@ -15,6 +15,7 @@ package org.talend.dataprep.i18n;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,10 +48,16 @@ public class ActionsBundle implements MessagesBundle {
 
     private static final String CHOICE_PREFIX = "choice.";
 
-    private final Map<Class, ResourceBundle> actionToResourceBundle = new HashMap<>();
+    /**
+     * Represents the fallBackKey used to map the default resource bundle since a concurrentHashMap does not map a null key.
+     */
+    private final Class fallBackKey;
+
+    private final Map<Class, ResourceBundle> actionToResourceBundle = new ConcurrentHashMap<>();
 
     private ActionsBundle() {
-        actionToResourceBundle.put(null, ResourceBundle.getBundle(BUNDLE_NAME, Locale.ENGLISH));
+        fallBackKey = this.getClass();
+        actionToResourceBundle.put(fallBackKey, ResourceBundle.getBundle(BUNDLE_NAME, Locale.ENGLISH));
     }
 
     private String getMessage(Object action, Locale locale, String code, Object... args) {
@@ -67,35 +74,33 @@ public class ActionsBundle implements MessagesBundle {
     }
 
     private ResourceBundle findBundle(Object action, Locale locale) {
-        synchronized (actionToResourceBundle) {
-            if (action == null) {
-                return actionToResourceBundle.get(null);
-            }
-            if (actionToResourceBundle.containsKey(action.getClass())) {
-                final ResourceBundle resourceBundle = actionToResourceBundle.get(action.getClass());
-                LOGGER.debug("Cache hit for action '{}': '{}'", action, resourceBundle);
-                return resourceBundle;
-            }
-            // Lookup for resource bundle in package hierarchy
-            final Package actionPackage = action.getClass().getPackage();
-            String currentPackageName = actionPackage.getName();
-            ResourceBundle bundle = null;
-            while (currentPackageName.contains(".")) {
-                try {
-                    bundle = ResourceBundle.getBundle(currentPackageName + '.' + ACTIONS_MESSAGES, locale);
-                    break; // Found, exit lookup
-                } catch (MissingResourceException e) {
-                    LOGGER.debug("No action resource bundle found for action '{}' at '{}'", action, currentPackageName, e);
-                }
-                currentPackageName = StringUtils.substringBeforeLast(currentPackageName, ".");
-            }
-            if (bundle == null) {
-                LOGGER.debug("Choose default action resource bundle for action '{}'", action);
-                bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
-            }
-            actionToResourceBundle.put(action.getClass(), bundle);
-            return bundle;
+        if (action == null) {
+            return actionToResourceBundle.get(fallBackKey);
         }
+        if (actionToResourceBundle.containsKey(action.getClass())) {
+            final ResourceBundle resourceBundle = actionToResourceBundle.get(action.getClass());
+            LOGGER.debug("Cache hit for action '{}': '{}'", action, resourceBundle);
+            return resourceBundle;
+        }
+        // Lookup for resource bundle in package hierarchy
+        final Package actionPackage = action.getClass().getPackage();
+        String currentPackageName = actionPackage.getName();
+        ResourceBundle bundle = null;
+        while (currentPackageName.contains(".")) {
+            try {
+                bundle = ResourceBundle.getBundle(currentPackageName + '.' + ACTIONS_MESSAGES, locale);
+                break; // Found, exit lookup
+            } catch (MissingResourceException e) {
+                LOGGER.debug("No action resource bundle found for action '{}' at '{}'", action, currentPackageName, e);
+            }
+            currentPackageName = StringUtils.substringBeforeLast(currentPackageName, ".");
+        }
+        if (bundle == null) {
+            LOGGER.debug("Choose default action resource bundle for action '{}'", action);
+            bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
+        }
+        actionToResourceBundle.putIfAbsent(action.getClass(), bundle);
+        return bundle;
     }
 
     public static List<Parameter> attachToAction(List<Parameter> parameters, Object parent) {
@@ -142,7 +147,7 @@ public class ActionsBundle implements MessagesBundle {
         try {
             return getMessage(action, locale, choiceKey, values);
         } catch (Exception e) {
-            LOGGER.debug("Unable to find choice key '{}' for choice '{}'", choiceKey, choiceName);
+            LOGGER.debug("Unable to find choice key '{}' for choice '{}': '{}'", choiceKey, choiceName, e);
             return choiceName;
         }
     }
@@ -159,7 +164,7 @@ public class ActionsBundle implements MessagesBundle {
 
     @Override
     public String getString(Locale locale, String code, Object... args) {
-        return getMessage(null, locale, code, args);
+        return getMessage(fallBackKey, locale, code, args);
     }
 
 }

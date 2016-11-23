@@ -18,18 +18,7 @@
     },
     "sidepanel": {
       "onToggleDock": "sidepanel:toggle",
-      "actions": [
-        {
-          "label": "Preparations",
-          "icon": "talend-dataprep",
-          "onClick": "menu:preparations"
-        },
-        {
-          "label": "Datasets",
-          "icon": "talend-cluster",
-          "onClick": "menu:datasets"
-        }
-      ]
+      "actions": ["menu:preparations", "menu:datasets"]
     },
     "listview:preparations": {
       "didMountActionCreator": "preparations:folder:fetch",

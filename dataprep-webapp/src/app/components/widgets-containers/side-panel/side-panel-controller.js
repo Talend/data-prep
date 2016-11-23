@@ -31,10 +31,11 @@ export default class SidePanelCtrl {
 			.views
 			.sidepanel
 			.actions
+			.map(actionName => this.appSettings.actions[actionName])
 			.map(action => ({
-				label: action.label,
-				icon: action.icon,
-				onClick: this.SettingsActionsService.createDispatcher(this.appSettings.actions[action.onClick]),
+				...action,
+				label: action.name,
+				onClick: this.SettingsActionsService.createDispatcher(action),
 			}));
 	}
 

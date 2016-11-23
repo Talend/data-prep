@@ -33,18 +33,7 @@ const settingsMock = {
 		},
 		sidepanel: {
 			onToggleDock: 'sidepanel:toggle',
-			actions: [
-				{
-					label: 'Preparations',
-					icon: 'icon-lab-mix',
-					onClick: 'menu:preparations',
-				},
-				{
-					label: 'Datasets',
-					icon: 'icon-dataset',
-					onClick: 'menu:datasets',
-				},
-			],
+			actions: ['menu:preparations', 'menu:datasets'],
 		},
 		'listview:preparations': {
 			didMountActionCreator: 'preparations:fetch',

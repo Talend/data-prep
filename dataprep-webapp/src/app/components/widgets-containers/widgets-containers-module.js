@@ -34,7 +34,7 @@ angular.module(MODULE_NAME,
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureAppSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
-	.directive('reactTalendForm', ['reactDirective', reactDirective => reactDirective(Form)])
+	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
 	.component('sidePanel', SidePanelContainer)

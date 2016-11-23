@@ -78,4 +78,21 @@ public interface DataSetLocation extends Serializable {
      */
     @JsonIgnore
     boolean isEnabled();
+
+    /**
+     * @return the location title.
+     */
+    default String getTitle() {
+        // it's needed for some imports that hold their title, by default it's null
+        return null;
+    }
+
+    /**
+     * @return the location label.
+     */
+    default String getLabel() {
+        // it's needed for some imports that hold their label, by default it's null
+        return null;
+    }
+
 }

@@ -13,6 +13,18 @@
 
 package org.talend.dataprep.dataset.service;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -21,11 +33,9 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +65,7 @@ import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
 import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.synchronous.*;
 import org.talend.dataprep.dataset.service.api.Import;
+import org.talend.dataprep.dataset.service.api.Import.ImportBuilder;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
@@ -76,17 +87,9 @@ import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
-import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")
@@ -1072,19 +1075,18 @@ public class DataSetService extends BaseDataSetService {
                 .filter(DataSetLocation::isEnabled) //
                 .map(l -> { //
                     final boolean defaultImport = LocalStoreLocation.NAME.equals(l.getLocationType());
+                    ImportBuilder builder = ImportBuilder.builder() //
+                            .locationType(l.getLocationType()) //
+                            .contentType(l.getAcceptedContentType()) //
+                            .defaultImport(defaultImport) //
+                            .label(l.getLabel()) //
+                            .title(l.getTitle());
                     if (l.isDynamic()) {
-                        return new Import(l.getLocationType(), //
-                                l.getAcceptedContentType(), //
-                                emptyList(), //
-                                l.isDynamic(), //
-                                defaultImport);
+                        builder = builder.dynamic(true);
                     } else {
-                        return new Import(l.getLocationType(), //
-                                l.getAcceptedContentType(), //
-                                l.getParameters(), //
-                                l.isDynamic(), //
-                                defaultImport);
+                        builder = builder.dynamic(false).parameters(l.getParameters());
                     }
+                    return builder.build();
                 }) //
                 .sorted((i1, i2) -> { //
                     int i1Value = i1.isDefaultImport() ? 1 : -1;

@@ -46,6 +46,11 @@ const settingsMock = {
 				},
 			],
 		},
+		'listview:folders': {
+			list: {
+				onTitleClick: 'menu:folders',
+			},
+		},
 		'listview:preparations': {
 			didMountActionCreator: 'preparations:fetch',
 			list: {

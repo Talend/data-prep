@@ -27,7 +27,8 @@ export default class PreparationListCtrl {
 
 	$onInit() {
 		this.didMountAction();
-		this.initState();
+		this.initToolbarProps();
+		this.initListProps();
 	}
 
 	$postLink() {
@@ -62,22 +63,12 @@ export default class PreparationListCtrl {
 		}
 	}
 
-	initState() {
-		const listViewSettings = this.appSettings.views['listview:preparations'];
-
-		// list content props
-		const listSettings = listViewSettings.list;
-		const titleClickAction = this.appSettings.actions[listSettings.onTitleClick];
-		this.listProps = {
-			...listSettings,
-			onTitleClick: this.SettingsActionsService.createDispatcher(titleClickAction),
-		};
-
-		// toolbar props
-		const toolbarSettings = listViewSettings.toolbar;
+	initToolbarProps() {
+		const toolbarSettings = this.appSettings.views['listview:preparations'].toolbar;
 		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
 		const dispatchDisplayMode = this.SettingsActionsService.createDispatcher(displayModeAction);
+
 		this.toolbarProps = {
 			...toolbarSettings,
 			actions: toolbarSettings.actions
@@ -85,6 +76,32 @@ export default class PreparationListCtrl {
 				.map(action => this.SettingsActionsService.createDispatcher(action)),
 			onClickAdd: this.SettingsActionsService.createDispatcher(clickAddAction),
 			onSelectDisplayMode: (event, mode) => dispatchDisplayMode(event, { mode }),
+		};
+	}
+
+	initListProps() {
+		// list title click
+		const listSettings = this.appSettings.views['listview:preparations'].list;
+		const titleClickAction = this.appSettings.actions[listSettings.onTitleClick];
+		const prepDispatcher = this.SettingsActionsService.createDispatcher(titleClickAction);
+
+		// folder title click
+		const folderListSettings = this.appSettings.views['listview:folders'].list;
+		const folderClickAction = this.appSettings.actions[folderListSettings.onTitleClick];
+		const folderDispatcher = this.SettingsActionsService.createDispatcher(folderClickAction);
+
+		// list item title click
+		const onTitleClick = (event, model) => {
+			if (this.adapted.folders.indexOf(model) > -1) {
+				return folderDispatcher(event, model);
+			}
+			return prepDispatcher(event, model);
+		};
+
+		// lit props
+		this.listProps = {
+			...listSettings,
+			onTitleClick,
 		};
 	}
 

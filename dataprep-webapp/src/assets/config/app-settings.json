@@ -31,6 +31,11 @@
         }
       ]
     },
+    "listview:folders": {
+      "list": {
+        "onTitleClick": "menu:folders"
+      }
+    },
     "listview:preparations": {
       "didMountActionCreator": "preparations:folder:fetch",
       "list": {

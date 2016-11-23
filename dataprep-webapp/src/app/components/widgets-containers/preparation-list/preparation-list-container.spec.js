@@ -105,7 +105,7 @@ const folders = [
 	},
 ];
 
-describe('Preparation container', () => {
+describe('Preparation list container', () => {
 	let scope;
 	let createElement;
 	let element;
@@ -173,15 +173,75 @@ describe('Preparation container', () => {
 		});
 	});
 
-	describe('actions', () => {
-		it('should dispatch folder fetch on mount', inject((SettingsActionsService) => {
-			// then
-			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(0)[0];
-			expect(lastCallArgs.id).toBe('preparations:fetch');
-			expect(lastCallArgs.type).toBe('@@preparation/FETCH');
-		}));
+	describe('toolbar actions', () => {
+		it('should dispatch preparation creation on "Add" click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
+				// when
+				element.find('div[role="toolbar"]').eq(0).find('button').eq(0).click(); // TODO id !
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:create');
+				expect(lastCallArgs.type).toBe('@@preparation/CREATE');
+			})
+		);
+	});
+
+	describe('folder actions', () => {
+		it('should dispatch folder redirection on title click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('.tc-list-display-table')
+					.eq(0)
+					.find('tbody tr')
+					.eq(0)
+					.find('button') // TODO id !
+					.eq(0)
+					.click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('menu:folders');
+				expect(lastCallArgs.type).toBe('@@router/GO_FOLDER');
+				expect(lastCallArgs.payload.id).toBe(folders[0].id);
+			})
+		);
+
+		it('should dispatch folder remove on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('.tc-list-display-table')
+					.eq(0)
+					.find('tbody tr')
+					.eq(0)
+					.find('.tc-actions')
+					.eq(0)
+					.find('button') // TODO id !
+					.eq(0)
+					.click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:remove:folder');
+				expect(lastCallArgs.type).toBe('@@preparation/REMOVE_FOLDER');
+				expect(lastCallArgs.payload.model).toBe(folders[0].model);
+			})
+		);
+	});
+
+	describe('preparation actions', () => {
 		it('should dispatch preparation creation on "Add" click',
 			inject((SettingsActionsService) => {
 				// given
@@ -268,31 +328,6 @@ describe('Preparation container', () => {
 				expect(lastCallArgs.id).toBe('menu:playground:preparation');
 				expect(lastCallArgs.type).toBe('@@router/GO_PREPARATION');
 				expect(lastCallArgs.payload.id).toBe(preparations[0].id);
-			})
-		);
-
-		it('should dispatch folder remove on action click',
-			inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
-
-				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(0)
-					.find('.tc-actions')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(0)
-					.click();
-
-				// then
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:remove:folder');
-				expect(lastCallArgs.type).toBe('@@preparation/REMOVE_FOLDER');
-				expect(lastCallArgs.payload.model).toBe(folders[0].model);
 			})
 		);
 	});

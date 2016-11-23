@@ -81,38 +81,31 @@ export default class ImportCtrl {
 				if (this.currentInputType.dynamic) {
 					this.isFetchingParameters = true;
 
-					if (this._isTCOMP(importType.locationType)) {
-						this.datastoreFormActions = [
-							{
-								style: 'success',
-								type: 'submit',
-								onClick: this.onDatastoreFormSubmit,
-								label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
-							},
-						];
+					this.datastoreFormActions = [
+						{
+							style: 'success',
+							type: 'submit',
+							onClick: this.onDatastoreFormSubmit,
+							label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
+						},
+					];
 
-						this.onDatastoreFormChange = this.onFormChange.bind(this);
+					this.onDatastoreFormChange = this.onFormChange.bind(this);
 
-						this.onDatastoreFormSubmit = () => {
-						};
+					this.onDatastoreFormSubmit = () => {};
 
-						this.ImportRestService.importParameters(this.currentInputType.locationType)
-							.then((response) => {
+					this.ImportRestService.importParameters(this.currentInputType.locationType)
+						.then((response) => {
+							if (this._isTCOMP(importType.locationType)) {
 								this.currentInputType.datastoreForm = response.data;
-							})
-							.finally(() => {
-								this.isFetchingParameters = false;
-							});
-					}
-					else {
-						this.ImportRestService.importParameters(this.currentInputType.locationType)
-							.then((response) => {
+							}
+							else {
 								this.currentInputType.parameters = response.data;
-							})
-							.finally(() => {
-								this.isFetchingParameters = false;
-							});
-					}
+							}
+						})
+						.finally(() => {
+							this.isFetchingParameters = false;
+						});
 				}
 			}
 		}

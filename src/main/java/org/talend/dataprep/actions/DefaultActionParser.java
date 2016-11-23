@@ -13,6 +13,8 @@
 package org.talend.dataprep.actions;
 
 import static java.util.function.Function.identity;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.FORBID_DISTRIBUTED;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CREATE_COLUMNS;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -54,6 +56,18 @@ public class DefaultActionParser implements ActionParser {
 
     private static final ActionFactory actionFactory = new ActionFactory();
 
+    private static boolean allowNonDistributedActions = false;
+
+    /**
+     * Indicate if parser should skip non distributed actions (actions that can't run in distributed contexts).
+     * 
+     * @param allowNonDistributedActions <code>true</code> to allow those actions, <code>false</code> otherwise. Defaults
+     * to <code>false</code>.
+     */
+    public static void setAllowNonDistributedActions(boolean allowNonDistributedActions) {
+        DefaultActionParser.allowNonDistributedActions = allowNonDistributedActions;
+    }
+
     private static void assertPreparation(Object actions) {
         if (actions == null) {
             throw new IllegalArgumentException("Actions can not be null.");
@@ -85,39 +99,58 @@ public class DefaultActionParser implements ActionParser {
     private static Action parseAction(JsonNode n) {
         String actionName = n.get("action").asText();
         LOGGER.info("New action: {}", actionName);
-        final ActionDefinition actionMetadata = actionRegistry.get(actionName);
+        final ActionDefinition actionDefinition = actionRegistry.get(actionName);
 
-        if (actionMetadata == null) {
+        if (actionDefinition == null) {
             LOGGER.error("No action implementation found for '{}'.", actionName);
-        } else {
-            LOGGER.info("Action metadata found for '{}': {}", actionName, actionMetadata.getClass().getName());
-            final Iterator<Map.Entry<String, JsonNode>> parameters = n.get("parameters").fields();
-            Map<String, String> parametersAsMap = new HashMap<>();
-            while (parameters.hasNext()) {
-                final Map.Entry<String, JsonNode> next = parameters.next();
-                final JsonNode value = next.getValue();
-                if (value.isTextual()) {
-                    parametersAsMap.put(next.getKey(), value.asText());
-                } else if (value.isObject()) {
-                    parametersAsMap.put(next.getKey(), value.toString());
-                } else if (value.isNull()) {
-                    parametersAsMap.put(next.getKey(), StringUtils.EMPTY);
-                } else {
-                    LOGGER.warn("Unknown JSON node type in parameters '{}', falls back to asText().", value);
-                    parametersAsMap.put(next.getKey(), value.asText());
+            return null;
+        }
+
+        LOGGER.info("Action metadata found for '{}': {}", actionName, actionDefinition.getClass().getName());
+        // Distributed run check for action
+        final Set<ActionDefinition.Behavior> behavior = actionDefinition.getBehavior();
+        // if non distributed actions are forbidden (e.g. running locally)
+        if (!allowNonDistributedActions) {
+            // if some actions cannot be run in distributed environment, let's see how bad it is...
+            if (behavior.contains(FORBID_DISTRIBUTED)) {
+                // actions that changes the schema (potentially really harmful for the preparation) throws an exception
+                if (behavior.contains(METADATA_CREATE_COLUMNS)) {
+                    throw new IllegalArgumentException("Action '" + actionName + "' cannot run in distributed environments.");
+                }
+                // else the action is just skipped
+                else {
+                    LOGGER.warn("Action '{}' cannot run in distributed environment, skip its execution.");
+                    return null;
                 }
             }
-            // Create action
-            final Action action = actionFactory.create(actionMetadata, parametersAsMap);
-            LOGGER.info("Wrap action execution for '{}' with parameters '{}'.", actionMetadata.getClass().getName(),
-                    parametersAsMap);
-            ActionContext context = new ActionContext(new TransformationContext());
-            context.setParameters(parametersAsMap);
-
-            LOGGER.info("New parsed action: {}", actionName);
-            return action;
         }
-        return null;
+
+        // Parameter parse
+        final Iterator<Map.Entry<String, JsonNode>> parameters = n.get("parameters").fields();
+        Map<String, String> parametersAsMap = new HashMap<>();
+        while (parameters.hasNext()) {
+            final Map.Entry<String, JsonNode> next = parameters.next();
+            final JsonNode value = next.getValue();
+            if (value.isTextual()) {
+                parametersAsMap.put(next.getKey(), value.asText());
+            } else if (value.isObject()) {
+                parametersAsMap.put(next.getKey(), value.toString());
+            } else if (value.isNull()) {
+                parametersAsMap.put(next.getKey(), StringUtils.EMPTY);
+            } else {
+                LOGGER.warn("Unknown JSON node type in parameters '{}', falls back to asText().", value);
+                parametersAsMap.put(next.getKey(), value.asText());
+            }
+        }
+        // Create action
+        final Action action = actionFactory.create(actionDefinition, parametersAsMap);
+        LOGGER.info("Wrap action execution for '{}' with parameters '{}'.", actionDefinition.getClass().getName(),
+                parametersAsMap);
+        ActionContext context = new ActionContext(new TransformationContext());
+        context.setParameters(parametersAsMap);
+
+        LOGGER.info("New parsed action: {}", actionName);
+        return action;
     }
 
     private static Function<IndexedRecord, IndexedRecord> internalParse(InputStream preparation) {
@@ -132,7 +165,8 @@ public class DefaultActionParser implements ActionParser {
             throw new IllegalArgumentException("Unable to parse preparation", e);
         }
         Optional<JsonNode> preparationName = Optional.ofNullable(preparationNode.get("name"));
-        LOGGER.info("Parsing actions from preparation '{}'", preparationName.isPresent() ? preparationName.get().asText() : "N/A");
+        LOGGER.info("Parsing actions from preparation '{}'",
+                preparationName.isPresent() ? preparationName.get().asText() : "N/A");
 
         // Get action JSON node
         final JsonNode actionNode = preparationNode.get("actions");
@@ -140,7 +174,7 @@ public class DefaultActionParser implements ActionParser {
             LOGGER.info("No action defined in preparation, returning identity function");
             return identity();
         }
-        
+
         // Get row metadata JSON node
         final JsonNode rowMetadataNode = preparationNode.get("rowMetadata");
         final RowMetadata rowMetadata;
@@ -182,6 +216,9 @@ public class DefaultActionParser implements ActionParser {
 
     private static class StackedNode extends BasicNode {
 
+        /** For the serialization interface. */
+        private static final long serialVersionUID = 1L;
+
         private transient Deque<DataSetRow> stack;
 
         @Override
@@ -206,6 +243,9 @@ public class DefaultActionParser implements ActionParser {
     }
 
     private static class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Serializable {
+
+        /** For the serialization interface. */
+        private static final long serialVersionUID = 1L;
 
         private final Pipeline pipeline;
 

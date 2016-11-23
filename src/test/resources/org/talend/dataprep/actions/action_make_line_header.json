@@ -1,0 +1,21 @@
+{
+  "name": "action make line header",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "string"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "make_line_header",
+      "parameters": {
+        "scope" : "line",
+        "row_id": "2"
+      }
+    }
+  ]
+}

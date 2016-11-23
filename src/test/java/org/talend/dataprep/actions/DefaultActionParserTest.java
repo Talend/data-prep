@@ -285,4 +285,26 @@ public class DefaultActionParserTest {
         assertEquals("string", result.get(0));
         assertEquals(1, result.getSchema().getFields().size());
     }
+
+    @Test
+    public void testMakeLineAsHeaderAction() throws Exception {
+        // Given
+        IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "string" });
+        IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "header" });
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_make_line_header.json")) {
+            function = parser.parse(resourceAsStream);
+        }
+        assertNotNull(function);
+
+        // When
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+
+        // Then -> Make as Line as Header
+        assertEquals("string", result1.get(0));
+        assertEquals("header", result2.get(0));
+        assertEquals(1, result1.getSchema().getFields().size());
+    }
+
 }

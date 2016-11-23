@@ -24,10 +24,11 @@
  */
 export default class ImportCtrl {
 
-	constructor($document, state, StateService, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, ImportRestService) {
+	constructor($document, $translate, state, StateService, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, ImportRestService) {
 		'ngInject';
 
 		this.$document = $document;
+		this.$translate = $translate;
 		this.state = state;
 		this.StateService = StateService;
 		this.UploadWorkflowService = UploadWorkflowService;
@@ -86,7 +87,7 @@ export default class ImportCtrl {
 								style: 'success',
 								type: 'submit',
 								onClick: this.onDatastoreFormSubmit,
-								label: 'Test connection',
+								label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
 							},
 						];
 

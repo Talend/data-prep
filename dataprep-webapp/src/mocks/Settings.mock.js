@@ -229,6 +229,16 @@ const settingsMock = {
 				args: [],
 			},
 		},
+		'preparation:remove:folder': {
+			id: 'preparation:remove:folder',
+			name: 'Remove folder',
+			icon: 'talend-trash',
+			type: '@@preparation/REMOVE_FOLDER',
+			payload: {
+				method: 'removeFolder',
+				args: [],
+			},
+		},
 	},
 };
 

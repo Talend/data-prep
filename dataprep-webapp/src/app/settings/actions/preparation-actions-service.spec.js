@@ -188,7 +188,7 @@ describe('Preparation actions service', () => {
 			expect(PreparationService.delete).toHaveBeenCalledWith(preparation);
 		}));
 
-		it('should manage fetching flag', inject((FolderService) => {
+		it('should refresh current folder', inject((FolderService) => {
 			// given
 			const currentFolderId = stateMock.inventory.folder.metadata.id;
 
@@ -203,6 +203,42 @@ describe('Preparation actions service', () => {
 				'REMOVE_SUCCESS',
 				{ type: 'preparation', name: preparation.name }
 			);
+		}));
+	});
+
+	describe('dispatch @@preparation/REMOVE_FOLDER', () => {
+		const folder = { id: 'folder 1' };
+
+		beforeEach(inject(($rootScope, $q, FolderService, PreparationActionsService) => {
+			// given
+			spyOn(FolderService, 'refresh').and.returnValue();
+			spyOn(FolderService, 'remove').and.returnValue($q.when());
+
+			const action = {
+				type: '@@preparation/REMOVE_FOLDER',
+				payload: {
+					method: 'removeFolder',
+					args: [],
+					model: folder,
+				}
+			};
+
+			// when
+			PreparationActionsService.dispatch(action);
+			$rootScope.$digest();
+		}));
+
+		it('should remove folder', inject((FolderService) => {
+			// then
+			expect(FolderService.remove).toHaveBeenCalledWith(folder.id);
+		}));
+
+		it('should refresh current folder', inject((FolderService) => {
+			// given
+			const currentFolderId = stateMock.inventory.folder.metadata.id;
+
+			// then
+			expect(FolderService.refresh).toHaveBeenCalledWith(currentFolderId);
 		}));
 	});
 });

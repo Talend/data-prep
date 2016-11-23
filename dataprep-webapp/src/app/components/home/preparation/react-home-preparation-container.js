@@ -17,6 +17,7 @@ const HomePreparationContainer = {
 			<react-preparation-list 
 				display-mode="$ctrl.state.inventory.preparationsDisplayMode"
 				items="$ctrl.state.inventory.folder.content.preparations"
+				folders="$ctrl.state.inventory.folder.content.folders"
 			/>
 		</div>
 	`,

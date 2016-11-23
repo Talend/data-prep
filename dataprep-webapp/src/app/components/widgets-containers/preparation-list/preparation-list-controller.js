@@ -19,6 +19,10 @@ export default class PreparationListCtrl {
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
+		this.adapted = {
+			folders: [],
+			items: [],
+		};
 	}
 
 	$onInit() {
@@ -34,10 +38,16 @@ export default class PreparationListCtrl {
 	}
 
 	$onChanges(changes) {
-		if (changes.items) {
+		if (changes.folders || changes.items) {
+			if (changes.folders) {
+				this.adapted.folders = this.adaptActions(changes.folders.currentValue || []);
+			}
+			if (changes.items) {
+				this.adapted.items = this.adaptActions(changes.items.currentValue || []);
+			}
 			this.listProps = {
 				...this.listProps,
-				items: this.adaptActions(changes.items.currentValue || []),
+				items: this.adapted.folders.concat(this.adapted.items),
 			};
 		}
 	}
@@ -78,10 +88,10 @@ export default class PreparationListCtrl {
 		};
 	}
 
-	adaptActions(preparations) {
+	adaptActions(items) {
 		const dispatchers = {};
-		return preparations.map((prep) => {
-			const actions = prep.actions.map((actionName) => {
+		return items.map((item) => {
+			const actions = item.actions.map((actionName) => {
 				const settingAction = this.appSettings.actions[actionName];
 				let dispatcher = dispatchers[actionName];
 				if (!dispatcher) {
@@ -92,12 +102,12 @@ export default class PreparationListCtrl {
 				return {
 					icon: settingAction.icon,
 					label: settingAction.name,
-					model: prep.model,
+					model: item.model,
 					onClick: dispatcher,
 				};
 			});
 			return {
-				...prep,
+				...item,
 				actions,
 			};
 		});

@@ -26,7 +26,9 @@ export default function FolderService($q, state, StateService, FolderRestService
 	'ngInject';
 
 	return {
+		adaptFolders,
 		adaptPreparations,
+		getFolderActions,
 		getPreparationActions,
 		init,
 		refresh,
@@ -69,7 +71,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 		const contentPromise = FolderRestService
 			.getContent(folderId, sort, order)
 			.then(content => ({
-				folders: content.folders,
+				folders: this.adaptFolders(content.folders),
 				preparations: this.adaptPreparations(content.preparations),
 			}));
 		return $q.all([breadcrumbPromise, contentPromise])
@@ -106,6 +108,27 @@ export default function FolderService($q, state, StateService, FolderRestService
 
 	/**
 	 * @ngdoc method
+	 * @name adaptFolders
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Adapt folders for UI components
+	 * @param {object[]} folders The folders
+	 * @returns {object[]} The adapted folders
+	 */
+	function adaptFolders(folders) {
+		return folders.map(item => ({
+			id: item.id,
+			name: item.name,
+			author: item.owner.displayName,
+			creationDate: moment(item.creationDate).fromNow(),
+			lastModificationDate: moment(item.lastModificationDate).fromNow(),
+			icon: 'talend-folder',
+			actions: this.getFolderActions(item),
+			model: item,
+		}));
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name getPreparationActions
 	 * @methodOf data-prep.services.folder.service:FolderService
 	 * @description Get the preparation available actions
@@ -113,6 +136,17 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 */
 	function getPreparationActions() {
 		return ['preparation:copy-move', 'preparation:remove'];
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getPreparationActions
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Get the preparation available actions
+	 * @returns {string[]} The array of actions available on the preparation
+	 */
+	function getFolderActions() {
+		return ['preparation:remove:folder'];
 	}
 
 	/**

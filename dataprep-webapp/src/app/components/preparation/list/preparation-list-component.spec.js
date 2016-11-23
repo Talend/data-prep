@@ -12,8 +12,6 @@
  ============================================================================*/
 
 describe('Preparation list component', () => {
-	'use strict';
-
 	let scope;
 	let createElement;
 	let element;
@@ -88,11 +86,12 @@ describe('Preparation list component', () => {
 	];
 	const preparations = preparationsModels.map((model) => ({ model }));
 
-	const folders = [
+	const foldersModels = [
 		{ id: '001', path: '/tata/titi', name: 'titi' },
 		{ id: '002', path: '/tata/toto', name: 'toto' },
 		{ id: '003', path: '/tata/tutu', name: 'tutu' },
 	];
+	const folders = foldersModels.map((model) => ({ model }));
 
 	beforeEach(angular.mock.module('data-prep.preparation-list', ($provide) => {
 		stateMock = {

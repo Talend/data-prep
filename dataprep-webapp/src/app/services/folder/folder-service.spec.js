@@ -11,6 +11,25 @@
 
  ============================================================================*/
 
+const folder = {
+	id: 'Lw==',
+	path: 'toto',
+	name: 'toto',
+	owner: { displayName: 'toto' },
+	creationDate: new Date().getTime(),
+	lastModificationDate: new Date().getTime(),
+};
+const adaptedFolder = {
+	id: 'Lw==',
+	name: 'toto',
+	author: 'toto',
+	creationDate: 'a few seconds ago',
+	lastModificationDate: 'a few seconds ago',
+	icon: 'talend-folder',
+	actions: ['preparation:remove:folder'],
+	model: folder,
+};
+
 describe('Folder services', () => {
 
 	let stateMock;
@@ -237,11 +256,11 @@ describe('Folder services', () => {
 			],
 		};
 		const content = {
-			folders: [{ path: 'toto', name: 'toto' }],
+			folders: [folder],
 			preparations: [preparation],
 		};
 		const adaptedContent = {
-			folders: content.folders,
+			folders: [adaptedFolder],
 			preparations: [adaptedPreparation],
 		};
 
@@ -394,6 +413,16 @@ describe('Folder services', () => {
 		}));
 	});
 
+	describe('adaptFolders', () => {
+		it('should wrap folder', inject((FolderService) => {
+			// when
+			const actualAdaptation = FolderService.adaptFolders([folder]);
+
+			// then
+			expect(actualAdaptation).toEqual([adaptedFolder]);
+		}));
+	});
+
 	describe('getPreparationActions', () => {
 		it('should return fixed preparation actions', inject((FolderService) => {
 			// when
@@ -401,6 +430,16 @@ describe('Folder services', () => {
 
 			// then
 			expect(actions).toEqual(['preparation:copy-move', 'preparation:remove']);
+		}));
+	});
+
+	describe('getFolderActions', () => {
+		it('should return fixed folder actions', inject((FolderService) => {
+			// when
+			const actions = FolderService.getFolderActions()
+
+			// then
+			expect(actions).toEqual(['preparation:remove:folder']);
 		}));
 	});
 });

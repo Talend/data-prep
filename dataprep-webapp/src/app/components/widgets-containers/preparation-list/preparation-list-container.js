@@ -28,6 +28,7 @@ const PreparationListContainer = {
 	bindings: {
 		displayMode: '<',
 		items: '<',
+		folders: '<',
 	},
 	controller: PreparationListCtrl,
 };

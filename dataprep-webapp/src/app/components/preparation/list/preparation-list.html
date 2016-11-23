@@ -19,8 +19,8 @@
 
     <inventory-item
             id="folder_{{$index}}"
-            ng-repeat="folder in $ctrl.state.inventory.folder.content.folders track by folder.id"
-            item="folder"
+            ng-repeat="folder in $ctrl.state.inventory.folder.content.folders track by folder.model.id"
+            item="folder.model"
             type="folder"
             details="FOLDER_DETAILS"
             open="$ctrl.goToFolder"

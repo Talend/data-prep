@@ -174,30 +174,4 @@ describe('Import REST Service', () => {
 		// then
 		expect(params).toEqual({ name: 'url' });
 	}));
-
-	it('should get datastore creation form UI-specs', inject(($rootScope, RestURLs, ImportRestService) => {
-		// given
-		const datastoreResponse = {
-			jsonSchema: 'jsonSchema',
-			uiSchema: 'uiSchema',
-			properties: 'properties',
-		};
-
-		let datastoreForm = {};
-
-		$httpBackend
-			.expectGET(RestURLs.exportUrl + '/imports/tcomp-ConnectorName/parameters')
-			.respond(200, datastoreResponse);
-
-		// when
-		ImportRestService.importParameters('tcomp-ConnectorName')
-			.then((response) => {
-				datastoreForm = response.data;
-			});
-		$httpBackend.flush();
-		$rootScope.$digest();
-
-		// then
-		expect(datastoreForm).toEqual(datastoreResponse);
-	}));
 });

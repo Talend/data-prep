@@ -59,7 +59,6 @@
     "react-dom": "^15.3.2",
     "react-talend-components": "^0.13.0",
     "react-talend-forms": "^0.6.0",
-    "react-tap-event-plugin": "^2.0.1",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#1.0.0",
     "talend-icons": "0.3.0",
     "uuid": "^2.0.3"

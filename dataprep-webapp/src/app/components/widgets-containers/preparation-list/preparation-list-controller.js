@@ -45,9 +45,13 @@ export default class PreparationListCtrl {
 			const sortBy = this.toolbarProps.sortBy.map((sort) => {
 				const isSelected = sort.selected;
 				const shouldBeSelected = sort.id === currentValue;
-				return isSelected === shouldBeSelected ?
-					sort :
-					{ ...sort, selected: shouldBeSelected };
+				if (isSelected === shouldBeSelected) {
+					return sort;
+				}
+				return {
+					...sort,
+					selected: shouldBeSelected,
+				};
 			});
 			this.toolbarProps = {
 				...this.toolbarProps,

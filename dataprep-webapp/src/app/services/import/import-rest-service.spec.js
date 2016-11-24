@@ -174,4 +174,43 @@ describe('Import REST Service', () => {
 		// then
 		expect(params).toEqual({ name: 'url' });
 	}));
+
+	it('should refresh import parameters', inject(($rootScope, RestURLs, ImportRestService) => {
+		// given
+		let params = null;
+
+		const formId = 'formId';
+		const propertyName = 'propertyName';
+		const formData = { propertyName: 'abc' };
+		const expectedResult = { jsonSchema: {}, uiSchema: {} };
+
+		$httpBackend
+			.expectPOST(RestURLs.tcompUrl + '/properties/' + formId + '/after/' + propertyName, formData)
+			.respond(200, expectedResult);
+
+		// when
+		ImportRestService.refreshParameters(formId, propertyName, formData)
+			.then((response) => {
+				params = response.data;
+			});
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		// then
+		expect(params).toEqual(expectedResult);
+	}));
+
+	it('should not refresh import parameters when form id is null', inject(($rootScope, RestURLs, ImportRestService) => {
+		// given
+		const formId = null;
+		const propertyName = 'propertyName';
+		const formData = { propertyName: 'abc' };
+
+		// when
+		const promise = ImportRestService.refreshParameters(formId, propertyName, formData);
+		$rootScope.$digest();
+
+		// then
+		expect(promise).toBeUndefined();
+	}));
 });

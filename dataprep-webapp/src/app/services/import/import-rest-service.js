@@ -15,32 +15,47 @@
  * @name data-prep.services.import.service:ImportRestService
  * @description Import service. This service provide the entry point to the backend import REST api.<br/>
  */
-export default function ImportRestService($http, RestURLs) {
-	'ngInject';
+export default class ImportRestService {
 
-	return {
-		importTypes,
-		importParameters,
-	};
-    /**
-     * @ngdoc method
-     * @name importTypes
-     * @methodOf data-prep.services.import.service:ImportRestService
-     * @description Fetch the available import types
-     * @returns {Promise}  The GET call promise
-     */
-	function importTypes() {
-		return $http.get(RestURLs.datasetUrl + '/imports');
+	constructor($http, RestURLs) {
+		'ngInject';
+
+		this.$http = $http;
+		this.RestURLs = RestURLs;
 	}
 
-    /**
-     * @ngdoc method
-     * @name importParameters
-     * @methodOf data-prep.services.import.service:ImportRestService
-     * @description Fetch the available import parameters
-     * @returns {Promise}  The GET call promise
-     */
-	function importParameters(locationType) {
-		return $http.get(RestURLs.datasetUrl + '/imports/' + locationType + '/parameters');
+	/**
+	 * @ngdoc method
+	 * @name importTypes
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Fetch the available import types
+	 * @returns {Promise}  The GET call promise
+	 */
+	importTypes() {
+		return this.$http.get(`${this.RestURLs.datasetUrl}/imports`);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name importParameters
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Fetch the available import parameters
+	 * @returns {Promise}  The GET call promise
+	 */
+	importParameters(locationType) {
+		return this.$http.get(`${this.RestURLs.datasetUrl}/imports/${locationType}/parameters`);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshParameters
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Refresh the available import parameters
+	 * @returns {Promise}  The POST call promise
+	 */
+	refreshParameters(formId, propertyName, formData) {
+		if (formId) {
+			return this.$http.post(`${this.RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData);
+		}
 	}
 }

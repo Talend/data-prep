@@ -11,32 +11,63 @@
 
   ============================================================================*/
 #help-import {
-  padding: 0 10px;
-  .dropdown-menu {
-    padding: 0;
-    .list-group {
-      margin: 0;
-    }
-  }
+	padding: 0 10px;
+	.dropdown-menu {
+		padding: 0;
+		.list-group {
+			margin: 0;
+		}
+	}
 }
 
 .loading-container {
-  .loading-msg {
-    position: absolute;
-    top: 15px;
-    left: 35px;
-    right: 35px;
-    padding: 15px 5px 15px 5px;
+	.loading-msg {
+		position: absolute;
+		top: 15px;
+		left: 35px;
+		right: 35px;
+		padding: 15px 5px 15px 5px;
 
-    background: transparent;
-    color: $dark-gray;
-    opacity: 0.8;
-  }
+		background: transparent;
+		color: $dark-gray;
+		opacity: 0.8;
+	}
 
-  .wait-icon {
-    position: absolute;
-  }
-  .wait-text {
-    padding-left: 40px;
-  }
+	.wait-icon {
+		position: absolute;
+	}
+	.wait-text {
+		padding-left: 40px;
+	}
+}
+
+.tcomp {
+	fieldset {
+
+		input,
+		textarea {
+			// Material-UI deals by itself with focus style
+			&,
+			&:focus {
+				box-shadow: none;
+			}
+		}
+	}
+
+	.datastore {
+		text-align: center;
+
+		legend,
+		.field-description {
+			text-align: left;
+		}
+
+		fieldset fieldset legend {
+			display: none;
+		}
+		fieldset > div > div {
+			// !important is needed to override element style attr
+			width: 75% !important;
+		}
+	}
 }

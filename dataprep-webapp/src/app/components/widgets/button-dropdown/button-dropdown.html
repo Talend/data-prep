@@ -32,7 +32,7 @@
         <span class="caret"></span>
         <span class="sr-only">{{::buttonDropdownCtrl.buttonDropdownTitle}}</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-right"
+    <ul class="dropdown-menu dropdown-menu-{{::(buttonDropdownCtrl.dropdownMenuDirection) || 'right'}}"
         role="menu"
         aria-labelledby="{{buttonDropdownCtrl.buttonId}}"
         uib-dropdown-menu>
@@ -60,7 +60,7 @@
         <span class="caret"></span>
         <span class="sr-only">{{::buttonDropdownCtrl.buttonDropdownTitle}}</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-right"
+    <ul class="dropdown-menu dropdown-menu-{{::(buttonDropdownCtrl.dropdownMenuDirection) || 'right'}}"
         role="menu"
         aria-labelledby="{{buttonDropdownCtrl.buttonId}}"
         uib-dropdown-menu>

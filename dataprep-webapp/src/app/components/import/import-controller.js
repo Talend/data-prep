@@ -22,56 +22,45 @@
  * @requires data-prep.services.dataset.service:DatasetService
  * @requires talend.widget.service:TalendConfirmService
  */
-export default function ImportCtrl($document,
-                                   state, StateService,
-                                   UploadWorkflowService, UpdateWorkflowService,
-                                   DatasetService,
-                                   TalendConfirmService,
-                                   ImportRestService) {
-	'ngInject';
-	const vm = this;
-	vm.state = state;
+export default class ImportCtrl {
 
-	/**
-	 * @ngdoc property
-	 * @name importType
-	 * @propertyOf data-prep.import.controller:ImportCtrl
-	 * @description List of supported import type.
-	 * @type {object[]}
-	 */
-	vm.importTypes = vm.state.import.importTypes;
+	constructor($document, $translate, state, StateService, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, ImportRestService) {
+		'ngInject';
 
-	/**
-	 * @ngdoc property
-	 * @name showModal
-	 * @propertyOf data-prep.import.controller:ImportCtrl
-	 * @description Display/Hide the import parameters modal
-	 * @type {boolean}
-	 */
-	vm.showModal = false;
+		this.$document = $document;
+		this.$translate = $translate;
+		this.state = state;
+		this.StateService = StateService;
+		this.UploadWorkflowService = UploadWorkflowService;
+		this.UpdateWorkflowService = UpdateWorkflowService;
+		this.DatasetService = DatasetService;
+		this.TalendConfirmService = TalendConfirmService;
+		this.ImportRestService = ImportRestService;
 
-	/**
-	 * @ngdoc property
-	 * @name showModal
-	 * @propertyOf data-prep.import.controller:ImportCtrl
-	 * @description Display/Hide the import parameters modal
-	 * @type {boolean}
-	 */
-	vm.isFetchingParameters = false;
+		/** List of supported import type */
+		this.importTypes = this.state.import.importTypes;
+
+		/** Display/Hide the import parameters modal */
+		this.showModal = false;
+
+		/** Display/Hide the import parameters modal */
+		this.isFetchingParameters = false;
+	}
 
 	// --------------------------------------------------------------------------------------------
 	// ---------------------------------------------Import-----------------------------------------
 	// --------------------------------------------------------------------------------------------
+
 	/**
 	 * @ngdoc method
 	 * @name startDefaultImport
 	 * @methodOf data-prep.import.controller:ImportCtrl
 	 * @description Start the default import process of a dataset.
 	 */
-	vm.startDefaultImport = () => {
-		const defaultExportType = _.find(vm.importTypes, 'defaultImport', true) || vm.importTypes[0];
-		vm.startImport(defaultExportType);
-	};
+	startDefaultImport() {
+		const defaultExportType = _.find(this.importTypes, 'defaultImport', true) || this.importTypes[0];
+		this.startImport(defaultExportType);
+	}
 
 	/**
 	 * @ngdoc method
@@ -80,27 +69,90 @@ export default function ImportCtrl($document,
 	 * @description Start the import process of a dataset. Route the call to the right import method
 	 * (local or remote) depending on the import type user choice.
 	 */
-	vm.startImport = (importType) => {
-		vm.currentInputType = importType;
-		switch (importType.locationType) {
-		case 'local':
-			$document.find('#datasetFile').eq(0).click();
-			break;
-		default:
-			vm.showModal = true;
-			if (vm.currentInputType.dynamic) {
-				vm.isFetchingParameters = true;
-				ImportRestService.importParameters(vm.currentInputType.locationType)
-					.then((response) => {
-						vm.currentInputType.parameters = response.data;
-					})
-					.finally(() => {
-						vm.isFetchingParameters = false;
-					});
-			}
+	startImport(importType) {
+		this.currentInputType = importType;
+		if (importType.locationType) {
+			switch (importType.locationType) {
+			case 'local':
+				this.$document.find('#datasetFile').eq(0).click();
+				break;
+			default:
+				this.showModal = true;
+				if (this.currentInputType.dynamic) {
+					this.isFetchingParameters = true;
 
+					this.datastoreFormActions = [
+						{
+							style: 'success',
+							type: 'submit',
+							onClick: this.onDatastoreFormSubmit,
+							label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
+						},
+					];
+
+					this.onDatastoreFormChange = this.onFormChange.bind(this);
+
+					this.onDatastoreFormSubmit = () => {};
+
+					this.ImportRestService.importParameters(this.currentInputType.locationType)
+						.then((response) => {
+							if (this._isTCOMP(importType.locationType)) {
+								this.currentInputType.datastoreForm = response.data;
+							}
+							else {
+								this.currentInputType.parameters = response.data;
+							}
+						})
+						.finally(() => {
+							this.isFetchingParameters = false;
+						});
+				}
+			}
 		}
-	};
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _isTCOMP
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Know if location type comes from TCOMP
+	 * @param locationType Import location type
+	 * @returns {boolean} true if locationType starts with tcomp
+	 */
+	_isTCOMP(locationType) {
+		return (locationType.indexOf('tcomp') === 0);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onCancel
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Cancel action for modal
+	 */
+	onCancel() {
+		this.showModal = false;
+		this.currentInputType = {};
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onFormChange
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Generic form change handler
+	 * @param formData All data as form properties
+	 * @param formId ID attached to the form
+	 * @param propertyName Property which has triggered change handler
+	 */
+	onFormChange(formData, formId, propertyName) {
+		this.isFetchingParameters = true;
+		this.ImportRestService.reimportParameters(formId, propertyName, formData)
+			.then((response) => {
+				this.currentInputType.datastoreForm = response.data;
+			})
+			.finally(() => {
+				this.isFetchingParameters = false;
+			});
+	}
 
 	/**
 	 * @ngdoc method
@@ -110,26 +162,26 @@ export default function ImportCtrl($document,
 	 * @param {string} name The dataset name
 	 * @param {object} importType The import parameters
 	 */
-	function createDataset(file, name, importType) {
-		const params = DatasetService.getLocationParamIteration({}, importType.parameters);
+	createDataset(file, name, importType) {
+		const params = this.DatasetService.getLocationParamIteration({}, importType.parameters);
 		params.type = importType.locationType;
 		params.name = name;
 
-		const dataset = DatasetService.createDatasetInfo(file, name);
-		StateService.startUploadingDataset(dataset);
+		const dataset = this.DatasetService.createDatasetInfo(file, name);
+		this.StateService.startUploadingDataset(dataset);
 
-		return DatasetService.create(params, importType.contentType, file)
+		return this.DatasetService.create(params, importType.contentType, file)
 			.progress((event) => {
 				dataset.progress = parseInt((100.0 * event.loaded) / event.total, 10);
 			})
 			.then((event) => {
-				DatasetService.getDatasetById(event.data).then(UploadWorkflowService.openDataset);
+				this.DatasetService.getDatasetById(event.data).then(this.UploadWorkflowService.openDataset);
 			})
 			.catch(() => {
 				dataset.error = true;
 			})
 			.finally(() => {
-				StateService.finishUploadingDataset(dataset);
+				this.StateService.finishUploadingDataset(dataset);
 			});
 	}
 
@@ -141,8 +193,8 @@ export default function ImportCtrl($document,
 	 * If so : the dataset is created
 	 * If not : the new name modal is shown
 	 */
-	vm.import = (importType) => {
-		const file = vm.datasetFile ? vm.datasetFile[0] : null;
+	import(importType) {
+		const file = this.datasetFile ? this.datasetFile[0] : null;
 		const datasetName = file ?
 			file.name :
 			_.find(importType.parameters, { name: 'name' }).value;
@@ -150,20 +202,20 @@ export default function ImportCtrl($document,
 		// remove file extension and ask final name
 		const name = datasetName.replace(/\.[^/.]+$/, '');
 
-		return DatasetService.checkNameAvailability(name)
+		return this.DatasetService.checkNameAvailability(name)
 		// name available: we create the dataset
 			.then(() => {
-				createDataset(file, name, importType);
+				this.createDataset(file, name, importType);
 			})
 			// name is not available, we ask for a new name
 			.catch(() => {
-				vm.datasetName = name;
-				vm.datasetNameModal = true;
+				this.datasetName = name;
+				this.datasetNameModal = true;
 			})
 			.finally(() => {
-				vm.showModal = false;
+				this.showModal = false;
 			});
-	};
+	}
 
 	/**
 	 * @ngdoc method
@@ -173,19 +225,19 @@ export default function ImportCtrl($document,
 	 * If so : the dataset is created
 	 * If not : the user has to choose to create a new one or the update the existing one
 	 */
-	vm.onImportNameValidation = () => {
-		const file = vm.datasetFile ? vm.datasetFile[0] : null;
-		const importType = vm.currentInputType;
-		const name = vm.datasetName;
+	onImportNameValidation() {
+		const file = this.datasetFile ? this.datasetFile[0] : null;
+		const importType = this.currentInputType;
+		const name = this.datasetName;
 
-		return DatasetService.checkNameAvailability(name)
+		return this.DatasetService.checkNameAvailability(name)
 		// name still exists
 			.then(() => {
-				createDataset(file, name, importType);
+				this.createDataset(file, name, importType);
 			})
 			// name still exists : we ask if user want to update it
-			.catch(existingDataset => updateOrCreate(file, existingDataset, importType, name));
-	};
+			.catch(existingDataset => this.updateOrCreate(file, existingDataset, importType, name));
+	}
 
 	/**
 	 * @ngdoc method
@@ -199,11 +251,11 @@ export default function ImportCtrl($document,
 	 * Create : get a unique name and create
 	 * Update : update the content of the existing dataset
 	 */
-	function updateOrCreate(file, existingDataset, importType, name) {
-		return TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], { dataset: name })
+	updateOrCreate(file, existingDataset, importType, name) {
+		return this.TalendConfirmService.confirm(null, ['UPDATE_EXISTING_DATASET'], { dataset: name })
 		// user confirm : let's update the dataset
 			.then(() => {
-				UpdateWorkflowService.updateDataset(file, existingDataset);
+				this.UpdateWorkflowService.updateDataset(file, existingDataset);
 			})
 			// user dismiss : cancel
 			// user select no : get unique name and create a new dataset
@@ -212,9 +264,9 @@ export default function ImportCtrl($document,
 					return;
 				}
 
-				return DatasetService.getUniqueName(name)
+				return this.DatasetService.getUniqueName(name)
 					.then((name) => {
-						return createDataset(
+						return this.createDataset(
 							file,
 							name,
 							importType

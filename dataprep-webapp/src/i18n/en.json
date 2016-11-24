@@ -155,8 +155,8 @@
   "IMPORT_WAIT": "Fetching import parameters, please wait...",
   "DATASET_NAME": "Dataset Name:",
   "PREPARATION": "Preparation",
-
-
+  "DATASTORE_TEST_CONNECTION": "Test connection",
+  "DATASTORE_CONNECTION_SUCCESSFUL": "Connection successful",
 
   "_comment": "Common",
   "LOADING": "Loading...",

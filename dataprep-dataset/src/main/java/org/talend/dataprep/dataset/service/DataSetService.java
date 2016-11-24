@@ -65,6 +65,7 @@ import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
 import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.synchronous.*;
 import org.talend.dataprep.dataset.service.api.Import;
+import org.talend.dataprep.dataset.service.api.Import.ImportBuilder;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
@@ -78,7 +79,6 @@ import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
-import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.schema.DraftValidator;
 import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.schema.FormatFamilyFactory;
@@ -1038,16 +1038,33 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
-    public List<Parameter> getImportParameters(@PathVariable("import") final String importType) {
-        if (StringUtils.isEmpty(importType)) {
-            return emptyList();
-        }
-        for (DataSetLocation location : locationsService.getAvailableLocations()) {
-            if (importType.equals(location.getLocationType())) {
-                return location.getParameters();
+    // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented ComponentProperties
+    public Object getImportParameters(@PathVariable("import") final String importType) {
+        DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
+        Object parametersToReturn;
+        if (matchingDatasetLocation == null) {
+            parametersToReturn = emptyList();
+        } else {
+            if (matchingDatasetLocation.isSchemaOriented()) {
+                parametersToReturn = matchingDatasetLocation.getParametersAsSchema();
+            } else {
+                parametersToReturn = matchingDatasetLocation.getParameters();
             }
         }
-        return emptyList();
+        return parametersToReturn;
+    }
+
+    private DataSetLocation findDataSetLocation(String importType) {
+        DataSetLocation matchingDatasetLocation = null;
+        if (!StringUtils.isEmpty(importType)) {
+            for (DataSetLocation location : locationsService.getAvailableLocations()) {
+                if (importType.equals(location.getLocationType())) {
+                    matchingDatasetLocation = location;
+                    break;
+                }
+            }
+        }
+        return matchingDatasetLocation;
     }
 
     @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1060,19 +1077,18 @@ public class DataSetService extends BaseDataSetService {
                 .filter(DataSetLocation::isEnabled) //
                 .map(l -> { //
                     final boolean defaultImport = LocalStoreLocation.NAME.equals(l.getLocationType());
+                    ImportBuilder builder = ImportBuilder.builder() //
+                            .locationType(l.getLocationType()) //
+                            .contentType(l.getAcceptedContentType()) //
+                            .defaultImport(defaultImport) //
+                            .label(l.getLabel()) //
+                            .title(l.getTitle());
                     if (l.isDynamic()) {
-                        return new Import(l.getLocationType(), //
-                                l.getAcceptedContentType(), //
-                                emptyList(), //
-                                l.isDynamic(), //
-                                defaultImport);
+                        builder = builder.dynamic(true);
                     } else {
-                        return new Import(l.getLocationType(), //
-                                l.getAcceptedContentType(), //
-                                l.getParameters(), //
-                                l.isDynamic(), //
-                                defaultImport);
+                        builder = builder.dynamic(false).parameters(l.getParameters());
                     }
+                    return builder.build();
                 }) //
                 .sorted((i1, i2) -> { //
                     int i1Value = i1.isDefaultImport() ? 1 : -1;

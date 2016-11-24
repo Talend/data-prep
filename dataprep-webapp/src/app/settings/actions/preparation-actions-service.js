@@ -29,7 +29,7 @@ export default class PreparationActionsService {
 		this.FolderService.refresh(this.state.inventory.folder.metadata.id);
 	}
 
-	popRemoveSuccess(preparation) {
+	displayRemoveSuccess(preparation) {
 		this.MessageService.success(
 			'REMOVE_SUCCESS_TITLE',
 			'REMOVE_SUCCESS',
@@ -88,7 +88,7 @@ export default class PreparationActionsService {
 				)
 				.then(() => this.PreparationService.delete(preparation))
 				.then(() => this.refreshCurrentFolder())
-				.then(() => this.popRemoveSuccess(preparation));
+				.then(() => this.displayRemoveSuccess(preparation));
 			break;
 		}
 		case '@@preparation/REMOVE_FOLDER': {

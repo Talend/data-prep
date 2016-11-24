@@ -132,7 +132,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 * @ngdoc method
 	 * @name getPreparationActions
 	 * @methodOf data-prep.services.folder.service:FolderService
-	 * @description Get the preparation available actions
+	 * @description Get the preparations' available actions
 	 * @returns {string[]} The array of actions available on the preparation
 	 */
 	function getPreparationActions() {
@@ -141,10 +141,10 @@ export default function FolderService($q, state, StateService, FolderRestService
 
 	/**
 	 * @ngdoc method
-	 * @name getPreparationActions
+	 * @name getFolderActions
 	 * @methodOf data-prep.services.folder.service:FolderService
-	 * @description Get the preparation available actions
-	 * @returns {string[]} The array of actions available on the preparation
+	 * @description Get the folders' available actions
+	 * @returns {string[]} The array of actions available on the folder
 	 */
 	function getFolderActions() {
 		return ['preparation:remove:folder'];

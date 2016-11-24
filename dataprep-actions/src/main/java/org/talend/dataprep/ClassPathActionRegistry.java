@@ -51,24 +51,33 @@ public class ClassPathActionRegistry implements ActionRegistry {
         LOGGER.info("{} actions registered for usage.", nameToActionClass.size());
     }
 
+    private ActionDefinition getDefinition(Class<? extends ActionDefinition> aClass) {
+        try {
+            return aClass.newInstance();
+        } catch (Exception e) {
+            LOGGER.error("Unable to return action definition '{}'", aClass.getName(), e);
+            return null;
+        }
+    }
+
     @Override
     public ActionDefinition get(String name) {
-        try {
-            final Class aClass = nameToActionClass.get(name);
-            if (aClass == null) {
-                LOGGER.error("Action definition '{}' does not exist.", name);
-                return null;
-            } else {
-                return (ActionDefinition) aClass.newInstance();
-            }
-        } catch (Exception e) {
-            LOGGER.error("Unable to return action definition '{}'", name, e);
+        final Class<? extends ActionDefinition> aClass = nameToActionClass.get(name);
+        if (aClass == null) {
+            LOGGER.error("Action definition '{}' does not exist.", name);
             return null;
+        } else {
+            return getDefinition(aClass);
         }
     }
 
     @Override
     public Stream<Class<? extends ActionDefinition>> getAll() {
         return nameToActionClass.values().stream();
+    }
+
+    @Override
+    public Stream<ActionDefinition> findAll() {
+        return nameToActionClass.values().stream().map(this::getDefinition);
     }
 }

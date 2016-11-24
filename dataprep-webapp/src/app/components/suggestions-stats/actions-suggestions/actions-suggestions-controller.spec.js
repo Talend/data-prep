@@ -57,7 +57,7 @@ describe('Actions suggestions controller', () => {
             stateMock.playground.filter.applyTransformationOnFilters = true;
             stateMock.playground.grid.selectedColumns = [{}];
             const transformation = { category: 'filtered' };
-            const category = { category: 'suggestion' };
+            const category = { category: 'suggestions' };
             const ctrl = createController();
 
             //when
@@ -72,7 +72,7 @@ describe('Actions suggestions controller', () => {
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}];
             const transformation = { category: 'filtered' };
-            const category = { category: 'suggestion' };
+            const category = { category: 'suggestions' };
             const ctrl = createController();
 
             //when
@@ -87,7 +87,7 @@ describe('Actions suggestions controller', () => {
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}];
             const transformation = { category: 'strings' };
-            const category = { category: 'suggestion' };
+            const category = { category: 'suggestions' };
             const ctrl = createController();
 
             //when
@@ -102,7 +102,7 @@ describe('Actions suggestions controller', () => {
             stateMock.playground.filter.applyTransformationOnFilters = false;
             stateMock.playground.grid.selectedColumns = [{}, {}];
             const transformation = { category: 'strings' };
-            const category = { category: 'suggestion' };
+            const category = { category: 'suggestions' };
             const ctrl = createController();
 
             //when
@@ -134,7 +134,7 @@ describe('Actions suggestions controller', () => {
             //given
             stateMock.playground.filter.applyTransformationOnFilters = true;
             const categoryTransformations = {
-                category: 'suggestion',
+                category: 'suggestions',
                 transformations: [{ category: 'filtered' }],
             };
             const ctrl = createController();
@@ -152,8 +152,8 @@ describe('Actions suggestions controller', () => {
                 stateMock.playground.filter.applyTransformationOnFilters = false;
                 stateMock.playground.grid.selectedColumns = [{}];
                 const categoryTransformations = {
-                    category: 'suggestion',
-                    transformations: [{ category: 'suggestion' }],
+                    category: 'suggestions',
+                    transformations: [{ category: 'suggestions' }],
                 };
                 const ctrl = createController();
 
@@ -171,10 +171,10 @@ describe('Actions suggestions controller', () => {
                 stateMock.playground.filter.applyTransformationOnFilters = false;
                 stateMock.playground.grid.selectedColumns = [{}, {}];
                 const categoryTransformations = {
-                    category: 'suggestion',
+                    category: 'suggestions',
                     transformations: [
                         { category: 'filtered' },
-                        { category: 'suggestion' }
+                        { category: 'suggestions' }
                     ],
                 };
                 const ctrl = createController();

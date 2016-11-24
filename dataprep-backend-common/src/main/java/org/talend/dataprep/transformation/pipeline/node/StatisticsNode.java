@@ -16,7 +16,12 @@ import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
 /**
+ * <p>
  * This node performs statistical analysis.
+ * </p>
+ * <p>
+ * Please note this class does not perform invalid values detection (see {@link InvalidDetectionNode} for this).
+ * </p>
  */
 public class StatisticsNode extends ColumnFilteredNode {
 
@@ -47,6 +52,24 @@ public class StatisticsNode extends ColumnFilteredNode {
         this(getDefaultAnalyzer(analyzerService), filter, adapter);
     }
 
+    /**
+     * Creates a default analyzer with te specified analyzer service.
+     * This analyzer performs quality, cardinality, frequency, patterns, the length, quantiles, summary and histogram analysis.
+     *
+     * @param analyzerService the provided analyzer service
+     */
+    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getDefaultAnalyzer(AnalyzerService analyzerService) {
+        return c -> analyzerService.build(c, //
+                AnalyzerService.Analysis.QUALITY, //
+                AnalyzerService.Analysis.CARDINALITY, //
+                AnalyzerService.Analysis.FREQUENCY, //
+                AnalyzerService.Analysis.PATTERNS, //
+                AnalyzerService.Analysis.LENGTH, //
+                AnalyzerService.Analysis.QUANTILES, //
+                AnalyzerService.Analysis.SUMMARY, //
+                AnalyzerService.Analysis.HISTOGRAM);
+    }
+
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         performColumnFilter(row, metadata);
@@ -69,23 +92,5 @@ public class StatisticsNode extends ColumnFilteredNode {
             }
         }
         super.signal(signal);
-    }
-
-    /**
-     * Creates a default analyzer with te specified analyzer service.
-     * This analyzer performs quality, cardinality, frequency, patterns, the length, quantiles, summary and histogram analysis.
-     *
-     * @param analyzerService the provided analyzer service
-     */
-    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getDefaultAnalyzer(AnalyzerService analyzerService) {
-        return c -> analyzerService.build(c, //
-                AnalyzerService.Analysis.QUALITY, //
-                AnalyzerService.Analysis.CARDINALITY, //
-                AnalyzerService.Analysis.FREQUENCY, //
-                AnalyzerService.Analysis.PATTERNS, //
-                AnalyzerService.Analysis.LENGTH, //
-                AnalyzerService.Analysis.QUANTILES, //
-                AnalyzerService.Analysis.SUMMARY, //
-                AnalyzerService.Analysis.HISTOGRAM);
     }
 }

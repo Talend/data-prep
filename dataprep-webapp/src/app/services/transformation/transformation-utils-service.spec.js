@@ -759,7 +759,7 @@ describe('Transformation Utils Service', () => {
                 // then :
                 // - "suggestions" category before the others
                 // - "filtered" category non present
-                expect(adaptedCategories[0].category).toBe('suggestion');
+                expect(adaptedCategories[0].category).toBe('suggestions');
                 expect(adaptedCategories[1].category).toBe('Numbers');
                 expect(adaptedCategories[2].category).toBe('strings');
 

@@ -27,6 +27,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -159,7 +160,7 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
                 .item(TYPE_E164) //
                 .item(TYPE_RFC3966) //
                 .defaultValue(TYPE_INTERNATIONAL).build());
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     private String getRegionCode(ActionContext context, DataSetRow row) {

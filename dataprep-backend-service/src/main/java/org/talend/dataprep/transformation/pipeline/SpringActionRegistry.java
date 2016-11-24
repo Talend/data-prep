@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
 
 @Component
-public class NameActionRegistry implements ActionRegistry { // NOSONAR
+public class SpringActionRegistry implements ActionRegistry { // NOSONAR
 
     @Autowired(required = false)
     private List<ActionDefinition> actions;
@@ -26,5 +26,10 @@ public class NameActionRegistry implements ActionRegistry { // NOSONAR
     @Override
     public Stream<Class<? extends ActionDefinition>> getAll() {
         return actions.stream().map(ActionDefinition::getClass);
+    }
+
+    @Override
+    public Stream<ActionDefinition> findAll() {
+        return actions.stream();
     }
 }

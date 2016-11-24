@@ -24,6 +24,7 @@ import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -47,7 +48,7 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
     public List<Parameter> getParameters() {
         final List<Parameter> parameters = super.getParameters();
         parameters.add(new Parameter(PRECISION, INTEGER, "0"));
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

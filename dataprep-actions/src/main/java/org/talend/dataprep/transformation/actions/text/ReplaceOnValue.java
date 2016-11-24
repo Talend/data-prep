@@ -27,6 +27,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -71,7 +72,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         parameters.add(new Parameter(CELL_VALUE_PARAMETER, REGEX, EMPTY));
         parameters.add(new Parameter(REPLACE_VALUE_PARAMETER, STRING, EMPTY));
         parameters.add(new Parameter(REPLACE_ENTIRE_CELL_PARAMETER, BOOLEAN, "false"));
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

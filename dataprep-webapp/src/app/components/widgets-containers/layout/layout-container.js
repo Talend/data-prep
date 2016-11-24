@@ -22,7 +22,9 @@ const LayoutContainer = {
 					<side-panel><side-panel/>
 				</div>
 				<div class="main">
-					<ng-transclude></ng-transclude>
+					<div class="main-wrapper">
+						<ng-transclude></ng-transclude>
+					</div>
 				</div>
 			</div>
 		</div>

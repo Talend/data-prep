@@ -13,7 +13,7 @@
 
 import { find } from 'lodash';
 
-const SUGGESTION = 'suggestion';
+const SUGGESTIONS = 'suggestions';
 
 /**
  * @ngdoc controller
@@ -51,7 +51,7 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
      * @returns {boolean} True if the transformation should be rendered, False otherwise
      */
 	vm.shouldRenderAction = function shouldRenderAction(categoryItem, action) {
-		if (categoryItem.category !== SUGGESTION) {
+		if (categoryItem.category !== SUGGESTIONS) {
 			return true;
 		}
 		return shouldRenderSuggestion(action);
@@ -63,13 +63,13 @@ export default function ActionsSuggestionsCtrl(state, TransformationService) {
      * @methodOf data-prep.actions-suggestions-stats.controller:ActionsSuggestionsCtrl
      * @param {object} categoryItem The categories with their transformations
      * @description Determine if the category should be rendered.
-     * The 'suggestion' category is rendered if it has transformations to render
+     * The 'suggestions' category is rendered if it has transformations to render
      * @returns {boolean} True if the category should be rendered, False otherwise
      */
 	vm.shouldRenderCategory = function shouldRenderCategory(categoryItem) {
         // render all non Suggestions category
         // render Suggestions if one of the transformations should be rendered
-		return categoryItem.category !== SUGGESTION ||
+		return categoryItem.category !== SUGGESTIONS ||
             find(categoryItem.transformations, action => shouldRenderSuggestion(action));
 	};
 }

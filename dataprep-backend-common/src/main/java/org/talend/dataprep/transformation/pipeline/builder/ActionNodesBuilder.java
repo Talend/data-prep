@@ -120,7 +120,7 @@ public class ActionNodesBuilder {
                 builder.to(neededReservoir);
             }
 
-            builder.to(new CompileNode(nextAction, context.create(nextAction.getRowAction())));
+            builder.to(new CompileNode(nextAction, context.create(nextAction.getRowAction(), initialMetadata)));
             builder.to(new ActionNode(nextAction, context.in(nextAction.getRowAction())));
         }
 

@@ -78,6 +78,14 @@ public class SelectParameter extends Parameter {
         this.multiple = multiple;
     }
 
+    @Override
+    public Parameter attach(Object parent) {
+        for (Item item : items) {
+            item.attach(parent);
+        }
+        return super.attach(parent);
+    }
+
     /**
      * Builder used to simplify the syntax of creation.
      */

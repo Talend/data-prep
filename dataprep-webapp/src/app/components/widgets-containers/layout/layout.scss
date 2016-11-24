@@ -10,38 +10,46 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-$tc-layout-header-height: 48px;
+$tc-layout-header-height: $navbar-height;
+$tc-layout-main-min-width: 1000px;
 
 .app {
-  @include display(flex);
-  @include flex-direction(column);
-  height: 100vh;
+	@include display(flex);
+	@include flex-direction(column);
+	height: 100vh;
 
-  .header {
-    @include flex-grow(0);
-    @include flex-shrink(0);
-    @include flex-basis($tc-layout-header-height);
-  }
+	.header {
+		@include flex-grow(0);
+		@include flex-shrink(0);
+		@include flex-basis($tc-layout-header-height);
+	}
 
-  .content {
-    @include display(flex);
-    @include flex-direction(row);
-    @include flex-grow(1);
-    @include flex-shrink(0);
-    @include flex-basis(100%);
+	.content {
+		@include display(flex);
+		@include flex-direction(row);
+		@include flex-grow(1);
+		@include flex-shrink(0);
+		@include flex-basis(0px);
+		@include align-items(stretch);
+		overflow: auto;
 
-    .main {
-      @include flex-grow(1);
-      @include flex-shrink(0);
-      @include flex-basis(500px);
-    }
+		.main {
+			@include flex-grow(1);
+			@include flex-shrink(0);
+			@include flex-basis(200px);
+			overflow: auto;
 
-    .sidemenu {
-      @include flex-grow(0);
-      @include flex-shrink(1);
+			&-wrapper {
+				min-width:$tc-layout-main-min-width;
+			}
+		}
 
-      background-color: $blue;
-    }
-  }
+		.sidemenu {
+			@include flex-grow(0);
+			@include flex-shrink(1);
+
+			background-color: $blue;
+		}
+	}
 
 }

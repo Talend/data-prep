@@ -15,7 +15,7 @@ import { chain, forEach, filter, map, find } from 'lodash';
 
 const COLUMN_CATEGORY = 'column_metadata';
 const CATEGORY = 'category';
-const SUGGESTION_CATEGORY = 'suggestion';
+const SUGGESTIONS_CATEGORY = 'suggestions';
 const FILTERED_CATEGORY = 'filtered';
 const HIGHLIGHT_CLASS = 'highlighted';
 
@@ -174,8 +174,8 @@ export default class TransformationUtilsService {
 
 		const filterTransformations = filterCategory ? filterCategory.transformations : [];
 		const suggestionsCategory = {
-			category: SUGGESTION_CATEGORY,
-			categoryHtml: SUGGESTION_CATEGORY.toUpperCase(),
+			category: SUGGESTIONS_CATEGORY,
+			categoryHtml: SUGGESTIONS_CATEGORY.toUpperCase(),
 			transformations: filterTransformations.concat(suggestions),
 		};
 

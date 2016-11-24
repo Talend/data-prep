@@ -192,7 +192,6 @@ public class MatchesPatternTest extends AbstractMetadataBaseTest {
 
     private ActionContext buildPatternActionContext(String regex) {
         ActionContext context = new ActionContext(new TransformationContext());
-        context.setRowMetadata(new RowMetadata());
         context.setParameters(Collections.singletonMap(MatchesPattern.PATTERN_PARAMETER, regex));
         action.compile(context);
         return context;

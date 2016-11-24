@@ -91,7 +91,9 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .body(sameJSONAs("[{\"id\":\"#548425458\"," + "\"dataSetId\":\"1234\"," + "\"author\":null," + "\"name\":null,"
                         + "\"creationDate\":0," + "\"lastModificationDate\":12345,"
                         + "\"owner\":null,"
+                        + "\"rowMetadata\":null,"
                         + "\"steps\":[\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"]," + "\"diff\":[]," + "\"actions\":[],"
+                        + "\"allowDistributedRun\": true,"
                         + "\"metadata\":[]" + "}]"));
 
         // given
@@ -117,9 +119,11 @@ public class PreparationControllerTest extends BasePreparationTest {
                                 "\"creationDate\":0," +
                                 "\"lastModificationDate\":12345," +
                                 "\"owner\":null," +
+                                "\"rowMetadata\":null," +
                                 "\"steps\":[\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"]," +
                                 "\"diff\":[]," +
                                 "\"actions\":[]," +
+                                "\"allowDistributedRun\": true," +
                                 "\"metadata\":[]" +
                                 "}," +
                                 "{\"id\":\"#1438725\"," +
@@ -129,9 +133,11 @@ public class PreparationControllerTest extends BasePreparationTest {
                                 "\"creationDate\":500," +
                                 "\"lastModificationDate\":456789," +
                                 "\"owner\":null," +
+                                "\"rowMetadata\":null," +
                                 "\"steps\":[\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"]," +
                                 "\"diff\":[]," +
                                 "\"actions\":[]," +
+                                "\"allowDistributedRun\": true," +
                                 "\"metadata\":[]" +
                                 "}" +
                                 "]")
@@ -360,7 +366,7 @@ public class PreparationControllerTest extends BasePreparationTest {
     }
 
     @Test
-    public void cannotCopyIfAnExistingPreparationAlrdeayExists() throws Exception {
+    public void cannotCopyIfAnExistingPreparationAlreadyExists() throws Exception {
         // given
         final String name = "my preparation";
         final Folder folder = folderRepository.addFolder(home.getId(), "great_folder");
@@ -1342,9 +1348,6 @@ public class PreparationControllerTest extends BasePreparationTest {
         .then()//
             .statusCode(404);
         // @formatter:on
-
-        final String preparationId = createPreparation("1234", "My preparation");
-
     }
 
     @Test
@@ -1354,13 +1357,10 @@ public class PreparationControllerTest extends BasePreparationTest {
         given()
             .queryParam("parentStepId", rootStep.getId())
         .when()
-            .post("/preparations/{id}/steps/{stepId}/order", preparationId, "DoesNotexist")//
+            .post("/preparations/{id}/steps/{stepId}/order", preparationId, "DoesNotExist")//
         .then()//
             .statusCode(404);
         // @formatter:on
-
-
-
     }
 
     @Test
@@ -1602,6 +1602,21 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(response.getStatusCode(), is(204));
     }
 
+    @Test
+    public void shouldMakePreparationNotDistributed() throws Exception {
+        // given
+        final String preparationId = createPreparation("1234", "my preparation");
+        applyTransformation(preparationId, "actions/append_make_line_header.json"); // Make line header can't be distributed
+        applyTransformation(preparationId, "actions/append_upper_case.json");
+        Preparation preparation = repository.get(preparationId, Preparation.class);
+
+        // when
+        final String preparationDetails = when().get("/preparations/{id}", preparation.id()).asString();
+
+        // then
+        assertThat(JsonPath.given(preparationDetails).get("allowDistributedRun"), is(false));
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------UTILS-------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
@@ -1664,18 +1679,4 @@ public class PreparationControllerTest extends BasePreparationTest {
         }
     }
 
-    /**
-     * Assert that the step is on the wanted column id
-     *
-     * @param stepId   The step id
-     * @param columnId The column id
-     */
-    private void assertThatStepIsOnColumn(final String stepId, final String columnId) {
-        final Step step = repository.get(stepId, Step.class);
-        final PreparationActions stepActions = repository.get(step.getContent(), PreparationActions.class);
-        final int stepActionIndex = stepActions.getActions().size() - 1;
-
-        final Map<String, String> stepParameters = stepActions.getActions().get(stepActionIndex).getParameters();
-        assertThat(stepParameters.get("column_id"), is(columnId));
-    }
 }

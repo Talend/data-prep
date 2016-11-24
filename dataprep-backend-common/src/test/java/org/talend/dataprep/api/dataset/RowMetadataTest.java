@@ -17,6 +17,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.row.Flag.UPDATE;
+import static org.talend.dataprep.test.SerializableMatcher.isSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -300,6 +301,11 @@ public class RowMetadataTest {
         assertFalse(row3.compatible(row1));
         assertFalse(row2.compatible(row3));
         assertFalse(row2.compatible(row4));
+    }
+
+    @Test
+    public void shouldReturnTrueForRowMetadata() throws Exception {
+        assertThat(RowMetadata.class, isSerializable());
     }
 
     /**

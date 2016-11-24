@@ -12,8 +12,6 @@
  ============================================================================*/
 
 describe('Inventory state service', () => {
-	'use strict';
-
 	let datasets;
 	let preparations;
 
@@ -210,6 +208,21 @@ describe('Inventory state service', () => {
 			//then
 			expect(inventoryState.preparationsOrder).toBe('desc');
 		}));
+
+		it('should set preparations sort/order from ids',
+			inject((inventoryState, InventoryStateService) => {
+				//given
+				inventoryState.preparationsSort = '';
+				inventoryState.preparationsOrder = '';
+
+				//when
+				InventoryStateService.setPreparationsSortFromIds('name', 'desc');
+
+				//then
+				expect(inventoryState.preparationsSort.id).toBe('name');
+				expect(inventoryState.preparationsOrder.id).toBe('desc');
+			})
+		);
 	});
 
 	describe('loading', () => {

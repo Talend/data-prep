@@ -81,6 +81,7 @@ import org.talend.dataprep.transformation.api.transformer.suggestion.Suggestion;
 import org.talend.dataprep.transformation.api.transformer.suggestion.SuggestionEngine;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -107,8 +108,8 @@ public class TransformationService extends BaseTransformationService {
     /**
      * All available transformation actions.
      */
-    @Autowired(required = false)
-    private ActionDefinition[] allActions;
+    @Autowired
+    private ActionRegistry actionRegistry;
 
     /**
      * he aggregation service.
@@ -312,7 +313,7 @@ public class TransformationService extends BaseTransformationService {
     public void transformPreview(@ApiParam(name = "body", value = "Preview parameters.") @RequestBody final PreviewParameters previewParameters,
                                  final OutputStream output) {
         //@formatter:on
-        if (shouldApplydiffToSampleSource(previewParameters)) {
+        if (shouldApplyDiffToSampleSource(previewParameters)) {
             executeDiffOnSample(previewParameters, output);
         } else {
             executeDiffOnDataset(previewParameters, output);
@@ -391,7 +392,7 @@ public class TransformationService extends BaseTransformationService {
         }
     }
 
-    private boolean shouldApplydiffToSampleSource(final PreviewParameters previewParameters) {
+    private boolean shouldApplyDiffToSampleSource(final PreviewParameters previewParameters) {
         if (previewParameters.getSourceType() != HEAD && previewParameters.getPreparationId() != null) {
             final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
                     previewParameters.getPreparationId(),
@@ -549,7 +550,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Return all actions for a column (regardless of column metadata)", notes = "This operation returns an array of actions.")
     @ResponseBody
     public List<ActionDefinition> columnActions(@RequestBody(required = false) ColumnMetadata column) {
-        return Stream.of(allActions) //
+        return actionRegistry.findAll() //
                 .filter(action -> !"TEST".equals(action.getCategory()) && action.acceptScope(COLUMN)) //
                 .map(am -> column != null ? am.adapt(column) : am) //
                 .collect(toList());
@@ -574,7 +575,7 @@ public class TransformationService extends BaseTransformationService {
 
         // look for all actions applicable to the column type
         final List<ActionDefinition> actions;
-        try (Stream<ActionDefinition> stream = Stream.of(this.allActions)) {
+        try (Stream<ActionDefinition> stream = actionRegistry.findAll()) {
             actions = stream.filter(am -> am.acceptField(column)).collect(toList());
         }
         final List<Suggestion> suggestions = suggestionEngine.score(actions, column);
@@ -596,7 +597,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Return all actions on lines", notes = "This operation returns an array of actions.")
     @ResponseBody
     public List<ActionDefinition> lineActions() {
-        try (Stream<ActionDefinition> stream = Stream.of(this.allActions)) {
+        try (Stream<ActionDefinition> stream = actionRegistry.findAll()) {
             return stream //
                     .filter(action -> action.acceptScope(LINE)) //
                     .map(action -> action.adapt(LINE)) //

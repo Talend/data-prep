@@ -36,7 +36,6 @@
   $navigation-item-space: 10px;
 
   p {
-    color: $base-font-color;
     line-height: $base-line-height;
   }
   //////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +47,8 @@
   $modal-image-height: 135px;
   $modal-image-width: $modal-image-height;
   $modal-trigger-image-width: 300px;
+
+  color: $base-font-color;
 
   label {
     cursor: pointer;
@@ -333,22 +334,18 @@
 }
 
 .modal-open {
-  overflow: hidden;
-
   .modal {
     display: block;
 
-    .modal-window {
+    &-window {
       margin: 0;
       padding: 0;
+      width: auto;
+      overflow: auto;
     }
 
-    .modal-dialog {
-      width: auto;
+    &-content {
+      margin: 1rem auto;
     }
   }
-}
-
-.modal-closed {
-  overflow: auto;
 }

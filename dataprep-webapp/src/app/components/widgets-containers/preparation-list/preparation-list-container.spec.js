@@ -120,8 +120,10 @@ describe('Preparation list container', () => {
 			element = angular.element(`
 				<react-preparation-list
 					display-mode="displayMode"
-					items="items"
 					folders="folders"
+					items="items"
+					sort-by="sortBy"
+					sort-desc="sortDesc"
 				/>
 			`);
 			body.append(element);
@@ -135,6 +137,8 @@ describe('Preparation list container', () => {
 	beforeEach(inject((SettingsActionsService) => {
 		// given
 		scope.displayMode = 'table';
+		scope.sortBy = 'name';
+		scope.sortDesc = true;
 		spyOn(SettingsActionsService, 'dispatch').and.returnValue();
 
 		// when
@@ -328,6 +332,30 @@ describe('Preparation list container', () => {
 				expect(lastCallArgs.id).toBe('menu:playground:preparation');
 				expect(lastCallArgs.type).toBe('@@router/GO_PREPARATION');
 				expect(lastCallArgs.payload.id).toBe(preparations[0].id);
+			})
+		);
+
+		it('should dispatch preparation sort on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('div[role="toolbar"]')
+					.eq(0)
+					.find('.nav')
+					.eq(2)  // TODO DANGEROUS, add id !
+					.find('button')
+					.eq(0)
+					.click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:sort');
+				expect(lastCallArgs.type).toBe('@@preparation/SORT');
+				expect(lastCallArgs.payload.sortBy).toBe('name');
+				expect(lastCallArgs.payload.sortDesc).toBe(false);
 			})
 		);
 	});

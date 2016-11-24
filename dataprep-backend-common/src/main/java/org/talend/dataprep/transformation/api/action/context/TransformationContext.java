@@ -23,6 +23,7 @@ import java.util.function.Function;
 import org.apache.commons.lang.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 
 /**
@@ -115,12 +116,13 @@ public final class TransformationContext implements Serializable {
      * {@link ActionContext#column(String, Function)} for more details.
      *
      * @param action The action to create the context for.
+     * @param rowMetadata The {@link RowMetadata row description} when the action context is created.
      */
-    public ActionContext create(DataSetRowAction action) {
+    public ActionContext create(DataSetRowAction action, RowMetadata rowMetadata) {
         if (contexts.containsKey(action)) {
             return contexts.get(action);
         } else {
-            ActionContext actionContext = new ActionContext(this);
+            ActionContext actionContext = new ActionContext(this, rowMetadata);
             contexts.put(action, actionContext);
             LOGGER.debug("adding new ActionContext for {}", action);
             return actionContext;

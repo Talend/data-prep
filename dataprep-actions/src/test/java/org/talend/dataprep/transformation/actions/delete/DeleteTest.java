@@ -163,9 +163,10 @@ public class DeleteTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, action.getBehavior().size());
+        assertEquals(3, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_ALL));
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_DELETE_ROWS));
     }
 
 }

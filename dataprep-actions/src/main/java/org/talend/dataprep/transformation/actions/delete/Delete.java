@@ -61,9 +61,9 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     public String getDescription() {
         switch (scope) {
         case LINE:
-            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, DELETE_SINGLE_LINE);
+            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, DELETE_SINGLE_LINE);
         case COLUMN:
-            return ActionsBundle.INSTANCE.actionDescription(Locale.ENGLISH, DELETE_COLUMN);
+            return ActionsBundle.INSTANCE.actionDescription(this, Locale.ENGLISH, DELETE_COLUMN);
         default:
             return null;
         }
@@ -73,9 +73,9 @@ public class Delete extends AbstractActionMetadata implements RowAction {
     public String getLabel() {
         switch (scope) {
         case LINE:
-            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, DELETE_SINGLE_LINE);
+            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, DELETE_SINGLE_LINE);
         case COLUMN:
-            return ActionsBundle.INSTANCE.actionLabel(Locale.ENGLISH, DELETE_COLUMN);
+            return ActionsBundle.INSTANCE.actionLabel(this, Locale.ENGLISH, DELETE_COLUMN);
         default:
             return null;
         }
@@ -103,6 +103,6 @@ public class Delete extends AbstractActionMetadata implements RowAction {
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_ALL, Behavior.FORBID_DISTRIBUTED);
+        return EnumSet.of(Behavior.VALUES_ALL, Behavior.FORBID_DISTRIBUTED, Behavior.VALUES_DELETE_ROWS);
     }
 }

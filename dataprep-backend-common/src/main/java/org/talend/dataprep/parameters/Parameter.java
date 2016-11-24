@@ -53,6 +53,8 @@ public class Parameter implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> configuration;
 
+    private Object parent;
+
     public Parameter() {
     }
 
@@ -123,11 +125,11 @@ public class Parameter implements Serializable {
     }
 
     public String getLabel() {
-        return ActionsBundle.INSTANCE.parameterLabel(Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.parameterLabel(parent, Locale.ENGLISH, getName());
     }
 
     public String getDescription() {
-        return ActionsBundle.INSTANCE.parameterDescription(Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.parameterDescription(parent, Locale.ENGLISH, getName());
     }
 
     public String getType() {
@@ -154,4 +156,8 @@ public class Parameter implements Serializable {
         return configuration;
     }
 
+    public Parameter attach(Object parent) {
+        this.parent = parent;
+        return this;
+    }
 }

@@ -19,16 +19,17 @@ export default class PreparationListCtrl {
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
+
 		this.adapted = {
 			folders: [],
 			items: [],
 		};
+		this.initToolbarProps();
+		this.initListProps();
 	}
 
 	$onInit() {
 		this.didMountAction();
-		this.initToolbarProps();
-		this.initListProps();
 	}
 
 	$postLink() {
@@ -51,6 +52,30 @@ export default class PreparationListCtrl {
 				items: this.adapted.folders.concat(this.adapted.items),
 			};
 		}
+		if (changes.sortBy) {
+			const currentValue = changes.sortBy.currentValue;
+			const sortBy = this.toolbarProps.sortBy.map((sort) => {
+				const isSelected = sort.selected;
+				const shouldBeSelected = sort.id === currentValue;
+				if (isSelected === shouldBeSelected) {
+					return sort;
+				}
+				return {
+					...sort,
+					selected: shouldBeSelected,
+				};
+			});
+			this.toolbarProps = {
+				...this.toolbarProps,
+				sortBy,
+			};
+		}
+		if (changes.sortDesc) {
+			this.toolbarProps = {
+				...this.toolbarProps,
+				sortDesc: changes.sortDesc.currentValue,
+			};
+		}
 	}
 
 	didMountAction() {
@@ -67,6 +92,7 @@ export default class PreparationListCtrl {
 		const toolbarSettings = this.appSettings.views['listview:preparations'].toolbar;
 		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
+		const sortAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
 		const dispatchDisplayMode = this.SettingsActionsService.createDispatcher(displayModeAction);
 
 		this.toolbarProps = {
@@ -76,6 +102,7 @@ export default class PreparationListCtrl {
 				.map(action => this.SettingsActionsService.createDispatcher(action)),
 			onClickAdd: this.SettingsActionsService.createDispatcher(clickAddAction),
 			onSelectDisplayMode: (event, mode) => dispatchDisplayMode(event, { mode }),
+			onSelectSortBy: this.SettingsActionsService.createDispatcher(sortAction),
 		};
 	}
 

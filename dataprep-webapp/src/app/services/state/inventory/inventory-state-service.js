@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { find, reject } from 'lodash';
+
 const sortList = [
     { id: 'name', name: 'NAME_SORT', property: 'name' },
     { id: 'date', name: 'DATE_SORT', property: 'created' },
@@ -70,6 +72,7 @@ export function InventoryStateService() {
 
 		setPreparationsSort,
 		setPreparationsOrder,
+		setPreparationsSortFromIds,
 		setPreparationsDisplayMode,
 
 		setFetchingDatasets,
@@ -117,7 +120,7 @@ export function InventoryStateService() {
      * @description Remove a dataset
      */
 	function removeDataset(dataset) {
-		inventoryState.datasets = _.reject(inventoryState.datasets, { id: dataset.id });
+		inventoryState.datasets = reject(inventoryState.datasets, { id: dataset.id });
 	}
 
     /**
@@ -129,7 +132,7 @@ export function InventoryStateService() {
      * @description Change the dataset name in folder and datasets list
      */
 	function setDatasetName(datasetId, name) {
-		const dataset = _.find(inventoryState.datasets, { id: datasetId });
+		const dataset = find(inventoryState.datasets, { id: datasetId });
 		dataset.name = name;
 	}
 
@@ -181,7 +184,7 @@ export function InventoryStateService() {
      * @name setDatasetsSort
      * @methodOf data-prep.services.state.service:InventoryStateService
      * @param {object} sort The sort type
-     * @description Set rhe sort type
+     * @description Set the sort type
      */
 	function setDatasetsSort(sort) {
 		inventoryState.datasetsSort = sort;
@@ -218,6 +221,19 @@ export function InventoryStateService() {
      */
 	function setPreparationsOrder(order) {
 		inventoryState.preparationsOrder = order;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setPreparationsOrderFromId
+	 * @methodOf data-prep.services.state.service:InventoryStateService
+	 * @param {string} sortId The sort id
+	 * @param {string} orderId The order id
+	 * @description Set the order by its id
+	 */
+	function setPreparationsSortFromIds(sortId, orderId) {
+		inventoryState.preparationsSort = find(sortList, { id: sortId });
+		inventoryState.preparationsOrder = find(orderList, { id: orderId });
 	}
 
     /**

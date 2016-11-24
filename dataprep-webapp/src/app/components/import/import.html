@@ -3,10 +3,12 @@
             button-text="{{'IMPORT_DATASET' | translate }}"
             button-additional-class="btn btn-success"
             button-action="$ctrl.startDefaultImport()"
+            dropdown-menu-direction="left"
             close-on-select="true">
         <div class="list-group">
-            <button  type="button" class="list-group-item" ng-repeat="importType in $ctrl.importTypes track by importType.locationType"
-                ng-click="$ctrl.startImport(importType)"> {{importType.label}}
+            <button type="button" class="list-group-item"
+                    ng-repeat="importType in $ctrl.importTypes track by importType.locationType"
+                    ng-click="$ctrl.startImport(importType)"> {{importType.label}}
             </button>
         </div>
     </talend-button-dropdown>
@@ -28,7 +30,9 @@
     <div ng-show="$ctrl.isFetchingParameters === false">
         <div class="modal-title">{{$ctrl.currentInputType.title}}</div>
         <br/>
-        <form name="$ctrl.datasetForm" ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
+        <form name="$ctrl.datasetForm"
+              ng-if="!$ctrl.currentInputType.datastoreForm"
+              ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
 
             <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
 
@@ -41,12 +45,27 @@
                         translate-once="OK"></button>
             </div>
         </form>
+        <div class="tcomp">
+            <div class="datastore"
+                 ng-if="$ctrl.currentInputType.datastoreForm">
+                <talend-form data="$ctrl.currentInputType.datastoreForm"
+                                   buttonBlockClass="form-actions"
+                                   actions="$ctrl.datastoreFormActions"
+                                   on-change="$ctrl.onDatastoreFormChange"
+                                   on-submit="$ctrl.onDatastoreFormSubmit"/>
+            </div>
+            <p class="text-center text-success"
+               ng-if="$ctrl.currentInputType.datasetForm"
+               translate-once="IMPORT_DATASTORE_CONNECTION_SUCCESSFUL">
+            </p>
+        </div>
+    </div>
     </div>
     <div id="import-ghost"
          ng-show="$ctrl.isFetchingParameters === true"
          class="loading-container">
         <div class="loading-msg">
-            <span class="wait-icon continuous-rotate" ><i data-icon="c" class="icon"></i></span>
+            <span class="wait-icon continuous-rotate"><i data-icon="c" class="icon"></i></span>
             <span class="wait-text" translate-once="IMPORT_WAIT"></span>
         </div>
     </div>

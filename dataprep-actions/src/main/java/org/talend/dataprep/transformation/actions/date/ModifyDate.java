@@ -33,6 +33,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
@@ -45,7 +46,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Change the date pattern on a 'date' column.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ModifyDate.ACTION_NAME)
-public class ModifyDate extends AbstractDate implements ColumnAction, DatePatternParamModel {
+public class ModifyDate extends AbstractDate implements ColumnAction {
 
     /** Action name. */
     public static final String ACTION_NAME = "modify_date"; //$NON-NLS-1$
@@ -91,7 +92,7 @@ public class ModifyDate extends AbstractDate implements ColumnAction, DatePatter
                 .defaultValue(CONSTANT_MODE) //
                 .build());
 
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

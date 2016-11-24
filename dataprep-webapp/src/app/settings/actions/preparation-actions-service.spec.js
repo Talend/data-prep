@@ -22,6 +22,9 @@ describe('Preparation actions service', () => {
 				folder: {
 					metadata: { id: 'folder 1' }
 				},
+
+				preparationsSort: { id: 'date', name: 'DATE_SORT', property: 'created' },
+				preparationsOrder: { id: 'asc', name: 'ASC_ORDER' },
 			}
 		};
 		$provide.constant('state', stateMock);
@@ -48,6 +51,105 @@ describe('Preparation actions service', () => {
 			expect(StateService.setPreparationsDisplayMode)
 				.toHaveBeenCalledWith(nextMode);
 		}));
+	});
+
+	describe('dispatch @@preparation/SORT', () => {
+		let folderMock;
+		beforeEach(inject(($q, FolderService, StateService, StorageService) => {
+			folderMock = spyOn(FolderService, 'refresh');
+			spyOn(StateService, 'setPreparationsSortFromIds').and.returnValue();
+			spyOn(StorageService, 'setPreparationsSort').and.returnValue();
+			spyOn(StorageService, 'setPreparationsOrder').and.returnValue();
+		}));
+
+		it('should set sort in app state',
+			inject(($q, StateService, PreparationActionsService) => {
+				// given
+				folderMock.and.returnValue($q.when());
+				const action = {
+					type: '@@preparation/SORT',
+					payload: {
+						sortBy: 'name',
+						sortDesc: true,
+					}
+				};
+
+				// when
+				PreparationActionsService.dispatch(action);
+
+				// then
+				expect(StateService.setPreparationsSortFromIds).toHaveBeenCalledWith('name', 'desc');
+			})
+		);
+
+		it('should refresh current folder',
+			inject(($q, StateService, FolderService, PreparationActionsService) => {
+				// given
+				folderMock.and.returnValue($q.when());
+				const action = {
+					type: '@@preparation/SORT',
+					payload: {
+						sortBy: 'name',
+						sortDesc: true,
+					}
+				};
+
+				// when
+				PreparationActionsService.dispatch(action);
+
+				// then
+				expect(FolderService.refresh).toHaveBeenCalledWith(stateMock.inventory.folder.metadata.id);
+			})
+		);
+
+		it('should save sort in local storage',
+			inject(($rootScope, $q, StateService, StorageService, PreparationActionsService) => {
+				// given
+				folderMock.and.returnValue($q.when());
+				const action = {
+					type: '@@preparation/SORT',
+					payload: {
+						sortBy: 'name',
+						sortDesc: true,
+					}
+				};
+
+				// when
+				PreparationActionsService.dispatch(action);
+				$rootScope.$digest();
+
+				// then
+				expect(StorageService.setPreparationsSort).toHaveBeenCalledWith('name');
+				expect(StorageService.setPreparationsOrder).toHaveBeenCalledWith('desc');
+			})
+		);
+
+		it('should restore sort in app state in case of error',
+			inject(($rootScope, $q, StateService, StorageService, PreparationActionsService) => {
+				// given
+				folderMock.and.returnValue($q.reject());
+				const action = {
+					type: '@@preparation/SORT',
+					payload: {
+						sortBy: 'name',
+						sortDesc: true,
+					}
+				};
+
+				// when
+				PreparationActionsService.dispatch(action);
+				expect(StateService.setPreparationsSortFromIds)
+					.not
+					.toHaveBeenCalledWith('date', 'asc'); // old sort
+				$rootScope.$digest();
+				
+				// then
+				expect(StorageService.setPreparationsSort).not.toHaveBeenCalled();
+				expect(StorageService.setPreparationsOrder).not.toHaveBeenCalled();
+				expect(StateService.setPreparationsSortFromIds)
+					.toHaveBeenCalledWith('date', 'asc');
+			})
+		);
 	});
 
 	describe('dispatch @@preparation/CREATE', () => {

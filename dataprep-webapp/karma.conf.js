@@ -2,7 +2,6 @@
 
 const argv = require('yargs').argv;
 const webpack = require('webpack');
-const SASS_DATA = require('./config/sass.conf');
 
 module.exports = function (config) {
     config.set({
@@ -53,9 +52,6 @@ module.exports = function (config) {
                 babel: {
                     presets: ['es2015']
                 }
-            },
-            sassLoader: {
-                data: SASS_DATA,
             }
         },
 

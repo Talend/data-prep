@@ -30,6 +30,7 @@ import javax.measure.unit.Unit;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -88,7 +89,7 @@ public class TemperaturesConverter extends AbstractMathNoParameterAction {
                 .build());
 
         parameters.add(new Parameter(TARGET_PRECISION, INTEGER, null, false, true, "precision"));
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     @Override

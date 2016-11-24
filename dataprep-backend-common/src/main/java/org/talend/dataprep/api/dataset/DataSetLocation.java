@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.FormatFamily;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,11 +42,27 @@ public interface DataSetLocation extends Serializable {
     String getLocationType();
 
     /**
+     * All needed parameters to use this location. Returns {@code null} if not relevant, when {@link #getParametersAsSchema} should
+     * be used for instance.
+     *
      * @return All needed parameters for this location (data set id, url, job name...).
      */
     @JsonIgnore
-    // Ignored so it not stored in JSON
     List<Parameter> getParameters();
+
+    /**
+     * If available, the json schema representation of the parameters.
+     */
+    @JsonIgnore
+    ComponentProperties getParametersAsSchema();
+
+    /**
+     * Tell user if he should call the Dataprep internal {@link #getParameters()} or the TComp oriented {@link #getParametersAsSchema()}.
+     *
+     * @return true if {@link #getParametersAsSchema()} should be use, false for {@link #getParameters()}
+     */
+    @JsonIgnore
+    boolean isSchemaOriented();
 
     @JsonIgnore
     // Ignored so it not stored in JSON
@@ -61,4 +78,21 @@ public interface DataSetLocation extends Serializable {
      */
     @JsonIgnore
     boolean isEnabled();
+
+    /**
+     * @return the location title.
+     */
+    default String getTitle() {
+        // it's needed for some imports that hold their title, by default it's null
+        return null;
+    }
+
+    /**
+     * @return the location label.
+     */
+    default String getLabel() {
+        // it's needed for some imports that hold their label, by default it's null
+        return null;
+    }
+
 }

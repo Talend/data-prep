@@ -31,6 +31,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
@@ -146,7 +147,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .build());
         // @formatter:on
 
-        return parameters;
+        return ActionsBundle.attachToAction(parameters, this);
     }
 
     private Parameter buildDecimalSeparatorParameter(String prefix) {

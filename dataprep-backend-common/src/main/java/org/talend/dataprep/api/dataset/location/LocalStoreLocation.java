@@ -20,6 +20,7 @@ import java.util.Objects;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.FormatFamily;
 
 /**
@@ -35,9 +36,6 @@ public class LocalStoreLocation implements DataSetLocation {
         return false;
     }
 
-    /**
-     * @see DataSetLocation#getLocationType()
-     */
     @Override
     public String getLocationType() {
         return NAME;
@@ -47,6 +45,12 @@ public class LocalStoreLocation implements DataSetLocation {
     public List<Parameter> getParameters() {
         return Collections.singletonList(new Parameter("datasetFile", ParameterType.FILE, "", false, false, "*.csv"));
     }
+
+    @Override
+    public ComponentProperties getParametersAsSchema() { return null; }
+
+    @Override
+    public boolean isSchemaOriented() { return false; }
 
     @Override
     public String getAcceptedContentType() {
@@ -63,9 +67,6 @@ public class LocalStoreLocation implements DataSetLocation {
         return true;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
     @Override
     public boolean equals(Object o) {
 
@@ -77,9 +78,6 @@ public class LocalStoreLocation implements DataSetLocation {
         return !(o == null || getClass() != o.getClass());
     }
 
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return Objects.hash(getClass());

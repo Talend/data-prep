@@ -345,7 +345,7 @@ public class PipelineTest {
     public void testCleanUp() throws Exception {
         // Given
         final TransformationContext transformationContext = new TransformationContext();
-        final ActionContext actionContext = transformationContext.create((r, ac) -> r);
+        final ActionContext actionContext = transformationContext.create((r, ac) -> r, new RowMetadata());
         final AtomicInteger wasDestroyed = new AtomicInteger(0);
 
         Destroyable destroyable = new Destroyable() {

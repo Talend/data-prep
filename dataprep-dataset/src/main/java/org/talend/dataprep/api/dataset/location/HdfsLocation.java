@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.FormatFamily;
 
 /**
@@ -40,9 +41,6 @@ public class HdfsLocation extends AbstractUrlLocation implements DataSetLocation
         return false;
     }
 
-    /**
-     * @see DataSetLocation#getLocationType()
-     */
     @Override
     public String getLocationType() {
         return NAME;
@@ -55,6 +53,12 @@ public class HdfsLocation extends AbstractUrlLocation implements DataSetLocation
                 new Parameter("url", ParameterType.STRING, "", false, false, "hdfs://host:port/file")
         );
     }
+
+    @Override
+    public ComponentProperties getParametersAsSchema() { return null; }
+
+    @Override
+    public boolean isSchemaOriented() { return false; }
 
     @Override
     public String getAcceptedContentType() {
@@ -71,17 +75,11 @@ public class HdfsLocation extends AbstractUrlLocation implements DataSetLocation
         return true;
     }
 
-    /**
-     * @see Object#toString()
-     */
     @Override
     public String toString() {
         return "HdfsLocation{" + "url='" + url + '\'' + '}';
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -92,9 +90,6 @@ public class HdfsLocation extends AbstractUrlLocation implements DataSetLocation
         return Objects.equals(url, that.url);
     }
 
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return Objects.hash(url);

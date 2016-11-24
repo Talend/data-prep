@@ -14,6 +14,7 @@
 import angular from 'angular';
 
 import { AppHeaderBar, Breadcrumbs,	IconsProvider, SidePanel, List } from 'react-talend-components';
+import Form from 'react-talend-forms';
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
 import LayoutContainer from './layout/layout-container';
@@ -37,7 +38,8 @@ angular.module(MODULE_NAME,
 	.directive('pureList', ['reactDirective', reactDirective => reactDirective(List)])
 	.directive('pureAppSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
-	.component('appHeaderBar', AppHeaderBarContainer)
+	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
+    .component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
 	.component('reactPreparationList', PreparationListContainer) // TODO rename this when preparation-list is removed
 	.component('sidePanel', SidePanelContainer)

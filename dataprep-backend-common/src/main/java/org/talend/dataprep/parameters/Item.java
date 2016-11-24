@@ -28,6 +28,8 @@ public interface Item {
 
     List<Parameter> getParameters();
 
+    Item attach(Object parent);
+
     class Builder {
 
         private String label;

@@ -65,8 +65,8 @@ const settingsMock = {
 			},
 			toolbar: {
 				sortBy: [
-					{ id: 'name', name: 'Name', field: 'name' },
-					{ id: 'date', name: 'Date', field: 'creationDate' },
+					{ id: 'name', name: 'Name' },
+					{ id: 'date', name: 'Creation Date' },
 				],
 				actions: ['preparation:create:folder'],
 				onClickAdd: 'preparation:create',

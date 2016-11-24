@@ -36,6 +36,7 @@ public class InvalidMarker implements Function<DataSetRow, DataSetRow> {
     public DataSetRow apply(DataSetRow dataSetRow) {
         // get the analyze from beginning
         final String[] values = dataSetRow.filter(columns).order(columns).toArray(DataSetRow.SKIP_TDP_ID);
+        analyzer.analyze(values);
         final List<Analyzers.Result> columnsAnalysis = analyzer.getResult();
 
         // we will mark the columns that has a new invalid

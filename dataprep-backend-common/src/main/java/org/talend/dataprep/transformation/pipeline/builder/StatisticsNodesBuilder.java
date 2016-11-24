@@ -209,7 +209,7 @@ public class StatisticsNodesBuilder {
     }
 
     private Node getInvalidDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new InvalidDetectionNode(analyzerService, columnFilter);
+        return new InvalidDetectionNode(columnFilter);
     }
 
     private Node getQualityStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {

@@ -1,7 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
-import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
@@ -11,32 +9,29 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.InvalidMarker;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.date.Providers;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-/**
- * Allow to mark (and unmark) invalid values in rows that go through the pipeline.
- */
 public class InvalidDetectionNode extends ColumnFilteredNode implements Monitored {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidDetectionNode.class);
-
-    private final Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer;
-
-    private InvalidMarker invalidMarker;
-
-    private Analyzer<Analyzers.Result> configuredAnalyzer;
 
     private long totalTime;
 
     private long count;
 
-    public InvalidDetectionNode(final AnalyzerService analyzerService, final Predicate<? super ColumnMetadata> filter) {
+    private transient InvalidMarker invalidMarker;
+
+    private transient Analyzer<Analyzers.Result> configuredAnalyzer;
+
+    private transient AnalyzerService analyzerService;
+
+    public InvalidDetectionNode(final Predicate<? super ColumnMetadata> filter) {
         super(filter);
-        this.analyzer = c -> analyzerService.build(c, AnalyzerService.Analysis.QUALITY);
     }
 
     @Override
@@ -45,16 +40,21 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
         try {
             performColumnFilter(row, metadata);
             if (configuredAnalyzer == null) {
-                this.configuredAnalyzer = analyzer.apply(filteredColumns);
+                this.configuredAnalyzer = getAnalyzerService().build(filteredColumns, AnalyzerService.Analysis.QUALITY);
                 this.invalidMarker = new InvalidMarker(filteredColumns, configuredAnalyzer);
             }
-            configuredAnalyzer.analyze(
-                    row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
             super.receive(invalidMarker.apply(row), metadata);
         } finally {
             totalTime += System.currentTimeMillis() - start;
             count++;
         }
+    }
+
+    private AnalyzerService getAnalyzerService() {
+        if (analyzerService == null) {
+            this.analyzerService = Providers.get(AnalyzerService.class);
+        }
+        return analyzerService;
     }
 
     @Override

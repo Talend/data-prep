@@ -90,7 +90,7 @@ export default class ImportCtrl {
 						},
 					];
 
-					this.onDatastoreFormChange = this.onFormChange.bind(this);
+					this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
 
 					this.onDatastoreFormSubmit = () => {};
 
@@ -136,16 +136,16 @@ export default class ImportCtrl {
 
 	/**
 	 * @ngdoc method
-	 * @name onFormChange
+	 * @name onDatastoreFormChange
 	 * @methodOf data-prep.import.controller:ImportCtrl
-	 * @description Generic form change handler
+	 * @description Datastore form change handler
 	 * @param formData All data as form properties
 	 * @param formId ID attached to the form
 	 * @param propertyName Property which has triggered change handler
 	 */
-	onFormChange(formData, formId, propertyName) {
+	onDatastoreFormChange(formData, formId, propertyName) {
 		this.isFetchingParameters = true;
-		this.ImportRestService.reimportParameters(formId, propertyName, formData)
+		this.ImportRestService.refreshParameters(formId, propertyName, formData)
 			.then((response) => {
 				this.currentInputType.datastoreForm = response.data;
 			})

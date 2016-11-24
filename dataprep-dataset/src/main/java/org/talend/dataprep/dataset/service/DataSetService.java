@@ -1041,8 +1041,10 @@ public class DataSetService extends BaseDataSetService {
     // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented ComponentProperties
     public Object getImportParameters(@PathVariable("import") final String importType) {
         DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
-        Object parametersToReturn = null;
-        if (matchingDatasetLocation != null) {
+        Object parametersToReturn;
+        if (matchingDatasetLocation == null) {
+            parametersToReturn = emptyList();
+        } else {
             if (matchingDatasetLocation.isSchemaOriented()) {
                 parametersToReturn = matchingDatasetLocation.getParametersAsSchema();
             } else {

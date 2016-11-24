@@ -12,7 +12,6 @@
 package org.talend.dataprep.parameters.jsonschema;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
  * Representation of dynamic form structure.

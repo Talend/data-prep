@@ -54,7 +54,7 @@ public interface DataSetLocation extends Serializable {
      * If available, the json schema representation of the parameters.
      */
     @JsonIgnore
-    default ComponentProperties getParametersAsSchema() { return null; }
+    ComponentProperties getParametersAsSchema();
 
     /**
      * Tell user if he should call the Dataprep internal {@link #getParameters()} or the TComp oriented {@link #getParametersAsSchema()}.
@@ -62,7 +62,7 @@ public interface DataSetLocation extends Serializable {
      * @return true if {@link #getParametersAsSchema()} should be use, false for {@link #getParameters()}
      */
     @JsonIgnore
-    default boolean isSchemaOriented() { return false; }
+    boolean isSchemaOriented();
 
     @JsonIgnore
     // Ignored so it not stored in JSON

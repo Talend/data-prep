@@ -59,7 +59,7 @@ public class SelectParameterTest extends ParameterBaseTest {
     @Test
     public void shouldCreateLocalizedItem() {
         // when
-        final SelectParameter params = SelectParameter.Builder.builder().item("key").build();
+        final SelectParameter params = SelectParameter.Builder.builder().item("key", "key").build();
 
         // then
         assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(LocalizedItem.class));
@@ -71,7 +71,7 @@ public class SelectParameterTest extends ParameterBaseTest {
         final SelectParameter params = SelectParameter
                 .Builder
                 .builder()
-                .item("key", new Parameter())
+                .item("key", "key", new Parameter())
                 .build();
 
         // then

@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.ServiceBaseTests;
-import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,10 +30,4 @@ public abstract class TransformationBaseTest extends ServiceBaseTests {
     @Autowired
     protected ObjectMapper mapper;
 
-    protected boolean includeAction(ActionDefinition actionMetadata) {
-        if (actionMetadata instanceof TransformationFailureAction || actionMetadata instanceof FailedAction) {
-            return false;
-        }
-        return true;
-    }
 }

@@ -16,7 +16,7 @@ package org.talend.dataprep.transformation;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
@@ -28,7 +28,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * A unit test action: only use to test unexpected action failures.
  */
-@Component(AbstractActionMetadata.ACTION_BEAN_PREFIX + FailedAction.FAILED_ACTION)
+@Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + FailedAction.FAILED_ACTION)
 public class FailedAction extends AbstractActionMetadata implements ColumnAction, CellAction, DataSetAction {
 
     public static final String FAILED_ACTION = "testfailedaction";

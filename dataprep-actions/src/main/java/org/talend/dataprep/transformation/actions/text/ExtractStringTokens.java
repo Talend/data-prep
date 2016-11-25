@@ -94,8 +94,8 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                         .name(MODE_PARAMETER)
-                        .item(MULTIPLE_COLUMNS_MODE, new Parameter(LIMIT, INTEGER, "4"))
-                        .item(SINGLE_COLUMN_MODE, new Parameter(PARAMETER_SEPARATOR, STRING, ","))
+                        .item(MULTIPLE_COLUMNS_MODE, MULTIPLE_COLUMNS_MODE, new Parameter(LIMIT, INTEGER, "4"))
+                        .item(SINGLE_COLUMN_MODE, SINGLE_COLUMN_MODE, new Parameter(PARAMETER_SEPARATOR, STRING, ","))
                         .defaultValue(MULTIPLE_COLUMNS_MODE)
                         .build()
         );

@@ -23,11 +23,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.parameters.Item;
+import org.talend.dataprep.parameters.LocalizedItem;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
-import org.talend.dataprep.transformation.FailedAction;
 import org.talend.dataprep.transformation.TransformationBaseTest;
-import org.talend.dataprep.transformation.TransformationFailureAction;
 
 /**
  * Test that a translation exists for i18n keys label/desc for each action and each params/item.
@@ -39,88 +38,64 @@ public class TestI18nKeysForActionsTest extends TransformationBaseTest {
     @Autowired
     private ActionDefinition[] allActions;
 
-    private void assertI18nKeyExists(final String label) {
-        if(label.startsWith("action.")
-                && !label.contains(FailedAction.FAILED_ACTION)
-                && !label.contains(TransformationFailureAction.TRANSFORMATION_FAILURE_ACTION)) {
-            fail("missing key <" + label + ">");
-        }
-    }
-
     @Test
-    public void test() {
+    public void allActionShouldHaveTranslations() {
         for (ActionDefinition actionMetadata : allActions) {
-            if (!includeAction(actionMetadata)) {
-                continue;
-            }
-
             final String name = actionMetadata.getName();
             assertNotNull(name);
             assertNotEquals("", name);
 
-            String label = actionMetadata.getLabel();
-            assertNotNull(label);
-            assertNotEquals("", label);
-            assertI18nKeyExists(label);
-
-            String desc = actionMetadata.getDescription();
-            assertNotNull(desc);
-            assertNotEquals("", desc);
-            assertI18nKeyExists(desc);
+            actionMetadata.getLabel();
+            actionMetadata.getDescription();
 
             String toString = actionMetadata.getName() + "," + actionMetadata.getCategory() + "," + actionMetadata.getLabel()
                     + "," + actionMetadata.getDescription();
             LOGGER.info(toString);
 
             for (Parameter param : actionMetadata.getParameters()) {
-                String pname = param.getName();
-                assertNotNull(pname);
-                assertNotEquals("", pname);
-
-                String plabel = param.getLabel();
-                assertNotNull(plabel);
-                assertNotEquals("", plabel);
-                assertI18nKeyExists("parameter." + pname + ".label");
-
-                String pdesc = param.getDescription();
-                assertNotNull(pdesc);
-                assertNotEquals("", pdesc);
-                assertI18nKeyExists("parameter." + pname + ".desc");
-
-                LOGGER.trace("  - " + pname + " | " + plabel + " | " + pdesc);
-
-                if (param instanceof SelectParameter) {
-
-                    List<Item> values = (List<Item>) param.getConfiguration().get("values");
-
-                    for (Item value : values) {
-                        LOGGER.trace("    - " + value);
-
-
-                        for (Parameter inlineParam : value.getParameters()) {
-
-                            String oname = inlineParam.getName();
-                            assertNotNull(oname);
-                            assertNotEquals("", oname);
-
-                            String olabel = inlineParam.getLabel();
-                            assertNotNull(olabel);
-                            assertNotEquals("", olabel);
-                            assertI18nKeyExists("parameter." + oname + ".label");
-
-                            String odesc = inlineParam.getDescription();
-                            assertNotNull(odesc);
-                            assertNotEquals("", odesc);
-                            assertI18nKeyExists("parameter." + oname + ".desc");
-
-                            LOGGER.trace("      - " + oname + " | " + olabel + " | " + odesc);
-                        }
-
-                    }
-
-                }
+                assertParameter(param);
             }
-            LOGGER.debug("");
+        }
+    }
+
+    private void assertParameter(Parameter param) {
+        String parameterName = param.getName();
+        assertNotNull(parameterName);
+        assertNotEquals("", parameterName);
+
+        String parameterLabel = param.getLabel();
+        assertNotNull(parameterLabel);
+        assertNotEquals("", parameterLabel);
+
+        String parameterDescription = param.getDescription();
+        assertNotNull(parameterDescription);
+        assertNotEquals("", parameterDescription);
+
+        LOGGER.trace("  - " + parameterName + " | " + parameterLabel + " | " + parameterDescription);
+        if (param instanceof SelectParameter) {
+            List<Item> values = ((SelectParameter) param).getItems();
+            for (Item value : values) {
+                assertItem(value);
+            }
+        }
+    }
+
+    private void assertItem(Item value) {
+        LOGGER.trace("    - " + value);
+
+        if (value instanceof LocalizedItem) {
+            try {
+                LOGGER.trace("    - " + value.getLabel());
+            } catch (Exception e) {
+                fail("missing key <" + value.getValue() + ">");
+            }
+        }
+
+        for (Parameter inlineParam : value.getParameters()) {
+            String name = inlineParam.getName();
+            String label = inlineParam.getLabel();
+            String desc = inlineParam.getDescription();
+            LOGGER.trace("      - " + name + " | " + label + " | " + desc);
         }
     }
 

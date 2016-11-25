@@ -138,20 +138,19 @@ public class FormatPhoneNumber extends AbstractActionMetadata implements ColumnA
         final List<Parameter> parameters = super.getParameters();
         parameters.add(SelectParameter.Builder.builder() //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
-                .item(OTHER_COLUMN_MODE, //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
                         new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
                                 ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //
-                .item(CONSTANT_MODE, //
+                .item(CONSTANT_MODE, CONSTANT_MODE, //
                         SelectParameter.Builder.builder().name(REGIONS_PARAMETER_CONSTANT_MODE).canBeBlank(true) //
-                                .item(US_REGION_CODE) //
-                                .item(FR_REGION_CODE) //
-                                .item(UK_REGION_CODE) //
-                                .item(DE_REGION_CODE) //
+                                .item(US_REGION_CODE, US_REGION_CODE) //
+                                .item(FR_REGION_CODE, FR_REGION_CODE) //
+                                .item(UK_REGION_CODE, UK_REGION_CODE) //
+                                .item(DE_REGION_CODE, DE_REGION_CODE) //
                                 .item(OTHER_REGION_TO_BE_SPECIFIED,
                                         new Parameter(MANUAL_REGION_PARAMETER_STRING, ParameterType.STRING, EMPTY))
                                 .defaultValue(US_REGION_CODE).build()) //
-
                 .defaultValue(CONSTANT_MODE).build());
 
         parameters.add(SelectParameter.Builder.builder().name(FORMAT_TYPE_PARAMETER) //

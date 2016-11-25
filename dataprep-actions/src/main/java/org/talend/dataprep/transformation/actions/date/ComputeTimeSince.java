@@ -108,13 +108,13 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
         parameters.add(SelectParameter.Builder.builder() //
                 .name(SINCE_WHEN_PARAMETER) //
                 .canBeBlank(false) //
-                .item(NOW_SERVER_SIDE_MODE) //
-                .item(SPECIFIC_DATE_MODE, new Parameter(SPECIFIC_DATE_PARAMETER, //
+                .item(NOW_SERVER_SIDE_MODE, NOW_SERVER_SIDE_MODE) //
+                .item(SPECIFIC_DATE_MODE, SPECIFIC_DATE_MODE, new Parameter(SPECIFIC_DATE_PARAMETER, //
                         ParameterType.DATE, //
                         StringUtils.EMPTY, //
                         false, //
                         false)) //
-                .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, //
                         ParameterType.COLUMN, //
                         StringUtils.EMPTY, //
                         false, //

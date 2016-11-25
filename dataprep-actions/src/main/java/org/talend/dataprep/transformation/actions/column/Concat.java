@@ -100,7 +100,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         parameters.add(new Parameter(PREFIX_PARAMETER, ParameterType.STRING, StringUtils.EMPTY));
 
         parameters.add(SelectParameter.Builder.builder().name(MODE_PARAMETER)
-                .item(OTHER_COLUMN_MODE,
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, StringUtils.EMPTY, //
                                 false, false, StringUtils.EMPTY),
                         new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY), //
@@ -110,7 +110,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
                                 .item(ALWAYS) //
                                 .defaultValue(BOTH_NOT_EMPTY) //
                                 .build())//
-                .item(CONSTANT_MODE) //
+                .item(CONSTANT_MODE, CONSTANT_MODE) //
                 .defaultValue(OTHER_COLUMN_MODE) //
                 .build());
 

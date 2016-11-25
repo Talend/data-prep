@@ -60,15 +60,31 @@ public class ActionsBundle implements MessagesBundle {
         actionToResourceBundle.put(fallBackKey, ResourceBundle.getBundle(BUNDLE_NAME, Locale.ENGLISH));
     }
 
+    /**
+     * Link all <code>parameters</code> to the <code>parent</code>: when looking for parameters translation, bundle
+     * will use <code>parent</code> to find resource bundle.
+     * @param parameters The {@link Parameter parameters} to attach to <code>parent</code>.
+     * @param parent An object to be used in resource bundle search.
+     * @return A list of {@link Parameter parameters} that will use <code>parent</code> to look for message keys.
+     * @see Parameter#attach(Object)
+     */
+    public static List<Parameter> attachToAction(List<Parameter> parameters, Object parent) {
+        return parameters.stream().map(p -> p.attach(parent)).collect(Collectors.toList());
+    }
+
     private String getMessage(Object action, Locale locale, String code, Object... args) {
         ResourceBundle bundle = findBundle(action, locale);
         // We can put some cache here if default internal caching it is not enough
         MessageFormat messageFormat;
-        try {
+        if (bundle.containsKey(code)) {
             messageFormat = new MessageFormat(bundle.getString(code));
-        } catch (MissingResourceException e) {
-            LOGGER.info("Unable to find key '{}'.", code, e);
-            throw new TalendRuntimeException(BaseErrorCodes.MISSING_I18N, e);
+        } else {
+            try {
+                messageFormat = new MessageFormat(actionToResourceBundle.get(fallBackKey).getString(code));
+            } catch (MissingResourceException e) {
+                LOGGER.info("Unable to find key '{}' using context '{}'.", code, action, e);
+                throw new TalendRuntimeException(BaseErrorCodes.MISSING_I18N, e);
+            }
         }
         return messageFormat.format(args);
     }
@@ -103,12 +119,9 @@ public class ActionsBundle implements MessagesBundle {
         return bundle;
     }
 
-    public static List<Parameter> attachToAction(List<Parameter> parameters, Object parent) {
-        return parameters.stream().map(p -> p.attach(parent)).collect(Collectors.toList());
-    }
-
     /**
-     * Fetches action label at {@code action.<action_name>.label} in the dataprep actions resource bundle.
+     * Fetches action label at {@code action.<action_name>.label} in the dataprep actions resource bundle. If message does not
+     * exist, code will lookup in {@link #fallBackKey} resource bundle (i.e. Data Prep one) for message.
      */
     public String actionLabel(Object action, Locale locale, String actionName, Object... values) {
         final String actionLabelKey = ACTION_PREFIX + actionName + LABEL_SUFFIX;
@@ -116,7 +129,8 @@ public class ActionsBundle implements MessagesBundle {
     }
 
     /**
-     * Fetches action description at {@code action.<action_name>.desc} in the dataprep actions resource bundle.
+     * Fetches action description at {@code action.<action_name>.desc} in the dataprep actions resource bundle. If message does
+     * not exist, code will lookup in {@link #fallBackKey} resource bundle (i.e. Data Prep one) for message.
      */
     public String actionDescription(Object action, Locale locale, String actionName, Object... values) {
         final String actionDescriptionKey = ACTION_PREFIX + actionName + DESCRIPTION_SUFFIX;
@@ -124,7 +138,8 @@ public class ActionsBundle implements MessagesBundle {
     }
 
     /**
-     * Fetches parameter label at {@code parameter.<parameter_name>.label} in the dataprep actions resource bundle.
+     * Fetches parameter label at {@code parameter.<parameter_name>.label} in the dataprep actions resource bundle. If message
+     * does not exist, code will lookup in {@link #fallBackKey} resource bundle (i.e. Data Prep one) for message.
      */
     public String parameterLabel(Object action, Locale locale, String parameterName, Object... values) {
         final String parameterLabelKey = PARAMETER_PREFIX + parameterName + LABEL_SUFFIX;
@@ -132,7 +147,8 @@ public class ActionsBundle implements MessagesBundle {
     }
 
     /**
-     * Fetches parameter description at {@code parameter.<parameter_name>.desc} in the dataprep actions resource bundle.
+     * Fetches parameter description at {@code parameter.<parameter_name>.desc} in the dataprep actions resource bundle. If
+     * message does not exist, code will lookup in {@link #fallBackKey} resource bundle (i.e. Data Prep one) for message.
      */
     public String parameterDescription(Object action, Locale locale, String parameterName, Object... values) {
         final String parameterDescriptionKey = PARAMETER_PREFIX + parameterName + DESCRIPTION_SUFFIX;
@@ -140,16 +156,12 @@ public class ActionsBundle implements MessagesBundle {
     }
 
     /**
-     * Fetches choice at {@code choice.<choice_name>} in the dataprep actions resource bundle.
+     * Fetches choice at {@code choice.<choice_name>} in the dataprep actions resource bundle. If message does not exist, code
+     * will lookup in {@link #fallBackKey} resource bundle (i.e. Data Prep one) for message.
      */
     public String choice(Object action, Locale locale, String choiceName, Object... values) {
         final String choiceKey = CHOICE_PREFIX + choiceName;
-        try {
-            return getMessage(action, locale, choiceKey, values);
-        } catch (Exception e) {
-            LOGGER.debug("Unable to find choice key '{}' for choice '{}': '{}'", choiceKey, choiceName, e);
-            return choiceName;
-        }
+        return getMessage(action, locale, choiceKey, values);
     }
 
     @Override

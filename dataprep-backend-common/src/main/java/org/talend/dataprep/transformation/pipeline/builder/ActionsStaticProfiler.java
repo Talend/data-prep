@@ -96,7 +96,8 @@ class ActionsStaticProfiler {
         // when only metadata is modified, we need to re-evaluate the invalids entries
         boolean needOnlyInvalidAnalysis = !needFullAnalysis && !metadataModifiedColumns.isEmpty();
         // only the columns with modified values or new columns need the schema + stats analysis
-        Predicate<ColumnMetadata> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns, valueModifiedColumns);
+        SerializablePredicate<ColumnMetadata> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns,
+                valueModifiedColumns);
         // only the columns with metadata change or value changes need to re-evaluate invalids
         Predicate<ColumnMetadata> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns);
 
@@ -106,9 +107,11 @@ class ActionsStaticProfiler {
 
     private static class FilterForFullAnalysis implements SerializablePredicate<ColumnMetadata> {
 
-        final Set<String> originalColumns;
+        private static final long serialVersionUID = 1L;
 
-        final Set<String> valueModifiedColumns;
+        private final Set<String> originalColumns;
+
+        private final Set<String> valueModifiedColumns;
 
         private FilterForFullAnalysis(Set<String> originalColumns, Set<String> valueModifiedColumns) {
             this.originalColumns = originalColumns;
@@ -123,11 +126,14 @@ class ActionsStaticProfiler {
 
     private static class FilterForInvalidAnalysis implements SerializablePredicate<ColumnMetadata> {
 
-        final Predicate<ColumnMetadata> filterForFullAnalysis;
+        private static final long serialVersionUID = 1L;
 
-        final Set<String> metadataModifiedColumns;
+        private final SerializablePredicate<ColumnMetadata> filterForFullAnalysis;
 
-        public FilterForInvalidAnalysis(Predicate<ColumnMetadata> filterForFullAnalysis, Set<String> metadataModifiedColumns) {
+        private final Set<String> metadataModifiedColumns;
+
+        private FilterForInvalidAnalysis(SerializablePredicate<ColumnMetadata> filterForFullAnalysis,
+                Set<String> metadataModifiedColumns) {
             this.filterForFullAnalysis = filterForFullAnalysis;
             this.metadataModifiedColumns = metadataModifiedColumns;
         }

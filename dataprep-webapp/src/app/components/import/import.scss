@@ -58,7 +58,8 @@
 		text-align: center;
 
 		legend,
-		.field-description {
+		.field-description,
+		fieldset > div > div {
 			text-align: left;
 		}
 

@@ -15,15 +15,14 @@
  * @name data-prep.services.import.service:ImportRestService
  * @description Import service. This service provide the entry point to the backend import REST api.<br/>
  */
-export default class ImportRestService {
+export default function ImportRestService($http, RestURLs) {
+	'ngInject';
 
-	constructor($http, RestURLs) {
-		'ngInject';
-
-		this.$http = $http;
-		this.RestURLs = RestURLs;
-	}
-
+	return {
+		importTypes,
+		importParameters,
+		refreshParameters,
+	};
 	/**
 	 * @ngdoc method
 	 * @name importTypes
@@ -31,8 +30,8 @@ export default class ImportRestService {
 	 * @description Fetch the available import types
 	 * @returns {Promise}  The GET call promise
 	 */
-	importTypes() {
-		return this.$http.get(`${this.RestURLs.datasetUrl}/imports`);
+	function importTypes() {
+		return $http.get(RestURLs.datasetUrl + '/imports');
 	}
 
 	/**
@@ -42,8 +41,8 @@ export default class ImportRestService {
 	 * @description Fetch the available import parameters
 	 * @returns {Promise}  The GET call promise
 	 */
-	importParameters(locationType) {
-		return this.$http.get(`${this.RestURLs.datasetUrl}/imports/${locationType}/parameters`);
+	function importParameters(locationType) {
+		return $http.get(RestURLs.datasetUrl + '/imports/' + locationType + '/parameters');
 	}
 
 	/**
@@ -53,9 +52,7 @@ export default class ImportRestService {
 	 * @description Refresh the available import parameters
 	 * @returns {Promise}  The POST call promise
 	 */
-	refreshParameters(formId, propertyName, formData) {
-		if (formId) {
-			return this.$http.post(`${this.RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData);
-		}
+	function refreshParameters(formId, propertyName, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData);
 	}
 }

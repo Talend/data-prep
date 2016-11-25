@@ -199,18 +199,4 @@ describe('Import REST Service', () => {
 		// then
 		expect(params).toEqual(expectedResult);
 	}));
-
-	it('should not refresh import parameters when form id is null', inject(($rootScope, RestURLs, ImportRestService) => {
-		// given
-		const formId = null;
-		const propertyName = 'propertyName';
-		const formData = { propertyName: 'abc' };
-
-		// when
-		const promise = ImportRestService.refreshParameters(formId, propertyName, formData);
-		$rootScope.$digest();
-
-		// then
-		expect(promise).toBeUndefined();
-	}));
 });

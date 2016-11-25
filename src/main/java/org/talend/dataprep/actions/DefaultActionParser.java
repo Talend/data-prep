@@ -68,9 +68,9 @@ public class DefaultActionParser implements ActionParser {
         DefaultActionParser.allowNonDistributedActions = allowNonDistributedActions;
     }
 
-    private static void assertPreparation(Object actions) {
-        if (actions == null) {
-            throw new IllegalArgumentException("Actions can not be null.");
+    private static void assertPreparation(Object preparation) {
+        if (preparation == null) {
+            throw new IllegalArgumentException("Preparation can not be null.");
         }
     }
 

@@ -31,7 +31,7 @@
         <div class="modal-title">{{$ctrl.currentInputType.title}}</div>
         <br/>
         <form name="$ctrl.datasetForm"
-              ng-if="!$ctrl.currentInputType.datastoreForm"
+              ng-if="!$ctrl.datastoreForm"
               ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
 
             <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
@@ -47,8 +47,8 @@
         </form>
         <div class="tcomp">
             <div class="datastore"
-                 ng-if="$ctrl.currentInputType.datastoreForm">
-                <talend-form data="$ctrl.currentInputType.datastoreForm"
+                 ng-if="$ctrl.datastoreForm">
+                <talend-form data="$ctrl.datastoreForm"
                                    buttonBlockClass="form-actions"
                                    actions="$ctrl.datastoreFormActions"
                                    on-change="$ctrl.onDatastoreFormChange"

@@ -32,7 +32,7 @@ function getDefaultConfig(options) {
 		module: {
 			preLoaders: [],
 			loaders: [
-				{ test: /\.js$/, loaders: ['ng-annotate', 'babel'], exclude: /node_modules/ },
+				{ test: /\.js$/, loaders: ['ng-annotate', 'babel?cacheDirectory'], exclude: /node_modules/ },
 				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-components/,},
 				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-components/, }, //css moodules  local scope
 				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
@@ -163,7 +163,10 @@ function addPlugins(config, options) {
 		 *
 		 * See: https://github.com/webpack/docs/wiki/optimization
 		 */
-		new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' })
+		new webpack.optimize.CommonsChunkPlugin({
+			name: 'vendor',
+			minChunks: Infinity,
+		})
 	);
 }
 

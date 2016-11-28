@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.actions;
 
-import static java.util.function.Function.identity;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.FORBID_DISTRIBUTED;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CREATE_COLUMNS;
 
@@ -172,7 +171,7 @@ public class DefaultActionParser implements ActionParser {
         final JsonNode actionNode = preparationNode.get("actions");
         if (actionNode == null) {
             LOGGER.info("No action defined in preparation, returning identity function");
-            return identity();
+            return new NoOpFunction();
         }
 
         // Get row metadata JSON node
@@ -286,6 +285,14 @@ public class DefaultActionParser implements ActionParser {
             } else {
                 return null;
             }
+        }
+    }
+
+    // Can't use identity() because result isn't serializable
+    private static class NoOpFunction implements Function<IndexedRecord, IndexedRecord>, Serializable {
+        @Override
+        public IndexedRecord apply(IndexedRecord indexedRecord) {
+            return indexedRecord;
         }
     }
 }

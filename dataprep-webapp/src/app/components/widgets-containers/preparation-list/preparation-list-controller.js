@@ -109,26 +109,29 @@ export default class PreparationListCtrl {
 	initListProps() {
 		// list title click
 		const listSettings = this.appSettings.views['listview:preparations'].list;
-		const titleClickAction = this.appSettings.actions[listSettings.onTitleClick];
+		const titleClickAction = this.appSettings.actions[listSettings.titleProps.onClick];
 		const prepDispatcher = this.SettingsActionsService.createDispatcher(titleClickAction);
 
 		// folder title click
 		const folderListSettings = this.appSettings.views['listview:folders'].list;
-		const folderClickAction = this.appSettings.actions[folderListSettings.onTitleClick];
+		const folderClickAction = this.appSettings.actions[folderListSettings.titleProps.onClick];
 		const folderDispatcher = this.SettingsActionsService.createDispatcher(folderClickAction);
 
 		// list item title click
-		const onTitleClick = (event, model) => {
-			if (this.adapted.folders.indexOf(model) > -1) {
-				return folderDispatcher(event, model);
+		const onClick = (event, entity) => {
+			if (this.adapted.folders.indexOf(entity) > -1) {
+				return folderDispatcher(event, entity);
 			}
-			return prepDispatcher(event, model);
+			return prepDispatcher(event, entity);
 		};
 
 		// lit props
 		this.listProps = {
 			...listSettings,
-			onTitleClick,
+			titleProps: {
+				...listSettings.titleProps,
+				onClick,
+			},
 		};
 	}
 

@@ -68,7 +68,7 @@ describe('App header bar container', () => {
 			// then
 			const onboardingIcon = element.find('#onboarding\\:preparation');
 			expect(onboardingIcon.attr('name')).toBe('Click here to discover the application');
-			expect(onboardingIcon.find('>i').eq(0).hasClass('icon-student-user-2')).toBe(true);
+			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-board');
 		});
 
 		it('should create feedback icon', () => {
@@ -78,7 +78,7 @@ describe('App header bar container', () => {
 			// then
 			const onboardingIcon = element.find('#modal\\:feedback');
 			expect(onboardingIcon.attr('name')).toBe('Send feedback to Talend');
-			expect(onboardingIcon.find('>i').eq(0).hasClass('icon-bubbles-talk-1')).toBe(true);
+			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-bubbles');
 		});
 
 		it('should create help icon', () => {
@@ -88,7 +88,7 @@ describe('App header bar container', () => {
 			// then
 			const onboardingIcon = element.find('#external\\:help');
 			expect(onboardingIcon.attr('name')).toBe('Open Online Help');
-			expect(onboardingIcon.find('>i').eq(0).hasClass('icon-help')).toBe(true);
+			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-question-circle');
 		});
 	});
 
@@ -105,7 +105,7 @@ describe('App header bar container', () => {
 			const onboardingIcon = element.find('#onboarding\\:preparation');
 			onboardingIcon.click((e) => { e.preventDefault(); });
 			onboardingIcon[0].click();
-			
+
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@onboarding/START_TOUR');

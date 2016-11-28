@@ -1,5 +1,6 @@
 const appConf = require('./app.conf.js');
 const getLicense = require('./license');
+const SASS_DATA = require('./sass.conf');
 
 const path = require('path');
 const webpack = require('webpack');
@@ -50,6 +51,9 @@ function getDefaultConfig(options) {
 				'window.jQuery': 'jquery'
 			})
 		],
+		sassLoader: {
+			data: SASS_DATA,
+		},
 		cache: true,
 		devtool: options.devtool,
 		debug: options.debug

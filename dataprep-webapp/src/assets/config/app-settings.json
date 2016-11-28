@@ -22,7 +22,9 @@
     },
     "listview:folders": {
       "list": {
-        "onTitleClick": "menu:folders"
+        "titleProps": {
+          "onClick": "menu:folders"
+        }
       }
     },
     "listview:preparations": {
@@ -38,9 +40,11 @@
           { "key": "nbSteps", "label": "Steps" }
         ],
         "items": [],
-        "iconKey": "icon",
-        "titleKey": "name",
-        "onTitleClick": "menu:playground:preparation"
+        "titleProps": {
+          "iconKey": "icon",
+          "key": "name",
+          "onClick": "menu:playground:preparation"
+        }
       },
       "toolbar": {
         "sortBy": [
@@ -59,7 +63,7 @@
     "menu:preparations": {
       "id": "menu:preparations",
       "name": "Preparations",
-      "icon": "talend-cluster",
+      "icon": "talend-dataprep",
       "type": "@@router/GO",
       "payload": {
         "method": "go",
@@ -83,7 +87,7 @@
     "menu:datasets": {
       "id": "menu:datasets",
       "name": "Datasets",
-      "icon": "talend-dataprep",
+      "icon": "talend-cluster",
       "type": "@@router/GO",
       "payload": {
         "method": "go",

@@ -37,7 +37,9 @@ const settingsMock = {
 		},
 		'listview:folders': {
 			list: {
-				onTitleClick: 'menu:folders',
+				titleProps: {
+					onClick: 'menu:folders',
+				},
 			},
 		},
 		'listview:preparations': {
@@ -53,9 +55,11 @@ const settingsMock = {
 					{ key: 'nbSteps', label: 'Nb steps' },
 				],
 				items: [],
-				iconKey: 'icon',
-				titleKey: 'name',
-				onTitleClick: 'menu:playground:preparation',
+				titleProps: {
+					iconKey: 'icon',
+					key: 'name',
+					onClick: 'menu:playground:preparation',
+				},
 			},
 			toolbar: {
 				sortBy: [
@@ -74,7 +78,7 @@ const settingsMock = {
 		'menu:preparations': {
 			id: 'menu:preparations',
 			name: 'Preparations',
-			icon: 'icon-lab-mix',
+			icon: 'talend-dataprep',
 			type: '@@router/GO',
 			payload: {
 				method: 'go',
@@ -86,7 +90,7 @@ const settingsMock = {
 		'menu:datasets': {
 			id: 'menu:datasets',
 			name: 'Datasets',
-			icon: 'icon-copy-duplicate-files',
+			icon: 'talend-cluster',
 			type: '@@router/GO',
 			payload: {
 				method: 'go',
@@ -96,7 +100,7 @@ const settingsMock = {
 		'menu:folders': {
 			id: 'menu:folders',
 			name: 'folders',
-			icon: 'icon-folder',
+			icon: 'talend-folder',
 			type: '@@router/GO_FOLDER',
 			payload: {
 				method: 'go',
@@ -126,7 +130,7 @@ const settingsMock = {
 		'onboarding:preparation': {
 			id: 'onboarding:preparation',
 			name: 'Click here to discover the application',
-			icon: 'icon-student-user-2',
+			icon: 'talend-board',
 			type: '@@onboarding/START_TOUR',
 			payload: {
 				method: 'startTour',
@@ -138,7 +142,7 @@ const settingsMock = {
 		'modal:feedback': {
 			id: 'modal:feedback',
 			name: 'Send feedback to Talend',
-			icon: 'icon-bubbles-talk-1',
+			icon: 'talend-bubbles',
 			type: '@@modal/SHOW',
 			payload: {
 				method: 'showFeedback',
@@ -147,7 +151,7 @@ const settingsMock = {
 		'external:help': {
 			id: 'external:help',
 			name: 'Open Online Help',
-			icon: 'icon-help',
+			icon: 'talend-question-circle',
 			type: '@@external/OPEN_WINDOW',
 			payload: {
 				method: 'open',

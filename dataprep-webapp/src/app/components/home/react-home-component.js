@@ -13,12 +13,14 @@
 
 const HomeComponent = {
 	template: `
-		<dataset-xls-preview></dataset-xls-preview>
-		<preparation-copy-move></preparation-copy-move>
-		<preparation-creator></preparation-creator>
 		<layout>
 			<ui-view name="home-content"></ui-view>
 		</layout>
+		
+		<dataset-xls-preview></dataset-xls-preview>
+		<preparation-copy-move></preparation-copy-move>
+		<preparation-creator></preparation-creator>
+		<insertion-home></insertion-home>
 	`,
 };
 

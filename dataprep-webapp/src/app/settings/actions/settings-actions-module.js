@@ -28,6 +28,7 @@ import DatasetActionsService from './dataset-actions-service';
 import PreparationActionsService from './preparation-actions-service';
 import InventoryActionsService from './inventory-actions-service';
 import SidePanelActionsService from './sidepanel-actions-service';
+import SearchActionsService from './search-actions-service';
 
 const MODULE_NAME = 'app.settings.actions';
 
@@ -49,6 +50,7 @@ angular.module(MODULE_NAME,
 	.service('PreparationActionsService', PreparationActionsService)
 	.service('InventoryActionsService', InventoryActionsService)
 	.service('SidePanelActionsService', SidePanelActionsService)
+	.service('SearchActionsService', SearchActionsService)
 	.factory('SettingsActionsHandlers', function (
 		ExternalActionsService,
 		MenuActionsService,

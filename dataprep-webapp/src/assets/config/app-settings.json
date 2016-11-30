@@ -6,6 +6,17 @@
         "title": "Talend Data Preparation",
         "onClick": "menu:preparations"
       },
+      "search": {
+        "config": {
+          "icon": {
+            "name": "talend-search",
+            "title": "Toggle search input"
+          }
+        },
+        "itemProps": {
+          "onClick": "search:open"
+        }
+      },
       "actions": [
         "onboarding:preparation",
         "modal:feedback",
@@ -395,6 +406,14 @@
       "type": "@@preparation/REMOVE_FOLDER",
       "payload": {
         "method": "removeFolder",
+        "args": []
+      }
+    },
+    "search:open": {
+      "id": "search:open",
+      "type": "@@search/OPEN",
+      "payload": {
+        "method": "dispatch",
         "args": []
       }
     }

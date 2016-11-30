@@ -12,24 +12,26 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SEARCH_BAR_MODULE from '../bar/search-bar-module';
-import SERVICES_SEARCH_MODULE from '../../../services/search/search-module';
 
-import DocumentationSearch from './documentation-search-component';
+import SERVICES_INVENTORY_MODULE from '../inventory/inventory-module';
+import SERVICES_DOCUMENTATION_MODULE from '../documentation/documentation-module';
+import SERVICES_EASTER_EGGS_MODULE from '../easter-eggs/easter-eggs-module';
 
-const MODULE_NAME = 'data-prep.documentation-search';
+import SearchService from './search-service';
+
+const MODULE_NAME = 'data-prep.services.search';
 
 /**
  * @ngdoc object
- * @name data-prep.data-prep.documentation-search
- * @description This module contains the component to manage an documentation search
- * @requires talend.widget
+ * @name data-prep.services.search
+ * @description This module contains the services to search
  */
 angular.module(MODULE_NAME,
 	[
-		SEARCH_BAR_MODULE,
-		SERVICES_SEARCH_MODULE,
+		SERVICES_DOCUMENTATION_MODULE,
+		SERVICES_EASTER_EGGS_MODULE,
+		SERVICES_INVENTORY_MODULE,
 	])
-    .component('documentationSearch', DocumentationSearch);
+	.service('SearchService', SearchService);
 
 export default MODULE_NAME;

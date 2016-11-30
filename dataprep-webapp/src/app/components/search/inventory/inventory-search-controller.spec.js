@@ -11,90 +11,71 @@
 
  ============================================================================*/
 
+const searchInput = 'barcelona';
+
+const results = [{}, {}];
+
 describe('Inventory Search controller', () => {
-    'use strict';
+	let component;
+	let scope;
 
-    let component;
-    let scope;
+	beforeEach(angular.mock.module('data-prep.inventory-search'));
 
-    beforeEach(angular.mock.module('data-prep.inventory-search'));
+	beforeEach(inject(($rootScope, $componentController) => {
+		scope = $rootScope.$new();
+		component = $componentController('inventorySearch', { $scope: scope });
+	}));
 
-    beforeEach(inject(($rootScope, $componentController) => {
-        scope = $rootScope.$new();
-        component = $componentController('inventorySearch', { $scope: scope });
-    }));
+	describe('search', () => {
+		it('should call search service', inject(($q, SearchService) => {
+			// given
+			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
 
-    describe('search ', () => {
-        it('should call inventory search service', inject(($q, InventoryService, DocumentationService) => {
-            const results = [{}, {}];
-            const docResults = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(InventoryService, 'search').and.returnValue($q.when(results));
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(docResults));
+			// when
+			component.search(searchInput);
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            scope.$digest();
+			// then
+			expect(SearchService.searchAll).toHaveBeenCalledWith(searchInput);
+		}));
 
-            //then
-            expect(InventoryService.search).toHaveBeenCalledWith('barcelona');
-        }));
+		it('should set results', inject(($q, SearchService) => {
+			// given
+			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
 
-        it('should call documentation search service', inject(($q, InventoryService, DocumentationService) => {
-            const results = [{}, {}];
-            const docResults = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(InventoryService, 'search').and.returnValue($q.when(results));
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(docResults));
+			// when
+			component.search(searchInput);
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            scope.$digest();
+			// then
+			expect(component.results).toEqual(results);
+		}));
 
-            //then
-            expect(DocumentationService.search).toHaveBeenCalledWith('barcelona');
-        }));
+		it('should NOT set results when they are out of date', inject(($q, SearchService) => {
+			// given
+			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
 
-        it('should set results', inject(($q, InventoryService, DocumentationService) => {
-            const results = [{}, {}];
-            const docResults = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(InventoryService, 'search').and.returnValue($q.when(results));
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(docResults));
+			// when
+			component.search(searchInput);
+			component.currentInput = 'other';
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            scope.$digest();
+			// then
+			expect(component.results).not.toEqual(results);
+		}));
 
-            //then
-            expect(component.results).toEqual(docResults.concat(results));
-        }));
+		it('should set empty array as results when there are no result', inject(($q, SearchService) => {
+			// given
+			const results = [];
+			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
+			component.results = null;
 
-        it('should NOT set results when they are out of date', inject(($q, InventoryService, DocumentationService) => {
-            const results = [{}, {}];
-            const docResults = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(InventoryService, 'search').and.returnValue($q.when(results));
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(docResults));
+			// when
+			component.search(searchInput);
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            component.currentInput = 'other';
-            scope.$digest();
-
-            //then
-            expect(component.results).not.toEqual(docResults.concat(results));
-        }));
-
-        it('should set empty array as results when there are no result', inject(($q, InventoryService, DocumentationService) => {
-            const results = [];
-            const docResults = [];
-            spyOn(InventoryService, 'search').and.returnValue($q.when(results));
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(docResults));
-            component.results = null;
-
-            //when
-            component.search('barcelona');
-            scope.$digest();
-
-            //then
-            expect(component.results).toEqual([]);
-        }));
-    });
+			// then
+			expect(component.results).toEqual(results);
+		}));
+	});
 });

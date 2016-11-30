@@ -95,7 +95,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 		return preparations.map(item => ({
 			id: item.id,
 			name: item.name,
-			author: item.author,
+			author: item.owner.displayName,
 			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			dataset: item.dataset.dataSetName,

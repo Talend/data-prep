@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.exception.error;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +22,6 @@ import java.util.List;
 
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
-
-import static org.springframework.http.HttpStatus.*;
 
 /**
  * Dataset error codes.
@@ -170,11 +170,7 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * Error thrown when an error occurs while adding or updating a dataset.
      */
-    UNABLE_TO_CREATE_OR_UPDATE_DATASET(INTERNAL_SERVER_ERROR.value()),
-    /**
-     * Error while interacting with TComp.
-     */
-    UNABLE_TO_CONNECT_WITH_TCOMP(INTERNAL_SERVER_ERROR.value());
+    UNABLE_TO_CREATE_OR_UPDATE_DATASET(INTERNAL_SERVER_ERROR.value());
 
     /**
      * The http status to use.

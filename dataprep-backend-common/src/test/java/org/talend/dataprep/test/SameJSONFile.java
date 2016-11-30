@@ -32,7 +32,17 @@ public class SameJSONFile {
      * @return a SameJSONAs to use like in assertThat(contentAsString, sameJSONAsFile("t-shirt_100.csv.expected.json"));
      */
     public static SameJSONAs<? super String> sameJSONAsFile(InputStream stream) throws IOException {
-        String expected = IOUtils.toString(stream);
+        return sameJSONAs(IOUtils.toString(stream));
+    }
+
+    /**
+     * Utilities method to assert that an expected json contained in a String matches a result.
+     *
+     * @param expected A string that contains the expected json.
+     * @return a SameJSONAs to use like in assertThat(contentAsString, sameJSONAsFile("t-shirt_100.csv.expected.json"));
+     */
+    public static SameJSONAs<? super String> sameJSONAs(String expected) throws IOException {
         return SameJSONAs.sameJSONAs(expected).allowingExtraUnexpectedFields().allowingAnyArrayOrdering();
     }
+
 }

@@ -21,7 +21,6 @@ import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.DATASET_NAME_ALREADY_USED;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
@@ -34,15 +33,12 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -59,15 +55,15 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.event.DataSetImportedEvent;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
 import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
-import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
-import org.talend.dataprep.dataset.service.analysis.synchronous.*;
+import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
+import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
+import org.talend.dataprep.dataset.service.analysis.synchronous.QualityAnalysis;
+import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.Import;
 import org.talend.dataprep.dataset.service.api.Import.ImportBuilder;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
-import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
@@ -120,21 +116,6 @@ public class DataSetService extends BaseDataSetService {
     protected DataSetMetadataRepository dataSetMetadataRepository;
 
     /**
-     * Dataset content store.
-     */
-    @Autowired
-    protected ContentStoreRouter contentStore;
-
-    @Autowired
-    private ApplicationEventPublisher publisher;
-
-    /**
-     * DQ synchronous analyzers.
-     */
-    @Autowired
-    private List<SynchronousDataSetAnalyzer> synchronousAnalyzers;
-
-    /**
      * Format analyzer needed to update the schema.
      */
     @Autowired
@@ -176,12 +157,6 @@ public class DataSetService extends BaseDataSetService {
     @Autowired
     private DataSetLocationService locationsService;
 
-    /**
-     * DataSet metadata builder.
-     */
-    @Autowired
-    private DataSetMetadataBuilder metadataBuilder;
-
     @Autowired
     private VersionService versionService;
 
@@ -194,55 +169,6 @@ public class DataSetService extends BaseDataSetService {
     @Value("${dataset.list.limit:10}")
     private int datasetListLimit;
 
-    /**
-     * Sort the synchronous analyzers.
-     */
-    @PostConstruct
-    public void initialize() {
-        synchronousAnalyzers.sort(Comparator.comparingInt(SynchronousDataSetAnalyzer::order));
-    }
-
-    /**
-     * Performs the analysis on the given dataset id.
-     *
-     * @param id the dataset id.
-     * @param performAsyncBackgroundAnalysis true if the asynchronous background analysis should be performed.
-     * @param analysersToSkip the list of analysers to skip.
-     */
-    private final void analyzeDataSet(String id, boolean performAsyncBackgroundAnalysis,
-            List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
-
-        // Calls all synchronous analysis first
-        try {
-            for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
-                if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
-                    continue;
-                }
-                LOG.info("Running {}", synchronousDataSetAnalyzer.getClass());
-                synchronousDataSetAnalyzer.analyze(id);
-                LOG.info("Done running {}", synchronousDataSetAnalyzer.getClass());
-            }
-        } catch (Exception e) {
-            // Clean up content & metadata (don't keep invalid information)
-            try {
-                final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
-                contentStore.delete(metadata);
-                dataSetMetadataRepository.remove(id);
-            } catch (Exception unableToCleanResources) {
-                LOG.error("Unable to clean temporary resources for '{}'.", id, unableToCleanResources);
-            }
-            throw e;
-        }
-
-        // perform async analysis
-        if (performAsyncBackgroundAnalysis) {
-            LOG.debug("starting async background analysis");
-            publisher.publishEvent(new DataSetImportedEvent(id));
-        }
-        else {
-            LOG.info("skipping asynchronous background analysis");
-        }
-    }
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
@@ -579,20 +505,6 @@ public class DataSetService extends BaseDataSetService {
         }
     }
 
-    /**
-     * Make sure the given name is not used by another dataset. If yes, throws a TDPException.
-     *
-     * @param id the dataset id to
-     * @param name the name to check.
-     */
-    private void checkIfNameIsAvailable(String id, String name) {
-        if (dataSetMetadataRepository.exist("name = '" + name + "'")) {
-            final ExceptionContext context = ExceptionContext.build() //
-                    .put("id", id) //
-                    .put("name", name);
-            throw new TDPException(DATASET_NAME_ALREADY_USED, context, true);
-        }
-    }
 
     @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")

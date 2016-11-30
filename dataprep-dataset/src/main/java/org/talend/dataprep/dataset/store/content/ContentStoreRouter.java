@@ -114,7 +114,7 @@ public class ContentStoreRouter extends DataSetContentStore {
      * @return the DataSetContentStore that deals with this dataset metadata.
      */
     private DataSetContentStore wrapStore(DataSetMetadata dataSetMetadata) {
-        String storeName = STORE_PREFIX + dataSetMetadata.getLocation().getLocationType();
+        String storeName = STORE_PREFIX + dataSetMetadata.getLocation().getParentLocationType();
         final DataSetContentStore contentStore = context.getBean(storeName, DataSetContentStore.class);
         return limit.get(contentStore);
     }

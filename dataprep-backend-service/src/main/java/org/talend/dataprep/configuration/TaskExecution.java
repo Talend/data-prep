@@ -65,7 +65,7 @@ public class TaskExecution {
     /**
      * @return an Authenticated task executor ready to run.
      */
-    private AsyncListenableTaskExecutor getAsyncExecutor() {
+    protected AsyncListenableTaskExecutor getAsyncExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(4);
         executor.setMaxPoolSize(10);

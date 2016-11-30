@@ -57,4 +57,5 @@ public class ComponentProperties {
     public void setUiSchema(ObjectNode uiSchema) {
         this.uiSchema = uiSchema;
     }
+
 }

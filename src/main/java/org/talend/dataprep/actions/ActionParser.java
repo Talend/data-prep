@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.actions;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.function.Function;
 
 import org.apache.avro.generic.IndexedRecord;

@@ -12,10 +12,13 @@
 
 package org.talend.dataprep.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -23,8 +26,11 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.service.Dictionaries;
 
 public class RemoteResourceGetterTest {
+
+    private static ServerMock serverMock;
 
     private final Header header = new BasicHeader("Authorization", "Bearer ABC");
 
@@ -34,27 +40,25 @@ public class RemoteResourceGetterTest {
 
     private RemoteResourceGetter remoteResourceGetter;
 
-    private static ServerMock serverMock;
-
     @BeforeClass
-    public static void init() throws Exception{
+    public static void init() throws Exception {
         serverMock = new ServerMock();
     }
 
     @After
-    public void tearDown()throws Exception{
+    public void tearDown() throws Exception {
         serverMock.removeAllEndPoints();
     }
 
     @Test
     public void testLoginOK() throws Exception {
         // Given
-        serverMock.addEndPoint("/login", "" ,header);
+        serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
 
         // When
-        Header result = remoteResourceGetter.login(serverUrl , "Maximus", "Spanish");
+        Header result = remoteResourceGetter.login(serverUrl, "Maximus", "Spanish");
 
         // Then
         assertEquals(header.getName(), result.getName());
@@ -64,26 +68,24 @@ public class RemoteResourceGetterTest {
     @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)
     public void testLoginKO() throws Exception {
         // Given
-        serverMock.addEndPoint("/login", "" ,header);
+        serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
 
-        // When
-        Header result = remoteResourceGetter.login(serverUrl + "/log", "Maximus", "Spanish");
-
-        // Then
-        fail();
+        // then
+        remoteResourceGetter.login(serverUrl + "/log", "Maximus", "Spanish");
     }
 
     @Test
     public void testGetDataSet() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/*", RemoteResourceGetterTest.class.getResourceAsStream("dataset.json"),header);
-        serverMock.addEndPoint("/login", "",header);
+        serverMock.addEndPoint("/api/datasets/*", RemoteResourceGetterTest.class.getResourceAsStream("dataset.json"), header);
+        serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
         // When
-        Map<String, DataSetRow> result = remoteResourceGetter.retrieveLookupDataSet(serverUrl,"Maximus", "Spanish", goodDataSetId, "0000");
+        Map<String, DataSetRow> result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
+                goodDataSetId, "0000");
 
         // Then
         assertEquals(2, result.size());
@@ -96,27 +98,45 @@ public class RemoteResourceGetterTest {
     @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)
     public void testGetDataSetNoRecords() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/", "{ \"metadata\": { \"columns\": [ { \"id\": \"0000\", \"name\": \"Postal\"}]}}",header);
+        serverMock.addEndPoint("/api/datasets/", "{ \"metadata\": { \"columns\": [ { \"id\": \"0000\", \"name\": \"Postal\"}]}}",
+                header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
-        // When
-        remoteResourceGetter.retrieveLookupDataSet(serverUrl,"Maximus", "Spanish", badDataSetId, "0000");
 
-        // Then
-        fail();
+        // then
+        remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish", badDataSetId, "0000");
     }
 
     @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)
     public void testGetDataSetNoMetadata() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/", "{ \"object\": \"\"}",header);
+        serverMock.addEndPoint("/api/datasets/", "{ \"object\": \"\"}", header);
+        String serverUrl = serverMock.getServerUrl();
+        remoteResourceGetter = new RemoteResourceGetter();
+
+        // then
+        remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish", badDataSetId, "0000");
+    }
+
+    @Test
+    public void testGetDictionaries() throws Exception {
+        // Given
+        Dictionaries o = new Dictionaries(null, null);
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(bos))) {
+            oos.writeObject(o);
+        }
+        serverMock.addEndPoint("/login", "", header);
+        serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(bos.toByteArray()), header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
         // When
-        remoteResourceGetter.retrieveLookupDataSet(serverUrl,"Maximus", "Spanish", badDataSetId, "0000");
+        Dictionaries result = remoteResourceGetter.retrieveDictionaries(serverUrl, "Maximus", "Spanish");
 
         // Then
-        fail();
+        assertNotNull(result);
+        assertNull(result.getDictionary());
+        assertNull(result.getKeyword());
     }
 
 }

@@ -14,10 +14,15 @@ package org.talend.dataprep.actions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOExceptionWithCause;
 import org.apache.commons.io.IOUtils;
@@ -34,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -46,9 +52,9 @@ public class RemoteResourceGetter implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteResourceGetter.class);
 
-    private CloseableHttpClient client = HttpClients.custom().build();
+    private final CloseableHttpClient client = HttpClients.custom().build();
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Login to the specified url with specified credentials to retrieve a JWT for following authentication.
@@ -56,7 +62,7 @@ public class RemoteResourceGetter implements Serializable {
      * @param url the url to connect to
      * @param userName the user name to use
      * @param passWord the password of the specified user
-     * @return the authentication header containg the JWT
+     * @return the authentication header containing the JWT token.
      */
     public Header login(String url, String userName, String passWord) {
         final URI uri;
@@ -92,8 +98,8 @@ public class RemoteResourceGetter implements Serializable {
      * Reads token of the specified JsonParser and returns a list of column metadata.
      * 
      * @param jsonParser the jsonParser whose next tokens are supposed to represent a list of column metadata
-     * @return
-     * @throws IOException
+     * @return The column metadata parsed from JSON parser.
+     * @throws IOException In case of JSON exception related error.
      */
     private List<ColumnMetadata> parseAnArrayOfColumnMetadata(JsonParser jsonParser) throws IOException {
         try {
@@ -139,7 +145,7 @@ public class RemoteResourceGetter implements Serializable {
             Map<String, DataSetRow> lookupDataset = new HashMap<>();
             jsonParser.nextToken();
             while (jsonParser.nextToken() != JsonToken.END_ARRAY && !jsonParser.isClosed()) {
-                Map<String, String> values = jsonParser.readValueAs(HashMap.class);
+                Map<String, String> values = jsonParser.readValueAs(Map.class);
                 DataSetRow row = new DataSetRow(rowMetadata, values);
                 lookupDataset.put(row.get(joinOnColumn), row.clone());
             }
@@ -159,7 +165,7 @@ public class RemoteResourceGetter implements Serializable {
      * @param inputStream the input stream containing the data set
      * @param joinOnColumn the column used to join the lookup data set
      * @return a map which associates to each value of the joint column its corresponding data set row
-     * @throws IOException
+     * @throws IOException In case of JSON exception related error.
      */
     private Map<String, DataSetRow> parseAndMapLookupDataSet(InputStream inputStream, String joinOnColumn) throws IOException {
         if (inputStream == null) {
@@ -235,6 +241,26 @@ public class RemoteResourceGetter implements Serializable {
             String joinOnColumn) {
         Header jwt = login(apiUrl, login, password);
         return mapLookupDataSet(apiUrl, jwt, dataSetId, joinOnColumn);
+    }
+
+    public Dictionaries retrieveDictionaries(String apiUrl, String login, String password) {
+        final int statusCode;
+        String url = apiUrl + "/api/transform/dictionary";
+        HttpGet request = new HttpGet(url);
+        request.addHeader(login(apiUrl, login, password));
+        try (final CloseableHttpResponse response = client.execute(request)) {
+            statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != 200) {
+                throw new RemoteConnectionException(
+                        "The status code of the response when trying to retrieveDictionaries the url:  " + url + " is: "
+                                + statusCode);
+            }
+            final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(response.getEntity().getContent()));
+            final Object object = ois.readObject();
+            return (Dictionaries) object;
+        } catch (Exception e) {
+            throw new RemoteConnectionException("Unable to retrieve dictionaries.", e);
+        }
     }
 
     public String retrievePreparation(String apiUrl, String login, String password, String preparationId) {

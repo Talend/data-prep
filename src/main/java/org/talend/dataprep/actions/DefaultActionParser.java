@@ -12,41 +12,37 @@
 
 package org.talend.dataprep.actions;
 
-import static java.util.function.Function.identity;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.FORBID_DISTRIBUTED;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CREATE_COLUMNS;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
+import org.talend.dataprep.actions.resources.DictionaryFunctionResourceProvider;
+import org.talend.dataprep.actions.resources.FunctionResource;
+import org.talend.dataprep.actions.resources.FunctionResourceProvider;
+import org.talend.dataprep.actions.resources.LookupFunctionResourceProvider;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
-import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.transformation.actions.datablending.LookupDatasetsManager;
-import org.talend.dataprep.transformation.actions.date.Providers;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
-import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,12 +51,6 @@ public class DefaultActionParser implements ActionParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultActionParser.class);
 
-    private final String apiUrl;
-
-    private final String login;
-
-    private final String password;
-
     private static final ActionRegistry actionRegistry = new ClassPathActionRegistry(
             "org.talend.dataprep.transformation.actions");
 
@@ -68,24 +58,39 @@ public class DefaultActionParser implements ActionParser {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private final String apiUrl;
+
+    private final String login;
+
+    private final String password;
+
+    private final List<FunctionResourceProvider> providers;
+
+    private boolean allowNonDistributedActions = false;
+
     public DefaultActionParser(String apiUrl, String login, String password) {
         this.apiUrl = apiUrl;
         this.login = login;
         this.password = password;
+        this.providers = Arrays.asList( //
+                new LookupFunctionResourceProvider(apiUrl, login, password), //
+                new DictionaryFunctionResourceProvider(actionRegistry, apiUrl, login, password) //
+        );
     }
 
     /**
-     * TODO the class representing the DQ library
+     * Indicate if parser should skip non distributed actions (actions that can't run in distributed contexts).
      *
-     * @return
+     * @param allowNonDistributedActions <code>true</code> to allow those actions, <code>false</code> otherwise. Defaults
+     * to <code>false</code> (non distributed actions are <b>not</b> allowed).
      */
-    private  Object retrieveDQDictionnary() {
-        return null;
+    public void setAllowNonDistributedActions(boolean allowNonDistributedActions) {
+        this.allowNonDistributedActions = allowNonDistributedActions;
     }
 
-    private static void assertPreparation(Object actions) {
-        if (actions == null) {
-            throw new IllegalArgumentException("Actions can not be null.");
+    private static void assertPreparation(Object preparation) {
+        if (preparation == null) {
+            throw new IllegalArgumentException("Preparation can not be null.");
         }
     }
 
@@ -124,12 +129,31 @@ public class DefaultActionParser implements ActionParser {
     private Action parseAction(JsonNode n) {
         String actionName = n.get("action").asText();
         LOGGER.info("New action: {}", actionName);
-        final ActionDefinition actionMetadata = actionRegistry.get(actionName);
+        final ActionDefinition actionDefinition = actionRegistry.get(actionName);
 
-        if (actionMetadata == null) {
+        if (actionDefinition == null) {
             LOGGER.error("No action implementation found for '{}'.", actionName);
         } else {
-            LOGGER.info("Action metadata found for '{}': {}", actionName, actionMetadata.getClass().getName());
+            LOGGER.info("Action metadata found for '{}': {}", actionName, actionDefinition.getClass().getName());
+            // Distributed run check for action
+            final Set<ActionDefinition.Behavior> behavior = actionDefinition.getBehavior();
+            // if non distributed actions are forbidden (e.g. running locally)
+            if (!allowNonDistributedActions) {
+                // if some actions cannot be run in distributed environment, let's see how bad it is...
+                if (behavior.contains(FORBID_DISTRIBUTED)) {
+                    // actions that changes the schema (potentially really harmful for the preparation) throws an exception
+                    if (behavior.contains(METADATA_CREATE_COLUMNS)) {
+                        throw new IllegalArgumentException("Action '" + actionName + "' cannot run in distributed environments.");
+                    }
+                    // else the action is just skipped
+                    else {
+                        LOGGER.warn("Action '{}' cannot run in distributed environment, skip its execution.");
+                        return null;
+                    }
+                }
+            }
+
+            LOGGER.info("Action metadata found for '{}': {}", actionName, actionDefinition.getClass().getName());
             final Iterator<Map.Entry<String, JsonNode>> parameters = n.get("parameters").fields();
             Map<String, String> parametersAsMap = new HashMap<>();
             while (parameters.hasNext()) {
@@ -138,8 +162,8 @@ public class DefaultActionParser implements ActionParser {
                 parametersAsMap.put(next.getKey(), parseParameter(value));
             }
             // Create action
-            final Action action = actionFactory.create(actionMetadata, parametersAsMap);
-            LOGGER.info("Wrap action execution for '{}' with parameters '{}'.", actionMetadata.getClass().getName(),
+            final Action action = actionFactory.create(actionDefinition, parametersAsMap);
+            LOGGER.info("Wrap action execution for '{}' with parameters '{}'.", actionDefinition.getClass().getName(),
                     parametersAsMap);
             ActionContext context = new ActionContext(new TransformationContext());
             context.setParameters(parametersAsMap);
@@ -177,43 +201,9 @@ public class DefaultActionParser implements ActionParser {
         return result;
     }
 
-    private HashMap<String, DataSetRow> getLookupDataset(RemoteResourceGetter clientFormLogin, String dataSetId,
-            String joinOnColumn) {
-        LOGGER.debug("Retrieving lookup dataset '{}'", dataSetId);
-        return (HashMap<String, DataSetRow>) clientFormLogin.retrieveLookupDataSet(apiUrl, login, password, dataSetId, joinOnColumn);
-    }
-
     private String getPreparation(RemoteResourceGetter clientFormLogin, String preparationId) {
         LOGGER.debug("Retrieving preparation '{}'", preparationId);
-                return clientFormLogin.retrievePreparation(apiUrl, login, password, preparationId);
-    }
-
-    private HashMap<String, DataSetRow> retrieveLookupDataSetFromAction(RemoteResourceGetter clientFormLogin, Action action) {
-        final HashMap<String, DataSetRow> result;
-
-        if (StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) {
-            final String dataSetId = action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey());
-            if (StringUtils.isEmpty(dataSetId)) {
-                throw new IllegalArgumentException("A lookup action must have a lookup dataset id: " + action);
-            } else {
-                final String joinOn = action.getParameters().get(Lookup.Parameters.LOOKUP_JOIN_ON.getKey());
-
-                result = getLookupDataset(clientFormLogin, dataSetId, joinOn);
-            }
-        } else {
-            throw new IllegalArgumentException(
-                    "Trying to retrieve a lookup dataset from the following action: " + action.getName());
-        }
-        return result;
-    }
-
-    private HashMap<String, HashMap<String, DataSetRow>> retrieveLookupDataSets(List<Action> actions) {
-        final HashMap<String, HashMap<String, DataSetRow>> result = new HashMap<>();
-        final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
-        actions.stream().filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME))
-                .forEach(action -> result.put(action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey()),
-                        retrieveLookupDataSetFromAction(clientFormLogin, action)));
-        return result;
+        return clientFormLogin.retrievePreparation(apiUrl, login, password, preparationId);
     }
 
     private Function<IndexedRecord, IndexedRecord> internalParse(InputStream preparation) {
@@ -234,7 +224,7 @@ public class DefaultActionParser implements ActionParser {
         final JsonNode actionNode = preparationNode.get("actions");
         if (actionNode == null) {
             LOGGER.info("No action defined in preparation, returning identity function");
-            return identity();
+            return new NoOpFunction();
         }
 
         // Get row metadata JSON node
@@ -253,10 +243,11 @@ public class DefaultActionParser implements ActionParser {
         // Get the list of actions
         List<Action> actions = getActions(actionNode.toString());
 
-        // get the list of lookup data sets
-        HashMap<String, HashMap<String, DataSetRow>> lookupDataSets = retrieveLookupDataSets(actions);
-
-        // get the DQ dictionary
+        // get the list of resources for function
+        FunctionResource[] resources = providers.stream() //
+                .map(provider -> provider.get(actions)) //
+                .collect(Collectors.toList()) //
+                .toArray(new FunctionResource[providers.size()]);
 
         // Build internal transformation pipeline
         final StackedNode stackedNode = new StackedNode();
@@ -270,11 +261,7 @@ public class DefaultActionParser implements ActionParser {
                 .allowMetadataChange(false) //
                 .withAnalyzerService(Providers.get(AnalyzerService.class)) //
                 .build();
-        return new SerializableFunction(pipeline, stackedNode, rowMetadata, lookupDataSets);
-    }
-
-    public Function<IndexedRecord, IndexedRecord> parse(InputStream preparation) {
-        return internalParse(preparation);
+        return new SerializableFunction(pipeline, stackedNode, rowMetadata, resources);
     }
 
     @Override
@@ -284,88 +271,12 @@ public class DefaultActionParser implements ActionParser {
         return internalParse(IOUtils.toInputStream(preparation));
     }
 
-    private static class StackedNode extends BasicNode {
-
-        private transient Deque<DataSetRow> stack;
-
-        @Override
-        public void receive(DataSetRow row, RowMetadata metadata) {
-            if (!row.isDeleted()) {
-                getStack().push(row);
-            }
-            super.receive(row, metadata);
-        }
-
-        private Deque<DataSetRow> getStack() {
-            if (stack == null) {
-                stack = new ArrayDeque<>();
-            }
-            return stack;
-        }
-
-        DataSetRow pop() {
-            final Deque<DataSetRow> dataSetRows = getStack();
-            return dataSetRows.isEmpty() ? null : dataSetRows.pop();
-        }
-    }
-
-    private static class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Serializable {
-
-        private static final Logger LOG = LoggerFactory.getLogger(SerializableFunction.class);
-
-        private final Pipeline pipeline;
-
-        private final StackedNode stackedNode;
-
-        private final RowMetadata initialRowMetadata;
-
-        private final HashMap<String, HashMap<String, DataSetRow>> lookupDataSets;
-
-        private transient boolean loaded = false;
-
-        private SerializableFunction(Pipeline pipeline, StackedNode stackedNode, RowMetadata initialRowMetadata,
-                HashMap<String, HashMap<String, DataSetRow>> lookupDatasets) {
-            this.pipeline = pipeline;
-            this.stackedNode = stackedNode;
-            this.initialRowMetadata = initialRowMetadata;
-            this.lookupDataSets = lookupDatasets;
-        }
+    // Can't use identity() because result isn't serializable
+    private static class NoOpFunction implements Function<IndexedRecord, IndexedRecord>, Serializable {
 
         @Override
         public IndexedRecord apply(IndexedRecord indexedRecord) {
-            if (!loaded) {
-                LOG.debug("Adding cached data sets to LookupDataSetManager");
-                lookupDataSets.entrySet().stream().forEach(entry -> {
-                    if (LookupDatasetsManager.put(entry.getKey(), entry.getValue()))
-                        LOG.debug("Added {} to the lookup data sets", entry.getKey());
-                });
-                loaded = true;
-            }
-            Map<String, String> values = new HashMap<>();
-            final List<Schema.Field> fields = indexedRecord.getSchema().getFields();
-            DecimalFormat decimalFormat = new DecimalFormat("0000");
-            int i = 0;
-            for (Schema.Field field : fields) {
-                values.put(decimalFormat.format(i++), String.valueOf(indexedRecord.get(field.pos())));
-            }
-            final DataSetRow row = new DataSetRow(values);
-            pipeline.receive(row, initialRowMetadata);
-
-            // Reapply values of data set row to the indexed record
-            final Optional<DataSetRow> result = Optional.ofNullable(stackedNode.pop());
-            if (result.isPresent()) {
-                final DataSetRow modifiedRow = result.get();
-                final RowMetadata modifiedRowRowMetadata = modifiedRow.getRowMetadata();
-                final Schema outputSchema = RowMetadataUtils.toSchema(modifiedRowRowMetadata);
-                GenericRecord modifiedRecord = new GenericData.Record(outputSchema);
-                final Iterator<Object> iterator = modifiedRow.order().values().values().iterator();
-                for (int j = 0; j < outputSchema.getFields().size() && iterator.hasNext(); j++) {
-                    modifiedRecord.put(j, iterator.next());
-                }
-                return modifiedRecord;
-            } else {
-                return null;
-            }
+            return indexedRecord;
         }
     }
 }

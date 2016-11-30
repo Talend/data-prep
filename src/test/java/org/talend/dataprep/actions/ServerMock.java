@@ -1,5 +1,10 @@
 package org.talend.dataprep.actions;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
@@ -9,11 +14,6 @@ import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
-
 public class ServerMock {
 
     private final LocalTestServer server = new LocalTestServer(null, null);
@@ -22,9 +22,9 @@ public class ServerMock {
 
     private final String serverUrl;
 
-    public ServerMock() throws Exception{
+    public ServerMock() throws Exception {
         server.start();
-        serverUrl = "http:/"+server.getServiceAddress();
+        serverUrl = "http:/" + server.getServiceAddress();
     }
 
     public void addEndPoint(String path, InputStream body, Header... headers) throws Exception {
@@ -35,23 +35,21 @@ public class ServerMock {
 
     public void addEndPoint(String path, String body, Header... headers) throws Exception {
         addEndPoint(path, IOUtils.toInputStream(body), headers);
-        set.add(path);
     }
 
-    public void removeEndPoint(String pattern){
+    public void removeEndPoint(String pattern) {
         server.unregister(pattern);
         set.remove(pattern);
     }
 
     public void removeAllEndPoints(){
-        set.stream().forEach(s -> server.unregister(s));
+        set.forEach(server::unregister);
         set.clear();
     }
 
-    public String getServerUrl(){
+    public String getServerUrl() {
         return serverUrl;
     }
-
 
     public static class MockedRequestHandler implements HttpRequestHandler {
 
@@ -62,11 +60,6 @@ public class ServerMock {
         public MockedRequestHandler(InputStream body, Header[] headers) {
             this.headers = headers;
             this.body = body;
-        }
-
-        public MockedRequestHandler(String body, Header[] headers) {
-            this.headers = headers;
-            this.body = IOUtils.toInputStream(body);
         }
 
         @Override

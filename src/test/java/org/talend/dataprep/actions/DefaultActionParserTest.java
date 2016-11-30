@@ -14,51 +14,68 @@ package org.talend.dataprep.actions;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
 
+import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.generic.IndexedRecord;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.transformation.service.Dictionaries;
 
 /**
  * TODO: Add a test to check error dataprep error messages and a lookup with two more actions.
  */
 public class DefaultActionParserTest {
 
-    private static ServerMock serverMock;
-
-    private static String apiUrl;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultActionParserTest.class);
 
     private static final String login = "login";
 
     private static final String password = "password";
 
-    private final Header header = new BasicHeader("Authorization", "Bearer ABC");
+    private static final Header header = new BasicHeader("Authorization", "Bearer ABC");
 
-    private final String preparationId = "A1B2C3";
+    private static final String preparationId = "A1B2C3";
 
-    private final String dataSetId = "A1B2C3";
+    private static final String dataSetId = "A1B2C3";
+
+    private static ServerMock serverMock;
 
     private static ActionParser parser;
+
+    private static String apiUrl;
+
+    private static byte[] sampleDictionary;
 
     @BeforeClass
     public static void init() throws Exception {
         serverMock = new ServerMock();
         apiUrl = serverMock.getServerUrl();
         parser = new DefaultActionParser(apiUrl, login, password);
+
+        Dictionaries o = new Dictionaries(null, null);
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(bos))) {
+            oos.writeObject(o);
+        }
+        sampleDictionary = bos.toByteArray();
     }
 
     @After
@@ -113,6 +130,7 @@ public class DefaultActionParserTest {
         }
 
         // Then
+        assertSerializable(function);
         assertNotNull(function);
     }
 
@@ -133,6 +151,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertEquals("STRING", result.get(0));
     }
 
@@ -153,6 +172,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertEquals("string string", result.get(0));
         assertEquals("string", result.get(1));
         assertEquals("string", result.get(2));
@@ -177,6 +197,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertEquals("string string", result.get(0));
         assertEquals("string", result.get(1));
         assertEquals("string", result.get(2));
@@ -202,6 +223,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result2 = function.apply(record2);
 
         // Then
+        assertSerializable(function);
         assertEquals("CA", result1.get(0));
         assertEquals("value to split", result1.get(1));
         assertEquals("value", result1.get(2));
@@ -229,6 +251,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertNull(result);
     }
 
@@ -244,6 +267,35 @@ public class DefaultActionParserTest {
                 .getResourceAsStream("action_delete_invalid.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
+            serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // When
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+        final IndexedRecord result3 = function.apply(record3);
+
+        // Then
+        assertSerializable(function);
+        assertNotNull(result1);
+        assertNotNull(result2);
+        assertNull(result3);
+    }
+
+    @Test
+    public void testDeleteInvalidEmailAction() throws Exception {
+        // Given
+        IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "test@test.org" });
+        IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "A" });
+        IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "email@server.com" });
+
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_delete_invalid_email.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
             function = parser.parse(preparationId);
         }
         assertNotNull(function);
@@ -255,8 +307,8 @@ public class DefaultActionParserTest {
 
         // Then
         assertNotNull(result1);
-        assertNotNull(result2);
-        assertNull(result3);
+        assertNull(result2);
+        assertNotNull(result3);
     }
 
     @Test
@@ -276,6 +328,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertEquals("1", result.get(0));
         assertEquals("3", result.get(1));
         assertEquals("2", result.get(2));
@@ -293,7 +346,7 @@ public class DefaultActionParserTest {
             } catch (Exception e) {
                 return action;
             }
-        }).filter(c -> c != null).collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
         assertTrue("Non serializable actions : " + Arrays.toString(nonSerializableActions.toArray()),
                 nonSerializableActions.isEmpty());
@@ -313,6 +366,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertEquals("string", result.get(0));
     }
 
@@ -336,6 +390,7 @@ public class DefaultActionParserTest {
         final IndexedRecord result = function.apply(record);
 
         // Then
+        assertSerializable(function);
         assertEquals("string", result.get(0));
         assertEquals(1, result.getSchema().getFields().size());
     }
@@ -419,4 +474,131 @@ public class DefaultActionParserTest {
         assertEquals("", result2.get(3));
         assertEquals(4, result2.getSchema().getFields().size());
     }
+
+    @Test
+    public void testMakeLineAsHeaderAction() throws Exception {
+        // Given
+        IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "string" });
+        IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "header" });
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_make_line_header.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // When
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+
+        // Then -> Make as Line as Header
+        assertSerializable(function);
+        assertEquals("string", result1.get(0));
+        assertEquals("header", result2.get(0));
+        assertEquals(1, result1.getSchema().getFields().size());
+    }
+
+    @Test
+    public void testDataMaskingAction() throws Exception {
+        // Given
+        final String initialEmailAddress = "email@email.com";
+        IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] {initialEmailAddress});
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // When
+        final IndexedRecord result = function.apply(record);
+
+        // Then
+        assertSerializable(function);
+        assertNotEquals(initialEmailAddress, result.get(0));
+        assertEquals(initialEmailAddress.length(), String.valueOf(result.get(0)).length());
+        assertTrue(String.valueOf(result.get(0)).contains("@"));
+    }
+
+    @Test(expected = AvroRuntimeException.class)
+    public void testDuplicateColumnName() throws Exception {
+        // Given
+        IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] {"My String"});
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_duplicate_column.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // Then
+        assertSerializable(function);
+        function.apply(record); // Preparation tries to create a new column with a name that previously existed.
+    }
+
+    @Test
+    public void testStringClustering() throws Exception {
+        // Given
+        IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] {"cluster1"});
+        IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] {"cluster2"});
+        IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] {"unique"});
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_text_clustering.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // Given
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+        final IndexedRecord result3 = function.apply(record3);
+
+        // Then
+        assertSerializable(function);
+        assertEquals("cluster", result1.get(0));
+        assertEquals("cluster", result2.get(0));
+        assertEquals("unique", result3.get(0));
+    }
+
+    @Test
+    public void testEmailSplit() throws Exception {
+        // Given
+        IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] {"email@email.com"});
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_split_email.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // Given
+        final IndexedRecord result = function.apply(record);
+
+        // Then
+        assertSerializable(function);
+        assertEquals("email@email.com", result.get(0));
+        assertEquals("email", result.get(1));
+        assertEquals("email.com", result.get(2));
+        assertEquals("a1_local", result.getSchema().getFields().get(1).name());
+        assertEquals("a1_domain", result.getSchema().getFields().get(2).name());
+    }
+
+    private static void assertSerializable(Function<IndexedRecord, IndexedRecord> function) {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new NullOutputStream());
+            oos.writeObject(function);
+            oos.flush();
+        } catch (Exception e) {
+            LOGGER.error("Unable to serialize function.", e);
+            fail();
+        }
+    }
+
 }

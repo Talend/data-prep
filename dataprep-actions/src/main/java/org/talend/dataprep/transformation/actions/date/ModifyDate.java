@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
 
 import java.time.DateTimeException;
@@ -75,17 +76,17 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
         parameters.add(SelectParameter.Builder.builder() //
                 .name(TIME_UNIT_PARAMETER) //
-                .item(ChronoUnit.YEARS.name()) //
-                .item(ChronoUnit.MONTHS.name()) //
-                .item(ChronoUnit.DAYS.name()) //
-                .item(ChronoUnit.HOURS.name()) //
-                .defaultValue(ChronoUnit.YEARS.name()) //
+                .item(YEARS.name(), YEARS.name()) //
+                .item(MONTHS.name(), MONTHS.name()) //
+                .item(DAYS.name(), DAYS.name()) //
+                .item(HOURS.name(), HOURS.name()) //
+                .defaultValue(YEARS.name()) //
                 .build());
 
         parameters.add(SelectParameter.Builder.builder() //
                 .name(MODE_PARAMETER) //
-                .item(CONSTANT_MODE, new Parameter(CONSTANT_VALUE, ParameterType.INTEGER, "1")) //
-                .item(OTHER_COLUMN_MODE,
+                .item(CONSTANT_MODE, CONSTANT_MODE, new Parameter(CONSTANT_VALUE, ParameterType.INTEGER, "1")) //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, //
                                 StringUtils.EMPTY)) //

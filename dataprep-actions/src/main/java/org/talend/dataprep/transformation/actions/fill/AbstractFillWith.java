@@ -148,8 +148,8 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                         .name(MODE_PARAMETER)
-                        .item(CONSTANT_MODE, constantParameter)
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                        .item(CONSTANT_MODE, CONSTANT_MODE, constantParameter)
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                                                StringUtils.EMPTY, false, false, StringUtils.EMPTY))
                         .defaultValue(CONSTANT_MODE)
                         .build()

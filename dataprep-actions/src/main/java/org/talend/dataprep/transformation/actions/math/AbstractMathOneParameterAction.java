@@ -48,8 +48,8 @@ public abstract class AbstractMathOneParameterAction extends AbstractMathAction 
 
         parameters.add(SelectParameter.Builder.builder() //
                 .name(MODE_PARAMETER) //
-                .item(CONSTANT_MODE, new Parameter(CONSTANT_VALUE, ParameterType.STRING, StringUtils.EMPTY)) //
-                .item(OTHER_COLUMN_MODE,
+                .item(CONSTANT_MODE, CONSTANT_MODE, new Parameter(CONSTANT_VALUE, ParameterType.STRING, StringUtils.EMPTY)) //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
                         new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, //
                                 StringUtils.EMPTY)) //

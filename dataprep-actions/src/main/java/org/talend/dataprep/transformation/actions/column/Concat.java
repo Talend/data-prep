@@ -106,8 +106,8 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
                         new Parameter(SEPARATOR_PARAMETER, ParameterType.STRING, StringUtils.EMPTY), //
                         SelectParameter.Builder.builder() //
                                 .name(SEPARATOR_CONDITION) //
-                                .item(BOTH_NOT_EMPTY) //
-                                .item(ALWAYS) //
+                                .item(BOTH_NOT_EMPTY, BOTH_NOT_EMPTY) //
+                                .item(ALWAYS, ALWAYS) //
                                 .defaultValue(BOTH_NOT_EMPTY) //
                                 .build())//
                 .item(CONSTANT_MODE, CONSTANT_MODE) //

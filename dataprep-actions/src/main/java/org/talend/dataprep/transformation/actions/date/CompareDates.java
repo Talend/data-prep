@@ -84,12 +84,12 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
         //@formatter:off
         return SelectParameter.Builder.builder() //
             .name(COMPARE_MODE) //
-            .item(EQ) //
-            .item(NE) //
-            .item(GT) //
-            .item(GE) //
-            .item(LT) //
-            .item(LE) //
+            .item(EQ, EQ) //
+            .item(NE, NE) //
+            .item(GT, GT) //
+            .item(GE, GE) //
+            .item(LT, LT) //
+            .item(LE, LE) //
             .defaultValue(EQ) //
             .build();
         //@formatter:on

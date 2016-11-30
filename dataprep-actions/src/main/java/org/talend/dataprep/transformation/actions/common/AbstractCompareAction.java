@@ -53,8 +53,8 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder() //
                         .name(MODE_PARAMETER) //
-                        .item(CONSTANT_MODE, getDefaultConstantValue()) //
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                        .item(CONSTANT_MODE, CONSTANT_MODE, getDefaultConstantValue()) //
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                                                StringUtils.EMPTY, false, false, //
                                                                StringUtils.EMPTY)) //
                         .defaultValue(CONSTANT_MODE)
@@ -75,13 +75,13 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         //@formatter:off
         return SelectParameter.Builder.builder() //
                            .name(CompareAction.COMPARE_MODE) //
-                           .item(CompareAction.EQ) //
-                           .item(CompareAction.NE) //
-                           .item(CompareAction.GT) //
-                           .item(CompareAction.GE) //
-                           .item(CompareAction.LT) //
-                           .item(CompareAction.LE) //
-                           .defaultValue(CompareAction.EQ) //
+                           .item(EQ, EQ) //
+                           .item(NE, NE) //
+                           .item(GT, GT) //
+                           .item(GE, GE) //
+                           .item(LT, LT) //
+                           .item(LE, LE) //
+                           .defaultValue(EQ) //
                            .build();
         //@formatter:on
 
@@ -213,17 +213,17 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
 
     protected boolean compareResultToBoolean(final int result, String mode) {
         switch (mode) {
-        case CompareAction.EQ:
+        case EQ:
             return result == 0;
-        case CompareAction.NE:
+        case NE:
             return result != 0;
-        case CompareAction.GT:
+        case GT:
             return result > 0;
-        case CompareAction.GE:
+        case GE:
             return result >= 0;
-        case CompareAction.LT:
+        case LT:
             return result < 0;
-        case CompareAction.LE:
+        case LE:
             return result <= 0;
         default:
             return false;

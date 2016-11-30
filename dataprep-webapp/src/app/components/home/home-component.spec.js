@@ -67,4 +67,12 @@ describe('Home component', () => {
 		//then
 		expect(element.find('preparation-creator').length).toBe(1);
 	});
+	
+	it('should inject home insertion point', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('insertion-home').length).toBe(1);
+	});
 });

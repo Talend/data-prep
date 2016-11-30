@@ -57,6 +57,14 @@ describe('Home component', () => {
 		expect(element.find('preparation-creator').length).toBe(1);
 	});
 
+	it('should inject home insertion point', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('insertion-home').length).toBe(1);
+	});
+	
 	it('should instanciate app layout with an ui insertion point', () => {
 		//when
 		createElement();

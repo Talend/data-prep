@@ -58,6 +58,8 @@ export const inventoryState = {
 
 export function InventoryStateService() {
 	return {
+		enableEdit,
+
 		setDatasets,
 		removeDataset,
 		setDatasetName,
@@ -78,6 +80,27 @@ export function InventoryStateService() {
 		setFetchingDatasets,
 		setFetchingPreparations,
 	};
+
+	function enableEdit(type, entity) {
+		const nextEntities = entities => entities.map((item) => {
+			if (item.model === entity) {
+				return {
+					...item,
+					displayMode: 'input',
+				};
+			}
+			return item;
+		});
+
+		if (type === 'folder') {
+			const folders = inventoryState.folder.content.folders;
+			inventoryState.folder.content.folders = nextEntities(folders);
+		}
+		if (type === 'preparation') {
+			const preparations = inventoryState.folder.content.preparations;
+			inventoryState.folder.content.preparations = nextEntities(preparations);
+		}
+	}
 
     /**
      * @ngdoc method

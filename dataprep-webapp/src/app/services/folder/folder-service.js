@@ -102,6 +102,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 			nbLines: item.dataset.dataSetNbRow,
 			nbSteps: item.steps.length - 1, // remove root step
 			icon: 'talend-dataprep',
+			displayMode: 'text',
 			actions: this.getPreparationActions(item),
 			model: item,
 		}));
@@ -123,6 +124,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			icon: 'talend-folder',
+			displayMode: 'text',
 			actions: this.getFolderActions(item),
 			model: item,
 		}));
@@ -136,7 +138,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 * @returns {string[]} The array of actions available on the preparation
 	 */
 	function getPreparationActions() {
-		return ['preparation:copy-move', 'preparation:remove'];
+		return ['preparation:edit', 'preparation:copy-move', 'preparation:remove'];
 	}
 
 	/**
@@ -147,7 +149,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 * @returns {string[]} The array of actions available on the folder
 	 */
 	function getFolderActions() {
-		return ['preparation:remove:folder'];
+		return ['preparation:edit:folder', 'preparation:remove:folder'];
 	}
 
 	/**

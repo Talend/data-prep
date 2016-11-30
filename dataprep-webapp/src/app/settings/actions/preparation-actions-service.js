@@ -78,6 +78,12 @@ export default class PreparationActionsService {
 				action.payload.model
 			);
 			break;
+		case '@@preparation/EDIT':
+		case '@@preparation/EDIT_FOLDER': {
+			const args = action.payload.args.concat(action.payload.model);
+			this.StateService[action.payload.method].apply(null, args);
+			break;
+		}
 		case '@@preparation/REMOVE': {
 			const preparation = action.payload.model;
 			this.TalendConfirmService

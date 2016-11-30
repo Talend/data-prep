@@ -41,6 +41,7 @@
         ],
         "items": [],
         "titleProps": {
+          "displayModeKey": "displayMode",
           "iconKey": "icon",
           "key": "name",
           "onClick": "menu:playground:preparation"
@@ -209,6 +210,26 @@
       "payload": {
         "method": "copyMove",
         "args": []
+      }
+    },
+    "preparation:edit": {
+      "id": "preparation:edit",
+      "name": "Edit preparation name",
+      "icon": "talend-pencil",
+      "type": "@@preparation/EDIT",
+      "payload": {
+        "method": "enableInventoryEdit",
+        "args": ["preparation"]
+      }
+    },
+    "preparation:edit:folder": {
+      "id": "preparation:edit:folder",
+      "name": "Edit folder name",
+      "icon": "talend-pencil",
+      "type": "@@preparation/EDIT_FOLDER",
+      "payload": {
+        "method": "enableInventoryEdit",
+        "args": ["folder"]
       }
     },
     "preparation:remove": {

@@ -51,7 +51,31 @@ export default class AppHeaderBarCtrl {
 		};
 	}
 
+	adaptSearch() {
+		const searchSettings = this.appSettings.views.appheaderbar.search;
+		const searchActionId = searchSettings.itemProps && searchSettings.itemProps.onClick;
+		const searchAction = this.appSettings.actions[searchActionId];
+		return {
+			...searchSettings,
+			config: {
+				...searchSettings.config,
+				title: this.$translate.instant('TOGGLE_SEARCH'),
+			},
+			inputProps: {
+				...searchSettings.inputProps,
+				placeholder: this.$translate.instant('SEARCH'),
+			},
+			itemProps: {
+				...searchSettings.itemProps,
+				onClick: this.SettingsActionsService.createDispatcher(searchAction),
+			},
+		};
+	}
+
 	adaptContent() {
+		const search = this.appSettings.views.appheaderbar.search ?
+			this.adaptSearch() :
+			{};
 		const navItems = this.appSettings.views.appheaderbar.actions ?
 			this.adaptActions() :
 			[];
@@ -59,12 +83,14 @@ export default class AppHeaderBarCtrl {
 			this.adaptUserMenu() :
 			[];
 
-		this.content = [{
-			navs: [{
-				nav: { pullRight: true },
-				navItems: navItems.concat(userMenu),
-			}],
-		}];
+		this.content = [
+			search,
+			{
+				navs: [{
+					nav: { pullRight: true },
+					navItems: navItems.concat(userMenu),
+				}],
+			}];
 	}
 
 	adaptActions() {

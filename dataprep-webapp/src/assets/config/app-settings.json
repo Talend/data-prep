@@ -9,8 +9,7 @@
       "search": {
         "config": {
           "icon": {
-            "name": "talend-search",
-            "title": "Toggle search input"
+            "name": "talend-search"
           }
         },
         "itemProps": {

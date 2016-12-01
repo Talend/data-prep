@@ -12,7 +12,6 @@
  ============================================================================*/
 
 describe('Import REST Service', () => {
-
 	let $httpBackend;
 	const importTypes = [
 		{
@@ -141,7 +140,7 @@ describe('Import REST Service', () => {
 		// given
 		let types = null;
 		$httpBackend
-			.expectGET(RestURLs.exportUrl + '/imports')
+			.expectGET(`${RestURLs.exportUrl}/imports`)
 			.respond(200, importTypes);
 
 		// when
@@ -160,7 +159,7 @@ describe('Import REST Service', () => {
 		// given
 		let params = null;
 		$httpBackend
-			.expectGET(RestURLs.exportUrl + '/imports/http/parameters')
+			.expectGET(`${RestURLs.exportUrl}/imports/http/parameters`)
 			.respond(200, { name: 'url' });
 
 		// when
@@ -185,7 +184,7 @@ describe('Import REST Service', () => {
 		const expectedResult = { jsonSchema: {}, uiSchema: {} };
 
 		$httpBackend
-			.expectPOST(RestURLs.tcompUrl + '/properties/' + formId + '/after/' + propertyName, formData)
+			.expectPOST(`${RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData)
 			.respond(200, expectedResult);
 
 		// when

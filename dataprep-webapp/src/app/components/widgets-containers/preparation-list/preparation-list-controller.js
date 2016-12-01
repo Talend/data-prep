@@ -106,31 +106,40 @@ export default class PreparationListCtrl {
 		};
 	}
 
-	initListProps() {
-		// list title click
-		const listSettings = this.appSettings.views['listview:preparations'].list;
-		const titleClickAction = this.appSettings.actions[listSettings.titleProps.onClick];
-		const prepDispatcher = this.SettingsActionsService.createDispatcher(titleClickAction);
+	getOnTitleActionDispatcher(listViewKey, actionKey) {
+		const listSettings = this.appSettings.views[listViewKey].list;
+		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
+		return this.SettingsActionsService.createDispatcher(action);
+	}
 
-		// folder title click
-		const folderListSettings = this.appSettings.views['listview:folders'].list;
-		const folderClickAction = this.appSettings.actions[folderListSettings.titleProps.onClick];
-		const folderDispatcher = this.SettingsActionsService.createDispatcher(folderClickAction);
-
-		// list item title click
-		const onClick = (event, entity) => {
+	getActionDispatcher(folderDispatcher, prepDispatcher) {
+		return (event, entity) => {
 			if (this.adapted.folders.indexOf(entity) > -1) {
 				return folderDispatcher(event, entity);
 			}
 			return prepDispatcher(event, entity);
 		};
+	}
 
-		// lit props
+	getOnTitleDispatcher(action) {
+		const folderDispatcher = this.getOnTitleActionDispatcher('listview:folders', action);
+		const prepDispatcher = this.getOnTitleActionDispatcher('listview:preparations', action);
+
+		return this.getActionDispatcher(folderDispatcher, prepDispatcher);
+	}
+
+	initListProps() {
+		const listSettings = this.appSettings.views['listview:preparations'].list;
+		const onClick = this.getOnTitleDispatcher('onClick');
+		const onEditCancel = this.getOnTitleDispatcher('onEditCancel');
+		const onEditValidate = this.getOnTitleDispatcher('onEditValidate');
 		this.listProps = {
 			...listSettings,
 			titleProps: {
 				...listSettings.titleProps,
 				onClick,
+				onEditCancel,
+				onEditValidate,
 			},
 		};
 	}

@@ -59,6 +59,7 @@ export const inventoryState = {
 export function InventoryStateService() {
 	return {
 		enableEdit,
+		cancelEdit,
 
 		setDatasets,
 		removeDataset,
@@ -81,6 +82,29 @@ export function InventoryStateService() {
 		setFetchingPreparations,
 	};
 
+	function createNextEntities(type, fn) {
+		switch (type) {
+		case 'folder': {
+			const folders = inventoryState.folder.content.folders;
+			inventoryState.folder.content.folders = fn(folders);
+			break;
+		}
+		case 'preparation': {
+			const preparations = inventoryState.folder.content.preparations;
+			inventoryState.folder.content.preparations = fn(preparations);
+			break;
+		}
+		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name enableEdit
+	 * @methodOf data-prep.services.state.service:InventoryStateService
+	 * @param {string} type The entity type
+	 * @param {object} entity The entity to switch display mode
+	 * @description Switch the edit mode of the provided entity
+	 */
 	function enableEdit(type, entity) {
 		const nextEntities = entities => entities.map((item) => {
 			if (item.model === entity) {
@@ -91,15 +115,28 @@ export function InventoryStateService() {
 			}
 			return item;
 		});
+		createNextEntities(type, nextEntities);
+	}
 
-		if (type === 'folder') {
-			const folders = inventoryState.folder.content.folders;
-			inventoryState.folder.content.folders = nextEntities(folders);
-		}
-		if (type === 'preparation') {
-			const preparations = inventoryState.folder.content.preparations;
-			inventoryState.folder.content.preparations = nextEntities(preparations);
-		}
+	/**
+	 * @ngdoc method
+	 * @name cancelEdit
+	 * @methodOf data-prep.services.state.service:InventoryStateService
+	 * @param {string} type The entity type
+	 * @param {object} entity The entity to switch display mode
+	 * @description Switch the edit mode of the provided entity
+	 */
+	function cancelEdit(type, entity) {
+		const nextEntities = entities => entities.map((item) => {
+			if (item.model === entity) {
+				return {
+					...item,
+					displayMode: undefined,
+				};
+			}
+			return item;
+		});
+		createNextEntities(type, nextEntities);
 	}
 
     /**

@@ -79,9 +79,43 @@ export default class PreparationActionsService {
 			);
 			break;
 		case '@@preparation/EDIT':
-		case '@@preparation/EDIT_FOLDER': {
+		case '@@preparation/EDIT_FOLDER':
+		case '@@preparation/CANCEL_EDIT':
+		case '@@preparation/CANCEL_EDIT_FOLDER': {
 			const args = action.payload.args.concat(action.payload.model);
 			this.StateService[action.payload.method].apply(null, args);
+			break;
+		}
+		case '@@preparation/VALIDATE_EDIT': {
+			const target = action.event.target;
+			const newName = target && target.value;
+			const cleanName = newName && newName.trim();
+			const preparation = action.payload.model;
+
+			this.StateService.cancelInventoryEdit('preparation', preparation);
+			if (cleanName && cleanName !== preparation.name) {
+				this.PreparationService.setName(preparation.id, cleanName)
+					.then(() => this.refreshCurrentFolder())
+					.then(() => {
+						this.MessageService.success(
+							'PREPARATION_RENAME_SUCCESS_TITLE',
+							'PREPARATION_RENAME_SUCCESS'
+						);
+					});
+			}
+			break;
+		}
+		case '@@preparation/VALIDATE_EDIT_FOLDER': {
+			const target = action.event.target;
+			const newName = target && target.value;
+			const cleanName = newName && newName.trim();
+			const folder = action.payload.model;
+
+			this.StateService.cancelInventoryEdit('folder', folder);
+			if (cleanName && cleanName !== folder.name) {
+				this.FolderService.rename(folder.id, cleanName)
+					.then(() => this.refreshCurrentFolder());
+			}
 			break;
 		}
 		case '@@preparation/REMOVE': {

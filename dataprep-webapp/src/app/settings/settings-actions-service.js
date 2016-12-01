@@ -23,6 +23,7 @@ export default class SettingsActionsService {
 		return (event, model) => {
 			const adaptedAction = {
 				...action,
+				event,
 				payload: {
 					...action.payload,
 					...model,

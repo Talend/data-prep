@@ -27,14 +27,22 @@ public class ServerMock {
         serverUrl = "http:/" + server.getServiceAddress();
     }
 
-    public void addEndPoint(String path, InputStream body, Header... headers) throws Exception {
-        MockedRequestHandler mockedRequestHandler = new MockedRequestHandler(body, headers);
+
+    public void addEndPoint(String path, String body,  Header... headers) throws Exception {
+        addEndPoint(path, body, 200, headers);
+    }
+    public void addEndPoint(String path, InputStream body, int statusCode, Header... headers) throws Exception {
+        MockedRequestHandler mockedRequestHandler = new MockedRequestHandler(body, statusCode, headers);
         server.register(path, mockedRequestHandler);
         set.add(path);
     }
 
-    public void addEndPoint(String path, String body, Header... headers) throws Exception {
-        addEndPoint(path, IOUtils.toInputStream(body), headers);
+    public void addEndPoint(String path, InputStream body, Header... headers) throws Exception {
+        addEndPoint(path, body, 200, headers);
+    }
+
+    public void addEndPoint(String path, String body,int statusCode,  Header... headers) throws Exception {
+        addEndPoint(path, IOUtils.toInputStream(body), statusCode, headers);
     }
 
     public void removeEndPoint(String pattern) {
@@ -57,9 +65,26 @@ public class ServerMock {
 
         private final InputStream body;
 
+        private final int statusCode;
+
         public MockedRequestHandler(InputStream body, Header[] headers) {
+            this(body, 200, headers);
+        }
+
+        public MockedRequestHandler(InputStream body, int statusCode, Header[] headers) {
             this.headers = headers;
             this.body = body;
+            this.statusCode = statusCode;
+        }
+
+        public MockedRequestHandler(String body, Header[] headers) {
+            this(body, 200, headers);
+        }
+
+        public MockedRequestHandler(String body, int statusCode, Header[] headers) {
+            this.headers = headers;
+            this.body = IOUtils.toInputStream(body);
+            this.statusCode = statusCode;
         }
 
         @Override
@@ -72,7 +97,7 @@ public class ServerMock {
                     httpResponse.addHeader(header);
                 }
             }
-            httpResponse.setStatusCode(200);
+            httpResponse.setStatusCode(statusCode);
         }
     }
 

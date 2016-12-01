@@ -15,7 +15,6 @@ package org.talend.dataprep.actions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import org.apache.commons.io.IOExceptionWithCause;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -48,7 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * A class that connects to a remote server based on a JWT-authentication and sends requests to retrieve data sets.
  */
-public class RemoteResourceGetter implements Serializable {
+public class RemoteResourceGetter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteResourceGetter.class);
 
@@ -66,7 +66,6 @@ public class RemoteResourceGetter implements Serializable {
      */
     public Header login(String url, String userName, String passWord) {
         final URI uri;
-        final int statusCode;
         try {
             uri = new URI(url + "/login?client-app=STUDIO");
         } catch (URISyntaxException e) {
@@ -76,11 +75,7 @@ public class RemoteResourceGetter implements Serializable {
                 .addParameter("password", passWord).build();
 
         try (CloseableHttpResponse response = client.execute(login)) {
-            statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                throw new RemoteConnectionException(
-                        "The status code of the response, when trying to connect to " + url + ", is: " + statusCode);
-            }
+            handleError(response);
             Header[] headers = response.getAllHeaders();
             for (Header header : headers) {
                 if (StringUtils.equalsIgnoreCase("Authorization", header.getName())) {
@@ -96,7 +91,7 @@ public class RemoteResourceGetter implements Serializable {
 
     /**
      * Reads token of the specified JsonParser and returns a list of column metadata.
-     * 
+     *
      * @param jsonParser the jsonParser whose next tokens are supposed to represent a list of column metadata
      * @return The column metadata parsed from JSON parser.
      * @throws IOException In case of JSON exception related error.
@@ -161,7 +156,7 @@ public class RemoteResourceGetter implements Serializable {
 
     /**
      * Reads and Maps the data set from the specified input stream.
-     * 
+     *
      * @param inputStream the input stream containing the data set
      * @param joinOnColumn the column used to join the lookup data set
      * @return a map which associates to each value of the joint column its corresponding data set row
@@ -200,7 +195,7 @@ public class RemoteResourceGetter implements Serializable {
      * Connects to the specified url with the specified JWT to retrieve the data set corresponding to the specified id and then
      * return
      * a map which associates to each value of the joint column its corresponding data set row.
-     * 
+     *
      * @param apiUrl the url to connect to
      * @param jwt the json web token
      * @param dataSetId the id of the data set to retrieve
@@ -208,17 +203,11 @@ public class RemoteResourceGetter implements Serializable {
      * @return a map which associates to each value of the joint column its corresponding data set row
      */
     private Map<String, DataSetRow> mapLookupDataSet(String apiUrl, Header jwt, String dataSetId, String joinOnColumn) {
-        final int statusCode;
         String url = apiUrl + "/api/datasets/" + dataSetId + "?fullContent=true&includeTechnicalProperties=true";
         HttpGet request = new HttpGet(url);
         request.addHeader(jwt);
         try (final CloseableHttpResponse response = client.execute(request)) {
-            statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                throw new RemoteConnectionException("The status code of the response when trying to mapLookupDataSet the url:  "
-                        + url + " is: " + statusCode);
-            }
-
+            handleError(response);
             return parseAndMapLookupDataSet(response.getEntity().getContent(), joinOnColumn);
 
         } catch (IOException e) {
@@ -229,7 +218,7 @@ public class RemoteResourceGetter implements Serializable {
     /**
      * Login to the specified url with specified credentials and retrieves the data set corresponding to the specified id and then
      * return a map which associates to each value of the joint column its corresponding data set row.
-     * 
+     *
      * @param apiUrl the url to connect to
      * @param login the user name to use
      * @param password the password of the specified user
@@ -244,17 +233,11 @@ public class RemoteResourceGetter implements Serializable {
     }
 
     public Dictionaries retrieveDictionaries(String apiUrl, String login, String password) {
-        final int statusCode;
         String url = apiUrl + "/api/transform/dictionary";
         HttpGet request = new HttpGet(url);
         request.addHeader(login(apiUrl, login, password));
         try (final CloseableHttpResponse response = client.execute(request)) {
-            statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                throw new RemoteConnectionException(
-                        "The status code of the response when trying to retrieveDictionaries the url:  " + url + " is: "
-                                + statusCode);
-            }
+            handleError(response);
             final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(response.getEntity().getContent()));
             final Object object = ois.readObject();
             return (Dictionaries) object;
@@ -265,16 +248,11 @@ public class RemoteResourceGetter implements Serializable {
 
     public String retrievePreparation(String apiUrl, String login, String password, String preparationId) {
         final Header jwt = login(apiUrl, login, password);
-        final int statusCode;
         String url = apiUrl + "/api/preparations/" + preparationId + "/details";
         HttpGet request = new HttpGet(url);
         request.addHeader(jwt);
         try (final CloseableHttpResponse response = client.execute(request)) {
-            statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                String message = IOUtils.toString(response.getEntity().getContent());
-                throw new RemoteConnectionException("Status Code: " + statusCode + ", reason: " + message);
-            }
+            handleError(response);
             return IOUtils.toString(response.getEntity().getContent());
         } catch (IOException e) {
             throw new RemoteConnectionException("Unable to retrieve the preparation with id: " + preparationId, e);
@@ -296,4 +274,17 @@ public class RemoteResourceGetter implements Serializable {
 
     }
 
+    public void handleError(HttpResponse response) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            try {
+                DPErrorCode errorCode = mapper.readValue(response.getEntity().getContent(), DPErrorCode.class);
+                throw new RemoteConnectionException("Status Code: " + statusCode + ", cause: " + errorCode.getCause()
+                        + ", message: " + errorCode.getMessage() + ".");
+            } catch (IOException e) {
+                throw new RemoteConnectionException(
+                        "Status Code: " + statusCode + ", cause: " + response.getStatusLine().getReasonPhrase() + ".", e);
+            }
+        }
+    }
 }

@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -74,6 +75,22 @@ public class RemoteResourceGetterTest {
 
         // then
         remoteResourceGetter.login(serverUrl + "/log", "Maximus", "Spanish");
+    }
+
+    @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)
+    public void testGetErrorCode() throws Exception {
+        // Given
+        try(InputStream inputStream = RemoteResourceGetterTest.class.getResourceAsStream("error_code.json")) {
+            serverMock.addEndPoint("/errorCode", inputStream, 404, header);
+        }
+        String serverUrl = serverMock.getServerUrl();
+        remoteResourceGetter = new RemoteResourceGetter();
+
+        // When
+        Header result = remoteResourceGetter.login(serverUrl + "/errorCode", "Maximus", "Spanish");
+
+        // Then
+        fail();
     }
 
     @Test
@@ -138,5 +155,6 @@ public class RemoteResourceGetterTest {
         assertNull(result.getDictionary());
         assertNull(result.getKeyword());
     }
+
 
 }

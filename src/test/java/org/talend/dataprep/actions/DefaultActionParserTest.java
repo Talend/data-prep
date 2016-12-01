@@ -39,9 +39,6 @@ import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.transformation.service.Dictionaries;
 
-/**
- * TODO: Add a test to check error dataprep error messages and a lookup with two more actions.
- */
 public class DefaultActionParserTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultActionParserTest.class);

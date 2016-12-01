@@ -272,6 +272,8 @@ describe('Import controller', () => {
 		it('should reset modal display flag and datastore creation form', inject(() => {
 			// given
 			ctrl = createController();
+			ctrl.showModal = true;
+			ctrl.datastoreForm = {};
 
 			// when
 			ctrl.cancel();

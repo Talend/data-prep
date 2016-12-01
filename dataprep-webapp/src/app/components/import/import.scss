@@ -43,7 +43,6 @@
 
 .tcomp {
 	fieldset {
-
 		input,
 		textarea {
 			// Material-UI deals by itself with focus style
@@ -54,7 +53,20 @@
 		}
 	}
 
-	.datastore {
+	> p,
+	.form-actions {
+		margin: auto;
+		width: 75%;
+	}
+
+	.form-actions {
+		display: flex;
+		justify-content: space-between;
+		padding: 10px 0;
+	}
+
+	.datastore,
+	.dataset {
 		text-align: center;
 
 		legend,
@@ -63,12 +75,18 @@
 			text-align: left;
 		}
 
+		fieldset legend,
 		fieldset fieldset legend {
 			display: none;
 		}
+
 		fieldset > div > div {
 			// !important is needed to override element style attr
 			width: 75% !important;
 		}
+	}
+
+	.datastore .form-actions {
+		justify-content: flex-end;
 	}
 }

@@ -24,7 +24,7 @@
  */
 export default class ImportCtrl {
 
-	constructor($document, $translate, state, StateService, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, ImportRestService) {
+	constructor($document, $translate, state, StateService, UploadWorkflowService, UpdateWorkflowService, DatasetService, TalendConfirmService, ImportService) {
 		'ngInject';
 
 		this.$document = $document;
@@ -35,7 +35,7 @@ export default class ImportCtrl {
 		this.UpdateWorkflowService = UpdateWorkflowService;
 		this.DatasetService = DatasetService;
 		this.TalendConfirmService = TalendConfirmService;
-		this.ImportRestService = ImportRestService;
+		this.ImportService = ImportService;
 
 		/** List of supported import type */
 		this.importTypes = this.state.import.importTypes;
@@ -43,8 +43,12 @@ export default class ImportCtrl {
 		/** Display/Hide the import parameters modal */
 		this.showModal = false;
 
-		/** Display/Hide the import parameters modal */
-		this.isFetchingParameters = false;
+		this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
+		this.onDatastoreFormSubmit = this.onDatastoreFormSubmit.bind(this);
+
+		this.onDatasetFormChange = this.onDatasetFormChange.bind(this);
+		this.onDatasetFormCancel = this.onDatasetFormCancel.bind(this);
+		this.onDatasetFormSubmit = this.onDatasetFormSubmit.bind(this);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -79,23 +83,10 @@ export default class ImportCtrl {
 			default:
 				this.showModal = true;
 				if (this.currentInputType.dynamic) {
-					this.isFetchingParameters = true;
+					this._getDatastoreFormActions();
+					this._getDatasetFormActions();
 
-					this.datastoreFormActions = [
-						{
-							style: 'success',
-							type: 'submit',
-							onClick: this.onDatastoreFormSubmit,
-							label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
-						},
-					];
-
-					this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
-
-					this.onDatastoreFormSubmit = () => {
-					};
-
-					this.ImportRestService.importParameters(this.currentInputType.locationType)
+					this.ImportService.importParameters(this.currentInputType.locationType)
 						.then((response) => {
 							if (this._isTCOMP(importType.locationType)) {
 								this.datastoreForm = response.data;
@@ -103,12 +94,51 @@ export default class ImportCtrl {
 							else {
 								this.currentInputType.parameters = response.data;
 							}
-						})
-						.finally(() => {
-							this.isFetchingParameters = false;
 						});
 				}
 			}
+		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _getDatastoreFormActions
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Populates datastore form actions if they don't exist
+	 */
+	_getDatastoreFormActions() {
+		if (!this.datastoreFormActions) {
+			this.datastoreFormActions = [
+				{
+					style: 'info',
+					type: 'submit',
+					label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
+				},
+			];
+		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _getDatasetFormActions
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Populates dataset form actions if they don't exist
+	 */
+	_getDatasetFormActions() {
+		if (!this.datasetFormActions) {
+			this.datasetFormActions = [
+				{
+					style: 'default',
+					type: 'button',
+					onClick: this.onDatasetFormCancel,
+					label: this.$translate.instant('CANCEL'),
+				},
+				{
+					style: 'success',
+					type: 'submit',
+					label: this.$translate.instant('IMPORT_DATASET'),
+				},
+			];
 		}
 	}
 
@@ -126,13 +156,15 @@ export default class ImportCtrl {
 
 	/**
 	 * @ngdoc method
-	 * @name cancel
+	 * @name onDatasetFormCancel
 	 * @methodOf data-prep.import.controller:ImportCtrl
 	 * @description Cancel action for modal
 	 */
-	cancel() {
+	onDatasetFormCancel() {
 		this.showModal = false;
 		this.datastoreForm = null;
+		this.dataStoreId = null;
+		this.datasetForm = null;
 	}
 
 	/**
@@ -145,14 +177,64 @@ export default class ImportCtrl {
 	 * @param propertyName Property which has triggered change handler
 	 */
 	onDatastoreFormChange(formData, formId, propertyName) {
-		this.isFetchingParameters = true;
 		const definitionName = formId || this.currentInputType.locationType;
-		this.ImportRestService.refreshParameters(definitionName, propertyName, formData)
+		this.ImportService.refreshParameters(definitionName, propertyName, formData)
 			.then((response) => {
 				this.datastoreForm = response.data;
+			});
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onDatastoreFormSubmit
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Datastore form change handler
+	 * @param uiSpecs All data as form properties
+	 * @param formId ID attached to the form
+	 */
+	onDatastoreFormSubmit(uiSpecs, formId) {
+		const definitionName = formId || this.currentInputType.locationType;
+		this.ImportService.testConnection(definitionName, uiSpecs && uiSpecs.formData)
+			.then((response) => {
+				this.dataStoreId = response.data && response.data.dataStoreId;
+				if (!this.dataStoreId) {
+					return null;
+				}
+				return this.ImportService.getDatasetForm(this.dataStoreId);
 			})
-			.finally(() => {
-				this.isFetchingParameters = false;
+			.then((datasetFormResponse) => {
+				this.datasetForm = datasetFormResponse && datasetFormResponse.data;
+			});
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onDatasetFormChange
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Datastore form change handler
+	 * @param formData All data as form properties
+	 * @param formId ID attached to the form
+	 * @param propertyName Property which has triggered change handler
+	 */
+	onDatasetFormChange(formData, formId, propertyName) {
+		this.ImportService.refreshDatasetForm(this.dataStoreId, propertyName, formData)
+			.then((response) => {
+				this.datasetForm = response.data;
+			});
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onDatasetFormSubmit
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Datastore form change handler
+	 * @param uiSpecs
+	 */
+	onDatasetFormSubmit(uiSpecs) {
+		this.ImportService.createDataset(this.dataStoreId, uiSpecs && uiSpecs.formData)
+			.then((response) => {
+				const dataSetId = response.data && response.data.dataSetId;
+				this.DatasetService.getDatasetById(dataSetId).then(this.UploadWorkflowService.openDataset);
 			});
 	}
 

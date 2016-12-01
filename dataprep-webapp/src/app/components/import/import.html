@@ -27,46 +27,43 @@
               ng-if="$ctrl.showModal"
               close-button="true"
               disable-enter="true">
-    <div ng-show="$ctrl.isFetchingParameters === false">
-        <div class="modal-title">{{$ctrl.currentInputType.title}}</div>
-        <br/>
-        <form name="$ctrl.datasetForm"
-              ng-if="!$ctrl.datastoreForm"
-              ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
+    <div class="modal-title">{{$ctrl.currentInputType.title}}</div>
+    <br/>
+    <form name="$ctrl.datasetForm"
+          ng-if="!$ctrl.datastoreForm"
+          ng-submit="$ctrl.datasetForm.$valid && $ctrl.import($ctrl.currentInputType)">
 
-            <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
+        <transform-params parameters="$ctrl.currentInputType.parameters"></transform-params>
 
-            <div class="modal-buttons">
-                <button class="btn talend-modal-close btn-default modal-secondary-button"
-                        type="button"
-                        translate-once="CANCEL"></button>
-                <button class="btn btn-primary modal-primary-button"
-                        ng-disabled="$ctrl.datasetForm.$invalid"
-                        translate-once="OK"></button>
-            </div>
-        </form>
-        <div class="tcomp">
-            <div class="datastore"
-                 ng-if="$ctrl.datastoreForm">
-                <talend-form data="$ctrl.datastoreForm"
-                                   buttonBlockClass="form-actions"
-                                   actions="$ctrl.datastoreFormActions"
-                                   on-change="$ctrl.onDatastoreFormChange"
-                                   on-submit="$ctrl.onDatastoreFormSubmit"/>
-            </div>
-            <p class="text-center text-success"
-               ng-if="$ctrl.currentInputType.datasetForm"
-               translate-once="IMPORT_DATASTORE_CONNECTION_SUCCESSFUL">
-            </p>
+        <div class="modal-buttons">
+            <button class="btn talend-modal-close btn-default modal-secondary-button"
+                    type="button"
+                    translate-once="CANCEL"></button>
+            <button class="btn btn-primary modal-primary-button"
+                    ng-disabled="$ctrl.datasetForm.$invalid"
+                    translate-once="OK"></button>
         </div>
-    </div>
-    </div>
-    <div id="import-ghost"
-         ng-show="$ctrl.isFetchingParameters === true"
-         class="loading-container">
-        <div class="loading-msg">
-            <span class="wait-icon continuous-rotate"><i data-icon="c" class="icon"></i></span>
-            <span class="wait-text" translate-once="IMPORT_WAIT"></span>
+    </form>
+    <div class="tcomp">
+        <div class="datastore"
+             ng-if="$ctrl.datastoreForm && $ctrl.datastoreForm.jsonSchema">
+            <talend-form data="$ctrl.datastoreForm"
+                         autocomplete="off"
+                         actions="$ctrl.datastoreFormActions"
+                         on-change="$ctrl.onDatastoreFormChange"
+                         on-submit="$ctrl.onDatastoreFormSubmit"/>
+        </div>
+        <p class="text-right text-success"
+           ng-if="$ctrl.datasetForm"
+           translate-once="DATASTORE_CONNECTION_SUCCESSFUL">
+        </p>
+        <div class="dataset"
+             ng-if="$ctrl.datasetForm && $ctrl.datasetForm.jsonSchema">
+            <talend-form data="$ctrl.datasetForm"
+                         autocomplete="off"
+                         actions="$ctrl.datasetFormActions"
+                         on-change="$ctrl.onDatasetFormChange"
+                         on-submit="$ctrl.onDatasetFormSubmit"/>
         </div>
     </div>
 </talend-modal>

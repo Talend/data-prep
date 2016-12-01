@@ -187,9 +187,16 @@ export default function TalendModal($timeout) {
 				 */
 				const attachListeners = () => {
 					innerElement.on('click', (e) => {
-						e.stopPropagation();
-						if (e.target.classList.contains('talend-modal-close')) {
-							hideModal();
+						// FIXME Need to deal with this textContent value if i18n
+						const isReactCancelButton =
+							Object.keys(e.target).some(k => k.indexOf('__react') > -1)
+							&& e.target.textContent === 'Cancel'
+							&& e.target.tagName === 'BUTTON';
+						if (!isReactCancelButton) {
+							e.stopPropagation();
+							if (e.target.classList.contains('talend-modal-close')) {
+								hideModal();
+							}
 						}
 					});
 

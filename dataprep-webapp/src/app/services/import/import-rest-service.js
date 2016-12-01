@@ -22,6 +22,10 @@ export default function ImportRestService($http, RestURLs) {
 		importTypes,
 		importParameters,
 		refreshParameters,
+		testConnection,
+		getDatasetForm,
+		refreshDatasetForm,
+		createDataset,
 	};
 	/**
 	 * @ngdoc method
@@ -54,5 +58,49 @@ export default function ImportRestService($http, RestURLs) {
 	 */
 	function refreshParameters(formId, propertyName, formData) {
 		return $http.post(`${RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name testConnection
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Test connection to a datastore
+	 * @returns {Promise} The POST call promise
+	 */
+	function testConnection(formId, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/datastores/${formId}`, formData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getDatasetForm
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Get dataset form properties
+	 * @returns {Promise} The GET call promise
+	 */
+	function getDatasetForm(datastoreId) {
+		return $http.get(`${RestURLs.tcompUrl}/datastores/${datastoreId}/dataset/properties`);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshDatasetForm
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Refresh the available dataset form parameters
+	 * @returns {Promise}  The POST call promise
+	 */
+	function refreshDatasetForm(datastoreId, propertyName, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/datastores/${datastoreId}/after/${propertyName}`, formData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name createDataset
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Create dataset for a datastore
+	 * @returns {Promise} The POST call promise
+	 */
+	function createDataset(datastoreId, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/datastores/${datastoreId}/dataset`, formData);
 	}
 }

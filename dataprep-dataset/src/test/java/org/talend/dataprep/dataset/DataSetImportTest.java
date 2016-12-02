@@ -90,13 +90,13 @@ public class DataSetImportTest extends DataSetBaseTest {
         final Iterator<DataSetMetadata> iterator = dataSetMetadataRepository.list().iterator();
         assertThat(iterator.hasNext(), is(true));
         final DataSetMetadata next = iterator.next();
-        assertThat(next.getLifecycle().importing(), is(true));
+        assertThat(next.getLifecycle().isImporting(), is(true));
         // Asserts when import is done
         // Wait until creation is done (i.e. end of thread since creation is a blocking operation).
         creationThread.join();
         assertThat(dataSetId, notNullValue());
         final DataSetMetadata metadata = dataSetMetadataRepository.get(dataSetId);
-        assertThat(metadata.getLifecycle().importing(), is(false));
+        assertThat(metadata.getLifecycle().isImporting(), is(false));
         assertThat(metadata.getLifecycle().schemaAnalyzed(), is(true));
         // TDP-283: Quality analysis should be synchronous
         assertThat(metadata.getLifecycle().qualityAnalyzed(), is(true));
@@ -128,7 +128,7 @@ public class DataSetImportTest extends DataSetBaseTest {
         final Iterator<DataSetMetadata> iterator = dataSetMetadataRepository.list().iterator();
         assertThat(iterator.hasNext(), is(true));
         final DataSetMetadata next = iterator.next();
-        assertThat(next.getLifecycle().importing(), is(true));
+        assertThat(next.getLifecycle().isImporting(), is(true));
         // ... list operation should *not* return data set being imported...
         when().get("/datasets").then().statusCode(HttpStatus.OK.value()).body(equalTo("[]"));
         // Assert the new data set is returned when creation completes.
@@ -177,7 +177,7 @@ public class DataSetImportTest extends DataSetBaseTest {
         assertThat(iterator.hasNext(), is(true));
         final DataSetMetadata next = iterator.next();
         LOGGER.info("found {}", next);
-        assertThat(next.getLifecycle().importing(), is(true));
+        assertThat(next.getLifecycle().isImporting(), is(true));
         // ... get operation should *not* return data set being imported but report an error ...
         int statusCode = when().get("/datasets/{id}/content", next.getId()).getStatusCode();
         assertThat(statusCode, is(400));

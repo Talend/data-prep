@@ -19,9 +19,9 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
@@ -31,23 +31,23 @@ public class ActionTestWorkbench {
     private ActionTestWorkbench() {
     }
 
-    public static void test(RowMetadata rowMetadata, ActionRegistry actionRegistry, Action... actions) {
+    public static void test(RowMetadata rowMetadata, ActionRegistry actionRegistry, RunnableAction... actions) {
         test(new DataSetRow(rowMetadata), actionRegistry, actions);
     }
 
-    public static void test(DataSetRow input, ActionRegistry actionRegistry, Action... actions) {
+    public static void test(DataSetRow input, ActionRegistry actionRegistry, RunnableAction... actions) {
         test(Collections.singletonList(input), actionRegistry, actions);
     }
 
-    public static void test(Collection<DataSetRow> input, ActionRegistry actionRegistry, Action... actions) {
+    public static void test(Collection<DataSetRow> input, ActionRegistry actionRegistry, RunnableAction... actions) {
         test(input, null, actionRegistry, actions);
     }
 
     public static void test(Collection<DataSetRow> input,
                             AnalyzerService analyzerService,
                             ActionRegistry actionRegistry,
-                            Action... actions) {
-        final List<Action> allActions = new ArrayList<>();
+                            RunnableAction... actions) {
+        final List<RunnableAction> allActions = new ArrayList<>();
         Collections.addAll(allActions, actions);
 
         final DataSet dataSet = new DataSet();

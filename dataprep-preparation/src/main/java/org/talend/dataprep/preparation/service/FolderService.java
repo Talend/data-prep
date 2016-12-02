@@ -58,7 +58,6 @@ public class FolderService {
     @Autowired
     private Security security;
 
-
     /**
      * List direct sub folders for the given id.
      *

@@ -30,7 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.common.HttpResponse;
 import org.talend.dataprep.api.service.command.folder.*;
@@ -44,6 +43,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.SecurityProxy;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -226,8 +226,8 @@ public class FolderAPI extends APIService {
         try (InputStream input = listPreparations.execute()) {
 
             output.writeArrayFieldStart("preparations");
-            final List<Preparation> preparations = mapper.readValue(input, new TypeReference<List<Preparation>>(){});
-            for (Preparation preparation : preparations) {
+            final List<UserPreparation> preparations = mapper.readValue(input, new TypeReference<List<UserPreparation>>(){});
+            for (UserPreparation preparation : preparations) {
                 enrichAndWritePreparation(preparation, output);
             }
             output.writeEndArray();
@@ -244,7 +244,7 @@ public class FolderAPI extends APIService {
      * @param preparation the preparation to enrich.
      * @param output where to write the json.
      */
-    private void enrichAndWritePreparation(final Preparation preparation, final JsonGenerator output) {
+    private void enrichAndWritePreparation(final UserPreparation preparation, final JsonGenerator output) {
 
         // get the dataset metadata
         final DataSetGetMetadata getMetadata = getCommand(DataSetGetMetadata.class, preparation.getDataSetId());

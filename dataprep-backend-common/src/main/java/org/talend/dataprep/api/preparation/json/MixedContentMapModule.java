@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * Jackson module that deals with MixedContentMap.
- * 
+ *
  * @see MixedContentMap
  */
 public class MixedContentMapModule extends SimpleModule {
@@ -68,24 +68,23 @@ public class MixedContentMapModule extends SimpleModule {
 
                         // Must add endsWith tests, because jackson parser stops parsing at first ']' when json starts
                         // with a '[' (means values such as '[]anything' are consider as valid array by jackson parser)
-                        boolean realJson = false;
+                        boolean actualJson;
                         if (value.charAt(0) == '{') {
                             // case json object:
-                            realJson = node.isContainerNode() && value.endsWith("}");
+                            actualJson = node.isContainerNode() && value.endsWith("}");
                         } else {
                             // case json array:
-                            realJson = node.isArray() && value.endsWith("]");
+                            actualJson = node.isArray() && value.endsWith("]");
                         }
 
-                        if (realJson) {
+                        if (actualJson) {
                             jsonGenerator.writeRawValue(value);
                         } else {
                             // otherwise, it is written as a string (may be a regular expression, e.g. [A-Za-z0-9]*)
                             jsonGenerator.writeString(value);
                         }
-                    }
-                    // otherwise, it is written as a string (may be a regular expression, e.g. [A-Za-z0-9]*)
-                    catch (IOException ioe) {
+                    } catch (IOException ioe) {
+                        // otherwise, it is written as a string (may be a regular expression, e.g. [A-Za-z0-9]*)
                         jsonGenerator.writeString(value);
                     }
                 } else {

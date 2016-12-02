@@ -27,11 +27,11 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.fill.FillInvalid;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
@@ -69,7 +69,7 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        final Action action = factory.create(fillInvalid, parameters);
+        final RunnableAction action = factory.create(fillInvalid, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
         action.getRowAction().apply(row, context);
@@ -96,7 +96,7 @@ public class FillWithBooleanIfInvalidTest extends AbstractMetadataBaseTest {
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
 
         // when
-        final Action action = factory.create(fillInvalid, parameters);
+        final RunnableAction action = factory.create(fillInvalid, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
         action.getRowAction().apply(row, context);

@@ -349,7 +349,6 @@ public class DataSetMetadataBuilder {
         this.author = original.getAuthor();
         this.name = original.getName();
         this.createdDate = original.getCreationDate();
-        this.isFavorite = original.isFavorite();
         this.location = original.getLocation();
         this.lastModificationDate = original.getLastModificationDate();
         this.tag = original.getTag();
@@ -384,8 +383,8 @@ public class DataSetMetadataBuilder {
         this.contentAnalyzed = original.getLifecycle().contentIndexed();
         this.qualityAnalyzed = original.getLifecycle().qualityAnalyzed();
         this.schemaAnalyzed = original.getLifecycle().schemaAnalyzed();
-        this.inProgress = original.getLifecycle().inProgress();
-        this.importing = original.getLifecycle().importing();
+        this.inProgress = original.getLifecycle().isInProgress();
+        this.importing = original.getLifecycle().isImporting();
 
         this.schemaParserResult = original.getSchemaParserResult();
         if (original.getRowMetadata() != null) {
@@ -442,7 +441,6 @@ public class DataSetMetadataBuilder {
         }
         metadata.setSheetName(this.sheetName);
         metadata.setDraft(this.draft);
-        metadata.setFavorite(this.isFavorite);
         metadata.setLocation(this.location);
         if (this.certificationStep != null) {
             metadata.getGovernance().setCertificationStep(this.certificationStep);
@@ -468,8 +466,8 @@ public class DataSetMetadataBuilder {
         metadataLifecycle.contentIndexed(contentAnalyzed);
         metadataLifecycle.schemaAnalyzed(schemaAnalyzed);
         metadataLifecycle.qualityAnalyzed(qualityAnalyzed);
-        metadataLifecycle.importing(importing);
-        metadataLifecycle.inProgress(inProgress);
+        metadataLifecycle.setImporting(importing);
+        metadataLifecycle.setInProgress(inProgress);
         return metadata;
     }
 }

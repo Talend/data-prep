@@ -17,13 +17,18 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import java.util.UUID;
+
 import javax.annotation.Resource;
 
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.folder.store.FolderRepository;
@@ -100,4 +105,27 @@ public abstract class BasePreparationTest extends ServiceBaseTests {
         assertThat(response.getStatusCode(), is(200));
         return response.asString();
     }
+
+    /**
+     * Create a new preparation via the PreparationService.
+     *
+     * @param datasetId the dataset id related to this preparation.
+     * @param name preparation name.
+     * @param numberOfColumns the wanted number of columns in the preparation row metadata.
+     * @return The preparation id
+     */
+    protected String createPreparationFromService(final String datasetId, final String name, int numberOfColumns) {
+        final Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, rootStep.id(),
+                versionService.version().getVersionId());
+        preparation.setName(name);
+        preparation.setCreationDate(0);
+        RowMetadata rowMetadata = new RowMetadata();
+        for (int i = 0; i < numberOfColumns; i++) {
+            rowMetadata.addColumn(new ColumnMetadata());
+        }
+        preparation.setRowMetadata(rowMetadata);
+        repository.add(preparation);
+        return preparation.id();
+    }
+
 }

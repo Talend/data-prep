@@ -55,6 +55,7 @@ import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
@@ -161,6 +162,9 @@ public class DataSetService extends BaseDataSetService {
     @Autowired
     private AccessGrantChecker accessGrantChecker;
 
+    @Autowired
+    private BeanConversionService conversionService;
+
     @Value("#{'${dataset.imports}'.split(',')}")
     private Set<String> enabledImports;
 
@@ -174,7 +178,7 @@ public class DataSetService extends BaseDataSetService {
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed
-    public Callable<List<DataSetMetadata>> list(
+    public Callable<List<UserDataSetMetadata>> list(
             @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(defaultValue = "DATE") String sort,
             @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(defaultValue = "DESC") String order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
@@ -191,8 +195,6 @@ public class DataSetService extends BaseDataSetService {
                 if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
                     predicates.add("id in [" + userData.getFavoritesDatasets().stream().map(ds -> '\'' + ds + '\'')
                             .collect(Collectors.joining(",")) + "]");
-                } else {
-                    predicates.add("isFavorite = 'true'");
                 }
             }
             if (certified) {
@@ -208,12 +210,7 @@ public class DataSetService extends BaseDataSetService {
             try (Stream<DataSetMetadata> stream = dataSetMetadataRepository.list(tqlFilter)) {
                 final Comparator<DataSetMetadata> comparator = getDataSetMetadataComparator(sort, order);
                 return stream.sorted(comparator) //
-                        .map(metadata -> {
-                            if (userData != null) {
-                                metadata.setFavorite(userData.getFavoritesDatasets().contains(metadata.getId()));
-                            }
-                            return metadata;
-                        }) //
+                        .map(m -> conversionService.convert(m, UserDataSetMetadata.class)) //
                         .limit(limit ? datasetListLimit : Long.MAX_VALUE) //
                         .collect(Collectors.toList());
             }
@@ -234,7 +231,7 @@ public class DataSetService extends BaseDataSetService {
     @RequestMapping(value = "/datasets/{id}/compatibledatasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all compatible data sets", notes = "Returns the list of data sets the current user is allowed to see and which are compatible with the specified data set id.")
     @Timed
-    public Iterable<DataSetMetadata> listCompatibleDatasets(
+    public Iterable<UserDataSetMetadata> listCompatibleDatasets(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set metadata") String dataSetId,
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "DATE", required = false) String sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
@@ -247,13 +244,8 @@ public class DataSetService extends BaseDataSetService {
         try (Stream<DataSetMetadata> stream = stream(iterator, false)) {
             String userId = security.getUserId();
             final UserData userData = userDataRepository.get(userId);
-            return stream.filter(metadata -> !metadata.getLifecycle().importing()) //
-                    .map(metadata -> {
-                        if (userData != null) {
-                            metadata.setFavorite(userData.getFavoritesDatasets().contains(metadata.getId()));
-                        }
-                        return metadata;
-                    }) //
+            return stream.filter(metadata -> !metadata.getLifecycle().isImporting()) //
+                    .map(m -> conversionService.convert(m, UserDataSetMetadata.class)) //
                     .sorted(comparator) //
                     .collect(Collectors.toList());
         }
@@ -307,7 +299,7 @@ public class DataSetService extends BaseDataSetService {
                     .tag(tag) //
                     .build();
 
-            dataSetMetadata.getLifecycle().importing(true); // Indicate data set is being imported
+            dataSetMetadata.getLifecycle().setImporting(true); // Indicate data set is being imported
 
             // Save data set content
             LOG.debug(marker, "Storing content...");
@@ -356,8 +348,7 @@ public class DataSetService extends BaseDataSetService {
                 // Build the result
                 DataSet dataSet = new DataSet();
                 if (metadata) {
-                    completeWithUserData(dataSetMetadata);
-                    dataSet.setMetadata(dataSetMetadata);
+                    dataSet.setMetadata(conversionService.convert(dataSetMetadata, UserDataSetMetadata.class));
                 }
                 Stream<DataSetRow> stream = contentStore.stream(dataSetMetadata, -1);  // Disable line limit
                 if (!includeInternalContent) {
@@ -410,8 +401,7 @@ public class DataSetService extends BaseDataSetService {
             return DataSet.empty();
         }
         DataSet dataSet = new DataSet();
-        completeWithUserData(metadata);
-        dataSet.setMetadata(metadata);
+        dataSet.setMetadata(conversionService.convert(metadata, UserDataSetMetadata.class));
         LOG.info("found dataset {} for #{}", dataSet.getMetadata().getName(), dataSetId);
         return dataSet;
     }
@@ -669,26 +659,12 @@ public class DataSetService extends BaseDataSetService {
         // Build the result
         DataSet dataSet = new DataSet();
         if (metadata) {
-            completeWithUserData(dataSetMetadata);
-            dataSet.setMetadata(dataSetMetadata);
+            dataSet.setMetadata(conversionService.convert(dataSetMetadata, UserDataSetMetadata.class));
         }
         dataSet.setRecords(contentStore.stream(dataSetMetadata).limit(100));
         return dataSet;
     }
 
-    /**
-     * This gets the current user data related to the dataSetMetadata and updates the dataSetMetadata accordingly. First
-     * check for favorites dataset
-     *
-     * @param dataSetMetadata, the metadata to be updated
-     */
-    void completeWithUserData(DataSetMetadata dataSetMetadata) {
-        String userId = security.getUserId();
-        UserData userData = userDataRepository.get(userId);
-        if (userData != null) {
-            dataSetMetadata.setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
-        } // no user data related to the current user to do nothing
-    }
 
     /**
      * Updates a data set metadata. If no data set exists for given id, a {@link TDPException} is thrown.
@@ -933,7 +909,8 @@ public class DataSetService extends BaseDataSetService {
     @RequestMapping(value = "/datasets/search", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search the dataset metadata", notes = "Search the dataset metadata.")
     @Timed
-    public Iterable<DataSetMetadata> search(@RequestParam @ApiParam(value = "What to search in datasets") final String name,
+    public <D> Iterable<D> search( //
+            @RequestParam @ApiParam(value = "What to search in datasets") final String name, //
             @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) {
 
         LOG.debug("search datasets metadata for {}", name);
@@ -944,7 +921,7 @@ public class DataSetService extends BaseDataSetService {
         } else {
             filter = "name contains '" + name + "'";
         }
-        final Set<DataSetMetadata> found = dataSetMetadataRepository.list(filter).collect(toSet());
+        final Set found = dataSetMetadataRepository.list(filter).collect(toSet());
 
         LOG.info("found {} dataset while searching {}", found.size(), name);
 

@@ -13,6 +13,14 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+
+import java.io.OutputStream;
+
+import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -25,13 +33,6 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.service.TransformationServiceBaseTests;
-
-import javax.annotation.Resource;
-import java.io.OutputStream;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 public class OptimizedExportStrategyTest extends TransformationServiceBaseTests {
 
@@ -119,8 +120,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTests 
         applyAction(preparation, "[{}]");
 
         final Preparation preparationDetails = getPreparation(preparation);
-        for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+        for (Step step : preparationDetails.getSteps()) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD), ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -144,8 +145,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTests 
         applyAction(preparation, "[{}]");
 
         final Preparation preparationDetails = getPreparation(preparation);
-        for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+        for (Step step : preparationDetails.getSteps()) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD), ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -153,7 +154,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTests 
             final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
                     datasetId,
                     preparation,
-                    step,
+                    step.id(),
                     format,
                     HEAD
             );
@@ -183,8 +184,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTests 
         applyAction(preparation, "[{}]");
 
         final Preparation preparationDetails = getPreparation(preparation);
-        for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+        for (Step step : preparationDetails.getSteps()) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step.id(), HEAD), ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -192,7 +193,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTests 
             final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
                     datasetId,
                     preparation,
-                    step,
+                    step.id(),
                     format,
                     HEAD
             );

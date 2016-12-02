@@ -6,9 +6,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
+import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
@@ -22,7 +23,7 @@ public class ActionNodesBuilder {
 
     private RowMetadata initialMetadata;
 
-    private final List<Action> actions = new ArrayList<>();
+    private final List<RunnableAction> actions = new ArrayList<>();
 
     // analyze requests
     private boolean needStatisticsBefore = false;
@@ -47,7 +48,7 @@ public class ActionNodesBuilder {
         return this;
     }
 
-    public ActionNodesBuilder actions(final List<Action> actions) {
+    public ActionNodesBuilder actions(final List<RunnableAction> actions) {
         this.actions.addAll(actions);
         return this;
     }
@@ -86,9 +87,13 @@ public class ActionNodesBuilder {
      * Build the actions pipeline
      */
     public Node build() {
-        final StatisticsNodesBuilder statisticsNodesBuilder = StatisticsNodesBuilder.builder().analyzerService(analyzerService)
-                .actionRegistry(actionRegistry).statisticsAdapter(statisticsAdapter).allowSchemaAnalysis(allowSchemaAnalysis)
-                .actions(actions).columns(initialMetadata.getColumns());
+        final StatisticsNodesBuilder statisticsNodesBuilder = StatisticsNodesBuilder.builder()
+                .analyzerService(analyzerService) //
+                .actionRegistry(actionRegistry) //
+                .statisticsAdapter(statisticsAdapter) //
+                .allowSchemaAnalysis(allowSchemaAnalysis) //
+                .actions(actions) //
+                .columns(initialMetadata.getColumns());
 
         final NodeBuilder builder = NodeBuilder.source();
 
@@ -109,9 +114,7 @@ public class ActionNodesBuilder {
         // * a reservoir if fresh statistics are needed for the action
         // * a compile node
         // * an action node
-        for (int actionIndex = 0; actionIndex < actions.size(); actionIndex++) {
-            final Action nextAction = actions.get(actionIndex);
-
+        for (final RunnableAction nextAction : actions) {
             // some actions need fresh statistics
             // in those cases, we gather the rows in a reservoir node that triggers statistics computation
             // before dispatching each row to the next node
@@ -120,8 +123,9 @@ public class ActionNodesBuilder {
                 builder.to(neededReservoir);
             }
 
-            builder.to(new CompileNode(nextAction, context.create(nextAction.getRowAction(), initialMetadata)));
-            builder.to(new ActionNode(nextAction, context.in(nextAction.getRowAction())));
+            final DataSetRowAction rowAction = nextAction.getRowAction();
+            builder.to(new CompileNode(nextAction, context.create(rowAction, initialMetadata)));
+            builder.to(new ActionNode(nextAction, context.in(rowAction)));
         }
 
         // global analysis after actions

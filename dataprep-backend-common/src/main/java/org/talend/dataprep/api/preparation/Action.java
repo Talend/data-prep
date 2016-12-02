@@ -17,9 +17,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-import org.talend.dataprep.transformation.api.action.DataSetRowAction;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -34,13 +31,6 @@ public class Action implements Serializable {
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
 
-    /** Default noop action. */
-    private static final DataSetRowAction IDLE_ROW_ACTION = (row, context) -> row;
-
-    /** The wrapped row action. */
-    @JsonIgnore
-    private DataSetRowAction rowAction;
-
     /** Json description of the action. */
     private String action;
 
@@ -51,16 +41,6 @@ public class Action implements Serializable {
      * Default empty constructor.
      */
     public Action() {
-        rowAction = IDLE_ROW_ACTION;
-    }
-
-    /**
-     * Create an Action from the given RowAction.
-     *
-     * @param rowAction the row action to build the Action from.
-     */
-    public Action(DataSetRowAction rowAction) {
-        this.rowAction = rowAction;
     }
 
     /**
@@ -94,18 +74,6 @@ public class Action implements Serializable {
     }
 
     /**
-     * @return the row action.
-     */
-    @JsonIgnore
-    public DataSetRowAction getRowAction() {
-        return rowAction;
-    }
-
-    public void setRowAction(DataSetRowAction rowAction) {
-        this.rowAction = rowAction;
-    }
-
-    /**
      * @see Object#equals(Object)
      */
     @Override
@@ -136,11 +104,6 @@ public class Action implements Serializable {
      */
     public static class Builder {
 
-        /** The default noop action. */
-        private DataSetRowAction rowAction = IDLE_ROW_ACTION;
-
-        private DataSetRowAction compile = IDLE_ROW_ACTION;
-
         private Map<String, String> parameters;
 
         private String name;
@@ -153,28 +116,13 @@ public class Action implements Serializable {
         }
 
         /**
-         * @param rowAction add the given row action to the builder.
-         * @return the current builder to carry on building.
-         */
-        public Builder withRow(DataSetRowAction rowAction) {
-            this.rowAction = rowAction;
-            return this;
-        }
-
-        /**
          * @return the built row action.
          */
         public Action build() {
-            DataSetRowAction newAction = new DataSetRowActionImpl(rowAction, compile);
-            final Action builtAction = new Action(newAction);
+            final Action builtAction = new Action();
             builtAction.getParameters().putAll(parameters);
             builtAction.setName(name);
             return builtAction;
-        }
-
-        public Builder withCompile(DataSetRowAction compile) {
-            this.compile = compile;
-            return this;
         }
 
         public Builder withParameters(Map<String, String> parameters) {

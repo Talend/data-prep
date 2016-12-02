@@ -15,6 +15,8 @@ package org.talend.dataprep.api.service.command.preparation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +24,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.security.SecurityProxy;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
@@ -65,12 +69,29 @@ public class EnrichedPreparationDetails extends GenericCommand<InputStream> {
     protected InputStream run() throws Exception {
         final ObjectNode preparationJsonRootNode = getPreparationDetails();
 
+        // convert the steps object array to a string array
+        objectStepToId((ArrayNode) preparationJsonRootNode.get("steps"));
+
         final String dataSetId = preparationJsonRootNode.get("dataSetId").asText();
         final DataSetMetadata dataset = getDatasetMetadata(dataSetId);
 
         this.enrichPreparation(preparationJsonRootNode, dataset);
 
         return IOUtils.toInputStream(preparationJsonRootNode.toString());
+    }
+
+    /**
+     * Replace the given "steps" array node by an array of steps id (object[] -> string[]).
+     *
+     * @param stepsNode the node that contains steps object to update.
+     */
+    private void objectStepToId(ArrayNode stepsNode) {
+        List<String> stepsId = new ArrayList<>();
+        for (JsonNode step : stepsNode) {
+            stepsId.add(step.get("id").textValue());
+        }
+        stepsNode.removeAll();
+        stepsId.forEach(stepsNode::add);
     }
 
     /**

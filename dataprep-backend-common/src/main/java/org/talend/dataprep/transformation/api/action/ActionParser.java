@@ -24,6 +24,7 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Actions;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,8 +51,9 @@ public class ActionParser {
      *
      * @param actions the actions to be parsed as string.
      * @return the parsed actions.
+     * @throws IllegalArgumentException if <code>actions</code> is null.
      */
-    public List<Action> parse(String actions) {
+    public List<RunnableAction> parse(String actions) {
         if (actions == null) {
             // Actions cannot be null (but can be empty string for no op actions).
             throw new IllegalArgumentException("Actions parameter can not be null.");
@@ -62,10 +64,10 @@ public class ActionParser {
         try {
             // Parse action JSON
             final Actions parsedActions = mapper.reader(Actions.class).readValue(actions);
-            // Create closures from parsed actions
             final List<Action> allActions = parsedActions.getActions();
-            final List<Action> builtActions = new ArrayList<>(allActions.size() + 1);
-            parsedActions.getActions().stream() //
+            // Create closures from parsed actions
+            final List<RunnableAction> builtActions = new ArrayList<>(allActions.size() + 1);
+            allActions.stream() //
                     .filter(parsedAction -> parsedAction != null && parsedAction.getName() != null) //
                     .forEach(parsedAction -> {
                         String actionNameLowerCase = parsedAction.getName().toLowerCase();

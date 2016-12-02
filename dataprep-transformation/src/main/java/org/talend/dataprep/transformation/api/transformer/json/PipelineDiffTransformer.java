@@ -112,8 +112,7 @@ class PipelineDiffTransformer implements Transformer {
         }
     }
 
-    private Pipeline buildPipeline(RowMetadata rowMetadata,
-                                   String actions) {
+    private Pipeline buildPipeline(RowMetadata rowMetadata, String actions) {
         return Pipeline.Builder.builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //

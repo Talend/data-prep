@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.pipeline.model;
 
 import static org.talend.dataprep.transformation.pipeline.Signal.END_OF_STREAM;
@@ -12,10 +24,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.transformation.api.transformer.ConfiguredCacheWriter;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
-import org.talend.dataprep.transformation.pipeline.Monitored;
-import org.talend.dataprep.transformation.pipeline.RuntimeNode;
-import org.talend.dataprep.transformation.pipeline.Signal;
-import org.talend.dataprep.transformation.pipeline.Visitor;
+import org.talend.dataprep.transformation.pipeline.*;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 public class WriterNode extends BasicNode implements Monitored {
@@ -44,7 +53,7 @@ public class WriterNode extends BasicNode implements Monitored {
 
     /**
      * Constructor.
-     * 
+     *
      * @param writer the transformer writer.
      * @param metadataCacheWriter the metadata cache writer.
      * @param metadataKey the transformation metadata cache key to use.
@@ -61,7 +70,7 @@ public class WriterNode extends BasicNode implements Monitored {
 
     /**
      * Synchronized method not to clash with the signal method.
-     * 
+     *
      * @see WriterNode#signal(Signal)
      * @see RuntimeNode#receive(DataSetRow, RowMetadata)
      */
@@ -97,7 +106,7 @@ public class WriterNode extends BasicNode implements Monitored {
 
     /**
      * Synchronized method not to clash with the receive method.
-     * 
+     *
      * @see WriterNode#receive(DataSetRow, RowMetadata)
      * @see RuntimeNode#signal(Signal)
      */
@@ -182,6 +191,11 @@ public class WriterNode extends BasicNode implements Monitored {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitNode(this);
+    }
+
+    @Override
+    public Node copyShallow() {
+        return new WriterNode(writer, metadataCacheWriter, metadataKey, fallBackRowMetadata);
     }
 
     @Override

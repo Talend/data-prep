@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.configuration;
 
 import java.io.PrintWriter;
@@ -32,6 +44,11 @@ public class Async {
         return new AsyncExecutionConfiguration();
     }
 
+    /**
+     * <h1>{@link BeanPostProcessor} notice</h1>
+     * Don't use any {@link org.springframework.beans.factory.annotation.Autowired} in the
+     * configuration as it will prevent autowired beans to be processed by BeanPostProcessor.
+     */
     private static class AsyncExecutionConfiguration implements BeanPostProcessor {
 
         @Override

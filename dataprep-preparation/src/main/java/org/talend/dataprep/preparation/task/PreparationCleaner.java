@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -18,6 +17,7 @@ import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -58,14 +58,14 @@ public class PreparationCleaner {
     private Step rootStep;
 
     @Autowired
-    private PreparationUtils preparationUtils;
+    private SecurityProxy securityProxy;
 
     @Autowired
-    private SecurityProxy securityProxy;
+    private PreparationUtils preparationUtils;
 
     /**
      * Get all the step ids that belong to a preparation
-     * 
+     *
      * @return The step ids
      */
     private Set<String> getPreparationStepIds() {
@@ -75,7 +75,7 @@ public class PreparationCleaner {
 
     /**
      * Get current steps that has no preparation
-     * 
+     *
      * @return The orphan steps
      */
     private List<Step> getCurrentOrphanSteps() {
@@ -90,7 +90,7 @@ public class PreparationCleaner {
 
     /**
      * Tag the orphans steps.
-     * 
+     *
      * @param currentOrphans The current orphans
      */
     private void updateOrphanTags(final List<Step> currentOrphans) {
@@ -106,7 +106,7 @@ public class PreparationCleaner {
     private void cleanSteps() {
         orphansStepsTags.entrySet().stream().filter(entry -> entry.getValue() >= orphanTime).forEach(entry -> {
             final Step step = entry.getKey();
-            final PreparationActions content = repository.get(step.getContent(), PreparationActions.class);
+            final PreparationActions content = repository.get(step.getContent().id(), PreparationActions.class);
             repository.remove(content);
             repository.remove(step);
         });
@@ -114,7 +114,7 @@ public class PreparationCleaner {
 
     /**
      * Removes all steps & content in the preparation <code>preparationId</code>.
-     * 
+     *
      * @param preparationId A preparation id, if <code>null</code> this a no-op. Preparation must still exist for proper
      * clean up.
      */
@@ -133,7 +133,7 @@ public class PreparationCleaner {
                     }
                 });
         // Clean up steps only used in deleted preparation
-        Collections.singletonList(repository.get(preparationId, Preparation.class)).stream() //
+        Stream.of(repository.get(preparationId, Preparation.class)) //
                 .filter(p -> { // Exit if preparation no longer exist.
                     if (p != null) {
                         return true;
@@ -147,7 +147,7 @@ public class PreparationCleaner {
                 .filter(s -> !rootStep.getId().equals(s.getId())) // Don't delete root step
                 .forEach(s -> stepUsageCount.computeIfPresent(s, (step, usage) -> {
                     if (usage == 1) { // Step only used in to-be-deleted preparation,
-                        final PreparationActions content = repository.get(step.getContent(), PreparationActions.class);
+                        final PreparationActions content = repository.get(step.getContent().id(), PreparationActions.class);
                         LOGGER.info("Removing step content {}.", content.getId());
                         repository.remove(content);
                         LOGGER.info("Removing step {}.", step.getId());

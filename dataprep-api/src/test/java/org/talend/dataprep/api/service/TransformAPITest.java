@@ -63,7 +63,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testTransformTwoActions() throws Exception {
         // given
-        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testDataset", "text/csv");
+        final String preparationId = createPreparationFromFile("dataset/dataset.csv", "another test Dataset", "text/csv");
         applyAction(preparationId,
                 IOUtils.toString(this.getClass().getResourceAsStream("transformation/upper_case_lastname_firstname.json")));
 

@@ -13,20 +13,21 @@
 
 package org.talend.dataprep.api.service.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Preparation;
-
 import java.io.Serializable;
 import java.util.Objects;
+
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.preparation.service.UserPreparation;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Simple bean used to display a preparation and a summary of its related dataset and its location.
  */
 @JsonIgnoreProperties({"dataSetId"})
-public class EnrichedPreparation extends Preparation {
+public class EnrichedPreparation extends UserPreparation {
 
     /** For the Serialization interface. */
     private static final long serialVersionUID = 1L;
@@ -43,8 +44,9 @@ public class EnrichedPreparation extends Preparation {
      *
      * @param preparation the preparation to display.
      */
-    private EnrichedPreparation(Preparation preparation) {
-        super(preparation.id(), preparation.getAppVersion());
+    private EnrichedPreparation(UserPreparation preparation) {
+        this.setId(preparation.id());
+        this.setAppVersion(preparation.getAppVersion());
         this.setDataSetId(preparation.getDataSetId());
         this.setAuthor(preparation.getAuthor());
         this.setName(preparation.getName());
@@ -55,14 +57,13 @@ public class EnrichedPreparation extends Preparation {
         this.setOwner(preparation.getOwner());
     }
 
-
     /**
      * Create an enriched preparation with dataset information.
      *
      * @param preparation the preparation to display.
      * @param dataSetMetadata the dataset metadata to summarize.
      */
-    public EnrichedPreparation(Preparation preparation, DataSetMetadata dataSetMetadata) {
+    public EnrichedPreparation(UserPreparation preparation, DataSetMetadata dataSetMetadata) {
         this(preparation);
         this.summary = new DataSetMetadataSummary(dataSetMetadata);
     }
@@ -73,7 +74,7 @@ public class EnrichedPreparation extends Preparation {
      * @param preparation the preparation to display.
      * @param folder where the folder is stored.
      */
-    public EnrichedPreparation(Preparation preparation, Folder folder) {
+    public EnrichedPreparation(UserPreparation preparation, Folder folder) {
         this(preparation);
         this.folder = folder;
     }

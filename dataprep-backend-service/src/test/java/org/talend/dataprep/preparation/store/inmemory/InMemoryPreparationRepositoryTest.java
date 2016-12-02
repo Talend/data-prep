@@ -23,16 +23,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.preparation.FixedIdPreparationContent;
+import org.talend.dataprep.preparation.FixedIdStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepositoryTest;
 
 /**
  * Unit test for the InMemoryPreparationRepository.
- * 
+ *
  * @see InMemoryPreparationRepository
  */
 public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest {
@@ -46,9 +47,9 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
     public InMemoryPreparationRepositoryTest() {
         repository = new InMemoryPreparationRepository();
         String version = "1.0";
-        final PreparationActions rootContent = new PreparationActions(Collections.<Action> emptyList(), version);
+        final PreparationActions rootContent = new PreparationActions(Collections.emptyList(), version);
         ReflectionTestUtils.setField(repository, "rootContent", rootContent);
-        ReflectionTestUtils.setField(repository, "rootStep", new Step(null, rootContent.id(), version));
+        ReflectionTestUtils.setField(repository, "rootStep", new Step(null, rootContent, version));
     }
 
     /**
@@ -100,12 +101,12 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
      * Helper method that only generates a step but simplify code.
      */
     private Step getStep(String rootName) {
-        return new Step(rootName + "_parent", rootName + "_content", "1.0.PE");
+        return new Step(new FixedIdStep(rootName + "_parent"), new FixedIdPreparationContent(rootName + "_content"), "1.0.PE");
     }
 
     /**
      * Helper method that only generates a preparation but simplify code.
-     * 
+     *
      * @param rootName root name for all the preparation attributes.
      * @return a new Preparation.
      */
@@ -118,7 +119,7 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
 
     /**
      * Helper method that only generates a preparation but simplify code.
-     * 
+     *
      * @param datasetId the preparation dataset id.
      * @param rootName root name for all the preparation attributes.
      * @return a new Preparation.

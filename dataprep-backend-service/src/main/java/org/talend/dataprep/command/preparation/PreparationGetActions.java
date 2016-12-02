@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -54,7 +53,9 @@ public class PreparationGetActions extends GenericCommand<InputStream> {
         super(PREPARATION_GROUP);
         execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + preparationId + "/actions/" + stepId));
         on(HttpStatus.OK).then(pipeStream());
-        on(HttpStatus.NOT_FOUND).then((req, resp) -> {throw new TDPException(PREPARATION_DOES_NOT_EXIST);});
+        on(HttpStatus.NOT_FOUND).then((req, resp) -> {
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST);
+        });
         onError(e -> new TDPException(UNABLE_TO_GET_PREPARATION_DETAILS, e));
     }
 

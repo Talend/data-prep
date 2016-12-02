@@ -27,11 +27,11 @@ import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 
@@ -90,7 +90,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "Something");
 
         // when
-        final Action action = factory.create(clearInvalid, parameters);
+        final RunnableAction action = factory.create(clearInvalid, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
         action.getRowAction().apply(row, context);
@@ -117,7 +117,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("0002", "Something");
 
         // when
-        final Action action = factory.create(clearInvalid, parameters);
+        final RunnableAction action = factory.create(clearInvalid, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
         action.getRowAction().apply(row, context);
@@ -144,7 +144,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest {
         expectedValues.put("0003", "Something");
 
         // when
-        final Action action = factory.create(clearInvalid, parameters);
+        final RunnableAction action = factory.create(clearInvalid, parameters);
         final ActionContext context = new ActionContext(new TransformationContext(), rowMetadata);
         context.setParameters(parameters);
         action.getRowAction().apply(row, context);

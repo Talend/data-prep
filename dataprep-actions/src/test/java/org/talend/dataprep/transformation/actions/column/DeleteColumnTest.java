@@ -26,10 +26,10 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class DeleteColumnTest extends AbstractMetadataBaseTest {
@@ -98,8 +98,7 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
-        final Action rowAction = factory.create(deleteColumn, parameters);
-        ActionTestWorkbench.test(Arrays.asList(row, row2), actionRegistry, rowAction);
+        ActionTestWorkbench.test(Arrays.asList(row, row2), actionRegistry, factory.create(deleteColumn, parameters));
 
         // then
         final int rowSize = row.getRowMetadata().getColumns().size();
@@ -123,9 +122,9 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest {
 
         // when
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0002");
-        final Action action1 = factory.create(deleteColumn, parameters);
+        final RunnableAction action1 = factory.create(deleteColumn, parameters);
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0001");
-        final Action action2 = factory.create(deleteColumn, parameters);
+        final RunnableAction action2 = factory.create(deleteColumn, parameters);
         ActionTestWorkbench.test(row, actionRegistry, action1, action2);
         ActionTestWorkbench.test(row2, actionRegistry, action1, action2);
 

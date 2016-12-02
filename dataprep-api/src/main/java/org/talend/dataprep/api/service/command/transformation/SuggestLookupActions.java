@@ -28,11 +28,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.preparation.Actions;
-import org.talend.dataprep.io.ReleasableInputStream;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.service.command.common.ChainedCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.io.ReleasableInputStream;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -63,7 +63,7 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
 
     /**
      * If this command fails, the previous command's response can always be returned.
-     * 
+     *
      * @see HystrixCommand#getFallback()
      */
     @Override
@@ -81,13 +81,13 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
         return (request, response) -> {
 
             // read suggested actions from previous command
-            ArrayNode suggestedActions = null;
+            ArrayNode suggestedActions;
             try {
-                suggestedActions = (ArrayNode) objectMapper.readerFor(Actions.class).readTree(getInput());
+                suggestedActions = (ArrayNode) objectMapper.readerFor(new TypeReference<Action>() {
+                }).readTree(getInput());
 
                 // list datasets from this command's response
-                List<DataSetMetadata> dataSets = null;
-                dataSets = objectMapper.readValue(response.getEntity().getContent(),
+                List<DataSetMetadata> dataSets = objectMapper.readValue(response.getEntity().getContent(),
                         new TypeReference<List<DataSetMetadata>>() {
                 });
 

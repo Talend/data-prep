@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.dataset.SearchDataSets;
 import org.talend.dataprep.api.service.command.folder.SearchFolders;
@@ -35,6 +34,7 @@ import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByName;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.preparation.service.UserPreparation;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -158,10 +158,10 @@ public class SearchAPI extends APIService {
         final int preparationsFound;
         final PreparationSearchByName command = getCommand(PreparationSearchByName.class, name, strict);
         try (InputStream input = command.execute()) {
-            List<Preparation> preparations= mapper.readValue(input, new TypeReference<List<Preparation>>(){});
+            List<UserPreparation> preparations= mapper.readValue(input, new TypeReference<List<UserPreparation>>(){});
             preparationsFound = preparations.size();
             output.writeArrayFieldStart("preparations");
-            for (Preparation preparation: preparations) {
+            for (UserPreparation preparation: preparations) {
                 EnrichedPreparation locatedPreparation = locatePreparation(preparation);
                 output.writeObject(locatedPreparation);
             }
@@ -176,7 +176,7 @@ public class SearchAPI extends APIService {
      * @param preparation the preparation to locate.
      * @return an enriched preparation with additional folder parameters.
      */
-    private EnrichedPreparation locatePreparation(Preparation preparation) {
+    private EnrichedPreparation locatePreparation(UserPreparation preparation) {
         final LocatePreparation command = getCommand(LocatePreparation.class, preparation.id());
         final Folder folder = command.execute();
         return new EnrichedPreparation(preparation, folder);

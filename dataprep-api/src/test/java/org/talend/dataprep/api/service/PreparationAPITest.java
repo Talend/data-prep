@@ -1,17 +1,35 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
+
+import static com.jayway.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
+import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
+import static org.talend.dataprep.api.service.PreparationAPITestClient.appendStepsToPrep;
+import static org.talend.dataprep.api.service.PreparationAPITestClient.changePreparationStepsOrder;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,13 +37,9 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.annotation.Resource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,23 +54,11 @@ import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 
-import static com.jayway.restassured.RestAssured.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
-import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
-import static org.talend.dataprep.api.service.PreparationAPITestClient.*;
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -125,6 +127,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getString("id"), is(preparationId));
         assertThat(longFormat.getList("actions").size(), is(0));
         assertThat(longFormat.getString("allowFullRun"), is("false"));
+        final List<String> steps = longFormat.getList("steps"); // make sure the "steps" node is a string array
+        assertThat(steps.size(), is(1));
     }
 
     @Test
@@ -348,8 +352,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         // then
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath()
-                .getList("steps");
+        final List<String> steps = getPreparation(preparationId).getSteps();
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(rootStep.id()));
     }
@@ -363,10 +366,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_lastname_firstname.json");
 
         // then : it should have appended 2 actions
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath()
-                .getList("steps");
+        final PreparationMessageForTest preparationMessage = getPreparation(preparationId);
+        final List<String> steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(rootStep.id()));
+    }
+
+    private PreparationMessageForTest getPreparation(String preparationId) throws IOException {
+        return mapper.readValue(given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
+                PreparationMessageForTest.class);
     }
 
     @Test
@@ -409,7 +417,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
-        List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        List<String> steps = getPreparation(preparationId).getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(rootStep.id()));
 
@@ -418,10 +426,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
         given().contentType(ContentType.JSON)
                 .body(actionContent3)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
-                        steps.get(1)).then().statusCode(is(200));
+                        steps.get(1))
+                .then().statusCode(is(200));
 
         // then : Steps id should have changed due to update
-        steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        steps = getPreparation(preparationId).getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(rootStep.id()));
     }
@@ -433,7 +442,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        final List<String> steps = getPreparation(preparationId).getSteps();
 
         // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59")
         // with another action that create a column
@@ -441,11 +450,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
         given().contentType(ContentType.JSON)
                 .body(updateAction)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId,
-                        steps.get(1)).then().statusCode(is(200));
+                        steps.get(1))
+                .then().statusCode(is(200));
 
         // then
-        final JsonPath jsonPath = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath();
-        final List<String> createdColumns = jsonPath.getList("diff[0].createdColumns");
+        final PreparationMessageForTest preparation = getPreparation(preparationId);
+        final List<String> createdColumns = preparation.getDiff().get(0).getCreatedColumns();
         assertThat(createdColumns, hasSize(1));
         assertThat(createdColumns, hasItem("0006"));
     }
@@ -458,7 +468,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        final List<String> steps = getPreparation(preparationId).getSteps();
         final String firstStep = steps.get(1);
 
         // when
@@ -480,7 +490,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
-        List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        List<String> steps = getPreparation(preparationId).getSteps();
         final String firstStep = steps.get(1);
 
         // when
@@ -489,7 +499,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .statusCode(is(200));
 
         // then : Steps id should have changed due to update
-        steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        steps = getPreparation(preparationId).getSteps();
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(rootStep.id()));
     }
@@ -510,7 +520,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent();
+        final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent().getId();
 
         //when
         given().when()//
@@ -627,8 +637,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void testPreparationContentWithActions() throws Exception {
         // given
         final String preparationId = createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", "text/csv");
-        String json = given().get("/api/preparations/{preparation}/details", preparationId).asString();
-        Preparation preparation = mapper.readerFor(Preparation.class).readValue(json);
+        PreparationMessageForTest preparation = getPreparation(preparationId);
         List<String> steps = preparation.getSteps();
 
         assertThat(steps.size(), is(1));
@@ -638,7 +647,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         // then
-        steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
+        final PreparationMessageForTest preparationMessage = getPreparation(preparationId);
+        steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(rootStep.id()));
 
@@ -697,8 +707,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         applyActionFromFile(preparationId, "preview/delete_city.json");
 
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath()
-                .getList("steps");
+        final List<String> steps = getPreparation(preparationId).getSteps();
         final String firstActionStep = steps.get(1);
         final String lastStep = steps.get(steps.size() - 1);
 
@@ -728,8 +737,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         applyActionFromFile(preparationId, "preview/delete_city.json");
 
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath()
-                .getList("steps");
+        final PreparationMessageForTest preparationMessage = getPreparation(preparationId);
+        final List<String> steps = preparationMessage.getSteps();
         final String lastStep = steps.get(steps.size() - 1);
 
         final String input = "{" //
@@ -879,9 +888,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         appendStepsToPrep(testPrepId, appendStep);
 
         // Adding steps
-        PreparationAPITestClient.PreparationDetailsResponse testPrepDetails = getPreparationDetails(testPrepId);
+        PreparationMessageForTest testPrepDetails = getPreparation(testPrepId);
 
-        List<String> stepsCreated = testPrepDetails.steps;
+        List<String> stepsCreated = testPrepDetails.getSteps();
 
         String rootStep = stepsCreated.get(0);
         String secondStep = stepsCreated.get(2);
@@ -889,10 +898,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // changing steps order
         changePreparationStepsOrder(testPrepId, rootStep, secondStep);
 
-        PreparationAPITestClient.PreparationDetailsResponse testPrepDetailsAfter = getPreparationDetails(testPrepId);
+        PreparationMessageForTest testPrepDetailsAfter = getPreparation(testPrepId);
 
-        assertEquals(testPrepDetailsAfter.actions.get(0), testPrepDetails.actions.get(1));
-        assertEquals(testPrepDetailsAfter.actions.get(1), testPrepDetails.actions.get(0));
+        assertEquals(testPrepDetailsAfter.getActions().get(0), testPrepDetails.getActions().get(1));
+        assertEquals(testPrepDetailsAfter.getActions().get(1), testPrepDetails.getActions().get(0));
     }
 
     /**
@@ -913,8 +922,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // Try to delete lookup dataset => fail because used
         expect().statusCode(CONFLICT.value()).when().delete("/api/datasets/{id}", lookupDataSetId);
 
-        PreparationDetailsResponse preparationDetails = PreparationAPITestClient.getPreparationDetails(carsPreparationId);
-        String firstStepId = preparationDetails.steps.get(0);
+        PreparationMessageForTest preparationDetails = getPreparation(carsPreparationId);
+        String firstStepId = preparationDetails.getSteps().get(0);
 
         // Now undo
         expect().statusCode(OK.value()).when().put("/api/preparations/{id}/head/{headId}", carsPreparationId, firstStepId);

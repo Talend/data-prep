@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions;
 
@@ -19,11 +18,13 @@ import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTes
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Map;
 
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Actions;
 import org.talend.dataprep.api.preparation.json.MixedContentMapModule;
 import org.talend.dataprep.api.type.Type;
@@ -67,8 +68,8 @@ public class ActionMetadataTestUtils {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new MixedContentMapModule());
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Actions parsedAction = mapper.reader(Actions.class).readValue(input);
-        return parsedAction.getActions().get(0).getParameters();
+        List<Action> parsedAction = ((Actions)mapper.reader(Actions.class).readValue(input)).getActions();
+        return parsedAction.get(0).getParameters();
     }
 
     /**

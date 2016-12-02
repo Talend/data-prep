@@ -25,15 +25,11 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +40,14 @@ import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.FormatFamily;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.user.store.UserDataRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -62,6 +62,15 @@ import com.jayway.restassured.response.Response;
  * Unit test for Data Set API.
  */
 public class DataSetAPITest extends ApiServiceTestBase {
+
+    @Autowired
+    UserDataRepository userDataRepository;
+
+    @Autowired
+    Security security;
+
+    @Autowired
+    VersionService versionService;
 
     @Autowired
     private ObjectMapper mapper;
@@ -608,16 +617,22 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // Make dataset1 more recent
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
-        dataSetMetadata1.setFavorite(true);
         dataSetMetadata1.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadata1.setLastModificationDate(Instant.now().getEpochSecond() + 1);
         dataSetMetadataRepository.add(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
-        dataSetMetadata2.setFavorite(true);
         dataSetMetadataRepository.add(dataSetMetadata2);
         final DataSetMetadata dataSetMetadata3 = dataSetMetadataRepository.get(dataSetId3);
         dataSetMetadata3.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadataRepository.add(dataSetMetadata3);
+
+        // add favorite
+        UserData userData = new UserData(security.getUserId(), versionService.version().getVersionId());
+        HashSet<String> favorites = new HashSet<>();
+        favorites.add(dataSetMetadata1.getId());
+        favorites.add(dataSetMetadata2.getId());
+        userData.setFavoritesDatasets(favorites);
+        userDataRepository.save(userData);
 
         // @formatter:off
         // certified, favorite and recent
@@ -719,7 +734,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final Response response = when().get("/api/datasets/{preparationId}/columns/{columnId}/types", dataSetId, "0000");
 
         // then
-        Assert.assertEquals(200, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
         for (JsonNode type : rootNode) {
             assertTrue(type.has("id"));

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -29,7 +28,7 @@ import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-class CompileDataSetRowAction implements DataSetRowAction {
+public class CompileDataSetRowAction implements DataSetRowAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CompileDataSetRowAction.class);
 
@@ -39,7 +38,7 @@ class CompileDataSetRowAction implements DataSetRowAction {
 
     private final ScopeCategory scope;
 
-    CompileDataSetRowAction(Map<String, String> parametersCopy, ActionDefinition metadata,
+    public CompileDataSetRowAction(Map<String, String> parametersCopy, ActionDefinition metadata,
                             ScopeCategory scope) {
         this.parametersCopy = parametersCopy;
         this.metadata = metadata;

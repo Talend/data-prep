@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -14,6 +13,8 @@
 package org.talend.dataprep.preparation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.InputStream;
@@ -22,12 +23,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.ServiceBaseTests;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,13 +52,16 @@ public class PreparationSerializationTest extends ServiceBaseTests {
     @Resource(name = "rootContent")
     private PreparationActions rootContent;
 
+    @Autowired
+    private BeanConversionService conversionService;
+
     @Test
     public void emptyPreparation() throws Exception {
         Preparation preparation = new Preparation("534fceed35b633160f2e2469f7ac7c14d75177b7",
                 versionService.version().getVersionId());
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
-        mapper.writeValue(output, preparation);
+        mapper.writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
         final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("emptyPreparation.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
@@ -69,7 +73,7 @@ public class PreparationSerializationTest extends ServiceBaseTests {
         preparation.setName("MyName");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
-        mapper.writer().writeValue(output, preparation);
+        mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
         final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("namePreparation.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
@@ -81,7 +85,7 @@ public class PreparationSerializationTest extends ServiceBaseTests {
         preparation.setDataSetId("12345");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
-        mapper.writer().writeValue(output, preparation);
+        mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
         final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("dataSetPreparation.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
@@ -94,7 +98,7 @@ public class PreparationSerializationTest extends ServiceBaseTests {
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
-        mapper.writer().writeValue(output, preparation);
+        mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
         final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("authorPreparation.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
@@ -106,28 +110,36 @@ public class PreparationSerializationTest extends ServiceBaseTests {
         preparation.setAuthor("myAuthor");
         preparation.setCreationDate(0L);
         final StringWriter output = new StringWriter();
-        mapper.writer().writeValue(output, new PreparationDetails(preparation));
+        mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
         final InputStream expected = PreparationSerializationTest.class.getResourceAsStream("preparationDetailsSteps.json");
         assertThat(output.toString(), sameJSONAsFile(expected));
     }
 
     @Test
-    @Ignore("Fails and I can't find why.")
     public void preparationDetailsStepsWithActions() throws Exception {
+
         final String version = versionService.version().getVersionId();
         // Add a step
         final List<Action> actions = PreparationTest.getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent1 = rootContent.append(actions);
         repository.add(newContent1);
-        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step s1 = new Step(rootStep, newContent1, version);
         repository.add(s1);
         // Use it in preparation
         Preparation preparation = new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
         preparation.setCreationDate(0L);
+
+        // when
         final StringWriter output = new StringWriter();
-        mapper.writer().writeValue(output, new PreparationDetails(preparation));
-        final InputStream expected = PreparationSerializationTest.class
-                .getResourceAsStream("preparationDetailsWithStepsAndActions.json");
-        assertThat(output.toString(), sameJSONAsFile(expected));
+        mapper.writer().writeValue(output, conversionService.convert(preparation, PreparationMessage.class));
+
+        // then
+        final PreparationMessage actual = mapper.readerFor(PreparationMessage.class).readValue(output.toString());
+        assertEquals(preparation.getId(), actual.getId());
+        assertNotNull(actual.getActions());
+        assertEquals(1, actual.getActions().size());
+        assertNotNull(actual.getSteps());
+        assertEquals(2, actual.getSteps().size());
+
     }
 }

@@ -17,6 +17,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
@@ -36,7 +37,7 @@ public class StatisticsNodesBuilder {
 
     private StatisticsAdapter statisticsAdapter;
 
-    private List<Action> actions;
+    private List<RunnableAction> actions;
 
     private List<ColumnMetadata> columns;
 
@@ -73,7 +74,7 @@ public class StatisticsNodesBuilder {
         return this;
     }
 
-    public StatisticsNodesBuilder actions(final List<Action> actions) {
+    public StatisticsNodesBuilder actions(final List<RunnableAction> actions) {
         this.actions = actions;
         return this;
     }

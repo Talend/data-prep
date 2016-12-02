@@ -1,14 +1,71 @@
 {
   "id": "b7368bd7e4de38ff954636d0ac0438c7fb56a208",
   "dataSetId": "12345",
+  "rowMetadata": null,
   "author": null,
   "name": null,
+  "headId": "883858e74be4a9ad1fa466234a5b4d2c201b12f0",
   "steps": [
-    "f6e172c33bdacbc69bca9d32b2bd78174712a171",
-    "2b6ae58738239819df3d8c4063e7cb56f53c0d59"
+    {
+      "id": "f6e172c33bdacbc69bca9d32b2bd78174712a171"
+    },
+    {
+      "id": "883858e74be4a9ad1fa466234a5b4d2c201b12f0"
+    }
   ],
-  "diff": [
-    null
+  "allowDistributedRun": true,
+  "metadata": [
+    {
+      "category": "strings",
+      "name": "uppercase",
+      "dynamic": false,
+      "description": "Converts all of the cell text in this column to UPPER case (capitalize)",
+      "label": "Change to UPPER Case",
+      "actionScope": [],
+      "parameters": [
+        {
+          "name": "column_id",
+          "type": "string",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "The column to which you want to apply this action",
+          "label": "Column",
+          "default": ""
+        },
+        {
+          "name": "row_id",
+          "type": "string",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "The row to which you want to apply this action",
+          "label": "Row",
+          "default": ""
+        },
+        {
+          "name": "scope",
+          "type": "string",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+          "label": "Scope",
+          "default": ""
+        },
+        {
+          "name": "filter",
+          "type": "filter",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "An optional filter to apply action on matching values only.",
+          "label": "Filter",
+          "default": ""
+        }
+      ],
+      "docUrl": ""
+    }
   ],
   "actions": [
     {
@@ -18,46 +75,8 @@
       }
     }
   ],
-  "metadata": [
-    {
-      "category": "strings",
-      "name": "uppercase",
-      "parameters": [
-        {
-          "name": "column_id",
-          "type": "string",
-          "implicit": true,
-          "canBeBlank": true,
-          "label": "Column",
-          "default": ""
-        },
-        {
-          "name": "row_id",
-          "type": "string",
-          "implicit": true,
-          "canBeBlank": true,
-          "label": "Row",
-          "default": ""
-        },
-        {
-          "name": "scope",
-          "type": "string",
-          "implicit": true,
-          "canBeBlank": true,
-          "description": "The transformation scope (CELL | LINE | COLUMN | DATASET)",
-          "label": "Scope",
-          "default": ""
-        },
-        {
-          "name": "filter",
-          "type": "filter",
-          "implicit": true,
-          "canBeBlank": true,
-          "description": "An optional filter to apply action on matching values only.",
-          "label": "Filter",
-          "default": ""
-        }
-      ]
-    }
-  ]
+  "diff": [
+    null
+  ],
+  "app-version": "2.0.0-SNAPSHOT"
 }

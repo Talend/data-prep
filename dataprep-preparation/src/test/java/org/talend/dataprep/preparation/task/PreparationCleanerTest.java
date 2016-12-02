@@ -25,6 +25,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.BasePreparationTest;
+import org.talend.dataprep.preparation.FixedIdPreparationContent;
 
 
 @TestPropertySource(properties={"dataset.metadata.store: in-memory", "preparation.store.remove.hours: 2"})
@@ -43,9 +44,9 @@ public class PreparationCleanerTest extends BasePreparationTest {
     public void removeOrphanSteps_should_remove_orphan_step_after_at_least_X_hours() {
         //given
         final String version = versionService.version().getVersionId();
-        final Step firstStep = new Step(rootStep.getId(), "first", version);
-        final Step secondStep = new Step(firstStep.getId(), "second", version);
-        final Step orphanStep = new Step(secondStep.getId(), "orphan", version);
+        final Step firstStep = new Step(rootStep, new FixedIdPreparationContent("first"), version);
+        final Step secondStep = new Step(firstStep, new FixedIdPreparationContent("second"), version);
+        final Step orphanStep = new Step(secondStep, new FixedIdPreparationContent("orphan"), version);
         final Preparation preparation = new Preparation("#123", "1", secondStep.id(), version);
 
         repository.add(firstStep);
@@ -78,9 +79,9 @@ public class PreparationCleanerTest extends BasePreparationTest {
     public void removeOrphanSteps_should_not_remove_step_that_still_belongs_to_a_preparation() {
         //given
         final String version = versionService.version().getVersionId();
-        final Step firstStep = new Step(rootStep.getId(), "first", version);
-        final Step secondStep = new Step(firstStep.getId(), "second", version);
-        final Step thirdStep = new Step(secondStep.getId(), "third", version);
+        final Step firstStep = new Step(rootStep, new FixedIdPreparationContent("first"), version);
+        final Step secondStep = new Step(firstStep, new FixedIdPreparationContent("second"), version);
+        final Step thirdStep = new Step(secondStep, new FixedIdPreparationContent("third"), version);
 
         final Preparation firstPreparation = new Preparation("#458", "1", firstStep.id(), version);
         final Preparation secondPreparation = new Preparation("#5428", "2", thirdStep.id(), version);
@@ -121,8 +122,9 @@ public class PreparationCleanerTest extends BasePreparationTest {
     public void removeOrphanSteps_should_remove_orphan_step_content() {
         //given
         final String version = versionService.version().getVersionId();
-        final PreparationActions content = new PreparationActions(version);
-        final Step step = new Step(rootStep.getId(), content.getId(), version);
+        final PreparationActions content = new PreparationActions();
+        content.setAppVersion(version);
+        final Step step = new Step(rootStep, content, version);
 
         repository.add(step);
         repository.add(content);

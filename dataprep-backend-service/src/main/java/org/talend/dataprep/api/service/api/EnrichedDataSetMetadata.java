@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * Simple bean used to display a dataset metadata and a summary of its related preparations.
  */
 @JsonIgnoreProperties({ "lifecycle", "nbLinesHeader", "nbLinesFooter" })
-public class EnrichedDataSetMetadata extends DataSetMetadata {
+public class EnrichedDataSetMetadata extends UserDataSetMetadata {
 
     /** For the Serialization interface. */
     private static final long serialVersionUID = 1;
@@ -42,18 +42,16 @@ public class EnrichedDataSetMetadata extends DataSetMetadata {
      * @param source the original dataset metadata.
      * @param relatedPreparations the relatedPreparations based on this dataset.
      */
-    public EnrichedDataSetMetadata(DataSetMetadata source, List<Preparation> relatedPreparations) {
-        super(source.getId(), source.getName(), source.getAuthor(), source.getCreationDate(), source.getLastModificationDate(),
-                null, null);
+    public EnrichedDataSetMetadata(UserDataSetMetadata source, List<Preparation> relatedPreparations) {
+        this.setId(source.getId());
+        this.setName(source.getName());
+        this.setAuthor(source.getAuthor());
+        this.setCreationDate(source.getCreationDate());
+        this.setLastModificationDate(source.getLastModificationDate());
         this.setContent(source.getContent());
         this.setDraft(source.isDraft());
         this.setEncoding(source.getEncoding());
-        this.setFavorite(source.isFavorite());
         this.setLocation(source.getLocation());
-        this.setOwner(source.getOwner());
-        this.setRoles(source.getRoles());
-        this.setSharedByMe(source.isSharedByMe());
-        this.setSharedDataSet(source.isSharedDataSet());
         this.setSheetName(source.getSheetName());
         this.setTag(source.getTag());
         this.getGovernance().setCertificationStep(source.getGovernance().getCertificationStep());
@@ -66,6 +64,10 @@ public class EnrichedDataSetMetadata extends DataSetMetadata {
         } else {
             this.preparations = Collections.emptyList();
         }
+        this.setOwner(source.getOwner());
+        this.setSharedByMe(source.isSharedByMe());
+        this.setSharedResource(source.isSharedDataSet());
+        this.setRoles(source.getRoles());
     }
 
     public List<PreparationSummary> getPreparations() {
@@ -107,7 +109,7 @@ public class EnrichedDataSetMetadata extends DataSetMetadata {
 
         /**
          * Constructor.
-         * 
+         *
          * @param source the preparation source.
          */
         public PreparationSummary(Preparation source) {

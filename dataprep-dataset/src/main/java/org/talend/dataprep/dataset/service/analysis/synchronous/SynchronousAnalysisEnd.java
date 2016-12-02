@@ -49,7 +49,7 @@ public class SynchronousAnalysisEnd implements SynchronousDataSetAnalyzer {
         try {
             DataSetMetadata metadata = repository.get(dataSetId);
             if (metadata != null) {
-                metadata.getLifecycle().importing(false);
+                metadata.getLifecycle().setImporting(false);
                 LOG.info("Finished content import of data set #{}.", dataSetId);
                 repository.add(metadata);
             } else {

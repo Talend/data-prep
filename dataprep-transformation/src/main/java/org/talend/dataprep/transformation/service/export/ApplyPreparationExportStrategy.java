@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -116,7 +115,7 @@ public class ApplyPreparationExportStrategy extends StandardExportStrategy {
                         .sourceType(parameters.getFrom())
                         .format(format.getName()) //
                         .actions(actions) //
-                        .preparationId(preparationId) //
+                        .preparation(getPreparation(preparationId)) //
                         .stepId(version) //
                         .volume(SMALL) //
                         .output(tee) //

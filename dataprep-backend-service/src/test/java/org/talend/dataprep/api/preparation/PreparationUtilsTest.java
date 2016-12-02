@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -17,10 +16,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -29,6 +27,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.ServiceBaseTests;
 import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.preparation.FixedIdPreparationContent;
+import org.talend.dataprep.preparation.FixedIdStep;
+import org.talend.dataprep.preparation.store.PersistentPreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 public class PreparationUtilsTest extends ServiceBaseTests {
@@ -58,8 +59,8 @@ public class PreparationUtilsTest extends ServiceBaseTests {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
-        final Step step2 = new Step(step1.id(), newContent2.id(), version);
+        final Step step1 = new Step(rootStep, newContent1, version);
+        final Step step2 = new Step(step1, newContent2, version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -91,8 +92,8 @@ public class PreparationUtilsTest extends ServiceBaseTests {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
-        final Step step2 = new Step(step1.id(), newContent2.id(), version);
+        final Step step1 = new Step(rootStep, newContent1, version);
+        final Step step2 = new Step(step1, newContent2, version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -124,8 +125,8 @@ public class PreparationUtilsTest extends ServiceBaseTests {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
-        final Step step2 = new Step(step1.id(), newContent2.id(), version);
+        final Step step1 = new Step(rootStep, newContent1, version);
+        final Step step2 = new Step(step1, newContent2, version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -157,8 +158,8 @@ public class PreparationUtilsTest extends ServiceBaseTests {
         final PreparationActions newContent2 = newContent1.append(actions);
 
         final String version = versionService.version().getVersionId();
-        final Step step1 = new Step(rootStep.id(), newContent1.id(), version);
-        final Step step2 = new Step(step1.id(), newContent2.id(), version);
+        final Step step1 = new Step(rootStep, newContent1, version);
+        final Step step2 = new Step(step1, newContent2, version);
 
         repository.add(newContent1);
         repository.add(newContent2);
@@ -206,7 +207,7 @@ public class PreparationUtilsTest extends ServiceBaseTests {
         final String version = versionService.version().getVersionId();
         final List<Action> actions = getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent = new PreparationActions(actions, version);
-        final Step step = new Step(rootStep.id(), newContent.id(), version);
+        final Step step = new Step(rootStep, newContent, version);
         final Preparation preparation = new Preparation("#15325878", "1234", step.id(), version);
 
         repository.add(newContent);
@@ -218,6 +219,122 @@ public class PreparationUtilsTest extends ServiceBaseTests {
 
         // Basic walk through code, no assert.
     }
+
+    @Test
+    public void scatterNull() throws Exception {
+        // When
+        final Collection<Identifiable> identifiableList = preparationUtils.scatter(null);
+
+        // Then
+        assertEquals(0, identifiableList.size());
+    }
+
+    @Test
+    public void scatterStep() throws Exception {
+        // Given
+        final Step step = new Step();
+
+        // When
+        final Collection<Identifiable> identifiableList = PreparationUtils.scatter(step);
+
+        // Then
+        assertEquals(2, identifiableList.size());
+        final Iterator<Identifiable> iterator = identifiableList.iterator();
+        assertEquals(step, iterator.next());
+        assertEquals(PreparationActions.ROOT_ACTIONS, iterator.next());
+    }
+
+    @Test
+    public void scatterPreparationAction() throws Exception {
+        // Given
+        final PreparationActions preparationActions = new PreparationActions();
+
+        // When
+        final Collection<Identifiable> identifiableList = PreparationUtils.scatter(preparationActions);
+
+        // Then
+        assertEquals(1, identifiableList.size());
+        assertEquals(preparationActions, identifiableList.iterator().next());
+    }
+
+    @Test
+    public void scatterPreparation() throws Exception {
+        // Given
+        final Preparation preparation = new Preparation();
+        final Step step1 = new FixedIdStep("step-1234");
+        final Step step2 = new FixedIdStep("step-5678");
+        final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
+        final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
+        step1.setContent(actions1);
+        step2.setContent(actions2);
+        preparation.setSteps(Arrays.asList(step1, step2));
+        repository.add(preparation);
+
+        // When
+        final Collection<Identifiable> identifiableList = PreparationUtils.scatter(preparation);
+
+        // Then
+        assertEquals(5, identifiableList.size());
+        final Iterator<Identifiable> iterator = identifiableList.iterator();
+        assertEquals(preparation, iterator.next());
+        assertEquals(step1, iterator.next());
+        assertEquals(actions1, iterator.next());
+        assertEquals(step2, iterator.next());
+        assertEquals(actions2, iterator.next());
+    }
+
+    @Test
+    public void scatterPreparationSave() throws Exception {
+        // Given
+        final Preparation preparation = new Preparation();
+        final Step step1 = new FixedIdStep("step-1234");
+        final Step step2 = new FixedIdStep("step-5678");
+        final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
+        final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
+        step1.setContent(actions1);
+        step2.setContent(actions2);
+        preparation.setSteps(Arrays.asList(step1, step2));
+
+        // When
+        repository.add(preparation);
+
+        // Then
+        assertEquals(PersistentPreparationRepository.class, repository.getClass());
+        assertTrue(repository.exist(Step.class, "id='step-1234'"));
+        assertTrue(repository.exist(Step.class, "id='step-5678'"));
+        assertTrue(repository.exist(PreparationActions.class, "id='actions-1234'"));
+        assertTrue(repository.exist(PreparationActions.class, "id='actions-5678'"));
+    }
+
+    @Test
+    public void scatterPreparationLoad() throws Exception {
+        // Given
+        final Preparation preparation = new Preparation();
+        preparation.setId("prep-1234");
+        final Step step1 = new FixedIdStep("step-1234");
+        final Step step2 = new FixedIdStep("step-5678");
+        final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
+        final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
+        step1.setContent(actions1);
+        step2.setContent(actions2);
+        preparation.setSteps(Arrays.asList(step1, step2));
+
+        // When
+        repository.add(preparation);
+        final Preparation savedPreparation = repository.get("prep-1234", Preparation.class);
+
+        // Then
+        assertEquals(PersistentPreparationRepository.class, repository.getClass());
+        assertEquals(preparation.getId(), savedPreparation.getId());
+        assertEquals(2, savedPreparation.getSteps().size());
+        assertEquals("step-1234", savedPreparation.getSteps().get(0).getId());
+        assertEquals("step-5678", savedPreparation.getSteps().get(1).getId());
+        assertNotNull(savedPreparation.getSteps().get(0).getContent());
+        assertNotNull(savedPreparation.getSteps().get(1).getContent());
+        assertEquals("actions-1234", savedPreparation.getSteps().get(0).getContent().getId());
+        assertEquals("actions-5678", savedPreparation.getSteps().get(1).getContent().getId());
+    }
+
 
     public static List<Action> getSimpleAction(final String actionName, final String paramKey, final String paramValue) {
         final Action action = new Action();

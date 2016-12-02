@@ -25,18 +25,16 @@ import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
 
 /**
  * Command used to create a dataset. Basically pass through all data to the DataSet low level API.
  */
 @Component
-@Scope("request")
+@Scope("prototype")
 public class CreateDataSet extends GenericCommand<String> {
 
     /**

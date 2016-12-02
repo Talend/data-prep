@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -111,15 +110,16 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String expectedExport = IOUtils
                 .toString(this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"));
 
-        final List<String> steps = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath()
-                .getList("steps");
-        final String firstActionStep = steps.get(1);
+        final PreparationMessageForTest preparationMessage = mapper.readValue(
+                given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
+                PreparationMessageForTest.class);
+        final List<String> steps = preparationMessage.getSteps();
 
         // when
         final String export = given() //
                 .formParam("exportType", "CSV") //
                 .formParam("preparationId", preparationId) //
-                .formParam("stepId", firstActionStep) //
+                .formParam("stepId", steps.get(1)) //
                 .when() //
                 .expect().statusCode(200).log().ifError() //
                 .get("/api/export") //

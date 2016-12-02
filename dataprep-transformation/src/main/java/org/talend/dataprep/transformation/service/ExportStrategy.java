@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -35,6 +34,7 @@ import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
@@ -127,7 +127,7 @@ public abstract class ExportStrategy {
      */
     protected String getCleanStepId(final Preparation preparation, final String stepId) {
         if (StringUtils.equals("head", stepId) || StringUtils.isEmpty(stepId)) {
-            return preparation.getSteps().get(preparation.getSteps().size() - 1);
+            return preparation.getSteps().get(preparation.getSteps().size() - 1).id();
         }
         return stepId;
     }
@@ -206,11 +206,11 @@ public abstract class ExportStrategy {
      * @param preparationId the wanted preparation id.
      * @return the preparation out of its id.
      */
-    protected Preparation getPreparation(String preparationId) {
+    protected PreparationMessage getPreparation(String preparationId) {
         final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
                 preparationId);
         try (InputStream details = preparationDetailsGet.execute()) {
-            return mapper.readerFor(Preparation.class).readValue(details);
+            return mapper.readerFor(PreparationMessage.class).readValue(details);
         } catch (Exception e) {
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }

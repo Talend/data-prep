@@ -43,7 +43,7 @@ public class DataSetLifecycle implements Serializable {
 
     /**
      * Changes the information on content indexed (is the data set content ready to be queried).
-     * 
+     *
      * @param contentAnalyzed The new value for the information.
      */
     public void contentIndexed(boolean contentAnalyzed) {
@@ -60,7 +60,7 @@ public class DataSetLifecycle implements Serializable {
     /**
      * Changes the information on schema analysis (is the data set content analyzed so column names and types are
      * available).
-     * 
+     *
      * @param schemaAnalyzed The new value for the information.
      */
     public void schemaAnalyzed(boolean schemaAnalyzed) {
@@ -96,25 +96,25 @@ public class DataSetLifecycle implements Serializable {
 
     /**
      * Changes the isImporting status of the data set.
-     * 
-     * @param isImporting <code>true</code> to indicate all synchronous analysis are done, <code>false</code> otherwise.
-     * @see #importing()
+     *
+     * @param importing <code>true</code> to indicate all synchronous analysis are done, <code>false</code> otherwise.
+     * @see #isImporting()
      */
-    public void importing(boolean isImporting) {
-        importing = isImporting;
+    public void setImporting(boolean importing) {
+        this.importing = importing;
     }
 
     /**
      * @return <code>true</code> if all mandatory and synchronous analysis were done, <code>false</code> otherwise.
      */
-    public boolean importing() {
+    public boolean isImporting() {
         return importing;
     }
 
     /**
      * @return <code>true</code> if all mandatory analysis were done <b>but</b> results are not yet complete.
      */
-    public boolean inProgress() {
+    public boolean isInProgress() {
         return inProgress;
     }
 
@@ -123,9 +123,9 @@ public class DataSetLifecycle implements Serializable {
      *
      * @param inProgress <code>true</code> to indicate not all analysis are done, <code>false</code> to indicate all
      * analysis is done.
-     * @see #inProgress()
+     * @see #isInProgress()
      */
-    public void inProgress(boolean inProgress) {
+    public void setInProgress(boolean inProgress) {
         this.inProgress = inProgress;
     }
 

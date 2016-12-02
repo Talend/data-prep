@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -102,7 +103,9 @@ public abstract class ApiServiceTestBase extends ServiceBaseTests {
     }
 
     protected String createDataset(final String file, final String name, final String type) throws IOException {
-        final String datasetContent = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(file));
+        final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
+        assertNotNull(resourceAsStream);
+        final String datasetContent = IOUtils.toString(resourceAsStream);
         final Response post = given() //
                 .contentType(ContentType.JSON) //
                 .body(datasetContent) //
@@ -123,13 +126,13 @@ public abstract class ApiServiceTestBase extends ServiceBaseTests {
     }
 
     protected String createPreparationFromFile(final String file, final String name, final String type) throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-" + System.currentTimeMillis(), type);
+        final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID(), type);
         return createPreparationFromDataset(dataSetId, name);
     }
 
     protected String createPreparationFromFile(final String file, final String name, final String type, final String folderId)
             throws IOException {
-        final String dataSetId = createDataset(file, "testDataset-" + System.currentTimeMillis(), type);
+        final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID(), type);
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
 

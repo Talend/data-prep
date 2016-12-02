@@ -18,11 +18,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
 
 /**
@@ -56,9 +58,9 @@ public class PreviewUpdate extends PreviewAbstract {
         final String dataSetId = preparation.getDataSetId();
 
         //Get steps from first transformation
-        final List<String> steps = preparation.getSteps();
+        final List<String> steps = preparation.getSteps().stream().map(Step::getId).collect(Collectors.toList());
         steps.remove(0);
-        
+
         // extract actions by steps in chronological order, until defined last active step (from input)
         Map<String, Action> originalActions = new LinkedHashMap<>();
         final Iterator<Action> iterator = actions.iterator();

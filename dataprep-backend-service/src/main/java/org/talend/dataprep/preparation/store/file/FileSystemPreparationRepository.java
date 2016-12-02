@@ -36,10 +36,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Identifiable;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
@@ -111,7 +109,7 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
             throw new TDPException(CommonErrorCodes.UNABLE_TO_SAVE_PREPARATION, e,
                     ExceptionContext.build().put("id", object.id()));
         }
-        LOG.debug("preparation #{} saved", object.id());
+        LOG.debug("{} #{} saved", object.getClass().getSimpleName(), object.id());
     }
 
     @Override
@@ -138,17 +136,13 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
             return null;
         }
         if (!from.exists()) {
-            LOG.debug("preparation #{} not found in file system", id);
+            LOG.debug("{} #{} not found in file system", clazz.getSimpleName(), id);
             return null;
         }
 
         T result;
         try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(from))) {
             result = mapper.readerFor(clazz).readValue(input);
-            if (result instanceof Preparation) {
-                Owner owner = new Owner(security.getUserId(), security.getUserId(), null);
-                ((Preparation) result).setOwner(owner);
-            }
         } catch (IOException e) {
             LOG.error("error reading preparation file {}", from.getAbsolutePath(), e);
             return null;
@@ -186,7 +180,7 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         }
         final File file = getIdentifiableFile(object);
         FilesHelper.deleteQuietly(file);
-        LOG.debug("preparation #{} removed", object.id());
+        LOG.debug("identifiable {} #{} removed", object.getClass().getSimpleName(), object.id());
     }
 
     private File getIdentifiableFile(Identifiable object) {
@@ -229,7 +223,7 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
     }
     /**
      * Return the root folder where the preparations are stored.
-     * 
+     *
      * @return the root folder.
      */
     private File getRootFolder() {

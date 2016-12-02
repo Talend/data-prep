@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -56,7 +55,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
@@ -76,6 +74,7 @@ import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.aggregation.AggregationService;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
@@ -351,8 +350,8 @@ public class TransformationService extends BaseTransformationService {
         );
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
-                final InputStream content = contentCache.get(contentKey); //
-                final JsonParser contentParser = mapper.getFactory().createParser(content)) {
+            final InputStream content = contentCache.get(contentKey); //
+            final JsonParser contentParser = mapper.getFactory().createParser(content)) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);
@@ -494,9 +493,9 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void applyActionsOnMetadata(TransformationContext context, RowMetadata metadata, String actionsAsJson) {
-        List<Action> actions = actionParser.parse(actionsAsJson);
+        List<RunnableAction> actions = actionParser.parse(actionsAsJson);
         ActionContext contextWithMetadata = new ActionContext(context, metadata);
-        for (Action action : actions) {
+        for (RunnableAction action : actions) {
             action.getRowAction().compile(contextWithMetadata);
 
         }
@@ -715,7 +714,7 @@ public class TransformationService extends BaseTransformationService {
 
         // get the step (in case of 'head', the real step id must be found)
         final String version = StringUtils.equals("head", stepId) ? //
-                preparation.getSteps().get(preparation.getSteps().size() - 1) : stepId;
+                preparation.getSteps().get(preparation.getSteps().size() - 1).getId() : stepId;
 
         /*
          * OK, this one is a bit tricky so pay attention.

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,6 +12,17 @@
 
 package org.talend.dataprep.preparation.service;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
+import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -21,6 +31,7 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +46,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
@@ -48,22 +60,11 @@ import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
-
-import static java.lang.Integer.MAX_VALUE;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.api.preparation.StepWithActions.buildFromStepId;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
-import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 @Component
 public class PreparationService {
@@ -97,12 +98,6 @@ public class PreparationService {
     private Step rootStep;
 
     /**
-     * Various preparation utilities.
-     */
-    @Autowired
-    private PreparationUtils preparationUtils;
-
-    /**
      * DataPrep abstraction to the underlying security (whether it's enabled or not).
      */
     @Autowired
@@ -134,6 +129,12 @@ public class PreparationService {
 
     @Autowired
     private ActionParser actionParser;
+
+    @Autowired
+    private BeanConversionService beanConversionService;
+
+    @Autowired
+    private PreparationUtils preparationUtils;
 
     /**
      * Create a preparation from the http request body.
@@ -194,11 +195,11 @@ public class PreparationService {
      * @param order how to order the sort.
      * @return the preparation details.
      */
-    public Collection<PreparationDetails> listAll(String sort, String order) {
+    public Collection<PreparationMessage> listAll(String sort, String order) {
         log.debug("Get list of preparations (with details).");
-        Collection<PreparationDetails> details = preparationRepository.list(Preparation.class) //
+        Collection<PreparationMessage> details = preparationRepository.list(Preparation.class) //
                 .sorted(getPreparationComparator(sort, order)) //
-                .map(this::getDetails) //
+                .map(p -> beanConversionService.convert(p, PreparationMessage.class)) //
                 .collect(toList());
         log.info("found {} preparation(s) in total", details.size());
         return details;
@@ -225,7 +226,7 @@ public class PreparationService {
      * @param sort Sort key (by name, creation date or modification date).
      * @param order Order for sort key (desc or asc).
      */
-    public Iterable<PreparationDetails> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
+    public Iterable<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
                                                            String sort, String order) {
         // TODO should stream the response à la DataSetRowIterator & DataSetRowStreamSerializer
         final Collection<Preparation> result;
@@ -241,7 +242,7 @@ public class PreparationService {
         // convert & sort the result
         return result.stream() //
                 .sorted(getPreparationComparator(sort, order)) //
-                .map(this::getDetails) //
+                .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
                 .collect(toList());
     }
 
@@ -472,11 +473,41 @@ public class PreparationService {
             preparationRepository.remove(previousPreparation);
         }
         updated.setAppVersion(versionService.version().getVersionId());
+        updated.setLastModificationDate(System.currentTimeMillis());
         preparationRepository.add(updated);
 
         log.info("Preparation {} updated -> {}", id, updated);
 
         return updated.id();
+    }
+
+    /**
+     * Update a preparation steps.
+     *
+     * @param preparationId the preparation id.
+     * @param steps the steps to update.
+     */
+    public void updatePreparationSteps(final String preparationId, final List<Step> steps) {
+
+        log.info("update preparation #{}'s steps", preparationId);
+
+        int updatedSteps = 0;
+        for (Step toUpdate : steps) {
+            if (!preparationRepository.exist(Step.class, "id='" + toUpdate.getId() + "'")) {
+                continue;
+            }
+            toUpdate.setRowMetadata(toUpdate.getRowMetadata());
+            toUpdate.setContent(toUpdate.getContent());
+            toUpdate.setDiff(toUpdate.getDiff());
+            toUpdate.setParent(toUpdate.getParent());
+
+            log.debug("{} updated", toUpdate);
+            preparationRepository.add(toUpdate);
+
+            updatedSteps++;
+        }
+
+        log.info("{} steps for preparation #{} were updated", updatedSteps, preparationId);
     }
 
     /**
@@ -522,13 +553,13 @@ public class PreparationService {
      * @param id the wanted preparation id.
      * @return the preparation details.
      */
-    public PreparationDetails getPreparationDetails(String id) {
+    public PreparationMessage getPreparationDetails(String id) {
         log.debug("Get content of preparation details for #{}.", id);
-        final Preparation preparation = this.getPreparation(id);
+        final Preparation preparation = preparationRepository.get(id, Preparation.class);
 
         // Ensure that the preparation is not locked elsewhere
         lock(id);
-        final PreparationDetails details = getDetails(preparation);
+        final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
         log.info("returning details for {} -> {}", id, details);
         return details;
     }
@@ -564,10 +595,9 @@ public class PreparationService {
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
         log.debug("Adding action to preparation...");
-        Preparation preparation = getPreparationDetails(preparationId).getPreparation();
+        Preparation preparation = getPreparation(preparationId);
         List<Action> actions = getVersionedAction(preparationId, "head");
-        step.setActions(buildActions(step.getActions()));
-        StepDiff actionCreatedColumns = stepDiffDelegate.getActionCreatedColumns(preparation.getRowMetadata(), actions, step.getActions());
+        StepDiff actionCreatedColumns = stepDiffDelegate.getActionCreatedColumns(preparation.getRowMetadata(), buildActions(actions), buildActions(step.getActions()));
         step.setDiff(actionCreatedColumns);
         appendSteps(preparationId, Collections.singletonList(step));
         log.debug("Added action to preparation.");
@@ -577,8 +607,8 @@ public class PreparationService {
      * Given a list of actions recreate but with the Spring Context {@link ActionDefinition}. It is mandatory to use any
      * action parsed from JSON.
      */
-    private List<Action> buildActions(List<Action> allActions) {
-        final List<Action> builtActions = new ArrayList<>(allActions.size() + 1);
+    private List<RunnableAction> buildActions(List<Action> allActions) {
+        final List<RunnableAction> builtActions = new ArrayList<>(allActions.size() + 1);
         for (Action parsedAction : allActions) {
             if (parsedAction != null && parsedAction.getName() != null) {
                 String actionNameLowerCase = parsedAction.getName().toLowerCase();
@@ -663,7 +693,7 @@ public class PreparationService {
 
         // Rebuild history from modified step
         final Step stepToModify = getStep(stepToModifyId);
-        replaceHistory(preparation, stepToModify.getParent(), actionsSteps);
+        replaceHistory(preparation, stepToModify.getParent().getId(), actionsSteps);
         log.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
     }
 
@@ -691,7 +721,7 @@ public class PreparationService {
         final Preparation preparation = getPreparation(id);
         // no preparation found
         if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparation));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
         lock(id);
@@ -710,7 +740,7 @@ public class PreparationService {
         final Preparation preparation = getPreparation(preparationId);
         // no preparation found
         if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparation));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
         lock(preparationId);
@@ -762,7 +792,6 @@ public class PreparationService {
     public ResponseEntity<Void> preparationsThatUseDataset(final String datasetId) {
         final boolean preparationUseDataSet = preparationRepository.exist(Preparation.class, "dataSetId = '" + datasetId + "'");
         final boolean dataSetUsedInLookup = isDatasetUsedToLookupInPreparationHead(datasetId);
-
         if (!preparationUseDataSet && !dataSetUsedInLookup) {
             return ResponseEntity.notFound().build();
         }
@@ -771,16 +800,12 @@ public class PreparationService {
 
     /** Check if the preparation uses this dataset in its head version. */
     private boolean isDatasetUsedToLookupInPreparationHead(String datasetId) {
-        boolean usedInHead = false;
         final String datasetParamName = Lookup.Parameters.LOOKUP_DS_ID.getKey();
-        usedInHead = preparationRepository.list(Preparation.class)
+        return preparationRepository.list(Preparation.class)
                 .flatMap(p -> getVersionedAction(p.getId(), "head").stream())
-                .filter(a -> a != null)
+                .filter(Objects::nonNull)
                 .filter(a -> Objects.equals(a.getName(), Lookup.LOOKUP_ACTION_NAME))
-                .filter(a -> Objects.equals(datasetId, a.getParameters().get(datasetParamName)))
-                .findAny()
-                .isPresent();
-        return usedInHead;
+                .anyMatch(a -> Objects.equals(datasetId, a.getParameters().get(datasetParamName)));
     }
 
     /**
@@ -831,7 +856,7 @@ public class PreparationService {
      * @return The list of actions
      */
     private List<Action> getActions(final Step step) {
-        return new ArrayList<>(preparationRepository.get(step.getContent(), PreparationActions.class).getActions());
+        return new ArrayList<>(preparationRepository.get(step.getContent().id(), PreparationActions.class).getActions());
     }
 
     /**
@@ -840,19 +865,8 @@ public class PreparationService {
      * @param stepId The step id
      * @return Le step with the provided id
      */
-    private Step getStep(final String stepId) {
+    public Step getStep(final String stepId) {
         return preparationRepository.get(stepId, Step.class);
-    }
-
-    /**
-     * Get the step from id
-     *
-     * @param stepId The step id
-     * @return Le step with the provided id
-     */
-    public StepWithActions getStepWithActions(final String stepId) {
-        return buildFromStepId(stepId, cId -> preparationRepository.get(cId, PreparationActions.class),
-                sId -> preparationRepository.get(sId, Step.class));
     }
 
     /**
@@ -862,7 +876,7 @@ public class PreparationService {
      * @return The preparation with the provided id
      * @throws TDPException when no preparation has the provided id
      */
-    Preparation getPreparation(final String id) {
+    public Preparation getPreparation(final String id) {
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation == null) {
             log.error("Preparation #{} does not exist", id);
@@ -900,7 +914,7 @@ public class PreparationService {
                 final AppendStep appendStep = new AppendStep();
                 appendStep.setDiff(step.getDiff());
                 appendStep.setActions(current.subList(previous.size(), current.size()));
-
+                appendStep.setRowMetadata(step.getRowMetadata());
                 return appendStep;
             }).collect(toList());
         }
@@ -1154,39 +1168,28 @@ public class PreparationService {
             setPreparationHead(preparation, startingStep);
         }
 
-        actionsSteps.stream().forEach(step -> appendStepToHead(preparation, step));
+        actionsSteps.forEach(step -> appendStepToHead(preparation, step));
     }
 
     /**
-     * Append a single step after the preparation head
+     * Append a single appendStep after the preparation head
      *
      * @param preparation The preparation
-     * @param step        The step to apply
+     * @param appendStep The appendStep to apply
      */
-    private void appendStepToHead(final Preparation preparation, final AppendStep step) {
+    private void appendStepToHead(final Preparation preparation, final AppendStep appendStep) {
         // Add new actions after head
         final Step head = preparationRepository.get(preparation.getHeadId(), Step.class);
-        final PreparationActions headContent = preparationRepository.get(head.getContent(), PreparationActions.class);
-        final PreparationActions newContent = headContent.append(step.getActions());
-        preparationRepository.add(newContent);
+        final PreparationActions newContent = head.getContent().append(appendStep.getActions());
 
         // Create new step from new content
-        final Step newStep = new Step(head.id(), newContent.id(), versionService.version().getVersionId(), step.getDiff());
-        preparationRepository.add(newStep);
+        final Step newHead = new Step(head, newContent, versionService.version().getVersionId(), appendStep.getDiff());
+        newHead.setRowMetadata(appendStep.getRowMetadata());
+        preparationRepository.add(newHead);
 
         // TODO Could we get the new step id?
         // Update preparation head step
-        setPreparationHead(preparation, newStep);
-    }
-
-    /**
-     * Convenient method to convert Preparation to PreparationDetails.
-     *
-     * @param preparation the preparation to cast.
-     * @return the preparation details that matches the given preparation.
-     */
-    private PreparationDetails getDetails(Preparation preparation) {
-        return new PreparationDetails(preparation);
+        setPreparationHead(preparation, newHead);
     }
 
     /**
@@ -1214,7 +1217,7 @@ public class PreparationService {
 
         // rewrite history
         final Step stepToDelete = getStep(stepToDeleteId);
-        replaceHistory(preparation, stepToDelete.getParent(), actions);
+        replaceHistory(preparation, stepToDelete.getParent().id(), actions);
     }
 
     /**
@@ -1270,4 +1273,5 @@ public class PreparationService {
             replaceHistory(preparation, steps.get(lastUnchangedIndex), result);
         }
     }
+
 }

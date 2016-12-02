@@ -4,7 +4,9 @@
   "author": "myAuthor",
   "name": null,
   "steps": [
-    "f6e172c33bdacbc69bca9d32b2bd78174712a171"
+    {
+      "id": "f6e172c33bdacbc69bca9d32b2bd78174712a171"
+    }
   ],
   "actions": [],
   "metadata": []

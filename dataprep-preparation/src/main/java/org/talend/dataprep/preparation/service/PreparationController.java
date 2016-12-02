@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,13 +12,14 @@
 
 package org.talend.dataprep.preparation.service;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +29,9 @@ import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.metrics.Timed;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
@@ -81,7 +81,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/details", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations details the current user is allowed to see. Creation date is always displayed in UTC time zone. This operation return all details on the preparations.")
     @Timed
-    public Collection<PreparationDetails> listAll(
+    public Collection<PreparationMessage> listAll(
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "MODIF", required = false) String sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
         return preparationService.listAll(sort, order);
@@ -111,7 +111,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/search", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search for preparations details", notes = "Returns the list of preparations details that match the search criteria.")
     @Timed
-    public Iterable<PreparationDetails> searchPreparations(
+    public Iterable<UserPreparation> searchPreparations(
             @RequestParam(required = false) @ApiParam("dataSetId") String dataSetId,
             @RequestParam(required = false) @ApiParam(value = "path of the folderId where to look for preparations") String folderId,
             @RequestParam(required = false) @ApiParam("name") String name,
@@ -181,8 +181,26 @@ public class PreparationController {
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the updated preparation.")
     @Timed
     public String update(@ApiParam("id") @PathVariable("id") String id,
-                         @RequestBody @ApiParam("preparation") final Preparation preparation) {
+                         @RequestBody @ApiParam("preparation") final PreparationMessage preparation) {
         return preparationService.update(id, preparation);
+    }
+
+    /**
+     * Update a preparation steps.
+     *
+     * @param preparationId the preparation id (mainly for to check).
+     * @param steps the steps to update.
+     * @return the updated preparation id.
+     */
+    @RequestMapping(value = "/preparations/{preparationId}/steps", method = PUT, produces = TEXT_PLAIN_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update a preparation steps", notes = "Returns the id of the updated step.")
+    @Timed
+    public String updateStepMetadata(@ApiParam("preparationId") @PathVariable("preparationId") String preparationId,
+            @RequestBody @ApiParam("rowMetadata") final List<Step> steps) {
+
+        preparationService.updatePreparationSteps(preparationId, steps);
+
+        return preparationId;
     }
 
     /**
@@ -210,7 +228,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/{id}/details", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
-    public PreparationDetails getDetails(@ApiParam("id") @PathVariable("id") String id) {
+    public PreparationMessage getDetails(@ApiParam("id") @PathVariable("id") String id) {
         return preparationService.getPreparationDetails(id);
     }
 
@@ -370,7 +388,7 @@ public class PreparationController {
     @ApiOperation(value = "Retrieve a specific step.",
                   notes = "Just find the step for this ID.")
     @Timed
-    public StepWithActions getStep(@PathVariable("id") final String stepId) {
-        return preparationService.getStepWithActions(stepId);
+    public Step getStep(@PathVariable("id") final String stepId) {
+        return preparationService.getStep(stepId);
     }
 }

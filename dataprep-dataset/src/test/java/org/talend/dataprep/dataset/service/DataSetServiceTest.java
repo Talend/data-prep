@@ -443,7 +443,8 @@ public class DataSetServiceTest extends DataSetBaseTest {
         checkSearchResult("tic TAC toc", strict, asList(ticTacTocId));
     }
 
-    private void checkSearchResult(final String search, final boolean isStrict, final List<String> expectedIds) throws IOException {
+    private void checkSearchResult(final String search, final boolean isStrict, final List<String> expectedIds)
+            throws IOException {
         final Response response = given() //
                 .queryParam("name", search) //
                 .queryParam("strict", isStrict) //
@@ -650,7 +651,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(copy.getAppVersion(), equalTo(original.getAppVersion()));
         assertThat(copy.getAuthor(), equalTo(original.getAuthor()));
         assertThat(copy.getCreationDate(), equalTo(original.getCreationDate()));
-        assertThat(copy.isFavorite(), equalTo(original.isFavorite()));
         assertThat(copy.getLocation(), equalTo(original.getLocation()));
     }
 
@@ -670,28 +670,24 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     @Test
     public void test_TDP_2052() throws Exception {
-        //given
+        // given
         final String dataSetId = "123456";
-        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV)))
-                .when()
-                .put("/datasets/{id}/raw?name=original", dataSetId)
-                .then()
-                .statusCode(OK.value());
+        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA_CSV))).when()
+                .put("/datasets/{id}/raw?name=original", dataSetId).then().statusCode(OK.value());
 
         String datasets = when().get("/datasets").asString();
-        List<DataSetMetadata> datasetsMetadata = mapper.readValue(datasets, new TypeReference<ArrayList<DataSetMetadata>>() {});
+        List<DataSetMetadata> datasetsMetadata = mapper.readValue(datasets, new TypeReference<ArrayList<DataSetMetadata>>() {
+        });
         final DataSetMetadata original = datasetsMetadata.get(0);
 
-        //when
-        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA2_CSV)))
-                .when()
-                .put("/datasets/{id}/raw?name=", dataSetId)
-                .then()
-                .statusCode(OK.value());
+        // when
+        given().body(IOUtils.toString(this.getClass().getResourceAsStream(TAGADA2_CSV))).when()
+                .put("/datasets/{id}/raw?name=", dataSetId).then().statusCode(OK.value());
 
-        //then
+        // then
         datasets = when().get("/datasets").asString();
-        datasetsMetadata = mapper.readValue(datasets, new TypeReference<ArrayList<DataSetMetadata>>() {});
+        datasetsMetadata = mapper.readValue(datasets, new TypeReference<ArrayList<DataSetMetadata>>() {
+        });
         final DataSetMetadata copy = datasetsMetadata.get(0);
 
         assertThat(copy.getId(), equalTo(original.getId()));
@@ -906,11 +902,11 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     /**
      * Test the import of a csv file with a really low separator coefficient variation.
-<<<<<<< Updated upstream
-=======
+     * <<<<<<< Updated upstream
+     * =======
      *
      * @see org.talend.dataprep.schema.csv.CSVSchemaParser
->>>>>>> Stashed changes
+     * >>>>>>> Stashed changes
      */
     @Test
     public void testLowSeparatorOccurrencesInCSV() throws Exception {
@@ -1204,18 +1200,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
     }
 
     @Test
-    public void testFavoritesTransientNotStored() {
-        String expectedDsId = UUID.randomUUID().toString();
-
-        DataSetMetadata dataSetMetadataToBeSet = metadataBuilder.metadata().id(expectedDsId).build();
-        dataSetMetadataToBeSet.setFavorite(true);
-        dataSetMetadataRepository.add(dataSetMetadataToBeSet);
-        DataSetMetadata dataSetMetadataGet = dataSetMetadataRepository.get(expectedDsId);
-        assertNotNull(dataSetMetadataGet);
-        assertFalse(dataSetMetadataGet.isFavorite());
-    }
-
-    @Test
     public void updateDatasetColumn_should_update_domain() throws Exception {
         // given
         final String dataSetId = given() //
@@ -1410,16 +1394,20 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Make dataset1 more recent
 
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
-        dataSetMetadata1.setFavorite(true);
         dataSetMetadata1.getGovernance().setCertificationStep(Certification.CERTIFIED);
-        dataSetMetadata1.setLastModificationDate(Instant.now().getEpochSecond()+1);
+        dataSetMetadata1.setLastModificationDate(Instant.now().getEpochSecond() + 1);
         dataSetMetadataRepository.add(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
-        dataSetMetadata2.setFavorite(true);
         dataSetMetadataRepository.add(dataSetMetadata2);
         final DataSetMetadata dataSetMetadata3 = dataSetMetadataRepository.get(dataSetId3);
         dataSetMetadata3.getGovernance().setCertificationStep(Certification.CERTIFIED);
         dataSetMetadataRepository.add(dataSetMetadata3);
+
+        UserData userData = new UserData();
+        userData.setUserId(security.getUserId());
+        userData.addFavoriteDataset(dataSetMetadata1.getId());
+        userData.addFavoriteDataset(dataSetMetadata2.getId());
+        userDataRepository.save(userData);
 
         // @formatter:off
         // certified, favorite and recent
@@ -1464,7 +1452,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         .then()
             .statusCode(200)
             .body("name", hasItems("dataset1", "dataset2"))
-            .body("name", hasSize(2));;
+            .body("name", hasSize(2));
 
         // only certified
         given()

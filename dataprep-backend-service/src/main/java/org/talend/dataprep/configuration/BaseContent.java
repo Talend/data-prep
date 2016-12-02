@@ -13,11 +13,12 @@
 
 package org.talend.dataprep.configuration;
 
+import static org.talend.dataprep.api.preparation.PreparationActions.ROOT_ACTIONS;
+import static org.talend.dataprep.api.preparation.Step.ROOT_STEP;
+
 import java.io.IOException;
 import java.util.Collections;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,14 +29,14 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Provide instance for root/initial content with current application version.
  */
 @Configuration
 public class BaseContent {
-
-    /** Kept here for compatibility between versions. **/
-    private static final String CONSTANT_ROOT_STEP_PREPARATION_ACTIONS_ID = "cdcd5c9a3a475f2298b5ee3f4258f8207ba10879";
 
     /** The version service. */
     @Autowired
@@ -43,16 +44,12 @@ public class BaseContent {
 
     @Bean
     public Converter<String, JsonNode> jsonNodeConverter() {
-        return new Converter<String, JsonNode>() {
-
-            @Override
-            public JsonNode convert(String source) {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    return mapper.readTree(source);
-                } catch (IOException e) {
-                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-                }
+        return source -> {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                return mapper.readTree(source);
+            } catch (IOException e) {
+                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
         };
     }
@@ -62,9 +59,11 @@ public class BaseContent {
      */
     @Bean(name = "rootContent")
     public PreparationActions initRootContent() {
-        PreparationActions preparationActions = new PreparationActions(Collections.emptyList(),
-                versionService.version().getVersionId());
-        preparationActions.setId(CONSTANT_ROOT_STEP_PREPARATION_ACTIONS_ID);
+        PreparationActions preparationActions = new PreparationActions( //
+                Collections.emptyList(), //
+                versionService.version().getVersionId() //
+        );
+        preparationActions.setId(ROOT_ACTIONS.id());
         return preparationActions;
     }
 
@@ -73,6 +72,8 @@ public class BaseContent {
      */
     @Bean(name = "rootStep")
     public Step getRootStep(PreparationActions rootContent) {
-        return new Step(null, rootContent.id(), versionService.version().getVersionId());
+        final Step step = new Step(null, rootContent, versionService.version().getVersionId());
+        step.setId(ROOT_STEP.id());
+        return step;
     }
 }

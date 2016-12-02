@@ -13,6 +13,15 @@
 
 package org.talend.dataprep.folder.store.file;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderBuilder.folder;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -23,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
@@ -40,15 +50,6 @@ import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.folder.store.NotEmptyFolderException;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.StringsHelper;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderBuilder.folder;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
-import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
-import static org.talend.dataprep.folder.store.file.FileSystemUtils.*;
 
 /**
  * File system folder repository implementation.
@@ -106,7 +107,7 @@ public class FileSystemFolderRepository implements FolderRepository {
                 try (Stream<Path> childrenStream = Files.list(folderPath)) {
                     children = childrenStream //
                             .map(p -> toFolderIfDirectory(p, security.getUserId())) //
-                            .filter(f -> f != null) //
+                            .filter(Objects::nonNull) //
                             .collect(toList());
                 }
             }

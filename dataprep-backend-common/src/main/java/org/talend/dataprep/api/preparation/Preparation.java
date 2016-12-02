@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.preparation;
 
@@ -17,16 +16,12 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.data.annotation.Transient;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.share.Owner;
-import org.talend.dataprep.api.share.SharedResource;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * The Preparation class represents the series of {@link Step steps} one can apply on a dataset to transform it.
  */
-public class Preparation extends Identifiable implements SharedResource, Serializable {
+public class Preparation extends Identifiable implements Serializable {
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;
@@ -65,29 +60,12 @@ public class Preparation extends Identifiable implements SharedResource, Seriali
     private String appVersion;
 
     /** List of the steps id for this preparation. */
-    private List<String> steps;
-
-    /** This preparation owner. */
-    @Transient // no saved in the database but computed when needed
-    private Owner owner;
-
-    /** True if this preparation is shared by another user. */
-    @Transient // no saved in the database but computed when needed
-    private boolean sharedPreparation = false;
-
-    /** True if this preparation is shared by current user. */
-    @Transient // no saved in the database but computed when needed
-    private boolean sharedByMe = false;
-
-    /** What role has the current user on this preparation. */
-    @Transient // no saved in the database but computed when needed
-    private Set<String> roles = new HashSet<>();
+    private List<Step> steps = Collections.singletonList(Step.ROOT_STEP);
 
     /**
      * Default empty constructor.
      */
     public Preparation() {
-        // needed for mongodb integration
     }
 
     /**
@@ -122,11 +100,11 @@ public class Preparation extends Identifiable implements SharedResource, Seriali
      * @return List of the steps id for this preparation.
      * @see org.talend.dataprep.preparation.store.PreparationRepository#get(String, Class)
      */
-    public List<String> getSteps() {
+    public List<Step> getSteps() {
         return steps;
     }
 
-    public void setSteps(List<String> steps) {
+    public void setSteps(List<Step> steps) {
         this.steps = steps;
     }
 
@@ -209,50 +187,6 @@ public class Preparation extends Identifiable implements SharedResource, Seriali
         this.appVersion = appVersion;
     }
 
-    public Owner getOwner() {
-        return owner;
-    }
-
-    /**
-     * @see SharedResource#setOwner(Owner)
-     */
-    @Override
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public void setSharedResource(boolean shared) {
-        this.sharedPreparation = shared;
-    }
-
-    public boolean isSharedByMe() {
-        return sharedByMe;
-    }
-
-    @Override
-    public void setSharedByMe(boolean sharedByMe) {
-        this.sharedByMe = sharedByMe;
-    }
-
-    @Override
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    public boolean isSharedPreparation() {
-        return sharedPreparation;
-    }
-
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    @Override
-    public String getOwnerId() {
-        return author;
-    }
-
     public void updateLastModificationDate() {
         this.lastModificationDate = System.currentTimeMillis();
     }
@@ -271,15 +205,9 @@ public class Preparation extends Identifiable implements SharedResource, Seriali
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id)
-                .append("dataSetId", dataSetId)
-                .append("author", author)
-                .append("name", name)
-                .append("creationDate", creationDate)
-                .append("lastModificationDate", lastModificationDate)
-                .append("headId", headId)
-                .append("owner", owner)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("dataSetId", dataSetId).append("author", author)
+                .append("name", name).append("creationDate", creationDate).append("lastModificationDate", lastModificationDate)
+                .append("headId", headId).toString();
     }
 
     @Override
@@ -292,13 +220,9 @@ public class Preparation extends Identifiable implements SharedResource, Seriali
         }
         Preparation that = (Preparation) o;
         return Objects.equals(id, that.id) && // NOSONAR generated code that's easy to read
-                Objects.equals(rowMetadata, that.rowMetadata) &&
-                Objects.equals(creationDate, that.creationDate) &&
-                Objects.equals(lastModificationDate, that.lastModificationDate) &&
-                Objects.equals(dataSetId, that.dataSetId) &&
-                Objects.equals(author, that.author) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(headId, that.headId);
+                Objects.equals(rowMetadata, that.rowMetadata) && Objects.equals(creationDate, that.creationDate)
+                && Objects.equals(lastModificationDate, that.lastModificationDate) && Objects.equals(dataSetId, that.dataSetId)
+                && Objects.equals(author, that.author) && Objects.equals(name, that.name) && Objects.equals(headId, that.headId);
     }
 
     @Override

@@ -1,15 +1,28 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.pipeline.node;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.pipeline.Monitored;
+import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 
 public class ActionNode extends BasicNode implements Monitored {
 
-    private final Action action;
+    private final RunnableAction action;
 
     private final ActionContext actionContext;
 
@@ -17,7 +30,7 @@ public class ActionNode extends BasicNode implements Monitored {
 
     private int count;
 
-    public ActionNode(Action action, ActionContext actionContext) {
+    public ActionNode(RunnableAction action, ActionContext actionContext) {
         this.action = action;
         this.actionContext = actionContext;
     }
@@ -43,12 +56,19 @@ public class ActionNode extends BasicNode implements Monitored {
             count++;
         }
         row.setRowMetadata(actionContext.getRowMetadata());
-        link.exec().emit(actionRow, actionContext.getRowMetadata());
+        if (link != null) {
+            link.exec().emit(actionRow, actionContext.getRowMetadata());
+        }
     }
 
     @Override
     public void accept(Visitor visitor) {
         visitor.visitAction(this);
+    }
+
+    @Override
+    public Node copyShallow() {
+        return new ActionNode(action, actionContext);
     }
 
     @Override
@@ -61,7 +81,7 @@ public class ActionNode extends BasicNode implements Monitored {
         return count;
     }
 
-    public Action getAction() {
+    public RunnableAction getAction() {
         return action;
     }
 

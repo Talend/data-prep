@@ -31,6 +31,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 
 /**
  * Unit test for the ActionParser class.
@@ -63,10 +64,10 @@ public class ActionParserTest extends AbstractMetadataBaseTest {
 
         RowMetadata expectedMetadata = getRowMetadata();
 
-        List<Action> actualActions = actionParser.parse("");
+        List<RunnableAction> actualActions = actionParser.parse("");
 
         // when
-        final Action[] actions = actualActions.toArray(new Action[actualActions.size()]);
+        final RunnableAction[] actions = actualActions.toArray(new RunnableAction[actualActions.size()]);
         ActionTestWorkbench.test(actualRow, actionRegistry, actions);
 
         // then
@@ -79,7 +80,7 @@ public class ActionParserTest extends AbstractMetadataBaseTest {
         String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("actions.json"));
 
         // when
-        List<Action> actualActions = actionParser.parse(json);
+        List<RunnableAction> actualActions = actionParser.parse(json);
 
         // then
         assertTrue(actualActions.size() == 1);

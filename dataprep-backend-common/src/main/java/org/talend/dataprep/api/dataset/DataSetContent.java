@@ -148,4 +148,17 @@ public class DataSetContent implements Serializable {
     public int hashCode() {
         return Objects.hash(nbRecords, nbLinesInHeader, nbLinesInFooter, limit, mediaType, parameters, formatFamilyId);
     }
+
+    @Override
+    public String toString() {
+        return "DataSetContent{" + //
+                "formatFamilyId='" + formatFamilyId + '\'' + //
+                ", mediaType='" + mediaType + '\'' + //
+                ", nbRecords=" + nbRecords + //
+                ", limit=" + limit + //
+                ", nbLinesInHeader=" + nbLinesInHeader + //
+                ", nbLinesInFooter=" + nbLinesInFooter + //
+                ", parameters=" + parameters + //
+                '}';
+    }
 }

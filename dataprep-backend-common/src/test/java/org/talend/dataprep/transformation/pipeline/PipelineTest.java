@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.pipeline;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -10,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -18,7 +29,7 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
@@ -39,7 +50,7 @@ public class PipelineTest {
     @Test
     public void testCompileAction() throws Exception {
         // Given
-        final Action mockAction = new Action() {
+        final RunnableAction mockAction = new RunnableAction() {
 
             @Override
             public DataSetRowAction getRowAction() {
@@ -74,7 +85,7 @@ public class PipelineTest {
     @Test
     public void testActionNode() throws Exception {
         final ActionContext actionContext = new ActionContext(new TransformationContext());
-        final Action mockAction = new Action();
+        final RunnableAction mockAction = new RunnableAction();
         ActionNode compileNode = new ActionNode(mockAction, actionContext);
 
         assertEquals(actionContext, compileNode.getActionContext());
@@ -84,7 +95,7 @@ public class PipelineTest {
     @Test
     public void testCompileNode() throws Exception {
         final ActionContext actionContext = new ActionContext(new TransformationContext());
-        final Action mockAction = new Action();
+        final RunnableAction mockAction = new RunnableAction();
         CompileNode compileNode = new CompileNode(mockAction, actionContext);
 
         assertEquals(actionContext, compileNode.getActionContext());
@@ -95,7 +106,7 @@ public class PipelineTest {
     public void testRecompileAction() throws Exception {
         // Given
         AtomicInteger compileCount = new AtomicInteger();
-        final Action mockAction = new Action() {
+        final RunnableAction mockAction = new RunnableAction() {
 
             @Override
             public DataSetRowAction getRowAction() {
@@ -133,7 +144,7 @@ public class PipelineTest {
     @Test
     public void testAction() throws Exception {
         // Given
-        final Action mockAction = new Action() {
+        final RunnableAction mockAction = new RunnableAction() {
 
             @Override
             public DataSetRowAction getRowAction() {
@@ -160,7 +171,7 @@ public class PipelineTest {
     @Test
     public void testCanceledAction() throws Exception {
         // Given
-        final Action mockAction = new Action() {
+        final RunnableAction mockAction = new RunnableAction() {
 
             @Override
             public DataSetRowAction getRowAction() {
@@ -325,11 +336,11 @@ public class PipelineTest {
         final Node node = NodeBuilder.source() //
                 .to(new BasicNode()) //
                 .dispatchTo(new BasicNode()) //
-                .to(new ActionNode(new Action(), new ActionContext(new TransformationContext()))) //
+                .to(new ActionNode(new RunnableAction(), new ActionContext(new TransformationContext()))) //
                 .to(output) //
                 .build();
         final Pipeline pipeline = new Pipeline(node);
-        final TestVisitor visitor = new TestVisitor();
+        final NodeClassVisitor visitor = new NodeClassVisitor();
 
         // when
         pipeline.accept(visitor);
@@ -337,8 +348,8 @@ public class PipelineTest {
         // then
         final Class[] expectedClasses = { Pipeline.class, SourceNode.class, BasicLink.class, BasicNode.class, CloneLink.class,
                 ActionNode.class };
-        Assert.assertThat(visitor.traversedClasses, CoreMatchers.hasItems(expectedClasses));
-        Assert.assertNotNull(pipeline.toString());
+        assertThat(visitor.traversedClasses, CoreMatchers.hasItems(expectedClasses));
+        assertNotNull(pipeline.toString());
     }
 
     @Test
@@ -434,50 +445,4 @@ public class PipelineTest {
         }
     }
 
-    private static class TestVisitor extends Visitor {
-
-        List<Class> traversedClasses = new ArrayList<>();
-
-        @Override
-        public void visitAction(ActionNode actionNode) {
-            traversedClasses.add(actionNode.getClass());
-            super.visitAction(actionNode);
-        }
-
-        @Override
-        public void visitCompile(CompileNode compileNode) {
-            traversedClasses.add(compileNode.getClass());
-            super.visitCompile(compileNode);
-        }
-
-        @Override
-        public void visitSource(SourceNode sourceNode) {
-            traversedClasses.add(sourceNode.getClass());
-            super.visitSource(sourceNode);
-        }
-
-        @Override
-        public void visitBasicLink(BasicLink basicLink) {
-            traversedClasses.add(basicLink.getClass());
-            super.visitBasicLink(basicLink);
-        }
-
-        @Override
-        public void visitPipeline(Pipeline pipeline) {
-            traversedClasses.add(pipeline.getClass());
-            super.visitPipeline(pipeline);
-        }
-
-        @Override
-        public void visitNode(Node node) {
-            traversedClasses.add(node.getClass());
-            super.visitNode(node);
-        }
-
-        @Override
-        public void visitCloneLink(CloneLink cloneLink) {
-            traversedClasses.add(cloneLink.getClass());
-            super.visitCloneLink(cloneLink);
-        }
-    }
 }

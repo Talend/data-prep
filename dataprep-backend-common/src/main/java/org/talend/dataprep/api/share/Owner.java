@@ -16,8 +16,6 @@ package org.talend.dataprep.api.share;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Owner of a folder.
  */
@@ -35,6 +33,9 @@ public class Owner implements Serializable {
     /** The owner last name. */
     private String lastName;
 
+    /** Display name for UI */
+    private String displayName;
+
     /**
      * Default empty constructor.
      */
@@ -44,7 +45,7 @@ public class Owner implements Serializable {
 
     /**
      * Full constructor.
-     * 
+     *
      * @param id the owner id.
      * @param firstName the owner first name.
      * @param lastName the owner last name.
@@ -100,7 +101,6 @@ public class Owner implements Serializable {
     /**
      * @return the display name for the front.
      */
-    @JsonProperty("displayName")
     public String getDisplayName() {
         String displayName = "";
         if (firstName != null) {
@@ -110,6 +110,10 @@ public class Owner implements Serializable {
             displayName += ' ' + lastName;
         }
         return displayName.trim();
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     /**

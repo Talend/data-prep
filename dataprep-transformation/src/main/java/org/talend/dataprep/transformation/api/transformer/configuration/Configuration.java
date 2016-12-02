@@ -1,26 +1,16 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.configuration;
-
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.format.export.ExportFormat;
-import org.talend.dataprep.transformation.format.JsonFormat;
-import org.talend.dataprep.transformation.pipeline.Node;
-import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 import java.io.OutputStream;
 import java.util.Collections;
@@ -28,6 +18,16 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.format.JsonFormat;
+import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 /**
  * Full configuration for a transformation.
@@ -75,6 +75,8 @@ public class Configuration {
 
     private String preparationId;
 
+    private PreparationMessage preparation;
+
     /**
      * Constructor for the transformer configuration.
      */
@@ -86,7 +88,7 @@ public class Configuration {
                             final String format, //
                             final String actions, //
                             final Map<String, String> arguments, //
-                            final String preparationId, //
+                            final PreparationMessage preparation, //
                             final String stepId, //
                             boolean allowMetadataChange, //
                             boolean globalStatistics, //
@@ -99,7 +101,7 @@ public class Configuration {
         this.format = format;
         this.actions = actions;
         this.arguments = arguments;
-        this.preparationId = preparationId;
+        this.preparation = preparation;
         this.stepId = stepId;
         this.allowMetadataChange = allowMetadataChange;
         this.globalStatistics = globalStatistics;
@@ -170,11 +172,15 @@ public class Configuration {
     }
 
     public String getPreparationId() {
-        return preparationId;
+        return preparation == null ? StringUtils.EMPTY : preparation.id();
     }
 
     public ExportParameters.SourceType getSourceType() {
         return sourceType;
+    }
+
+    public PreparationMessage getPreparation() {
+        return preparation;
     }
 
     public enum Volume {
@@ -219,7 +225,7 @@ public class Configuration {
 
         private String stepId;
 
-        private String preparationId = StringUtils.EMPTY;
+        private PreparationMessage preparation = null;
 
         private boolean allowMetadataChange = true;
 
@@ -249,7 +255,7 @@ public class Configuration {
          * @return a new {@link Configuration} from the mapper setup.
          */
         public Configuration build() {
-            return new Configuration(output, filter, outFilter, monitorSupplier, sourceType, format, actions, arguments, preparationId, stepId, allowMetadataChange, globalStatistics, dataVolume);
+            return new Configuration(output, filter, outFilter, monitorSupplier, sourceType, format, actions, arguments, preparation, stepId, allowMetadataChange, globalStatistics, dataVolume);
         }
 
         /**
@@ -304,8 +310,8 @@ public class Configuration {
             return this;
         }
 
-        public Builder preparationId(final String preparationId) {
-            this.preparationId = preparationId;
+        public Builder preparation(final PreparationMessage preparation) {
+            this.preparation = preparation;
             return this;
         }
 

@@ -34,7 +34,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
  * Command used to retrieve the preparations from a folder.
  */
 @Component
-@Scope("request")
+@Scope("prototype")
 public class PreparationListByFolder extends GenericCommand<InputStream> {
 
     /**

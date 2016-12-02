@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.service;
 
@@ -139,6 +138,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
         String dataSetId = createDataset("input_dataset.csv", "uppercase", "text/csv");
         String preparationId = createEmptyPreparationFromDataset(dataSetId, "uppercase prep");
         applyActionFromFile(preparationId, "uppercase_action.json");
+        applyActionFromFile(preparationId, "lowercase_filtered_action.json");
 
         // when
         String transformedContent = given() //
@@ -179,7 +179,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
         applyActionFromFile(prepId, "uppercase_action.json");
 
         final Preparation preparation = getPreparation(prepId);
-        final String headId = preparation.getSteps().get(preparation.getSteps().size() - 1);
+        final String headId = preparation.getHeadId();
 
         final TransformationCacheKey key = cacheKeyGenerator.generateContentKey(
                 dsId,

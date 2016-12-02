@@ -76,7 +76,7 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
                 return;
             }
             // e.g. excel multi sheet dataset when user has not choose the sheet yet
-            if (!metadata.getLifecycle().inProgress()) {
+            if (!metadata.getLifecycle().isInProgress()) {
                 LOGGER.debug("No need to recompute quality of data set #{} (statistics are completed).", dataSetId);
                 return;
             }
@@ -98,9 +98,9 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
                 }
                 // Turn on / off "in progress" flag
                 if (isNewDataSet && metadata.getContent().getNbRecords() >= maxRecord) {
-                    metadata.getLifecycle().inProgress(true);
+                    metadata.getLifecycle().setInProgress(true);
                 } else {
-                    metadata.getLifecycle().inProgress(false);
+                    metadata.getLifecycle().setInProgress(false);
                 }
                 // ... all quality is now analyzed, mark it so.
                 metadata.getLifecycle().qualityAnalyzed(true);

@@ -34,7 +34,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.dataset.store.metadata.ObjectDataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
@@ -119,13 +118,7 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
 
         lock.readLock().lock();
         try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(file))) {
-            final DataSetMetadata dataSetMetadata = mapper.readerFor(DataSetMetadata.class).readValue(input);
-            // set default values for sharing and owner
-            dataSetMetadata.setSharedDataSet(false);
-            final Owner owner = new Owner();
-            owner.setFirstName(dataSetMetadata.getAuthor());
-            dataSetMetadata.setOwner(owner);
-            return dataSetMetadata;
+            return mapper.readerFor(DataSetMetadata.class).readValue(input);
         } catch (IOException e) {
             LOG.error("unable to load dataset {}", id, e);
             return null;
@@ -157,7 +150,7 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
 
     /**
      * Return the file that matches the given metadata id.
-     * 
+     *
      * @param metadataId the metadata id.
      * @return the file where to read/write the metadata.
      */

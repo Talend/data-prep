@@ -1,5 +1,13 @@
 package org.talend.dataprep.preparation.service;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+import static org.talend.dataprep.preparation.service.StepDiffDelegateTest.CompileAnswer.answer;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -9,21 +17,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
-import static org.talend.dataprep.preparation.service.StepDiffDelegateTest.CompileAnswer.answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StepDiffDelegateTest {
@@ -31,13 +30,13 @@ public class StepDiffDelegateTest {
     private StepDiffDelegate stepDiffDelegate = new StepDiffDelegate();
 
     @Mock
-    private Action firstAction;
+    private RunnableAction firstAction;
 
     @Mock
     private DataSetRowAction firstActionCompiler;
 
     @Mock
-    private Action secondAction;
+    private RunnableAction secondAction;
 
     @Mock
     private DataSetRowAction secondActionCompiler;
@@ -83,7 +82,7 @@ public class StepDiffDelegateTest {
         return firstCol;
     }
 
-    static class CompileAnswer implements Answer<Void> {
+    static class CompileAnswer implements org.mockito.stubbing.Answer<Void> {
 
         private final List<String> columnsToAdd;
 
@@ -107,13 +106,11 @@ public class StepDiffDelegateTest {
                 rowMetadata.addColumn(columnMetadata);
             }
             for (String columnToRemove : columnsToRemove) {
-                Optional<ColumnMetadata> matchingColumn = rowMetadata.getColumns()
-                        .stream()
-                        .filter(c -> columnToRemove.equals(c.getName()))
+                Optional<ColumnMetadata> matchingColumn = rowMetadata.getColumns() //
+                        .stream() //
+                        .filter(c -> columnToRemove.equals(c.getName())) //
                         .findAny();
-                if (matchingColumn.isPresent()) {
-                    rowMetadata.deleteColumnById(matchingColumn.get().getId());
-                }
+                matchingColumn.ifPresent(columnMetadata -> rowMetadata.deleteColumnById(columnMetadata.getId()));
             }
 
             return null;

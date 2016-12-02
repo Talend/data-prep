@@ -25,11 +25,11 @@ import java.util.Map;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.column.Concat;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.text.UpperCase;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
@@ -124,11 +124,11 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
         final Map<String, String> makeHeaderParameters = new HashMap<>();
         makeHeaderParameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "line");
         makeHeaderParameters.put("row_id", row2.getTdpId().toString());
-        final Action makeHeader = factory.create(action, makeHeaderParameters);
+        final RunnableAction makeHeader = factory.create(action, makeHeaderParameters);
         final Map<String, String> upperCaseParameters = new HashMap<>();
         upperCaseParameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         upperCaseParameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
-        final Action upperCase = factory.create(new UpperCase(), upperCaseParameters);
+        final RunnableAction upperCase = factory.create(new UpperCase(), upperCaseParameters);
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, makeHeader, upperCase);
 
         // then
@@ -170,13 +170,13 @@ public class MakeLineHeaderTest extends AbstractMetadataBaseTest {
         final Map<String, String> makeHeaderParameters = new HashMap<>();
         makeHeaderParameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "line");
         makeHeaderParameters.put("row_id", row2.getTdpId().toString());
-        final Action makeHeader = factory.create(action, makeHeaderParameters);
+        final RunnableAction makeHeader = factory.create(action, makeHeaderParameters);
         final Map<String, String> concatColumnParameters = new HashMap<>();
         concatColumnParameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         concatColumnParameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         concatColumnParameters.put(OtherColumnParameters.MODE_PARAMETER, "other_column_mode");
         concatColumnParameters.put(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, "0001");
-        final Action concat = factory.create(new Concat(), concatColumnParameters);
+        final RunnableAction concat = factory.create(new Concat(), concatColumnParameters);
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, makeHeader, concat);
 
         // then

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -19,8 +18,6 @@ import java.io.InputStream;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -28,6 +25,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.io.ReleasableInputStream;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A helper class for common behavior definition.
@@ -111,6 +111,14 @@ public class Defaults {
         };
     }
 
+    /**
+     * Read content from HTTP response and convert response to <code>T</code> using provided <code>mapper</code>.
+     *
+     * @param mapper The mapper to use for reading value.
+     * @param clazz The result class.
+     * @param <T> The result type
+     * @return The response converted as <code>T</code>.
+     */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, Class<T> clazz) {
         return (request, response) -> {
             try {
@@ -129,15 +137,36 @@ public class Defaults {
         };
     }
 
-    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, TypeReference<T> typeReference) {
-        return convertResponse(mapper, typeReference, e -> {throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);});
+    /**
+     * Read content from HTTP response and convert response to <code>T</code> using provided <code>mapper</code>.
+     *
+     * @param mapper The mapper to use for reading value.
+     * @param typeReference The result class.
+     * @param <T> The result type
+     * @return The response converted as <code>T</code>.
+     */
+    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
+            TypeReference<T> typeReference) {
+        return convertResponse(mapper, typeReference, e -> {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        });
     }
 
-    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, TypeReference<T> typeReference, Function<IOException, T> errorHandler) {
+    /**
+     * Read content from HTTP response and convert response to <code>T</code> using provided <code>mapper</code>.
+     *
+     * @param mapper The mapper to use for reading value.
+     * @param typeReference The result class.
+     * @param errorHandler The error handler to be called on error.
+     * @param <T> The result type
+     * @return The response converted as <code>T</code>.
+     */
+    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
+            TypeReference<T> typeReference, Function<Exception, T> errorHandler) {
         return (request, response) -> {
             try {
                 return mapper.readerFor(typeReference).readValue(response.getEntity().getContent());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return errorHandler.apply(e);
             } finally {
                 request.releaseConnection();

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,7 +12,13 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import com.fasterxml.jackson.core.JsonParser;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +30,8 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -36,10 +43,7 @@ import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.service.ExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * A {@link ExportStrategy strategy} to export a preparation (using its default data set), using any information
@@ -105,6 +109,8 @@ public class OptimizedExportStrategy extends StandardExportStrategy {
 
             // get the actions to apply (no preparation ==> dataset export ==> no actions)
             final String actions = getActions(preparationId, previousVersion, version);
+            final PreparationMessage preparation = getPreparation(preparationId);
+            preparation.setSteps(getMatchingSteps(preparation.getSteps(), previousVersion, version));
 
             LOGGER.debug("Running optimized strategy for preparation {} @ step #{}", preparationId, version);
 
@@ -126,7 +132,7 @@ public class OptimizedExportStrategy extends StandardExportStrategy {
                         .sourceType(parameters.getFrom())
                         .format(format.getName()) //
                         .actions(actions) //
-                        .preparationId(preparationId) //
+                        .preparation(preparation) //
                         .stepId(version) //
                         .volume(Configuration.Volume.SMALL) //
                         .output(tee) //
@@ -142,6 +148,33 @@ public class OptimizedExportStrategy extends StandardExportStrategy {
         } catch (Exception e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
         }
+    }
+
+    /**
+     * Return the steps that are between the from and the to steps IDs.
+     *
+     * @param steps the steps to start from.
+     * @param fromId the from step id.
+     * @param toId the to step id.
+     * @return the steps that are between the from and the to steps IDs.
+     */
+    private List<Step> getMatchingSteps(List<Step> steps, String fromId, String toId) {
+        List<Step> result = new ArrayList<>();
+        boolean addStep = false;
+        for (Step step : steps) {
+            // skip steps before the from
+            if (fromId.equals(step.id())) {
+                addStep = true;
+            } else if (addStep) { // fromId should not be added, hence the else !
+                result.add(step);
+            }
+            // skip steps after
+            if (addStep && toId.equals(step.getId())) {
+                break;
+            }
+        }
+        LOGGER.debug("Matching steps from {} to {} are {}", fromId, toId, steps);
+        return result;
     }
 
     /**
@@ -225,7 +258,7 @@ public class OptimizedExportStrategy extends StandardExportStrategy {
             // head is not allowed as step id
             version = stepId;
             previousVersion = rootStep.getId();
-            final List<String> steps = preparation.getSteps();
+            final List<String> steps = preparation.getSteps().stream().map(Step::id).collect(Collectors.toList());
             if (steps.size() <= 2) {
                 LOGGER.debug("Not enough steps ({}) in preparation.", steps.size());
                 return null;

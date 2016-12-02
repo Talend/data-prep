@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -111,7 +110,7 @@ public class PreparationTest extends ServiceBaseTests {
         final PreparationActions newContent = new PreparationActions(actions, version);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep.id(), newContent.id(), version);
+        final Step s = new Step(rootStep, newContent, version);
         repository.add(s);
 
         Preparation preparation = new Preparation("#48368", "1234", s.id(), version);
@@ -129,7 +128,7 @@ public class PreparationTest extends ServiceBaseTests {
         final PreparationActions newContent = rootContent.append(actions);
         repository.add(newContent);
 
-        final Step s = new Step(rootStep.id(), newContent.id(), version);
+        final Step s = new Step(rootStep, newContent, version);
         repository.add(s);
 
         final Preparation preparation = new Preparation("#5438743", "1234", s.id(), version);
@@ -150,10 +149,10 @@ public class PreparationTest extends ServiceBaseTests {
         repository.add(newContent2);
 
         // Steps
-        final Step s1 = new Step(rootStep.id(), newContent1.id(), version);
+        final Step s1 = new Step(rootStep, newContent1, version);
         repository.add(s1);
 
-        final Step s2 = new Step(s1.id(), newContent2.id(), version);
+        final Step s2 = new Step(s1, newContent2, version);
         repository.add(s2);
 
         // Preparation

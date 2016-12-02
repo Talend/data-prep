@@ -1,58 +1,16 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import javax.validation.Valid;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.talend.dataprep.api.PreparationAddAction;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.StepWithActions;
-import org.talend.dataprep.api.service.api.PreviewAddParameters;
-import org.talend.dataprep.api.service.api.PreviewDiffParameters;
-import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
-import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
-import org.talend.dataprep.api.service.command.preparation.*;
-import org.talend.dataprep.api.service.command.transformation.GetPreparationColumnTypes;
-import org.talend.dataprep.command.CommandHelper;
-import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
-import org.talend.dataprep.command.preparation.PreparationGetActions;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.APIErrorCodes;
-import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.security.PublicAPI;
-import org.talend.dataprep.util.SortAndOrderHelper;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -65,6 +23,51 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARAT
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order;
 import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.dataprep.api.PreparationAddAction;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.api.service.api.PreviewDiffParameters;
+import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
+import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
+import org.talend.dataprep.api.service.command.preparation.*;
+import org.talend.dataprep.api.service.command.transformation.GetPreparationColumnTypes;
+import org.talend.dataprep.command.CommandHelper;
+import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
+import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.command.preparation.PreparationUpdate;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.PublicAPI;
+import org.talend.dataprep.transformation.actions.datablending.Lookup;
+import org.talend.dataprep.util.SortAndOrderHelper;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.netflix.hystrix.HystrixCommand;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class PreparationAPI extends APIService {
@@ -339,8 +342,8 @@ public class PreparationAPI extends APIService {
         Preparation preparation = internalGetPreparation(preparationId);
 
         // get the preparation actions for up to the updated action
-        final int stepIndex = preparation.getSteps().indexOf(stepId);
-        final String parentStepId = preparation.getSteps().get(stepIndex - 1);
+        final int stepIndex = preparation.getSteps().stream().map(Step::getId).collect(toList()).indexOf(stepId);
+        final String parentStepId = preparation.getSteps().get(stepIndex - 1).id();
         final PreparationGetActions getActionsCommand = getCommand(PreparationGetActions.class, preparationId, parentStepId);
 
         // get the diff
@@ -388,7 +391,7 @@ public class PreparationAPI extends APIService {
             LOG.debug("Moving preparation #{} head to step '{}'...", preparationId, headId);
         }
 
-        StepWithActions step = getCommand(FindStep.class, headId).execute();
+        Step step = getCommand(FindStep.class, headId).execute();
         if (step == null) {
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST);
         } else if (isHeadStepDependingOnDeletedDataSet(step)) {
@@ -610,7 +613,7 @@ public class PreparationAPI extends APIService {
         }
     }
 
-    private boolean isHeadStepDependingOnDeletedDataSet(StepWithActions step) {
+    private boolean isHeadStepDependingOnDeletedDataSet(Step step) {
         final boolean valid;
         // If root
         if (step.getParent() == null) {
@@ -620,7 +623,7 @@ public class PreparationAPI extends APIService {
             boolean oneActionRefersToNonexistentDataset = actions.stream() //
                     .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
                     .map(action -> action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey())) //
-                    .filter(dsId -> {
+                    .anyMatch(dsId -> {
                         boolean hasNoDataset;
                         try {
                             hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
@@ -630,7 +633,7 @@ public class PreparationAPI extends APIService {
                             hasNoDataset = true;
                         }
                         return hasNoDataset;
-                    }).findAny().isPresent();
+                    });
             valid = !oneActionRefersToNonexistentDataset && isHeadStepDependingOnDeletedDataSet(step.getParent());
         }
         return valid;

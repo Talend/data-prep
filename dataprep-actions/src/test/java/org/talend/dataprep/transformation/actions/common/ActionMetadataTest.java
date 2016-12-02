@@ -28,7 +28,6 @@ import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -156,10 +155,8 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(58L);
 
-        final Action action = factory.create(cellTransformation, parameters);
-
         // when
-        ActionTestWorkbench.test(row, actionRegistry, action);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(cellTransformation, parameters));
 
         // then
         assertThat(row.get("0000"), is("TOTO"));
@@ -179,10 +176,8 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
         parameters.put("column_id", "0001");
         parameters.put("row_id", "58");
 
-        final Action action = factory.create(cellTransformation, parameters);
-
         // when
-        ActionTestWorkbench.test(row, actionRegistry, action);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(cellTransformation, parameters));
 
         // then
         assertThat(row.get("0001"), is("toto"));
@@ -201,10 +196,8 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(58L);
 
-        final Action action = factory.create(lineTransformation, parameters);
-
         // when
-        ActionTestWorkbench.test(row, actionRegistry, action);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(lineTransformation, parameters));
 
         // then
         assertThat(row.get("0001"), is("TOTO"));
@@ -224,10 +217,8 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(60L);
 
-        final Action action = factory.create(lineTransformation, parameters);
-
         // when
-        ActionTestWorkbench.test(row, actionRegistry, action);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(lineTransformation, parameters));
 
         // then
         assertThat(row.get("0001"), is("toto"));
@@ -247,10 +238,8 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
         final DataSetRow row = new DataSetRow(rowValues);
         row.setTdpId(58L);
 
-        final Action action = factory.create(columnTransformation, parameters);
-
         // when
-        ActionTestWorkbench.test(row, actionRegistry, action);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(columnTransformation, parameters));
 
         // then
         assertThat(row.get("0001"), is("TOTO"));
@@ -268,10 +257,8 @@ public class ActionMetadataTest extends AbstractMetadataBaseTest {
         rowValues.put("0001", "tata");
         final DataSetRow row = new DataSetRow(rowValues);
 
-        final Action action = factory.create(tableTransformation, parameters);
-
         // when
-        ActionTestWorkbench.test(row, actionRegistry, action);
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(tableTransformation, parameters));
 
         // then
         assertThat(row.get("0000"), is("TOTO"));

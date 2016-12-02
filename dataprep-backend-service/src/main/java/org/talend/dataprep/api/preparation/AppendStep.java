@@ -1,25 +1,28 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.preparation;
+
+import org.talend.dataprep.api.dataset.RowMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AppendStep {
+
     private StepDiff diff = new StepDiff();
 
     private List<Action> actions = new ArrayList<>(1);
+    private RowMetadata rowMetadata;
 
     public List<Action> getActions() {
         return actions;
@@ -35,5 +38,13 @@ public class AppendStep {
 
     public StepDiff getDiff() {
         return diff;
+    }
+
+    public void setRowMetadata(RowMetadata rowMetadata) {
+        this.rowMetadata = rowMetadata;
+    }
+
+    public RowMetadata getRowMetadata() {
+        return rowMetadata;
     }
 }

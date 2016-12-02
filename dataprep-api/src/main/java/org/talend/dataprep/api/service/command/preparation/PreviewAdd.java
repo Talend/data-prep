@@ -15,12 +15,14 @@ package org.talend.dataprep.api.service.command.preparation;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 
 /**
@@ -58,7 +60,7 @@ public class PreviewAdd extends PreviewAbstract {
             dataSetId = preparation.getDataSetId();
 
             // Get steps from first transformation
-            final List<String> steps = preparation.getSteps();
+            final List<String> steps = preparation.getSteps().stream().map(Step::getId).collect(Collectors.toList());
             steps.remove(0);
 
             // extract actions by steps in chronological order, until defined last active step (from input)

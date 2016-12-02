@@ -587,6 +587,32 @@ public class DefaultActionParserTest {
         assertEquals("a1_domain", result.getSchema().getFields().get(2).name());
     }
 
+    @Test
+    public void testKeepInvalidAndEmpty() throws Exception {
+        // Given
+        IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] {"1"});
+        IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] {"a"});
+        IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] {""});
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_invalid_empty_keep.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // Given
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+        final IndexedRecord result3 = function.apply(record3);
+
+        // Then
+        assertSerializable(function);
+        assertNull(result1);
+        assertNotNull(result2);
+        assertNotNull(result3);
+    }
+
     private static void assertSerializable(Function<IndexedRecord, IndexedRecord> function) {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new NullOutputStream());

@@ -70,7 +70,7 @@ const preparations = [
 
 const folders = [
 	{
-		id: 'folder1',
+		id: 'Lw==',
 		name: 'JSO folder 1',
 		author: 'jsomsanith',
 		creationDate: '2 minutes ago',
@@ -79,15 +79,15 @@ const folders = [
 		actions: ['preparation:remove:folder'],
 		model: {
 			id: 'Lw==',
-			path: 'toto',
-			name: 'toto',
+			path: '/JSO folder 1',
+			name: 'JSO folder 1',
 			owner: { displayName: 'jsomsanith' },
 			creationDate: 1495305349058340,
 			lastModificationDate: 1495305349058340,
 		},
 	},
 	{
-		id: 'folder2',
+		id: 'Lw==2',
 		name: 'JSO folder 2',
 		author: 'jsomsanith',
 		creationDate: '5 days ago',
@@ -96,8 +96,8 @@ const folders = [
 		actions: ['preparation:remove:folder'],
 		model: {
 			id: 'Lw==2',
-			path: 'tata',
-			name: 'tata',
+			path: '/JSO folder 2',
+			name: 'JSO folder 2',
 			owner: { displayName: 'jsomsanith' },
 			creationDate: 1495305349058340,
 			lastModificationDate: 1495305349058340,

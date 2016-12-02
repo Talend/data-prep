@@ -38,7 +38,8 @@ const adaptedPreparation = {
 	nbLines: 400,
 	nbSteps: 3,
 	icon: 'talend-dataprep',
-	actions: ['preparation:copy-move', 'preparation:remove'],
+	displayMode: 'text',
+	actions: ['preparation:edit', 'preparation:copy-move', 'preparation:remove'],
 	model: preparation,
 };
 
@@ -57,7 +58,8 @@ const adaptedFolder = {
 	creationDate: 'a few seconds ago',
 	lastModificationDate: 'a few seconds ago',
 	icon: 'talend-folder',
-	actions: ['preparation:remove:folder'],
+	displayMode: 'text',
+	actions: ['preparation:edit:folder', 'preparation:remove:folder'],
 	model: folder,
 };
 
@@ -399,7 +401,7 @@ describe('Folder services', () => {
 			const actions = FolderService.getPreparationActions()
 
 			// then
-			expect(actions).toEqual(['preparation:copy-move', 'preparation:remove']);
+			expect(actions).toEqual(['preparation:edit', 'preparation:copy-move', 'preparation:remove']);
 		}));
 	});
 
@@ -409,7 +411,7 @@ describe('Folder services', () => {
 			const actions = FolderService.getFolderActions()
 
 			// then
-			expect(actions).toEqual(['preparation:remove:folder']);
+			expect(actions).toEqual(['preparation:edit:folder', 'preparation:remove:folder']);
 		}));
 	});
 });

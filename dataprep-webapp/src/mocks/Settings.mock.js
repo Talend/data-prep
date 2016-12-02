@@ -39,6 +39,8 @@ const settingsMock = {
 			list: {
 				titleProps: {
 					onClick: 'menu:folders',
+					onEditCancel: 'preparation:cancel-edit:folder',
+					onEditValidate: 'preparation:validate-edit:folder',
 				},
 			},
 		},
@@ -56,9 +58,12 @@ const settingsMock = {
 				],
 				items: [],
 				titleProps: {
+					displayModeKey: 'displayMode',
 					iconKey: 'icon',
 					key: 'name',
 					onClick: 'menu:playground:preparation',
+					onEditCancel: 'preparation:cancel-edit',
+					onEditValidate: 'preparation:validate-edit',
 				},
 			},
 			toolbar: {
@@ -227,6 +232,66 @@ const settingsMock = {
 			payload: {
 				method: 'copyMove',
 				args: [],
+			},
+		},
+		'preparation:edit': {
+			id: 'preparation:edit',
+			name: 'Edit preparation name',
+			icon: 'talend-pencil',
+			type: '@@preparation/EDIT',
+			payload: {
+				method: 'enableInventoryEdit',
+				args: ['preparation'],
+			},
+		},
+		'preparation:cancel-edit': {
+			id: 'preparation:cancel-edit',
+			name: 'Cancel preparation name edition',
+			icon: 'talend-crossbig',
+			type: '@@preparation/CANCEL_EDIT',
+			payload: {
+				method: 'cancelInventoryEdit',
+				args: ['preparation'],
+			},
+		},
+		'preparation:validate-edit': {
+			id: 'preparation:validate-edit',
+			name: 'Validate preparation name edition',
+			icon: 'talend-check',
+			type: '@@preparation/VALIDATE_EDIT',
+			payload: {
+				method: 'validateInventoryEdit',
+				args: ['preparation'],
+			},
+		},
+		'preparation:edit:folder': {
+			id: 'preparation:edit:folder',
+			name: 'Edit folder name',
+			icon: 'talend-pencil',
+			type: '@@preparation/EDIT_FOLDER',
+			payload: {
+				method: 'enableInventoryEdit',
+				args: ['folder'],
+			},
+		},
+		'preparation:cancel-edit:folder': {
+			id: 'preparation:cancel-edit:folder',
+			name: 'Cancel folder name edition',
+			icon: 'talend-crossbig',
+			type: '@@preparation/CANCEL_EDIT_FOLDER',
+			payload: {
+				method: 'cancelInventoryEdit',
+				args: ['folder'],
+			},
+		},
+		'preparation:validate-edit:folder': {
+			id: 'preparation:validate-edit:folder',
+			name: 'Validate folder name edition',
+			icon: 'talend-check',
+			type: '@@preparation/VALIDATE_EDIT_FOLDER',
+			payload: {
+				method: 'validateInventoryEdit',
+				args: ['folder'],
 			},
 		},
 		'preparation:remove': {

@@ -24,6 +24,7 @@ export default class PreparationListCtrl {
 			folders: [],
 			items: [],
 		};
+		this.actionsDispatchers = [];
 		this.initToolbarProps();
 		this.initListProps();
 	}
@@ -106,26 +107,37 @@ export default class PreparationListCtrl {
 		};
 	}
 
-	getOnTitleActionDispatcher(listViewKey, actionKey) {
+	isFolder(model) {
+		if (model) {
+			for (const adaptedFolder of this.adapted.folders) {
+				if (adaptedFolder.id === model.id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	getTitleActionDispatcher(listViewKey, actionKey) {
 		const listSettings = this.appSettings.views[listViewKey].list;
 		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
 		return this.SettingsActionsService.createDispatcher(action);
 	}
 
-	getActionDispatcher(folderDispatcher, prepDispatcher) {
-		return (event, entity) => {
-			if (this.adapted.folders.indexOf(entity) > -1) {
-				return folderDispatcher(event, entity);
+	getItemTitleActionDispatcher(folderDispatcher, prepDispatcher) {
+		return (event, payload) => {
+			if (this.isFolder(payload.model) || this.isFolder(payload.model.model)) {
+				return folderDispatcher(event, payload);
 			}
-			return prepDispatcher(event, entity);
+			return prepDispatcher(event, payload);
 		};
 	}
 
 	getOnTitleDispatcher(action) {
-		const folderDispatcher = this.getOnTitleActionDispatcher('listview:folders', action);
-		const prepDispatcher = this.getOnTitleActionDispatcher('listview:preparations', action);
+		const folderDispatcher = this.getTitleActionDispatcher('listview:folders', action);
+		const prepDispatcher = this.getTitleActionDispatcher('listview:preparations', action);
 
-		return this.getActionDispatcher(folderDispatcher, prepDispatcher);
+		return this.getItemTitleActionDispatcher(folderDispatcher, prepDispatcher);
 	}
 
 	initListProps() {
@@ -144,22 +156,25 @@ export default class PreparationListCtrl {
 		};
 	}
 
+	getActionDispatcher(actionName) {
+		let dispatcher = this.actionsDispatchers[actionName];
+		if (!dispatcher) {
+			const settingAction = this.appSettings.actions[actionName];
+			dispatcher = this.SettingsActionsService.createDispatcher(settingAction);
+			this.actionsDispatchers[actionName] = dispatcher;
+		}
+		return dispatcher;
+	}
+
 	adaptActions(items) {
-		const dispatchers = {};
 		return items.map((item) => {
 			const actions = item.actions.map((actionName) => {
 				const settingAction = this.appSettings.actions[actionName];
-				let dispatcher = dispatchers[actionName];
-				if (!dispatcher) {
-					dispatcher = this.SettingsActionsService.createDispatcher(settingAction);
-					dispatchers[actionName] = dispatcher;
-				}
-
 				return {
 					icon: settingAction.icon,
 					label: settingAction.name,
 					model: item.model,
-					onClick: dispatcher,
+					onClick: this.getActionDispatcher(actionName),
 				};
 			});
 			return {

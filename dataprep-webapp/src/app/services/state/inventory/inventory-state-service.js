@@ -107,7 +107,7 @@ export function InventoryStateService() {
 	 */
 	function enableEdit(type, entity) {
 		const nextEntities = entities => entities.map((item) => {
-			if (item.model === entity) {
+			if (item.id === entity.id) {
 				return {
 					...item,
 					displayMode: 'input',
@@ -128,7 +128,7 @@ export function InventoryStateService() {
 	 */
 	function cancelEdit(type, entity) {
 		const nextEntities = entities => entities.map((item) => {
-			if (item.model === entity) {
+			if (item.id === entity.id) {
 				return {
 					...item,
 					displayMode: undefined,

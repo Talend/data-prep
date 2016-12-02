@@ -87,8 +87,7 @@ export default class PreparationActionsService {
 			break;
 		}
 		case '@@preparation/VALIDATE_EDIT': {
-			const target = action.event.target;
-			const newName = target && target.value;
+			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
 			const preparation = action.payload.model;
 
@@ -106,8 +105,7 @@ export default class PreparationActionsService {
 			break;
 		}
 		case '@@preparation/VALIDATE_EDIT_FOLDER': {
-			const target = action.event.target;
-			const newName = target && target.value;
+			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
 			const folder = action.payload.model;
 

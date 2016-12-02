@@ -24,7 +24,7 @@ const preparations = [
 		nbLines: 20,
 		nbSteps: 3,
 		icon: 'talend-dataprep',
-		actions: ['preparation:copy-move', 'preparation:remove'],
+		actions: ['preparation:edit', 'preparation:copy-move', 'preparation:remove'],
 		model: {
 			id: '1',
 			dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
@@ -50,7 +50,7 @@ const preparations = [
 		nbLines: 400,
 		nbSteps: 2,
 		icon: 'talend-dataprep',
-		actions: ['preparation:copy-move', 'preparation:remove'],
+		actions: ['preparation:edit', 'preparation:copy-move', 'preparation:remove'],
 		model: {
 			id: '2',
 			dataSetId: '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
@@ -76,7 +76,7 @@ const folders = [
 		creationDate: '2 minutes ago',
 		lastModificationDate: '2 minutes ago',
 		icon: 'talend-folder',
-		actions: ['preparation:remove:folder'],
+		actions: ['preparation:edit:folder', 'preparation:remove:folder'],
 		model: {
 			id: 'Lw==',
 			path: '/JSO folder 1',
@@ -93,7 +93,7 @@ const folders = [
 		creationDate: '5 days ago',
 		lastModificationDate: '5 days ago',
 		icon: 'talend-folder',
-		actions: ['preparation:remove:folder'],
+		actions: ['preparation:edit:folder', 'preparation:remove:folder'],
 		model: {
 			id: 'Lw==2',
 			path: '/JSO folder 2',
@@ -219,7 +219,7 @@ describe('Preparation list container', () => {
 			})
 		);
 
-		it('should dispatch folder remove on action click',
+		it('should dispatch folder edit on action click',
 			inject((SettingsActionsService) => {
 				// given
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
@@ -233,6 +233,31 @@ describe('Preparation list container', () => {
 					.eq(0)
 					.find('button') // TODO id !
 					.eq(0)
+					.click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:edit:folder');
+				expect(lastCallArgs.type).toBe('@@preparation/EDIT_FOLDER');
+				expect(lastCallArgs.payload.model).toBe(folders[0].model);
+			})
+		);
+		
+		it('should dispatch folder remove on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('.tc-list-display-table')
+					.eq(0)
+					.find('tbody tr')
+					.eq(0)
+					.find('.tc-actions')
+					.eq(0)
+					.find('button') // TODO id !
+					.eq(1)
 					.click();
 
 				// then
@@ -262,7 +287,7 @@ describe('Preparation list container', () => {
 			})
 		);
 
-		it('should dispatch preparation copy/move on action click',
+		it('should dispatch preparation edit on action click',
 			inject((SettingsActionsService) => {
 				// given
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
@@ -276,6 +301,31 @@ describe('Preparation list container', () => {
 					.eq(0)
 					.find('button') // TODO id !
 					.eq(0)
+					.click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('preparation:edit');
+				expect(lastCallArgs.type).toBe('@@preparation/EDIT');
+				expect(lastCallArgs.payload.model).toBe(preparations[0].model);
+			})
+		);
+
+		it('should dispatch preparation copy/move on action click',
+			inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('.tc-list-display-table')
+					.eq(0)
+					.find('tbody tr')
+					.eq(2)
+					.find('.tc-actions')
+					.eq(0)
+					.find('button') // TODO id !
+					.eq(1)
 					.click();
 
 				// then
@@ -300,7 +350,7 @@ describe('Preparation list container', () => {
 					.find('.tc-actions')
 					.eq(0)
 					.find('button') // TODO id !
-					.eq(1)
+					.eq(2)
 					.click();
 
 				// then

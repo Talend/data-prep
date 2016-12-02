@@ -58,7 +58,7 @@ public class RemoteResourceGetter {
 
     /**
      * Login to the specified url with specified credentials to retrieve a JWT for following authentication.
-     * 
+     *
      * @param url the url to connect to
      * @param userName the user name to use
      * @param passWord the password of the specified user
@@ -282,8 +282,9 @@ public class RemoteResourceGetter {
                 throw new RemoteConnectionException("Status Code: " + statusCode + ", cause: " + errorCode.getCause()
                         + ", message: " + errorCode.getMessage() + ".");
             } catch (IOException e) {
+                LOGGER.debug("Communication error with server.", e);
                 throw new RemoteConnectionException(
-                        "Status Code: " + statusCode + ", cause: " + response.getStatusLine().getReasonPhrase() + ".", e);
+                        "Status Code: " + statusCode + ", cause: " + response.getStatusLine().getReasonPhrase() + ".");
             }
         }
     }

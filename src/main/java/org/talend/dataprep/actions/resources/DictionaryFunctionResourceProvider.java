@@ -56,7 +56,10 @@ public class DictionaryFunctionResourceProvider implements FunctionResourceProvi
 
         if (requireDictionary) {
             final RemoteResourceGetter getter = new RemoteResourceGetter();
-            return getter.retrieveDictionaries(apiUrl, login, password);
+            LOGGER.info("Retrieving dictionary from Data Prep...");
+            final Dictionaries dictionaries = getter.retrieveDictionaries(apiUrl, login, password);
+            LOGGER.info("Dictionary retrieved.");
+            return dictionaries;
         } else {
             return null;
         }

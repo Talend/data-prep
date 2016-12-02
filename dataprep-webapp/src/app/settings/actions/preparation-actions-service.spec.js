@@ -142,7 +142,7 @@ describe('Preparation actions service', () => {
 					.not
 					.toHaveBeenCalledWith('date', 'asc'); // old sort
 				$rootScope.$digest();
-				
+
 				// then
 				expect(StorageService.setPreparationsSort).not.toHaveBeenCalled();
 				expect(StorageService.setPreparationsOrder).not.toHaveBeenCalled();
@@ -248,6 +248,106 @@ describe('Preparation actions service', () => {
 			// then
 			expect(StateService.toggleCopyMovePreparation)
 				.toHaveBeenCalledWith(folder, preparation);
+		}));
+	});
+
+	describe('dispatch @@preparation/EDIT', () => {
+		it('should enable title edition', inject((StateService, PreparationActionsService) => {
+			// given
+			const preparation = { id: 'prep1' };
+			const action = {
+				type: '@@preparation/EDIT',
+				payload: {
+					method: 'enableInventoryEdit',
+					args: ['preparation'],
+					model: preparation,
+				}
+			};
+			spyOn(StateService, 'enableInventoryEdit').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.enableInventoryEdit).toHaveBeenCalledWith(
+				'preparation',
+				preparation
+			);
+		}));
+	});
+
+	describe('dispatch @@preparation/EDIT_FOLDER', () => {
+		it('should enable title edition', inject((StateService, PreparationActionsService) => {
+			// given
+			const folder = { id: 'folder1' };
+			const action = {
+				type: '@@preparation/EDIT',
+				payload: {
+					method: 'enableInventoryEdit',
+					args: ['folder'],
+					model: folder,
+				}
+			};
+			spyOn(StateService, 'enableInventoryEdit').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.enableInventoryEdit).toHaveBeenCalledWith(
+				'folder',
+				folder
+			);
+		}));
+	});
+
+	describe('dispatch @@preparation/CANCEL_EDIT', () => {
+		it('should enable title edition', inject((StateService, PreparationActionsService) => {
+			// given
+			const preparation = { id: 'prep1' };
+			const action = {
+				type: '@@preparation/EDIT',
+				payload: {
+					method: 'cancelInventoryEdit',
+					args: ['preparation'],
+					model: preparation,
+				}
+			};
+			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+				'preparation',
+				preparation
+			);
+		}));
+	});
+
+	describe('dispatch @@preparation/CANCEL_EDIT_FOLDER', () => {
+		it('should enable title edition', inject((StateService, PreparationActionsService) => {
+			// given
+			const folder = { id: 'folder1' };
+			const action = {
+				type: '@@preparation/CANCEL_EDIT_FOLDER',
+				payload: {
+					method: 'cancelInventoryEdit',
+					args: ['folder'],
+					model: folder,
+				}
+			};
+			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+				'folder',
+				folder
+			);
 		}));
 	});
 

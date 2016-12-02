@@ -40,7 +40,7 @@ const settingsMock = {
 				titleProps: {
 					onClick: 'menu:folders',
 					onEditCancel: 'preparation:cancel-edit:folder',
-					onEditValidate: 'preparation:validate-edit:folder',
+					onEditSubmit: 'preparation:submit-edit:folder',
 				},
 			},
 		},
@@ -63,7 +63,7 @@ const settingsMock = {
 					key: 'name',
 					onClick: 'menu:playground:preparation',
 					onEditCancel: 'preparation:cancel-edit',
-					onEditValidate: 'preparation:validate-edit',
+					onEditSubmit: 'preparation:submit-edit',
 				},
 			},
 			toolbar: {
@@ -254,8 +254,8 @@ const settingsMock = {
 				args: ['preparation'],
 			},
 		},
-		'preparation:validate-edit': {
-			id: 'preparation:validate-edit',
+		'preparation:submit-edit': {
+			id: 'preparation:submit-edit',
 			name: 'Validate preparation name edition',
 			icon: 'talend-check',
 			type: '@@preparation/VALIDATE_EDIT',
@@ -284,8 +284,8 @@ const settingsMock = {
 				args: ['folder'],
 			},
 		},
-		'preparation:validate-edit:folder': {
-			id: 'preparation:validate-edit:folder',
+		'preparation:submit-edit:folder': {
+			id: 'preparation:submit-edit:folder',
 			name: 'Validate folder name edition',
 			icon: 'talend-check',
 			type: '@@preparation/VALIDATE_EDIT_FOLDER',

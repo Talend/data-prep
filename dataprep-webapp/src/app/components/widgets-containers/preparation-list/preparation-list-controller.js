@@ -144,14 +144,14 @@ export default class PreparationListCtrl {
 		const listSettings = this.appSettings.views['listview:preparations'].list;
 		const onClick = this.getOnTitleDispatcher('onClick');
 		const onEditCancel = this.getOnTitleDispatcher('onEditCancel');
-		const onEditValidate = this.getOnTitleDispatcher('onEditValidate');
+		const onEditSubmit = this.getOnTitleDispatcher('onEditSubmit');
 		this.listProps = {
 			...listSettings,
 			titleProps: {
 				...listSettings.titleProps,
 				onClick,
 				onEditCancel,
-				onEditValidate,
+				onEditSubmit,
 			},
 		};
 	}

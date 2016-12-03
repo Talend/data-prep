@@ -13,7 +13,11 @@
 
 import angular from 'angular';
 
-import { AppHeaderBar, Breadcrumbs,	IconsProvider, SidePanel, List } from 'react-talend-components';
+import AppHeaderBar from 'react-talend-components/lib/AppHeaderBar';
+import Breadcrumbs from 'react-talend-components/lib/Breadcrumbs';
+import IconsProvider from 'react-talend-components/lib/IconsProvider';
+import SidePanel from 'react-talend-components/lib/SidePanel';
+import List from 'react-talend-components/lib/List';
 import Form from 'react-talend-forms';
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';

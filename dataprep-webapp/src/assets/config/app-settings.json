@@ -240,9 +240,9 @@
       "id": "preparation:submit-edit",
       "name": "Validate preparation name edition",
       "icon": "talend-check",
-      "type": "@@preparation/VALIDATE_EDIT",
+      "type": "@@preparation/SUBMIT_EDIT",
       "payload": {
-        "method": "validateInventoryEdit",
+        "method": "submitInventoryEdit",
         "args": ["preparation"]
       }
     },
@@ -270,9 +270,9 @@
       "id": "preparation:submit-edit:folder",
       "name": "Validate folder name edition",
       "icon": "talend-check",
-      "type": "@@preparation/VALIDATE_EDIT_FOLDER",
+      "type": "@@preparation/SUBMIT_EDIT_FOLDER",
       "payload": {
-        "method": "validateInventoryEdit",
+        "method": "submitInventoryEdit",
         "args": ["folder"]
       }
     },

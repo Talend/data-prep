@@ -29,11 +29,11 @@ export default class PreparationActionsService {
 		this.FolderService.refresh(this.state.inventory.folder.metadata.id);
 	}
 
-	displayRemoveSuccess(preparation) {
+	displaySuccess(messageKey, preparation) {
 		this.MessageService.success(
-			'REMOVE_SUCCESS_TITLE',
-			'REMOVE_SUCCESS',
-			{ type: 'preparation', name: preparation.name }
+			`${messageKey}_TITLE`,
+			messageKey,
+			preparation && { type: 'preparation', name: preparation.name }
 		);
 	}
 
@@ -86,7 +86,7 @@ export default class PreparationActionsService {
 			this.StateService[action.payload.method].apply(null, args);
 			break;
 		}
-		case '@@preparation/VALIDATE_EDIT': {
+		case '@@preparation/SUBMIT_EDIT': {
 			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
 			const preparation = action.payload.model;
@@ -95,16 +95,11 @@ export default class PreparationActionsService {
 			if (cleanName && cleanName !== preparation.name) {
 				this.PreparationService.setName(preparation.id, cleanName)
 					.then(() => this.refreshCurrentFolder())
-					.then(() => {
-						this.MessageService.success(
-							'PREPARATION_RENAME_SUCCESS_TITLE',
-							'PREPARATION_RENAME_SUCCESS'
-						);
-					});
+					.then(() => this.displaySuccess('PREPARATION_RENAME_SUCCESS'));
 			}
 			break;
 		}
-		case '@@preparation/VALIDATE_EDIT_FOLDER': {
+		case '@@preparation/SUBMIT_EDIT_FOLDER': {
 			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
 			const folder = action.payload.model;
@@ -126,7 +121,7 @@ export default class PreparationActionsService {
 				)
 				.then(() => this.PreparationService.delete(preparation))
 				.then(() => this.refreshCurrentFolder())
-				.then(() => this.displayRemoveSuccess(preparation));
+				.then(() => this.displaySuccess('REMOVE_SUCCESS', preparation));
 			break;
 		}
 		case '@@preparation/REMOVE_FOLDER': {

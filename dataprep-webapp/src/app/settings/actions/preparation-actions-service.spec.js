@@ -351,6 +351,183 @@ describe('Preparation actions service', () => {
 		}));
 	});
 
+	describe('dispatch @@preparation/SUBMIT_EDIT', () => {
+		let preparation;
+		let action;
+		beforeEach(inject(($q, StateService, FolderService, MessageService, PreparationService) => {
+			preparation = { id: 'prepId', name: 'prep1' };
+			action = {
+				type: '@@preparation/SUBMIT_EDIT',
+				payload: {
+					method: 'submitInventoryEdit',
+					args: ['preparation'],
+					model: preparation,
+				}
+			};
+
+			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+			spyOn(PreparationService, 'setName').and.returnValue($q.when());
+			spyOn(FolderService, 'refresh').and.returnValue($q.when());
+			spyOn(MessageService, 'success').and.returnValue($q.when());
+		}));
+
+		it('should disable title edition', inject((StateService, PreparationActionsService) => {
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+				'preparation',
+				preparation
+			);
+		}));
+
+		it('should NOT set name if it hasn\'t change', inject((PreparationService, PreparationActionsService) => {
+			// given
+			action.payload.value = preparation.name;
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(PreparationService.setName).not.toHaveBeenCalled();
+		}));
+
+		it('should NOT set name if it is empty', inject((PreparationService, PreparationActionsService) => {
+			// given
+			action.payload.value = '';
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(PreparationService.setName).not.toHaveBeenCalled();
+		}));
+
+		it('should set new name', inject((PreparationService, PreparationActionsService) => {
+			// given
+			action.payload.value = 'New prep1 name';
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(PreparationService.setName).toHaveBeenCalledWith(
+				preparation.id,
+				'New prep1 name'
+			);
+		}));
+
+		it('should set refresh current folder', inject(($rootScope, FolderService, PreparationActionsService) => {
+			// given
+			const currentFolderId = stateMock.inventory.folder.metadata.id;
+			action.payload.value = 'New prep1 name';
+
+			// when
+			PreparationActionsService.dispatch(action);
+			$rootScope.$digest();
+
+			// then
+			expect(FolderService.refresh).toHaveBeenCalledWith(currentFolderId);
+		}));
+
+		it('should display success message', inject(($rootScope, MessageService, PreparationActionsService) => {
+			// given
+			action.payload.value = 'New prep1 name';
+
+			// when
+			PreparationActionsService.dispatch(action);
+			$rootScope.$digest();
+
+			// then
+			expect(MessageService.success).toHaveBeenCalledWith(
+				'PREPARATION_RENAME_SUCCESS_TITLE',
+				'PREPARATION_RENAME_SUCCESS',
+				undefined
+			);
+		}));
+	});
+
+	describe('dispatch @@preparation/SUBMIT_EDIT_FOLDER', () => {
+		let folder;
+		let action;
+		beforeEach(inject(($q, StateService, FolderService) => {
+			folder = { id: 'folderId', name: 'folder1' };
+			action = {
+				type: '@@preparation/SUBMIT_EDIT_FOLDER',
+				payload: {
+					method: 'submitInventoryEdit',
+					args: ['preparation'],
+					model: folder,
+				}
+			};
+
+			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+			spyOn(FolderService, 'rename').and.returnValue($q.when());
+			spyOn(FolderService, 'refresh').and.returnValue($q.when());
+		}));
+
+		it('should disable title edition', inject((StateService, PreparationActionsService) => {
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+				'folder',
+				folder
+			);
+		}));
+
+		it('should NOT set name if it hasn\'t change', inject((FolderService, PreparationActionsService) => {
+			// given
+			action.payload.value = folder.name;
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(FolderService.rename).not.toHaveBeenCalled();
+		}));
+
+		it('should NOT set name if it is empty', inject((FolderService, PreparationActionsService) => {
+			// given
+			action.payload.value = '';
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(FolderService.rename).not.toHaveBeenCalled();
+		}));
+
+		it('should rename folder', inject((FolderService, PreparationActionsService) => {
+			// given
+			action.payload.value = 'New folder1 name';
+
+			// when
+			PreparationActionsService.dispatch(action);
+
+			// then
+			expect(FolderService.rename).toHaveBeenCalledWith(
+				folder.id,
+				'New folder1 name'
+			);
+		}));
+
+		it('should set refresh current folder', inject(($rootScope, FolderService, PreparationActionsService) => {
+			// given
+			const currentFolderId = stateMock.inventory.folder.metadata.id;
+			action.payload.value = 'New folder1 name';
+
+			// when
+			PreparationActionsService.dispatch(action);
+			$rootScope.$digest();
+
+			// then
+			expect(FolderService.refresh).toHaveBeenCalledWith(currentFolderId);
+		}));
+	});
+
 	describe('dispatch @@preparation/REMOVE', () => {
 		const preparation = { id: 'prep 1' };
 

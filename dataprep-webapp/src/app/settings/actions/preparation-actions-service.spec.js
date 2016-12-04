@@ -440,7 +440,7 @@ describe('Preparation actions service', () => {
 				type: '@@preparation/SUBMIT_EDIT_FOLDER',
 				payload: {
 					method: 'submitInventoryEdit',
-					args: ['preparation'],
+					args: ['folder'],
 					model: folder,
 				}
 			};

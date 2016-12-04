@@ -26,7 +26,7 @@ export default class PreparationActionsService {
 	}
 
 	refreshCurrentFolder() {
-		this.FolderService.refresh(this.state.inventory.folder.metadata.id);
+		return this.FolderService.refresh(this.state.inventory.folder.metadata.id);
 	}
 
 	displaySuccess(messageKey, preparation) {

@@ -51,8 +51,7 @@ export default class PreparationActionsService {
 
 			this.StateService.setPreparationsSortFromIds(sortBy, sortOrder);
 
-			this.FolderService
-				.refresh(this.state.inventory.folder.metadata.id)
+			this.refreshCurrentFolder()
 				.then(() => this.StorageService.setPreparationsSort(sortBy))
 				.then(() => this.StorageService.setPreparationsOrder(sortOrder))
 				.catch(() => {
@@ -86,28 +85,19 @@ export default class PreparationActionsService {
 			this.StateService[action.payload.method].apply(null, args);
 			break;
 		}
-		case '@@preparation/SUBMIT_EDIT': {
-			const newName = action.payload.value;
-			const cleanName = newName && newName.trim();
-			const preparation = action.payload.model;
-
-			this.StateService.cancelInventoryEdit('preparation', preparation);
-			if (cleanName && cleanName !== preparation.name) {
-				this.PreparationService.setName(preparation.id, cleanName)
-					.then(() => this.refreshCurrentFolder())
-					.then(() => this.displaySuccess('PREPARATION_RENAME_SUCCESS'));
-			}
-			break;
-		}
+		case '@@preparation/SUBMIT_EDIT':
 		case '@@preparation/SUBMIT_EDIT_FOLDER': {
 			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
-			const folder = action.payload.model;
+			const model = action.payload.model;
+			const type = action.payload.args[0];
 
-			this.StateService.cancelInventoryEdit('folder', folder);
-			if (cleanName && cleanName !== folder.name) {
-				this.FolderService.rename(folder.id, cleanName)
-					.then(() => this.refreshCurrentFolder());
+			this.StateService.cancelInventoryEdit(type, model);
+			if (cleanName && cleanName !== model.name) {
+				const nameEdition = type === 'folder' ?
+					this.FolderService.rename(model.id, cleanName) :
+					this.PreparationService.setName(model.id, cleanName);
+				nameEdition.then(() => this.refreshCurrentFolder());
 			}
 			break;
 		}

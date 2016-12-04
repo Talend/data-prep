@@ -354,7 +354,7 @@ describe('Preparation actions service', () => {
 	describe('dispatch @@preparation/SUBMIT_EDIT', () => {
 		let preparation;
 		let action;
-		beforeEach(inject(($q, StateService, FolderService, MessageService, PreparationService) => {
+		beforeEach(inject(($q, StateService, FolderService, PreparationService) => {
 			preparation = { id: 'prepId', name: 'prep1' };
 			action = {
 				type: '@@preparation/SUBMIT_EDIT',
@@ -368,7 +368,6 @@ describe('Preparation actions service', () => {
 			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
 			spyOn(PreparationService, 'setName').and.returnValue($q.when());
 			spyOn(FolderService, 'refresh').and.returnValue($q.when());
-			spyOn(MessageService, 'success').and.returnValue($q.when());
 		}));
 
 		it('should disable title edition', inject((StateService, PreparationActionsService) => {
@@ -429,22 +428,6 @@ describe('Preparation actions service', () => {
 
 			// then
 			expect(FolderService.refresh).toHaveBeenCalledWith(currentFolderId);
-		}));
-
-		it('should display success message', inject(($rootScope, MessageService, PreparationActionsService) => {
-			// given
-			action.payload.value = 'New prep1 name';
-
-			// when
-			PreparationActionsService.dispatch(action);
-			$rootScope.$digest();
-
-			// then
-			expect(MessageService.success).toHaveBeenCalledWith(
-				'PREPARATION_RENAME_SUCCESS_TITLE',
-				'PREPARATION_RENAME_SUCCESS',
-				undefined
-			);
 		}));
 	});
 

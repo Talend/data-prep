@@ -95,7 +95,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 		return preparations.map(item => ({
 			id: item.id,
 			name: item.name,
-			author: item.owner.displayName,
+			author: item.owner && item.owner.displayName,
 			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			dataset: item.dataset.dataSetName,
@@ -119,7 +119,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 		return folders.map(item => ({
 			id: item.id,
 			name: item.name,
-			author: item.owner.displayName,
+			author: item.owner && item.owner.displayName,
 			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			icon: 'talend-folder',

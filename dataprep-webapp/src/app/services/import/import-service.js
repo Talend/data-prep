@@ -21,19 +21,21 @@ export default class ImportService {
 
 	constructor(ImportRestService, StateService) {
 		'ngInject';
+
 		this.ImportRestService = ImportRestService;
 		this.StateService = StateService;
 	}
-    /**
-     * @ngdoc method
-     * @name initImport
-     * @methodOf data-prep.services.import.service:ImportService
-     * @description Initialize the import types list
-     */
+
+	/**
+	 * @ngdoc method
+	 * @name initImport
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Initialize the import types list
+	 */
 	initImport() {
 		return this.ImportRestService.importTypes()
-            .then((response) => {
-	this.StateService.setImportTypes(response.data);
-});
+			.then((response) => {
+				this.StateService.setImportTypes(response.data);
+			});
 	}
 }

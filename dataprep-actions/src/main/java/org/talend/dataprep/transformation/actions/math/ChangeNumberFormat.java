@@ -124,10 +124,10 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         // @formatter:off
         parameters.add(SelectParameter.Builder.builder()
                 .name(FROM_SEPARATORS)
-                .item(UNKNOWN_SEPARATORS)
-                .item(US_SEPARATORS)
-                .item(EU_SEPARATORS)
-                .item(CH_SEPARATORS)
+                .item(UNKNOWN_SEPARATORS, UNKNOWN_SEPARATORS)
+                .item(US_SEPARATORS, US_SEPARATORS)
+                .item(EU_SEPARATORS, EU_SEPARATORS)
+                .item(CH_SEPARATORS, CH_SEPARATORS)
                 .item(CUSTOM, buildDecimalSeparatorParameter(FROM), buildGroupingSeparatorParameter(FROM))
                 .defaultValue(UNKNOWN_SEPARATORS)
                 .build());
@@ -136,11 +136,11 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         // @formatter:off
         parameters.add(SelectParameter.Builder.builder()
                 .name(TARGET_PATTERN)
-                .item(US_PATTERN)
-                .item(EU_PATTERN)
-                .item(CH_PATTERN)
-                .item(SCIENTIFIC)
-                .item(CUSTOM, new Parameter(TARGET_PATTERN + "_" + CUSTOM, STRING, US_DECIMAL_PATTERN.toPattern()),
+                .item(US_PATTERN, US_PATTERN)
+                .item(EU_PATTERN, EU_PATTERN)
+                .item(CH_PATTERN, CH_PATTERN)
+                .item(SCIENTIFIC, SCIENTIFIC)
+                .item(CUSTOM, CUSTOM, new Parameter(TARGET_PATTERN + "_" + CUSTOM, STRING, US_DECIMAL_PATTERN.toPattern()),
                         buildDecimalSeparatorParameter(TARGET),
                         buildGroupingSeparatorParameter(TARGET))
                 .defaultValue(US_PATTERN)
@@ -156,7 +156,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .name(name) //
                 .item(".") //
                 .item(",") //
-                .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ".")) //
+                .item(CUSTOM, CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ".")) //
                 .defaultValue(".") //
                 .build();
     }
@@ -170,7 +170,7 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
                 .item(".", "dot") //
                 .item("'", "quote") //
                 .item("", "none") //
-                .item(CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ",")) //
+                .item(CUSTOM, CUSTOM, new Parameter(name + "_" + CUSTOM, STRING, ",")) //
                 .canBeBlank(true) //
                 .defaultValue(",") //
                 .build();

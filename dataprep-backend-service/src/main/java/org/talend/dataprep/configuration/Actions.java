@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Import;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.filter.SimpleFilterService;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.date.DateParser;
-import org.talend.dataprep.transformation.actions.date.Providers;
 import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -61,6 +61,10 @@ public class Actions {
         @Override
         public <T> T get(Class<T> clazz, Object... args) {
             return context.getBean(clazz, args);
+        }
+
+        @Override
+        public void clear() {
         }
     }
 }

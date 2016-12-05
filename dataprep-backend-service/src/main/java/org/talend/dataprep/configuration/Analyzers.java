@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
+import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
 
 @Configuration
 public class Analyzers implements DisposableBean {
@@ -32,7 +33,9 @@ public class Analyzers implements DisposableBean {
 
     @Bean
     public AnalyzerService analyzerService() {
-        return new AnalyzerService(dataqualityIndexesLocation, luceneIndexStrategy);
+        return new AnalyzerService(dataqualityIndexesLocation, //
+                luceneIndexStrategy, //
+                CategoryRecognizerBuilder.newBuilder().lucene());
     }
 
     @Override

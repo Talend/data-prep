@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -11,18 +10,17 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.transformation.actions.date;
+package org.talend.dataprep.transformation.actions;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Constructor;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.transformation.actions.date.DateParser;
 
 /**
  * This class provides a Spring-like mechanism when non-Spring code wants to lookup for:
@@ -34,9 +32,9 @@ import org.slf4j.LoggerFactory;
  */
 public class Providers {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Providers.class);
+    public static final SingletonProvider DEFAULT_PROVIDER = new SingletonProvider(new InstantiationProvider());
 
-    private static final SingletonProvider DEFAULT_PROVIDER = new SingletonProvider(new InstantiationProvider());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Providers.class);
 
     private static Provider provider = DEFAULT_PROVIDER;
 
@@ -77,21 +75,27 @@ public class Providers {
         return provider.get(DateParser.class);
     }
 
+    public static void clear() {
+        provider.clear();
+    }
+
     /**
      * Provider interface to provide how to create instance of <code>clazz</code>.
+     *
      * @see #setProvider(Provider)
      */
-    @FunctionalInterface
     public interface Provider {
 
         <T> T get(Class<T> clazz, Object... args);
+
+        void clear();
     }
 
     private static class SingletonProvider implements Provider {
 
         private final Provider next;
 
-        Map<Class, Object> singletons = new HashMap<>();
+        private final Map<Class, Object> singletons = new HashMap<>();
 
         SingletonProvider(Provider next) {
             this.next = next;
@@ -99,7 +103,20 @@ public class Providers {
 
         @Override
         public <T> T get(Class<T> clazz, Object... args) {
-            return clazz.cast(singletons.getOrDefault(clazz, next.get(clazz, args)));
+            final Object o;
+            if (singletons.containsKey(clazz)) {
+                o = singletons.get(clazz);
+            } else {
+                final T newValue = next.get(clazz, args);
+                singletons.put(clazz, newValue);
+                o = newValue;
+            }
+            return clazz.cast(o);
+        }
+
+        @Override
+        public void clear() {
+            singletons.clear();
         }
     }
 
@@ -112,29 +129,56 @@ public class Providers {
 
         @Override
         public <T> T get(Class<T> clazz, Object... args) {
+            final List<Class> argsClasses = Stream.of(args) //
+                    .map(Object::getClass) //
+                    .collect(Collectors.toList());
+
             if (clazz.isInterface()) {
                 synchronized (lock) {
                     try {
                         Reflections reflections = new Reflections(clazz.getPackage().getName());
                         final Set<Class<? extends T>> subTypesOf = reflections.getSubTypesOf(clazz);
-                        return clazz.cast(subTypesOf.iterator().next().newInstance());
+                        LOGGER.debug("Found these sub types of " + clazz.getName() + ": {}", subTypesOf);
+                        Constructor constructor = null;
+                        for (Class<? extends T> subType : subTypesOf) {
+                            try {
+                                constructor = subType.getConstructor(argsClasses.toArray(new Class[argsClasses.size()]));
+                                constructor.setAccessible(true);
+                            } catch (NoSuchMethodException e) {
+                                LOGGER.debug("Skip class '{}' (no constructor with arguments '{}')", clazz, args);
+                            }
+                        }
+                        if (constructor == null) {
+                            throw new IllegalArgumentException("No implementation of '" + clazz.getName() + "' with constructor '" + Arrays.toString(args) + "' found.");
+                        } else {
+                            if (argsClasses.isEmpty()) {
+                                return clazz.cast(constructor.newInstance());
+                            } else {
+                                return clazz.cast(constructor.newInstance(args));
+                            }
+                        }
                     } catch (Exception e) {
-                        throw new UnsupportedOperationException("Unable to instantiate '" + clazz.getName() + "'.", e);
+                        throw new UnsupportedOperationException("Unable to instantiate a sub type of interface'" + clazz.getName()
+                                + "' with args: '" + Arrays.toString(args) + "'.", e);
                     }
                 }
-            }
-            try {
-                final List<Class> argsClasses = Stream.of(args) //
-                        .map(Object::getClass) //
-                        .collect(Collectors.toList());
-                if (argsClasses.isEmpty()) {
-                    return clazz.newInstance();
-                } else {
-                    return clazz.getConstructor(argsClasses.toArray(new Class[argsClasses.size()])).newInstance();
+            } else {
+                // Is a class (not an interface).
+                try {
+                    if (argsClasses.isEmpty()) {
+                        return clazz.newInstance();
+                    } else {
+                        return clazz.getConstructor(argsClasses.toArray(new Class[argsClasses.size()])).newInstance(args);
+                    }
+                } catch (Exception e) {
+                    throw new UnsupportedOperationException("Unable to instantiate '" + clazz.getName() + "'.", e);
                 }
-            } catch (Exception e) {
-                throw new UnsupportedOperationException("Unable to instantiate '" + clazz.getName() + "'.", e);
             }
+        }
+
+        @Override
+        public void clear() {
+            // Nothing to do.
         }
     }
 

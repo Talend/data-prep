@@ -45,7 +45,7 @@
     "d3-tip": "^0.6.7",
     "intro.js": "^1.1.1",
     "jquery": "2.1.4",
-    "jquery-datetimepicker": "github:xdan/datetimepicker",
+    "jquery-datetimepicker": "2.5.4",
     "jquery-ui": "1.10.x",
     "lodash": "^3.9.3",
     "modernizr": "^3.3.1",

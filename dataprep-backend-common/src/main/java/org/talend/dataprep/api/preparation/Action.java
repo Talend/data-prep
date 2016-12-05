@@ -38,7 +38,8 @@ public class Action implements Serializable {
     private static final DataSetRowAction IDLE_ROW_ACTION = (row, context) -> row;
 
     /** The wrapped row action. */
-    private final DataSetRowAction rowAction;
+    @JsonIgnore
+    private DataSetRowAction rowAction;
 
     /** Json description of the action. */
     private String action;
@@ -98,6 +99,10 @@ public class Action implements Serializable {
     @JsonIgnore
     public DataSetRowAction getRowAction() {
         return rowAction;
+    }
+
+    public void setRowAction(DataSetRowAction rowAction) {
+        this.rowAction = rowAction;
     }
 
     /**

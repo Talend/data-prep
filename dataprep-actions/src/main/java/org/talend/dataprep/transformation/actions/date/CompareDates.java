@@ -23,6 +23,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.*;
 
@@ -84,12 +85,12 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
         //@formatter:off
         return SelectParameter.Builder.builder() //
             .name(COMPARE_MODE) //
-            .item(EQ) //
-            .item(NE) //
-            .item(GT) //
-            .item(GE) //
-            .item(LT) //
-            .item(LE) //
+            .item(EQ, EQ) //
+            .item(NE, NE) //
+            .item(GT, GT) //
+            .item(GE, GE) //
+            .item(LT, LT) //
+            .item(LE, LE) //
             .defaultValue(EQ) //
             .build();
         //@formatter:on

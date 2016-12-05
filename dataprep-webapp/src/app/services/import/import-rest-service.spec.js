@@ -12,7 +12,6 @@
  ============================================================================*/
 
 describe('Import REST Service', () => {
-
 	let $httpBackend;
 	const importTypes = [
 		{
@@ -141,7 +140,7 @@ describe('Import REST Service', () => {
 		// given
 		let types = null;
 		$httpBackend
-			.expectGET(RestURLs.exportUrl + '/imports')
+			.expectGET(`${RestURLs.exportUrl}/imports`)
 			.respond(200, importTypes);
 
 		// when
@@ -160,7 +159,7 @@ describe('Import REST Service', () => {
 		// given
 		let params = null;
 		$httpBackend
-			.expectGET(RestURLs.exportUrl + '/imports/http/parameters')
+			.expectGET(`${RestURLs.exportUrl}/imports/http/parameters`)
 			.respond(200, { name: 'url' });
 
 		// when
@@ -173,5 +172,30 @@ describe('Import REST Service', () => {
 
 		// then
 		expect(params).toEqual({ name: 'url' });
+	}));
+
+	it('should refresh import parameters', inject(($rootScope, RestURLs, ImportRestService) => {
+		// given
+		let params = null;
+
+		const formId = 'formId';
+		const propertyName = 'propertyName';
+		const formData = { propertyName: 'abc' };
+		const expectedResult = { jsonSchema: {}, uiSchema: {} };
+
+		$httpBackend
+			.expectPOST(`${RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData)
+			.respond(200, expectedResult);
+
+		// when
+		ImportRestService.refreshParameters(formId, propertyName, formData)
+			.then((response) => {
+				params = response.data;
+			});
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		// then
+		expect(params).toEqual(expectedResult);
 	}));
 });

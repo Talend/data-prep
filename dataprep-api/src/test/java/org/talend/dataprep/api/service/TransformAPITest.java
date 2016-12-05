@@ -20,12 +20,17 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.lucene.store.Directory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.http.ContentType;
@@ -341,4 +346,22 @@ public class TransformAPITest extends ApiServiceTestBase {
         assertThat(transformed, sameJSONAsFile(expectedContent));
     }
 
+    @Test
+    public void retrieveDictionary() throws Exception {
+        // when
+        final InputStream dictionary = given().when() //
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/transform/dictionary").asInputStream();
+
+        // then
+        final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(dictionary));
+        final Object object = ois.readObject();
+        Assert.assertEquals(Dictionaries.class, object.getClass());
+
+        final Dictionaries serviceDictionary = (Dictionaries) object;
+        final Directory dictionaryDirectory = serviceDictionary.getDictionary().get(); // Test Lucene directory creation.
+        assertNotNull(dictionaryDirectory);
+        final Directory keywordDirectory = serviceDictionary.getKeyword().get(); // Test Lucene directory creation.
+        assertNotNull(keywordDirectory);
+    }
 }

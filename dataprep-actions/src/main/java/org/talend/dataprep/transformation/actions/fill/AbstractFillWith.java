@@ -37,10 +37,10 @@ import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.actions.date.DatePattern;
-import org.talend.dataprep.transformation.actions.date.Providers;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 public abstract class AbstractFillWith extends AbstractActionMetadata implements OtherColumnParameters {
@@ -148,8 +148,8 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
         //@formatter:off
         parameters.add(SelectParameter.Builder.builder()
                         .name(MODE_PARAMETER)
-                        .item(CONSTANT_MODE, constantParameter)
-                        .item(OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
+                        .item(CONSTANT_MODE, CONSTANT_MODE, constantParameter)
+                        .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, new Parameter(SELECTED_COLUMN_PARAMETER, ParameterType.COLUMN, //
                                                                StringUtils.EMPTY, false, false, StringUtils.EMPTY))
                         .defaultValue(CONSTANT_MODE)
                         .build()

@@ -155,8 +155,8 @@ public class LookupTest extends AbstractMetadataBaseTest {
         Assert.assertEquals(expected, row);
 
         // and (metadata)
-        checkMergedMetadata(row.getRowMetadata().getById("0003"), "State", "string", "US_STATE");
-        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Capital", "string", "CITY");
+        checkMergedMetadata(row.getRowMetadata().getById("0004"), "State", "string", "US_STATE");
     }
 
     @Test

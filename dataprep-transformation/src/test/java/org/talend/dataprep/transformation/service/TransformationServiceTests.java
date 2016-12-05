@@ -22,7 +22,10 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -41,7 +44,7 @@ import com.jayway.restassured.response.Response;
 /**
  * Integration tests on actions.
  */
-public class TransformTests extends TransformationServiceBaseTests {
+public class TransformationServiceTests extends TransformationServiceBaseTests {
 
     /**
      * Content cache for the tests.
@@ -286,6 +289,20 @@ public class TransformTests extends TransformationServiceBaseTests {
                 HEAD
         );
         assertFalse(contentCache.has(key));
+    }
+
+    @Test
+    public void getDictionary() throws Exception {
+        // when
+        final InputStream dictionary = given() //
+                .when() //
+                .get("dictionary") //
+                .asInputStream();
+
+        // then
+        final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(dictionary));
+        final Object object = ois.readObject();
+        Assert.assertEquals(Dictionaries.class, object.getClass());
     }
 
 }

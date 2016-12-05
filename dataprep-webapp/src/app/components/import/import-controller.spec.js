@@ -12,7 +12,6 @@
  ============================================================================*/
 
 describe('Import controller', () => {
-	'use strict';
 
 	let ctrl;
 	let createController;
@@ -28,7 +27,8 @@ describe('Import controller', () => {
 					folders: [],
 					datasets: [],
 				},
-			}, import: {
+			},
+			import: {
 				importTypes: [
 					{
 						locationType: 'hdfs',
@@ -250,19 +250,91 @@ describe('Import controller', () => {
 
 		it('should start import from tcomp', inject((ImportRestService, $q) => {
 			// given
+			const fakeData = { jsonSchema: {} };
 			ctrl = createController();
-			spyOn(ImportRestService, 'importParameters').and.returnValue($q.when({ data: { name: 'tcomp' } }));
+			spyOn(ImportRestService, 'importParameters').and.returnValue($q.when({ data: fakeData }));
 
 			// when
 			ctrl.startImport(StateMock.import.importTypes[4]);
 
 			// then
-			expect(ctrl.isFetchingParameters).toEqual(true);
+			expect(ctrl.isFetchingParameters).toBeTruthy();
 			expect(ImportRestService.importParameters).toHaveBeenCalledWith('tcomp-FullExampleDatastore');
 
 			scope.$digest();
-			expect(ctrl.currentInputType.datastoreForm).toEqual({ name: 'tcomp' });
-			expect(ctrl.isFetchingParameters).toEqual(false);
+			expect(ctrl.datastoreForm).toEqual(fakeData);
+			expect(ctrl.isFetchingParameters).toBeFalsy();
+		}));
+	});
+
+	describe('cancel', () => {
+
+		it('should reset modal display flag and datastore creation form', inject(() => {
+			// given
+			ctrl = createController();
+			ctrl.showModal = true;
+			ctrl.datastoreForm = {};
+
+			// when
+			ctrl.cancel();
+			scope.$digest();
+
+			// then
+			expect(ctrl.showModal).toBeFalsy();
+			expect(ctrl.datastoreForm).toBeNull();
+		}));
+	});
+
+	describe('onDatastoreFormChange', () => {
+		let formData;
+		let formId;
+		let propertyName;
+		let fakeData;
+
+		beforeEach(inject(() => {
+			ctrl = createController();
+			formId = 'formId';
+			propertyName = 'propertyNameWithTrigger';
+			formData = {
+				propertyName: 'propertyValue1',
+			};
+			fakeData = {
+				jsonSchema: {},
+				uiSchema: {},
+				properties: {
+					propertyName: 'propertyValue2',
+				},
+			};
+		}));
+
+		it('should refresh parameters', inject((ImportRestService, $q) => {
+			// given
+			spyOn(ImportRestService, 'refreshParameters').and.returnValue($q.when({ data: fakeData }));
+
+			// when
+			ctrl.onDatastoreFormChange(formData, formId, propertyName);
+			expect(ctrl.isFetchingParameters).toBeTruthy();
+			scope.$digest();
+
+			// then
+			expect(ImportRestService.refreshParameters).toHaveBeenCalledWith(formId, propertyName, formData);
+			expect(ctrl.datastoreForm).toEqual(fakeData);
+			expect(ctrl.isFetchingParameters).toBeFalsy();
+		}));
+
+		it('should not refresh parameters if promise fails', inject((ImportRestService, $q) => {
+			// given
+			spyOn(ImportRestService, 'refreshParameters').and.returnValue($q.reject());
+
+			// when
+			ctrl.onDatastoreFormChange(formData, formId, propertyName);
+			expect(ctrl.isFetchingParameters).toBeTruthy();
+			scope.$digest();
+
+			// then
+			expect(ImportRestService.refreshParameters).toHaveBeenCalledWith(formId, propertyName, formData);
+			expect(ctrl.datastoreForm).not.toEqual(fakeData);
+			expect(ctrl.isFetchingParameters).toBeFalsy();
 		}));
 	});
 

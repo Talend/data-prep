@@ -32,11 +32,11 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-import org.talend.dataprep.transformation.actions.date.Providers;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -157,6 +157,8 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
         // get the matching lookup row
         DataSetRow matchingRow = rowMatcher.getMatchingRow(joinOn, joinValue);
 
+        LOGGER.info("For "+ joinValue+" I have found this matching row: "+matchingRow.values().values());
+
         // get the columns to add
         List<LookupSelectedColumnParameter> colsToAdd = getColsToAdd(parameters);
         colsToAdd.forEach(toAdd -> {
@@ -174,14 +176,17 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
      * @return the list of columns to merge.
      */
     private List<LookupSelectedColumnParameter> getColsToAdd(Map<String, String> parameters) {
+        List<LookupSelectedColumnParameter> result;
         try {
             final String cols = parameters.get(LOOKUP_SELECTED_COLS.getKey());
-            return new ObjectMapper().readValue(cols, new TypeReference<List<LookupSelectedColumnParameter>>() {
+            result =  new ObjectMapper().readValue(cols, new TypeReference<List<LookupSelectedColumnParameter>>() {
             });
+            Collections.reverse(result);
         } catch (IOException e) {
             LOGGER.debug("Unable to parse parameter.", e);
-            return Collections.emptyList();
+            result = Collections.emptyList();
         }
+        return result;
     }
 
     @Override

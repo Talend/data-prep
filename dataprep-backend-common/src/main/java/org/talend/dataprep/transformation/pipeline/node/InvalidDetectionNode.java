@@ -9,7 +9,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.InvalidMarker;
 import org.talend.dataprep.quality.AnalyzerService;
-import org.talend.dataprep.transformation.actions.date.Providers;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;

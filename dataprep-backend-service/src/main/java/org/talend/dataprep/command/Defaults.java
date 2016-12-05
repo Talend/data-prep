@@ -130,11 +130,15 @@ public class Defaults {
     }
 
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, TypeReference<T> typeReference) {
+        return convertResponse(mapper, typeReference, e -> {throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);});
+    }
+
+    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, TypeReference<T> typeReference, Function<IOException, T> errorHandler) {
         return (request, response) -> {
             try {
                 return mapper.readerFor(typeReference).readValue(response.getEntity().getContent());
             } catch (IOException e) {
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                return errorHandler.apply(e);
             } finally {
                 request.releaseConnection();
             }

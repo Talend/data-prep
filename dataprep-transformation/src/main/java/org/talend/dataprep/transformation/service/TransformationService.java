@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.service;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
@@ -23,17 +24,16 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +64,7 @@ import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.aggregation.AggregationService;
@@ -83,6 +84,7 @@ import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
+import org.talend.dataquality.semantic.broadcast.BroadcastIndexObject;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -98,6 +100,9 @@ public class TransformationService extends BaseTransformationService {
      * This class' logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(TransformationService.class);
+
+    @Autowired
+    private AnalyzerService analyzerService;
 
     /**
      * The Spring application context.
@@ -643,8 +648,36 @@ public class TransformationService extends BaseTransformationService {
     @PublicAPI
     public List<ExportFormat> exportTypes() {
         return formatRegistrationService.getExternalFormats().stream() //
-                .sorted((f1, f2) -> f1.getOrder() - f2.getOrder()) // Enforce strict order.
+                .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
                 .collect(toList());
+    }
+
+    @RequestMapping(value = "/dictionary", method = GET, produces = APPLICATION_OCTET_STREAM_VALUE)
+    @ApiOperation(value = "Get current dictionary (as serialized object).")
+    @Timed
+    public StreamingResponseBody getDictionary() {
+        return outputStream -> {
+            final File dictionaryPath = new File(analyzerService.getIndexesLocation() + "/index/dictionary/default/");
+            LOG.debug("Returning dictionary at path '{}'", dictionaryPath.getAbsoluteFile());
+            final File keywordPath = new File(analyzerService.getIndexesLocation() + "/index/keyword/default/");
+            LOG.debug("Returning keywords at path '{}'", keywordPath.getAbsoluteFile());
+
+            // Read lucene directory and build BroadcastIndexObject instance
+            final BroadcastIndexObject dictionary, keyword;
+            try (FSDirectory directory = FSDirectory.open(dictionaryPath)) {
+                dictionary = new BroadcastIndexObject(directory);
+            }
+            try (FSDirectory directory = FSDirectory.open(keywordPath)) {
+                keyword = new BroadcastIndexObject(directory);
+            }
+
+            // Serialize it to output
+            LOG.debug("Returning dictionaries '{}' / '{}'", dictionary, keyword);
+            Dictionaries result = new Dictionaries(dictionary, keyword);
+            try (ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(outputStream))) {
+                oos.writeObject(result);
+            }
+        };
     }
 
 }

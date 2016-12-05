@@ -18,6 +18,7 @@ import static java.util.stream.StreamSupport.stream;
 import static org.talend.dataprep.api.dataset.row.FlagNames.INTERNAL_PROPERTY_PREFIX;
 import static org.talend.dataprep.api.dataset.row.FlagNames.TDP_INVALID;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ import org.talend.dataprep.api.type.Type;
 /**
  * A DataSetRow is a row of a dataset. Values in data set row are <b>alphabetically</b> ordered by name.
  */
-public class DataSetRow implements Cloneable {
+public class DataSetRow implements Cloneable, Serializable {
 
     /**
      * <p>

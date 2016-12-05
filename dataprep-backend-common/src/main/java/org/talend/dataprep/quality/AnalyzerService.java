@@ -76,15 +76,24 @@ public class AnalyzerService {
 
     private final Set<Analyzer> openedAnalyzers = new HashSet<>();
 
-    private CategoryRecognizerBuilder builder;
+    private final String indexesLocation;
+
+    private final CategoryRecognizerBuilder builder;
 
     public AnalyzerService() {
-        this(System.getProperty("java.io.tmpdir") + "/org.talend.dataquality.semantic", "singleton");
+        this(CategoryRecognizerBuilder.newBuilder().lucene());
     }
 
-    public AnalyzerService(String indexesLocation, String indexStrategy) {
-        LOGGER.info("DataQuality indexes location : '{}'", indexesLocation);
-        CategoryRegistryManager.setLocalRegistryPath(indexesLocation);
+    public AnalyzerService(CategoryRecognizerBuilder builder) {
+        this(System.getProperty("java.io.tmpdir") + "/org.talend.dataquality.semantic", //
+                "singleton", //
+                builder);
+    }
+
+    public AnalyzerService(String indexesLocation, String indexStrategy, CategoryRecognizerBuilder builder) {
+        this.indexesLocation = indexesLocation;
+        LOGGER.info("DataQuality indexes location : '{}'", this.indexesLocation);
+        CategoryRegistryManager.setLocalRegistryPath(this.indexesLocation);
         // Configure DQ index creation strategy (one copy per use or one copy shared by all calls).
         LOGGER.info("Analyzer service lucene index strategy set to '{}'", indexStrategy);
         if ("basic".equalsIgnoreCase(indexStrategy)) {
@@ -93,12 +102,19 @@ public class AnalyzerService {
             ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
         } else {
             // Default
-            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", "singleton");
-            ClassPathDirectory.setProvider(new ClassPathDirectory.BasicProvider());
+            LOGGER.warn("Not a supported strategy for lucene indexes: '{}'", indexStrategy);
+            ClassPathDirectory.setProvider(new ClassPathDirectory.SingletonProvider());
         }
         // Semantic builder (a single instance to be shared among all analyzers for proper index file management).
-        builder = CategoryRecognizerBuilder.newBuilder().lucene();
-        dateParser = new DateParser(this);
+        this.builder = builder;
+        this.dateParser = new DateParser(this);
+    }
+
+    /**
+     * @return The file path where DQ dictionaries are.
+     */
+    public String getIndexesLocation() {
+        return indexesLocation;
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {

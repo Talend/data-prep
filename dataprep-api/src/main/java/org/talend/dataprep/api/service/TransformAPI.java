@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
-import org.talend.dataprep.api.service.command.transformation.ColumnActions;
-import org.talend.dataprep.api.service.command.transformation.LineActions;
-import org.talend.dataprep.api.service.command.transformation.SuggestActionParams;
-import org.talend.dataprep.api.service.command.transformation.SuggestColumnActions;
+import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGet;
@@ -113,5 +110,17 @@ public class TransformAPI extends APIService {
         final GenericCommand<InputStream> getActionDynamicParams = getCommand(SuggestActionParams.class, inputData, action,
                 dynamicParamsInput.getColumnId());
         return CommandHelper.toStreaming(getActionDynamicParams);
+    }
+
+    /**
+     * Get the current dictionary (as serialized object).
+     */
+    @RequestMapping(value = "/api/transform/dictionary", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get current dictionary (as serialized object).", notes = "Returns a DQ dictionary serialized usin Java serialization and GZIP-ed.")
+    @Timed
+    public StreamingResponseBody getDictionary() {
+        // get preparation/dataset content
+        HystrixCommand<InputStream> dictionaryCommand = getCommand(DictionaryCommand.class);
+        return CommandHelper.toStreaming(dictionaryCommand);
     }
 }

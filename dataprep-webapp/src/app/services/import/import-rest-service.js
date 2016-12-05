@@ -21,26 +21,38 @@ export default function ImportRestService($http, RestURLs) {
 	return {
 		importTypes,
 		importParameters,
+		refreshParameters,
 	};
-    /**
-     * @ngdoc method
-     * @name importTypes
-     * @methodOf data-prep.services.import.service:ImportRestService
-     * @description Fetch the available import types
-     * @returns {Promise}  The GET call promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name importTypes
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Fetch the available import types
+	 * @returns {Promise}  The GET call promise
+	 */
 	function importTypes() {
 		return $http.get(RestURLs.datasetUrl + '/imports');
 	}
 
-    /**
-     * @ngdoc method
-     * @name importParameters
-     * @methodOf data-prep.services.import.service:ImportRestService
-     * @description Fetch the available import parameters
-     * @returns {Promise}  The GET call promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name importParameters
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Fetch the available import parameters
+	 * @returns {Promise}  The GET call promise
+	 */
 	function importParameters(locationType) {
 		return $http.get(RestURLs.datasetUrl + '/imports/' + locationType + '/parameters');
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshParameters
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Refresh the available import parameters
+	 * @returns {Promise}  The POST call promise
+	 */
+	function refreshParameters(formId, propertyName, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData);
 	}
 }

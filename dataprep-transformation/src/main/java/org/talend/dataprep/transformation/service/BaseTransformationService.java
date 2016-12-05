@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,13 +88,13 @@ public abstract class BaseTransformationService {
         return format;
     }
 
-    protected StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
+    StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
         // Full run execution (depends on the export parameters).
         try {
             final Optional<? extends ExportStrategy> electedStrategy = sampleExportStrategies.stream() //
                     .filter(exportStrategy -> exportStrategy.accept(parameters)) //
-                    .sorted((s1, s2) -> Integer.compare(s1.order(), s2.order())) //
+                    .sorted(Comparator.comparingInt(ExportStrategy::order)) //
                     .findFirst();
             if (electedStrategy.isPresent()) {
                 LOG.debug("Strategy for execution: {}", electedStrategy.get().getClass());

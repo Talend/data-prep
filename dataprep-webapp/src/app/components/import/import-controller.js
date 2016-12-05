@@ -90,14 +90,15 @@ export default class ImportCtrl {
 						},
 					];
 
-					this.onDatastoreFormChange = this.onFormChange.bind(this);
+					this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
 
-					this.onDatastoreFormSubmit = () => {};
+					this.onDatastoreFormSubmit = () => {
+					};
 
 					this.ImportRestService.importParameters(this.currentInputType.locationType)
 						.then((response) => {
 							if (this._isTCOMP(importType.locationType)) {
-								this.currentInputType.datastoreForm = response.data;
+								this.datastoreForm = response.data;
 							}
 							else {
 								this.currentInputType.parameters = response.data;
@@ -125,29 +126,30 @@ export default class ImportCtrl {
 
 	/**
 	 * @ngdoc method
-	 * @name onCancel
+	 * @name cancel
 	 * @methodOf data-prep.import.controller:ImportCtrl
 	 * @description Cancel action for modal
 	 */
-	onCancel() {
+	cancel() {
 		this.showModal = false;
-		this.currentInputType = {};
+		this.datastoreForm = null;
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name onFormChange
+	 * @name onDatastoreFormChange
 	 * @methodOf data-prep.import.controller:ImportCtrl
-	 * @description Generic form change handler
+	 * @description Datastore form change handler
 	 * @param formData All data as form properties
 	 * @param formId ID attached to the form
 	 * @param propertyName Property which has triggered change handler
 	 */
-	onFormChange(formData, formId, propertyName) {
+	onDatastoreFormChange(formData, formId, propertyName) {
 		this.isFetchingParameters = true;
-		this.ImportRestService.reimportParameters(formId, propertyName, formData)
+		const definitionName = formId || this.currentInputType.locationType;
+		this.ImportRestService.refreshParameters(definitionName, propertyName, formData)
 			.then((response) => {
-				this.currentInputType.datastoreForm = response.data;
+				this.datastoreForm = response.data;
 			})
 			.finally(() => {
 				this.isFetchingParameters = false;

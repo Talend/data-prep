@@ -59,7 +59,7 @@ export const inventoryState = {
 export function InventoryStateService() {
 	return {
 		enableEdit,
-		cancelEdit,
+		disableEdit,
 
 		setDatasets,
 		removeDataset,
@@ -126,7 +126,7 @@ export function InventoryStateService() {
 	 * @param {object} entity The entity to switch display mode
 	 * @description Switch the edit mode of the provided entity
 	 */
-	function cancelEdit(type, entity) {
+	function disableEdit(type, entity) {
 		const nextEntities = entities => entities.map((item) => {
 			if (item.id === entity.id) {
 				return {

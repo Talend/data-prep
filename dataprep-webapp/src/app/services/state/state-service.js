@@ -130,7 +130,7 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 
 		// inventory
 		enableInventoryEdit: InventoryStateService.enableEdit,
-		cancelInventoryEdit: InventoryStateService.cancelEdit,
+		disableInventoryEdit: InventoryStateService.disableEdit,
 		setDatasetName: InventoryStateService.setDatasetName,
 		setDatasets: InventoryStateService.setDatasets,
 		removeDataset: InventoryStateService.removeDataset,

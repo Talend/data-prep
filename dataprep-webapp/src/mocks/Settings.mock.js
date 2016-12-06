@@ -250,7 +250,7 @@ const settingsMock = {
 			icon: 'talend-crossbig',
 			type: '@@preparation/CANCEL_EDIT',
 			payload: {
-				method: 'cancelInventoryEdit',
+				method: 'disableInventoryEdit',
 				args: ['preparation'],
 			},
 		},
@@ -280,7 +280,7 @@ const settingsMock = {
 			icon: 'talend-crossbig',
 			type: '@@preparation/CANCEL_EDIT_FOLDER',
 			payload: {
-				method: 'cancelInventoryEdit',
+				method: 'disableInventoryEdit',
 				args: ['folder'],
 			},
 		},

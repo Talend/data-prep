@@ -92,7 +92,7 @@ export default class PreparationActionsService {
 			const model = action.payload.model;
 			const type = action.payload.args[0];
 
-			this.StateService.cancelInventoryEdit(type, model);
+			this.StateService.disableInventoryEdit(type, model);
 			if (cleanName && cleanName !== model.name) {
 				const nameEdition = type === 'folder' ?
 					this.FolderService.rename(model.id, cleanName) :

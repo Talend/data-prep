@@ -308,18 +308,18 @@ describe('Preparation actions service', () => {
 			const action = {
 				type: '@@preparation/EDIT',
 				payload: {
-					method: 'cancelInventoryEdit',
+					method: 'disableInventoryEdit',
 					args: ['preparation'],
 					model: preparation,
 				}
 			};
-			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+			spyOn(StateService, 'disableInventoryEdit').and.returnValue();
 
 			// when
 			PreparationActionsService.dispatch(action);
 
 			// then
-			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+			expect(StateService.disableInventoryEdit).toHaveBeenCalledWith(
 				'preparation',
 				preparation
 			);
@@ -333,18 +333,18 @@ describe('Preparation actions service', () => {
 			const action = {
 				type: '@@preparation/CANCEL_EDIT_FOLDER',
 				payload: {
-					method: 'cancelInventoryEdit',
+					method: 'disableInventoryEdit',
 					args: ['folder'],
 					model: folder,
 				}
 			};
-			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+			spyOn(StateService, 'disableInventoryEdit').and.returnValue();
 
 			// when
 			PreparationActionsService.dispatch(action);
 
 			// then
-			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+			expect(StateService.disableInventoryEdit).toHaveBeenCalledWith(
 				'folder',
 				folder
 			);
@@ -365,7 +365,7 @@ describe('Preparation actions service', () => {
 				}
 			};
 
-			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+			spyOn(StateService, 'disableInventoryEdit').and.returnValue();
 			spyOn(PreparationService, 'setName').and.returnValue($q.when());
 			spyOn(FolderService, 'refresh').and.returnValue($q.when());
 		}));
@@ -375,7 +375,7 @@ describe('Preparation actions service', () => {
 			PreparationActionsService.dispatch(action);
 
 			// then
-			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+			expect(StateService.disableInventoryEdit).toHaveBeenCalledWith(
 				'preparation',
 				preparation
 			);
@@ -445,7 +445,7 @@ describe('Preparation actions service', () => {
 				}
 			};
 
-			spyOn(StateService, 'cancelInventoryEdit').and.returnValue();
+			spyOn(StateService, 'disableInventoryEdit').and.returnValue();
 			spyOn(FolderService, 'rename').and.returnValue($q.when());
 			spyOn(FolderService, 'refresh').and.returnValue($q.when());
 		}));
@@ -455,7 +455,7 @@ describe('Preparation actions service', () => {
 			PreparationActionsService.dispatch(action);
 
 			// then
-			expect(StateService.cancelInventoryEdit).toHaveBeenCalledWith(
+			expect(StateService.disableInventoryEdit).toHaveBeenCalledWith(
 				'folder',
 				folder
 			);

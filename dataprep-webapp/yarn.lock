@@ -1000,9 +1000,9 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
-bootstrap-talend-theme@0.12.1:
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.12.1.tgz#cf489f3855a89c9304e581241438383fd56c8b97"
+bootstrap-talend-theme@0.12.3:
+  version "0.12.3"
+  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.12.3.tgz#def470a30d8a46dd08801249d8c4608140024a83"
   dependencies:
     bootstrap-sass "^3.3.7"
 

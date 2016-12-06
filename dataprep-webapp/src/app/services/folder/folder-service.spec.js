@@ -30,6 +30,7 @@ const preparation = {
 };
 const adaptedPreparation = {
 	id: '1',
+	type: 'preparation',
 	name: 'JSO prep 1',
 	author: 'anonymousUser',
 	creationDate: 'a few seconds ago',
@@ -53,6 +54,7 @@ const folder = {
 };
 const adaptedFolder = {
 	id: 'Lw==',
+	type: 'folder',
 	name: 'toto',
 	author: 'toto',
 	creationDate: 'a few seconds ago',

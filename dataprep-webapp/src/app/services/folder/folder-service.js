@@ -94,6 +94,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	function adaptPreparations(preparations) {
 		return preparations.map(item => ({
 			id: item.id,
+			type: 'preparation',
 			name: item.name,
 			author: item.author,
 			creationDate: moment(item.creationDate).fromNow(),
@@ -119,6 +120,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	function adaptFolders(folders) {
 		return folders.map(item => ({
 			id: item.id,
+			type: 'folder',
 			name: item.name,
 			author: item.owner.displayName,
 			creationDate: moment(item.creationDate).fromNow(),

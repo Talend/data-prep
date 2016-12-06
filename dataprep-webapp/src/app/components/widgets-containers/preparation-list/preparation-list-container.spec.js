@@ -17,6 +17,7 @@ import settings from '../../../../mocks/Settings.mock';
 const preparations = [
 	{
 		id: '1',
+		type: 'preparation',
 		name: 'JSO prep 1',
 		author: 'jsomsanith',
 		lastModificationDate: '2 minutes ago',
@@ -43,6 +44,7 @@ const preparations = [
 	},
 	{
 		id: '2',
+		type: 'preparation',
 		name: 'JSO prep 2',
 		author: 'jsomsanith',
 		lastModificationDate: '5 days ago',
@@ -71,6 +73,7 @@ const preparations = [
 const folders = [
 	{
 		id: 'Lw==',
+		type: 'folder',
 		name: 'JSO folder 1',
 		author: 'jsomsanith',
 		creationDate: '2 minutes ago',
@@ -88,6 +91,7 @@ const folders = [
 	},
 	{
 		id: 'Lw==2',
+		type: 'folder',
 		name: 'JSO folder 2',
 		author: 'jsomsanith',
 		creationDate: '5 days ago',
@@ -243,7 +247,7 @@ describe('Preparation list container', () => {
 				expect(lastCallArgs.payload.model).toBe(folders[0].model);
 			})
 		);
-		
+
 		it('should dispatch folder remove on action click',
 			inject((SettingsActionsService) => {
 				// given

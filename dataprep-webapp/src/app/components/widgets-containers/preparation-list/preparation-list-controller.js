@@ -107,17 +107,6 @@ export default class PreparationListCtrl {
 		};
 	}
 
-	isFolder(model) {
-		if (model) {
-			for (const adaptedFolder of this.adapted.folders) {
-				if (adaptedFolder.id === model.id) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	getTitleActionDispatcher(listViewKey, actionKey) {
 		const listSettings = this.appSettings.views[listViewKey].list;
 		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
@@ -126,7 +115,7 @@ export default class PreparationListCtrl {
 
 	getItemTitleActionDispatcher(folderDispatcher, prepDispatcher) {
 		return (event, payload) => {
-			if (this.isFolder(payload.model) || this.isFolder(payload.model.model)) {
+			if (payload.type === 'folder' || payload.model.type === 'folder') {
 				return folderDispatcher(event, payload);
 			}
 			return prepDispatcher(event, payload);

@@ -14,6 +14,7 @@
 describe('Inventory state service', () => {
 	let datasets;
 	let preparations;
+	let folders;
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
@@ -60,6 +61,10 @@ describe('Inventory state service', () => {
 				author: 'anonymousUser',
 				creationDate: 1427447330693,
 			},
+		];
+		folders = [
+			{ id: 'folder1', type: 'folder' },
+			{ id: 'folder2', type: 'folder' },
 		];
 	});
 
@@ -119,6 +124,30 @@ describe('Inventory state service', () => {
 			// then
 			expect(inventoryState.preparationsDisplayMode).toBe('tile');
 		}));
+
+		it('should enable edit mode', inject((inventoryState, InventoryStateService) => {
+			// given
+			inventoryState.folder.content.preparations = preparations;
+
+			// when
+			InventoryStateService.enableEdit('preparation', preparations[1]);
+
+			// then
+			expect(inventoryState.folder.content.preparations[0].displayMode).toBe(undefined);
+			expect(inventoryState.folder.content.preparations[1].displayMode).toBe('input');
+		}));
+
+		it('should disable edit mode', inject((inventoryState, InventoryStateService) => {
+			// given
+			inventoryState.folder.content.preparations = preparations;
+			inventoryState.folder.content.preparations[1].displayMode = 'input';
+
+			// when
+			InventoryStateService.disableEdit('preparation', preparations[1]);
+
+			// then
+			expect(inventoryState.folder.content.preparations[1].displayMode).toBe(undefined);
+		}));
 	});
 
 	describe('folder', () => {
@@ -161,6 +190,30 @@ describe('Inventory state service', () => {
 
 			//then
 			expect(inventoryState.homeFolderId).toBe(homeId);
+		}));
+
+		it('should enable edit mode', inject((inventoryState, InventoryStateService) => {
+			// given
+			inventoryState.folder.content.folders = folders;
+
+			// when
+			InventoryStateService.enableEdit('folder', folders[1]);
+
+			// then
+			expect(inventoryState.folder.content.folders[0].displayMode).toBe(undefined);
+			expect(inventoryState.folder.content.folders[1].displayMode).toBe('input');
+		}));
+
+		it('should disable edit mode', inject((inventoryState, InventoryStateService) => {
+			// given
+			inventoryState.folder.content.folders = folders;
+			inventoryState.folder.content.folders[1].displayMode = 'input';
+
+			// when
+			InventoryStateService.disableEdit('folder', folders[1]);
+
+			// then
+			expect(inventoryState.folder.content.folders[1].displayMode).toBe(undefined);
 		}));
 	});
 

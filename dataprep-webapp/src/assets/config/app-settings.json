@@ -42,6 +42,9 @@
           { "key": "nbSteps", "label": "Steps" }
         ],
         "items": [],
+        "itemProps": {
+          "classNameKey": "className"
+        },
         "titleProps": {
           "displayModeKey": "displayMode",
           "iconKey": "icon",

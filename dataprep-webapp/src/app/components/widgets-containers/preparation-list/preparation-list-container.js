@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import PreparationListCtrl from './preparation-list-controller';
+import './preparation-list-container.scss';
 
 /**
  * Preparation list container

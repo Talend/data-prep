@@ -12,14 +12,22 @@
  ============================================================================*/
 
 export default class BreadcrumbCtrl {
-	constructor(appSettings, SettingsActionsService) {
+	constructor($element, appSettings, SettingsActionsService) {
 		'ngInject';
+		this.$element = $element;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
 	}
 
 	$onInit() {
 		this.maxItems = this.appSettings.views.breadcrumb.maxItems;
+	}
+
+	$postLink() {
+		this.$element[0].addEventListener('click', (e) => {
+			// block the native click action to avoid home redirection on empty href
+			e.preventDefault();
+		});
 	}
 
 	$onChanges() {

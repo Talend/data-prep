@@ -20,8 +20,7 @@ describe('Breadcrumb container', () => {
 	let element;
 
 	const body = angular.element('body');
-
-	const breadcrumb = [
+	const breadcrumbNoEllipsis = [
 		{
 			id: 'abcd',
 			name: 'HOME'
@@ -31,12 +30,39 @@ describe('Breadcrumb container', () => {
 			name: 'CHARLES'
 		}
 	];
+
+	const breadcrumb = [
+		{
+			id: 'abcd',
+			name: 'HOME'
+		},
+		{
+			id: 'abce',
+			name: 'CHARLES'
+		},
+		{
+			id: 'abcef',
+			name: 'folderF'
+		},
+		{
+			id: 'abcefg',
+			name: 'folderG'
+		},
+		{
+			id: 'abcefgh',
+			name: 'folderH'
+		},
+		{
+			id: 'abcefghi',
+			name: 'folderI'
+		}
+	];
 	beforeEach(angular.mock.module('react-talend-components.containers'));
 
 	beforeEach(inject(($rootScope, $compile, SettingsService) => {
 		scope = $rootScope.$new();
 
-		createElement = () => {
+		createElement = (breadcrumb) => {
 			scope.breadcrumb = breadcrumb;
 			element = angular.element('<breadcrumbs items="breadcrumb"></breadcrumbs>');
 			body.append(element);
@@ -56,7 +82,7 @@ describe('Breadcrumb container', () => {
 	describe('render', () => {
 		it('should create the breadcrumb', () => {
 			// when
-			createElement();
+			createElement(breadcrumbNoEllipsis);
 
 			// then
 			const parentFolder = element.find('.breadcrumb > li').eq(0);
@@ -65,6 +91,28 @@ describe('Breadcrumb container', () => {
 
 			const currentFolder = element.find('.breadcrumb > li').eq(1);
 			expect(currentFolder.find('span').eq(0).text()).toBe('CHARLES');
+		});
+
+		it('should create the breadcrumb with ellipsis', () => {
+			// when
+			createElement(breadcrumb);
+
+			// then
+			const parentFolder = element.find('.breadcrumb > li').eq(0);
+			expect(parentFolder.find('button').eq(0).text()).toBe('…');
+
+			const currentFolder = element.find('.breadcrumb > li').eq(1);
+			expect(currentFolder.find('button').eq(0).text()).toBe('CHARLES');
+		});
+
+		it('should create the dropdown within breadcrumb', () => {
+			// when
+			createElement(breadcrumb);
+
+			// then
+			const dropdownItems = element.find('.breadcrumb .dropdown-menu > li');
+			expect(dropdownItems.length).toBe(1); // maxItems = 5
+			expect(dropdownItems.eq(0).text()).toBe('HOME');
 		});
 	});
 
@@ -75,13 +123,24 @@ describe('Breadcrumb container', () => {
 
 		it('should dispatch button click', inject((SettingsActionsService) => {
 			// given
-			createElement();
+			createElement(breadcrumbNoEllipsis);
 
 			// when
 			const parentFolderButton = element.find('.breadcrumb > li').eq(0).find('button');
-			parentFolderButton.click((e) => {
-				e.preventDefault();
-			});
+			parentFolderButton[0].click();
+
+			// then
+			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO_FOLDER');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.id).toBe('abcd');
+		}));
+
+		it('should dispatch dropdown item click', inject((SettingsActionsService) => {
+			// given
+			createElement(breadcrumb);
+
+			// when
+			const parentFolderButton = element.find('.breadcrumb .dropdown-menu > li > a').eq(0);
 			parentFolderButton[0].click();
 
 			// then

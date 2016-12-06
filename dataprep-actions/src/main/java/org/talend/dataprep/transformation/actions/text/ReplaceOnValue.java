@@ -182,7 +182,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN);
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED);
     }
 
 }

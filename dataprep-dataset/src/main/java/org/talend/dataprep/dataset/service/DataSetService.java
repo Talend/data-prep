@@ -199,7 +199,7 @@ public class DataSetService extends BaseDataSetService {
      */
     @PostConstruct
     public void initialize() {
-        synchronousAnalyzers.sort((analyzer1, analyzer2) -> analyzer1.order() - analyzer2.order());
+        synchronousAnalyzers.sort(Comparator.comparingInt(SynchronousDataSetAnalyzer::order));
     }
 
     /**
@@ -213,13 +213,25 @@ public class DataSetService extends BaseDataSetService {
             List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
 
         // Calls all synchronous analysis first
-        for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
-            if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
-                continue;
+        try {
+            for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
+                if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
+                    continue;
+                }
+                LOG.info("Running {}", synchronousDataSetAnalyzer.getClass());
+                synchronousDataSetAnalyzer.analyze(id);
+                LOG.info("Done running {}", synchronousDataSetAnalyzer.getClass());
             }
-            LOG.info("Running {}", synchronousDataSetAnalyzer.getClass());
-            synchronousDataSetAnalyzer.analyze(id);
-            LOG.info("Done running {}", synchronousDataSetAnalyzer.getClass());
+        } catch (Exception e) {
+            // Clean up content & metadata (don't keep invalid information)
+            try {
+                final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
+                contentStore.delete(metadata);
+                dataSetMetadataRepository.remove(id);
+            } catch (Exception unableToCleanResources) {
+                LOG.error("Unable to clean temporary resources for '{}'.", id, unableToCleanResources);
+            }
+            throw e;
         }
 
         // perform async analysis

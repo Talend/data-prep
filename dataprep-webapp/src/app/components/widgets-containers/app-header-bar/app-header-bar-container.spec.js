@@ -103,7 +103,6 @@ describe('App header bar container', () => {
 
 			// when
 			const onboardingIcon = element.find('#onboarding\\:preparation');
-			onboardingIcon.click((e) => { e.preventDefault(); });
 			onboardingIcon[0].click();
 
 			// then
@@ -118,7 +117,6 @@ describe('App header bar container', () => {
 
 			// when
 			const feedbackIcon = element.find('#modal\\:feedback');
-			feedbackIcon.click((e) => { e.preventDefault(); });
 			feedbackIcon[0].click();
 
 			// then
@@ -132,7 +130,6 @@ describe('App header bar container', () => {
 
 			// when
 			const helpIcon = element.find('#external\\:help');
-			helpIcon.click((e) => { e.preventDefault(); });
 			helpIcon[0].click();
 
 			// then

@@ -18,7 +18,7 @@ const preparation = {
 		dataSetNbRow: 400,
 	},
 	name: 'JSO prep 1',
-	author: 'anonymousUser',
+	owner: { displayName: 'toto' },
 	creationDate: new Date().getTime(),
 	lastModificationDate: new Date().getTime(),
 	steps: [
@@ -32,7 +32,7 @@ const adaptedPreparation = {
 	id: '1',
 	type: 'preparation',
 	name: 'JSO prep 1',
-	author: 'anonymousUser',
+	author: 'toto',
 	creationDate: 'a few seconds ago',
 	lastModificationDate: 'a few seconds ago',
 	dataset: 'US states',

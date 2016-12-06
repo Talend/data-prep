@@ -99,7 +99,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
                 LOG.debug(marker, "using {} to parse the dataset", detectedFormat);
 
-                verifyFormat(metadata, detectedFormat);
+                verifyFormat(detectedFormat);
 
                 internalUpdateMetadata(metadata, detectedFormat);
 
@@ -114,11 +114,10 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
     /**
      * Checks for format validity. Clean up and throw exception if the format is null or unsupported.
-     * 
-     * @param metadata the metadata of the dataset being imported
+     *
      * @param detectedFormat the detected format of the dataset
      */
-    private void verifyFormat(DataSetMetadata metadata, Format detectedFormat) {
+    private void verifyFormat(Format detectedFormat) {
 
         TDPException hypotheticalException = null;
         Set<Charset> supportedEncodings = encodings != null ? encodings.getSupportedCharsets() : Collections.emptySet();
@@ -129,9 +128,6 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
             hypotheticalException = new TDPException(DataSetErrorCodes.UNSUPPORTED_ENCODING);
         }
         if (hypotheticalException != null) {
-            // Clean up content & metadata (don't keep invalid information)
-            store.delete(metadata);
-            repository.remove(metadata.getId());
             // Throw exception to indicate unsupported content
             throw hypotheticalException;
         }
@@ -159,7 +155,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
     /**
      * Update the dataset schema information from its metadata.
-     * 
+     *
      * @param original the original dataset metadata.
      * @param updated the dataset to update.
      */

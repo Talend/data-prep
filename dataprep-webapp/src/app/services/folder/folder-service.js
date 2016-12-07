@@ -104,7 +104,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 			nbSteps: item.steps.length - 1, // remove root step
 			icon: 'talend-dataprep',
 			displayMode: 'text',
-			className: 'list-item-folder',
+			className: 'list-item-preparation',
 			actions: this.getPreparationActions(item),
 			model: item,
 		}));
@@ -128,7 +128,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			icon: 'talend-folder',
 			displayMode: 'text',
-			className: 'list-item-preparation',
+			className: 'list-item-folder',
 			actions: this.getFolderActions(item),
 			model: item,
 		}));

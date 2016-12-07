@@ -30,7 +30,13 @@ export default class PreparationListCtrl {
 	}
 
 	$onInit() {
-		this.didMountAction();
+		const didMountActionCreator = this.appSettings
+			.views['listview:preparations']
+			.didMountActionCreator;
+		if (didMountActionCreator) {
+			const action = this.appSettings.actions[didMountActionCreator];
+			this.SettingsActionsService.dispatch(action);
+		}
 	}
 
 	$postLink() {
@@ -54,21 +60,9 @@ export default class PreparationListCtrl {
 			};
 		}
 		if (changes.sortBy) {
-			const currentValue = changes.sortBy.currentValue;
-			const sortBy = this.toolbarProps.sortBy.map((sort) => {
-				const isSelected = sort.selected;
-				const shouldBeSelected = sort.id === currentValue;
-				if (isSelected === shouldBeSelected) {
-					return sort;
-				}
-				return {
-					...sort,
-					selected: shouldBeSelected,
-				};
-			});
 			this.toolbarProps = {
 				...this.toolbarProps,
-				sortBy,
+				sortBy: changes.sortBy.currentValue,
 			};
 		}
 		if (changes.sortDesc) {
@@ -76,16 +70,6 @@ export default class PreparationListCtrl {
 				...this.toolbarProps,
 				sortDesc: changes.sortDesc.currentValue,
 			};
-		}
-	}
-
-	didMountAction() {
-		const didMountActionCreator = this.appSettings
-			.views['listview:preparations']
-			.didMountActionCreator;
-		if (didMountActionCreator) {
-			const action = this.appSettings.actions[didMountActionCreator];
-			this.SettingsActionsService.dispatch(action);
 		}
 	}
 

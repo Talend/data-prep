@@ -19,7 +19,7 @@
     <inventory-item
             id="dataset_{{$index}}"
             ng-repeat="dataset in $ctrl.state.inventory.datasets track by dataset.id"
-            item="dataset"
+            item="dataset.model"
             type="dataset"
             details="DATASET_DETAILS"
             file-model="$ctrl.updateDatasetFile"

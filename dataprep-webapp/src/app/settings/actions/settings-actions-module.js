@@ -24,6 +24,7 @@ import ExternalActionsService from './external-actions-service';
 import MenuActionsService from './menu-actions-service';
 import ModalActionsService from './modal-actions-service';
 import OnboardingActionsService from './onboarding-actions-service';
+import DatasetActionsService from './dataset-actions-service';
 import PreparationActionsService from './preparation-actions-service';
 import SidePanelActionsService from './sidepanel-actions-service';
 
@@ -43,6 +44,7 @@ angular.module(MODULE_NAME,
 	.service('MenuActionsService', MenuActionsService)
 	.service('ModalActionsService', ModalActionsService)
 	.service('OnboardingActionsService', OnboardingActionsService)
+	.service('DatasetActionsService', DatasetActionsService)
 	.service('PreparationActionsService', PreparationActionsService)
 	.service('SidePanelActionsService', SidePanelActionsService)
 	.factory('SettingsActionsHandlers', function (
@@ -50,6 +52,7 @@ angular.module(MODULE_NAME,
 		MenuActionsService,
 		ModalActionsService,
 		OnboardingActionsService,
+		DatasetActionsService,
 		PreparationActionsService,
 		SidePanelActionsService) {
 		'ngInject';
@@ -58,6 +61,7 @@ angular.module(MODULE_NAME,
 			MenuActionsService,
 			ModalActionsService,
 			OnboardingActionsService,
+			DatasetActionsService,
 			PreparationActionsService,
 			SidePanelActionsService,
 		];

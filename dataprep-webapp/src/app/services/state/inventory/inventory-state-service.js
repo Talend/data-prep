@@ -39,6 +39,7 @@ export const inventoryState = {
 	preparationsSort: sortList[1],
 	preparationsOrder: orderList[1],
 
+	datasetsDisplayMode: 'table',
 	preparationsDisplayMode: 'table',
 
 	homeFolderId: HOME_FOLDER.id,
@@ -72,6 +73,8 @@ export function InventoryStateService() {
 
 		setDatasetsSort,
 		setDatasetsOrder,
+		setDatasetsSortFromIds,
+		setDatasetsDisplayMode,
 
 		setPreparationsSort,
 		setPreparationsOrder,
@@ -257,6 +260,30 @@ export function InventoryStateService() {
      */
 	function setDatasetsOrder(order) {
 		inventoryState.datasetsOrder = order;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setDatasetsSortFromIds
+	 * @methodOf data-prep.services.state.service:InventoryStateService
+	 * @param {string} sortId The sort id
+	 * @param {string} orderId The order id
+	 * @description Set the order by its id
+	 */
+	function setDatasetsSortFromIds(sortId, orderId) {
+		inventoryState.datasetsSort = find(sortList, { id: sortId });
+		inventoryState.datasetsOrder = find(orderList, { id: orderId });
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setDatasetsDisplayMode
+	 * @methodOf data-prep.services.state.service:InventoryStateService
+	 * @param {string} displayMode The display mode
+	 * @description Set the dataset display mode
+	 */
+	function setDatasetsDisplayMode(displayMode) {
+		inventoryState.preparationsDisplayMode = displayMode;
 	}
 
     /**

@@ -136,6 +136,8 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 		removeDataset: InventoryStateService.removeDataset,
 		setDatasetsSort: InventoryStateService.setDatasetsSort,
 		setDatasetsOrder: InventoryStateService.setDatasetsOrder,
+		setDatasetsSortFromIds: InventoryStateService.setDatasetsSortFromIds,
+		setDatasetsDisplayMode: InventoryStateService.setDatasetsDisplayMode,
 		setPreparationsSort: InventoryStateService.setPreparationsSort,
 		setPreparationsOrder: InventoryStateService.setPreparationsOrder,
 		setPreparationsSortFromIds: InventoryStateService.setPreparationsSortFromIds,

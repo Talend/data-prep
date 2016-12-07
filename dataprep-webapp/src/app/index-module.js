@@ -108,6 +108,12 @@ const app = angular.module(MODULE_NAME,
 					'home-content': { template: '<react-home-preparation></react-home-preparation>' },
 				},
 			})
+			.state('reactHome.datasets', {
+				url: '/datasets',
+				views: {
+					'home-content': { template: '<react-home-dataset></react-home-dataset>' },
+				},
+			})
 			.state('playground', {
 				url: '/playground',
 				template: '<playground></playground>',

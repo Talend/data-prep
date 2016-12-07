@@ -22,6 +22,7 @@ import Form from 'react-talend-forms';
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
 import LayoutContainer from './layout/layout-container';
+import DatasetListContainer from './dataset-list/dataset-list-container';
 import PreparationListContainer from './preparation-list/preparation-list-container';
 import SidePanelContainer from './side-panel/side-panel-container';
 
@@ -45,6 +46,7 @@ angular.module(MODULE_NAME,
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
     .component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
+	.component('reactDatasetList', DatasetListContainer) // TODO rename this when dataset-list is removed
 	.component('reactPreparationList', PreparationListContainer) // TODO rename this when preparation-list is removed
 	.component('sidePanel', SidePanelContainer)
 	.component('layout', LayoutContainer);

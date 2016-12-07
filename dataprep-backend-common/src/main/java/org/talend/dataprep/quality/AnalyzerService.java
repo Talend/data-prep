@@ -204,7 +204,6 @@ public class AnalyzerService {
         List<String> domainList = columns.stream() //
                 .map(ColumnMetadata::getDomain) //
                 .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
-                .map(String::toUpperCase) // DQ 1.5.5 -> domain categories are now upper case
                 .collect(Collectors.toList());
         final String[] domains = domainList.toArray(new String[domainList.size()]);
 

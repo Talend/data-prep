@@ -40,6 +40,7 @@ const adaptedPreparation = {
 	nbSteps: 3,
 	icon: 'talend-dataprep',
 	displayMode: 'text',
+	className: 'list-item-preparation',
 	actions: ['preparation:edit', 'preparation:copy-move', 'preparation:remove'],
 	model: preparation,
 };
@@ -61,6 +62,7 @@ const adaptedFolder = {
 	lastModificationDate: 'a few seconds ago',
 	icon: 'talend-folder',
 	displayMode: 'text',
+	className: 'list-item-folder',
 	actions: ['preparation:edit:folder', 'preparation:remove:folder'],
 	model: folder,
 };

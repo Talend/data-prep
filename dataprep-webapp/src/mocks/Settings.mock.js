@@ -57,6 +57,9 @@ const settingsMock = {
 					{ key: 'nbSteps', label: 'Nb steps' },
 				],
 				items: [],
+				itemProps: {
+					classNameKey: 'className',
+				},
 				titleProps: {
 					displayModeKey: 'displayMode',
 					iconKey: 'icon',

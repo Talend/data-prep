@@ -249,6 +249,8 @@ public class DefaultActionParser implements ActionParser {
                 .collect(Collectors.toList()) //
                 .toArray(new FunctionResource[providers.size()]);
 
+        LOGGER.trace("The initial row metadata is: " + rowMetadata);
+
         // Build internal transformation pipeline
         final StackedNode stackedNode = new StackedNode();
         final Pipeline pipeline = Pipeline.Builder.builder() //

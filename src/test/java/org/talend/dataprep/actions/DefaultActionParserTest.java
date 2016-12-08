@@ -51,7 +51,9 @@ public class DefaultActionParserTest {
 
     private static final String preparationId = "A1B2C3";
 
-    private static final String dataSetId = "A1B2C3";
+    private static final String dataSetId1 = "A1B2C3";
+
+    private static final String dataSetId2 = "A1B2C3D4";
 
     private static ServerMock serverMock;
 
@@ -399,9 +401,9 @@ public class DefaultActionParserTest {
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
         try (final InputStream preparationStream = DefaultActionParserTest.class.getResourceAsStream("single_lookup.json");
-                InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("dataset.json")) {
+                final InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", preparationStream, header);
-            serverMock.addEndPoint("/api/datasets/" + dataSetId+"*", dataSetStream, header);
+            serverMock.addEndPoint("/api/datasets/" + dataSetId1 +"*", dataSetStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
         }
@@ -421,8 +423,8 @@ public class DefaultActionParserTest {
         // Then
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
-        assertEquals("California", result1.get(2));
-        assertEquals("Sacramento", result1.get(3));
+        assertEquals("Sacramento", result1.get(2));
+        assertEquals("California", result1.get(3));
         assertEquals(4, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));
@@ -433,15 +435,15 @@ public class DefaultActionParserTest {
     }
 
     @Test
-    public void testUpperWithLookupAction() throws Exception {
+    public void testUpperWithSingleLookupAction() throws Exception {
         // Given
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
         try (final InputStream preparationStream = DefaultActionParserTest.class.getResourceAsStream("upper_with_lookup.json");
-                InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("dataset.json")) {
+                final InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", preparationStream, header);
-            serverMock.addEndPoint("/api/datasets/" + dataSetId+"*", dataSetStream, header);
+            serverMock.addEndPoint("/api/datasets/" + dataSetId1 +"*", dataSetStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
         }
@@ -461,8 +463,8 @@ public class DefaultActionParserTest {
         // Then
         assertEquals("Rose Bowl", result1.get(0));
         assertEquals("CA", result1.get(1));
-        assertEquals("CALIFORNIA", result1.get(2));
-        assertEquals("Sacramento", result1.get(3));
+        assertEquals("SACRAMENTO", result1.get(2));
+        assertEquals("California", result1.get(3));
         assertEquals(4, result1.getSchema().getFields().size());
 
         assertEquals("Beaver Stadium", result2.get(0));
@@ -470,6 +472,50 @@ public class DefaultActionParserTest {
         assertEquals("", result2.get(2));
         assertEquals("", result2.get(3));
         assertEquals(4, result2.getSchema().getFields().size());
+    }
+
+    @Test
+    public void testTwoLookupActionsWithUppercase() throws Exception {
+        // Given
+        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
+        final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream preparationStream = DefaultActionParserTest.class.getResourceAsStream("two_lookups_with_upper.json");
+                final InputStream dataSetStream1 = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json");
+                final InputStream dataSetStream2 = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset2.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", preparationStream, header);
+            serverMock.addEndPoint("/api/datasets/" + dataSetId1 +"*", dataSetStream1, header);
+            serverMock.addEndPoint("/api/datasets/" + dataSetId2 +"*", dataSetStream2, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+        assertEquals("Rose Bowl", record1.get(0));
+        assertEquals("CA", record1.get(1));
+        assertEquals(2, record1.getSchema().getFields().size());
+
+        assertEquals("Beaver Stadium", record2.get(0));
+        assertEquals("SN", record2.get(1));
+        assertEquals(2, record2.getSchema().getFields().size());
+
+        // When
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+
+        // Then
+        assertEquals("Rose Bowl", result1.get(0));
+        assertEquals("CA", result1.get(1));
+        assertEquals("WEST", result1.get(2));
+        assertEquals("SACRAMENTO", result1.get(3));
+        assertEquals("California", result1.get(4));
+        assertEquals(5, result1.getSchema().getFields().size());
+
+        assertEquals("Beaver Stadium", result2.get(0));
+        assertEquals("SN", result2.get(1));
+        assertEquals("", result2.get(2));
+        assertEquals("", result2.get(3));
+        assertEquals("", result2.get(4));
+        assertEquals(5, result2.getSchema().getFields().size());
     }
 
     @Test

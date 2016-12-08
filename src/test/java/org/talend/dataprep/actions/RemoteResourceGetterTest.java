@@ -96,7 +96,7 @@ public class RemoteResourceGetterTest {
     @Test
     public void testGetDataSet() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/*", RemoteResourceGetterTest.class.getResourceAsStream("dataset.json"), header);
+        serverMock.addEndPoint("/api/datasets/*", RemoteResourceGetterTest.class.getResourceAsStream("lookup_dataset1.json"), header);
         serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
@@ -105,7 +105,7 @@ public class RemoteResourceGetterTest {
                 goodDataSetId, "0000");
 
         // Then
-        assertEquals(2, result.size());
+        assertEquals(5, result.size());
         assertEquals("California", result.get("CA").values().get("0001"));
         assertEquals("Sacramento", result.get("CA").values().get("0002"));
         assertEquals("Alabama", result.get("AL").values().get("0001"));

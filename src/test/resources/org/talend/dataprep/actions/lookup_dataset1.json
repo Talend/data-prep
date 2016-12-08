@@ -331,7 +331,7 @@
       "schemaAnalyzed": true,
       "qualityAnalyzed": true
     },
-    "records": 50,
+    "records": 5,
     "nbLinesHeader": 1,
     "nbLinesFooter": 0,
     "type": "text/csv",
@@ -372,6 +372,27 @@
       "0002": "Sacramento",
       "0003": "Los Angeles",
       "tdpId": 2
+    },
+    {
+      "0000": "WA",
+      "0001": "Washington",
+      "0002": "Olympia",
+      "0003": "Seattle",
+      "tdpId": 3
+    },
+    {
+      "0000": "OR",
+      "0001": "Oregon",
+      "0002": "Salem",
+      "0003": "Portland",
+      "tdpId": 4
+    },
+    {
+      "0000": "NM",
+      "0001": "New Mexico",
+      "0002": "Santa Fe",
+      "0003": "Albuquerque",
+      "tdpId": 5
     }
   ]
 }

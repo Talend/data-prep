@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-export default class DatasetListCtrl {
+export default class InventoryListCtrl {
 	constructor($element, $translate, appSettings, SettingsActionsService) {
 		'ngInject';
 
@@ -21,6 +21,7 @@ export default class DatasetListCtrl {
 		this.SettingsActionsService = SettingsActionsService;
 
 		this.adapted = {
+			folders: [],
 			items: [],
 		};
 		this.actionsDispatchers = [];
@@ -29,7 +30,13 @@ export default class DatasetListCtrl {
 	}
 
 	$onInit() {
-		this.didMountAction();
+		const didMountActionCreator = this.appSettings
+			.views[this.views]
+			.didMountActionCreator;
+		if (didMountActionCreator) {
+			const action = this.appSettings.actions[didMountActionCreator];
+			this.SettingsActionsService.dispatch(action);
+		}
 	}
 
 	$postLink() {
@@ -40,28 +47,22 @@ export default class DatasetListCtrl {
 	}
 
 	$onChanges(changes) {
-		if (changes.items) {
+		if (changes.folders || changes.items) {
+			if (changes.folders) {
+				this.adapted.folders = this.adaptActions(changes.folders.currentValue || []);
+			}
+			if (changes.items) {
+				this.adapted.items = this.adaptActions(changes.items.currentValue || []);
+			}
 			this.listProps = {
 				...this.listProps,
-				items: this.adaptActions(changes.items.currentValue || []),
+				items: this.adapted.folders.concat(this.adapted.items),
 			};
 		}
 		if (changes.sortBy) {
-			const currentValue = changes.sortBy.currentValue;
-			const sortBy = this.toolbarProps.sortBy.map((sort) => {
-				const isSelected = sort.selected;
-				const shouldBeSelected = sort.id === currentValue;
-				if (isSelected === shouldBeSelected) {
-					return sort;
-				}
-				return {
-					...sort,
-					selected: shouldBeSelected,
-				};
-			});
 			this.toolbarProps = {
 				...this.toolbarProps,
-				sortBy,
+				sortBy: changes.sortBy.currentValue,
 			};
 		}
 		if (changes.sortDesc) {
@@ -72,18 +73,8 @@ export default class DatasetListCtrl {
 		}
 	}
 
-	didMountAction() {
-		const didMountActionCreator = this.appSettings
-			.views['listview:datasets']
-			.didMountActionCreator;
-		if (didMountActionCreator) {
-			const action = this.appSettings.actions[didMountActionCreator];
-			this.SettingsActionsService.dispatch(action);
-		}
-	}
-
 	initToolbarProps() {
-		const toolbarSettings = this.appSettings.views['listview:datasets'].toolbar;
+		const toolbarSettings = this.appSettings.views[this.views].toolbar;
 		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
 		const sortAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
@@ -100,25 +91,23 @@ export default class DatasetListCtrl {
 		};
 	}
 
-	getTitleActionDispatcher(listViewKey, actionKey) {
-		const listSettings = this.appSettings.views[listViewKey].list;
+	getTitleActionDispatcher(viewKey, actionKey) {
+		const listSettings = this.appSettings.views[viewKey].list;
 		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
 		return this.SettingsActionsService.createDispatcher(action);
 	}
 
-	getOnTitleDispatcher(action) {
-		const datasetDispatcher = this.getTitleActionDispatcher('listview:datasets', action);
-
-		return (event, payload) => {
-			return datasetDispatcher(event, payload);
-		};
-	}
-
 	initListProps() {
-		const listSettings = this.appSettings.views['listview:datasets'].list;
-		const onClick = this.getOnTitleDispatcher('onClick');
-		const onEditCancel = this.getOnTitleDispatcher('onEditCancel');
-		const onEditSubmit = this.getOnTitleDispatcher('onEditSubmit');
+		const listSettings = this.appSettings.views[this.views].list;
+		const onFolderClick = this.getTitleActionDispatcher('listview:folders', 'onClick');
+		const onItemClick = this.getTitleActionDispatcher(this.views, 'onClick');
+		const onClick = (event, payload) => {
+			return payload.type === 'folder' ?
+				onFolderClick(event, payload) :
+				onItemClick(event, payload);
+		};
+		const onEditCancel = this.getTitleActionDispatcher(this.views, 'onEditCancel');
+		const onEditSubmit = this.getTitleActionDispatcher(this.views, 'onEditSubmit');
 		this.listProps = {
 			...listSettings,
 			titleProps: {
@@ -144,11 +133,12 @@ export default class DatasetListCtrl {
 		return items.map((item) => {
 			const actions = item.actions.map((actionName) => {
 				const settingAction = this.appSettings.actions[actionName];
+				const dispatch = this.getActionDispatcher(actionName);
 				return {
 					icon: settingAction.icon,
 					label: settingAction.name,
-					model: item.model,
-					onClick: this.getActionDispatcher(actionName),
+					model: item,
+					onClick: (event, payload) => dispatch(event, payload.model),
 				};
 			});
 			return {

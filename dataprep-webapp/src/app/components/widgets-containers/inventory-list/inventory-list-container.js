@@ -11,13 +11,14 @@
 
  ============================================================================*/
 
-import DatasetListCtrl from './dataset-list-controller';
+import InventoryListCtrl from './inventory-list-controller';
+import './inventory-list-container.scss';
 
 /**
- * Dataset list container
+ * Inventory list container
  * @restrict E
  */
-const DatasetListContainer = {
+const InventoryListContainer = {
 	template: `
 		<pure-list
 			display-mode="$ctrl.displayMode"
@@ -27,11 +28,13 @@ const DatasetListContainer = {
 	`,
 	bindings: {
 		displayMode: '<',
+		folders: '<',
 		items: '<',
 		sortBy: '<',
 		sortDesc: '<',
+		views: '<',
 	},
-	controller: DatasetListCtrl,
+	controller: InventoryListCtrl,
 };
 
-export default DatasetListContainer;
+export default InventoryListContainer;

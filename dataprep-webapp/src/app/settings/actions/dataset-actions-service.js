@@ -12,12 +12,13 @@
  ============================================================================*/
 
 export default class DatasetActionsService {
-	constructor($stateParams, state, DatasetService,
+	constructor($stateParams, state, DatasetService, DatasetListService,
 				StateService, StorageService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
 		this.DatasetService = DatasetService;
+		this.DatasetListService = DatasetListService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
 	}
@@ -36,7 +37,7 @@ export default class DatasetActionsService {
 
 			this.StateService.setDatasetsSortFromIds(sortBy, sortOrder);
 
-			this.DatasetService.init()
+			this.DatasetListService.refreshDatasets()
 				.then(() => this.StorageService.setDatasetsSort(sortBy))
 				.then(() => this.StorageService.setDatasetsOrder(sortOrder))
 				.catch(() => {

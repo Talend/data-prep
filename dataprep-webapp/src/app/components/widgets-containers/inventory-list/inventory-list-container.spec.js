@@ -109,7 +109,7 @@ const folders = [
 	},
 ];
 
-describe('Preparation list container', () => {
+describe('Inventory list container', () => {
 	let scope;
 	let createElement;
 	let element;
@@ -122,12 +122,13 @@ describe('Preparation list container', () => {
 
 		createElement = () => {
 			element = angular.element(`
-				<react-preparation-list
+				<react-inventory-list
 					display-mode="displayMode"
 					folders="folders"
 					items="items"
 					sort-by="sortBy"
 					sort-desc="sortDesc"
+					views="'listview:preparations'"
 				/>
 			`);
 			body.append(element);

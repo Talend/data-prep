@@ -13,11 +13,12 @@
 const HomeDatasetContainer = {
 	template: `
 		<div class="home-content">
-			<react-dataset-list
+			<react-inventory-list
 				display-mode="$ctrl.state.inventory.datasetsDisplayMode"
 				items="$ctrl.state.inventory.datasets"
 				sort-by="$ctrl.state.inventory.datasetsSort.id"
 				sort-desc="$ctrl.state.inventory.datasetsOrder.id === 'desc'"
+				views="'listview:datasets'"
 			/>
 		</div>
 	`,

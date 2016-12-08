@@ -45,6 +45,6 @@ describe('Home Dataset Container', () => {
 		createElement();
 
 		//then
-		expect(element.find('react-dataset-list').length).toBe(1);
+		expect(element.find('react-inventory-list').length).toBe(1);
 	});
 });

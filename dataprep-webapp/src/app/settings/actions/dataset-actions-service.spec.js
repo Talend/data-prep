@@ -17,8 +17,9 @@ describe('Datasets actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions'));
 
 	describe('dispatch', () => {
-		beforeEach(inject(($q, DatasetService, StateService, StorageService) => {
+		beforeEach(inject(($q, DatasetService, DatasetListService, StateService, StorageService) => {
 			spyOn(DatasetService, 'init').and.returnValue($q.when());
+			spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
 			spyOn(StateService, 'setDatasetsDisplayMode').and.returnValue();
 			spyOn(StateService, 'setDatasetsSortFromIds').and.returnValue();
 			spyOn(StorageService, 'setDatasetsSort').and.returnValue();
@@ -79,7 +80,7 @@ describe('Datasets actions service', () => {
 			})
 		);
 
-		it('should refresh datasets list', inject((DatasetService, DatasetActionsService) => {
+		it('should refresh datasets list', inject((DatasetListService, DatasetActionsService) => {
 			// given
 			const action = {
 				type: '@@dataset/SORT',
@@ -93,7 +94,7 @@ describe('Datasets actions service', () => {
 			DatasetActionsService.dispatch(action);
 
 			// then
-			expect(DatasetService.init).toHaveBeenCalled();
+			expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
 		}));
 
 		it('should fetch all datasets', inject((DatasetService, DatasetActionsService) => {

@@ -35,6 +35,25 @@ describe('Menu actions service', () => {
 			expect($state.go).toHaveBeenCalledWith('nav.index.preparations');
 		}));
 
+		it('should change route with dataset parameters', inject(($state, MenuActionsService) => {
+			// given
+			const action = {
+				type: '@@router/GO_DATASET',
+				payload: {
+					method: 'go',
+					args: ['nav.index.datasets'],
+					id: 'acbd'
+				},
+			};
+			spyOn($state, 'go').and.returnValue();
+
+			// when
+			MenuActionsService.dispatch(action);
+
+			// then
+			expect($state.go).toHaveBeenCalledWith('nav.index.datasets', { datasetid: 'acbd' });
+		}));
+
 		it('should change route with folder parameters', inject(($state, MenuActionsService) => {
 			// given
 			const action = {

@@ -89,7 +89,7 @@
           { "id": "date", "name": "Creation Date" }
         ],
         "actions": [],
-        "onClickAdd": "dataset:create",
+        "onClickAdd": "",
         "onSelectDisplayMode": "dataset:display-mode",
         "onSelectSortBy": "dataset:sort",
         "searchLabel": "Find a dataset"

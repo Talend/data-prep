@@ -71,6 +71,18 @@ describe('Inventory state service', () => {
 	});
 
 	describe('datasets', () => {
+		it('should set display mode', inject((inventoryState, InventoryStateService) => {
+			// given
+			expect(inventoryState.datasetsDisplayMode).toBe('table');
+			const displayMode = 'tile';
+
+			// when
+			InventoryStateService.setDatasetsDisplayMode(displayMode);
+
+			// then
+			expect(inventoryState.datasetsDisplayMode).toBe('tile');
+		}));
+
 		it('should set datasets', inject((inventoryState, InventoryStateService) => {
 			//given
 			inventoryState.preparations = null;
@@ -263,6 +275,21 @@ describe('Inventory state service', () => {
 			//then
 			expect(inventoryState.preparationsOrder).toBe('desc');
 		}));
+
+		it('should set datasets sort/order from ids',
+			inject((inventoryState, InventoryStateService) => {
+				//given
+				inventoryState.datasetsSort = '';
+				inventoryState.datasetsOrder = '';
+
+				//when
+				InventoryStateService.setDatasetsSortFromIds('name', 'desc');
+
+				//then
+				expect(inventoryState.datasetsSort.id).toBe('name');
+				expect(inventoryState.datasetsOrder.id).toBe('desc');
+			})
+		);
 
 		it('should set preparations sort/order from ids',
 			inject((inventoryState, InventoryStateService) => {

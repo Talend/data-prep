@@ -79,6 +79,37 @@ const settingsMock = {
 				searchLabel: 'Find a preparation',
 			},
 		},
+		"listview:datasets": {
+			"didMountActionCreator": "datasets:fetch",
+			"list": {
+				"columns": [
+					{ "key": "name", "label": "Name" },
+					{ "key": "author", "label": "Author" },
+					{ "key": "creationDate", "label": "Created" },
+					{ "key": "nbLines", "label": "Lines" }
+				],
+				"items": [],
+				"titleProps": {
+					"displayModeKey": "displayMode",
+					"iconKey": "icon",
+					"key": "name",
+					"onClick": "menu:playground:dataset",
+					"onEditCancel": "dataset:cancel-edit",
+					"onEditSubmit": "dataset:submit-edit"
+				}
+			},
+			"toolbar": {
+				"sortBy": [
+					{ "id": "name", "name": "Name" },
+					{ "id": "date", "name": "Creation Date" }
+				],
+				"actions": [],
+				"onClickAdd": "",
+				"onSelectDisplayMode": "dataset:display-mode",
+				"onSelectSortBy": "dataset:sort",
+				"searchLabel": "Find a dataset"
+			}
+		}
 	},
 	actions: {
 		'menu:preparations': {
@@ -122,6 +153,18 @@ const settingsMock = {
 				method: 'go',
 				args: ['playground.preparation'],
 			},
+		},
+		"menu:playground:dataset": {
+			"id": "menu:playground:dataset",
+			"name": "Dataset Playground",
+			"icon": "talend-dataprep",
+			"type": "@@router/GO_DATASET",
+			"payload": {
+				"method": "go",
+				"args": [
+					"playground.dataset"
+				]
+			}
 		},
 		'sidepanel:toggle': {
 			id: 'sidepanel:toggle',
@@ -174,6 +217,46 @@ const settingsMock = {
 			payload: {
 				method: 'logout',
 			},
+		},
+		"dataset:display-mode": {
+			"id": "dataset:display-mode",
+			"name": "Change dataset display mode",
+			"icon": "",
+			"type": "@@dataset/DISPLAY_MODE",
+			"payload": {
+				"method": "setDatasetsDisplayMode",
+				"args": []
+			}
+		},
+		"dataset:sort": {
+			"id": "dataset:sort",
+			"name": "Change dataset sort",
+			"icon": "",
+			"type": "@@dataset/SORT",
+			"payload": {
+				"method": "setDatasetsSortFromIds",
+				"args": []
+			}
+		},
+		"dataset:create": {
+			"id": "dataset:create",
+			"name": "Create a dataset",
+			"icon": "talend-dataprep",
+			"type": "@@dataset/CREATE",
+			"payload": {
+				"method": "",
+				"args": []
+			}
+		},
+		"datasets:fetch": {
+			"id": "datasets:fetch",
+			"name": "Fetch all datasets",
+			"icon": "talend-dataprep",
+			"type": "@@dataset/DATASET_FETCH",
+			"payload": {
+				"method": "init",
+				"args": []
+			}
 		},
 		'preparation:display-mode': {
 			id: 'preparation:display-mode',

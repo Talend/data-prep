@@ -12,24 +12,14 @@
  ============================================================================*/
 
 export default class DatasetActionsService {
-	constructor($stateParams, state, DatasetService, MessageService,
-				StateService, StorageService, TalendConfirmService) {
+	constructor($stateParams, state, DatasetService,
+				StateService, StorageService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
 		this.DatasetService = DatasetService;
-		this.MessageService = MessageService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
-		this.TalendConfirmService = TalendConfirmService;
-	}
-
-	displaySuccess(messageKey, dataset) {
-		this.MessageService.success(
-			`${messageKey}_TITLE`,
-			messageKey,
-			dataset && { type: 'dataset', name: dataset.name }
-		);
 	}
 
 	dispatch(action) {
@@ -54,9 +44,6 @@ export default class DatasetActionsService {
 				});
 			break;
 		}
-		case '@@dataset/CREATE':
-			this.StateService.togglePreparationCreator();
-			break;
 		case '@@dataset/DATASET_FETCH':
 			this.StateService.setPreviousRoute('nav.index.datasets');
 			this.StateService.setFetchingInventoryDatasets(true);
@@ -64,46 +51,6 @@ export default class DatasetActionsService {
 				this.StateService.setFetchingInventoryDatasets(false);
 			});
 			break;
-		//case '@@dataset/COPY_MOVE':
-		//	this.StateService.toggleCopyMovePreparation(
-		//		this.state.inventory.folder.metadata,
-		//		action.payload.model
-		//	);
-		//	break;
-		//case '@@dataset/EDIT':
-		//case '@@dataset/CANCEL_EDIT': {
-		//	const args = action.payload.args.concat(action.payload.model);
-		//	this.StateService[action.payload.method].apply(null, args);
-		//	break;
-		//}
-		//case '@@dataset/SUBMIT_EDIT': {
-		//	const newName = action.payload.value;
-		//	const cleanName = newName && newName.trim();
-		//	const model = action.payload.model;
-		//	const type = action.payload.args[0];
-		//
-		//	this.StateService.disableInventoryEdit(type, model);
-		//	if (cleanName && cleanName !== model.name) {
-		//		const nameEdition = type === 'folder' ?
-		//			this.FolderService.rename(model.id, cleanName) :
-		//			this.PreparationService.setName(model.id, cleanName);
-		//		nameEdition.then(() => this.refreshCurrentFolder());
-		//	}
-		//	break;
-		//}
-		//case '@@preparation/REMOVE': {
-		//	const preparation = action.payload.model;
-		//	this.TalendConfirmService
-		//		.confirm(
-		//			{ disableEnter: true },
-		//			['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-		//			{ type: 'preparation', name: preparation.name }
-		//		)
-		//		.then(() => this.PreparationService.delete(preparation))
-		//		.then(() => this.refreshCurrentFolder())
-		//		.then(() => this.displaySuccess('REMOVE_SUCCESS', preparation));
-		//	break;
-		//}
 		}
 	}
 }

@@ -10,11 +10,12 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+import moment from 'moment';
 
 describe('Dataset List Service', () => {
     'use strict';
 
-    let datasets;
+    let datasets, adaptedDatasets;
     let stateMock;
     let restPromise;
 
@@ -55,6 +56,61 @@ describe('Dataset List Service', () => {
                 nbLinesHeader: 1,
                 nbLinesFooter: 0,
                 created: '03-30-2015 08:06',
+            },
+        ];
+
+        adaptedDatasets = [
+            {
+                id: datasets[0].id,
+                type: 'dataset',
+                name: datasets[0].name,
+                author: datasets[0].owner && datasets[0].owner.displayName,
+                creationDate: moment(datasets[0].created).fromNow(),
+                lastModificationDate: moment(datasets[0].lastModificationDate).fromNow(),
+                nbLines: datasets[0].records,
+                icon: 'talend-dataprep',
+                displayMode: 'text',
+                actions: [],
+                model: datasets[0],
+            },
+            {
+                id: datasets[1].id,
+                type: 'dataset',
+                name: datasets[1].name,
+                author: datasets[1].owner && datasets[1].owner.displayName,
+                creationDate: moment(datasets[1].created).fromNow(),
+                lastModificationDate: moment(datasets[1].lastModificationDate).fromNow(),
+                nbLines: datasets[1].records,
+                icon: 'talend-dataprep',
+                displayMode: 'text',
+                actions: [],
+                model: datasets[1],
+            },
+            {
+                id: datasets[2].id,
+                type: 'dataset',
+                name: datasets[2].name,
+                author: datasets[2].owner && datasets[2].owner.displayName,
+                creationDate: moment(datasets[2].created).fromNow(),
+                lastModificationDate: moment(datasets[2].lastModificationDate).fromNow(),
+                nbLines: datasets[2].records,
+                icon: 'talend-dataprep',
+                displayMode: 'text',
+                actions: [],
+                model: datasets[2],
+            },
+            {
+                id: datasets[3].id,
+                type: 'dataset',
+                name: datasets[3].name,
+                author: datasets[3].owner && datasets[3].owner.displayName,
+                creationDate: moment(datasets[3].created).fromNow(),
+                lastModificationDate: moment(datasets[3].lastModificationDate).fromNow(),
+                nbLines: datasets[3].records,
+                icon: 'talend-dataprep',
+                displayMode: 'text',
+                actions: [],
+                model: datasets[3],
             },
         ];
     }
@@ -109,7 +165,7 @@ describe('Dataset List Service', () => {
                 $rootScope.$apply();
 
                 //then
-                expect(StateService.setDatasets).toHaveBeenCalledWith(datasets);
+                expect(StateService.setDatasets).toHaveBeenCalledWith(adaptedDatasets);
             }));
 
             it('should trigger another refresh when one is already pending with different sort condition', inject(($rootScope, DatasetListService, DatasetRestService, StateService) => {
@@ -122,7 +178,7 @@ describe('Dataset List Service', () => {
                 $rootScope.$apply();
 
                 //then
-                expect(StateService.setDatasets).toHaveBeenCalledWith(datasets);
+                expect(StateService.setDatasets).toHaveBeenCalledWith(adaptedDatasets);
                 expect(DatasetRestService.getDatasets.calls.count()).toBe(2);
             }));
 

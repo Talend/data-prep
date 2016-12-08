@@ -283,7 +283,7 @@ export function InventoryStateService() {
 	 * @description Set the dataset display mode
 	 */
 	function setDatasetsDisplayMode(displayMode) {
-		inventoryState.preparationsDisplayMode = displayMode;
+		inventoryState.datasetsDisplayMode = displayMode;
 	}
 
     /**

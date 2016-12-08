@@ -28,6 +28,7 @@ import SERVICES_STATE_MODULE from '../../services/state/state-module';
 import HomeComponent from './home-component';
 import HomeDatasetComponent from './dataset/home-dataset-component';
 import HomePreparationComponent from './preparation/home-preparation-component';
+import ABOUT from '../about/about-module';
 
 // React home page
 import WIDGETS_CONTAINERS_MODULE from '../widgets-containers/widgets-containers-module';
@@ -75,6 +76,7 @@ angular.module(MODULE_NAME,
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_STATE_MODULE,
+		ABOUT,
 	])
 	.component('home', HomeComponent)
 	.component('homeDataset', HomeDatasetComponent)

@@ -72,4 +72,13 @@ describe('home state', () => {
 		}));
 	});
 
+	describe('toggleAboutModal', () => {
+		it('should toggle about modal', inject((homeState, HomeStateService) => {
+			//when
+			HomeStateService.toggleAboutModal();
+
+			//then
+			expect(homeState.showAbout).toBe(true);
+		}));
+	});
 });

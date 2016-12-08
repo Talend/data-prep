@@ -9,7 +9,8 @@
       "actions": [
         "onboarding:preparation",
         "modal:feedback",
-        "external:help"
+        "external:help",
+        "modal:about"
       ]
     },
     "breadcrumb": {
@@ -198,6 +199,15 @@
         "args": [
           "https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
         ]
+      }
+    },
+    "modal:about": {
+      "id": "modal:about",
+      "name": "About Data Preparation",
+      "icon": "talend-info-circle",
+      "type": "@@modal/SHOW",
+      "payload": {
+        "method": "toggleAboutModal"
       }
     },
     "dataset:display-mode": {

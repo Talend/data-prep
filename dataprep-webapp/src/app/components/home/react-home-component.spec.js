@@ -64,7 +64,7 @@ describe('Home component', () => {
 		//then
 		expect(element.find('insertion-home').length).toBe(1);
 	});
-	
+
 	it('should instanciate app layout with an ui insertion point', () => {
 		//when
 		createElement();
@@ -72,5 +72,13 @@ describe('Home component', () => {
 		//then
 		expect(element.find('layout').length).toBe(1);
 		expect(element.find('layout').eq(0).find('ui-view[name="home-content"]').length).toBe(1);
+	});
+
+	it('should instantiate home about modal', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('about').length).toBe(1);
 	});
 });

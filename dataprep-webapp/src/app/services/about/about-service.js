@@ -11,18 +11,15 @@
 
  ============================================================================*/
 
-const HomeComponent = {
-	template: `
-		<layout>
-			<ui-view name="home-content"></ui-view>
-		</layout>
-
-		<dataset-xls-preview></dataset-xls-preview>
-		<preparation-copy-move></preparation-copy-move>
-		<preparation-creator></preparation-creator>
-		<insertion-home></insertion-home>
-		<about></about>
-	`,
-};
-
-export default HomeComponent;
+/**
+ * @ngdoc service
+ * @name data-prep.services.about.service:AboutService
+ * @description About Service. This service provides the entry point to the backend builds details
+ * @requires data-prep.services.about.service:AboutRestService
+ */
+export default class AboutService {
+	constructor(AboutRestService) {
+		'ngInject';
+		this.buildDetails = AboutRestService.buildDetails.bind(AboutRestService);
+	}
+}

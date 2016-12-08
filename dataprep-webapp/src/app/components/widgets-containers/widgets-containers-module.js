@@ -26,6 +26,7 @@ import InventoryListContainer from './inventory-list/inventory-list-container';
 import SidePanelContainer from './side-panel/side-panel-container';
 
 import FOLDER_MODULE from '../../services/folder/folder-module';
+import SEARCH_MODULE from '../../services/search/search-module';
 import SETTINGS_MODULE from '../../settings/settings-module';
 
 const MODULE_NAME = 'react-talend-components.containers';
@@ -35,6 +36,7 @@ angular.module(MODULE_NAME,
 		'react',
 		'pascalprecht.translate',
 		FOLDER_MODULE,
+		SEARCH_MODULE,
 		SETTINGS_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])

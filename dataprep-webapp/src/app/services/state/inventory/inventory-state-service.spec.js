@@ -54,12 +54,14 @@ describe('Inventory state service', () => {
 				dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
 				author: 'anonymousUser',
 				creationDate: 1427447300300,
+				type: 'preparation',
 			},
 			{
 				id: 'fbaa18e82e913e97e5f0e9d40f04413412be1126',
 				dataSetId: '3b21388c-f54a-4334-9bef-748912d0806f',
 				author: 'anonymousUser',
 				creationDate: 1427447330693,
+				type: 'preparation',
 			},
 		];
 		folders = [
@@ -116,7 +118,7 @@ describe('Inventory state service', () => {
 		it('should set display mode', inject((inventoryState, InventoryStateService) => {
 			// given
 			expect(inventoryState.preparationsDisplayMode).toBe('table');
-			const displayMode = 'tile';
+			const displayMode = { mode: 'tile' };
 
 			// when
 			InventoryStateService.setPreparationsDisplayMode(displayMode);
@@ -130,7 +132,7 @@ describe('Inventory state service', () => {
 			inventoryState.folder.content.preparations = preparations;
 
 			// when
-			InventoryStateService.enableEdit('preparation', preparations[1]);
+			InventoryStateService.enableEdit(preparations[1]);
 
 			// then
 			expect(inventoryState.folder.content.preparations[0].displayMode).toBe(undefined);
@@ -143,7 +145,7 @@ describe('Inventory state service', () => {
 			inventoryState.folder.content.preparations[1].displayMode = 'input';
 
 			// when
-			InventoryStateService.disableEdit('preparation', preparations[1]);
+			InventoryStateService.disableEdit(preparations[1]);
 
 			// then
 			expect(inventoryState.folder.content.preparations[1].displayMode).toBe(undefined);
@@ -197,7 +199,7 @@ describe('Inventory state service', () => {
 			inventoryState.folder.content.folders = folders;
 
 			// when
-			InventoryStateService.enableEdit('folder', folders[1]);
+			InventoryStateService.enableEdit(folders[1]);
 
 			// then
 			expect(inventoryState.folder.content.folders[0].displayMode).toBe(undefined);
@@ -210,7 +212,7 @@ describe('Inventory state service', () => {
 			inventoryState.folder.content.folders[1].displayMode = 'input';
 
 			// when
-			InventoryStateService.disableEdit('folder', folders[1]);
+			InventoryStateService.disableEdit(folders[1]);
 
 			// then
 			expect(inventoryState.folder.content.folders[1].displayMode).toBe(undefined);

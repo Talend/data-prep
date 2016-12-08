@@ -91,33 +91,23 @@ export default class PreparationListCtrl {
 		};
 	}
 
-	getTitleActionDispatcher(listViewKey, actionKey) {
-		const listSettings = this.appSettings.views[listViewKey].list;
+	getTitleActionDispatcher(viewKey, actionKey) {
+		const listSettings = this.appSettings.views[viewKey].list;
 		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
 		return this.SettingsActionsService.createDispatcher(action);
 	}
 
-	getItemTitleActionDispatcher(folderDispatcher, prepDispatcher) {
-		return (event, payload) => {
-			if (payload.type === 'folder' || payload.model.type === 'folder') {
-				return folderDispatcher(event, payload);
-			}
-			return prepDispatcher(event, payload);
-		};
-	}
-
-	getOnTitleDispatcher(action) {
-		const folderDispatcher = this.getTitleActionDispatcher('listview:folders', action);
-		const prepDispatcher = this.getTitleActionDispatcher('listview:preparations', action);
-
-		return this.getItemTitleActionDispatcher(folderDispatcher, prepDispatcher);
-	}
-
 	initListProps() {
 		const listSettings = this.appSettings.views['listview:preparations'].list;
-		const onClick = this.getOnTitleDispatcher('onClick');
-		const onEditCancel = this.getOnTitleDispatcher('onEditCancel');
-		const onEditSubmit = this.getOnTitleDispatcher('onEditSubmit');
+		const onFolderClick = this.getTitleActionDispatcher('listview:folders', 'onClick');
+		const onPrepClick = this.getTitleActionDispatcher('listview:preparations', 'onClick');
+		const onClick = (event, payload) => {
+			return payload.type === 'folder' ?
+				onFolderClick(event, payload) :
+				onPrepClick(event, payload);
+		};
+		const onEditCancel = this.getTitleActionDispatcher('listview:preparations', 'onEditCancel');
+		const onEditSubmit = this.getTitleActionDispatcher('listview:preparations', 'onEditSubmit');
 		this.listProps = {
 			...listSettings,
 			titleProps: {
@@ -143,11 +133,12 @@ export default class PreparationListCtrl {
 		return items.map((item) => {
 			const actions = item.actions.map((actionName) => {
 				const settingAction = this.appSettings.actions[actionName];
+				const dispatch = this.getActionDispatcher(actionName);
 				return {
 					icon: settingAction.icon,
 					label: settingAction.name,
-					model: item.model,
-					onClick: this.getActionDispatcher(actionName),
+					model: item,
+					onClick: (event, payload) => dispatch(event, payload.model),
 				};
 			});
 			return {

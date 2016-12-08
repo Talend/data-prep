@@ -79,7 +79,7 @@ const folders = [
 		creationDate: '2 minutes ago',
 		lastModificationDate: '2 minutes ago',
 		icon: 'talend-folder',
-		actions: ['preparation:edit:folder', 'preparation:remove:folder'],
+		actions: ['preparation:edit', 'preparation:remove:folder'],
 		model: {
 			id: 'Lw==',
 			path: '/JSO folder 1',
@@ -97,7 +97,7 @@ const folders = [
 		creationDate: '5 days ago',
 		lastModificationDate: '5 days ago',
 		icon: 'talend-folder',
-		actions: ['preparation:edit:folder', 'preparation:remove:folder'],
+		actions: ['preparation:edit', 'preparation:remove:folder'],
 		model: {
 			id: 'Lw==2',
 			path: '/JSO folder 2',
@@ -242,8 +242,8 @@ describe('Preparation list container', () => {
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
 				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:edit:folder');
-				expect(lastCallArgs.type).toBe('@@preparation/EDIT_FOLDER');
+				expect(lastCallArgs.id).toBe('preparation:edit');
+				expect(lastCallArgs.type).toBe('@@preparation/EDIT');
 				expect(lastCallArgs.payload.model).toBe(folders[0].model);
 			})
 		);

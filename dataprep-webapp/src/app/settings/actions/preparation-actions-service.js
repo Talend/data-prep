@@ -40,7 +40,10 @@ export default class PreparationActionsService {
 	dispatch(action) {
 		switch (action.type) {
 		case '@@preparation/DISPLAY_MODE':
-			this.StateService.setPreparationsDisplayMode(action.payload.mode);
+		case '@@preparation/CREATE':
+		case '@@preparation/EDIT':
+		case '@@preparation/CANCEL_EDIT':
+			this.StateService[action.payload.method](action.payload);
 			break;
 		case '@@preparation/SORT': {
 			const oldSort = this.state.inventory.preparationsSort;
@@ -59,9 +62,6 @@ export default class PreparationActionsService {
 				});
 			break;
 		}
-		case '@@preparation/CREATE':
-			this.StateService.togglePreparationCreator();
-			break;
 		case '@@preparation/FOLDER_FETCH': {
 			const folderId = this.$stateParams.folderId;
 			this.StateService.setPreviousRoute('nav.index.preparations', { folderId });
@@ -77,22 +77,13 @@ export default class PreparationActionsService {
 				action.payload.model
 			);
 			break;
-		case '@@preparation/EDIT':
-		case '@@preparation/EDIT_FOLDER':
-		case '@@preparation/CANCEL_EDIT':
-		case '@@preparation/CANCEL_EDIT_FOLDER': {
-			const args = action.payload.args.concat(action.payload.model);
-			this.StateService[action.payload.method].apply(null, args);
-			break;
-		}
-		case '@@preparation/SUBMIT_EDIT':
-		case '@@preparation/SUBMIT_EDIT_FOLDER': {
+		case '@@preparation/SUBMIT_EDIT': {
 			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
 			const model = action.payload.model;
-			const type = action.payload.args[0];
+			const type = model.type;
 
-			this.StateService.disableInventoryEdit(type, model);
+			this.StateService.disableInventoryEdit(model);
 			if (cleanName && cleanName !== model.name) {
 				const nameEdition = type === 'folder' ?
 					this.FolderService.rename(model.id, cleanName) :

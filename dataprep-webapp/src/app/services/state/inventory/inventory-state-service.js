@@ -101,11 +101,10 @@ export function InventoryStateService() {
 	 * @ngdoc method
 	 * @name enableEdit
 	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {string} type The entity type
 	 * @param {object} entity The entity to switch display mode
 	 * @description Switch the edit mode of the provided entity
 	 */
-	function enableEdit(type, entity) {
+	function enableEdit(entity) {
 		const nextEntities = entities => entities.map((item) => {
 			if (item.id === entity.id) {
 				return {
@@ -115,18 +114,17 @@ export function InventoryStateService() {
 			}
 			return item;
 		});
-		createNextEntities(type, nextEntities);
+		createNextEntities(entity.type, nextEntities);
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name cancelEdit
 	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {string} type The entity type
 	 * @param {object} entity The entity to switch display mode
 	 * @description Switch the edit mode of the provided entity
 	 */
-	function disableEdit(type, entity) {
+	function disableEdit(entity) {
 		const nextEntities = entities => entities.map((item) => {
 			if (item.id === entity.id) {
 				return {
@@ -136,7 +134,7 @@ export function InventoryStateService() {
 			}
 			return item;
 		});
-		createNextEntities(type, nextEntities);
+		createNextEntities(entity.type, nextEntities);
 	}
 
     /**
@@ -300,10 +298,10 @@ export function InventoryStateService() {
      * @ngdoc method
      * @name setPreparationsDisplayMode
      * @methodOf data-prep.services.state.service:InventoryStateService
-     * @param {string} displayMode The display mode
+     * @param {string} displayMode.mode The display mode
      * @description Set the preparation display mode
      */
 	function setPreparationsDisplayMode(displayMode) {
-		inventoryState.preparationsDisplayMode = displayMode;
+		inventoryState.preparationsDisplayMode = displayMode.mode;
 	}
 }

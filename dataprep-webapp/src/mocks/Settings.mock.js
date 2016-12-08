@@ -39,8 +39,6 @@ const settingsMock = {
 			list: {
 				titleProps: {
 					onClick: 'menu:folders',
-					onEditCancel: 'preparation:cancel-edit:folder',
-					onEditSubmit: 'preparation:submit-edit:folder',
 				},
 			},
 		},
@@ -239,62 +237,32 @@ const settingsMock = {
 		},
 		'preparation:edit': {
 			id: 'preparation:edit',
-			name: 'Edit preparation name',
+			name: 'Edit name',
 			icon: 'talend-pencil',
 			type: '@@preparation/EDIT',
 			payload: {
 				method: 'enableInventoryEdit',
-				args: ['preparation'],
+				args: [],
 			},
 		},
 		'preparation:cancel-edit': {
 			id: 'preparation:cancel-edit',
-			name: 'Cancel preparation name edition',
+			name: 'Cancel name edition',
 			icon: 'talend-crossbig',
 			type: '@@preparation/CANCEL_EDIT',
 			payload: {
 				method: 'disableInventoryEdit',
-				args: ['preparation'],
+				args: [],
 			},
 		},
 		'preparation:submit-edit': {
 			id: 'preparation:submit-edit',
-			name: 'Validate preparation name edition',
+			name: 'Submit name edition',
 			icon: 'talend-check',
 			type: '@@preparation/VALIDATE_EDIT',
 			payload: {
 				method: 'validateInventoryEdit',
-				args: ['preparation'],
-			},
-		},
-		'preparation:edit:folder': {
-			id: 'preparation:edit:folder',
-			name: 'Edit folder name',
-			icon: 'talend-pencil',
-			type: '@@preparation/EDIT_FOLDER',
-			payload: {
-				method: 'enableInventoryEdit',
-				args: ['folder'],
-			},
-		},
-		'preparation:cancel-edit:folder': {
-			id: 'preparation:cancel-edit:folder',
-			name: 'Cancel folder name edition',
-			icon: 'talend-crossbig',
-			type: '@@preparation/CANCEL_EDIT_FOLDER',
-			payload: {
-				method: 'disableInventoryEdit',
-				args: ['folder'],
-			},
-		},
-		'preparation:submit-edit:folder': {
-			id: 'preparation:submit-edit:folder',
-			name: 'Validate folder name edition',
-			icon: 'talend-check',
-			type: '@@preparation/VALIDATE_EDIT_FOLDER',
-			payload: {
-				method: 'validateInventoryEdit',
-				args: ['folder'],
+				args: [],
 			},
 		},
 		'preparation:remove': {

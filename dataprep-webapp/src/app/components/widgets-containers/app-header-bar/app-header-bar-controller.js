@@ -15,13 +15,13 @@ const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
 
 export default class AppHeaderBarCtrl {
-	constructor($element, $translate, appSettings, SettingsActionsService) {
+	constructor($element, $translate, appSettings, SettingsActionsService, SearchService) {
 		'ngInject';
 		this.$element = $element;
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
-
+		this.searchService = SearchService;
 		this.init();
 	}
 
@@ -55,7 +55,7 @@ export default class AppHeaderBarCtrl {
 		const searchSettings = this.appSettings.views.appheaderbar.search;
 		const searchActionId = searchSettings.itemProps && searchSettings.itemProps.onClick;
 		const searchAction = this.appSettings.actions[searchActionId];
-		return {
+		const searchProps = {
 			...searchSettings,
 			config: {
 				...searchSettings.config,
@@ -70,6 +70,33 @@ export default class AppHeaderBarCtrl {
 				onClick: this.SettingsActionsService.createDispatcher(searchAction),
 			},
 		};
+		const inputValue = searchSettings.inputProps && searchSettings.inputProps.value;
+		if (inputValue) {
+			this.searchService.searchAll()
+				.then((results) => {
+					const adaptedResults = results.map((result) => {
+						return {
+							title: '', description: result,
+						};
+					});
+					return {
+						...searchProps,
+						items: [
+							{
+								title: 'Common category',
+								icon: {
+									name: 'fa fa-asterisk',
+									title: 'icon',
+								},
+								suggestions: adaptedResults,
+							},
+						],
+					};
+				});
+		}
+		else {
+			return searchProps;
+		}
 	}
 
 	adaptContent() {
@@ -84,13 +111,16 @@ export default class AppHeaderBarCtrl {
 			[];
 
 		this.content = [
-			search,
 			{
 				navs: [{
 					nav: { pullRight: true },
 					navItems: navItems.concat(userMenu),
 				}],
-			}];
+			},
+			{
+				search,
+			},
+		];
 	}
 
 	adaptActions() {

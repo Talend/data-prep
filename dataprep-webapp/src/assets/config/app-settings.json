@@ -12,6 +12,9 @@
             "name": "talend-search"
           }
         },
+        "inputProps": {
+          "value": "data"
+        },
         "itemProps": {
           "onClick": "search:open"
         }

@@ -13,6 +13,7 @@
 
 export const homeState = {
 	sidePanelDocked: false,
+	sidePanelSelectedItem: 'menu:preparations',
 	preparations: {
 		creator: {
 			isVisible: false,
@@ -27,10 +28,15 @@ export const homeState = {
 
 export function HomeStateService() {
 	return {
+		setSidepanelSelectedItem,
 		toggleSidepanel,
 		toggleCopyMovePreparation,
 		togglePreparationCreator,
 	};
+
+	function setSidepanelSelectedItem(item) {
+		homeState.sidePanelSelectedItem = item;
+	}
 
 	function toggleSidepanel() {
 		homeState.sidePanelDocked = !homeState.sidePanelDocked;

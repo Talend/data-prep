@@ -36,6 +36,7 @@ export default class SidePanelCtrl {
 				...action,
 				label: action.name,
 				onClick: this.SettingsActionsService.createDispatcher(action),
+				active: this.state.home.sidePanelSelectedItem === action.id,
 			}));
 	}
 

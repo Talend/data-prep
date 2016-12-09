@@ -45,7 +45,7 @@ angular.module(MODULE_NAME,
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
     .component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
-	.component('reactInventoryList', InventoryListContainer) // TODO rename this when inventory-list is removed
+	.component('inventoryList', InventoryListContainer)
 	.component('sidePanel', SidePanelContainer)
 	.component('layout', LayoutContainer);
 

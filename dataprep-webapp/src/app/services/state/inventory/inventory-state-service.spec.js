@@ -74,7 +74,7 @@ describe('Inventory state service', () => {
 		it('should set display mode', inject((inventoryState, InventoryStateService) => {
 			// given
 			expect(inventoryState.datasetsDisplayMode).toBe('table');
-			const displayMode = 'tile';
+			const displayMode = { mode: 'tile' };
 
 			// when
 			InventoryStateService.setDatasetsDisplayMode(displayMode);

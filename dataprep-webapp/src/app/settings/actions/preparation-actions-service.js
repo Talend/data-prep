@@ -39,7 +39,6 @@ export default class PreparationActionsService {
 
 	dispatch(action) {
 		switch (action.type) {
-		case '@@preparation/DISPLAY_MODE':
 		case '@@preparation/CREATE':
 		case '@@preparation/EDIT':
 		case '@@preparation/CANCEL_EDIT':

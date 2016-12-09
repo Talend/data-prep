@@ -32,7 +32,8 @@ const InventoryListContainer = {
 		items: '<',
 		sortBy: '<',
 		sortDesc: '<',
-		views: '<',
+		viewKey: '<',
+		folderViewKey: '<',
 	},
 	controller: InventoryListCtrl,
 };

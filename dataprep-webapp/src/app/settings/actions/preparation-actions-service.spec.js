@@ -30,29 +30,6 @@ describe('Preparation actions service', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	describe('dispatch @@preparation/DISPLAY_MODE', () => {
-		it('should change display mode', inject((StateService, PreparationActionsService) => {
-			// given
-			const nextMode = 'tile';
-			const action = {
-				type: '@@preparation/DISPLAY_MODE',
-				payload: {
-					method: 'setPreparationsDisplayMode',
-					args: [],
-					mode: nextMode,
-				}
-			};
-			spyOn(StateService, 'setPreparationsDisplayMode').and.returnValue();
-
-			// when
-			PreparationActionsService.dispatch(action);
-
-			// then
-			expect(StateService.setPreparationsDisplayMode)
-				.toHaveBeenCalledWith(action.payload);
-		}));
-	});
-
 	describe('dispatch @@preparation/SORT', () => {
 		let folderMock;
 		beforeEach(inject(($q, FolderService, StateService, StorageService) => {

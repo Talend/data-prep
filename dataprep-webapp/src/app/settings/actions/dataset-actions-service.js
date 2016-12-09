@@ -12,22 +12,18 @@
  ============================================================================*/
 
 export default class DatasetActionsService {
-	constructor($stateParams, state, DatasetService, DatasetListService,
+	constructor($stateParams, state, DatasetService,
 				StateService, StorageService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
 		this.DatasetService = DatasetService;
-		this.DatasetListService = DatasetListService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
 	}
 
 	dispatch(action) {
 		switch (action.type) {
-		case '@@dataset/DISPLAY_MODE':
-			this.StateService.setDatasetsDisplayMode(action.payload.mode);
-			break;
 		case '@@dataset/SORT': {
 			const oldSort = this.state.inventory.datasetsSort;
 			const oldOrder = this.state.inventory.datasetsOrder;
@@ -37,7 +33,7 @@ export default class DatasetActionsService {
 
 			this.StateService.setDatasetsSortFromIds(sortBy, sortOrder);
 
-			this.DatasetListService.refreshDatasets()
+			this.DatasetService.refreshDatasets()
 				.then(() => this.StorageService.setDatasetsSort(sortBy))
 				.then(() => this.StorageService.setDatasetsOrder(sortOrder))
 				.catch(() => {

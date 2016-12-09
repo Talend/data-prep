@@ -279,11 +279,11 @@ export function InventoryStateService() {
 	 * @ngdoc method
 	 * @name setDatasetsDisplayMode
 	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {string} displayMode The display mode
+	 * @param {string} displayMode.mode The display mode
 	 * @description Set the dataset display mode
 	 */
 	function setDatasetsDisplayMode(displayMode) {
-		inventoryState.datasetsDisplayMode = displayMode;
+		inventoryState.datasetsDisplayMode = displayMode.mode;
 	}
 
     /**

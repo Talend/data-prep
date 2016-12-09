@@ -14,13 +14,14 @@ const HomePreparationContainer = {
 	template: `
 		<div class="home-content">
 			<breadcrumbs items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
-			<react-inventory-list
+			<inventory-list
 				display-mode="$ctrl.state.inventory.preparationsDisplayMode"
 				folders="$ctrl.state.inventory.folder.content.folders"
 				items="$ctrl.state.inventory.folder.content.preparations"
 				sort-by="$ctrl.state.inventory.preparationsSort.id"
 				sort-desc="$ctrl.state.inventory.preparationsOrder.id === 'desc'"
-				views="'listview:preparations'"
+				view-key="'listview:preparations'"
+				folder-view-key="'listview:folders'"
 			/>
 		</div>
 	`,

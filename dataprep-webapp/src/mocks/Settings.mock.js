@@ -97,8 +97,6 @@ const settingsMock = {
 					"iconKey": "icon",
 					"key": "name",
 					"onClick": "menu:playground:dataset",
-					"onEditCancel": "dataset:cancel-edit",
-					"onEditSubmit": "dataset:submit-edit"
 				}
 			},
 			"toolbar": {
@@ -107,7 +105,6 @@ const settingsMock = {
 					{ "id": "date", "name": "Creation Date" }
 				],
 				"actions": [],
-				"onClickAdd": "",
 				"onSelectDisplayMode": "dataset:display-mode",
 				"onSelectSortBy": "dataset:sort",
 				"searchLabel": "Find a dataset"
@@ -225,7 +222,7 @@ const settingsMock = {
 			"id": "dataset:display-mode",
 			"name": "Change dataset display mode",
 			"icon": "",
-			"type": "@@dataset/DISPLAY_MODE",
+			"type": "@@inventory/DISPLAY_MODE",
 			"payload": {
 				"method": "setDatasetsDisplayMode",
 				"args": []
@@ -238,16 +235,6 @@ const settingsMock = {
 			"type": "@@dataset/SORT",
 			"payload": {
 				"method": "setDatasetsSortFromIds",
-				"args": []
-			}
-		},
-		"dataset:create": {
-			"id": "dataset:create",
-			"name": "Create a dataset",
-			"icon": "talend-dataprep",
-			"type": "@@dataset/CREATE",
-			"payload": {
-				"method": "",
 				"args": []
 			}
 		},
@@ -265,7 +252,7 @@ const settingsMock = {
 			id: 'preparation:display-mode',
 			name: 'Change preparation display mode',
 			icon: '',
-			type: '@@preparation/DISPLAY_MODE',
+			type: '@@inventory/DISPLAY_MODE',
 			payload: {
 				method: 'setPreparationsDisplayMode',
 				args: [],

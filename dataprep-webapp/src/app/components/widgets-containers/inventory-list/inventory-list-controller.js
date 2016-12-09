@@ -31,7 +31,7 @@ export default class InventoryListCtrl {
 
 	$onInit() {
 		const didMountActionCreator = this.appSettings
-			.views[this.views]
+			.views[this.viewKey]
 			.didMountActionCreator;
 		if (didMountActionCreator) {
 			const action = this.appSettings.actions[didMountActionCreator];
@@ -74,7 +74,7 @@ export default class InventoryListCtrl {
 	}
 
 	initToolbarProps() {
-		const toolbarSettings = this.appSettings.views[this.views].toolbar;
+		const toolbarSettings = this.appSettings.views[this.viewKey].toolbar;
 		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
 		const sortAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
@@ -98,16 +98,24 @@ export default class InventoryListCtrl {
 	}
 
 	initListProps() {
-		const listSettings = this.appSettings.views[this.views].list;
-		const onFolderClick = this.getTitleActionDispatcher('listview:folders', 'onClick');
-		const onItemClick = this.getTitleActionDispatcher(this.views, 'onClick');
-		const onClick = (event, payload) => {
-			return payload.type === 'folder' ?
-				onFolderClick(event, payload) :
-				onItemClick(event, payload);
-		};
-		const onEditCancel = this.getTitleActionDispatcher(this.views, 'onEditCancel');
-		const onEditSubmit = this.getTitleActionDispatcher(this.views, 'onEditSubmit');
+		const listSettings = this.appSettings.views[this.viewKey].list;
+		const onItemClick = this.getTitleActionDispatcher(this.viewKey, 'onClick');
+
+		let onClick;
+		if (this.folderViewKey) {
+			const onFolderClick = this.getTitleActionDispatcher(this.folderViewKey, 'onClick');
+			onClick = (event, payload) => {
+				return payload.type === 'folder' ?
+					onFolderClick(event, payload) :
+					onItemClick(event, payload);
+			};
+		}
+		else {
+			onClick = onItemClick;
+		}
+
+		const onEditCancel = this.getTitleActionDispatcher(this.viewKey, 'onEditCancel');
+		const onEditSubmit = this.getTitleActionDispatcher(this.viewKey, 'onEditSubmit');
 		this.listProps = {
 			...listSettings,
 			titleProps: {

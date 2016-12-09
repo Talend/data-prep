@@ -98,7 +98,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			creationDate: moment(item.created).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			nbLines: item.records,
-			icon: 'talend-dataprep',
+			icon: 'talend-file-cog',
 			displayMode: 'text',
 			className: 'list-item-dataset',
 			actions: getDatasetActions(item),

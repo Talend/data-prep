@@ -61,6 +61,6 @@ describe('Home Preparation Container', () => {
 		createElement();
 
 		//then
-		expect(element.find('react-inventory-list').length).toBe(1);
+		expect(element.find('inventory-list').length).toBe(1);
 	});
 });

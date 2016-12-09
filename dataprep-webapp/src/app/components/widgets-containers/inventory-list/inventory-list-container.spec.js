@@ -122,13 +122,14 @@ describe('Inventory list container', () => {
 
 		createElement = () => {
 			element = angular.element(`
-				<react-inventory-list
+				<inventory-list
 					display-mode="displayMode"
 					folders="folders"
 					items="items"
 					sort-by="sortBy"
 					sort-desc="sortDesc"
-					views="'listview:preparations'"
+					view-key="'listview:preparations'"
+					folder-view-key="'listview:folders'"
 				/>
 			`);
 			body.append(element);

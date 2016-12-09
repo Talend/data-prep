@@ -79,37 +79,37 @@ const settingsMock = {
 				searchLabel: 'Find a preparation',
 			},
 		},
-		"listview:datasets": {
-			"didMountActionCreator": "datasets:fetch",
-			"list": {
-				"columns": [
-					{ "key": "name", "label": "Name" },
-					{ "key": "author", "label": "Author" },
-					{ "key": "creationDate", "label": "Created" },
-					{ "key": "nbLines", "label": "Lines" }
+		'listview:datasets': {
+			didMountActionCreator: 'datasets:fetch',
+			list: {
+				columns: [
+					{ key: 'name', label: 'Name' },
+					{ key: 'author', label: 'Author' },
+					{ key: 'creationDate', label: 'Created' },
+					{ key: 'nbLines', label: 'Lines' },
 				],
-				"items": [],
-				"itemProps": {
-					"classNameKey": "className"
+				items: [],
+				itemProps: {
+					classNameKey: 'className',
 				},
-				"titleProps": {
-					"displayModeKey": "displayMode",
-					"iconKey": "icon",
-					"key": "name",
-					"onClick": "menu:playground:dataset",
-				}
+				titleProps: {
+					displayModeKey: 'displayMode',
+					iconKey: 'icon',
+					key: 'name',
+					onClick: 'menu:playground:dataset',
+				},
 			},
-			"toolbar": {
-				"sortOptions": [
-					{ "id": "name", "name": "Name" },
-					{ "id": "date", "name": "Creation Date" }
+			toolbar: {
+				sortOptions: [
+					{ id: 'name', name: 'Name' },
+					{ id: 'date', name: 'Creation Date' },
 				],
-				"actions": [],
-				"onSelectDisplayMode": "dataset:display-mode",
-				"onSelectSortBy": "dataset:sort",
-				"searchLabel": "Find a dataset"
-			}
-		}
+				actions: [],
+				onSelectDisplayMode: 'dataset:display-mode',
+				onSelectSortBy: 'dataset:sort',
+				searchLabel: 'Find a dataset',
+			},
+		},
 	},
 	actions: {
 		'menu:preparations': {
@@ -154,17 +154,17 @@ const settingsMock = {
 				args: ['playground.preparation'],
 			},
 		},
-		"menu:playground:dataset": {
-			"id": "menu:playground:dataset",
-			"name": "Dataset Playground",
-			"icon": "talend-dataprep",
-			"type": "@@router/GO_DATASET",
-			"payload": {
-				"method": "go",
-				"args": [
-					"playground.dataset"
-				]
-			}
+		'menu:playground:dataset': {
+			id: 'menu:playground:dataset',
+			name: 'Dataset Playground',
+			icon: 'talend-dataprep',
+			type: '@@router/GO_DATASET',
+			payload: {
+				method: 'go',
+				args: [
+					'playground.dataset',
+				],
+			},
 		},
 		'sidepanel:toggle': {
 			id: 'sidepanel:toggle',
@@ -218,35 +218,35 @@ const settingsMock = {
 				method: 'logout',
 			},
 		},
-		"dataset:display-mode": {
-			"id": "dataset:display-mode",
-			"name": "Change dataset display mode",
-			"icon": "",
-			"type": "@@inventory/DISPLAY_MODE",
-			"payload": {
-				"method": "setDatasetsDisplayMode",
-				"args": []
-			}
+		'dataset:display-mode': {
+			id: 'dataset:display-mode',
+			name: 'Change dataset display mode',
+			icon: '',
+			type: '@@inventory/DISPLAY_MODE',
+			payload: {
+				method: 'setDatasetsDisplayMode',
+				args: [],
+			},
 		},
-		"dataset:sort": {
-			"id": "dataset:sort",
-			"name": "Change dataset sort",
-			"icon": "",
-			"type": "@@dataset/SORT",
-			"payload": {
-				"method": "setDatasetsSortFromIds",
-				"args": []
-			}
+		'dataset:sort': {
+			id: 'dataset:sort',
+			name: 'Change dataset sort',
+			icon: '',
+			type: '@@dataset/SORT',
+			payload: {
+				method: 'setDatasetsSortFromIds',
+				args: [],
+			},
 		},
-		"datasets:fetch": {
-			"id": "datasets:fetch",
-			"name": "Fetch all datasets",
-			"icon": "talend-dataprep",
-			"type": "@@dataset/DATASET_FETCH",
-			"payload": {
-				"method": "init",
-				"args": []
-			}
+		'datasets:fetch': {
+			id: 'datasets:fetch',
+			name: 'Fetch all datasets',
+			icon: 'talend-dataprep',
+			type: '@@dataset/DATASET_FETCH',
+			payload: {
+				method: 'init',
+				args: [],
+			},
 		},
 		'preparation:display-mode': {
 			id: 'preparation:display-mode',

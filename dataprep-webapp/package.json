@@ -21,7 +21,7 @@
     "test": "karma start",
     "test:ci": "karma start karma.conf.ci.js",
     "test:auto": "karma start --auto",
-    "lint:es": "eslint --config .eslintrc --fix src/app",
+    "lint:es": "eslint --config .eslintrc --fix src",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/app/**/*.scss' -v -q",
     "stats": "webpack --config config/webpack.config.dev.js --profile -j > stats.json"
   },

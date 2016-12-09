@@ -11,77 +11,77 @@
 
   ============================================================================*/
 
-function SlickGridMock () {
-    return {
-        //mock functions
-        initCellMock: function(cell, box) {
-            //cell : the SlickGrid cell infos. Ex: {row: 1, cell: 2}
-            //box : the SlickGrid cell box. Ex: {left: 300, right: 500, top: 10, bottom: 40}
-            this.cell = cell;
-            this.box = box;
-        },
-        initColumnsMock: function(columns) {
-            this.columns = columns;
-        },
-        initRenderedRangeMock: function(range) {
-            this.range = range;
-        },
-        initActiveCellMock: function(activeCell) {
-            this.activeCell = activeCell;
-        },
-        initCellEditorMock: function(editor) {
-            this.cellEditor = editor;
-        },
-        cssStyleConfig: {},
+function SlickGridMock() {
+	return {
+        // mock functions
+		initCellMock(cell, box) {
+            // cell : the SlickGrid cell infos. Ex: {row: 1, cell: 2}
+            // box : the SlickGrid cell box. Ex: {left: 300, right: 500, top: 10, bottom: 40}
+			this.cell = cell;
+			this.box = box;
+		},
+		initColumnsMock(columns) {
+			this.columns = columns;
+		},
+		initRenderedRangeMock(range) {
+			this.range = range;
+		},
+		initActiveCellMock(activeCell) {
+			this.activeCell = activeCell;
+		},
+		initCellEditorMock(editor) {
+			this.cellEditor = editor;
+		},
+		cssStyleConfig: {},
 
-        //slickGrid events
-        onActiveCellChanged: { subscribe: function() {} },
-        onBeforeHeaderCellDestroy: { subscribe: function() {} },
-        onClick: { subscribe: function() {} },
-        onColumnsReordered: { subscribe: function() {} },
-        onColumnsResized: { subscribe: function() {} },
-        onHeaderCellRendered: { subscribe: function() {} },
-        onHeaderClick: { subscribe: function() {} },
-        onMouseEnter: { subscribe: function() {} },
-        onMouseLeave: { subscribe: function() {} },
-        onScroll: { subscribe: function() {} },
-        onHeaderContextMenu: { subscribe: function() {} },
+        // slickGrid events
+		onActiveCellChanged: { subscribe() {} },
+		onBeforeHeaderCellDestroy: { subscribe() {} },
+		onClick: { subscribe() {} },
+		onColumnsReordered: { subscribe() {} },
+		onColumnsResized: { subscribe() {} },
+		onHeaderCellRendered: { subscribe() {} },
+		onHeaderClick: { subscribe() {} },
+		onMouseEnter: { subscribe() {} },
+		onMouseLeave: { subscribe() {} },
+		onScroll: { subscribe() {} },
+		onHeaderContextMenu: { subscribe() {} },
 
-        //slickGrid functions
-        autosizeColumns: function() {},
-        invalidate: function() {},
-        invalidateRows: function() {},
-        getActiveCell: function() {
-            return this.activeCell;
-        },
-        getColumns: function() {
-            return this.columns;
-        },
-        getCellEditor: function() {
-            return this.cellEditor;
-        },
-        getCellFromEvent: function() {
-            return this.cell;
-        },
-        getCellNodeBox: function() {
-            return this.box;
-        },
-        getRenderedRange: function() {
-            return this.range;
-        },
-        render: function() {},
-        resetActiveCell: function() {},
-        resizeCanvas: function() {},
-        scrollCellIntoView: function() {},
-        setColumns: function(columns) {
-            this.columns = columns;
-        },
-        setCellCssStyles: function(cssStyle, config) {
-            this.cssStyleConfig[cssStyle] = config;
-        },
-        scrollRowToTop: function() {},
-        updateRowCount: function() {}
-    };
+        // slickGrid functions
+		autosizeColumns() {},
+		invalidate() {},
+		invalidateRows() {},
+		getActiveCell() {
+			return this.activeCell;
+		},
+		getColumns() {
+			return this.columns;
+		},
+		getCellEditor() {
+			return this.cellEditor;
+		},
+		getCellFromEvent() {
+			return this.cell;
+		},
+		getCellNodeBox() {
+			return this.box;
+		},
+		getRenderedRange() {
+			return this.range;
+		},
+		render() {},
+		resetActiveCell() {},
+		resizeCanvas() {},
+		scrollCellIntoView() {},
+		setColumns(columns) {
+			this.columns = columns;
+		},
+		setCellCssStyles(cssStyle, config) {
+			this.cssStyleConfig[cssStyle] = config;
+		},
+		scrollRowToTop() {},
+		updateRowCount() {},
+	};
 }
 
 module.exports = SlickGridMock;

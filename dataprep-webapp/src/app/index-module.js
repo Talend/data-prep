@@ -107,12 +107,6 @@ const app = angular.module(MODULE_NAME,
 				views: {
 					'home-content': { template: '<react-home-preparation></react-home-preparation>' },
 				},
-				resolve: {
-					preparation: (StateService) => {
-						'ngInject';
-						return StateService.setSidepanelSelectedItem('menu:preparations');
-					},
-				},
 			})
 			.state('playground', {
 				url: '/playground',

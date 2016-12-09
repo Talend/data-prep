@@ -74,19 +74,19 @@
       "payload": {
         "method": "go",
         "args": [
-          "nav.index.preparations"
+          "reactHome.preparations"
         ]
       }
     },
     "menu:folders": {
       "id": "menu:folders",
-      "name": "folders",
+      "name": "Folders",
       "icon": "icon-folder",
       "type": "@@router/GO_FOLDER",
       "payload": {
         "method": "go",
         "args": [
-          "nav.index.preparations"
+          "reactHome.preparations"
         ]
       }
     },
@@ -98,7 +98,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "nav.index.datasets"
+          "reactHome.datasets"
         ]
       }
     },

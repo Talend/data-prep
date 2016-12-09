@@ -15,19 +15,6 @@ describe('home state', () => {
 
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
-	describe('setSidepanelSelectedItem', () => {
-		it('should set sidepanel selected item', inject((homeState, HomeStateService) => {
-			//given
-			homeState.sidePanelSelectedItem = 'menu:preparations';
-
-			//when
-			HomeStateService.setSidepanelSelectedItem('menu:datasets');
-
-			//then
-			expect(homeState.sidePanelSelectedItem).toBe('menu:datasets');
-		}));
-	});
-
 	describe('toggleSidepanel', () => {
 		it('should toggle sidepanel', inject((homeState, HomeStateService) => {
 			//given

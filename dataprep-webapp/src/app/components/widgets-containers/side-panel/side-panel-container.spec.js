@@ -26,7 +26,7 @@ describe('Side Panel container', () => {
 		scope = $rootScope.$new();
 
 		createElement = () => {
-			element = angular.element('<side-panel><side-panel/>');
+			element = angular.element('<side-panel active="active"><side-panel/>');
 			body.append(element);
 			$compile(element)(scope);
 			scope.$digest();
@@ -68,6 +68,19 @@ describe('Side Panel container', () => {
 			const datasetsButton = element.find('nav > ul > li').eq(1).find('button');
 			expect(datasetsButton.attr('title')).toBe('Display Datasets');
 		});
+
+		it('should set active based on the route state name', () => {
+			// given
+			createElement();
+
+			// when
+			scope.active = 'reactHome.datasets';
+			scope.$digest();
+
+			// then
+			expect(element.find('nav > ul > li').eq(0).hasClass('active')).toBe(false);
+			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBe(true);
+		});
 	});
 
 	describe('onClick', () => {
@@ -102,7 +115,7 @@ describe('Side Panel container', () => {
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO');
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('nav.index.preparations');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('reactHome.preparations');
 		}));
 
 		it('should dispatch datasets button click', inject((SettingsActionsService) => {
@@ -117,7 +130,7 @@ describe('Side Panel container', () => {
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO');
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('nav.index.datasets');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('reactHome.datasets');
 		}));
 	});
 });

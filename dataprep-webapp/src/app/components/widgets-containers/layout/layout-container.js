@@ -19,7 +19,7 @@ const LayoutContainer = {
 			</div>
 			<div class="content">
 				<div class="sidemenu">
-					<side-panel><side-panel/>
+					<side-panel active="$ctrl.$state.current.name"><side-panel/>
 				</div>
 				<div class="main">
 					<div class="main-wrapper">
@@ -29,6 +29,10 @@ const LayoutContainer = {
 			</div>
 		</div>
 	`,
+	controller($state) {
+		'ngInject';
+		this.$state = $state;
+	},
 };
 
 export default LayoutContainer;

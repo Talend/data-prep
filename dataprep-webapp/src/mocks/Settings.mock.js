@@ -88,9 +88,7 @@ const settingsMock = {
 			type: '@@router/GO',
 			payload: {
 				method: 'go',
-				args: [
-					'nav.index.preparations',
-				],
+				args: ['reactHome.preparations'],
 			},
 		},
 		'menu:datasets': {
@@ -100,17 +98,17 @@ const settingsMock = {
 			type: '@@router/GO',
 			payload: {
 				method: 'go',
-				args: ['nav.index.datasets'],
+				args: ['reactHome.datasets'],
 			},
 		},
 		'menu:folders': {
 			id: 'menu:folders',
-			name: 'folders',
+			name: 'Folders',
 			icon: 'talend-folder',
 			type: '@@router/GO_FOLDER',
 			payload: {
 				method: 'go',
-				args: ['nav.index.preparations'],
+				args: ['reactHome.preparations'],
 			},
 		},
 		'menu:playground:preparation': {

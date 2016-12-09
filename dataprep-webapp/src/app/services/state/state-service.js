@@ -44,7 +44,6 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 		resetRoute: RouteStateService.reset.bind(RouteStateService),
 
 		// home
-		setSidepanelSelectedItem: HomeStateService.setSidepanelSelectedItem,
 		toggleHomeSidepanel: HomeStateService.toggleSidepanel,
 		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,
 		togglePreparationCreator: HomeStateService.togglePreparationCreator,

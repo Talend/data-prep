@@ -20,6 +20,9 @@ const SidePanelContainer = {
 			on-toggle-dock="$ctrl.toggle"
 			docked="$ctrl.state.home.sidePanelDocked"
 		/>`,
+	bindings: {
+		active: '<',
+	},
 	controller: SidePanelCtrl,
 };
 export default SidePanelContainer;

@@ -100,6 +100,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			nbLines: item.records,
 			icon: 'talend-dataprep',
 			displayMode: 'text',
+			className: 'list-item-dataset',
 			actions: getDatasetActions(item),
 			model: item,
 		}));

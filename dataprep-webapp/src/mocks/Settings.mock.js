@@ -89,6 +89,9 @@ const settingsMock = {
 					{ "key": "nbLines", "label": "Lines" }
 				],
 				"items": [],
+				"itemProps": {
+					"classNameKey": "className"
+				},
 				"titleProps": {
 					"displayModeKey": "displayMode",
 					"iconKey": "icon",
@@ -99,7 +102,7 @@ const settingsMock = {
 				}
 			},
 			"toolbar": {
-				"sortBy": [
+				"sortOptions": [
 					{ "id": "name", "name": "Name" },
 					{ "id": "date", "name": "Creation Date" }
 				],

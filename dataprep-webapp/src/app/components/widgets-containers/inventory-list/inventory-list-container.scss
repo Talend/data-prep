@@ -1,0 +1,29 @@
+/*  ============================================================================
+
+  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+
+  This source code is available under agreement available at
+  https://github.com/Talend/data-prep/blob/master/LICENSE
+
+  You should have received a copy of the agreement
+  along with this program; if not, write to Talend SA
+  9 rue Pages 92150 Suresnes, France
+
+  ============================================================================*/
+.list-item-preparation, .list-item-dataset {
+  .tc-list-icon {
+    fill: #005393;
+  }
+}
+
+.list-item-folder {
+  .tc-list-icon {
+    fill: #EAC282;
+  }
+}
+
+.list-item-shared-folder {
+  .tc-list-icon {
+    fill: #00A6CE;
+  }
+}

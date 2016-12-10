@@ -75,19 +75,26 @@ export default class InventoryListCtrl {
 
 	initToolbarProps() {
 		const toolbarSettings = this.appSettings.views[this.viewKey].toolbar;
+
 		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
-		const sortAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
-		const dispatchDisplayMode = this.SettingsActionsService.createDispatcher(displayModeAction);
+		const sortByAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
+
+		const onClickAdd = clickAddAction && this.SettingsActionsService.createDispatcher(clickAddAction);
+		const onSelectSortBy = sortByAction && this.SettingsActionsService.createDispatcher(sortByAction);
+		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
+		const onSelectDisplayMode = dispatchDisplayMode && ((event, mode) => dispatchDisplayMode(event, { mode }));
+
+		const actions = toolbarSettings.actions
+			.map(actionName => this.appSettings.actions[actionName])
+			.map(action => this.SettingsActionsService.createDispatcher(action));
 
 		this.toolbarProps = {
 			...toolbarSettings,
-			actions: toolbarSettings.actions
-				.map(actionName => this.appSettings.actions[actionName])
-				.map(action => this.SettingsActionsService.createDispatcher(action)),
-			onClickAdd: this.SettingsActionsService.createDispatcher(clickAddAction),
-			onSelectDisplayMode: (event, mode) => dispatchDisplayMode(event, { mode }),
-			onSelectSortBy: this.SettingsActionsService.createDispatcher(sortAction),
+			actions,
+			onClickAdd,
+			onSelectDisplayMode,
+			onSelectSortBy,
 		};
 	}
 

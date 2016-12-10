@@ -5516,9 +5516,9 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.26.0:
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.26.0.tgz#463117dfbee34e500b439019e9b69426409d1c98"
+react-talend-components@0.26.5:
+  version "0.26.5"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.26.5.tgz#bf1b6964875a506447963401e1da9012939e1583"
   dependencies:
     react-autowhatever "^7.0.0"
 

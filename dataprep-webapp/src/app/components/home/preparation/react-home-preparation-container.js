@@ -15,7 +15,6 @@ const HomePreparationContainer = {
 		<div class="home-content">
 			<breadcrumbs items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
 			<inventory-list
-				display-mode="$ctrl.state.inventory.preparationsDisplayMode"
 				folders="$ctrl.state.inventory.folder.content.folders"
 				items="$ctrl.state.inventory.folder.content.preparations"
 				sort-by="$ctrl.state.inventory.preparationsSort.id"

@@ -15,13 +15,28 @@ const PREPARATION = 'preparation';
 
 export default class SearchActionsService {
 
-	constructor(MenuActionsService) {
+	constructor(MenuActionsService, SearchService, StateService) {
 		'ngInject';
-		this.MenuActionsService = MenuActionsService;
+
+		this.menuActionsService = MenuActionsService;
+		this.searchService = SearchService;
+		this.stateService = StateService;
 	}
 
 	dispatch(action) {
 		switch (action.type) {
+		case '@@search/ALL': {
+			const searchInput =
+				action.payload &&
+				action.payload.searchInput;
+			if (searchInput) {
+				this.stateService.setSearchInput(searchInput);
+				this.searchService
+					.searchAll(searchInput)
+					.then(results => this.stateService.setSearchResults(results));
+			}
+			break;
+		}
 		case '@@search/OPEN': {
 			switch (action.payload.category) {
 			case PREPARATION: {
@@ -33,7 +48,7 @@ export default class SearchActionsService {
 						id: action.payload.id,
 					},
 				};
-				this.MenuActionsService.dispatch(menuAction);
+				this.menuActionsService.dispatch(menuAction);
 				break;
 			}
 			}

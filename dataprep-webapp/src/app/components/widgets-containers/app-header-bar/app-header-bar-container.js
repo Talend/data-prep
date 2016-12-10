@@ -17,7 +17,13 @@ const AppHeaderBarContainer = {
 		 	app="$ctrl.app"
 		 	brand-link="$ctrl.brandLink"
 		 	content="$ctrl.content"
+		 	watch-depth="reference"
 		/>`,
 	controller: AppHeaderBarCtrl,
+	bindings: {
+		searchToggle: '<',
+		searchInput: '<',
+		searchResults: '<',
+	},
 };
 export default AppHeaderBarContainer;

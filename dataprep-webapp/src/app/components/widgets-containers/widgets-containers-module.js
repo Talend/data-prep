@@ -28,6 +28,7 @@ import SidePanelContainer from './side-panel/side-panel-container';
 import FOLDER_MODULE from '../../services/folder/folder-module';
 import SEARCH_MODULE from '../../services/search/search-module';
 import SETTINGS_MODULE from '../../settings/settings-module';
+import STATE_MODULE from '../../services/state/state-module';
 
 const MODULE_NAME = 'react-talend-components.containers';
 
@@ -38,6 +39,7 @@ angular.module(MODULE_NAME,
 		FOLDER_MODULE,
 		SEARCH_MODULE,
 		SETTINGS_MODULE,
+		STATE_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])

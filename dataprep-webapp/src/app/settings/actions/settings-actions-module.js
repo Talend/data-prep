@@ -16,6 +16,7 @@ import uiRouter from 'angular-ui-router';
 import SERVICES_FOLDER_MODULE from '../../services/folder/folder-module';
 import SERVICES_ONBOARDING_MODULE from '../../services/onboarding/onboarding-module';
 import SERVICES_PREPARATION_MODULE from '../../services/preparation/preparation-module';
+import SERVICES_SEARCH_MODULE from '../../services/search/search-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
 import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 import WIDGETS_MODULE from '../../components/widgets/widget-module';
@@ -39,6 +40,7 @@ angular.module(MODULE_NAME,
 		SERVICES_ONBOARDING_MODULE,
 		SERVICES_PREPARATION_MODULE,
 		SERVICES_STATE_MODULE,
+		SERVICES_SEARCH_MODULE,
 		SERVICES_UTILS_MODULE,
 		WIDGETS_MODULE,
 	])
@@ -59,6 +61,7 @@ angular.module(MODULE_NAME,
 		DatasetActionsService,
 		PreparationActionsService,
 		InventoryActionsService,
+		SearchActionsService,
 		SidePanelActionsService) {
 		'ngInject';
 		return [
@@ -68,6 +71,7 @@ angular.module(MODULE_NAME,
 			OnboardingActionsService,
 			DatasetActionsService,
 			PreparationActionsService,
+			SearchActionsService,
 			InventoryActionsService,
 			SidePanelActionsService,
 		];

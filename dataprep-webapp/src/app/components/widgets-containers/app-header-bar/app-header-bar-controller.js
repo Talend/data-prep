@@ -13,6 +13,25 @@
 
 const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
+const SEARCH_INVENTORY_TYPES = [
+	{
+		title: 'preparations',
+		iconName: 'talend-dataprep',
+		iconTitle: 'preparations',
+	}, {
+		title: 'datasets',
+		iconName: 'talend-files-o',
+		iconTitle: 'datasets',
+	}, {
+		title: 'folders',
+		iconName: 'talend-folder',
+		iconTitle: 'folders',
+	}, {
+		title: 'documentation',
+		iconName: 'talend-question-circle',
+		iconTitle: 'documentation',
+	},
+];
 
 export default class AppHeaderBarCtrl {
 	constructor($element, $translate, appSettings, state, SettingsActionsService, SearchService) {
@@ -35,47 +54,30 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onChanges(changes) {
-		const newContent = this.content.slice();
+		const updatedContent = this.content.slice();
 		if (changes.searchInput) {
-			const searchInput = changes.searchInput && changes.searchInput.currentValue;
-			newContent[1].search = {
-				...newContent[1].search,
+			const searchInput = changes.searchInput.currentValue;
+			updatedContent[1].search = {
+				...updatedContent[1].search,
 				inputProps: {
-					...newContent[1].search.inputProps,
+					...updatedContent[1].search.inputProps,
 					value: searchInput,
-					items: searchInput === '' ? [] : newContent[1].search.inputProps.items,
+				},
+				items: searchInput === '' ? [] : updatedContent[1].search.items,
+				renderItemData: {
+					value: searchInput,
 				},
 			};
 		}
 		else if (changes.searchResults) {
-			const results = changes.searchResults && changes.searchResults.currentValue;
-			const inventoryTypes = [
-				{
-					title: 'preparation',
-					iconName: 'talend-preparation',
-					iconTitle: 'preparation',
-				}, {
-					title: 'dataset',
-					iconName: 'talend-dataset',
-					iconTitle: 'dataset',
-				}, {
-					title: 'folder',
-					iconName: 'talend-folder',
-					iconTitle: 'folder',
-				}, {
-					title: 'documentation',
-					iconName: 'talend-documentation',
-					iconTitle: 'documentation',
-				},
-			];
-			newContent[1].search = {
-				...newContent[1].search,
-				items: inventoryTypes
+			const results = changes.searchResults.currentValue;
+			updatedContent[1].search = {
+				...updatedContent[1].search,
+				items: SEARCH_INVENTORY_TYPES
 					.filter((inventoryType) => {
-						const suggestions = results.filter((result) => {
+						return results.some((result) => {
 							return result.inventoryType === inventoryType.title;
 						});
-						return suggestions && suggestions.length;
 					})
 					.map((inventoryType) => {
 						const suggestions = results.filter((result) => {
@@ -97,7 +99,7 @@ export default class AppHeaderBarCtrl {
 					}),
 			};
 		}
-		this.content = newContent;
+		this.content = updatedContent;
 	}
 
 	init() {
@@ -146,6 +148,9 @@ export default class AppHeaderBarCtrl {
 			itemProps: {
 				...searchSettings.itemProps,
 				onClick: this.settingsActionsService.createDispatcher(searchOpenAction),
+			},
+			renderItemData: {
+				value: this.state.search.searchInput,
 			},
 		};
 	}

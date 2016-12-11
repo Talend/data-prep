@@ -19,8 +19,10 @@ import static org.talend.dataprep.transformation.actions.datablending.Lookup.Par
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -32,9 +34,11 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
+import org.talend.dataprep.transformation.actions.common.ActionMetadataTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -42,7 +46,6 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Lookup
  */
-@Ignore
 public class LookupTest extends AbstractMetadataBaseTest {
 
     /** The action to test. */
@@ -105,6 +108,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
         // given
         Map<String, String> parameters = getUsStatesLookupParameters("us_states");
         DataSetRow row = ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena");
+        cacheUsStates();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -123,9 +127,10 @@ public class LookupTest extends AbstractMetadataBaseTest {
         // given
         Map<String, String> parameters = getUsStatesLookupParameters("nba");
         parameters.put(LOOKUP_SELECTED_COLS.getKey(),
-                "[{\"id\":\"0001\", \"name\":\"Team\"}, {\"id\":\"0004\", \"Stadium\":\"toto\"}, {\"id\":\"0006\", \"name\":\"Coordinates\"}]");
+                "[{\"id\":\"0001\", \"name\":\"Team\"}, {\"id\":\"0004\", \"name\":\"Stadium\"}, {\"id\":\"0006\", \"name\":\"Coordinates\"}]");
         parameters.put(LOOKUP_JOIN_ON.getKey(), "0003");
         DataSetRow row = ActionMetadataTestUtils.getRow("Dallas", "TX");
+        cacheNBA();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -137,7 +142,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
 
         // and (check metadata)
         checkMergedMetadata(row.getRowMetadata().getById("0002"), "Team", "string", "");
-        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Arena", "string", "");
+        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Stadium", "string", "");
         checkMergedMetadata(row.getRowMetadata().getById("0004"), "Coordinates", "string", "");
     }
 
@@ -146,6 +151,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
         // given
         Map<String, String> parameters = getUsStatesLookupParameters("us_states");
         DataSetRow row = ActionMetadataTestUtils.getRow("Toronto", "ON", "Air Canada Centre");
+        cacheUsStates();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -155,8 +161,9 @@ public class LookupTest extends AbstractMetadataBaseTest {
         Assert.assertEquals(expected, row);
 
         // and (metadata)
-        checkMergedMetadata(row.getRowMetadata().getById("0003"), "Capital", "string", "CITY");
-        checkMergedMetadata(row.getRowMetadata().getById("0004"), "State", "string", "US_STATE");
+        checkMergedMetadata(row.getRowMetadata().getById("0003"), "State", "string", "US_STATE");
+        checkMergedMetadata(row.getRowMetadata().getById("0004"), "Capital", "string", "CITY");
+
     }
 
     @Test
@@ -164,6 +171,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
         // given
         Map<String, String> parameters = getUsStatesLookupParameters("us_states");
         DataSetRow row = ActionMetadataTestUtils.getRow("Huntington", "", "");
+        cacheUsStates();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -180,6 +188,7 @@ public class LookupTest extends AbstractMetadataBaseTest {
     @Test
     public void shouldMergeSeveralRows() throws IOException {
         // given
+        cacheUsStates();
         Map<String, String> parameters = getUsStatesLookupParameters("us_states");
         DataSetRow[] rows = new DataSetRow[] { ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena"),
                 ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena"),
@@ -200,6 +209,12 @@ public class LookupTest extends AbstractMetadataBaseTest {
         for (int i = 0; i < rows.length; i++) {
             Assert.assertEquals(expectedRows[i], rows[i]);
         }
+    }
+
+    @Test
+    public void should_have_expected_behavior() {
+        assertEquals(1, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
 
     /**
@@ -239,10 +254,38 @@ public class LookupTest extends AbstractMetadataBaseTest {
         return parameters;
     }
 
-    @Test
-    public void should_have_expected_behavior() {
-        assertEquals(1, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
+    private void cacheUsStates() {
+        Map<String, DataSetRow> usStates = new HashMap<>();
+
+        ColumnMetadata[] columnArrays = {ColumnMetadata.Builder.column().name("Postal").domain("US_STATE").type(Type.STRING).build(),
+                ColumnMetadata.Builder.column().name("State").domain("US_STATE").type(Type.STRING).build(),
+                ColumnMetadata.Builder.column().name("Capital").domain("CITY").type(Type.STRING).build()};
+        List<ColumnMetadata> columns = Arrays.stream(columnArrays).collect(Collectors.toList());
+
+
+        DataSetRow[] rows = { ActionMetadataTestUtils.getRow("GA", "Georgia", "Atlanta"),
+                ActionMetadataTestUtils.getRow("FL", "Florida", "Tallahassee"),
+                ActionMetadataTestUtils.getRow("IL", "Illinois", "Springfield"),
+                ActionMetadataTestUtils.getRow("TX", "Texas", "Austin"),
+                ActionMetadataTestUtils.getRow("CA", "California", "Sacramento")};
+
+                Arrays.stream(rows).forEach(r -> r.getRowMetadata().setColumns(columns));
+        Arrays.stream(rows).forEach(r -> usStates.put((String)r.values().get("0000"), r));
+
+        LookupDatasetsManager.put("us_states", usStates);
+    }
+
+    private void cacheNBA() {
+        Map<String, DataSetRow> usStates = new HashMap<>();
+        DataSetRow row = ActionMetadataTestUtils.getRow("Southwest", "Dallas Mavericks", "Dallas", "TX", "American Airlines Center", "",
+                "32.790556°N 96.810278°W");
+        row.getRowMetadata().getColumns().get(1).setName("Team");
+        row.getRowMetadata().getColumns().get(4).setName("Stadium");
+        row.getRowMetadata().getColumns().get(6).setName("Coordinates");
+
+        usStates.put("TX", row);
+
+        LookupDatasetsManager.put("nba", usStates);
     }
 
 }

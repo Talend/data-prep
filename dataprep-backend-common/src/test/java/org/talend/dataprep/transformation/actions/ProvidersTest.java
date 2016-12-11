@@ -104,6 +104,7 @@ public class ProvidersTest {
         // when
         final Object INSTANCE = new Object();
         Providers.setProvider(new Providers.Provider() {
+
             @Override
             public <T> T get(Class<T> clazz, Object... args) {
                 if (Object.class.equals(clazz)) {
@@ -127,7 +128,6 @@ public class ProvidersTest {
         assertNull(o2);
     }
 
-
     @Test(expected = UnsupportedOperationException.class)
     public void shouldThrowExceptionWithInvalidArg() throws Exception {
         Providers.get(Object.class, "1");
@@ -138,11 +138,53 @@ public class ProvidersTest {
         Providers.get(ProviderTestInterface.class, "1");
     }
 
+    @Test
+    public void shouldReturnDifferentInstancesWhenPrototypeScope() throws Exception {
+        // Given
+        final Object field = new Object();
+
+        // When
+        final InterfaceToImplementWithConstWithArgs firstInstanceWithArgs = Providers
+                .get(InterfaceToImplementWithConstWithArgs.class, field);
+        final InterfaceToImplementWithConstWithArgs secondInstanceWithArgs = Providers
+                .get(InterfaceToImplementWithConstWithArgs.class, field);
+
+        final InterfaceToImplementWithConstWithoutArgs firstInstanceWithoutArgs = Providers
+                .get(InterfaceToImplementWithConstWithoutArgs.class);
+        final InterfaceToImplementWithConstWithoutArgs secondInstanceWithoutArgs = Providers
+                .get(InterfaceToImplementWithConstWithoutArgs.class);
+
+        // Then
+        assertTrue(secondInstanceWithArgs != firstInstanceWithArgs);
+        assertEquals(ImplementationWithConstWithArgsPrototype.class, firstInstanceWithArgs.getClass());
+        assertTrue(secondInstanceWithoutArgs != firstInstanceWithoutArgs);
+        assertEquals(ImplementationWithConstWithoutArgsPrototype.class, firstInstanceWithoutArgs.getClass());
+    }
+
+    @Test
+    public void shouldReturnSameInstanceWhenFakeScope() throws Exception {
+        // Given
+        final Object field = new Object();
+
+        // When
+        final Interface2ToImplementWithConstWithArgs firstInstanceWithArgs = Providers.get(Interface2ToImplementWithConstWithArgs.class, field);
+        final Interface2ToImplementWithConstWithArgs secondInstanceWithArgs = Providers.get(Interface2ToImplementWithConstWithArgs.class, field);
+        final Interface2ToImplementWithConstWithoutArgs firstInstanceWithoutArgs = Providers.get(Interface2ToImplementWithConstWithoutArgs.class);
+        final Interface2ToImplementWithConstWithoutArgs secondInstanceWithoutArgs = Providers.get(Interface2ToImplementWithConstWithoutArgs.class);
+
+        // Then
+        assertTrue(secondInstanceWithArgs == firstInstanceWithArgs);
+        assertEquals(ImplementationWithConstWithArgsFakeScope.class, firstInstanceWithArgs.getClass());
+        assertTrue(secondInstanceWithoutArgs == firstInstanceWithoutArgs);
+        assertEquals(ImplementationWithConstWithoutArgsFakeScope.class, firstInstanceWithoutArgs.getClass());
+    }
+
     interface ProviderTestInterface {
+
         void test();
     }
 
-    public static class ProviderTestInterfaceImpl implements ProviderTestInterface {
+    static class ProviderTestInterfaceImpl implements ProviderTestInterface {
 
         public ProviderTestInterfaceImpl() {
         }
@@ -164,6 +206,50 @@ public class ProvidersTest {
         @Override
         public void test() {
             // Nothing to do
+        }
+    }
+
+    @interface FakeScope {
+    }
+
+    interface InterfaceToImplementWithConstWithArgs {
+    }
+
+    interface Interface2ToImplementWithConstWithArgs {
+    }
+
+    interface InterfaceToImplementWithConstWithoutArgs {
+    }
+
+    interface Interface2ToImplementWithConstWithoutArgs {
+    }
+
+    @PrototypeScope
+    public static class ImplementationWithConstWithArgsPrototype implements InterfaceToImplementWithConstWithArgs {
+
+        private final Object o;
+
+        public ImplementationWithConstWithArgsPrototype(Object o) {
+            this.o = o;
+        }
+    }
+
+    @FakeScope
+    public static class ImplementationWithConstWithArgsFakeScope implements Interface2ToImplementWithConstWithArgs {
+
+        public ImplementationWithConstWithArgsFakeScope(Object o) {
+        }
+    }
+
+    @PrototypeScope
+    public static class ImplementationWithConstWithoutArgsPrototype implements InterfaceToImplementWithConstWithoutArgs {
+
+    }
+
+    @FakeScope
+    public static class ImplementationWithConstWithoutArgsFakeScope implements Interface2ToImplementWithConstWithoutArgs {
+
+        public ImplementationWithConstWithoutArgsFakeScope() {
         }
     }
 

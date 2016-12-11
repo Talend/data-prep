@@ -26,11 +26,13 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.actions.PrototypeScope;
 
 /**
  * A default implementation of {@link LookupRowMatcher}.
  *
  */
+@PrototypeScope
 public class DefaultLookupRowMatcher implements LookupRowMatcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLookupRowMatcher.class);
@@ -46,15 +48,14 @@ public class DefaultLookupRowMatcher implements LookupRowMatcher {
         this.datasetId = parameters.get(LOOKUP_DS_ID.getKey());
         this.cache = LookupDatasetsManager.get(datasetId);
 
-
         Optional<DataSetRow> optionalFirstRow = cache.values().stream().findFirst();
-        if (optionalFirstRow.isPresent()){
+        if (optionalFirstRow.isPresent()) {
             DataSetRow firstRow = optionalFirstRow.get();
             if (firstRow != null && firstRow.getRowMetadata() != null && firstRow.getRowMetadata().getColumns() != null) {
                 emptyRow = getEmptyRow(firstRow.getRowMetadata().getColumns());
             }
-        }else{
-            LOGGER.warn("The dataset with id '"+datasetId+"' has no row");
+        } else {
+            LOGGER.warn("The dataset with id '" + datasetId + "' has no row");
         }
     }
 

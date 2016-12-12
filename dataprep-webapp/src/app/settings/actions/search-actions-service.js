@@ -38,7 +38,7 @@ export default class SearchActionsService {
 			break;
 		}
 		case '@@search/OPEN': {
-			switch (action.payload.category) {
+			switch (action.payload.inventoryType) {
 			case PREPARATION: {
 				const menuAction = {
 					type: '@@router/GO_PREPARATION',

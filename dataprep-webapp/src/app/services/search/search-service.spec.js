@@ -59,19 +59,6 @@ describe('Search service', () => {
 			expect(InventoryService.search).toHaveBeenCalledWith(searchInput);
 		}));
 
-		it('should call easter eggs service', inject(($rootScope, SearchService, EasterEggsService) => {
-			// given
-			const searchInput = 'STAR WARS';
-			spyOn(EasterEggsService, 'enableEasterEgg');
-
-			// when
-			SearchService.searchAll(searchInput);
-			$rootScope.$digest();
-
-			// then
-			expect(EasterEggsService.enableEasterEgg).toHaveBeenCalledWith(searchInput);
-		}));
-
 		it('should aggregate results', inject(($rootScope, $q, SearchService, DocumentationService, InventoryService) => {
 			let results = null;
 

@@ -25,7 +25,7 @@ describe('Search actions service', () => {
 					method: 'dispatch',
 					args: [],
 					id: 'acbd',
-					category: 'preparation',
+					inventoryType: 'preparation',
 				},
 			};
 			const menuAction = {

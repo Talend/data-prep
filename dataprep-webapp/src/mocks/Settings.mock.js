@@ -19,6 +19,11 @@ const settingsMock = {
 				title: 'Talend Data Preparation',
 				onClick: 'menu:home',
 			},
+			search: {
+				config: {
+					isOnlyIcon: true,
+				},
+			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
 			userMenuActions: {
 				id: 'user-menu',

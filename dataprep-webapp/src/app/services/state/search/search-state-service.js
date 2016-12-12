@@ -12,6 +12,7 @@
  ============================================================================*/
 
 export const searchState = {
+	searchToggle: true,
 	searchInput: '',
 	searchResults: [],
 };
@@ -23,9 +24,20 @@ export const searchState = {
  */
 export function SearchStateService() {
 	return {
+		toggle,
 		setSearchInput,
 		setSearchResults,
 	};
+
+	/**
+	 * @ngdoc method
+	 * @name setSearchInput
+	 * @methodOf data-prep.services.state.service:SearchStateService
+	 * @description Display the feedback
+	 */
+	function toggle() {
+		searchState.searchToggle = !searchState.searchToggle;
+	}
 
 	/**
 	 * @ngdoc method

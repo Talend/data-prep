@@ -123,15 +123,23 @@ export default class AppHeaderBarCtrl {
 
 	adaptSearch() {
 		const searchSettings = this.appSettings.views.appheaderbar.search;
+		const searchToggleActionId = searchSettings.itemProps && searchSettings.config.onInputIconClick;
 		const searchAllActionId = searchSettings.itemProps && searchSettings.inputProps.onKeyDown;
 		const searchOpenActionId = searchSettings.itemProps && searchSettings.itemProps.onClick;
+		const searchToggleAction = this.appSettings.actions[searchToggleActionId];
 		const searchAllAction = this.appSettings.actions[searchAllActionId];
 		const searchOpenAction = this.appSettings.actions[searchOpenActionId];
 		return {
 			...searchSettings,
 			config: {
 				...searchSettings.config,
-				title: this.$translate.instant('TOGGLE_SEARCH'),
+				isOnlyIcon: this.state.search.searchToggle,
+				icon: {
+					name: searchToggleAction && searchToggleAction.icon,
+					title: this.$translate.instant('TOGGLE_SEARCH'),
+					actionStyle: 'link',
+				},
+				onInputIconClick: this.settingsActionsService.createDispatcher(searchToggleAction),
 			},
 			inputProps: {
 				...searchSettings.inputProps,

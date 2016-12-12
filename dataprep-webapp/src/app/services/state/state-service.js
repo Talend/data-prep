@@ -174,6 +174,7 @@ export function StateService(RouteStateService, routeState,
 		setDefaultExportType: ExportStateService.setDefaultExportType,
 
 		// search
+		setSearchToggle: SearchStateService.toggle,
 		setSearchInput: SearchStateService.setSearchInput,
 		setSearchResults: SearchStateService.setSearchResults,
 	};

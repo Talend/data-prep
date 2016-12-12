@@ -12,63 +12,72 @@
  ============================================================================*/
 
 describe('Inventory Service', () => {
-    'use strict';
+	const results = {
+		data: {
+			folders: [{ name: 'folder test', lastModificationDate: 1 }],
+			preparations: [{ name: 'prep test', lastModificationDate: 2 }],
+			datasets: [{
+				name: 'dataset test',
+				lastModificationDate: 3,
+				author: 'toto',
+				created: 1,
+				records: 100,
+				path: 'home',
+				type: 'csv',
+				owner: {
+					id: 'charles',
+				},
+			}],
+		},
+	};
 
-    let results = {
-        data: {
-            folders: [{ name: 'folder test', lastModificationDate: 1 }],
-            preparations: [{ name: 'prep test', lastModificationDate: 2 }],
-            datasets: [{
-                name: 'dataset test',
-                lastModificationDate: 3,
-                author: 'toto',
-                created: 1,
-                records: 100,
-                path: 'home',
-                type: 'csv',
-                owner: {
-                    id: 'charles',
-                },
-            },],
+	beforeEach(angular.mock.module('data-prep.services.inventory'));
 
-        },
-    };
+	beforeEach(inject(($q, InventoryRestService) => {
+		spyOn(InventoryRestService, 'search').and.returnValue($q.when(results));
+	}));
 
-    beforeEach(angular.mock.module('data-prep.services.inventory'));
+	it('should call inventory search rest service and process data', inject(($rootScope, InventoryService) => {
+		// given
+		let result = null;
+		const expectedResult = [
+			{
+				inventoryType: 'dataset',
+				author: 'toto',
+				created: 1,
+				records: 100,
+				name: 'dataset test',
+				path: 'home',
+				type: 'csv',
+				originalItem: results.data.datasets[0],
+				lastModificationDate: 3,
+				tooltipName: 'dataset test',
+				owner: {
+					id: 'charles',
+				},
+			},
+			{
+				name: 'prep test',
+				lastModificationDate: 2,
+				inventoryType: 'preparation',
+				tooltipName: 'prep test',
+			},
+			{
+				name: 'folder test',
+				lastModificationDate: 1,
+				inventoryType: 'folder',
+				tooltipName: 'folder test',
+			},
+		];
 
-    beforeEach(inject(($q, InventoryRestService) => {
-        spyOn(InventoryRestService, 'search').and.returnValue($q.when(results));
-    }));
+		// when
+		InventoryService.search('test').then((response) => {
+			result = response;
+		});
 
-    it('should call inventory search rest service and process data', inject(($rootScope, InventoryService) => {
-        //given
-        let result = null;
-        let expectedResult = [
-            { inventoryType: 'dataset',
-                author: 'toto',
-                created: 1,
-                records: 100,
-                name: 'dataset <span class="highlighted">test</span>',
-                path: 'home',
-                type: 'csv',
-                originalItem: results.data.datasets[0],
-                lastModificationDate: 3,
-                tooltipName: 'dataset test',
-                owner: {
-                    id: 'charles',
-                }, },
-            { name: 'prep <span class="highlighted">test</span>', lastModificationDate: 2, inventoryType: 'preparation', tooltipName: 'prep test' },
-            { name: 'folder <span class="highlighted">test</span>', lastModificationDate: 1, inventoryType: 'folder', tooltipName: 'folder test' },
-        ];
+		$rootScope.$digest();
 
-        //when
-        InventoryService.search('test').then((response) => {
-            result = response;
-        });
-
-        $rootScope.$digest();
-
-        //then
-        expect(result).toEqual(expectedResult);
-    }));
+		// then
+		expect(result).toEqual(expectedResult);
+	}));
 });

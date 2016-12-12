@@ -68,7 +68,7 @@ describe('App header bar container', () => {
 			// then
 			const searchBar = element.find('.navbar-form');
 			expect(searchBar.attr('role')).toBe('search');
-			expect(searchBar.find('i').eq(0).hasClass('talend-search')).toBeTruthy();
+			expect(searchBar.find('button').length).toBe(1);
 		});
 
 		it('should create onboarding icon', () => {

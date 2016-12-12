@@ -8,9 +8,7 @@
       },
       "search": {
         "config": {
-          "icon": {
-            "name": "talend-search"
-          }
+          "onInputIconClick": "search:toggle"
         },
         "inputProps": {
           "value": ""
@@ -408,6 +406,15 @@
       "type": "@@preparation/REMOVE_FOLDER",
       "payload": {
         "method": "removeFolder",
+        "args": []
+      }
+    },
+    "search:toggle": {
+      "id": "search:toggle",
+      "icon": "talend-search",
+      "type": "@@search/TOGGLE",
+      "payload": {
+        "method": "dispatch",
         "args": []
       }
     },

@@ -15,8 +15,15 @@ describe('Search', function () {
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
 	describe('state service', function () {
+		it('should toggle', inject(function (searchState, SearchStateService) {
+			// when
+			SearchStateService.toggle();
+
+			// then
+			expect(searchState.searchToggle).toBeFalsy();
+		}));
+
 		it('should set input search', inject(function (searchState, SearchStateService) {
-			// given
 			// when
 			SearchStateService.setSearchInput('lorem ipsum');
 
@@ -25,12 +32,11 @@ describe('Search', function () {
 		}));
 
 		it('should set search results', inject(function (searchState, SearchStateService) {
-			// given
 			// when
 			SearchStateService.setSearchResults([1, 2, 3]);
 
 			// then
-			expect(searchState.searchResults).toBe([1, 2, 3]);
+			expect(searchState.searchResults).toEqual([1, 2, 3]);
 		}));
 	});
 });

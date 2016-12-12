@@ -142,7 +142,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 * @returns {string[]} The array of actions available on the preparation
 	 */
 	function getPreparationActions() {
-		return ['preparation:edit', 'preparation:copy-move', 'preparation:remove'];
+		return ['inventory:edit', 'preparation:copy-move', 'preparation:remove'];
 	}
 
 	/**
@@ -153,7 +153,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 * @returns {string[]} The array of actions available on the folder
 	 */
 	function getFolderActions() {
-		return ['preparation:edit', 'preparation:remove:folder'];
+		return ['inventory:edit', 'preparation:remove:folder'];
 	}
 
 	/**

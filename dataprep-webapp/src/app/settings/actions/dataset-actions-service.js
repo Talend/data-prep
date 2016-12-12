@@ -13,13 +13,16 @@
 
 export default class DatasetActionsService {
 	constructor($stateParams, state, DatasetService,
-				StateService, StorageService) {
+				MessageService, StateService, StorageService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
 		this.DatasetService = DatasetService;
+		this.MessageService = MessageService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
+
+		this.renamingList = [];
 	}
 
 	dispatch(action) {
@@ -48,6 +51,47 @@ export default class DatasetActionsService {
 				this.StateService.setFetchingInventoryDatasets(false);
 			});
 			break;
+		case '@@dataset/SUBMIT_EDIT': {
+			const newName = action.payload.value;
+			const cleanName = newName && newName.trim();
+			const model = action.payload.model;
+
+			this.StateService.disableInventoryEdit(model);
+			if (cleanName && cleanName !== model.name) {
+
+				if (this.renamingList.indexOf(model) > -1) {
+					this.MessageService.warning(
+						'DATASET_CURRENTLY_RENAMING_TITLE',
+						'DATASET_CURRENTLY_RENAMING'
+					);
+					return;
+				}
+
+				if (this.DatasetService.getDatasetByName(cleanName)) {
+					this.MessageService.error(
+						'DATASET_NAME_ALREADY_USED_TITLE',
+						'DATASET_NAME_ALREADY_USED'
+					);
+					return;
+				}
+
+				this.renamingList.push(model);
+
+				return this.DatasetService.rename(model.model, cleanName)
+					.then(() => {
+						this.MessageService.success(
+							'DATASET_RENAME_SUCCESS_TITLE',
+							'DATASET_RENAME_SUCCESS'
+						);
+					})
+					.finally(() => {
+						const index = this.renamingList.indexOf(model);
+						this.renamingList.splice(index, 1);
+					});
+			}
+			break;
 		}
+		}
+
 	}
 }

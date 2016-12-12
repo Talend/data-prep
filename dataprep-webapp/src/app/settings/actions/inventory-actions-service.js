@@ -20,8 +20,11 @@ export default class InventoryActionsService {
 	dispatch(action) {
 		switch (action.type) {
 		case '@@inventory/DISPLAY_MODE':
+		case '@@inventory/EDIT':
+		case '@@inventory/CANCEL_EDIT':
 			this.StateService[action.payload.method](action.payload);
 			break;
 		}
+
 	}
 }

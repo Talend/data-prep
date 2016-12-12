@@ -97,6 +97,11 @@ export function InventoryStateService() {
 			inventoryState.folder.content.preparations = fn(preparations);
 			break;
 		}
+		case 'dataset': {
+			const datasets = inventoryState.datasets;
+			inventoryState.datasets = fn(datasets);
+			break;
+		}
 		}
 	}
 

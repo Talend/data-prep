@@ -40,8 +40,6 @@ export default class PreparationActionsService {
 	dispatch(action) {
 		switch (action.type) {
 		case '@@preparation/CREATE':
-		case '@@preparation/EDIT':
-		case '@@preparation/CANCEL_EDIT':
 			this.StateService[action.payload.method](action.payload);
 			break;
 		case '@@preparation/SORT': {

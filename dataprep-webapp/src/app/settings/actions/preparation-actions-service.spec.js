@@ -282,7 +282,7 @@ describe('Preparation actions service', () => {
 			action = {
 				type: '@@preparation/SUBMIT_EDIT',
 				payload: {
-					method: 'submitInventoryEdit',
+					method: '',
 					args: [],
 					model: preparation,
 				}

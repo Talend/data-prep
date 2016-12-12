@@ -411,5 +411,22 @@
         "args": []
       }
     },
+    "search:all": {
+      "id": "search:all",
+      "icon": "talend-search",
+      "type": "@@search/ALL",
+      "payload": {
+        "method": "dispatch",
+        "args": []
+      }
+    },
+    "search:open": {
+      "id": "search:open",
+      "type": "@@search/OPEN",
+      "payload": {
+        "method": "dispatch",
+        "args": []
+      }
+    }
   }
 }

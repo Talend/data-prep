@@ -27,10 +27,10 @@
   },
   "dependencies": {
     "X-SlickGrid": "github:ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf",
-    "angular": "^1.5.7",
-    "angular-animate": "^1.5.7",
+    "angular": "1.5.9",
+    "angular-animate": "1.5.9",
     "angular-mass-autocomplete": "^0.2.2",
-    "angular-sanitize": "^1.5.7",
+    "angular-sanitize": "1.5.9",
     "angular-translate": "^2.10.0",
     "angular-translate-loader-static-files": "^2.10.0",
     "angular-translate-once": "^1.0.3",
@@ -65,7 +65,7 @@
     "uuid": "^2.0.3"
   },
   "devDependencies": {
-    "angular-mocks": "^1.5.7",
+    "angular-mocks": "1.5.9",
     "babel-core": "^6.10.4",
     "babel-eslint": "^7.0.0",
     "babel-loader": "^6.2.4",

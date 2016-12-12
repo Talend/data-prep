@@ -13,7 +13,8 @@
 
 export default class DatasetActionsService {
 	constructor($stateParams, state, DatasetService,
-				MessageService, StateService, StorageService) {
+				MessageService, StateService, StorageService,
+				TalendConfirmService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
@@ -21,6 +22,7 @@ export default class DatasetActionsService {
 		this.MessageService = MessageService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
+		this.TalendConfirmService = TalendConfirmService;
 
 		this.renamingList = [];
 	}
@@ -54,12 +56,12 @@ export default class DatasetActionsService {
 		case '@@dataset/SUBMIT_EDIT': {
 			const newName = action.payload.value;
 			const cleanName = newName && newName.trim();
-			const model = action.payload.model;
+			const dataset = action.payload.model;
 
-			this.StateService.disableInventoryEdit(model);
-			if (cleanName && cleanName !== model.name) {
+			this.StateService.disableInventoryEdit(dataset);
+			if (cleanName && cleanName !== dataset.name) {
 
-				if (this.renamingList.indexOf(model) > -1) {
+				if (this.renamingList.indexOf(dataset) > -1) {
 					this.MessageService.warning(
 						'DATASET_CURRENTLY_RENAMING_TITLE',
 						'DATASET_CURRENTLY_RENAMING'
@@ -75,9 +77,9 @@ export default class DatasetActionsService {
 					return;
 				}
 
-				this.renamingList.push(model);
+				this.renamingList.push(dataset);
 
-				return this.DatasetService.rename(model.model, cleanName)
+				return this.DatasetService.rename(dataset.model, cleanName)
 					.then(() => {
 						this.MessageService.success(
 							'DATASET_RENAME_SUCCESS_TITLE',
@@ -85,12 +87,33 @@ export default class DatasetActionsService {
 						);
 					})
 					.finally(() => {
-						const index = this.renamingList.indexOf(model);
+						const index = this.renamingList.indexOf(dataset);
 						this.renamingList.splice(index, 1);
 					});
 			}
 			break;
 		}
+		case '@@dataset/REMOVE': {
+			const dataset = action.payload.model;
+			this.TalendConfirmService
+				.confirm(
+					{ disableEnter: true },
+					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
+					{ type: 'dataset', name: dataset.name }
+				)
+				.then(() => this.DatasetService.delete(dataset))
+				.then(() => this.MessageService.success(
+					'REMOVE_SUCCESS_TITLE',
+					'REMOVE_SUCCESS',
+					{ type: 'dataset', name: dataset.name }
+				));
+			break;
+		}
+		case '@@dataset/CLONE':
+			const dataset = action.payload.model;
+			return this.DatasetService.clone(dataset)
+				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
+			break;
 		}
 
 	}

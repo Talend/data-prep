@@ -107,7 +107,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	}
 
 	function getDatasetActions() {
-		return ['inventory:edit'];
+		return ['inventory:edit', 'dataset:clone', 'dataset:remove'];
 	}
 	/**
 	 * @ngdoc method

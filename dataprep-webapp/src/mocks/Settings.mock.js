@@ -248,6 +248,26 @@ const settingsMock = {
 				"args": []
 			}
 		},
+		"dataset:remove": {
+			"id": "dataset:remove",
+			"name": "Remove dataset",
+			"icon": "talend-trash",
+			"type": "@@dataset/REMOVE",
+			"payload": {
+				"method": "remove",
+				"args": []
+			}
+		},
+		"dataset:clone": {
+			"id": "dataset:clone",
+			"name": "Copy dataset",
+			"icon": "talend-files-o",
+			"type": "@@dataset/CLONE",
+			"payload": {
+				"method": "clone",
+				"args": []
+			}
+		},
 		'datasets:fetch': {
 			id: 'datasets:fetch',
 			name: 'Fetch all datasets',

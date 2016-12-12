@@ -460,7 +460,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	function rename(metadata, name) {
 		const oldName = metadata.name;
 		StateService.setDatasetName(metadata.id, name);
-		metadata.name = name;
+		metadata.name = name
 		return DatasetRestService.updateMetadata(metadata)
             .catch((error) => {
 	StateService.setDatasetName(metadata.id, oldName);

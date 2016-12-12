@@ -29,6 +29,8 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	let datasetsPromise;
 
 	return {
+		adaptDatasets,
+		getDatasetActions,
 		refreshDatasets,
 		getDatasetsPromise,
 		hasDatasetsPromise,
@@ -70,7 +72,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 		deferredCancel = $q.defer();
 		datasetsPromise = DatasetRestService.getDatasets(sort, order, deferredCancel)
 			.then((res) => {
-				StateService.setDatasets(adaptDatasets(res.data));
+				StateService.setDatasets(this.adaptDatasets(res.data));
 				return res.data;
 			})
 			.catch(() => {
@@ -101,7 +103,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			icon: 'talend-file-cog',
 			displayMode: 'text',
 			className: 'list-item-dataset',
-			actions: getDatasetActions(item),
+			actions: this.getDatasetActions(item),
 			model: item,
 		}));
 	}

@@ -200,6 +200,22 @@ public class SelectParameter extends Parameter {
         }
 
         /**
+         * Add an 'constant' item (an item with a value, but no label translation) to the select parameter builder. Unlike the
+         * {@link #item(String, String)} the second parameter
+         * is <b>not</b> a key to a i18n label but a constant label to be taken as is.
+         *
+         * @param value the item value.
+         * @param text the item (constant) label
+         * @return the builder to carry on building the column.
+         */
+        public Builder constant(String value, String text) {
+            final Item item = Item.Builder.builder().value(value).text(text).build();
+            this.items.add(item);
+            return this;
+        }
+
+
+        /**
          * Add an item to the select parameter builder.
          *
          * @param value the item value.

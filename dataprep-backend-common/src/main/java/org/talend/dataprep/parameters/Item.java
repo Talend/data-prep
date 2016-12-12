@@ -38,6 +38,8 @@ public interface Item {
 
         private List<Parameter> inlineParameters;
 
+        private String text;
+
         public static Builder builder() {
             return new Builder();
         }
@@ -52,6 +54,11 @@ public interface Item {
             return this;
         }
 
+        public Builder text(String text) {
+            this.text = text;
+            return this;
+        }
+
         public Builder inlineParameters(List<Parameter> inlineParameters) {
             this.inlineParameters = inlineParameters;
             return this;
@@ -60,7 +67,11 @@ public interface Item {
         public Item build() {
             final List<Parameter> parameters = inlineParameters == null ? emptyList() : inlineParameters;
             if (label == null) {
-                return new TextItem(value, parameters);
+                if (text == null) {
+                    return new TextItem(value, parameters);
+                } else {
+                    return new TextItem(value, text, parameters);
+                }
             } else {
                 return new LocalizedItem(value, label, parameters);
             }

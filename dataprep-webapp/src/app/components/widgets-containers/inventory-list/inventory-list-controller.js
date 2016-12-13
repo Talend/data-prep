@@ -159,6 +159,7 @@ export default class InventoryListCtrl {
 						}
 					];
 					return {
+						id: 'dropdown_' + item.model.id,
 						displayMode: 'dropdown',
 						label: settingAction.name,
 						icon: settingAction.icon,

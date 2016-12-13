@@ -24,30 +24,20 @@
 		}
 
 		.modal-content {
-			border: 0;
-		}
-
-		.modal-content {
 			padding: 0;
-			width: 20%;
-			margin: 8rem auto;
+			width: 25%;
 
 			.modal-header {
 				text-align: center;
 				color: $black;
 				opacity: .8;
-				border-radius: 5px;
 				letter-spacing: .5px;
 				font-weight: 500;
 				background-color: $gray;
 			}
 
 			.modal-body {
-				@include display(flex);
-				@include flex-direction(column);
-				@include align-items(center);
-				@include justify-content(space-between);
-				height: 100%;
+				text-align: center;
 
 				#about-dataprep-logo {
 					font-size: 2em;
@@ -55,13 +45,12 @@
 				}
 
 				.version-copyrights {
-					@include display(flex);
-					@include flex-direction(column);
 					margin: 15px 0;
 				}
 
 				table {
-					margin: 10px;
+					margin: 10px auto;
+					text-align: justify;
 					td, th {
 						padding: 0 5px;
 					}

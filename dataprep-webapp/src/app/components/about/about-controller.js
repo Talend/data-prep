@@ -16,9 +16,8 @@ export default class AboutCtrl {
 		this.state = state;
 		this.version = version;
 		this.copyRights = copyRights;
-		this.aboutService = AboutService;
-		this.buildDetails = [];
 		this.showBuildDetails = false;
+		AboutService.loadBuilds();
 	}
 
 	/**
@@ -29,18 +28,5 @@ export default class AboutCtrl {
 	 */
 	toggleDetailsDisplay() {
 		this.showBuildDetails = !this.showBuildDetails;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name getBuildDetails
-	 * @methodOf data-prep.about.controller:AboutCtrl
-	 * @description fetches the builds list and toggles the builds details list
-	 */
-	getBuildDetails() {
-		this.aboutService.buildDetails().then((details) => {
-			this.toggleDetailsDisplay();
-			this.buildDetails = details;
-		});
 	}
 }

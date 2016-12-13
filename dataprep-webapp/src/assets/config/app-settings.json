@@ -207,7 +207,7 @@
       "icon": "talend-info-circle",
       "type": "@@modal/SHOW",
       "payload": {
-        "method": "toggleAboutModal"
+        "method": "toggleAbout"
       }
     },
     "dataset:display-mode": {

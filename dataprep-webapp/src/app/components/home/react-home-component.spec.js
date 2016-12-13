@@ -18,8 +18,10 @@ describe('Home component', () => {
 
 	beforeEach(angular.mock.module('data-prep.home'));
 
-	beforeEach(inject(($rootScope, $compile) => {
+	beforeEach(inject(($rootScope, $compile, AboutService) => {
 		scope = $rootScope.$new(true);
+		spyOn(AboutService, 'loadBuilds').and.returnValue();
+
 		createElement = () => {
 			element = angular.element('<react-home></react-home>');
 			$compile(element)(scope);

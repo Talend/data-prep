@@ -15,36 +15,13 @@ describe('about controller', () => {
 	let scope;
 	let createController;
 
-	const allBuildDetails = [
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "API"
-		},
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "DATASET"
-		},
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "PREPARATION"
-		},
-		{
-			"versionId": "2.0.0-SNAPSHOT",
-			"buildId": "2adb70d",
-			"serviceName": "TRANSFORMATION"
-		}
-	];
-
-
 	beforeEach(angular.mock.module('data-prep.about'));
 
-	beforeEach(inject(($rootScope, $componentController) => {
+	beforeEach(inject(($rootScope, $componentController, AboutService) => {
 		scope = $rootScope.$new();
 
 		createController = () => $componentController('about', { $scope: scope });
+		spyOn(AboutService, 'loadBuilds').and.returnValue();
 	}));
 
 	it('should toggle build details display', () => {
@@ -58,44 +35,11 @@ describe('about controller', () => {
 		expect(ctrl.showBuildDetails).toBe(true);
 	});
 
-	it('should call rest api', inject(($q, AboutService) => {
-		// given
-		const ctrl = createController();
-		spyOn(AboutService, 'buildDetails').and.returnValue($q.when());
-
+	it('should populate build details on controller instantiation', inject((AboutService) => {
 		// when
-		ctrl.getBuildDetails();
-		scope.$digest();
+		createController();
 
 		// then
-		expect(ctrl.aboutService.buildDetails).toHaveBeenCalled();
-	}));
-
-	it('should toggle build details display after api call', inject(($q, AboutService) => {
-		// given
-		spyOn(AboutService, 'buildDetails').and.returnValue($q.when(true));
-		const ctrl = createController();
-		expect(ctrl.showBuildDetails).toBe(false);
-
-		// when
-		ctrl.getBuildDetails();
-		scope.$digest();
-
-		// then
-		expect(ctrl.showBuildDetails).toBe(true);
-	}));
-
-	it('should populate build details after api call', inject(($q, AboutService) => {
-		// given
-		spyOn(AboutService, 'buildDetails').and.returnValue($q.when(allBuildDetails));
-		const ctrl = createController();
-		expect(ctrl.buildDetails).toEqual([]);
-
-		// when
-		ctrl.getBuildDetails();
-		scope.$digest();
-
-		// then
-		expect(ctrl.buildDetails).toBe(allBuildDetails);
+		expect(AboutService.loadBuilds).toHaveBeenCalled();
 	}));
 });

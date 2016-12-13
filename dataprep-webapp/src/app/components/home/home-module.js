@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import ABOUT_MODULE from '../about/about-module';
 import DATASET_HEADER_MODULE from '../dataset/header/dataset-header-module';
 import DATASET_LIST_MODULE from '../dataset/list/dataset-list-module';
 import DATASET_UPDLOAD_LIST_MODULE from '../dataset/upload-list/dataset-upload-list-module';
@@ -28,7 +29,6 @@ import SERVICES_STATE_MODULE from '../../services/state/state-module';
 import HomeComponent from './home-component';
 import HomeDatasetComponent from './dataset/home-dataset-component';
 import HomePreparationComponent from './preparation/home-preparation-component';
-import ABOUT from '../about/about-module';
 
 // React home page
 import WIDGETS_CONTAINERS_MODULE from '../widgets-containers/widgets-containers-module';
@@ -44,6 +44,7 @@ export default MODULE_NAME;
  * @ngdoc object
  * @name data-prep.home
  * @description This module contains the home page of the app.
+ * @requires talend.about
  * @requires talend.widget
  * @requires data-prep.dataset-upload-list
  * @requires data-prep.dataset-header
@@ -61,6 +62,7 @@ export default MODULE_NAME;
  */
 angular.module(MODULE_NAME,
 	[
+		ABOUT_MODULE,
 		DATASET_UPDLOAD_LIST_MODULE,
 		DATASET_HEADER_MODULE,
 		DATASET_LIST_MODULE,
@@ -76,7 +78,6 @@ angular.module(MODULE_NAME,
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_STATE_MODULE,
-		ABOUT,
 	])
 	.component('home', HomeComponent)
 	.component('homeDataset', HomeDatasetComponent)

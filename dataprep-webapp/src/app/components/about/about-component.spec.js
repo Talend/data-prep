@@ -44,13 +44,16 @@ describe('Breadcrumb component', () => {
 	beforeEach(angular.mock.module('data-prep.about', ($provide) => {
 		stateMock = {
 			home: {
-				showAbout: true,
+				about: {
+					isVisible: true,
+					builds: allBuildDetails
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
 			"ABOUT_HEADER": "ABOUT TALEND DATA PREPARATION",
 			"MORE": "more",
@@ -58,14 +61,14 @@ describe('Breadcrumb component', () => {
 			"SERVICE_NAME": "SERVICE",
 			"BUILD_ID": "BUILD ID",
 			"VERSION_ID": "VERSION ID",
-			"CLOSE": "CLOSE",
 			"VERSION": "VERSION",
 		});
 		$translateProvider.preferredLanguage('en');
 	}));
 
-	beforeEach(inject(($rootScope, $compile) => {
+	beforeEach(inject(($rootScope, $compile, AboutService) => {
 		scope = $rootScope.$new(true);
+		spyOn(AboutService, 'loadBuilds').and.returnValue();
 
 		createElement = () => {
 			const html = `<about></about>`;
@@ -83,12 +86,12 @@ describe('Breadcrumb component', () => {
 	describe('render', () => {
 		it('should render about modal', () => {
 			// given
-			stateMock.home.showAbout = false;
+			stateMock.home.about.isVisible = false;
 			createElement();
 			expect(element.find('talend-modal').length).toBe(0);
 
 			// when
-			stateMock.home.showAbout = true;
+			stateMock.home.about.isVisible = true;
 			scope.$digest();
 
 			// then
@@ -159,7 +162,6 @@ describe('Breadcrumb component', () => {
 				// when
 				createElement();
 				controller.showBuildDetails = true;
-				controller.buildDetails = allBuildDetails;
 				scope.$digest();
 
 				// then
@@ -188,9 +190,8 @@ describe('Breadcrumb component', () => {
 		});
 
 		describe('clicks', () => {
-			it('should display table on more button click', inject(($q, AboutService) => {
+			it('should display table on more button click', () => {
 				// given
-				spyOn(AboutService, 'buildDetails').and.returnValue($q.when(allBuildDetails));
 				createElement();
 
 				// when
@@ -199,7 +200,7 @@ describe('Breadcrumb component', () => {
 
 				// then
 				expect(element.find('table').length).toBe(1);
-			}));
+			});
 
 			it('should hide table on less button click', () => {
 				// given

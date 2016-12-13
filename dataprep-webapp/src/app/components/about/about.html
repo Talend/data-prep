@@ -15,11 +15,9 @@
 
 <talend-modal
         id="about-modal"
-        fullscreen="false"
         close-button="true"
-        ng-if="$ctrl.state.home.showAbout"
-        state="$ctrl.state.home.showAbout"
-        disableCloseOnBackgroundClick="false"
+        ng-if="$ctrl.state.home.about.isVisible"
+        state="$ctrl.state.home.about.isVisible"
         disable-enter="true">
 
     <div class="modal-header">
@@ -27,11 +25,11 @@
     </div>
 
     <div class="modal-body">
-        <span id="about-dataprep-logo" data-icon="c"></span>
-        <span class="version-copyrights">
-            <span id="version">{{"VERSION" | translate}}: {{$ctrl.version}}</span>
-            <span id="copyrights">{{$ctrl.copyRights}}</span>
-        </span>
+        <div id="about-dataprep-logo" data-icon="c"></div>
+        <div class="version-copyrights">
+            <div id="version">{{"VERSION" | translate}}: {{$ctrl.version}}</div>
+            <div id="copyrights">{{$ctrl.copyRights}}</div>
+        </div>
 
         <table ng-if="$ctrl.showBuildDetails">
             <thead>
@@ -42,7 +40,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="buildDetail in $ctrl.buildDetails track by $index">
+                <tr ng-repeat="buildDetail in $ctrl.state.home.about.builds track by $index">
                     <td>{{buildDetail.serviceName}}</td>
                     <td>{{buildDetail.buildId}}</td>
                     <td>{{buildDetail.versionId}}</td>
@@ -50,7 +48,7 @@
             </tbody>
         </table>
 
-        <button class="btn btn-primary" translate-once="MORE" ng-if="!$ctrl.showBuildDetails" ng-click="$ctrl.getBuildDetails()"></button>
+        <button class="btn btn-primary" translate-once="MORE" ng-if="!$ctrl.showBuildDetails" ng-click="$ctrl.toggleDetailsDisplay()"></button>
         <button class="btn btn-primary" translate-once="LESS" ng-if="$ctrl.showBuildDetails" ng-click="$ctrl.toggleDetailsDisplay()"></button>
     </div>
 </talend-modal>

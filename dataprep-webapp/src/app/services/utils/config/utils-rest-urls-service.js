@@ -37,6 +37,6 @@ export default function RestURLs() {
 		this.searchUrl = serverUrl + '/api/search';
 		this.upgradeVersion = serverUrl + '/api/upgrade/check';
 		this.tcompUrl = serverUrl + '/api/tcomp';
-		this.buildsUrl = serverUrl + '/api/version';
+		this.versionUrl = serverUrl + '/api/version';
 	};
 }

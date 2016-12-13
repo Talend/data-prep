@@ -12,8 +12,8 @@
  ============================================================================*/
 
 import angular from 'angular';
-import AboutRestService from './rest/about-rest-service';
 import AboutService from './about-service';
+import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
 const MODULE_NAME = 'data-prep.services.about';
@@ -26,9 +26,9 @@ const MODULE_NAME = 'data-prep.services.about';
  */
 angular.module(MODULE_NAME,
 	[
+		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-	.service('AboutRestService', AboutRestService)
 	.service('AboutService', AboutService);
 
 export default MODULE_NAME;

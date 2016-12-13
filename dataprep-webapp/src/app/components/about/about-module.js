@@ -15,13 +15,18 @@ import angular from 'angular';
 import ngTranslate from 'angular-translate';
 
 import AboutComponent from './about-component.js';
-import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 import SERVICES_ABOUT_MODULE from '../../services/about/about-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
+import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 
 const MODULE_NAME = 'data-prep.about';
 
-angular.module(MODULE_NAME, [ngTranslate, SERVICES_UTILS_MODULE, SERVICES_ABOUT_MODULE, SERVICES_STATE_MODULE])
+angular.module(MODULE_NAME, [
+	ngTranslate,
+	SERVICES_ABOUT_MODULE,
+	SERVICES_STATE_MODULE,
+	SERVICES_UTILS_MODULE,
+])
 	.component('about', AboutComponent);
 
 export default MODULE_NAME;

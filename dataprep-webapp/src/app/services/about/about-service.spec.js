@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-describe('About REST Service', () => {
+describe('About Service', () => {
 	'use strict';
 
 	let $httpBackend;
@@ -45,16 +45,16 @@ describe('About REST Service', () => {
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 
-	it('should get all build details', inject(($rootScope, RestURLs, AboutRestService) => {
+	it('should get all build details', inject(($rootScope, RestURLs, AboutService) => {
 		//given
 		let details = null;
 
 		$httpBackend
-			.expectGET(RestURLs.buildsUrl)
+			.expectGET(RestURLs.versionUrl)
 			.respond(200, buildDetails);
 
 		//when
-		AboutRestService.buildDetails()
+		AboutService.fetchBuildDetails()
 			.then((response) => {
 				details = response;
 			});
@@ -63,5 +63,18 @@ describe('About REST Service', () => {
 
 		//then
 		expect(details).toEqual(buildDetails);
+	}));
+
+	it('should populate state with builds details', inject(($q, $rootScope, RestURLs, AboutService, StateService) => {
+		//given
+		spyOn(AboutService, 'fetchBuildDetails').and.returnValue($q.when(buildDetails));
+		spyOn(StateService, 'setBuilds').and.returnValue();
+
+		//when
+		AboutService.loadBuilds();
+		$rootScope.$digest();
+
+		//then
+		expect(StateService.setBuilds).toHaveBeenCalledWith(buildDetails);
 	}));
 });

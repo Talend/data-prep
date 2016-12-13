@@ -14,13 +14,13 @@
   -->
 <ul ng-if="$ctrl.filteredDatasets.length">
     <li class="inventory-item-row"
-        ng-repeat="dataset in $ctrl.filteredDatasets track by $index">
+        ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id">
         <input class="add-dataset-input" type="checkbox" ng-model="dataset.addedToLookup"
                ng-disabled="!dataset.enableToAddToLookup"/>
         <inventory-item
                 ng-click="$ctrl.toogleSelect(dataset)"
                 type="dataset"
-                item="dataset"
+                item="dataset.model"
                 details="DATASET_DETAILS"
                 toggle-favorite-enabled="true">
         </inventory-item>

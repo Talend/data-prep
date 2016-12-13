@@ -1,96 +1,94 @@
+/*  ============================================================================
 
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
- /*  ============================================================================
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ ============================================================================*/
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+describe('Lookup Dataset list controller', () => {
+	let createController;
+	let scope;
 
-  ============================================================================*/
+	const datasets = [
+		{ model: { id: 'ec4834d9bc2af8', name: 'Customers (50 lines)' } },
+		{ model: { id: 'ab45f893d8e923', name: 'Us states' } },
+		{ model: { id: 'cf98d83dcb9437', name: 'Customers (1K lines)' } },
+	];
 
- describe('Lookup Dataset list controller', () => {
-     let createController;
-     let scope;
+	beforeEach(angular.mock.module('data-prep.lookup'));
 
-     const datasets = [
-         { id: 'ec4834d9bc2af8', name: 'Customers (50 lines)' },
-         { id: 'ab45f893d8e923', name: 'Us states' },
-         { id: 'cf98d83dcb9437', name: 'Customers (1K lines)' },
-     ];
+	beforeEach(inject(($rootScope, $componentController) => {
+		scope = $rootScope.$new();
 
-     beforeEach(angular.mock.module('data-prep.lookup'));
+		createController = () => $componentController('lookupDatasetList', { $scope: scope });
+	}));
 
-     beforeEach(inject(($rootScope, $componentController) => {
-         scope = $rootScope.$new();
+	it('should toogle the selection of lookup dataset', () => {
+		//given
+		var dataset = { enableToAddToLookup: true, addedToLookup: true };
+		var ctrl = createController();
 
-         createController = () => $componentController('lookupDatasetList', { $scope: scope });
-     }));
+		//when
+		ctrl.toogleSelect(dataset);
 
-     it('should toogle the selection of lookup dataset',() => {
-         //given
-         var dataset = { enableToAddToLookup: true, addedToLookup: true };
-         var ctrl = createController();
+		//then
+		expect(dataset.addedToLookup).toBe(false);
+	});
 
-         //when
-         ctrl.toogleSelect(dataset);
+	it('should not toogle the selection of the lookup dataset if dataset is disabled', () => {
+		//given
+		var dataset = { enableToAddToLookup: false, addedToLookup: true };
+		var ctrl = createController();
 
-         //then
-         expect(dataset.addedToLookup).toBe(false);
-     });
+		//when
+		ctrl.toogleSelect(dataset);
 
-     it('should not toogle the selection of the lookup dataset if dataset is disabled', () => {
-         //given
-         var dataset = { enableToAddToLookup: false, addedToLookup: true };
-         var ctrl = createController();
+		//then
+		expect(dataset.addedToLookup).toBe(true);
+	});
 
-         //when
-         ctrl.toogleSelect(dataset);
+	it('should not filter when search-text is empty', () => {
+		//given
+		var ctrl = createController();
+		ctrl.searchText = '';
+		ctrl.datasets = datasets;
 
-         //then
-         expect(dataset.addedToLookup).toBe(true);
-     });
+		//when
+		ctrl.filterDatasets();
 
-     it('should not filter when search-text is empty', () => {
-         //given
-         var ctrl = createController();
-         ctrl.searchText = '';
-         ctrl.datasets = datasets;
+		//then
+		expect(ctrl.filteredDatasets.length).toBe(3);
+	});
 
-         //when
-         ctrl.filterDatasets();
+	it('should filter datasets', () => {
+		//given
+		var ctrl = createController();
+		ctrl.searchText = 'Us states';
+		ctrl.datasets = datasets;
 
-         //then
-         expect(ctrl.filteredDatasets.length).toBe(3);
-     });
+		//when
+		ctrl.filterDatasets();
 
-     it('should filter datasets', () => {
-         //given
-         var ctrl = createController();
-         ctrl.searchText = 'Us states';
-         ctrl.datasets = datasets;
+		//then
+		expect(ctrl.filteredDatasets.length).toBe(1);
+		expect(ctrl.filteredDatasets[0]).toBe(datasets[1]);
+	});
 
-         //when
-         ctrl.filterDatasets();
+	it('should call filterDatasets on $onChanges', () => {
+		//given
+		var ctrl = createController();
+		spyOn(ctrl, 'filterDatasets').and.returnValue();
 
-         //then
-         expect(ctrl.filteredDatasets.length).toBe(1);
-         expect(ctrl.filteredDatasets[0]).toBe(datasets[1]);
-     });
+		//when
+		ctrl.$onChanges();
 
-     it('should call filterDatasets on $onChanges', () => {
-         //given
-         var ctrl = createController();
-         spyOn(ctrl, 'filterDatasets').and.returnValue();
-
-         //when
-         ctrl.$onChanges();
-
-         //then
-         expect(ctrl.filterDatasets).toHaveBeenCalled();
-     });
- });
+		//then
+		expect(ctrl.filterDatasets).toHaveBeenCalled();
+	});
+});

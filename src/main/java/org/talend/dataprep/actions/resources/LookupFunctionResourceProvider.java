@@ -47,8 +47,8 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
         return clientFormLogin.retrieveLookupDataSet(apiUrl, login, password, dataSetId, joinOnColumn);
     }
 
-    private Map<String, DataSetRow> retrieveLookupDataSetFromAction(RemoteResourceGetter clientFormLogin, Action action) {
-        final Map<String, DataSetRow> result;
+    public LightweightExportableDataSet retrieveLookupDataSetFromAction(RemoteResourceGetter clientFormLogin, Action action) {
+        final LightweightExportableDataSet result;
 
         if (StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) {
             final String dataSetId = action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey());
@@ -65,8 +65,8 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
         return result;
     }
 
-    private Map<String, Map<String, DataSetRow>> retrieveLookupDataSets(List<RunnableAction> actions) {
-        final Map<String, Map<String, DataSetRow>> result = new HashMap<>();
+    public Map<String, LightweightExportableDataSet> retrieveLookupDataSets(List<Action> actions) {
+        final Map<String, LightweightExportableDataSet> result = new HashMap<>();
         final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
         actions.stream() //
                 .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //

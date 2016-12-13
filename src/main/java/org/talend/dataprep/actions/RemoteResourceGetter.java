@@ -16,10 +16,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
@@ -32,8 +30,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.LightweightExportableDataSetUtils;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.transformation.service.Dictionaries;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A class that connects to a remote server based on a JWT-authentication and sends requests to retrieve data sets.
@@ -102,6 +103,7 @@ public class RemoteResourceGetter {
         } catch (IllegalArgumentException | IOException e) {
             throw new RemoteConnectionException("Unable to retrieve the lookup dataset: " + dataSetId, e);
         }
+
     }
 
     /**
@@ -135,7 +137,7 @@ public class RemoteResourceGetter {
         }
     }
 
-    public String retrievePreparation(String apiUrl, String login, String password, String preparationId) {
+    String retrievePreparation(String apiUrl, String login, String password, String preparationId) {
         final Header jwt = login(apiUrl, login, password);
         String url = apiUrl + "/api/preparations/" + preparationId + "/details";
         HttpGet request = new HttpGet(url);
@@ -153,17 +155,17 @@ public class RemoteResourceGetter {
      */
     public static class RemoteConnectionException extends RuntimeException {
 
-        public RemoteConnectionException(String message) {
+        RemoteConnectionException(String message) {
             super(message);
         }
 
-        public RemoteConnectionException(String message, Throwable e) {
+        RemoteConnectionException(String message, Throwable e) {
             super(message, e);
         }
 
     }
 
-    public void handleError(HttpResponse response) {
+    void handleError(HttpResponse response) {
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode != 200) {
             try {

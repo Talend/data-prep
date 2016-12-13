@@ -69,6 +69,8 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		isRemoveEnabled,
 		isProcessCertificationEnabled,
 		isRenameEnabled,
+		adaptDatasets: DatasetListService.adaptDatasets,
+		getDatasetActions: DatasetListService.getDatasetActions,
 
         // content
 		getMetadata: DatasetRestService.getMetadata,

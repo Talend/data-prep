@@ -268,6 +268,16 @@ const settingsMock = {
 				"args": []
 			}
 		},
+		"dataset:favourite": {
+			"id": "dataset:favourite",
+			"name": "Add dataset in your favourite list",
+			"icon": "talend-star",
+			"type": "@@dataset/FAVOURITE",
+			"payload": {
+				"method": "",
+				"args": []
+			}
+		},
 		'datasets:fetch': {
 			id: 'datasets:fetch',
 			name: 'Fetch all datasets',

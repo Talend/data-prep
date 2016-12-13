@@ -114,7 +114,9 @@ export default class DatasetActionsService {
 			return this.DatasetService.clone(dataset)
 				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
 			break;
+		case '@@dataset/FAVOURITE':
+			return this.DatasetService.toggleFavorite(action.payload.model);
+			break;
 		}
-
 	}
 }

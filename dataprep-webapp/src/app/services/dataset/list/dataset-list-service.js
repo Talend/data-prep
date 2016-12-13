@@ -110,9 +110,9 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
 	function getDatasetActions(item) {
 		if (item.preparations.length > 1) {
-			return ['inventory:edit', 'menu:playground:preparation', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
+			return ['inventory:edit', 'menu:playground:preparation', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
 		}
-		return ['inventory:edit', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
+		return ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
 	}
 	/**
 	 * @ngdoc method
@@ -124,7 +124,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 */
 	function clone(dataset) {
 		const promise = DatasetRestService.clone(dataset);
-		promise.then(refreshDatasets);
+		promise.then(() => this.refreshDatasets());
 
 		return promise;
 	}
@@ -144,7 +144,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
 		// The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
 		// which is used by the caller
-		promise.then(refreshDatasets);
+		promise.then(() => this.refreshDatasets());
 
 		return promise;
 	}
@@ -162,7 +162,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
 		// The appended promise is not returned because DatasetRestService.import return a $upload object with progress function
 		// which is used by the caller
-		promise.then(refreshDatasets);
+		promise.then(() => this.refreshDatasets());
 
 		return promise;
 	}
@@ -203,7 +203,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 * @returns {promise} Promise that resolves datasetsList
 	 */
 	function getDatasetsPromise() {
-		return datasetsPromise || refreshDatasets();
+		return datasetsPromise || this.refreshDatasets();
 	}
 
 	/**

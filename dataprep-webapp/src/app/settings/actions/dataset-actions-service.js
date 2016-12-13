@@ -12,10 +12,11 @@
  ============================================================================*/
 
 export default class DatasetActionsService {
-	constructor($stateParams, state, DatasetService,
+	constructor($document, $stateParams, state, DatasetService,
 				MessageService, StateService, StorageService,
 				TalendConfirmService) {
 		'ngInject';
+		this.$document = $document;
 		this.$stateParams = $stateParams;
 		this.state = state;
 		this.DatasetService = DatasetService;
@@ -117,6 +118,11 @@ export default class DatasetActionsService {
 		case '@@dataset/FAVOURITE':
 			return this.DatasetService.toggleFavorite(action.payload.model);
 			break;
+		case '@@dataset/UPDATE': {
+			this.$document[0].getElementById('inputUpdateDataset').click();
+			this.StateService.setDatasetToUpdate(action.payload.model);
+			break;
+		}
 		}
 	}
 }

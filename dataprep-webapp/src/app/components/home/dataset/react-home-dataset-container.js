@@ -13,6 +13,14 @@
 const HomeDatasetContainer = {
 	template: `
 		<div class="home-content">
+		<input
+			id="inputUpdateDataset"
+			type="file"
+			class="ng-hide"
+			ng-file-select
+			accept="*.csv"
+			ng-model="$ctrl.updateDatasetFile"
+			ng-file-change="$ctrl.onFileChange()"/>
 			<inventory-list
 				display-mode="$ctrl.state.inventory.datasetsDisplayMode"
 				items="$ctrl.state.inventory.datasets"
@@ -22,9 +30,16 @@ const HomeDatasetContainer = {
 			/>
 		</div>
 	`,
-	controller(state) {
+	controller(state, UpdateWorkflowService) {
 		'ngInject';
 		this.state = state;
+		this.UpdateWorkflowService = UpdateWorkflowService;
+
+		this.updateDatasetFile = null;
+
+		this.onFileChange = () => {
+			this.UpdateWorkflowService.updateDataset(this.updateDatasetFile[0], this.state.inventory.datasetToUpdate);
+		};
 	},
 };
 

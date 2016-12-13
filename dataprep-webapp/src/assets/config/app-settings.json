@@ -262,6 +262,16 @@
         "args": []
       }
     },
+    "dataset:update": {
+      "id": "dataset:update",
+      "name": "Update dataset ",
+      "icon": "talend-file-move",
+      "type": "@@dataset/UPDATE",
+      "payload": {
+        "method": "",
+        "args": []
+      }
+    },
     "datasets:fetch": {
       "id": "datasets:fetch",
       "name": "Fetch all datasets",

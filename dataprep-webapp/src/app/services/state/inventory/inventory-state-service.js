@@ -31,6 +31,7 @@ const HOME_FOLDER = {
 
 export const inventoryState = {
 	datasets: null,
+	datasetToUpdate: null,
 
 	sortList,
 	orderList,
@@ -65,6 +66,7 @@ export function InventoryStateService() {
 		setDatasets,
 		removeDataset,
 		setDatasetName,
+		setDatasetToUpdate,
 
 		setHomeFolderId,
 		setFolder,
@@ -143,6 +145,17 @@ export function InventoryStateService() {
 			return item;
 		});
 		createNextEntities(entity.type, nextEntities);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setDatasetToUpdate
+	 * @methodOf data-prep.services.state.service:InventoryStateService
+	 * @param {dataset} dataset dataset to update
+	 * @description Set datasetToUpdate in Inventory
+	 */
+	function setDatasetToUpdate(dataset) {
+		inventoryState.datasetToUpdate = dataset;
 	}
 
     /**

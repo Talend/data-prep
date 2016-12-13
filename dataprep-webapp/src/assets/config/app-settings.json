@@ -7,15 +7,10 @@
         "onClick": "menu:preparations"
       },
       "search": {
-        "config": {
-          "onInputIconClick": "search:toggle"
-        },
-        "inputProps": {
-          "value": ""
-        },
-        "itemProps": {
-          "onClick": "search:open"
-        }
+        "onToggle": "search:toggle",
+        "onBlur": "search:toggle",
+        "onChange": "search:all",
+        "onSelect": "search:open"
       },
       "actions": [
         "onboarding:preparation",
@@ -412,28 +407,15 @@
     "search:toggle": {
       "id": "search:toggle",
       "icon": "talend-search",
-      "type": "@@search/TOGGLE",
-      "payload": {
-        "method": "dispatch",
-        "args": []
-      }
+      "type": "@@search/TOGGLE"
     },
     "search:all": {
       "id": "search:all",
-      "icon": "talend-search",
-      "type": "@@search/ALL",
-      "payload": {
-        "method": "dispatch",
-        "args": []
-      }
+      "type": "@@search/ALL"
     },
     "search:open": {
       "id": "search:open",
-      "type": "@@search/OPEN",
-      "payload": {
-        "method": "dispatch",
-        "args": []
-      }
+      "type": "@@search/OPEN"
     }
   }
 }

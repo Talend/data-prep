@@ -20,9 +20,10 @@ const settingsMock = {
 				onClick: 'menu:home',
 			},
 			search: {
-				config: {
-					isOnlyIcon: true,
-				},
+				onToggle: 'search:toggle',
+				onBlur: 'search:toggle',
+				onChange: '"search:all',
+				onSelect: 'search:open',
 			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
 			userMenuActions: {
@@ -409,6 +410,19 @@ const settingsMock = {
 				method: 'removeFolder',
 				args: [],
 			},
+		},
+		'search:toggle': {
+			id: 'search:toggle',
+			icon: 'talend-search',
+			type: '@@search/TOGGLE',
+		},
+		'search:all': {
+			id: 'search:all',
+			type: '@@search/ALL',
+		},
+		'search:open': {
+			id: 'search:open',
+			type: '@@search/OPEN',
 		},
 	},
 };

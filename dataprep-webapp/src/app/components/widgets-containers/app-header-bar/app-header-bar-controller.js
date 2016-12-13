@@ -55,32 +55,42 @@ export default class AppHeaderBarCtrl {
 
 	$onChanges(changes) {
 		const updatedContent = this.content.slice();
-		if (changes.searchInput) {
+		if (changes.searchToggle) {
+			const searchToggle = changes.searchToggle.currentValue;
+			if (searchToggle) {
+				const searchSettings = this.appSettings.views.appheaderbar.search;
+				const searchToggleAction = this.appSettings.actions[searchSettings.onToggle];
+				updatedContent[1].search = {
+					...updatedContent[1].search,
+					onToggle: this.settingsActionsService.createDispatcher(searchToggleAction),
+					items: [],
+				};
+			}
+			else {
+				delete updatedContent[1].search.onToggle;
+			}
+		}
+		else if (changes.searchInput) {
 			const searchInput = changes.searchInput.currentValue;
-			updatedContent[1].search = {
-				...updatedContent[1].search,
-				inputProps: {
-					...updatedContent[1].search.inputProps,
-					value: searchInput,
-				},
-				items: searchInput === '' ? [] : updatedContent[1].search.items,
-				renderItemData: {
-					value: searchInput,
-				},
-			};
+			if (!searchInput.length) {
+				updatedContent[1].search = {
+					...updatedContent[1].search,
+					items: [],
+				};
+			}
 		}
 		else if (changes.searchResults) {
-			const results = changes.searchResults.currentValue;
+			const searchResults = changes.searchResults.currentValue;
 			updatedContent[1].search = {
 				...updatedContent[1].search,
 				items: SEARCH_INVENTORY_TYPES
 					.filter((inventoryType) => {
-						return results.some((result) => {
+						return searchResults.some((result) => {
 							return result.inventoryType === inventoryType.title;
 						});
 					})
 					.map((inventoryType) => {
-						const suggestions = results.filter((result) => {
+						const suggestions = searchResults.filter((result) => {
 							return result.inventoryType === inventoryType.title;
 						});
 						return {
@@ -123,43 +133,25 @@ export default class AppHeaderBarCtrl {
 
 	adaptSearch() {
 		const searchSettings = this.appSettings.views.appheaderbar.search;
-		const searchToggleActionId = searchSettings.itemProps && searchSettings.config.onInputIconClick;
-		const searchAllActionId = searchSettings.itemProps && searchSettings.inputProps.onKeyDown;
-		const searchOpenActionId = searchSettings.itemProps && searchSettings.itemProps.onClick;
-		const searchToggleAction = this.appSettings.actions[searchToggleActionId];
-		const searchAllAction = this.appSettings.actions[searchAllActionId];
-		const searchOpenAction = this.appSettings.actions[searchOpenActionId];
+		const searchToggleAction = this.appSettings.actions[searchSettings.onToggle];
+		const searchBlurAction = this.appSettings.actions[searchSettings.onBlur];
+		const searchAllAction = this.appSettings.actions[searchSettings.onChange];
+		const searchOpenAction = this.appSettings.actions[searchSettings.onSelect];
 		return {
 			...searchSettings,
-			config: {
-				...searchSettings.config,
-				isOnlyIcon: this.state.search.searchToggle,
-				icon: {
-					name: searchToggleAction && searchToggleAction.icon,
-					title: this.$translate.instant('TOGGLE_SEARCH'),
-					actionStyle: 'link',
-				},
-				onInputIconClick: this.settingsActionsService.createDispatcher(searchToggleAction),
+			icon: {
+				name: searchToggleAction && searchToggleAction.icon,
+				title: this.$translate.instant('TOGGLE_SEARCH'),
+				bsStyle: 'link',
 			},
-			inputProps: {
-				...searchSettings.inputProps,
-				value: this.state.search.searchInput,
-				placeholder: this.$translate.instant('SEARCH'),
-				onKeyDown: () => {
-				},
-				onChange: (event) => {
-					const searchInput = event.target && event.target.value;
-					return this.settingsActionsService
-						.createDispatcher(searchAllAction)(event, { searchInput });
-				},
+			placeholder: this.$translate.instant('SEARCH'),
+			onToggle: this.settingsActionsService.createDispatcher(searchToggleAction),
+			onBlur: this.settingsActionsService.createDispatcher(searchBlurAction),
+			onChange: (event) => {
+				const searchInput = event.target && event.target.value;
+				return this.settingsActionsService.createDispatcher(searchAllAction)(event, { searchInput });
 			},
-			itemProps: {
-				...searchSettings.itemProps,
-				onClick: this.settingsActionsService.createDispatcher(searchOpenAction),
-			},
-			renderItemData: {
-				value: this.state.search.searchInput,
-			},
+			onSelect: this.settingsActionsService.createDispatcher(searchOpenAction),
 		};
 	}
 

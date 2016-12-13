@@ -25,6 +25,10 @@ export default class SearchActionsService {
 
 	dispatch(action) {
 		switch (action.type) {
+		case '@@search/TOGGLE': {
+			this.stateService.toggleSearch();
+			break;
+		}
 		case '@@search/ALL': {
 			const searchInput =
 				action.payload &&

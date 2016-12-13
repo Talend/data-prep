@@ -177,7 +177,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 */
 	function processCertification(dataset) {
 		return DatasetRestService.processCertification(dataset.id)
-			.then(refreshDatasets);
+			.then(() => this.refreshDatasets());
 	}
 
 	/**

@@ -108,7 +108,10 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 		}));
 	}
 
-	function getDatasetActions() {
+	function getDatasetActions(item) {
+		if (item.preparations.length > 1) {
+			return ['inventory:edit', 'menu:playground:preparation', 'dataset:clone', 'dataset:remove'];
+		}
 		return ['inventory:edit', 'dataset:clone', 'dataset:remove'];
 	}
 	/**

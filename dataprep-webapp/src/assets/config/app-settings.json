@@ -137,7 +137,7 @@
     },
     "menu:playground:dataset": {
       "id": "menu:playground:dataset",
-      "name": "Dataset Playground",
+      "name": "Open Dataset",
       "icon": "",
       "type": "@@router/GO_DATASET",
       "payload": {
@@ -149,7 +149,7 @@
     },
     "menu:playground:preparation": {
       "id": "menu:playground:preparation",
-      "name": "Preparation Playground",
+      "name": "open Preparation",
       "icon": "talend-dataprep",
       "type": "@@router/GO_PREPARATION",
       "payload": {

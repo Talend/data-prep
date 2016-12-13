@@ -142,6 +142,29 @@ export default class InventoryListCtrl {
 			const actions = item.actions.map((actionName) => {
 				const settingAction = this.appSettings.actions[actionName];
 				const dispatch = this.getActionDispatcher(actionName);
+				if (actionName === 'menu:playground:preparation') {
+					const preparations = item.model.preparations.map((preparation) => {
+						return {
+							label: preparation.name,
+							onClick: (event) =>dispatch(event, preparation),
+						};
+					});
+
+					const dispatchDataset = this.getActionDispatcher('menu:playground:dataset');
+					const items = [
+						{
+							icon: 'talend-plus',
+							label: this.$translate.instant('CREATE_NEW_PREP'),
+							onClick: (event) =>dispatchDataset(event, item.model),
+						}
+					];
+					return {
+						displayMode: 'dropdown',
+						label: settingAction.name,
+						icon: settingAction.icon,
+						items: items.concat(preparations),
+					};
+				}
 				return {
 					icon: settingAction.icon,
 					label: settingAction.name,

@@ -146,7 +146,7 @@ const settingsMock = {
 		},
 		'menu:playground:preparation': {
 			id: 'menu:playground:preparation',
-			name: 'Preparation Playground',
+			name: 'Open Preparation',
 			icon: 'talend-dataprep',
 			type: '@@router/GO_PREPARATION',
 			payload: {
@@ -156,7 +156,7 @@ const settingsMock = {
 		},
 		'menu:playground:dataset': {
 			id: 'menu:playground:dataset',
-			name: 'Dataset Playground',
+			name: 'Open Dataset',
 			icon: 'talend-dataprep',
 			type: '@@router/GO_DATASET',
 			payload: {

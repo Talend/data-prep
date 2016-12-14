@@ -11,6 +11,9 @@
 
   ============================================================================*/
 
+$medium-screen: em(640) !default;
+$large-screen: em(860) !default;
+
 #about-modal {
 	.modal {
 		.modal-close {
@@ -25,7 +28,15 @@
 
 		.modal-content {
 			padding: 0;
-			width: 25%;
+			width: 80%;
+
+			@include media($medium-screen) {
+				width: 55%;
+			}
+
+			@include media($large-screen) {
+				width: 40%;
+			}
 
 			.modal-header {
 				text-align: center;

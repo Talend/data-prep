@@ -12,8 +12,6 @@
  ============================================================================*/
 
 describe('About Service', () => {
-	'use strict';
-
 	let $httpBackend;
 	const buildDetails = [
 		{

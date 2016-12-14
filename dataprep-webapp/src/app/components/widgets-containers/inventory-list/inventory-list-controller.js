@@ -146,7 +146,7 @@ export default class InventoryListCtrl {
 					const preparations = item.model.preparations.map((preparation) => {
 						return {
 							label: preparation.name,
-							onClick: (event) =>dispatch(event, preparation),
+							onClick: event => dispatch(event, preparation),
 						};
 					});
 
@@ -155,8 +155,8 @@ export default class InventoryListCtrl {
 						{
 							icon: 'talend-plus',
 							label: this.$translate.instant('CREATE_NEW_PREP'),
-							onClick: (event) =>dispatchDataset(event, item.model),
-						}
+							onClick: event => dispatchDataset(event, item.model),
+						},
 					];
 					return {
 						id: 'dropdown_' + item.model.id,

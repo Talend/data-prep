@@ -438,4 +438,22 @@ describe('Dataset List Service', () => {
             expect(DatasetRestService.getDatasets).toHaveBeenCalled();
         }));
     });
+
+    describe('getDatasetActions', () => {
+        it('should return actions for a dataset which does not have related preparations', inject((DatasetListService) => {
+            //given
+            const dataset = {id: 'dataset'};
+
+            //then
+            expect(DatasetListService.getDatasetActions(dataset)).toEqual(['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite']);
+        }));
+
+        it('should return actions for a dataset which has related preparations', inject((DatasetListService) => {
+            //given
+            const dataset = {id: 'dataset', preparations: [{id: 'preparation'}]};
+
+            //then
+            expect(DatasetListService.getDatasetActions(dataset)).toEqual(['inventory:edit', 'menu:playground:preparation', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite']);
+        }));
+    });
 });

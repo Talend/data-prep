@@ -61,7 +61,6 @@ export default class DatasetActionsService {
 
 			this.StateService.disableInventoryEdit(dataset);
 			if (cleanName && cleanName !== dataset.name) {
-
 				if (this.renamingList.indexOf(dataset) > -1) {
 					this.MessageService.warning(
 						'DATASET_CURRENTLY_RENAMING_TITLE',
@@ -80,7 +79,7 @@ export default class DatasetActionsService {
 
 				this.renamingList.push(dataset);
 
-				return this.DatasetService.rename(dataset.model, cleanName)
+				this.DatasetService.rename(dataset.model, cleanName)
 					.then(() => {
 						this.MessageService.success(
 							'DATASET_RENAME_SUCCESS_TITLE',
@@ -110,14 +109,16 @@ export default class DatasetActionsService {
 				));
 			break;
 		}
-		case '@@dataset/CLONE':
+		case '@@dataset/CLONE': {
 			const dataset = action.payload.model;
-			return this.DatasetService.clone(dataset)
+			this.DatasetService.clone(dataset)
 				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
 			break;
-		case '@@dataset/FAVOURITE':
-			return this.DatasetService[action.payload.method](action.payload.model);
+		}
+		case '@@dataset/FAVOURITE': {
+			this.DatasetService[action.payload.method](action.payload.model);
 			break;
+		}
 		case '@@dataset/UPDATE': {
 			this.$document[0].getElementById('inputUpdateDataset').click();
 			this.StateService.setDatasetToUpdate(action.payload.model);

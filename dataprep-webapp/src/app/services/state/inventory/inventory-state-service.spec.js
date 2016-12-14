@@ -124,6 +124,17 @@ describe('Inventory state service', () => {
 			// then
 			expect(inventoryState.datasets[1].name).toBe('tonton');
 		}));
+
+		it('should set dataset to update', inject((inventoryState, InventoryStateService) => {
+			// given
+			const datasetToUpdate = { id: '1', name: 'toto' };
+
+			// when
+			InventoryStateService.setDatasetToUpdate(datasetToUpdate);
+
+			// then
+			expect(inventoryState.datasetToUpdate).toBe(datasetToUpdate);
+		}));
 	});
 
 	describe('preparation', () => {

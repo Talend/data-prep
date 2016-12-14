@@ -353,6 +353,7 @@ describe('Dataset Service', () => {
 
             //then
             expect(StateService.setDatasetName).toHaveBeenCalledWith(metadata.id, name);
+            expect(metadata.name).toEqual(name);
         }));
 
         it('should set back old name via app state on rename failure', inject(($rootScope, $q, DatasetService, DatasetRestService, StateService) => {

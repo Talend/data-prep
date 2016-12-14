@@ -238,55 +238,55 @@ const settingsMock = {
 				args: [],
 			},
 		},
-		"dataset:submit-edit": {
-			"id": "dataset:submit-edit",
-			"name": "Submit name edition",
-			"icon": "talend-check",
-			"type": "@@dataset/SUBMIT_EDIT",
-			"payload": {
-				"method": "",
-				"args": []
-			}
+		'dataset:submit-edit': {
+			id: 'dataset:submit-edit',
+			name: 'Submit name edition',
+			icon: 'talend-check',
+			type: '@@dataset/SUBMIT_EDIT',
+			payload: {
+				method: '',
+				args: [],
+			},
 		},
-		"dataset:remove": {
-			"id": "dataset:remove",
-			"name": "Remove dataset",
-			"icon": "talend-trash",
-			"type": "@@dataset/REMOVE",
-			"payload": {
-				"method": "remove",
-				"args": []
-			}
+		'dataset:remove': {
+			id: 'dataset:remove',
+			name: 'Remove dataset',
+			icon: 'talend-trash',
+			type: '@@dataset/REMOVE',
+			payload: {
+				method: 'remove',
+				args: [],
+			},
 		},
-		"dataset:clone": {
-			"id": "dataset:clone",
-			"name": "Copy dataset",
-			"icon": "talend-files-o",
-			"type": "@@dataset/CLONE",
-			"payload": {
-				"method": "clone",
-				"args": []
-			}
+		'dataset:clone': {
+			id: 'dataset:clone',
+			name: 'Copy dataset',
+			icon: 'talend-files-o',
+			type: '@@dataset/CLONE',
+			payload: {
+				method: 'clone',
+				args: [],
+			},
 		},
-		"dataset:favourite": {
-			"id": "dataset:favourite",
-			"name": "Add dataset in your favourite list",
-			"icon": "talend-star",
-			"type": "@@dataset/FAVOURITE",
-			"payload": {
-				"method": "toggleFavorite",
-				"args": []
-			}
+		'dataset:favourite': {
+			id: 'dataset:favourite',
+			name: 'Add dataset in your favourite list',
+			icon: 'talend-star',
+			type: '@@dataset/FAVOURITE',
+			payload: {
+				method: 'toggleFavorite',
+				args: [],
+			},
 		},
-		"dataset:update": {
-			"id": "dataset:update",
-			"name": "Update dataset ",
-			"icon": "talend-file-move",
-			"type": "@@dataset/UPDATE",
-			"payload": {
-				"method": "",
-				"args": []
-			}
+		'dataset:update': {
+			id: 'dataset:update',
+			name: 'Update dataset ',
+			icon: 'talend-file-move',
+			type: '@@dataset/UPDATE',
+			payload: {
+				method: '',
+				args: [],
+			},
 		},
 		'datasets:fetch': {
 			id: 'datasets:fetch',

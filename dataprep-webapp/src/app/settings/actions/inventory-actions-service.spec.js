@@ -19,6 +19,8 @@ describe('Inventory actions service', () => {
 	describe('dispatch', () => {
 		beforeEach(inject((StateService) => {
 			spyOn(StateService, 'setPreparationsDisplayMode').and.returnValue();
+			spyOn(StateService, 'enableInventoryEdit').and.returnValue();
+			spyOn(StateService, 'disableInventoryEdit').and.returnValue();
 		}));
 
 		it('should change inventory list display mode', inject((StateService, InventoryActionsService) => {
@@ -36,6 +38,40 @@ describe('Inventory actions service', () => {
 
 			// then
 			expect(StateService.setPreparationsDisplayMode).toHaveBeenCalledWith(action.payload);
+		}));
+
+		it('should enable edit mode', inject((StateService, InventoryActionsService) => {
+			// given
+			const action = {
+				type: '@@inventory/EDIT',
+				payload: {
+					method: "enableInventoryEdit",
+					args: []
+				}
+			};
+
+			// when
+			InventoryActionsService.dispatch(action);
+
+			// then
+			expect(StateService.enableInventoryEdit).toHaveBeenCalledWith(action.payload);
+		}));
+
+		it('should disable edit mode', inject((StateService, InventoryActionsService) => {
+			// given
+			const action = {
+				type: '@@inventory/CANCEL_EDIT',
+				payload: {
+					method: "disableInventoryEdit",
+					args: []
+				}
+			};
+
+			// when
+			InventoryActionsService.dispatch(action);
+
+			// then
+			expect(StateService.disableInventoryEdit).toHaveBeenCalledWith(action.payload);
 		}));
 	});
 });

@@ -47,4 +47,12 @@ describe('Home Dataset Container', () => {
 		//then
 		expect(element.find('inventory-list').length).toBe(1);
 	});
+
+	it('should render inputUpdateDataset', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('#inputUpdateDataset').length).toBe(1);
+	});
 });

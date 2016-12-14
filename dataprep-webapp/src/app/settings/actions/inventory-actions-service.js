@@ -25,6 +25,5 @@ export default class InventoryActionsService {
 			this.StateService[action.payload.method](action.payload);
 			break;
 		}
-
 	}
 }

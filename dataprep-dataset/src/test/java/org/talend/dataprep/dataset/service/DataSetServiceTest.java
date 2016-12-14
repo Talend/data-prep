@@ -1533,6 +1533,35 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(contentAsString, not(is("[]"))); // There should be some exports available
     }
 
+
+    @Test
+    public void shouldGetDataSetColumnTypes() throws Exception {
+
+        // given
+        final String dataSetId = createCSVDataSet(this.getClass().getResourceAsStream("../communes_france.csv"), "cities");
+
+        // when
+        final Response response = when().get("/datasets/{dataSetId}/columns/{columnId}/types", dataSetId, "0000");
+
+        // then
+        /*
+         * expected response array of
+         * {
+         *   "id": "CITY",
+         *   "label": "City",
+         *   "frequency": 99.24
+         * }
+         */
+        Assert.assertEquals(200, response.getStatusCode());
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
+        Assert.assertEquals(7, rootNode.size());
+        for (JsonNode type : rootNode) {
+            assertTrue(type.has("id"));
+            assertTrue(type.has("label"));
+            assertTrue(type.has("frequency"));
+        }
+    }
+
     private String insertEmptyDataSet() {
         String datasetId = UUID.randomUUID().toString();
         DataSetMetadata dataSetMetadata = metadataBuilder.metadata().id(datasetId)
@@ -1548,5 +1577,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertQueueMessages(dataSetId);
         return dataSetId;
     }
+
 
 }

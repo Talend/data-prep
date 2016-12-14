@@ -13,6 +13,10 @@
 
 package org.talend.dataprep.api.service;
 
+import static org.springframework.http.MediaType.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,12 +27,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.exception.HystrixRuntimeException;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
@@ -55,9 +53,13 @@ import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-import static org.springframework.http.MediaType.*;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_SEARCH_DATAPREP;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -477,5 +479,24 @@ public class DataSetAPI extends APIService {
     @PublicAPI
     public StreamingResponseBody listImports() {
         return CommandHelper.toStreaming(getCommand(DataSetGetImports.class));
+    }
+
+    /**
+     * Return the semantic types for a given dataset / column.
+     *
+     * @param datasetId the dataset id.
+     * @param columnId the column id.
+     * @return the semantic types for a given dataset / column.
+     */
+    @RequestMapping(value = "/api/datasets/{datasetId}/columns/{columnId}/types", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
+    @Timed
+    @PublicAPI
+    public StreamingResponseBody getDataSetColumnSemanticCategories(
+            @ApiParam(value = "The dataset id") @PathVariable String datasetId,
+            @ApiParam(value = "The column id") @PathVariable String columnId) {
+
+        LOG.debug("listing semantic types for dataset {}, column {}", datasetId, columnId);
+        return CommandHelper.toStreaming(getCommand(GetDataSetColumnTypes.class, datasetId, columnId));
     }
 }

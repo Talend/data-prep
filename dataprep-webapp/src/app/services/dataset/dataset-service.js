@@ -56,13 +56,13 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		filters,
 		init,
 
-        // lifecycle
+		// lifecycle
 		create: DatasetListService.create,
 		update: DatasetListService.update,
 		delete: deleteDataset,
 		clone: DatasetListService.clone,
 
-        // dataset actions
+		// dataset actions
 		updateColumn: DatasetRestService.updateColumn,
 		processCertification: DatasetListService.processCertification,
 		toggleFavorite: DatasetListService.toggleFavorite,
@@ -72,11 +72,11 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		adaptDatasets: DatasetListService.adaptDatasets,
 		getDatasetActions: DatasetListService.getDatasetActions,
 
-        // content
+		// content
 		getMetadata: DatasetRestService.getMetadata,
 		getContent: DatasetRestService.getContent,
 
-        // dataset getters, refresher
+		// dataset getters, refresher
 		refreshDatasets: DatasetListService.refreshDatasets,
 		getDatasets,           // promise that resolves datasets list
 		getFilteredDatasets, // retrieve datasets given a set of filters
@@ -85,31 +85,31 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		getSheetPreview,
 		loadFilteredDatasets: DatasetRestService.loadFilteredDatasets, // retrieve datasets given a set of filters
 
-        // dataset update
+		// dataset update
 		rename,
 		setDatasetSheet,
 		updateParameters,
 		refreshSupportedEncodings,
 
-        // compatible preparation list
+		// compatible preparation list
 		getCompatiblePreparations,
 
-        // utils
+		// utils
 		getUniqueName,
 		createDatasetInfo,
 		checkNameAvailability,
 		getLocationParamIteration: getParamIteration,
 	};
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------Lifecycle--------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @name refreshDatasetsSort
-     * @description Refresh the actual sort parameter
-     * */
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------------Lifecycle--------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @name refreshDatasetsSort
+	 * @description Refresh the actual sort parameter
+	 * */
 	function refreshDatasetsSort() {
 		const savedSort = StorageService.getDatasetsSort();
 		if (savedSort) {
@@ -117,12 +117,12 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @name refreshDatasetsOrder
-     * @description Refresh the actual order parameter
-     */
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @name refreshDatasetsOrder
+	 * @description Refresh the actual order parameter
+	 */
 	function refreshDatasetsOrder() {
 		const savedSortOrder = StorageService.getDatasetsOrder();
 		if (savedSortOrder) {
@@ -130,109 +130,109 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @name refreshDatasetsOrder
-     * @description Init datasets sort/order and refresh datasets list
-     */
+	/**
+	 * @ngdoc method
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @name refreshDatasetsOrder
+	 * @description Init datasets sort/order and refresh datasets list
+	 */
 	function init() {
 		refreshDatasetsSort();
 		refreshDatasetsOrder();
 		return DatasetListService.refreshDatasets();
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------Lifecycle--------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name deleteDataset
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {object} dataset The dataset to delete
-     * @description Delete a dataset.
-     * @returns {promise} The pending DELETE promise
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------------Lifecycle--------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name deleteDataset
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {object} dataset The dataset to delete
+	 * @description Delete a dataset.
+	 * @returns {promise} The pending DELETE promise
+	 */
 	function deleteDataset(dataset) {
 		return DatasetListService.delete(dataset)
-            .then((response) => {
-	StorageService.removeAllAggregations(dataset.id);
-	return response;
-});
+			.then((response) => {
+				StorageService.removeAllAggregations(dataset.id);
+				return response;
+			});
 	}
 
-    /**
-     * @ngdoc method
-     * @name isProcessCertificationEnabled
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description check if Process Certification is enabled
-     */
+	/**
+	 * @ngdoc method
+	 * @name isProcessCertificationEnabled
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description check if Process Certification is enabled
+	 */
 	function isProcessCertificationEnabled() {
 		return false;
 	}
 
-    /**
-     * @ngdoc method
-     * @name isRemoveEnabled
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description check if Remove is enabled
-     */
+	/**
+	 * @ngdoc method
+	 * @name isRemoveEnabled
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description check if Remove is enabled
+	 */
 	function isRemoveEnabled() {
 		return true;
 	}
 
-    /**
-     * @ngdoc method
-     * @name isRenameEnabled
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description check if Rename is enabled
-     */
+	/**
+	 * @ngdoc method
+	 * @name isRenameEnabled
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description check if Rename is enabled
+	 */
 	function isRenameEnabled() {
 		return true;
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------Metadata---------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name getDatasets
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description Return a promise that resolves the datasets list.
-     * @returns {promise} The pending GET or resolved promise
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------------Metadata---------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getDatasets
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description Return a promise that resolves the datasets list.
+	 * @returns {promise} The pending GET or resolved promise
+	 */
 	function getDatasets() {
 		if (DatasetListService.hasDatasetsPromise()) {
 			return DatasetListService.getDatasetsPromise();
 		}
 		else {
 			return state.inventory.datasets !== null ?
-                $q.when(state.inventory.datasets) :
-                DatasetListService.refreshDatasets();
+				$q.when(state.inventory.datasets) :
+				DatasetListService.refreshDatasets();
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name getFilteredDatasets
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {object} filter The filter definition
-     * @param {string} name The dataset name (or part of it)
-     * @description Return a promise that resolves the datasets list.
-     * @returns {promise} The GET promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name getFilteredDatasets
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {object} filter The filter definition
+	 * @param {string} name The dataset name (or part of it)
+	 * @description Return a promise that resolves the datasets list.
+	 * @returns {promise} The GET promise
+	 */
 	function getFilteredDatasets(filter, name) {
 		return DatasetRestService.getFilteredDatasets(filter.getParameters(name));
 	}
 
-    /**
-     * @ngdoc method
-     * @name getDatasetByName
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {string} name The dataset name
-     * @description Get the dataset that has the wanted name. The case is not important here.
-     * @returns {object} The dataset that has the same name (case insensitive)
-     */
+	/**
+	 * @ngdoc method
+	 * @name getDatasetByName
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {string} name The dataset name
+	 * @description Get the dataset that has the wanted name. The case is not important here.
+	 * @returns {object} The dataset that has the same name (case insensitive)
+	 */
 	function getDatasetByName(name) {
 		const lowerCaseName = name.toLowerCase();
 		return _.find(state.inventory.datasets, (dataset) => {
@@ -240,14 +240,14 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name getDatasetById
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {string} datasetId The dataset id
-     * @description Get the dataset that has the wanted id
-     * @returns {promise} The dataset
-     */
+	/**
+	 * @ngdoc method
+	 * @name getDatasetById
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {string} datasetId The dataset id
+	 * @description Get the dataset that has the wanted id
+	 * @returns {promise} The dataset
+	 */
 	function getDatasetById(datasetId) {
 		return DatasetListService.getDatasetsPromise().then((datasetList) => {
 			return _.find(datasetList, (dataset) => {
@@ -256,19 +256,19 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		});
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------------Utils-----------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name createDatasetInfo
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description create the dataset info from the given parameters.
-     * @param {file} file The file tu upload in case of
-     * @param {string} name The dataset name
-     * @param {string} id The dataset id (used to update existing dataset)
-     * @returns {Object} The adapted dataset infos {name: string, progress: number, file: *, error: boolean}
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------------Utils-----------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name createDatasetInfo
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description create the dataset info from the given parameters.
+	 * @param {file} file The file tu upload in case of
+	 * @param {string} name The dataset name
+	 * @param {string} id The dataset id (used to update existing dataset)
+	 * @returns {Object} The adapted dataset infos {name: string, progress: number, file: *, error: boolean}
+	 */
 	function createDatasetInfo(file, name, id) {
 		return {
 			name,
@@ -280,78 +280,78 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name getUniqueName
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {string} name The base name
-     * @param {number} index The number to add initialized to 1
-     * @description Get a unique name from a base name. The existence check is done on the local dataset list. It
-     *     transform the base name, adding "(number)"
-     * @returns {promise} The process to get a unique name
-     */
+	/**
+	 * @ngdoc method
+	 * @name getUniqueName
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {string} name The base name
+	 * @param {number} index The number to add initialized to 1
+	 * @description Get a unique name from a base name. The existence check is done on the local dataset list. It
+	 *     transform the base name, adding "(number)"
+	 * @returns {promise} The process to get a unique name
+	 */
 	function getUniqueName(name, index = 1) {
 		const cleanedName = name.replace(/\([0-9]+\)$/, '').trim();
 		const result = cleanedName + ' (' + index + ')';
 
 		return checkNameAvailability(result)
-            .catch(() => getUniqueName(name, index + 1));
+			.catch(() => getUniqueName(name, index + 1));
 	}
 
-    /**
-     * @ngdoc method
-     * @name checkNameAvailability
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description Check if the dataset name is available.
-     * @param {string} name The dataset name
-     * @returns {promise} Resolve the promise if it is available,
-     * reject it with the existing dataset if not
-     */
+	/**
+	 * @ngdoc method
+	 * @name checkNameAvailability
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description Check if the dataset name is available.
+	 * @param {string} name The dataset name
+	 * @returns {promise} Resolve the promise if it is available,
+	 * reject it with the existing dataset if not
+	 */
 	function checkNameAvailability(name) {
 		return DatasetRestService.getDatasetByName(name)
-            .then((dataset) => {
-	if (dataset) {
-		return $q.reject(dataset);
-	}
-	else {
-		return $q.when(name);
-	}
-});
+			.then((dataset) => {
+				if (dataset) {
+					return $q.reject(dataset);
+				}
+				else {
+					return $q.when(name);
+				}
+			});
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------------Sheet Preview-------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name getSheetPreview
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {object} dataset The dataset
-     * @param {string} sheetName The sheet name
-     * @description Get a dataset sheet preview
-     * @returns {object} The preview data
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------Sheet Preview-------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getSheetPreview
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {object} dataset The dataset
+	 * @param {string} sheetName The sheet name
+	 * @description Get a dataset sheet preview
+	 * @returns {object} The preview data
+	 */
 	function getSheetPreview(dataset, sheetName) {
 		return DatasetRestService.getSheetPreview(dataset.id, sheetName);
 	}
 
-    /**
-     * @ngdoc method
-     * @name setDatasetSheet
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {object} metadata The dataset metadata
-     * @param {string} sheetName The sheet name
-     * @description Set the selected sheet to the dataset
-     * @returns {Promise} The process Promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name setDatasetSheet
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {object} metadata The dataset metadata
+	 * @param {string} sheetName The sheet name
+	 * @description Set the selected sheet to the dataset
+	 * @returns {Promise} The process Promise
+	 */
 	function setDatasetSheet(metadata, sheetName) {
 		metadata.sheetName = sheetName;
 		return DatasetRestService.updateMetadata(metadata);
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------Dataset Parameters-----------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------Dataset Parameters-----------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
 	function extractOriginalParameters(metadata) {
 		return {
 			separator: metadata.parameters.SEPARATOR,
@@ -364,21 +364,21 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		metadata.encoding = parameters.encoding;
 	}
 
-    /**
-     * @ngdoc method
-     * @name getParamIteration
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description function for recursively gather params
-     * @param {object} paramsAccu The parameters values accumulator
-     * @param {array} parameters The parameters array
-     * @returns {object} The parameters
-     */
+	/**
+	 * @ngdoc method
+	 * @name getParamIteration
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description function for recursively gather params
+	 * @param {object} paramsAccu The parameters values accumulator
+	 * @param {array} parameters The parameters array
+	 * @returns {object} The parameters
+	 */
 	function getParamIteration(paramsAccu, parameters) {
 		if (parameters) {
 			_.forEach(parameters, (paramItem) => {
 				paramsAccu[paramItem.name] = typeof (paramItem.value) !== 'undefined' ? paramItem.value : paramItem.default;
 
-                // deal with select inline parameters
+				// deal with select inline parameters
 				if (paramItem.type === 'select') {
 					const selectedValue = _.find(paramItem.configuration.values, { value: paramItem.value });
 					getParamIteration(paramsAccu, selectedValue.parameters);
@@ -389,84 +389,84 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		return paramsAccu;
 	}
 
-    /**
-     * @ngdoc method
-     * @name updateParameters
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {object} metadata The dataset metadata
-     * @param {object} parameters The new parameters
-     * @description Set the new parameters
-     * @returns {Promise} The process Promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name updateParameters
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {object} metadata The dataset metadata
+	 * @param {object} parameters The new parameters
+	 * @description Set the new parameters
+	 * @returns {Promise} The process Promise
+	 */
 	function updateParameters(metadata, parameters) {
 		const originalParameters = extractOriginalParameters(metadata);
 		setParameters(metadata, parameters);
 
 		return DatasetRestService.updateMetadata(metadata)
-            .then(() => {
-	metadata.preparations = originalParameters.preparations;
-})
-            .catch((error) => {
-	setParameters(metadata, originalParameters);
-	return $q.reject(error);
-});
+			.then(() => {
+				metadata.preparations = originalParameters.preparations;
+			})
+			.catch((error) => {
+				setParameters(metadata, originalParameters);
+				return $q.reject(error);
+			});
 	}
 
-    /**
-     * @ngdoc method
-     * @name refreshEncodings
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description Refresh the supported encodings list
-     * @returns {Promise} The process Promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name refreshEncodings
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description Refresh the supported encodings list
+	 * @returns {Promise} The process Promise
+	 */
 	function refreshSupportedEncodings() {
 		return DatasetRestService.getEncodings()
-            .then(StateService.setDatasetEncodings);
+			.then(StateService.setDatasetEncodings);
 	}
 
-    /**
-     * @ngdoc method
-     * @name getCompatiblePreparations
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @description fetches the compatible prepartions for a given dataset
-     * @returns {Promise} The process Promise
-     */
+	/**
+	 * @ngdoc method
+	 * @name getCompatiblePreparations
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description fetches the compatible prepartions for a given dataset
+	 * @returns {Promise} The process Promise
+	 */
 	function getCompatiblePreparations(datasetId) {
 		return DatasetRestService.getCompatiblePreparations(datasetId)
-            .then((compatiblePreparations) => {
-	if (state.playground.preparation) {
-		compatiblePreparations = _.reject(compatiblePreparations, { id: state.playground.preparation.id });
+			.then((compatiblePreparations) => {
+				if (state.playground.preparation) {
+					compatiblePreparations = _.reject(compatiblePreparations, { id: state.playground.preparation.id });
+				}
+
+				return _.map(compatiblePreparations, (candidatePrepa) => {
+					return {
+						preparation: candidatePrepa,
+						dataset: _.find(state.inventory.datasets, { id: candidatePrepa.dataSetId }),
+					};
+				});
+			});
 	}
 
-	return _.map(compatiblePreparations, (candidatePrepa) => {
-		return {
-			preparation: candidatePrepa,
-			dataset: _.find(state.inventory.datasets, { id: candidatePrepa.dataSetId }),
-		};
-	});
-});
-	}
-
-    //--------------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------------Rename---------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name rename
-     * @methodOf data-prep.services.dataset.service:DatasetService
-     * @param {object} metadata The dataset metadata
-     * @param {string} name The new name
-     * @description Set the new name
-     * @returns {Promise} The process Promise
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -----------------------------------------------------Rename---------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name rename
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @param {object} metadata The dataset metadata
+	 * @param {string} name The new name
+	 * @description Set the new name
+	 * @returns {Promise} The process Promise
+	 */
 	function rename(metadata, name) {
 		const oldName = metadata.name;
 		StateService.setDatasetName(metadata.id, name);
 		metadata.name = name;
 		return DatasetRestService.updateMetadata(metadata)
-            .catch((error) => {
-	StateService.setDatasetName(metadata.id, oldName);
-	return $q.reject(error);
-});
+			.catch((error) => {
+				StateService.setDatasetName(metadata.id, oldName);
+				return $q.reject(error);
+			});
 	}
 }

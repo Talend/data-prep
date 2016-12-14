@@ -109,7 +109,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	}
 
 	function getDatasetActions(item) {
-		if (item.preparations.length > 1) {
+		if (item.preparations && item.preparations.length > 0) {
 			return ['inventory:edit', 'menu:playground:preparation', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
 		}
 		return ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];

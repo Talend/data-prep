@@ -116,7 +116,7 @@ export default class DatasetActionsService {
 				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
 			break;
 		case '@@dataset/FAVOURITE':
-			return this.DatasetService.toggleFavorite(action.payload.model);
+			return this.DatasetService[action.payload.method](action.payload.model);
 			break;
 		case '@@dataset/UPDATE': {
 			this.$document[0].getElementById('inputUpdateDataset').click();

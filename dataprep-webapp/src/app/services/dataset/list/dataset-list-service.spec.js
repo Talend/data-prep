@@ -29,6 +29,7 @@ describe('Dataset List Service', () => {
                 nbLinesHeader: 1,
                 nbLinesFooter: 0,
                 created: '03-30-2015 08:06',
+                preparations: [{name: 'preparation 1'}],
             },
             {
                 id: '3b21388c-f54a-4334-9bef-748912d0806f',
@@ -71,7 +72,7 @@ describe('Dataset List Service', () => {
                 icon: 'talend-file-cog',
                 displayMode: 'text',
                 className: 'list-item-dataset',
-                actions: [],
+                actions: ['inventory:edit', 'menu:playground:preparation', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
                 model: datasets[0],
             },
             {
@@ -85,7 +86,7 @@ describe('Dataset List Service', () => {
                 icon: 'talend-file-cog',
                 displayMode: 'text',
                 className: 'list-item-dataset',
-                actions: [],
+                actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
                 model: datasets[1],
             },
             {
@@ -99,7 +100,7 @@ describe('Dataset List Service', () => {
                 icon: 'talend-file-cog',
                 displayMode: 'text',
                 className: 'list-item-dataset',
-                actions: [],
+                actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
                 model: datasets[2],
             },
             {
@@ -113,7 +114,7 @@ describe('Dataset List Service', () => {
                 icon: 'talend-file-cog',
                 displayMode: 'text',
                 className: 'list-item-dataset',
-                actions: [],
+                actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
                 model: datasets[3],
             },
         ];

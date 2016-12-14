@@ -274,7 +274,7 @@ const settingsMock = {
 			"icon": "talend-star",
 			"type": "@@dataset/FAVOURITE",
 			"payload": {
-				"method": "",
+				"method": "toggleFavorite",
 				"args": []
 			}
 		},

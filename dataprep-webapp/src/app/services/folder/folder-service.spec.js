@@ -41,7 +41,7 @@ const adaptedPreparation = {
 	icon: 'talend-dataprep',
 	displayMode: 'text',
 	className: 'list-item-preparation',
-	actions: ['preparation:edit', 'preparation:copy-move', 'preparation:remove'],
+	actions: ['inventory:edit', 'preparation:copy-move', 'preparation:remove'],
 	model: preparation,
 };
 
@@ -63,7 +63,7 @@ const adaptedFolder = {
 	icon: 'talend-folder',
 	displayMode: 'text',
 	className: 'list-item-folder',
-	actions: ['preparation:edit', 'preparation:remove:folder'],
+	actions: ['inventory:edit', 'preparation:remove:folder'],
 	model: folder,
 };
 
@@ -405,7 +405,7 @@ describe('Folder services', () => {
 			const actions = FolderService.getPreparationActions();
 
 			// then
-			expect(actions).toEqual(['preparation:edit', 'preparation:copy-move', 'preparation:remove']);
+			expect(actions).toEqual(['inventory:edit', 'preparation:copy-move', 'preparation:remove']);
 		}));
 	});
 
@@ -415,7 +415,7 @@ describe('Folder services', () => {
 			const actions = FolderService.getFolderActions();
 
 			// then
-			expect(actions).toEqual(['preparation:edit', 'preparation:remove:folder']);
+			expect(actions).toEqual(['inventory:edit', 'preparation:remove:folder']);
 		}));
 	});
 });

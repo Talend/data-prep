@@ -15,17 +15,17 @@ const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
 const SEARCH_INVENTORY_TYPES = [
 	{
-		title: 'preparations',
+		title: 'preparation',
 		iconName: 'talend-dataprep',
-		iconTitle: 'preparations',
+		iconTitle: 'preparation',
 	}, {
-		title: 'datasets',
+		title: 'dataset',
 		iconName: 'talend-files-o',
-		iconTitle: 'datasets',
+		iconTitle: 'dataset',
 	}, {
-		title: 'folders',
+		title: 'folder',
 		iconName: 'talend-folder',
-		iconTitle: 'folders',
+		iconTitle: 'folder',
 	}, {
 		title: 'documentation',
 		iconName: 'talend-question-circle',

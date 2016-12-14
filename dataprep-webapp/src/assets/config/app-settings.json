@@ -10,7 +10,9 @@
         "onToggle": "search:toggle",
         "onBlur": "search:toggle",
         "onChange": "search:all",
-        "onSelect": "search:open"
+        "onSelect": "search:open",
+        "debounceMinLength": 2,
+        "debounceTimeout": 200
       },
       "actions": [
         "onboarding:preparation",

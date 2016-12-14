@@ -10,22 +10,23 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-const HomeDatasetContainer = {
-	template: `
-		<div class="home-content">
-			<inventory-list
-				id="'datasets-list'"
-				items="$ctrl.state.inventory.datasets"
-				sort-by="$ctrl.state.inventory.datasetsSort.id"
-				sort-desc="$ctrl.state.inventory.datasetsOrder.id === 'desc'"
-				view-key="'listview:datasets'"
-			/>
-		</div>
-	`,
-	controller(state) {
+export default class AboutCtrl {
+	constructor(state, version, copyRights, AboutService) {
 		'ngInject';
 		this.state = state;
-	},
-};
+		this.version = version;
+		this.copyRights = copyRights;
+		this.showBuildDetails = false;
+		AboutService.loadBuilds();
+	}
 
-export default HomeDatasetContainer;
+	/**
+	 * @ngdoc method
+	 * @name toggleDetailsDisplay
+	 * @methodOf data-prep.about.controller:AboutCtrl
+	 * @description toggles the builds details list
+	 */
+	toggleDetailsDisplay() {
+		this.showBuildDetails = !this.showBuildDetails;
+	}
+}

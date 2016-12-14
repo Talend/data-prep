@@ -72,4 +72,45 @@ describe('home state', () => {
 		}));
 	});
 
+	describe('About', () => {
+		it('should toggle about modal', inject((homeState, HomeStateService) => {
+			//when
+			HomeStateService.toggleAbout();
+
+			//then
+			expect(homeState.about.isVisible).toBe(true);
+		}));
+
+		it('should populate builds', inject((homeState, HomeStateService) => {
+			//given
+			const allBuildDetails = [
+				{
+					"versionId": "2.0.0-SNAPSHOT",
+					"buildId": "2adb70d",
+					"serviceName": "API"
+				},
+				{
+					"versionId": "2.0.0-SNAPSHOT",
+					"buildId": "2adb70d",
+					"serviceName": "DATASET"
+				},
+				{
+					"versionId": "2.0.0-SNAPSHOT",
+					"buildId": "2adb70d",
+					"serviceName": "PREPARATION"
+				},
+				{
+					"versionId": "2.0.0-SNAPSHOT",
+					"buildId": "2adb70d",
+					"serviceName": "TRANSFORMATION"
+				}
+			];
+
+			//when
+			HomeStateService.setBuilds(allBuildDetails);
+
+			//then
+			expect(homeState.about.builds).toBe(allBuildDetails);
+		}));
+	});
 });

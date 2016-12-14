@@ -12,13 +12,13 @@
  ============================================================================*/
 
 const sortList = [
-    { id: 'name', name: 'NAME_SORT', property: 'name' },
-    { id: 'date', name: 'DATE_SORT', property: 'created' },
+	{ id: 'name', name: 'NAME_SORT', property: 'name' },
+	{ id: 'date', name: 'DATE_SORT', property: 'created' },
 ];
 
 const orderList = [
-    { id: 'asc', name: 'ASC_ORDER' },
-    { id: 'desc', name: 'DESC_ORDER' },
+	{ id: 'asc', name: 'ASC_ORDER' },
+	{ id: 'desc', name: 'DESC_ORDER' },
 ];
 
 export const lookupState = {
@@ -50,11 +50,11 @@ export function LookupStateService() {
 		reset,
 		setVisibility,
 
-        // lookup user selection update
+		// lookup user selection update
 		setSelectedColumn,
 		updateColumnsToAdd,
 
-        // init lookup
+		// init lookup
 		setActions,
 		setAddedActions,
 		setDatasets,
@@ -65,95 +65,96 @@ export function LookupStateService() {
 		setOrder,
 	};
 
-    /**
-     * @ngdoc method
-     * @name sortDatasets
-     * @description Sort lookup datasets
-     */
+	/**
+	 * @ngdoc method
+	 * @name sortDatasets
+	 * @description Sort lookup datasets
+	 */
 	function sortDatasets() {
 		lookupState.datasets = _.sortBy(lookupState.datasets,
-            function (dataset) {
-	return _.isNumber(dataset[lookupState.sort.property]) ? dataset[lookupState.sort.property] : dataset[lookupState.sort.property].toLowerCase();
-});
+			function (dataset) {
+				const model = dataset.model;
+				return _.isNumber(model[lookupState.sort.property]) ? model[lookupState.sort.property] : model[lookupState.sort.property].toLowerCase();
+			});
 
 		if (lookupState.order.id === 'desc') {
 			lookupState.datasets = lookupState.datasets.reverse();
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name setSort
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @description Set the sort type of the lookup datasets
-     */
+	/**
+	 * @ngdoc method
+	 * @name setSort
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @description Set the sort type of the lookup datasets
+	 */
 	function setSort(sort) {
 		lookupState.sort = sort;
 		sortDatasets();
 	}
 
-    /**
-     * @ngdoc method
-     * @name setOrder
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @description Set the order type of the lookup datasets
-     */
+	/**
+	 * @ngdoc method
+	 * @name setOrder
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @description Set the order type of the lookup datasets
+	 */
 	function setOrder(order) {
 		lookupState.order = order;
 		sortDatasets();
 	}
 
-    /**
-     * @ngdoc method
-     * @name setVisibility
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @description Set the lookup visibility
-     */
+	/**
+	 * @ngdoc method
+	 * @name setVisibility
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @description Set the lookup visibility
+	 */
 	function setVisibility(visibility) {
 		lookupState.visibility = visibility;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setDataset
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} lookupAction The lookup action on a dataset
-     * @description Sets the current lookup action
-     */
+	/**
+	 * @ngdoc method
+	 * @name setDataset
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} lookupAction The lookup action on a dataset
+	 * @description Sets the current lookup action
+	 */
 	function setDataset(lookupAction) {
 		lookupState.dataset = lookupAction;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setDatasets
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} datasets The datasets to add to the lookup
-     * @description Sets the current datasets added to the lookup
-     */
+	/**
+	 * @ngdoc method
+	 * @name setDatasets
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} datasets The datasets to add to the lookup
+	 * @description Sets the current datasets added to the lookup
+	 */
 	function setDatasets(datasets) {
 		lookupState.datasets = datasets;
 		sortDatasets();
 	}
 
-    /**
-     * @ngdoc method
-     * @name setAddedActions
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} actions The actions to add to the lookup
-     * @description Sets the current actions added to the lookup
-     */
+	/**
+	 * @ngdoc method
+	 * @name setAddedActions
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} actions The actions to add to the lookup
+	 * @description Sets the current actions added to the lookup
+	 */
 	function setAddedActions(actions) {
 		lookupState.addedActions = actions;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setData
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} data The data
-     * @description Set data to display in the grid and reset the column checkboxes
-     */
+	/**
+	 * @ngdoc method
+	 * @name setData
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} data The data
+	 * @description Set data to display in the grid and reset the column checkboxes
+	 */
 	function setData(data) {
 		lookupState.dataView.beginUpdate();
 		lookupState.dataView.setItems(data.records, 'tdpId');
@@ -164,13 +165,13 @@ export function LookupStateService() {
 		createColumnsCheckboxes(data);
 	}
 
-    /**
-     * @ngdoc method
-     * @name setSelectedColumn
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} column The column metadata
-     * @description Set the lookup ds selected column and update columns to add (omit the selected column)
-     */
+	/**
+	 * @ngdoc method
+	 * @name setSelectedColumn
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} column The column metadata
+	 * @description Set the lookup ds selected column and update columns to add (omit the selected column)
+	 */
 	function setSelectedColumn(column) {
 		lookupState.selectedColumn = column;
 		if (column) {
@@ -178,17 +179,17 @@ export function LookupStateService() {
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name createColumnsCheckboxes
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} data The data
-     * @description Create the checkboxes definition for each column
-     */
+	/**
+	 * @ngdoc method
+	 * @name createColumnsCheckboxes
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} data The data
+	 * @description Create the checkboxes definition for each column
+	 */
 	function createColumnsCheckboxes(data) {
 		const addedColIds = lookupState.step ?
-            _.map(lookupState.step.actionParameters.parameters.lookup_selected_cols, 'id') :
-            [];
+			_.map(lookupState.step.actionParameters.parameters.lookup_selected_cols, 'id') :
+			[];
 		lookupState.columnCheckboxes = _.map(data.metadata.columns, function (col) {
 			return {
 				id: col.id,
@@ -198,43 +199,43 @@ export function LookupStateService() {
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name updateColumnsToAdd
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @description Update the columns to add in the lookup step
-     */
+	/**
+	 * @ngdoc method
+	 * @name updateColumnsToAdd
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @description Update the columns to add in the lookup step
+	 */
 	function updateColumnsToAdd() {
 		lookupState.columnsToAdd = _.chain(lookupState.columnCheckboxes)
-            .filter('isAdded')
-            .filter(function (col) {
-	return col.id !== lookupState.selectedColumn.id;
-})
-            .map(function (obj) {
-	return _.omit(obj, 'isAdded');
-})
-            .value();
+			.filter('isAdded')
+			.filter(function (col) {
+				return col.id !== lookupState.selectedColumn.id;
+			})
+			.map(function (obj) {
+				return _.omit(obj, 'isAdded');
+			})
+			.value();
 	}
 
-    /**
-     * @ngdoc method
-     * @name setActions
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {Array} actions The lookup actions (1 per possible dataset)
-     * @description Sets the actions
-     */
+	/**
+	 * @ngdoc method
+	 * @name setActions
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {Array} actions The lookup actions (1 per possible dataset)
+	 * @description Sets the actions
+	 */
 	function setActions(actions) {
 		lookupState.actions = actions;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setAddMode
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} lookupAction the lookup action
-     * @param {object} data The selected lookup dataset data
-     * @description Set parameters for add mode
-     */
+	/**
+	 * @ngdoc method
+	 * @name setAddMode
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} lookupAction the lookup action
+	 * @param {object} data The selected lookup dataset data
+	 * @description Set parameters for add mode
+	 */
 	function setAddMode(lookupAction, data) {
 		lookupState.step = null;
 		setDataset(lookupAction);
@@ -242,15 +243,15 @@ export function LookupStateService() {
 		setSelectedColumn(data.metadata.columns[0]); // this update the columns to add
 	}
 
-    /**
-     * @ngdoc method
-     * @name setUpdateMode
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @param {object} lookupAction the lookup action
-     * @param {object} data The selected lookup dataset data
-     * @param {object} step The step to update
-     * @description Set parameters for update mode
-     */
+	/**
+	 * @ngdoc method
+	 * @name setUpdateMode
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @param {object} lookupAction the lookup action
+	 * @param {object} data The selected lookup dataset data
+	 * @param {object} step The step to update
+	 * @description Set parameters for update mode
+	 */
 	function setUpdateMode(lookupAction, data, step) {
 		const selectedColumn = _.find(data.metadata.columns, { id: step.actionParameters.parameters.lookup_join_on });
 		lookupState.step = step;
@@ -259,12 +260,12 @@ export function LookupStateService() {
 		setSelectedColumn(selectedColumn); // this update the columns to add
 	}
 
-    /**
-     * @ngdoc method
-     * @name reset
-     * @methodOf data-prep.services.state.service:LookupStateService
-     * @description Reset the lookup internal state
-     */
+	/**
+	 * @ngdoc method
+	 * @name reset
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @description Reset the lookup internal state
+	 */
 	function reset() {
 		lookupState.actions = [];
 		lookupState.addedActions = [];

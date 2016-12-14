@@ -40,7 +40,7 @@ angular.module(MODULE_NAME,
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureList', ['reactDirective', reactDirective => reactDirective(List)])
-	.directive('pureAppSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
+	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
     .component('appHeaderBar', AppHeaderBarContainer)

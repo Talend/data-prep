@@ -1,0 +1,54 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<talend-modal
+        id="about-modal"
+        close-button="true"
+        ng-if="$ctrl.state.home.about.isVisible"
+        state="$ctrl.state.home.about.isVisible"
+        disable-enter="true">
+
+    <div class="modal-header">
+        {{'ABOUT_HEADER' | translate}}
+    </div>
+
+    <div class="modal-body">
+        <div id="about-dataprep-logo" data-icon="c"></div>
+        <div class="version-copyrights">
+            <div id="version">{{"VERSION" | translate}}: {{$ctrl.version}}</div>
+            <div id="copyrights">{{$ctrl.copyRights}}</div>
+        </div>
+
+        <table ng-if="$ctrl.showBuildDetails">
+            <thead>
+                <tr>
+                    <th>{{'SERVICE' | translate}}</th>
+                    <th>{{'BUILD_ID' | translate}}</th>
+                    <th>{{'VERSION_ID' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="buildDetail in $ctrl.state.home.about.builds track by $index">
+                    <td>{{buildDetail.serviceName}}</td>
+                    <td>{{buildDetail.buildId}}</td>
+                    <td>{{buildDetail.versionId}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn btn-primary" translate-once="MORE" ng-if="!$ctrl.showBuildDetails" ng-click="$ctrl.toggleDetailsDisplay()"></button>
+        <button class="btn btn-primary" translate-once="LESS" ng-if="$ctrl.showBuildDetails" ng-click="$ctrl.toggleDetailsDisplay()"></button>
+    </div>
+</talend-modal>

@@ -10,19 +10,11 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import template from './about.html';
+import AboutCtrl from './about-controller';
 
-const HomeComponent = {
-	template: `
-		<layout>
-			<ui-view name="home-content"></ui-view>
-		</layout>
-
-		<dataset-xls-preview></dataset-xls-preview>
-		<preparation-copy-move></preparation-copy-move>
-		<preparation-creator></preparation-creator>
-		<insertion-home></insertion-home>
-		<about></about>
-	`,
+const AboutComponent = {
+	templateUrl: template,
+	controller: AboutCtrl,
 };
-
-export default HomeComponent;
+export default AboutComponent;

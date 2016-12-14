@@ -145,11 +145,12 @@ export default class InventoryListCtrl {
 	}
 
 	adaptActions(items) {
-		return items.map((item) => {
+		return items.map((item, index) => {
 			const actions = item.actions.map((actionName) => {
 				const settingAction = this.appSettings.actions[actionName];
 				const dispatch = this.getActionDispatcher(actionName);
 				return {
+					id: `${this.id}-${index}-${settingAction.id}`,
 					icon: settingAction.icon,
 					label: settingAction.name,
 					model: item,

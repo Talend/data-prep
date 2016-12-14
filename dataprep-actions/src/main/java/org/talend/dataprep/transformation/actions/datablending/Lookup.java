@@ -181,7 +181,6 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
             final String cols = parameters.get(LOOKUP_SELECTED_COLS.getKey());
             result =  new ObjectMapper().readValue(cols, new TypeReference<List<LookupSelectedColumnParameter>>() {
             });
-            Collections.reverse(result);
         } catch (IOException e) {
             LOGGER.debug("Unable to parse parameter.", e);
             result = Collections.emptyList();

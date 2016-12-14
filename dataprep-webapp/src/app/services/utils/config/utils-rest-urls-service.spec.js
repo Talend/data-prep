@@ -33,6 +33,7 @@ describe('REST urls service', () => {
         expect(RestURLs.searchUrl).toBe('/api/search');
         expect(RestURLs.upgradeVersion).toBe('/api/upgrade/check');
         expect(RestURLs.tcompUrl).toBe('/api/tcomp');
+        expect(RestURLs.versionUrl).toBe('/api/version');
     }));
 
     it('should change api url with provided server url', inject((RestURLs) => {
@@ -52,5 +53,6 @@ describe('REST urls service', () => {
         expect(RestURLs.searchUrl).toBe('http://10.10.10.10:8888/api/search');
         expect(RestURLs.upgradeVersion).toBe('http://10.10.10.10:8888/api/upgrade/check');
         expect(RestURLs.tcompUrl).toBe('http://10.10.10.10:8888/api/tcomp');
+        expect(RestURLs.versionUrl).toBe('http://10.10.10.10:8888/api/version');
     }));
 });

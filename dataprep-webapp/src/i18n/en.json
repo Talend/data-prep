@@ -390,5 +390,14 @@
   "UPGRADE_VERSION_NEW_VERSION_AVAILABLE": "New Version Available",
   "UPGRADE_VERSION_NEW_VERSION": "There is a new version of Talend Data Preparation Free Desktop available: {{version}}.",
   "UPGRADE_VERSION_RELEASE_NOTES": "Check out the <a href='{{release_note_url}}' target='_blank'>release notes</a> for improvements and changes.",
-  "UPGRADE_VERSION_DOWNLOAD": "To upgrade, go to the <a href='{{download_url}}' target='_blank'>download page</a> on the Talend web site and install the new version."
+  "UPGRADE_VERSION_DOWNLOAD": "To upgrade, go to the <a href='{{download_url}}' target='_blank'>download page</a> on the Talend web site and install the new version.",
+
+  "_comment": "_about",
+  "ABOUT_HEADER": "ABOUT TALEND DATA PREPARATION",
+  "MORE": "more",
+  "LESS": "less",
+  "SERVICE_NAME": "SERVICE",
+  "BUILD_ID": "BUILD ID",
+  "VERSION_ID": "VERSION ID",
+  "VERSION": "VERSION"
 }

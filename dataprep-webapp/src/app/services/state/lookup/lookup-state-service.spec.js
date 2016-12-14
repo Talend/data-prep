@@ -381,9 +381,9 @@ describe('Lookup state service', function () {
         it('should sort lookup step when updating the sort type', inject(function (lookupState, LookupStateService) {
             //given
             lookupState.datasets = [
-                { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 80 },
-                { id: '3', addedToLookup: false, created: 90 },
-                { id: '2', addedToLookup: false, created: 100 },
+                { model: { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 80 }},
+                { model: { id: '3', addedToLookup: false, created: 90 }},
+                { model: { id: '2', addedToLookup: false, created: 100 }},
             ];
 
             lookupState.sort = { id: 'name', name: 'NAME_SORT', property: 'name' };
@@ -394,17 +394,17 @@ describe('Lookup state service', function () {
             LookupStateService.setSort({ id: 'date', name: 'DATE_SORT', property: 'created' });
 
             //then
-            expect(lookupState.datasets[0].created).toBe(100);
-            expect(lookupState.datasets[1].created).toBe(90);
-            expect(lookupState.datasets[2].created).toBe(80);
+            expect(lookupState.datasets[0].model.created).toBe(100);
+            expect(lookupState.datasets[1].model.created).toBe(90);
+            expect(lookupState.datasets[2].model.created).toBe(80);
         }));
 
         it('should sort lookup step when updating the order type', inject(function (lookupState, LookupStateService) {
             //given
             lookupState.datasets = [
-                { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 80 },
-                { id: '3', addedToLookup: false, created: 90 },
-                { id: '2', addedToLookup: false, created: 100 },
+                { model: { id: '2', addedToLookup: false, created: 100 }},
+                { model: { id: '3', addedToLookup: false, created: 90 }},
+                { model: { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 80 }},
             ];
 
             lookupState.sort = { id: 'date', name: 'DATE_SORT', property: 'created' };
@@ -415,17 +415,17 @@ describe('Lookup state service', function () {
             LookupStateService.setOrder({ id: 'asc', name: 'ASC_ORDER' });
 
             //then
-            expect(lookupState.datasets[0].created).toBe(80);
-            expect(lookupState.datasets[1].created).toBe(90);
-            expect(lookupState.datasets[2].created).toBe(100);
+            expect(lookupState.datasets[0].model.created).toBe(80);
+            expect(lookupState.datasets[1].model.created).toBe(90);
+            expect(lookupState.datasets[2].model.created).toBe(100);
         }));
 
         it('should sort lookup step when updating the sort type in case of String', inject(function (lookupState, LookupStateService) {
             //given
             lookupState.datasets = [
-                { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 'a' },
-                { id: '3', addedToLookup: false, created: 'b' },
-                { id: '2', addedToLookup: false, created: 'C' },
+                { model: { id: '3', addedToLookup: false, created: 'b' }},
+                { model: { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 'a' }},
+                { model: { id: '2', addedToLookup: false, created: 'C' }},
             ];
 
             lookupState.sort = { id: 'name', name: 'NAME_SORT', property: 'name' };
@@ -436,17 +436,17 @@ describe('Lookup state service', function () {
             LookupStateService.setSort({ id: 'date', name: 'DATE_SORT', property: 'created' });
 
             //then
-            expect(lookupState.datasets[0].created).toBe('C');
-            expect(lookupState.datasets[1].created).toBe('b');
-            expect(lookupState.datasets[2].created).toBe('a');
+            expect(lookupState.datasets[0].model.created).toBe('C');
+            expect(lookupState.datasets[1].model.created).toBe('b');
+            expect(lookupState.datasets[2].model.created).toBe('a');
         }));
 
         it('should sort lookup step when updating the order type in case of String', inject(function (lookupState, LookupStateService) {
             //given
             lookupState.datasets = [
-                { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 'a' },
-                { id: '3', addedToLookup: false, created: 'b' },
-                { id: '2', addedToLookup: false, created: 'C' },
+                { model: { id: '2', addedToLookup: false, created: 'C' }},
+                { model: { id: '3', addedToLookup: false, created: 'b' }},
+                { model: { id: '9e739b88-5ec9-4b58-84b5-2127a7e2eac7', addedToLookup: true, created: 'a' }},
             ];
 
             lookupState.sort = { id: 'date', name: 'DATE_SORT', property: 'created' };
@@ -457,9 +457,9 @@ describe('Lookup state service', function () {
             LookupStateService.setOrder({ id: 'asc', name: 'ASC_ORDER' });
 
             //then
-            expect(lookupState.datasets[0].created).toBe('a');
-            expect(lookupState.datasets[1].created).toBe('b');
-            expect(lookupState.datasets[2].created).toBe('C');
+            expect(lookupState.datasets[0].model.created).toBe('a');
+            expect(lookupState.datasets[1].model.created).toBe('b');
+            expect(lookupState.datasets[2].model.created).toBe('C');
         }));
     });
 });

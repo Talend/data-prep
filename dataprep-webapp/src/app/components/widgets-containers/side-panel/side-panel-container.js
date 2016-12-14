@@ -14,13 +14,15 @@
 import SidePanelCtrl from './side-panel-controller';
 
 const SidePanelContainer = {
-	template: `<pure-app-side-panel
+	template: `<pure-side-panel
+			id="$ctrl.id"
 		 	actions="$ctrl.actions"
 		 	toggle-icon="$ctrl.toggleIcon"
 			on-toggle-dock="$ctrl.toggle"
 			docked="$ctrl.state.home.sidePanelDocked"
 		/>`,
 	bindings: {
+		id: '<',
 		active: '<',
 	},
 	controller: SidePanelCtrl,

@@ -21,12 +21,14 @@ import './inventory-list-container.scss';
 const InventoryListContainer = {
 	template: `
 		<pure-list
+			id="$ctrl.id"
 			display-mode="$ctrl.displayMode"
 			list="$ctrl.listProps"
 			toolbar="$ctrl.toolbarProps"
 		/>
 	`,
 	bindings: {
+		id: '<',
 		displayMode: '<',
 		folders: '<',
 		items: '<',

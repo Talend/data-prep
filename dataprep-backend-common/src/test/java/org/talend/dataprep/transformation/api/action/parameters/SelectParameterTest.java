@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.api.action.parameters;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -23,10 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
-import org.talend.dataprep.parameters.LocalizedItem;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.ParameterType;
-import org.talend.dataprep.parameters.SelectParameter;
+import org.talend.dataprep.parameters.*;
 
 /**
  * Unit test for the SelectParameter bean. Mostly test the json serialization.
@@ -77,4 +75,20 @@ public class SelectParameterTest extends ParameterBaseTest {
         // then
         assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(LocalizedItem.class));
     }
+
+    @Test
+    public void shouldCreateConstantItem() {
+        // when
+        final SelectParameter params = SelectParameter
+                .Builder
+                .builder()
+                .constant("key", "a constant key")
+                .build();
+
+        // then
+        assertThat(params.getItems().get(0), IsInstanceOf.instanceOf(TextItem.class));
+        assertThat(params.getItems().get(0).getValue(), is("key"));
+        assertThat(params.getItems().get(0).getLabel(), is("a constant key"));
+    }
+
 }

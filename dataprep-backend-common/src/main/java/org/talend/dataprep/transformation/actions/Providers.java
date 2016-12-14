@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.actions;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -108,8 +109,13 @@ public class Providers {
                 o = singletons.get(clazz);
             } else {
                 final T newValue = next.get(clazz, args);
-                singletons.put(clazz, newValue);
-                o = newValue;
+                Annotation[] annotations = newValue.getClass().getDeclaredAnnotations();
+                if (Arrays.stream(annotations).anyMatch(a -> a instanceof PrototypeScope)) {
+                    o = next.get(clazz, args);
+                } else {
+                    singletons.put(clazz, newValue);
+                    o = newValue;
+                }
             }
             return clazz.cast(o);
         }
@@ -149,7 +155,8 @@ public class Providers {
                             }
                         }
                         if (constructor == null) {
-                            throw new IllegalArgumentException("No implementation of '" + clazz.getName() + "' with constructor '" + Arrays.toString(args) + "' found.");
+                            throw new IllegalArgumentException("No implementation of '" + clazz.getName() + "' with constructor '"
+                                    + Arrays.toString(args) + "' found.");
                         } else {
                             if (argsClasses.isEmpty()) {
                                 return clazz.cast(constructor.newInstance());

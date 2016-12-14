@@ -23,6 +23,10 @@ export const homeState = {
 			preparation: undefined,
 		},
 	},
+	about: {
+		isVisible: false,
+		builds: [],
+	},
 };
 
 export function HomeStateService() {
@@ -30,6 +34,8 @@ export function HomeStateService() {
 		toggleSidepanel,
 		toggleCopyMovePreparation,
 		togglePreparationCreator,
+		toggleAbout,
+		setBuilds,
 	};
 
 	function toggleSidepanel() {
@@ -44,5 +50,13 @@ export function HomeStateService() {
 
 	function togglePreparationCreator() {
 		homeState.preparations.creator.isVisible = !homeState.preparations.creator.isVisible;
+	}
+
+	function toggleAbout() {
+		homeState.about.isVisible = !homeState.about.isVisible;
+	}
+
+	function setBuilds(builds) {
+		homeState.about.builds = builds;
 	}
 }

@@ -22,30 +22,30 @@ export default class LookupDatasetListCtrl {
 		this.filterDatasets();
 	}
 
-    /**
-     * @ngdoc method
-     * @name filterDatasets
-     * @methodOf data-prep.lookup-dataset-list.controller:LookupDatasetListCtrl
-     * @description filter datasets
-     */
+	/**
+	 * @ngdoc method
+	 * @name filterDatasets
+	 * @methodOf data-prep.lookup-dataset-list.controller:LookupDatasetListCtrl
+	 * @description filter datasets
+	 */
 	filterDatasets() {
 		if (this.searchText) {
 			this.filteredDatasets = this.datasets.filter(
-                (dataset) => {
-	return dataset.name.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1;
-});
+				(dataset) => {
+					return dataset.model.name.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1;
+				});
 		}
 		else {
 			this.filteredDatasets = this.datasets;
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name toogleSelect
-     * @methodOf data-prep.lookup-dataset-list.controller:LookupDatasetListCtrl
-     * @description Select/Deselect a dataset
-     */
+	/**
+	 * @ngdoc method
+	 * @name toogleSelect
+	 * @methodOf data-prep.lookup-dataset-list.controller:LookupDatasetListCtrl
+	 * @description Select/Deselect a dataset
+	 */
 	toogleSelect(dataset) {
 		if (dataset.enableToAddToLookup) {
 			dataset.addedToLookup = !dataset.addedToLookup;

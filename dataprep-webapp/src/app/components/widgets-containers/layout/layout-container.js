@@ -19,7 +19,7 @@ const LayoutContainer = {
 			</div>
 			<div class="content">
 				<div class="sidemenu">
-					<side-panel active="$ctrl.$state.current.name"><side-panel/>
+					<side-panel id="'side-panel'" active="$ctrl.$state.current.name"><side-panel/>
 				</div>
 				<div class="main">
 					<div class="main-wrapper">

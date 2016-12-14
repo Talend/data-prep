@@ -12,13 +12,15 @@
  ============================================================================*/
 
 const PREPARATION = 'preparation';
+const DATASET = 'dataset';
+const FOLDER = 'folder';
+const DOCUMENTATION = 'documentation';
 
 export default class SearchActionsService {
 
-	constructor(MenuActionsService, SearchService, StateService) {
+	constructor(SearchService, StateService) {
 		'ngInject';
 
-		this.menuActionsService = MenuActionsService;
 		this.searchService = SearchService;
 		this.stateService = StateService;
 	}
@@ -43,16 +45,21 @@ export default class SearchActionsService {
 		}
 		case '@@search/OPEN': {
 			switch (action.payload.inventoryType) {
-			case PREPARATION: {
-				const menuAction = {
-					type: '@@router/GO_PREPARATION',
+			case PREPARATION:
+			case DATASET:
+			case FOLDER: {
+				break;
+			}
+			case DOCUMENTATION: {
+				const newAction = {
+					type: '@@external/OPEN_WINDOW',
 					payload: {
-						method: 'go',
-						args: ['playground.preparation'],
-						id: action.payload.id,
+						method: 'open',
+						args: [
+							action.payload.url,
+						],
 					},
 				};
-				this.menuActionsService.dispatch(menuAction);
 				break;
 			}
 			}

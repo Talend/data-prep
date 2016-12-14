@@ -81,32 +81,34 @@ export default class AppHeaderBarCtrl {
 		}
 		else if (changes.searchResults) {
 			const searchResults = changes.searchResults.currentValue;
+			this.adaptedSearchResults = SEARCH_INVENTORY_TYPES
+				.filter((inventoryType) => {
+					return searchResults.some((result) => {
+						return result.inventoryType === inventoryType.title;
+					});
+				})
+				.map((inventoryType) => {
+					const suggestions = searchResults.filter((result) => {
+						return result.inventoryType === inventoryType.title;
+					});
+					return {
+						title: inventoryType.title,
+						icon: {
+							name: inventoryType.iconName,
+							title: inventoryType.iconTitle,
+						},
+						suggestions: suggestions.map((result) => {
+							return {
+								...result,
+								title: result.name,
+								description: result.description,
+							};
+						}),
+					};
+				});
 			updatedContent[1].search = {
 				...updatedContent[1].search,
-				items: SEARCH_INVENTORY_TYPES
-					.filter((inventoryType) => {
-						return searchResults.some((result) => {
-							return result.inventoryType === inventoryType.title;
-						});
-					})
-					.map((inventoryType) => {
-						const suggestions = searchResults.filter((result) => {
-							return result.inventoryType === inventoryType.title;
-						});
-						return {
-							title: inventoryType.title,
-							icon: {
-								name: inventoryType.iconName,
-								title: inventoryType.iconTitle,
-							},
-							suggestions: suggestions.map((result) => {
-								return {
-									title: result.name,
-									description: result.description,
-								};
-							}),
-						};
-					}),
+				items: this.adaptedSearchResults,
 			};
 		}
 		this.content = updatedContent;
@@ -134,7 +136,7 @@ export default class AppHeaderBarCtrl {
 	adaptSearch() {
 		const searchSettings = this.appSettings.views.appheaderbar.search;
 		const searchToggleAction = this.appSettings.actions[searchSettings.onToggle];
-		const searchBlurAction = this.appSettings.actions[searchSettings.onBlur];
+		// const searchBlurAction = this.appSettings.actions[searchSettings.onBlur];
 		const searchAllAction = this.appSettings.actions[searchSettings.onChange];
 		const searchOpenAction = this.appSettings.actions[searchSettings.onSelect];
 		return {
@@ -146,12 +148,17 @@ export default class AppHeaderBarCtrl {
 			},
 			placeholder: this.$translate.instant('SEARCH'),
 			onToggle: this.settingsActionsService.createDispatcher(searchToggleAction),
-			onBlur: this.settingsActionsService.createDispatcher(searchBlurAction),
+			onBlur: () => {
+				// console.log('onBlur');
+				// this.settingsActionsService.createDispatcher(searchBlurAction);
+			},
 			onChange: (event) => {
 				const searchInput = event.target && event.target.value;
 				return this.settingsActionsService.createDispatcher(searchAllAction)(event, { searchInput });
 			},
-			onSelect: this.settingsActionsService.createDispatcher(searchOpenAction),
+			onSelect: (event, { sectionIndex, itemIndex }) => {
+				return this.settingsActionsService.createDispatcher(searchOpenAction)(event, this.adaptedSearchResults[sectionIndex].suggestions[itemIndex]);
+			},
 		};
 	}
 

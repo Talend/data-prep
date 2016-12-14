@@ -58,7 +58,7 @@
     "react-autowhatever": "^7.0.0",
     "react-bootstrap": "^0.30.3",
     "react-dom": "^15.4.1",
-    "react-talend-components": "0.27.0",
+    "react-talend-components": "0.33.0",
     "react-talend-forms": "0.7.1",
     "sunchoke": "git+https://github.com/Talend/sunchoke.git#1.0.0",
     "talend-icons": "0.10.0",

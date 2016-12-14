@@ -49,10 +49,10 @@ export default class InventoryListCtrl {
 	$onChanges(changes) {
 		if (changes.folders || changes.items) {
 			if (changes.folders) {
-				this.adapted.folders = this.adaptActions(changes.folders.currentValue || []);
+				this.adapted.folders = this.adaptItemActions(changes.folders.currentValue || []);
 			}
 			if (changes.items) {
-				this.adapted.items = this.adaptActions(changes.items.currentValue || []);
+				this.adapted.items = this.adaptItemActions(changes.items.currentValue || []);
 			}
 			this.listProps = {
 				...this.listProps,
@@ -76,23 +76,22 @@ export default class InventoryListCtrl {
 	initToolbarProps() {
 		const toolbarSettings = this.appSettings.views[this.viewKey].toolbar;
 
-		const clickAddAction = this.appSettings.actions[toolbarSettings.onClickAdd];
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
 		const sortByAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
 
-		const onClickAdd = clickAddAction && this.SettingsActionsService.createDispatcher(clickAddAction);
 		const onSelectSortBy = sortByAction && this.SettingsActionsService.createDispatcher(sortByAction);
 		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
 		const onSelectDisplayMode = dispatchDisplayMode && ((event, mode) => dispatchDisplayMode(event, { mode }));
 
-		const actions = toolbarSettings.actions
-			.map(actionName => this.appSettings.actions[actionName])
-			.map(action => this.SettingsActionsService.createDispatcher(action));
+		const actions = toolbarSettings.actions &&
+			{
+				left: this.adaptActions(toolbarSettings.actions.left),
+				right: this.adaptActions(toolbarSettings.actions.right),
+			};
 
 		this.toolbarProps = {
 			...toolbarSettings,
 			actions,
-			onClickAdd,
 			onSelectDisplayMode,
 			onSelectSortBy,
 		};
@@ -108,7 +107,7 @@ export default class InventoryListCtrl {
 		const listSettings = this.appSettings.views[this.viewKey].list;
 		const onItemClick = this.getTitleActionDispatcher(this.viewKey, 'onClick');
 
-		let onClick;
+		let onClick = onItemClick;
 		if (this.folderViewKey) {
 			const onFolderClick = this.getTitleActionDispatcher(this.folderViewKey, 'onClick');
 			onClick = (event, payload) => {
@@ -116,9 +115,6 @@ export default class InventoryListCtrl {
 					onFolderClick(event, payload) :
 					onItemClick(event, payload);
 			};
-		}
-		else {
-			onClick = onItemClick;
 		}
 
 		const onEditCancel = this.getTitleActionDispatcher(this.viewKey, 'onEditCancel');
@@ -144,46 +140,33 @@ export default class InventoryListCtrl {
 		return dispatcher;
 	}
 
-	adaptActions(items) {
+	adaptItemActions(items) {
 		return items.map((item, index) => {
-			const actions = item.actions.map((actionName) => {
-				const settingAction = this.appSettings.actions[actionName];
-				const dispatch = this.getActionDispatcher(actionName);
-				if (actionName === 'menu:playground:preparation') {
-					const preparations = item.model.preparations.map((preparation) => {
-						return {
-							label: preparation.name,
-							onClick: event => dispatch(event, preparation),
-						};
-					});
-
-					const dispatchDataset = this.getActionDispatcher('menu:playground:dataset');
-					const items = [
-						{
-							icon: 'talend-plus',
-							label: this.$translate.instant('CREATE_NEW_PREP'),
-							onClick: event => dispatchDataset(event, item.model),
-						},
-					];
-					return {
-						id: 'dropdown_' + item.model.id,
-						displayMode: 'dropdown',
-						label: settingAction.name,
-						icon: settingAction.icon,
-						items: items.concat(preparations),
-					};
-				}
+			const actions = this.adaptActions(item.actions).map((action) => {
 				return {
-					id: `${this.id}-${index}-${settingAction.id}`,
-					icon: settingAction.icon,
-					label: settingAction.name,
+					...action,
+					id: `${this.id}-${index}-${action.id}`,
 					model: item,
-					onClick: (event, payload) => dispatch(event, payload.model),
+					onClick: (event, payload) => action.onClick(event, payload.model),
 				};
 			});
 			return {
 				...item,
 				actions,
+			};
+		});
+	}
+
+	adaptActions(actions) {
+		return actions && actions.map((actionName) => {
+			const settingAction = this.appSettings.actions[actionName];
+			const onClick = this.getActionDispatcher(actionName);
+			return {
+				id: settingAction.id,
+				icon: settingAction.icon,
+				label: settingAction.name,
+				bsStyle: settingAction.bsStyle,
+				onClick,
 			};
 		});
 	}

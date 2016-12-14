@@ -16,6 +16,7 @@ import ABOUT_MODULE from '../about/about-module';
 import DATASET_HEADER_MODULE from '../dataset/header/dataset-header-module';
 import DATASET_LIST_MODULE from '../dataset/list/dataset-list-module';
 import DATASET_UPDLOAD_LIST_MODULE from '../dataset/upload-list/dataset-upload-list-module';
+import FOLDER_CREATOR_MODULE from '../folder/creator/folder-creator-module';
 import IMPORT_MODULE from '../import/import-module';
 import PREPARATION_BREADCRUMB_MODULE from '../preparation/breadcrumb/preparation-breadcrumb-module';
 import PREPARATION_CREATOR_MODULE from '../preparation/creator/preparation-creator-module';
@@ -66,6 +67,7 @@ angular.module(MODULE_NAME,
 		DATASET_UPDLOAD_LIST_MODULE,
 		DATASET_HEADER_MODULE,
 		DATASET_LIST_MODULE,
+		FOLDER_CREATOR_MODULE,
 		IMPORT_MODULE,
 		PREPARATION_BREADCRUMB_MODULE,
 		PREPARATION_CREATOR_MODULE,

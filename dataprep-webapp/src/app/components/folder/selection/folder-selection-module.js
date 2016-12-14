@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_FOLDER_MODULE from '../../services/folder/folder-module';
+import SERVICES_FOLDER_MODULE from '../../../services/folder/folder-module';
 
 import FolderSelection from './folder-selection-component';
 import FolderTreeComponent from './folder-tree/folder-tree-component';

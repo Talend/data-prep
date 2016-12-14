@@ -13,6 +13,11 @@
 
 export const homeState = {
 	sidePanelDocked: false,
+	folders: {
+		creator: {
+			isVisible: false,
+		},
+	},
 	preparations: {
 		creator: {
 			isVisible: false,
@@ -33,6 +38,7 @@ export function HomeStateService() {
 	return {
 		toggleSidepanel,
 		toggleCopyMovePreparation,
+		toggleFolderCreator,
 		togglePreparationCreator,
 		toggleAbout,
 		setBuilds,
@@ -46,6 +52,10 @@ export function HomeStateService() {
 		homeState.preparations.copyMove.isVisible = !homeState.preparations.copyMove.isVisible;
 		homeState.preparations.copyMove.initialFolder = initialFolder;
 		homeState.preparations.copyMove.preparation = preparation;
+	}
+
+	function toggleFolderCreator() {
+		homeState.folders.creator.isVisible = !homeState.folders.creator.isVisible;
 	}
 
 	function togglePreparationCreator() {

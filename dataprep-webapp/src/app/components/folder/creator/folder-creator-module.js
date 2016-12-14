@@ -12,24 +12,19 @@
  ============================================================================*/
 
 import angular from 'angular';
-import FOLDER_SELECTION from '../../folder/selection/folder-selection-module';
-import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
+import FolderCreatorContainer from './folder-creator-container';
+import FolderCreatorFormContainer from './form/folder-creator-form-component';
 
-import InventoryCopyMoveComponent from './inventory-copy-move-component';
-
-const MODULE_NAME = 'data-prep.inventory-copy-move';
+const MODULE_NAME = 'data-prep.folder-creator';
 
 /**
  * @ngdoc object
- * @name data-prep.inventory-copy-move
- * @description This module contains the entities to manage the inventory copy/move wiazerd
- * @requires data-prep.folder-selection
+ * @name data-prep.folder-creator
+ * @description This module manage folder creation
  */
 angular.module(MODULE_NAME,
-	[
-		FOLDER_SELECTION,
-		TALEND_WIDGET_MODULE,
-	])
-    .component('inventoryCopyMove', InventoryCopyMoveComponent);
+	[])
+    .component('folderCreatorForm', FolderCreatorFormContainer)
+    .component('folderCreator', FolderCreatorContainer);
 
 export default MODULE_NAME;

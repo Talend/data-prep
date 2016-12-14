@@ -11,19 +11,19 @@
 
  ============================================================================*/
 
-const HomeComponent = {
-	template: `
-		<layout>
-			<ui-view name="home-content"></ui-view>
-		</layout>
+/**
+ * @ngdoc component
+ * @name data-prep.preparation-creator:preparationCreatorForm
+ * @description This component renders add preparation modal content
+ * @usage
+ *      <preparation-creator-form></preparation-creator-form>
+ * */
 
-		<dataset-xls-preview></dataset-xls-preview>
-		<folder-creator></folder-creator>
-		<preparation-copy-move></preparation-copy-move>
-		<preparation-creator></preparation-creator>
-		<insertion-home></insertion-home>
-		<about></about>
-	`,
+import PreparationCreatorCtrl from './folder-creator-form-controller';
+
+import template from './folder-creator-form.html';
+
+export default {
+	templateUrl: template,
+	controller: PreparationCreatorCtrl,
 };
-
-export default HomeComponent;

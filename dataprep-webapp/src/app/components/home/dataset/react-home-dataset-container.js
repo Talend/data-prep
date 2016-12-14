@@ -13,14 +13,17 @@
 const HomeDatasetContainer = {
 	template: `
 		<div class="home-content">
-		<input
-			id="inputUpdateDataset"
-			type="file"
-			class="ng-hide"
-			ng-file-select
-			accept="*.csv"
-			ng-model="$ctrl.updateDatasetFile"
-			ng-file-change="$ctrl.onFileChange()"/>
+			<form>
+				<label class="sr-only">Update Dataset Input</label>
+				<input
+					id="inputUpdateDataset"
+					type="file"
+					class="ng-hide"
+					ng-file-select
+					accept="*.csv"
+					ng-model="$ctrl.updateDatasetFile"
+					ng-file-change="$ctrl.onFileChange()"/>
+			</form>
 			<inventory-list
 				display-mode="$ctrl.state.inventory.datasetsDisplayMode"
 				items="$ctrl.state.inventory.datasets"

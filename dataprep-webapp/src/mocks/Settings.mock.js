@@ -243,10 +243,6 @@ const settingsMock = {
 			name: 'Submit name edition',
 			icon: 'talend-check',
 			type: '@@dataset/SUBMIT_EDIT',
-			payload: {
-				method: '',
-				args: [],
-			},
 		},
 		'dataset:remove': {
 			id: 'dataset:remove',

@@ -226,11 +226,7 @@
       "id": "dataset:submit-edit",
       "name": "Submit name edition",
       "icon": "talend-check",
-      "type": "@@dataset/SUBMIT_EDIT",
-      "payload": {
-        "method": "",
-        "args": []
-      }
+      "type": "@@dataset/SUBMIT_EDIT"
     },
     "dataset:remove": {
       "id": "dataset:remove",

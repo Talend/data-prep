@@ -123,6 +123,7 @@ describe('Inventory list container', () => {
 		createElement = () => {
 			element = angular.element(`
 				<inventory-list
+					id="'list'"
 					display-mode="displayMode"
 					folders="folders"
 					items="items"
@@ -183,38 +184,30 @@ describe('Inventory list container', () => {
 		});
 	});
 
-	describe('toolbar actions', () => {
-		it('should dispatch preparation creation on "Add" click',
+	describe('folder actions', () => {
+		it('should dispatch folder creation',
 			inject((SettingsActionsService) => {
 				// given
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('div[role="toolbar"]').eq(0).find('button').eq(0).click(); // TODO id !
+				element.find('#list-preparation\\:create\\:folder').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
 				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:create');
+				expect(lastCallArgs.id).toBe('preparation:create:folder');
 				expect(lastCallArgs.type).toBe('@@preparation/CREATE');
 			})
 		);
-	});
 
-	describe('folder actions', () => {
 		it('should dispatch folder redirection on title click',
 			inject((SettingsActionsService) => {
 				// given
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(0)
-					.click();
+				element.find('#list-0-title').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -231,15 +224,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(0)
-					.find('.tc-actions')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(0)
-					.click();
+				element.find('#list-0-preparation\\:edit').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -256,15 +241,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(0)
-					.find('.tc-actions')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(1)
-					.click();
+				element.find('#list-0-preparation\\:remove\\:folder').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -277,13 +254,14 @@ describe('Inventory list container', () => {
 	});
 
 	describe('preparation actions', () => {
-		it('should dispatch preparation creation on "Add" click',
+
+		it('should dispatch preparation creation',
 			inject((SettingsActionsService) => {
 				// given
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('div[role="toolbar"]').eq(0).find('button').eq(0).click(); // TODO id !
+				element.find('#list-preparation\\:create').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -299,15 +277,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(2)
-					.find('.tc-actions')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(0)
-					.click();
+				element.find('#list-2-preparation\\:edit').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -324,15 +294,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(2)
-					.find('.tc-actions')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(1)
-					.click();
+				element.find('#list-2-preparation\\:copy-move').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -349,15 +311,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(2)
-					.find('.tc-actions')
-					.eq(0)
-					.find('button') // TODO id !
-					.eq(2)
-					.click();
+				element.find('#list-2-preparation\\:remove').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -374,13 +328,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('.tc-list-display-table')
-					.eq(0)
-					.find('tbody tr')
-					.eq(2)
-					.find('button') // TODO id !
-					.eq(0)
-					.click();
+				element.find('#list-2-title').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -397,13 +345,8 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('div[role="toolbar"]')
-					.eq(0)
-					.find('.nav')
-					.eq(2)  // TODO DANGEROUS, add id !
-					.find('button')
-					.eq(0)
-					.click();
+				console.log(element.find('#list-sort-order')[0]);
+				element.find('#list-sort-order').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);

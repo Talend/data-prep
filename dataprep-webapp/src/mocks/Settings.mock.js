@@ -72,8 +72,9 @@ const settingsMock = {
 					{ id: 'name', name: 'Name' },
 					{ id: 'date', name: 'Creation Date' },
 				],
-				actions: ['preparation:create:folder'],
-				onClickAdd: 'preparation:create',
+				actions: {
+					left: ['preparation:create', 'preparation:create:folder'],
+				},
 				onSelectDisplayMode: 'preparation:display-mode',
 				onSelectSortBy: 'preparation:sort',
 				searchLabel: 'Find a preparation',
@@ -316,8 +317,8 @@ const settingsMock = {
 		},
 		'preparation:create': {
 			id: 'preparation:create',
-			name: 'Create a preparation',
-			icon: 'talend-dataprep',
+			name: 'Create preparation',
+			icon: 'talend-plus',
 			type: '@@preparation/CREATE',
 			payload: {
 				method: 'togglePreparationCreator',
@@ -326,11 +327,11 @@ const settingsMock = {
 		},
 		'preparation:create:folder': {
 			id: 'preparation:create:folder',
-			name: 'Create a folder',
+			name: 'Create folder',
 			icon: 'talend-folder',
-			type: '@@preparation/CREATE_FOLDER',
+			type: '@@preparation/CREATE',
 			payload: {
-				method: 'createFolder',
+				method: 'toggleFolderCreator',
 				args: [],
 			},
 		},

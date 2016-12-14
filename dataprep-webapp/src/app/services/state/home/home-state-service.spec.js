@@ -72,6 +72,19 @@ describe('home state', () => {
 		}));
 	});
 
+	describe('toggleFolderCreator', () => {
+		it('should toggle folder creator', inject((homeState, HomeStateService) => {
+			//given
+			homeState.folders.creator.isVisible = false;
+
+			//when
+			HomeStateService.toggleFolderCreator();
+
+			//then
+			expect(homeState.folders.creator.isVisible).toBe(true);
+		}));
+	});
+
 	describe('About', () => {
 		it('should toggle about modal', inject((homeState, HomeStateService) => {
 			//when

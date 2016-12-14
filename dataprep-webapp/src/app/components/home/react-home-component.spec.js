@@ -13,7 +13,6 @@
 
 describe('Home component', () => {
 	let scope;
-	let createElement;
 	let element;
 
 	beforeEach(angular.mock.module('data-prep.home'));
@@ -22,12 +21,9 @@ describe('Home component', () => {
 		scope = $rootScope.$new(true);
 		spyOn(AboutService, 'loadBuilds').and.returnValue();
 
-		createElement = () => {
-			element = angular.element('<react-home></react-home>');
-			$compile(element)(scope);
-			scope.$digest();
-			return element;
-		};
+		element = angular.element('<react-home></react-home>');
+		$compile(element)(scope);
+		scope.$digest();
 	}));
 
 	afterEach(() => {
@@ -36,51 +32,31 @@ describe('Home component', () => {
 	});
 
 	it('should hold dataset-xls-preview', () => {
-		//when
-		createElement();
-
-		//then
 		expect(element.find('dataset-xls-preview').length).toBe(1);
 	});
 
-	it('should hold preparation-copy-move', () => {
-		//when
-		createElement();
+	it('should hold folder-creator', () => {
+		expect(element.find('folder-creator').length).toBe(1);
+	});
 
-		//then
+	it('should hold preparation-copy-move', () => {
 		expect(element.find('preparation-copy-move').length).toBe(1);
 	});
 
 	it('should hold preparation-creator', () => {
-		//when
-		createElement();
-
-		//then
 		expect(element.find('preparation-creator').length).toBe(1);
 	});
 
 	it('should inject home insertion point', () => {
-		//when
-		createElement();
-
-		//then
 		expect(element.find('insertion-home').length).toBe(1);
 	});
 
 	it('should instanciate app layout with an ui insertion point', () => {
-		//when
-		createElement();
-
-		//then
 		expect(element.find('layout').length).toBe(1);
 		expect(element.find('layout').eq(0).find('ui-view[name="home-content"]').length).toBe(1);
 	});
 
 	it('should instantiate home about modal', () => {
-		//when
-		createElement();
-
-		//then
 		expect(element.find('about').length).toBe(1);
 	});
 });

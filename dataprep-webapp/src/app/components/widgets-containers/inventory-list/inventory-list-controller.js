@@ -20,10 +20,6 @@ export default class InventoryListCtrl {
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
 
-		this.adapted = {
-			folders: [],
-			items: [],
-		};
 		this.actionsDispatchers = [];
 		this.initToolbarProps();
 		this.initListProps();
@@ -48,15 +44,10 @@ export default class InventoryListCtrl {
 
 	$onChanges(changes) {
 		if (changes.folders || changes.items) {
-			if (changes.folders) {
-				this.adapted.folders = this.adaptItemActions(changes.folders.currentValue || []);
-			}
-			if (changes.items) {
-				this.adapted.items = this.adaptItemActions(changes.items.currentValue || []);
-			}
+			const allItems = (this.folders || []).concat(this.items || []);
 			this.listProps = {
 				...this.listProps,
-				items: this.adapted.folders.concat(this.adapted.items),
+				items: this.adaptItemActions(allItems),
 			};
 		}
 		if (changes.sortBy) {

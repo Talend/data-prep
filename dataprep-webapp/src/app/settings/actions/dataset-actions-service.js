@@ -79,7 +79,7 @@ export default class DatasetActionsService {
 
 				this.renamingList.push(dataset);
 
-				this.DatasetService.rename(dataset.model, cleanName)
+				return this.DatasetService.rename(dataset.model, cleanName)
 					.then(() => {
 						this.MessageService.success(
 							'DATASET_RENAME_SUCCESS_TITLE',

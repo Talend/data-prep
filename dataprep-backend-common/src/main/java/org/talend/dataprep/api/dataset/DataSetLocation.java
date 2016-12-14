@@ -42,10 +42,10 @@ public interface DataSetLocation extends Serializable {
     String getLocationType();
 
     /**
-     * @return in case a location has many types (e.g. oracle, mysql, postgres -> database)
+     * @return in case a content store deal with many types (e.g. oracle, mysql, postgres -> database)
      */
     @JsonIgnore
-    default String getParentLocationType() {
+    default String getStoreName() {
         // default is the location type
         return getLocationType();
     }

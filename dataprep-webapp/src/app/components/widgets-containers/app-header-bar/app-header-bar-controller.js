@@ -108,12 +108,14 @@ export default class AppHeaderBarCtrl {
 		const onSelectDispatcherByType = [];
 		Object.keys(onSelectActionBy).forEach((type) => {
 			const onSelectAction = this.appSettings.actions[onSelectActionBy[type]];
-			this.searchAvailableInventoryTypes.push({
-				title: type,
-				iconName: onSelectAction.icon,
-				iconTitle: onSelectAction.name,
-			});
-			onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
+			if (onSelectAction) {
+				this.searchAvailableInventoryTypes.push({
+					title: type,
+					iconName: onSelectAction.icon,
+					iconTitle: onSelectAction.name,
+				});
+				onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
+			}
 		});
 		this.searchOnSelect = (event, { sectionIndex, itemIndex }) => {
 			const selectedCategory = this.adaptedSearchResults[sectionIndex];

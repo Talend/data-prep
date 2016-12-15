@@ -17,28 +17,67 @@ describe('Search actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions'));
 
 	describe('dispatch', () => {
-		it('should toggle search input', inject(() => {
+		it('should toggle search input', inject((StateService, SearchActionsService) => {
 			// given
+			const action = {
+				type: '@@search/TOGGLE',
+				payload: {
+					method: 'open',
+					args: [],
+					url: 'http://www.google.fr',
+				},
+			};
+			spyOn(StateService, 'toggleSearch').and.returnValue();
 
 			// when
+			SearchActionsService.dispatch(action);
 
 			// then
+			expect(StateService.toggleSearch).toHaveBeenCalled();
 		}));
 
-		it('should do nothing if search input is empty', inject(() => {
+		it('should do nothing if search input is empty', inject(($q, $rootScope, StateService, SearchActionsService, SearchService) => {
 			// given
+			const action = {
+				type: '@@search/ALL',
+				payload: {
+					searchInput: '',
+				},
+			};
+			spyOn(StateService, 'setSearchInput').and.returnValue();
+			spyOn(SearchService, 'searchAll').and.returnValue();
+			spyOn(StateService, 'setSearchResults').and.returnValue();
 
 			// when
+			SearchActionsService.dispatch(action);
+			$rootScope.$digest();
 
 			// then
+			expect(StateService.setSearchInput).toHaveBeenCalledWith('');
+			expect(SearchService.searchAll).not.toHaveBeenCalled();
+			expect(StateService.setSearchResults).not.toHaveBeenCalled();
 		}));
 
-		it('should search everywhere if search input is not empty', inject(() => {
+		it('should search everywhere if search input is not empty', inject(($q, $rootScope, StateService, SearchActionsService, SearchService) => {
 			// given
+			const action = {
+				type: '@@search/ALL',
+				payload: {
+					searchInput: 'lorem ipsum',
+				},
+			};
+			spyOn(StateService, 'setSearchInput').and.returnValue();
+			spyOn(SearchService, 'searchAll').and.returnValue($q.when(['a', 'b', 'c']));
+			spyOn(StateService, 'setSearchResults').and.returnValue();
 
 			// when
+			SearchActionsService.dispatch(action);
+			$rootScope.$digest();
 
 			// then
+			expect(StateService.setSearchInput).toHaveBeenCalledWith('lorem ipsum');
+			expect(SearchService.searchAll).toHaveBeenCalledWith('lorem ipsum');
+			expect(StateService.setSearchResults).toHaveBeenCalledWith(['a', 'b', 'c']);
 		}));
 	});
 });

@@ -11,10 +11,19 @@
 
  ============================================================================*/
 
-const searchInput = 'lorem ipsum';
-
 describe('Search service', () => {
-	beforeEach(angular.mock.module('data-prep.services.search'));
+	let stateMock;
+
+	const searchInput = 'lorem ipsum';
+
+	beforeEach(angular.mock.module('data-prep.services.search', ($provide) => {
+		stateMock = {
+			search: {
+				searchInput,
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
 	describe('searchDocumentation', () => {
 		it('should call documentation service', inject(($rootScope, SearchService, DocumentationService) => {
@@ -78,6 +87,27 @@ describe('Search service', () => {
 			expect(results.length).toBe(2);
 			expect(results).toContain(documentationResult);
 			expect(results).toContain(inventoryResult);
+		}));
+
+		it('should not aggregate results if search input has changed', inject(($rootScope, $q, state, SearchService, DocumentationService, InventoryService) => {
+			let results = null;
+
+			// given
+			const documentationResult = 'documentation';
+			const inventoryResult = 'inventory';
+			spyOn(DocumentationService, 'search').and.returnValue($q.when([documentationResult]));
+			spyOn(InventoryService, 'search').and.returnValue($q.when([inventoryResult]));
+			stateMock.search.searchInput = searchInput;
+
+			// when
+			SearchService.searchAll(searchInput).then((response) => {
+				results = response;
+			});
+			stateMock.search.searchInput = 'newValue';
+			$rootScope.$digest();
+
+			// then
+			expect(results.length).toBe(0);
 		}));
 	});
 });

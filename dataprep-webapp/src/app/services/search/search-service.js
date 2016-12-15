@@ -18,7 +18,7 @@ const EASTER_EGGS_VALUE = 'star wars';
  * @name data-prep.services.recipe.service:SearchService
  * @description Search service. This service provide the entry point to search
  */
-export default function SearchService($q, DocumentationService, EasterEggsService, InventoryService) {
+export default function SearchService($q, state, DocumentationService, EasterEggsService, InventoryService) {
 	'ngInject';
 
 	return {
@@ -58,7 +58,7 @@ export default function SearchService($q, DocumentationService, EasterEggsServic
 		return $q
 			.all([inventoryPromise, documentationPromise])
 			.then(() => {
-				return results;
+				return (state.search.searchInput === searchInput) ? results : [];
 			});
 	}
 }

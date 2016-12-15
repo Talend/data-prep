@@ -14,7 +14,7 @@
 describe('Filter service', () => {
 
     let stateMock;
-    beforeEach(angular.mock.module('data-prep.services.filter', ($provide) => {
+    beforeEach(angular.mock.module('data-prep.services.filter-service', ($provide) => {
         const columns = [
             { id: '0000', name: 'id' },
             { id: '0001', name: 'name' },
@@ -30,10 +30,8 @@ describe('Filter service', () => {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject((StateService, StatisticsService, StorageService) => {
+    beforeEach(inject((StateService, StorageService) => {
         spyOn(StateService, 'addGridFilter').and.returnValue();
-        spyOn(StatisticsService, 'updateFilteredStatistics').and.returnValue();
-        spyOn(StorageService, 'saveFilter').and.returnValue();
         spyOn(StorageService, 'removeFilter').and.returnValue();
     }));
 
@@ -74,48 +72,6 @@ describe('Filter service', () => {
                     },
                 ],
             });
-        }));
-    });
-
-
-    describe('get range label for', () => {
-        it('should construct range label', inject((FilterService) => {
-            //given
-            const intervals = [
-                { input: { min: 0, max: 10, isMaxReached: false }, output: '[0 .. 10[' },
-                { input: { min: 10, max: 10, isMaxReached: false }, output: '[10]' },
-                { input: { min: 0, max: 10, isMaxReached: true }, output: '[0 .. 10]' },
-                { input: { min: 'Jan 2015', max: 'Mar 2015', isMaxReached: true }, output: '[Jan 2015 .. Mar 2015]' },
-            ];
-
-            //when
-            const fn = FilterService.getRangeLabelFor;
-
-            //then
-            intervals.forEach(interval => expect(fn(interval.input)).toEqual(interval.output));
-        }));
-    });
-
-    describe('get splitted range label', () => {
-        it('should isolate range values', inject((FilterService) => {
-            //given
-            const labels = [
-                { input: '', output: [''] },
-                { input: '[]', output: [''] },
-                { input: '[10]', output: ['10'] },
-                { input: '[0,10]', output: ['0', '10'] },
-                { input: '[0,10[', output: ['0', '10'] },
-                { input: '[0 .. 10]', output: ['0', '10'] },
-                { input: '[0 .. 10[', output: ['0', '10'] },
-                { input: '[Jan 2016,Jan 2017]', output: ['Jan 2016', 'Jan 2017'] },
-                { input: '[Jan 2016 .. Jan 2017[', output: ['Jan 2016', 'Jan 2017'] },
-            ];
-
-            //when
-            const fn = FilterService.getSplittedRangeLabelFor;
-
-            //then
-            labels.forEach(label => expect(fn(label.input)).toEqual(label.output));
         }));
     });
 
@@ -989,85 +945,6 @@ describe('Filter service', () => {
             expect(filterInfo.type).toBe('exact');
             expect(filterInfo.filterFn()({ col1: ' toto est ici' })).toBeFalsy();
         }));
-
-        it('should trigger statistics update', inject((FilterService, StatisticsService) => {
-            //given
-            const removeFnCallback = () => {};
-
-            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
-
-            //when
-            FilterService.addFilter('contains', 'col1', 'column name', {
-                phrase: [
-                    {
-                        value: 'toto',
-                    },
-                ],
-            }, removeFnCallback);
-
-            //then
-            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
-        }));
-
-        it('should save filter in localstorage', inject((FilterService, StorageService) => {
-            //given
-            expect(StorageService.saveFilter).not.toHaveBeenCalled();
-
-            //when
-            FilterService.addFilter('contains', 'col1', 'column name', {
-                phrase: [
-                    {
-                        value: 'toto',
-                    },
-                ],
-            });
-
-            //then
-            expect(StorageService.saveFilter).toHaveBeenCalledWith('abcd', []);
-        }));
-    });
-
-    describe('add filter and digest', () => {
-        it('should add a filter wrapped in $timeout to trigger a digest', inject(($timeout, FilterService, StateService) => {
-            //given
-            const removeFnCallback = () => {};
-
-            expect(StateService.addGridFilter).not.toHaveBeenCalled();
-
-            //when
-            FilterService.addFilterAndDigest('contains', 'col1', 'column name', {
-                caseSensitive: true,
-                phrase: [
-                    {
-                        value: 'toto\n',
-                    },
-                ],
-            }, removeFnCallback);
-            expect(StateService.addGridFilter).not.toHaveBeenCalled();
-            $timeout.flush();
-
-            //then
-            expect(StateService.addGridFilter).toHaveBeenCalled();
-
-            const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-            expect(filterInfo.type).toBe('contains');
-            expect(filterInfo.colId).toBe('col1');
-            expect(filterInfo.colName).toBe('column name');
-            expect(filterInfo.editable).toBe(true);
-            expect(filterInfo.args).toEqual({
-                caseSensitive: true,
-                phrase: [
-                    {
-                        label: 'toto\\n',
-                        value: 'toto\n',
-                    },
-                ],
-            });
-            expect(filterInfo.filterFn()({ col1: ' toto\nest ici' })).toBeTruthy();
-            expect(filterInfo.filterFn()({ col1: ' toto est ici' })).toBeFalsy();
-            expect(filterInfo.filterFn()({ col1: ' tata est ici' })).toBeFalsy();
-            expect(filterInfo.removeFilterFn).toBe(removeFnCallback);
-        }));
     });
 
     describe('remove filter', () => {
@@ -1082,14 +959,6 @@ describe('Filter service', () => {
 
             //then
             expect(StateService.removeAllGridFilters).toHaveBeenCalled();
-        }));
-
-        it('should remove filter in the localstorage when removing all filters', inject((FilterService, StorageService) => {
-            //when
-            FilterService.removeAllFilters();
-
-            //then
-            expect(StorageService.removeFilter).toHaveBeenCalledWith('abcd');
         }));
 
         it('should call each filter remove callback', inject((FilterService) => {
@@ -1121,18 +990,6 @@ describe('Filter service', () => {
             expect(StateService.removeGridFilter).toHaveBeenCalledWith(filter);
         }));
 
-        it('should save filter in the localstorage when removing a filter', inject((FilterService, StorageService) => {
-            //given
-            var filter = {};
-
-            //when
-            FilterService.removeFilter(filter);
-
-            //then
-            expect(StorageService.saveFilter).toHaveBeenCalledWith('abcd', []);
-        }));
-
-
         it('should call filter remove callback', inject((FilterService) => {
             //given
             const removeFn = jasmine.createSpy('removeFilterCallback');
@@ -1143,29 +1000,6 @@ describe('Filter service', () => {
 
             //then
             expect(removeFn).toHaveBeenCalled();
-        }));
-
-        it('should trigger statistics update on remove single', inject((FilterService, StatisticsService) => {
-            //given
-            const filter = {};
-            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
-
-            //when
-            FilterService.removeFilter(filter);
-
-            //then
-            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
-        }));
-
-        it('should trigger statistics update on remove all', inject((FilterService, StatisticsService) => {
-            //given
-            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
-
-            //when
-            FilterService.removeAllFilters();
-
-            //then
-            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
         }));
     });
 
@@ -1469,62 +1303,6 @@ describe('Filter service', () => {
             expect(newFilterInfos.removeFilterFn).toBe(removeCallback);
         }));
 
-        it('should trigger statistics update', inject((FilterService, StatisticsService) => {
-            //given
-            const oldFilter = {
-                type: 'contains',
-                colId: 'col2',
-                colName: 'column 2',
-                args: {
-                    phrase: [
-                        {
-                            value: 'Tata',
-                        },
-                    ],
-                },
-                filterFn: () => {},
-            };
-            expect(StatisticsService.updateFilteredStatistics).not.toHaveBeenCalled();
-
-            //when
-            FilterService.updateFilter(oldFilter, [
-                {
-                    value: 'Tata',
-                },
-            ]);
-
-            //then
-            expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
-        }));
-
-        it('should save filter in localstorage', inject((FilterService, StorageService) => {
-            //given
-            var oldFilter = {
-                type: 'contains',
-                colId: 'col2',
-                colName: 'column 2',
-                args: {
-                    phrase: [
-                        {
-                            value: 'Tata',
-                        },
-                    ],
-                },
-                filterFn: function () {},
-            };
-            expect(StorageService.saveFilter).not.toHaveBeenCalled();
-
-            //when
-            FilterService.updateFilter(oldFilter, [
-                {
-                    value: 'Tata',
-                },
-            ]);
-
-            //then
-            expect(StorageService.saveFilter).toHaveBeenCalledWith('abcd', []);
-        }));
-
         it('should update exact filter while several values are selected', inject((FilterService, StateService) => {
             //given
             const oldFilter = {
@@ -1688,6 +1466,29 @@ describe('Filter service', () => {
             expect(newFilter.filterFn()({ col1: '2014-02-01' })).toBeTruthy();
             expect(newFilter.filterFn()({ col1: '2014-03-01' })).toBeTruthy();
             expect(newFilter.filterFn()({ col1: '2014-05-01' })).toBeFalsy();
+        }));
+    });
+
+    describe('get splitted range label', () => {
+        it('should isolate range values', inject((FilterService) => {
+            //given
+            const labels = [
+                { input: '', output: [''] },
+                { input: '[]', output: [''] },
+                { input: '[10]', output: ['10'] },
+                { input: '[0,10]', output: ['0', '10'] },
+                { input: '[0,10[', output: ['0', '10'] },
+                { input: '[0 .. 10]', output: ['0', '10'] },
+                { input: '[0 .. 10[', output: ['0', '10'] },
+                { input: '[Jan 2016,Jan 2017]', output: ['Jan 2016', 'Jan 2017'] },
+                { input: '[Jan 2016 .. Jan 2017[', output: ['Jan 2016', 'Jan 2017'] },
+            ];
+
+            //when
+            const fn = FilterService._getSplittedRangeLabelFor;
+
+            //then
+            labels.forEach(label => expect(fn.call(FilterService, label.input)).toEqual(label.output));
         }));
     });
 });

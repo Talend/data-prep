@@ -15,7 +15,7 @@ import angular from 'angular';
 import COLUMN_PROFILE_OPTIONS_MODULE from '../column-profile-options/column-profile-options-module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
-import SERVICES_FILTER_MODULE from '../../../services/filter/filter-module';
+import SERVICES_FILTER_MANAGER_MODULE from '../../../services/filter/manager/filter-manager-module';
 import SERVICES_RECIPE_MODULE from '../../../services/recipe/recipe-module';
 import SERVICES_STATE_MODULE from '../../../services/state/state-module';
 import SERVICES_STATISTICS_MODULE from '../../../services/statistics/statistics-module';
@@ -30,7 +30,7 @@ angular.module(MODULE_NAME,
 		COLUMN_PROFILE_OPTIONS_MODULE,
 		TALEND_WIDGET_MODULE,
 		SERVICES_DATASET_MODULE,
-		SERVICES_FILTER_MODULE,
+		SERVICES_FILTER_MANAGER_MODULE,
 		SERVICES_RECIPE_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_STATISTICS_MODULE,

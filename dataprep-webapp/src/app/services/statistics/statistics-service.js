@@ -50,10 +50,10 @@ export default function StatisticsService($q, $log, $filter, state, StateService
 
         // statistics entry points
 		processAggregation,             // aggregation charts
-		processClassicChart,           // classic charts (not aggregation)
-		updateStatistics,                 // update all stats (values, charts)
-		updateFilteredStatistics, // update filtered entries stats
-		reset,                                       // reset charts/statistics/cache
+		processClassicChart,            // classic charts (not aggregation)
+		updateStatistics,               // update all stats (values, charts)
+		updateFilteredStatistics,       // update filtered entries stats
+		reset,                          // reset charts/statistics/cache
 	};
 	return service;
 

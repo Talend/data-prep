@@ -24,7 +24,7 @@ import { filter } from 'lodash';
  * @requires data-prep.services.filter.service:FilterService
  */
 export default function DatagridHeaderCtrl($scope, state, TransformationService, ConverterService, PlaygroundService,
-                                           FilterService) {
+                                           FilterManagerService) {
 	'ngInject';
 
 	const ACTION_SCOPE = 'column_metadata';
@@ -33,7 +33,7 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
 
 	const vm = this;
 	vm.converterService = ConverterService;
-	vm.filterService = FilterService;
+	vm.filterManagerService = FilterManagerService;
 	vm.PlaygroundService = PlaygroundService;
 	vm.state = state;
 

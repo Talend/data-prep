@@ -12,26 +12,25 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_FILTER_ADAPTER_MODULE from '../filter/adapter/filter-adapter-module';
-import SERVICES_STATISTICS_MODULE from '../statistics/statistics-module';
-import SERVICES_UTILS_MODULE from '../utils/utils-module';
+import SERVICES_FILTER_ADAPTER_MODULE from './adapter/filter-adapter-module';
+import SERVICES_STATE_MODULE from '../../services/state/state-module';
+import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 
 import FilterService from './filter-service';
 
-const MODULE_NAME = 'data-prep.services.filter';
+const MODULE_NAME = 'data-prep.services.filter-service';
 
 /**
  * @ngdoc object
- * @name data-prep.services.filter
- * @description This module contains the services to manage filters in the datagrid.
- * It is responsible for the filter update within the SlickGrid grid
+ * @name data-prep.services.filter-service
+ * @description This module contains the services to manage filters in the monitor
  */
 angular.module(MODULE_NAME,
 	[
 		SERVICES_FILTER_ADAPTER_MODULE,
-		SERVICES_STATISTICS_MODULE,
+		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('FilterService', FilterService);
+	.service('FilterService', FilterService);
 
 export default MODULE_NAME;

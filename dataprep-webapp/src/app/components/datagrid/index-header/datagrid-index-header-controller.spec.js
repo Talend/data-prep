@@ -20,7 +20,7 @@ describe('Datagrid index header controller', () => {
     let scope;
 
     beforeEach(angular.mock.module('data-prep.datagrid-index-header'));
-    beforeEach(inject(($rootScope, $componentController, FilterService) => {
+    beforeEach(inject(($rootScope, $componentController, FilterManagerService) => {
         scope = $rootScope.$new();
 
         createController = () => {
@@ -29,10 +29,10 @@ describe('Datagrid index header controller', () => {
             });
         };
 
-        spyOn(FilterService, 'addFilterAndDigest');
+        spyOn(FilterManagerService, 'addFilterAndDigest');
     }));
 
-    it('should create invalid_records filter', inject((FilterService) => {
+    it('should create invalid_records filter', inject((FilterManagerService) => {
         //given
         const ctrl = createController();
 
@@ -40,10 +40,10 @@ describe('Datagrid index header controller', () => {
         ctrl.createFilter('invalid_records');
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('invalid_records');
+        expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('invalid_records');
     }));
 
-    it('should create empty_records filter', inject((FilterService) => {
+    it('should create empty_records filter', inject((FilterManagerService) => {
         //given
         const ctrl = createController();
 
@@ -51,10 +51,10 @@ describe('Datagrid index header controller', () => {
         ctrl.createFilter('empty_records');
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records');
+        expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('empty_records');
     }));
 
-    it('should create invalid_empty_records filter', inject((FilterService) => {
+    it('should create invalid_empty_records filter', inject((FilterManagerService) => {
         //given
         const ctrl = createController();
 
@@ -62,6 +62,6 @@ describe('Datagrid index header controller', () => {
         ctrl.createFilter('invalid_empty_records');
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('quality', undefined, undefined, { invalid: true, empty: true });
+        expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('quality', undefined, undefined, { invalid: true, empty: true });
     }));
 });

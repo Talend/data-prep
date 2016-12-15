@@ -15,7 +15,7 @@ import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import 'angular-mass-autocomplete';
 import SERVICES_DATAGRID_MODULE from '../../../services/datagrid/datagrid-module';
-import SERVICES_FILTER_MODULE from '../../../services/filter/filter-module';
+import SERVICES_FILTER_MANAGER_MODULE from '../../../services/filter/manager/filter-manager-module';
 
 import FilterSearchCtrl from './filter-search-controller';
 import FilterSearch from './filter-search-directive';
@@ -35,7 +35,7 @@ angular.module(MODULE_NAME,
 		'MassAutoComplete',
 		ngTranslate,
 		SERVICES_DATAGRID_MODULE,
-		SERVICES_FILTER_MODULE,
+		SERVICES_FILTER_MANAGER_MODULE,
 	])
     .controller('FilterSearchCtrl', FilterSearchCtrl)
     .directive('filterSearch', FilterSearch);

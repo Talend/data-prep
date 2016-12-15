@@ -16,11 +16,11 @@
  * @name data-prep.stats-details.controller:StatsDetailsCtrl
  * @description Statistics details
  * @requires data-prep.services.state.constant:state
- * @requires data-prep.services.filter.service:FilterService
+ * @requires data-prep.services.filter-manager.service:FilterManagerService
  * @requires data-prep.services.statisticsService.service:StatisticsService
  * @requires data-prep.services.statisticsService.service:StatisticsTooltipService
  */
-export default function StatsDetailsCtrl(state, FilterService, StatisticsService, StatisticsTooltipService) {
+export default function StatsDetailsCtrl(state, FilterManagerService, StatisticsService, StatisticsTooltipService) {
 	'ngInject';
 
 	const vm = this;
@@ -45,8 +45,8 @@ export default function StatsDetailsCtrl(state, FilterService, StatisticsService
 				},
 			],
 		};
-		return item.pattern || keyName === FilterService.CTRL_KEY_NAME ?
-            FilterService.addFilterAndDigest('matches', column.id, column.name, args, null, keyName) :
-            FilterService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
+		return item.pattern || keyName === FilterManagerService.CTRL_KEY_NAME ?
+			FilterManagerService.addFilterAndDigest('matches', column.id, column.name, args, null, keyName) :
+			FilterManagerService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
 	}
 }

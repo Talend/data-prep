@@ -41,12 +41,12 @@ describe('ColumnProfile controller', () => {
     }));
 
     describe('filter', () => {
-        beforeEach(inject(($q, FilterService, StatisticsService) => {
-            spyOn(FilterService, 'addFilterAndDigest').and.returnValue();
+        beforeEach(inject(($q, FilterManagerService, StatisticsService) => {
+            spyOn(FilterManagerService, 'addFilterAndDigest').and.returnValue();
             spyOn(StatisticsService, 'getRangeFilterRemoveFn').and.returnValue(removeFilterFn);
         }));
 
-        it('should add a "exact" filter', inject((FilterService) => {
+        it('should add a "exact" filter', inject((FilterManagerService) => {
             //given
             const ctrl = createController();
             const obj = { data: 'Ulysse', occurrences: 5 };
@@ -60,7 +60,7 @@ describe('ColumnProfile controller', () => {
             ctrl.addBarchartFilter(obj);
 
             //then
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('exact', '0001', 'firstname', {
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('exact', '0001', 'firstname', {
                 phrase: [
                     {
                         value: 'Ulysse',
@@ -70,7 +70,7 @@ describe('ColumnProfile controller', () => {
             }, null, null);
         }));
 
-        it('should add a number "range" filter with closed intervals', inject((StatisticsService, FilterService) => {
+        it('should add a number "range" filter with closed intervals', inject((StatisticsService, FilterManagerService) => {
             //given
             const ctrl = createController();
             const interval = {
@@ -90,7 +90,7 @@ describe('ColumnProfile controller', () => {
 
             //then
             expect(StatisticsService.getRangeFilterRemoveFn).toHaveBeenCalled();
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith(
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(
                 'inside_range',
                 '0001',
                 'firstname',
@@ -108,7 +108,7 @@ describe('ColumnProfile controller', () => {
                 null);
         }));
 
-        it('should add a number "range" filter with mixed intervals', inject((StatisticsService, FilterService) => {
+        it('should add a number "range" filter with mixed intervals', inject((StatisticsService, FilterManagerService) => {
             //given
             const ctrl = createController();
             const interval = {
@@ -128,7 +128,7 @@ describe('ColumnProfile controller', () => {
 
             //then
             expect(StatisticsService.getRangeFilterRemoveFn).toHaveBeenCalled();
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith(
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(
                 'inside_range',
                 '0001',
                 'firstname',
@@ -146,7 +146,7 @@ describe('ColumnProfile controller', () => {
                 null);
         }));
 
-        it('should add a number "range" filter with only one value', inject((StatisticsService, FilterService) => {
+        it('should add a number "range" filter with only one value', inject((StatisticsService, FilterManagerService) => {
             //given
             const ctrl = createController();
             const interval = {
@@ -166,7 +166,7 @@ describe('ColumnProfile controller', () => {
 
             //then
             expect(StatisticsService.getRangeFilterRemoveFn).toHaveBeenCalled();
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith(
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(
                 'inside_range',
                 '0001',
                 'firstname',
@@ -184,7 +184,7 @@ describe('ColumnProfile controller', () => {
                 null);
         }));
 
-        it('should add a date "range" filter', inject((StatisticsService, FilterService) => {
+        it('should add a date "range" filter', inject((StatisticsService, FilterManagerService) => {
             //given
             const ctrl = createController();
             const interval = {
@@ -205,7 +205,7 @@ describe('ColumnProfile controller', () => {
 
             //then
             expect(StatisticsService.getRangeFilterRemoveFn).toHaveBeenCalled();
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith(
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(
                 'inside_range',
                 '0001',
                 'firstname',
@@ -222,7 +222,7 @@ describe('ColumnProfile controller', () => {
                 null);
         }));
 
-        it('should add a date "range" filter from time', inject((StatisticsService, FilterService) => {
+        it('should add a date "range" filter from time', inject((StatisticsService, FilterManagerService) => {
             //given
             const ctrl = createController();
             const minDateTime = new Date(2016, 0, 1).getTime();
@@ -245,7 +245,7 @@ describe('ColumnProfile controller', () => {
 
             //then
             expect(StatisticsService.getRangeFilterRemoveFn).toHaveBeenCalled();
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith(
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(
                 'inside_range',
                 '0001',
                 'CreationDate',
@@ -263,7 +263,7 @@ describe('ColumnProfile controller', () => {
                 null);
         }));
 
-        it('should add a "empty_records" filter from exact_filter on barchart click callback', inject((StatisticsService, FilterService) => {
+        it('should add a "empty_records" filter from exact_filter on barchart click callback', inject((StatisticsService, FilterManagerService) => {
             //given
             const ctrl = createController();
             const obj = { data: '', occurrences: 5 };
@@ -277,7 +277,7 @@ describe('ColumnProfile controller', () => {
             ctrl.addBarchartFilter(obj);
 
             //then
-            expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
+            expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
         }));
     });
 

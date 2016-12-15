@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import SERVICES_FILTER_ADAPTER_MODULE from '../filter/adapter/filter-adapter-module';
 import SERVICES_FILTER_MODULE from '../filter/filter-module';
 import SERVICES_PARAMETERS_MODULE from '../parameters/parameters-module';
 import SERVICES_PREPARATION_MODULE from '../preparation/preparation-module';
@@ -38,6 +39,7 @@ const MODULE_NAME = 'data-prep.services.recipe';
  */
 angular.module(MODULE_NAME,
 	[
+		SERVICES_FILTER_ADAPTER_MODULE,
 		SERVICES_FILTER_MODULE,
 		SERVICES_PARAMETERS_MODULE,
 		SERVICES_PREPARATION_MODULE,

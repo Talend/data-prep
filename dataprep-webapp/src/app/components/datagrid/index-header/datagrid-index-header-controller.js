@@ -19,13 +19,13 @@ const INVALID_EMPTY_RECORDS = 'invalid_empty_records';
  * @ngdoc controller
  * @name data-prep.datagrid-index-header.controller:DatagridIndexHeaderCtrl
  * @description Index Column Header controller.
- * @requires data-prep.services.filter.service:FilterService
+ * @requires data-prep.services.filter-manager.service:FilterManagerService
  */
 export default class DatagridIndexHeaderCtrl {
-	constructor(FilterService) {
+	constructor(FilterManagerService) {
 		'ngInject';
 
-		this.FilterService = FilterService;
+		this.FilterManagerService = FilterManagerService;
 		this.INVALID_RECORDS = INVALID_RECORDS;
 		this.EMPTY_RECORDS = EMPTY_RECORDS;
 		this.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
@@ -34,13 +34,13 @@ export default class DatagridIndexHeaderCtrl {
 	createFilter(type) {
 		switch (type) {
 		case INVALID_RECORDS:
-			this.FilterService.addFilterAndDigest('invalid_records');
+			this.FilterManagerService.addFilterAndDigest('invalid_records');
 			break;
 		case EMPTY_RECORDS:
-			this.FilterService.addFilterAndDigest('empty_records');
+			this.FilterManagerService.addFilterAndDigest('empty_records');
 			break;
 		case INVALID_EMPTY_RECORDS:
-			this.FilterService.addFilterAndDigest('quality', undefined, undefined, { invalid: true, empty: true });
+			this.FilterManagerService.addFilterAndDigest('quality', undefined, undefined, { invalid: true, empty: true });
 			break;
 		}
 	}

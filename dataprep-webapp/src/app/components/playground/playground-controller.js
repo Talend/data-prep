@@ -26,7 +26,7 @@
  */
 export default function PlaygroundCtrl($timeout, $state, $stateParams, state, StateService,
                                        PlaygroundService, DatasetService, PreparationService,
-                                       PreviewService, FilterService,
+                                       PreviewService, FilterManagerService,
                                        OnboardingService, LookupService, MessageService) {
 	'ngInject';
 
@@ -39,7 +39,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	vm.previewInProgress = () => PreviewService.previewInProgress();
 	vm.startOnBoarding = tourId => OnboardingService.startTour(tourId);
 	vm.fetchCompatiblePreparations = datasetId => DatasetService.getCompatiblePreparations(datasetId);
-	vm.removeAllFilters = () => FilterService.removeAllFilters();
+	vm.removeAllFilters = () => FilterManagerService.removeAllFilters();
 
     /**
      * @ngdoc property

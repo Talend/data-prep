@@ -114,7 +114,7 @@ describe('filter search controller', function () {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function ($rootScope, $controller, FilterService) {
+    beforeEach(inject(function ($rootScope, $controller, FilterManagerService) {
         scope = $rootScope.$new();
 
         createController = function () {
@@ -123,7 +123,7 @@ describe('filter search controller', function () {
             });
         };
 
-        spyOn(FilterService, 'addFilter').and.returnValue();
+        spyOn(FilterManagerService, 'addFilter').and.returnValue();
     }));
 
     it('should create sorted suggestions based on case insensitive typed word and current data from service', function () {
@@ -205,13 +205,13 @@ describe('filter search controller', function () {
         expect(ctrl.filterSearch).toBe('');
     });
 
-    it('should add filter on item selection', inject(function (FilterService) {
+    it('should add filter on item selection', inject(function (FilterManagerService) {
         //given
         stateMock.playground.data = data;
         var ctrl = createController();
         ctrl.filterSearch = 'ala';
 
-        expect(FilterService.addFilter).not.toHaveBeenCalled();
+        expect(FilterManagerService.addFilter).not.toHaveBeenCalled();
 
         //when
         ctrl.filterSuggestOptions.on_select({
@@ -222,7 +222,7 @@ describe('filter search controller', function () {
         });
 
         //then
-        expect(FilterService.addFilter).toHaveBeenCalledWith('contains', '0002', 'State', {
+        expect(FilterManagerService.addFilter).toHaveBeenCalledWith('contains', '0002', 'State', {
             phrase: [
                 {
                     value: 'ala',

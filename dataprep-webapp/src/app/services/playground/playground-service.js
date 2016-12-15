@@ -113,7 +113,13 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		StateService.setCurrentSampleType(sampleType);
 		updateGridSelection(dataset, preparation);
 		this.updatePreparationDetails();
+		// should be follwed by StatisticsService.updateFilteredStatistics & StorageService.saveFilter
 		FilterService.initFilters(dataset, preparation);
+		StatisticsService.updateFilteredStatistics();
+		StorageService.saveFilter(
+			state.playground.preparation ? state.playground.preparation.id : state.playground.dataset.id,
+			state.playground.filter.gridFilters
+		);
 		TransformationCacheService.invalidateCache();
 		HistoryService.clear();
 		PreviewService.reset(false);

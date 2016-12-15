@@ -17,7 +17,7 @@
     <filter-monitor class="monitor"
                     filters="filterBarCtrl.state.playground.filter.gridFilters"
                     state="filterBarCtrl.state.playground.filter.enabled"
-                    on-toogle="filterBarCtrl.filterService.toggleFilters()"
+                    on-toogle="filterBarCtrl.filterManagerService.toggleFilters()"
                     nb-lines="filterBarCtrl.state.playground.grid.nbLines"
                     nb-total-lines="filterBarCtrl.state.playground.grid.nbTotalLines"
                     percentage="filterBarCtrl.state.playground.grid.displayLinesPercentage"></filter-monitor>
@@ -27,13 +27,13 @@
 
         <filter-list class="list"
                      filters="filterBarCtrl.state.playground.filter.gridFilters"
-                     on-filter-change="filterBarCtrl.filterService.updateFilter(filter, value)"
-                     on-filter-remove="filterBarCtrl.filterService.removeFilter(filter)"
+                     on-filter-change="filterBarCtrl.filterManagerService.updateFilter(filter, value)"
+                     on-filter-remove="filterBarCtrl.filterManagerService.removeFilter(filter)"
                      enabled="filterBarCtrl.state.playground.filter.enabled"></filter-list>
 
         <button id="reset-filters"
            class="filters-remove"
-           ng-click="filterBarCtrl.filterService.removeAllFilters()"
+           ng-click="filterBarCtrl.filterManagerService.removeAllFilters()"
            title="{{::'REMOVE_ALL_FILTERS' | translate}}"
            ng-if="filterBarCtrl.state.playground.filter.gridFilters.length"
            ng-include="'assets/images/filter/delete.svg'"></button>

@@ -13,7 +13,7 @@
 
 import angular from 'angular';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
-import SERVICES_FILTER_MODULE from '../../../services/filter/filter-module';
+import SERVICES_FILTER_MANAGER_MODULE from '../../../services/filter/manager/filter-manager-module';
 import SERVICES_STATE_MODULE from '../../../services/state/state-module';
 
 import StatsDetailsCtrl from './stats-details-controller';
@@ -32,7 +32,7 @@ const MODULE_NAME = 'data-prep.stats-details';
 angular.module(MODULE_NAME,
 	[
 		TALEND_WIDGET_MODULE,
-		SERVICES_FILTER_MODULE,
+		SERVICES_FILTER_MANAGER_MODULE,
 		SERVICES_STATE_MODULE,
 	])
     .controller('StatsDetailsCtrl', StatsDetailsCtrl)

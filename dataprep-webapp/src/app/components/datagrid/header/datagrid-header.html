@@ -51,13 +51,13 @@
              quality="datagridHeaderCtrl.column.quality">
 
     <valid-menu-items>
-        <li ng-click="datagridHeaderCtrl.filterService.addFilter('valid_records', datagridHeaderCtrl.column.id, datagridHeaderCtrl.column.name)">
+        <li ng-click="datagridHeaderCtrl.filterManagerService.addFilter('valid_records', datagridHeaderCtrl.column.id, datagridHeaderCtrl.column.name)">
             <a><span translate-once="SELECT_VALID_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase }}</a>
         </li>
     </valid-menu-items>
 
     <empty-menu-items>
-        <li ng-click="datagridHeaderCtrl.filterService.addFilter('empty_records', datagridHeaderCtrl.column.id, datagridHeaderCtrl.column.name)">
+        <li ng-click="datagridHeaderCtrl.filterManagerService.addFilter('empty_records', datagridHeaderCtrl.column.id, datagridHeaderCtrl.column.name)">
             <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
         </li>
         <li class="divider"></li>
@@ -67,7 +67,7 @@
     </empty-menu-items>
 
     <invalid-menu-items>
-        <li ng-click="datagridHeaderCtrl.filterService.addFilter('invalid_records', datagridHeaderCtrl.column.id, datagridHeaderCtrl.column.name)">
+        <li ng-click="datagridHeaderCtrl.filterManagerService.addFilter('invalid_records', datagridHeaderCtrl.column.id, datagridHeaderCtrl.column.name)">
             <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
         </li>
         <li class="divider"></li>

@@ -16,7 +16,7 @@
  * @name data-prep.filter-search.controller:FilterSearchCtrl
  * @description Filter search controller.
  */
-export default function FilterSearchCtrl(FilterService, DatagridService) {
+export default function FilterSearchCtrl(FilterManagerService, DatagridService) {
 	'ngInject';
 
 	const vm = this;
@@ -66,7 +66,7 @@ export default function FilterSearchCtrl(FilterService, DatagridService) {
      * @description Action when user select a suggestion:  create the filter and reset the input
      */
 	function suggestionSelect(item) {
-		FilterService.addFilter('contains', item.columnId, item.columnName, {
+		FilterManagerService.addFilter('contains', item.columnId, item.columnName, {
 			phrase: [{ value: item.value }],
 		});
 		vm.filterSearch = '';

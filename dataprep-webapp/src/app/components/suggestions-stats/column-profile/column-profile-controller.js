@@ -18,9 +18,9 @@
  * @requires data-prep.services.state.constant:state
  * @requires data-prep.statistics.service:StatisticsService
  * @requires data-prep.statistics.service:StatisticsTooltipService
- * @requires data-prep.services.filter.service:FilterService
+ * @requires data-prep.services.filter-manager.service:FilterManagerService
  */
-export default function ColumnProfileCtrl($translate, $timeout, state, StatisticsService, StatisticsTooltipService, FilterService) {
+export default function ColumnProfileCtrl($translate, $timeout, state, StatisticsService, StatisticsTooltipService, FilterManagerService) {
 	'ngInject';
 
 	const vm = this;
@@ -45,9 +45,9 @@ export default function ColumnProfileCtrl($translate, $timeout, state, Statistic
 			],
 			caseSensitive: true,
 		};
-		return value.length || keyName === FilterService.CTRL_KEY_NAME ?
-            FilterService.addFilterAndDigest('exact', column.id, column.name, args, null, keyName) :
-            FilterService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
+		return value.length || keyName === FilterManagerService.CTRL_KEY_NAME ?
+			FilterManagerService.addFilterAndDigest('exact', column.id, column.name, args, null, keyName) :
+			FilterManagerService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
 	}
 
     /**
@@ -77,14 +77,14 @@ export default function ColumnProfileCtrl($translate, $timeout, state, Statistic
 		const args = {
 			intervals: [
 				{
-					label: interval.label || FilterService.getRangeLabelFor(interval, isDateRange),
+					label: interval.label || FilterManagerService.getRangeLabelFor(interval, isDateRange),
 					value: [min, max],
 					isMaxReached: interval.isMaxReached,
 				},
 			],
 			type: selectedColumn.type,
 		};
-		FilterService.addFilterAndDigest('inside_range', selectedColumn.id, selectedColumn.name, args, removeFilterFn, keyName);
+		FilterManagerService.addFilterAndDigest('inside_range', selectedColumn.id, selectedColumn.name, args, removeFilterFn, keyName);
 	}
 
 	function changeAggregation(column, aggregation) {

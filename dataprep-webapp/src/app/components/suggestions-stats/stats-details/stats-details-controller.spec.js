@@ -27,7 +27,7 @@ describe('Stats-details controller', function () {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(function ($rootScope, $controller, FilterService) {
+    beforeEach(inject(function ($rootScope, $controller, FilterManagerService) {
         scope = $rootScope.$new();
 
         createController = function () {
@@ -36,10 +36,10 @@ describe('Stats-details controller', function () {
             });
         };
 
-        spyOn(FilterService, 'addFilterAndDigest').and.returnValue();
+        spyOn(FilterManagerService, 'addFilterAndDigest').and.returnValue();
     }));
 
-    it('should add a new "pattern" filter', inject(function (FilterService) {
+    it('should add a new "pattern" filter', inject(function (FilterManagerService) {
         //given
         var ctrl = createController();
         var obj = { data: 'Ulysse', occurrences: 5, pattern: 'Aa9' };
@@ -53,7 +53,7 @@ describe('Stats-details controller', function () {
         ctrl.addPatternFilter(obj);
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('matches', '0001', 'firstname', {
+        expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('matches', '0001', 'firstname', {
             patterns: [
                 {
                     value: 'Aa9',
@@ -62,7 +62,7 @@ describe('Stats-details controller', function () {
         }, null, null);
     }));
 
-    it('should add a new "empty" filter if pattern is empty', inject(function (FilterService) {
+    it('should add a new "empty" filter if pattern is empty', inject(function (FilterManagerService) {
         //given
         var ctrl = createController();
         var obj = { data: 'Ulysse', occurrences: 5 };
@@ -76,6 +76,6 @@ describe('Stats-details controller', function () {
         ctrl.addPatternFilter(obj);
 
         //then
-        expect(FilterService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
+        expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
     }));
 });

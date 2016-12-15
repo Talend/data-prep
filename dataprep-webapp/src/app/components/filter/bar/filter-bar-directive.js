@@ -13,7 +13,7 @@
 
 import template from './filter-bar.html';
 
-export default function FilterBar(state, FilterService) {
+export default function FilterBar(state, FilterManagerService) {
 	'ngInject';
 
 	return {
@@ -22,7 +22,7 @@ export default function FilterBar(state, FilterService) {
 		scope: {},
 		bindToController: true,
 		controller() {
-			this.filterService = FilterService;
+			this.filterManagerService = FilterManagerService;
 			this.state = state;
 		},
 

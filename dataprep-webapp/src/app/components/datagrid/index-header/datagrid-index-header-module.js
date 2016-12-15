@@ -13,7 +13,7 @@
 
 import angular from 'angular';
 import sunchoke from 'sunchoke';
-import SERVICES_FILTER_MODULE from '../../../services/filter/filter-module';
+import SERVICES_FILTER_MANAGER_MODULE from '../../../services/filter/manager/filter-manager-module';
 import DatagridIndexHeader from './datagrid-index-header-component';
 
 const MODULE_NAME = 'data-prep.datagrid-index-header';
@@ -28,7 +28,7 @@ const MODULE_NAME = 'data-prep.datagrid-index-header';
 angular.module(MODULE_NAME,
 	[
 		sunchoke.dropdown,
-		SERVICES_FILTER_MODULE,
+		SERVICES_FILTER_MANAGER_MODULE,
 	])
     .component('datagridIndexHeader', DatagridIndexHeader);
 

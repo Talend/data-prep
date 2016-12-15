@@ -69,19 +69,19 @@ describe('Filter bar directive', function () {
         expect(element.find('#reset-filters').length).toBe(0);
     });
 
-    it('should execute reset callback on "remove all" icon click', function () {
+    it('should execute reset callback on "remove all" icon click', inject((FilterManagerService) => {
         //given
         createElement();
 
         var ctrl = element.controller('filterBar');
-        ctrl.filterService.removeAllFilters = jasmine.createSpy('removeAllFilters');
+        spyOn(FilterManagerService, 'removeAllFilters').and.returnValue();
 
         //when
         element.find('#reset-filters').click();
 
         //then
-        expect(ctrl.filterService.removeAllFilters).toHaveBeenCalled();
-    });
+        expect(FilterManagerService.removeAllFilters).toHaveBeenCalled();
+    }));
 
     it('should render filter search', function () {
         //when

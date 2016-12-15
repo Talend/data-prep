@@ -224,7 +224,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-0-preparation\\:edit').click();
+				element.find('#list-0-inventory\\:edit').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -277,7 +277,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-2-preparation\\:edit').click();
+				element.find('#list-2-inventory\\:edit').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);

@@ -134,6 +134,32 @@ export default class InventoryListCtrl {
 	adaptItemActions(items) {
 		return items.map((item, index) => {
 			const actions = this.adaptActions(item.actions).map((action) => {
+				// TODO remove that and do something more generic
+				if (action.id === 'menu:playground:preparation') {
+					const preparations = item.model.preparations.map((preparation) => {
+						return {
+							label: preparation.name,
+							onClick: event => action.onClick(event, preparation),
+						};
+					});
+
+					const dispatchDataset = this.getActionDispatcher('menu:playground:dataset');
+					const items = [
+						{
+							icon: 'talend-plus',
+							label: this.$translate.instant('CREATE_NEW_PREP'),
+							onClick: event => dispatchDataset(event, item.model),
+						},
+					];
+					return {
+						...action,
+						id: 'dropdown_' + item.model.id, // TODO change the id
+						displayMode: 'dropdown',
+						items: items.concat(preparations),
+						onClick: null,
+					};
+				}
+
 				return {
 					...action,
 					id: `${this.id}-${index}-${action.id}`,
@@ -152,6 +178,18 @@ export default class InventoryListCtrl {
 		return actions && actions.map((actionName) => {
 			const settingAction = this.appSettings.actions[actionName];
 			const onClick = this.getActionDispatcher(actionName);
+
+			// TODO remove that and do something more generic
+			if (actionName === 'menu:playground:preparation') {
+				return {
+					id: settingAction.id,
+					displayMode: 'dropdown',
+					label: settingAction.name,
+					icon: settingAction.icon,
+					onClick,
+				};
+			}
+
 			return {
 				id: settingAction.id,
 				icon: settingAction.icon,

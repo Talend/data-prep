@@ -88,12 +88,6 @@ export default class InventoryListCtrl {
 		};
 	}
 
-	getTitleActionDispatcher(viewKey, actionKey) {
-		const listSettings = this.appSettings.views[viewKey].list;
-		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
-		return this.SettingsActionsService.createDispatcher(action);
-	}
-
 	initListProps() {
 		const listSettings = this.appSettings.views[this.viewKey].list;
 		const onItemClick = this.getTitleActionDispatcher(this.viewKey, 'onClick');
@@ -124,78 +118,87 @@ export default class InventoryListCtrl {
 	getActionDispatcher(actionName) {
 		let dispatcher = this.actionsDispatchers[actionName];
 		if (!dispatcher) {
-			const settingAction = this.appSettings.actions[actionName];
-			dispatcher = this.SettingsActionsService.createDispatcher(settingAction);
+			const actionSettings = this.appSettings.actions[actionName];
+			dispatcher = this.SettingsActionsService.createDispatcher(actionSettings);
 			this.actionsDispatchers[actionName] = dispatcher;
 		}
 		return dispatcher;
 	}
 
-	adaptItemActions(items) {
-		return items.map((item, index) => {
-			const actions = this.adaptActions(item.actions).map((action) => {
-				// TODO remove that and do something more generic
-				if (action.id === 'menu:playground:preparation') {
-					const preparations = item.model.preparations.map((preparation) => {
-						return {
-							label: preparation.name,
-							onClick: event => action.onClick(event, preparation),
-						};
-					});
+	getTitleActionDispatcher(viewKey, actionKey) {
+		const listSettings = this.appSettings.views[viewKey].list;
+		const action = this.appSettings.actions[listSettings.titleProps[actionKey]];
+		return this.SettingsActionsService.createDispatcher(action);
+	}
 
-					const dispatchDataset = this.getActionDispatcher('menu:playground:dataset');
-					const items = [
-						{
-							icon: 'talend-plus',
-							label: this.$translate.instant('CREATE_NEW_PREP'),
-							onClick: event => dispatchDataset(event, item.model),
-						},
-					];
-					return {
-						...action,
-						id: 'dropdown_' + item.model.id, // TODO change the id
-						displayMode: 'dropdown',
-						items: items.concat(preparations),
-						onClick: null,
-					};
+	createBaseAction(actionName) {
+		const actionSettings = this.appSettings.actions[actionName];
+		const baseAction = {
+			id: actionSettings.id,
+			icon: actionSettings.icon,
+			label: actionSettings.name,
+			bsStyle: actionSettings.bsStyle,
+		};
+		if (actionSettings.displayMode) {
+			baseAction.displayMode = actionSettings.displayMode;
+		}
+		return baseAction;
+	}
+
+	createDropdownItemAction(item, actionName) {
+		const itemOnClick = this.getActionDispatcher(actionName);
+		const itemAction = this.createBaseAction(actionName);
+		itemAction.onClick = event => itemOnClick(event, item);
+		return itemAction;
+	}
+
+	createDropdownActions(items, actionName) {
+		return items.map((item) => {
+			const itemAction = this.createDropdownItemAction(item, actionName);
+			itemAction.label = item.name;
+			return itemAction;
+		});
+	}
+
+	adaptActions(actions, hostModel) {
+		return actions &&
+			actions.map((actionName) => {
+				const adaptedAction = this.createBaseAction(actionName);
+
+				if (adaptedAction.displayMode === 'dropdown') {
+					const actionSettings = this.appSettings.actions[actionName];
+					// conf.items is the key where the dropdown items are stored
+					// ex: dataset > preparations is hosted in dataset, with "preparations" key
+					const modelItems = hostModel[actionSettings.items];
+					// dropdown static actions are applied to the host model
+					// ex: dataset > "create new preparation action" is applied to the dataset
+					const staticActions = actionSettings.static.map(
+						staticAction => this.createDropdownItemAction(hostModel, staticAction)
+					);
+					// dropdown dynamic action is the unique action on each item click
+					// ex: dataset > "open preparation x" is applied to "preparation x"
+					const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamic);
+					adaptedAction.items = staticActions.concat(dynamicActions);
+				}
+				else {
+					const dispatch = this.getActionDispatcher(actionName);
+					adaptedAction.model = hostModel;
+					adaptedAction.onClick = (event, payload) => dispatch(event, payload.model); // TODO remove payload.model, use payload
 				}
 
-				return {
-					...action,
-					id: `${this.id}-${index}-${action.id}`,
-					model: item,
-					onClick: (event, payload) => action.onClick(event, payload.model),
-				};
+				return adaptedAction;
+			});
+	}
+
+	adaptItemActions(items) {
+		return items.map((item, index) => {
+			const actions = this.adaptActions(item.actions, item);
+			actions.forEach((action) => {
+				action.id = `${this.id}-${index}-${action.id}`;
 			});
 			return {
 				...item,
 				actions,
-			};
-		});
-	}
-
-	adaptActions(actions) {
-		return actions && actions.map((actionName) => {
-			const settingAction = this.appSettings.actions[actionName];
-			const onClick = this.getActionDispatcher(actionName);
-
-			// TODO remove that and do something more generic
-			if (actionName === 'menu:playground:preparation') {
-				return {
-					id: settingAction.id,
-					displayMode: 'dropdown',
-					label: settingAction.name,
-					icon: settingAction.icon,
-					onClick,
-				};
-			}
-
-			return {
-				id: settingAction.id,
-				icon: settingAction.icon,
-				label: settingAction.name,
-				bsStyle: settingAction.bsStyle,
-				onClick,
 			};
 		});
 	}

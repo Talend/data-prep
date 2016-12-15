@@ -137,8 +137,8 @@
     },
     "menu:playground:dataset": {
       "id": "menu:playground:dataset",
-      "name": "Open Dataset",
-      "icon": "",
+      "name": "Create new preparation",
+      "icon": "talend-plus",
       "type": "@@router/GO_DATASET",
       "payload": {
         "method": "go",
@@ -149,7 +149,7 @@
     },
     "menu:playground:preparation": {
       "id": "menu:playground:preparation",
-      "name": "open Preparation",
+      "name": "Open Preparation",
       "icon": "talend-dataprep",
       "type": "@@router/GO_PREPARATION",
       "payload": {
@@ -158,6 +158,15 @@
           "playground.preparation"
         ]
       }
+    },
+    "list:dataset:preparations": {
+      "id": "list:dataset:preparations",
+      "name": "Open preparation",
+      "icon": "talend-dataprep",
+      "displayMode": "dropdown",
+      "items": "preparations",
+      "dynamic": "menu:playground:preparation",
+      "static": ["menu:playground:dataset"]
     },
     "sidepanel:toggle": {
       "id": "sidepanel:toggle",

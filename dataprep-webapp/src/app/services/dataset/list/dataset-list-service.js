@@ -104,15 +104,23 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			displayMode: 'text',
 			className: 'list-item-dataset',
 			actions: this.getDatasetActions(item),
+			preparations: item.preparations,
 			model: item,
 		}));
 	}
 
 	function getDatasetActions(item) {
+		const actions = [
+			'inventory:edit',
+			'dataset:update',
+			'dataset:clone',
+			'dataset:remove',
+			'dataset:favourite',
+		];
 		if (item.preparations && item.preparations.length > 0) {
-			return ['inventory:edit', 'menu:playground:preparation', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
+			actions.splice(1, 0, 'list:dataset:preparations');
 		}
-		return ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'];
+		return actions;
 	}
 	/**
 	 * @ngdoc method

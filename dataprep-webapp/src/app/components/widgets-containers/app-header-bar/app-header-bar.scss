@@ -22,7 +22,14 @@
 }
 
 .navbar [role='search'] .form-control {
-	width: 362px;
+	width: 400px;
 	padding-right: 0;
 	margin-bottom: 0;
+	animation: fadeIn 0.2s;
+}
+
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
 }

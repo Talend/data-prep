@@ -23,7 +23,12 @@ const settingsMock = {
 				onToggle: 'search:toggle',
 				onBlur: 'search:toggle',
 				onChange: '"search:all',
-				onSelect: 'search:open',
+				onSelect: {
+					preparation: '"menu:playground:preparation',
+					dataset: '"menu:playground:dataset',
+					folder: '"menu:folders',
+					documentation: 'external:documentation',
+				},
 			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
 			userMenuActions: {
@@ -420,9 +425,14 @@ const settingsMock = {
 			id: 'search:all',
 			type: '@@search/ALL',
 		},
-		'search:open': {
-			id: 'search:open',
-			type: '@@search/OPEN',
+		'external:documentation': {
+			id: 'external:documentation',
+			type: '@@external/OPEN_WINDOW',
+			icon: 'talend-question-circle',
+			name: 'Documentation',
+			payload: {
+				method: 'open',
+			},
 		},
 	},
 };

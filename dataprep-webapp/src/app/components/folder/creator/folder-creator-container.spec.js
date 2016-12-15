@@ -11,19 +11,19 @@
 
  ============================================================================*/
 
-describe('Preparation creator container', () => {
+describe('Folder creator container', () => {
 	let scope;
 	let createElement;
 	let element;
 	let stateMock;
 	const body = angular.element('body');
 
-	beforeEach(angular.mock.module('data-prep.preparation-creator', ($provide) => {
+	beforeEach(angular.mock.module('data-prep.folder-creator', ($provide) => {
 		stateMock = {
 			home: {
-				preparations: {
+				folders: {
 					creator: {
-						isVisible: true,
+						isVisible: false,
 					},
 				},
 			},
@@ -34,7 +34,7 @@ describe('Preparation creator container', () => {
 	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new(true);
 		createElement = () => {
-			element = angular.element('<preparation-creator></preparation-creator>');
+			element = angular.element('<folder-creator></folder-creator>');
 			body.append(element);
 			$compile(element)(scope);
 			scope.$digest();
@@ -46,14 +46,21 @@ describe('Preparation creator container', () => {
 		element.remove();
 	}));
 
-	it('should render preparation creator form in a modal', inject(($q, DatasetService) => {
+	it('should render folder creator form in a modal', () => {
 		// given
-		spyOn(DatasetService, 'getFilteredDatasets').and.returnValue($q.when())
+		expect(body.find('folder-creator-form').length).toBe(0);
 		
-		//when
+		// when
 		createElement();
 
-		//then
-		expect(body.find('preparation-creator-form').length).toBe(1);
-	}));
+		// then
+		expect(body.find('folder-creator-form').length).toBe(0);
+		
+		// when
+		stateMock.home.folders.creator.isVisible = true;
+		scope.$digest();
+		
+		// then
+		expect(body.find('folder-creator-form').length).toBe(1);
+	});
 });

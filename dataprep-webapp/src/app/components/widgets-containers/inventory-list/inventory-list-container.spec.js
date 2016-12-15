@@ -345,8 +345,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				console.log(element.find('#list-sort-order')[0]);
-				element.find('#list-sort-order').click();
+				element.find('#list-sort-order')[0].click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);

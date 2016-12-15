@@ -150,7 +150,7 @@
     "menu:playground:dataset": {
       "id": "menu:playground:dataset",
       "name": "Open Dataset",
-      "icon": "talend-files-o",
+      "icon": "talend-datastore",
       "type": "@@router/GO_DATASET",
       "payload": {
         "method": "go",

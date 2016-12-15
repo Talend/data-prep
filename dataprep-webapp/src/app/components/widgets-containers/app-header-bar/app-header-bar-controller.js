@@ -36,37 +36,27 @@ export default class AppHeaderBarCtrl {
 
 	$onChanges(changes) {
 		const updatedContent = this.content.slice();
+		const searchConfiguration = updatedContent[1].search;
 		if (changes.searchToggle) {
 			const searchToggle = changes.searchToggle.currentValue;
 			if (searchToggle) {
-				const searchSettings = this.appSettings.views.appheaderbar.search;
-				const searchToggleAction = this.appSettings.actions[searchSettings.onToggle];
-				updatedContent[1].search = {
-					...updatedContent[1].search,
-					onToggle: this.settingsActionsService.createDispatcher(searchToggleAction),
-					items: [],
-				};
+				searchConfiguration.onToggle = this.searchOnToggle;
+				searchConfiguration.items = [];
 			}
 			else {
-				delete updatedContent[1].search.onToggle;
+				delete searchConfiguration.onToggle;
 			}
 		}
 		else if (changes.searchInput) {
 			const searchInput = changes.searchInput.currentValue;
 			if (!searchInput.length) {
-				updatedContent[1].search = {
-					...updatedContent[1].search,
-					items: [],
-				};
+				searchConfiguration.items = [];
 			}
 		}
 		else if (changes.searchResults) {
 			const searchResults = changes.searchResults.currentValue;
 			this.adaptedSearchResults = this._adaptSearchResults(searchResults);
-			updatedContent[1].search = {
-				...updatedContent[1].search,
-				items: this.adaptedSearchResults,
-			};
+			searchConfiguration.items = this.adaptedSearchResults;
 		}
 		this.content = updatedContent;
 	}
@@ -92,28 +82,40 @@ export default class AppHeaderBarCtrl {
 
 	adaptSearch() {
 		const searchSettings = this.appSettings.views.appheaderbar.search;
-		const searchToggleAction = this.appSettings.actions[searchSettings.onToggle];
-		const onToggle = this.settingsActionsService.createDispatcher(searchToggleAction);
-		// const searchBlurAction = this.appSettings.actions[searchSettings.onBlur];
-		// const onBlur = this.settingsActionsService.createDispatcher(searchBlurAction);
+
+		// onToggle
+		const onToggleAction = this.appSettings.actions[searchSettings.onToggle];
+		this.searchOnToggle = this.settingsActionsService.createDispatcher(onToggleAction);
+
+		// onBlur
+		// FIXME onBlur should not be triggered while clicking on result item
+		// const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
+		// const onBlurActionDispatcher = this.settingsActionsService.createDispatcher(onBlurAction);
+		this.searchOnBlur = () => {
+		};
+
+		// onChange
 		const onChangeAction = this.appSettings.actions[searchSettings.onChange];
 		const onChangeActionDispatcher = this.settingsActionsService.createDispatcher(onChangeAction);
-		const onChange = (event) => {
+		this.searchOnChange = (event) => {
 			const searchInput = event.target && event.target.value;
 			return onChangeActionDispatcher(event, { searchInput });
 		};
-		this.searchInventoryTypes = [];
-		const onSelectActionBy = this.appSettings.actions[searchSettings.onSelect];
-		const onSelectDispatcherByType = Object.keys(onSelectActionBy).map((type) => {
+
+		// onSelect
+		this.searchAvailableInventoryTypes = [];
+		const onSelectActionBy = searchSettings.onSelect;
+		const onSelectDispatcherByType = [];
+		Object.keys(onSelectActionBy).forEach((type) => {
 			const onSelectAction = this.appSettings.actions[onSelectActionBy[type]];
-			this.searchInventoryTypes.push({
+			this.searchAvailableInventoryTypes.push({
 				title: type,
 				iconName: onSelectAction.icon,
 				iconTitle: onSelectAction.name,
 			});
-			return this.settingsActionsService.createDispatcher(onSelectAction);
+			onSelectDispatcherByType[type] = this.settingsActionsService.createDispatcher(onSelectAction);
 		});
-		const onSelect = (event, { sectionIndex, itemIndex }) => {
+		this.searchOnSelect = (event, { sectionIndex, itemIndex }) => {
 			const selectedCategory = this.adaptedSearchResults[sectionIndex];
 			const selectedItem = selectedCategory && selectedCategory.suggestions[itemIndex];
 			return onSelectDispatcherByType[selectedItem.inventoryType](event, selectedItem);
@@ -122,20 +124,20 @@ export default class AppHeaderBarCtrl {
 		return {
 			...searchSettings,
 			icon: {
-				name: searchToggleAction && searchToggleAction.icon,
+				name: onToggleAction && onToggleAction.icon,
 				title: this.$translate.instant('TOGGLE_SEARCH'),
 				bsStyle: 'link',
 			},
 			placeholder: this.$translate.instant('SEARCH'),
-			onToggle,
-			// onBlur,
-			onChange,
-			onSelect,
+			onToggle: this.searchOnToggle,
+			onBlur: this.searchOnBlur,
+			onChange: this.searchOnChange,
+			onSelect: this.searchOnSelect,
 		};
 	}
 
 	_adaptSearchResults(searchResults) {
-		return this.searchInventoryTypes
+		return this.searchAvailableInventoryTypes
 			.filter((inventoryType) => {
 				return searchResults.some((result) => {
 					return result.inventoryType === inventoryType.title;
@@ -149,7 +151,7 @@ export default class AppHeaderBarCtrl {
 					title: inventoryType.title,
 					icon: {
 						name: inventoryType.iconName,
-						title: inventoryType.iconTitle,
+						title: inventoryType.title,
 					},
 					suggestions: suggestions.map((result) => {
 						return {

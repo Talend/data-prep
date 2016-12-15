@@ -24,7 +24,12 @@ export default class AppHeaderBarCtrl {
 		this.settingsActionsService = SettingsActionsService;
 		this.searchService = SearchService;
 		this.state = state;
-		this.init();
+	}
+
+	$onInit() {
+		this.initApp();
+		this.adaptBrandLink();
+		this.adaptContent();
 	}
 
 	$postLink() {
@@ -35,36 +40,33 @@ export default class AppHeaderBarCtrl {
 	}
 
 	$onChanges(changes) {
-		const updatedContent = this.content.slice();
-		const searchConfiguration = updatedContent[1].search;
-		if (changes.searchToggle) {
-			const searchToggle = changes.searchToggle.currentValue;
-			if (searchToggle) {
-				searchConfiguration.onToggle = this.searchOnToggle;
-				searchConfiguration.items = [];
+		if (this.content) {
+			const updatedContent = this.content.slice();
+			const searchConfiguration = updatedContent[1].search;
+			if (changes.searchToggle) {
+				const searchToggle = changes.searchToggle.currentValue;
+				if (searchToggle) {
+					searchConfiguration.onToggle = this.searchOnToggle;
+					searchConfiguration.items = [];
+				}
+				else {
+					delete searchConfiguration.onToggle;
+				}
 			}
-			else {
-				delete searchConfiguration.onToggle;
+			else if (changes.searchInput) {
+				const searchInput = changes.searchInput.currentValue;
+				searchConfiguration.value = searchInput;
+				if (!searchInput.length) {
+					searchConfiguration.items = [];
+				}
 			}
-		}
-		else if (changes.searchInput) {
-			const searchInput = changes.searchInput.currentValue;
-			if (!searchInput.length) {
-				searchConfiguration.items = [];
+			else if (changes.searchResults) {
+				const searchResults = changes.searchResults.currentValue;
+				this.adaptedSearchResults = this._adaptSearchResults(searchResults);
+				searchConfiguration.items = this.adaptedSearchResults;
 			}
+			this.content = updatedContent;
 		}
-		else if (changes.searchResults) {
-			const searchResults = changes.searchResults.currentValue;
-			this.adaptedSearchResults = this._adaptSearchResults(searchResults);
-			searchConfiguration.items = this.adaptedSearchResults;
-		}
-		this.content = updatedContent;
-	}
-
-	init() {
-		this.initApp();
-		this.adaptBrandLink();
-		this.adaptContent();
 	}
 
 	initApp() {

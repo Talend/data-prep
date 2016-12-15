@@ -17,32 +17,28 @@ describe('Search actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions'));
 
 	describe('dispatch', () => {
-		it('should open preparation by redirecting to MenuActionsService', inject(($state, SearchActionsService, MenuActionsService) => {
+		it('should toggle search input', inject(() => {
 			// given
-			const action = {
-				type: '@@search/OPEN',
-				payload: {
-					method: 'dispatch',
-					args: [],
-					id: 'acbd',
-					inventoryType: 'preparation',
-				},
-			};
-			const menuAction = {
-				type: '@@router/GO_PREPARATION',
-				payload: {
-					method: 'go',
-					args: ['playground.preparation'],
-					id: 'acbd',
-				},
-			};
-			spyOn(MenuActionsService, 'dispatch').and.returnValue();
 
 			// when
-			SearchActionsService.dispatch(action);
 
 			// then
-			expect(MenuActionsService.dispatch).toHaveBeenCalledWith(menuAction);
+		}));
+
+		it('should do nothing if search input is empty', inject(() => {
+			// given
+
+			// when
+
+			// then
+		}));
+
+		it('should search everywhere if search input is not empty', inject(() => {
+			// given
+
+			// when
+
+			// then
 		}));
 	});
 });

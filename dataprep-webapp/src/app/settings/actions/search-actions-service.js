@@ -30,8 +30,8 @@ export default class SearchActionsService {
 			const searchInput =
 				action.payload &&
 				action.payload.searchInput;
+			this.stateService.setSearchInput(searchInput);
 			if (searchInput) {
-				this.stateService.setSearchInput(searchInput);
 				this.searchService
 					.searchAll(searchInput)
 					.then(results => this.stateService.setSearchResults(results));

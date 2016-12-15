@@ -7,6 +7,7 @@
         "onClick": "menu:preparations"
       },
       "search": {
+        "placeholder": "Search Talend Data Preparation and Documentation",
         "onToggle": "search:toggle",
         "onBlur": "search:toggle",
         "onChange": "search:all",
@@ -412,6 +413,7 @@
     },
     "search:toggle": {
       "id": "search:toggle",
+      "name": "Toggle search input",
       "icon": "talend-search",
       "type": "@@search/TOGGLE"
     },

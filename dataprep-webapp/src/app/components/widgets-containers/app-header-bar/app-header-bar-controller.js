@@ -90,10 +90,12 @@ export default class AppHeaderBarCtrl {
 		this.searchOnToggle = this.settingsActionsService.createDispatcher(onToggleAction);
 
 		// onBlur
-		// FIXME onBlur should not be triggered while clicking on result item
-		// const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
-		// const onBlurActionDispatcher = this.settingsActionsService.createDispatcher(onBlurAction);
-		this.searchOnBlur = () => {
+		const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
+		const onBlurActionDispatcher = this.settingsActionsService.createDispatcher(onBlurAction);
+		this.searchOnBlur = (event) => {
+			if (!this.state.search.searchInput) {
+				onBlurActionDispatcher(event);
+			}
 		};
 
 		// onChange
@@ -129,10 +131,9 @@ export default class AppHeaderBarCtrl {
 			...searchSettings,
 			icon: {
 				name: onToggleAction && onToggleAction.icon,
-				title: this.$translate.instant('TOGGLE_SEARCH'),
+				title: onToggleAction && onToggleAction.name,
 				bsStyle: 'link',
 			},
-			placeholder: this.$translate.instant('SEARCH'),
 			onToggle: this.searchOnToggle,
 			onBlur: this.searchOnBlur,
 			onChange: this.searchOnChange,

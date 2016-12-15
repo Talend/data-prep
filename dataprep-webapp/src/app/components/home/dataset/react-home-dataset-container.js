@@ -14,7 +14,7 @@ const HomeDatasetContainer = {
 	template: `
 		<div class="home-content">
 			<form>
-				<label class="sr-only">Update Dataset Input</label>
+				<label class="sr-only" translate-once="UPDATE_DATASET_INPUT"></label>
 				<input
 					id="inputUpdateDataset"
 					type="file"

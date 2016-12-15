@@ -13,25 +13,6 @@
 
 const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
-const SEARCH_INVENTORY_TYPES = [
-	{
-		title: 'preparation',
-		iconName: 'talend-dataprep',
-		iconTitle: 'preparation',
-	}, {
-		title: 'dataset',
-		iconName: 'talend-files-o',
-		iconTitle: 'dataset',
-	}, {
-		title: 'folder',
-		iconName: 'talend-folder',
-		iconTitle: 'folder',
-	}, {
-		title: 'documentation',
-		iconName: 'talend-question-circle',
-		iconTitle: 'documentation',
-	},
-];
 
 export default class AppHeaderBarCtrl {
 	constructor($element, $translate, appSettings, state, SettingsActionsService, SearchService) {
@@ -81,31 +62,7 @@ export default class AppHeaderBarCtrl {
 		}
 		else if (changes.searchResults) {
 			const searchResults = changes.searchResults.currentValue;
-			this.adaptedSearchResults = SEARCH_INVENTORY_TYPES
-				.filter((inventoryType) => {
-					return searchResults.some((result) => {
-						return result.inventoryType === inventoryType.title;
-					});
-				})
-				.map((inventoryType) => {
-					const suggestions = searchResults.filter((result) => {
-						return result.inventoryType === inventoryType.title;
-					});
-					return {
-						title: inventoryType.title,
-						icon: {
-							name: inventoryType.iconName,
-							title: inventoryType.iconTitle,
-						},
-						suggestions: suggestions.map((result) => {
-							return {
-								...result,
-								title: result.name,
-								description: result.description,
-							};
-						}),
-					};
-				});
+			this.adaptedSearchResults = this._adaptSearchResults(searchResults);
 			updatedContent[1].search = {
 				...updatedContent[1].search,
 				items: this.adaptedSearchResults,
@@ -136,9 +93,32 @@ export default class AppHeaderBarCtrl {
 	adaptSearch() {
 		const searchSettings = this.appSettings.views.appheaderbar.search;
 		const searchToggleAction = this.appSettings.actions[searchSettings.onToggle];
+		const onToggle = this.settingsActionsService.createDispatcher(searchToggleAction);
 		// const searchBlurAction = this.appSettings.actions[searchSettings.onBlur];
-		const searchAllAction = this.appSettings.actions[searchSettings.onChange];
-		const searchOpenAction = this.appSettings.actions[searchSettings.onSelect];
+		// const onBlur = this.settingsActionsService.createDispatcher(searchBlurAction);
+		const onChangeAction = this.appSettings.actions[searchSettings.onChange];
+		const onChangeActionDispatcher = this.settingsActionsService.createDispatcher(onChangeAction);
+		const onChange = (event) => {
+			const searchInput = event.target && event.target.value;
+			return onChangeActionDispatcher(event, { searchInput });
+		};
+		this.searchInventoryTypes = [];
+		const onSelectActionBy = this.appSettings.actions[searchSettings.onSelect];
+		const onSelectDispatcherByType = Object.keys(onSelectActionBy).map((type) => {
+			const onSelectAction = this.appSettings.actions[onSelectActionBy[type]];
+			this.searchInventoryTypes.push({
+				title: type,
+				iconName: onSelectAction.icon,
+				iconTitle: onSelectAction.name,
+			});
+			return this.settingsActionsService.createDispatcher(onSelectAction);
+		});
+		const onSelect = (event, { sectionIndex, itemIndex }) => {
+			const selectedCategory = this.adaptedSearchResults[sectionIndex];
+			const selectedItem = selectedCategory && selectedCategory.suggestions[itemIndex];
+			return onSelectDispatcherByType[selectedItem.inventoryType](event, selectedItem);
+		};
+
 		return {
 			...searchSettings,
 			icon: {
@@ -147,19 +127,39 @@ export default class AppHeaderBarCtrl {
 				bsStyle: 'link',
 			},
 			placeholder: this.$translate.instant('SEARCH'),
-			onToggle: this.settingsActionsService.createDispatcher(searchToggleAction),
-			onBlur: () => {
-				// console.log('onBlur');
-				// this.settingsActionsService.createDispatcher(searchBlurAction);
-			},
-			onChange: (event) => {
-				const searchInput = event.target && event.target.value;
-				return this.settingsActionsService.createDispatcher(searchAllAction)(event, { searchInput });
-			},
-			onSelect: (event, { sectionIndex, itemIndex }) => {
-				return this.settingsActionsService.createDispatcher(searchOpenAction)(event, this.adaptedSearchResults[sectionIndex].suggestions[itemIndex]);
-			},
+			onToggle,
+			// onBlur,
+			onChange,
+			onSelect,
 		};
+	}
+
+	_adaptSearchResults(searchResults) {
+		return this.searchInventoryTypes
+			.filter((inventoryType) => {
+				return searchResults.some((result) => {
+					return result.inventoryType === inventoryType.title;
+				});
+			})
+			.map((inventoryType) => {
+				const suggestions = searchResults.filter((result) => {
+					return result.inventoryType === inventoryType.title;
+				});
+				return {
+					title: inventoryType.title,
+					icon: {
+						name: inventoryType.iconName,
+						title: inventoryType.iconTitle,
+					},
+					suggestions: suggestions.map((result) => {
+						return {
+							...result,
+							title: result.name,
+							description: result.description,
+						};
+					}),
+				};
+			});
 	}
 
 	adaptContent() {

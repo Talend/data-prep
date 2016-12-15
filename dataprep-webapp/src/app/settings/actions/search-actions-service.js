@@ -11,11 +11,6 @@
 
  ============================================================================*/
 
-const PREPARATION = 'preparation';
-const DATASET = 'dataset';
-const FOLDER = 'folder';
-const DOCUMENTATION = 'documentation';
-
 export default class SearchActionsService {
 
 	constructor(SearchService, StateService) {
@@ -40,28 +35,6 @@ export default class SearchActionsService {
 				this.searchService
 					.searchAll(searchInput)
 					.then(results => this.stateService.setSearchResults(results));
-			}
-			break;
-		}
-		case '@@search/OPEN': {
-			switch (action.payload.inventoryType) {
-			case PREPARATION:
-			case DATASET:
-			case FOLDER: {
-				break;
-			}
-			case DOCUMENTATION: {
-				const newAction = {
-					type: '@@external/OPEN_WINDOW',
-					payload: {
-						method: 'open',
-						args: [
-							action.payload.url,
-						],
-					},
-				};
-				break;
-			}
 			}
 			break;
 		}

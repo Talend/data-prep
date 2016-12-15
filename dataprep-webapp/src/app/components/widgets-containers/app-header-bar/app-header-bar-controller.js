@@ -47,6 +47,7 @@ export default class AppHeaderBarCtrl {
 				const searchToggle = changes.searchToggle.currentValue;
 				if (searchToggle) {
 					searchConfiguration.onToggle = this.searchOnToggle;
+					searchConfiguration.value = '';
 					searchConfiguration.items = [];
 				}
 				else {
@@ -137,7 +138,7 @@ export default class AppHeaderBarCtrl {
 			onToggle: this.searchOnToggle,
 			onBlur: this.searchOnBlur,
 			onChange: this.searchOnChange,
-			onSelect: this.searchOnSelect,
+			onSelect: this.searchOnToggle && this.searchOnSelect,
 		};
 	}
 

@@ -319,7 +319,7 @@ public class SimpleFilterService implements FilterService {
      * @return The valid value predicate
      */
     private Predicate<DataSetRow> createValidPredicate(final String columnId) {
-        return r -> !r.isInvalid(columnId);
+        return r -> !r.isInvalid(columnId) && !isEmpty(r.get(columnId));
     }
 
     /**

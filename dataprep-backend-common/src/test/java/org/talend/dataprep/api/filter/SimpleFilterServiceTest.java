@@ -721,8 +721,11 @@ public class SimpleFilterServiceTest {
         //then
         row.setInvalid("0001"); // value is marked as invalid
         assertThat(filter.test(row), is(false));
+
+        row.unsetInvalid("0001"); // value is marked as valid
         row.set("0001", ""); //empty
         assertThat(filter.test(row), is(false));
+
         row.unsetInvalid("0001"); // value is marked as valid
         row.set("0001", "toto"); // correct value
         assertThat(filter.test(row), is(true));
@@ -740,8 +743,12 @@ public class SimpleFilterServiceTest {
         final Predicate<DataSetRow> filter = service.build(filtersDefinition, rowMetadata);
 
         //then
+        row.set("0001", "toto");
+        row.set("0002", "toto");
+
         row.setInvalid("0001"); // value is marked as invalid
         assertThat(filter.test(row), is(true));
+
         row.setInvalid("0002"); // value is marked as invalid
         assertThat(filter.test(row), is(false));
     }

@@ -180,16 +180,15 @@ public class TransformationService extends BaseTransformationService {
         return executeSampleExportStrategy(parameters);
     }
 
-
     /**
      * Apply the preparation to the dataset out of the given IDs.
      *
      * @param preparationId the preparation id to apply on the dataset.
-     * @param datasetId     the dataset id to transform.
-     * @param formatName    The output {@link ExportFormat format}. This format also set the MIME response type.
-     * @param stepId        the preparation step id to use (default is 'head').
-     * @param name          the transformation name.
-     * @param exportParams  additional (optional) export parameters.
+     * @param datasetId the dataset id to transform.
+     * @param formatName The output {@link ExportFormat format}. This format also set the MIME response type.
+     * @param stepId the preparation step id to use (default is 'head').
+     * @param name the transformation name.
+     * @param exportParams additional (optional) export parameters.
      */
     //@formatter:off
     @RequestMapping(value = "/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", method = GET)
@@ -216,9 +215,9 @@ public class TransformationService extends BaseTransformationService {
     /**
      * Export the dataset to the given format.
      *
-     * @param datasetId    the dataset id to transform.
-     * @param formatName   The output {@link ExportFormat format}. This format also set the MIME response type.
-     * @param name         the transformation name.
+     * @param datasetId the dataset id to transform.
+     * @param formatName The output {@link ExportFormat format}. This format also set the MIME response type.
+     * @param name the transformation name.
      * @param exportParams additional (optional) export parameters.
      */
     //@formatter:off
@@ -320,7 +319,7 @@ public class TransformationService extends BaseTransformationService {
      * To prevent the actions to exceed URL length limit, everything is shipped within via the multipart request body.
      *
      * @param previewParameters The preview parameters, encoded in json within the request body.
-     * @param output            Where to write the response.
+     * @param output Where to write the response.
      */
     //@formatter:off
     @RequestMapping(value = "/transform/preview", method = POST, produces = APPLICATION_JSON_VALUE)
@@ -337,23 +336,23 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void executeDiffOnSample(final PreviewParameters previewParameters, final OutputStream output) {
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
-                previewParameters.getPreparationId(),
-                rootStep.id(),
-                previewParameters.getSourceType()
+        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
+                previewParameters.getPreparationId(), //
+                rootStep.id(), //
+                previewParameters.getSourceType() //
         );
 
-        final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey(
-                previewParameters.getDataSetId(),
-                previewParameters.getPreparationId(),
-                rootStep.id(),
-                JSON,
-                previewParameters.getSourceType()
+        final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
+                previewParameters.getDataSetId(), //
+                previewParameters.getPreparationId(), //
+                rootStep.id(), //
+                JSON, //
+                previewParameters.getSourceType() //
         );
 
-        try(final InputStream metadata = contentCache.get(metadataKey);
-            final InputStream content = contentCache.get(contentKey);
-            final JsonParser contentParser = mapper.getFactory().createParser(content)) {
+        try (final InputStream metadata = contentCache.get(metadataKey); //
+                final InputStream content = contentCache.get(contentKey); //
+                final JsonParser contentParser = mapper.getFactory().createParser(content)) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);
@@ -367,7 +366,7 @@ public class TransformationService extends BaseTransformationService {
             // trigger diff
             executePreview( //
                     previewParameters.getNewActions(), //
-                    previewParameters.getBaseActions(),  //
+                    previewParameters.getBaseActions(), //
                     previewParameters.getTdpIds(), //
                     dataSet, //
                     output //
@@ -384,7 +383,7 @@ public class TransformationService extends BaseTransformationService {
         boolean identityReleased = false;
         securityProxy.asTechnicalUser();
         try (final InputStream dataSetContent = dataSetGet.execute(); //
-             final JsonParser parser = mapper.getFactory().createParser(dataSetContent)) {
+                final JsonParser parser = mapper.getFactory().createParser(dataSetContent)) {
 
             securityProxy.releaseIdentity();
             identityReleased = true;
@@ -392,7 +391,7 @@ public class TransformationService extends BaseTransformationService {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             executePreview( //
                     previewParameters.getNewActions(), //
-                    previewParameters.getBaseActions(),  //
+                    previewParameters.getBaseActions(), //
                     previewParameters.getTdpIds(), //
                     dataSet, //
                     output //
@@ -410,25 +409,24 @@ public class TransformationService extends BaseTransformationService {
 
     private boolean shouldApplyDiffToSampleSource(final PreviewParameters previewParameters) {
         if (previewParameters.getSourceType() != HEAD && previewParameters.getPreparationId() != null) {
-            final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
-                    previewParameters.getPreparationId(),
-                    rootStep.id(),
-                    previewParameters.getSourceType()
+            final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
+                    previewParameters.getPreparationId(), //
+                    rootStep.id(), //
+                    previewParameters.getSourceType() //
             );
 
-            final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey(
-                    previewParameters.getDataSetId(),
-                    previewParameters.getPreparationId(),
-                    rootStep.id(),
-                    JSON,
-                    previewParameters.getSourceType()
+            final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
+                    previewParameters.getDataSetId(), //
+                    previewParameters.getPreparationId(), //
+                    rootStep.id(), //
+                    JSON, //
+                    previewParameters.getSourceType() //
             );
 
             return contentCache.has(metadataKey) && contentCache.has(contentKey);
         }
         return false;
     }
-
 
     /**
      * Given a list of requested preview, it applies the diff to each one.
@@ -576,15 +574,17 @@ public class TransformationService extends BaseTransformationService {
      * Suggest what {@link ActionDefinition actions} can be applied to <code>column</code>.
      *
      * @param column A {@link ColumnMetadata column} definition.
-     * @param limit  An optional limit parameter to return the first <code>limit</code> suggestions.
+     * @param limit An optional limit parameter to return the first <code>limit</code> suggestions.
      * @return A list of {@link ActionDefinition} that can be applied to this column.
      * @see #suggest(DataSet)
      */
     @RequestMapping(value = "/suggest/column", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Suggest actions for a given column metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
-    public List<ActionDefinition> suggest(@RequestBody(required = false) ColumnMetadata column, //
-                                        @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5", required = false) int limit) {
+    public List<ActionDefinition> suggest( //
+            @RequestBody(required = false) ColumnMetadata column, //
+            @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5") int limit) {
+
         if (column == null) {
             return Collections.emptyList();
         }
@@ -711,17 +711,11 @@ public class TransformationService extends BaseTransformationService {
         LOG.debug("listing preparation semantic categories for preparation #{} column #{}@{}", preparationId, columnId, stepId);
 
         // get the preparation
-        final Preparation preparation;
-        try {
-            final PreparationDetailsGet details = applicationContext.getBean(PreparationDetailsGet.class, preparationId);
-            preparation = mapper.readerFor(Preparation.class).readValue(details.execute());
-        } catch (IOException e) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, e, build().put("id", preparationId));
-        }
+        final Preparation preparation = getPreparation(preparationId);
 
         // get the step (in case of 'head', the real step id must be found)
-        final String version = StringUtils.equals("head", stepId) ? preparation.getSteps().get(preparation.getSteps().size() - 1)
-                : stepId;
+        final String version = StringUtils.equals("head", stepId) ? //
+                preparation.getSteps().get(preparation.getSteps().size() - 1) : stepId;
 
         /*
          * OK, this one is a bit tricky so pay attention.
@@ -735,61 +729,96 @@ public class TransformationService extends BaseTransformationService {
          */
 
         // generate the cache keys for both metadata & content
-        final ContentCacheKey metadataKey = cacheKeyGenerator //
-                .metadataBuilder() //
-                .preparationId(preparationId) //
-                .stepId(version) //
-                .sourceType(HEAD) //
-                .build();
+        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder() //
+                .preparationId(preparationId).stepId(version).sourceType(HEAD).build();
 
-        final ContentCacheKey contentKey = cacheKeyGenerator //
-                .contentBuilder() //
-                .datasetId(preparation.getDataSetId()) //
-                .preparationId(preparationId) //
-                .stepId(version) //
-                .format(JSON) //
-                .sourceType(HEAD) //
+        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder() //
+                .datasetId(preparation.getDataSetId()).preparationId(preparationId).stepId(version) //
+                .format(JSON).sourceType(HEAD) //
                 .build();
 
         // if the preparation is not cached, let's compute it to have some cache
         if (!contentCache.has(metadataKey) || !contentCache.has(contentKey)) {
-
-            final ExportParameters exportParameters = new ExportParameters();
-            exportParameters.setPreparationId(preparationId);
-            exportParameters.setExportType("JSON");
-            exportParameters.setStepId(stepId);
-            exportParameters.setDatasetId(preparation.getDataSetId());
-
-            final StreamingResponseBody streamingResponseBody = executeSampleExportStrategy(exportParameters);
-            try {
-                // the result is not important here as it will be cached !
-                streamingResponseBody.writeTo(new NullOutputStream());
-            } catch (IOException e) {
-                throw new TDPException(UNEXPECTED_EXCEPTION, e);
-            }
+            addPreparationInCache(preparation, stepId);
         }
 
         // run the analyzer service on the cached content
         try {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(contentCache.get(metadataKey));
-            final ColumnMetadata columnMetadata = metadata.getRowMetadata().getById(columnId);
-            final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
-            analyzer.init();
+            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCache.get(contentKey));
+            LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);
+            return semanticDomains;
 
-            try (final JsonParser parser = mapper.getFactory().createParser(contentCache.get(contentKey))) {
-                final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-                dataSet.getRecords() //
-                        .map(r -> r.get(columnId)) //
-                        .forEach(analyzer::analyze);
-                analyzer.end();
-            }
+        } catch (IOException e) {
+            throw new TDPException(UNEXPECTED_EXCEPTION, e);
+        }
+    }
 
-            final List<Analyzers.Result> analyzerResult = analyzer.getResult();
-            final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
-            statisticsAdapter.adapt(singletonList(columnMetadata), analyzerResult);
-            LOG.debug("found {} for preparation #{}, column #{}", columnMetadata.getSemanticDomains(), preparationId, columnId);
-            return columnMetadata.getSemanticDomains();
+    /**
+     * Get the preparation from the preparation service.
+     *
+     * @param preparationId the wanted preparation id.
+     * @return the preparation from the preparation service.
+     */
+    private Preparation getPreparation(@ApiParam(value = "The preparation id") @PathVariable String preparationId) {
+        final Preparation preparation;
+        try {
+            final PreparationDetailsGet details = applicationContext.getBean(PreparationDetailsGet.class, preparationId);
+            preparation = mapper.readerFor(Preparation.class).readValue(details.execute());
+        } catch (IOException e) {
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, e, build().put("id", preparationId));
+        }
+        return preparation;
+    }
 
+    /**
+     * Return the semantic domains for the given parameters.
+     *
+     * @param metadata the dataset metadata.
+     * @param columnId the column id to analyze.
+     * @param records the dataset records.
+     * @return the semantic domains for the given parameters.
+     * @throws IOException can happen...
+     */
+    private List<SemanticDomain> getSemanticDomains(DataSetMetadata metadata, String columnId, InputStream records)
+            throws IOException {
+
+        final ColumnMetadata columnMetadata = metadata.getRowMetadata().getById(columnId);
+        final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
+        analyzer.init();
+
+        try (final JsonParser parser = mapper.getFactory().createParser(records)) {
+            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+            dataSet.getRecords() //
+                    .map(r -> r.get(columnId)) //
+                    .forEach(analyzer::analyze);
+            analyzer.end();
+        }
+
+        final List<Analyzers.Result> analyzerResult = analyzer.getResult();
+        final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
+        statisticsAdapter.adapt(singletonList(columnMetadata), analyzerResult);
+
+        return columnMetadata.getSemanticDomains();
+    }
+
+    /**
+     * Add the following preparation in cache.
+     *
+     * @param preparation the preparation to cache.
+     * @param stepId the preparation step id.
+     */
+    private void addPreparationInCache(Preparation preparation, String stepId) {
+        final ExportParameters exportParameters = new ExportParameters();
+        exportParameters.setPreparationId(preparation.getId());
+        exportParameters.setExportType("JSON");
+        exportParameters.setStepId(stepId);
+        exportParameters.setDatasetId(preparation.getDataSetId());
+
+        final StreamingResponseBody streamingResponseBody = executeSampleExportStrategy(exportParameters);
+        try {
+            // the result is not important here as it will be cached !
+            streamingResponseBody.writeTo(new NullOutputStream());
         } catch (IOException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
         }

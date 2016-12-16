@@ -15,15 +15,13 @@ const NAV_ITEM = 'navItem';
 const DROPDOWN = 'dropdown';
 
 export default class AppHeaderBarCtrl {
-	constructor($element, $translate, appSettings, state, SettingsActionsService, SearchService) {
+	constructor($element, $translate, appSettings, SettingsActionsService) {
 		'ngInject';
 
 		this.$element = $element;
 		this.$translate = $translate;
 		this.appSettings = appSettings;
 		this.settingsActionsService = SettingsActionsService;
-		this.searchService = SearchService;
-		this.state = state;
 	}
 
 	$onInit() {
@@ -57,7 +55,7 @@ export default class AppHeaderBarCtrl {
 			else if (changes.searchInput) {
 				const searchInput = changes.searchInput.currentValue;
 				searchConfiguration.value = searchInput;
-				if (!searchInput.length) {
+				if (!searchInput) {
 					searchConfiguration.items = [];
 				}
 			}
@@ -88,23 +86,25 @@ export default class AppHeaderBarCtrl {
 
 		// onToggle
 		const onToggleAction = this.appSettings.actions[searchSettings.onToggle];
-		this.searchOnToggle = this.settingsActionsService.createDispatcher(onToggleAction);
+		this.searchOnToggle = onToggleAction && this.settingsActionsService.createDispatcher(onToggleAction);
 
 		// onBlur
 		const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
-		const onBlurActionDispatcher = this.settingsActionsService.createDispatcher(onBlurAction);
+		const onBlurActionDispatcher = onBlurAction && this.settingsActionsService.createDispatcher(onBlurAction);
 		this.searchOnBlur = (event) => {
-			if (!this.state.search.searchInput) {
+			if (!this.searchInput && onBlurActionDispatcher) {
 				onBlurActionDispatcher(event);
 			}
 		};
 
 		// onChange
 		const onChangeAction = this.appSettings.actions[searchSettings.onChange];
-		const onChangeActionDispatcher = this.settingsActionsService.createDispatcher(onChangeAction);
+		const onChangeActionDispatcher = onChangeAction && this.settingsActionsService.createDispatcher(onChangeAction);
 		this.searchOnChange = (event) => {
 			const searchInput = event.target && event.target.value;
-			return onChangeActionDispatcher(event, { searchInput });
+			if (onChangeActionDispatcher) {
+				return onChangeActionDispatcher(event, { searchInput });
+			}
 		};
 
 		// onSelect
@@ -125,12 +125,15 @@ export default class AppHeaderBarCtrl {
 		this.searchOnSelect = (event, { sectionIndex, itemIndex }) => {
 			const selectedCategory = this.adaptedSearchResults[sectionIndex];
 			const selectedItem = selectedCategory && selectedCategory.suggestions[itemIndex];
-			return onSelectDispatcherByType[selectedItem.inventoryType](event, selectedItem);
+			const onSelectDispatcher = onSelectDispatcherByType[selectedItem.inventoryType];
+			if (onSelectDispatcher) {
+				return onSelectDispatcher(event, selectedItem);
+			}
 		};
 
 		return {
 			...searchSettings,
-			icon: {
+			icon: onToggleAction && {
 				name: onToggleAction && onToggleAction.icon,
 				title: onToggleAction && onToggleAction.name,
 				bsStyle: 'link',
@@ -144,15 +147,9 @@ export default class AppHeaderBarCtrl {
 
 	_adaptSearchResults(searchResults) {
 		return this.searchAvailableInventoryTypes
-			.filter((inventoryType) => {
-				return searchResults.some((result) => {
-					return result.inventoryType === inventoryType.title;
-				});
-			})
+			.filter(inventoryType => searchResults.some(result => result.inventoryType === inventoryType.title))
 			.map((inventoryType) => {
-				const suggestions = searchResults.filter((result) => {
-					return result.inventoryType === inventoryType.title;
-				});
+				const suggestions = searchResults.filter(result => result.inventoryType === inventoryType.title);
 				return {
 					title: inventoryType.title,
 					icon: {
@@ -173,7 +170,7 @@ export default class AppHeaderBarCtrl {
 	adaptContent() {
 		const search = this.appSettings.views.appheaderbar.search ?
 			this.adaptSearch() :
-			{};
+			null;
 		const navItems = this.appSettings.views.appheaderbar.actions ?
 			this.adaptActions() :
 			[];

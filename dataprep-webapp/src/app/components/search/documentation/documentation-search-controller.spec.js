@@ -17,13 +17,13 @@ const results = [{ url: 'url', name: 'name', description: 'description' }];
 
 describe('Documentation Search controller', () => {
 	let scope;
-	let component;
+	let ctrl;
 
 	beforeEach(angular.mock.module('data-prep.documentation-search'));
 
 	beforeEach(inject(($rootScope, $componentController) => {
 		scope = $rootScope.$new();
-		component = $componentController('documentationSearch', { $scope: scope });
+		ctrl = $componentController('documentationSearch', { $scope: scope });
 	}));
 
 	describe('search ', () => {
@@ -32,7 +32,7 @@ describe('Documentation Search controller', () => {
 			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(results));
 
 			// when
-			component.search(searchInput);
+			ctrl.search(searchInput);
 			scope.$digest();
 
 			// then
@@ -44,11 +44,11 @@ describe('Documentation Search controller', () => {
 			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(results));
 
 			// when
-			component.search(searchInput);
+			ctrl.search(searchInput);
 			scope.$digest();
 
 			// then
-			expect(component.results).toBe(results);
+			expect(ctrl.results).toBe(results);
 		}));
 
 		it('should NOT set results when the search is out of date', inject(($q, SearchService) => {
@@ -56,12 +56,12 @@ describe('Documentation Search controller', () => {
 			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(results));
 
 			// when
-			component.search(searchInput);
-			component.currentInput = 'other';
+			ctrl.search(searchInput);
+			ctrl.currentInput = 'other';
 			scope.$digest();
 
 			// then
-			expect(component.results).not.toBe(results);
+			expect(ctrl.results).not.toBe(results);
 		}));
 	});
 });

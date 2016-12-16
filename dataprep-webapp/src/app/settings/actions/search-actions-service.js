@@ -13,9 +13,10 @@
 
 export default class SearchActionsService {
 
-	constructor(SearchService, StateService) {
+	constructor(state, SearchService, StateService) {
 		'ngInject';
 
+		this.state = state;
 		this.searchService = SearchService;
 		this.stateService = StateService;
 	}
@@ -34,7 +35,11 @@ export default class SearchActionsService {
 			if (searchInput) {
 				this.searchService
 					.searchAll(searchInput)
-					.then(results => this.stateService.setSearchResults(results));
+					.then((results) => {
+						if (this.state.search.searchInput === searchInput) {
+							this.stateService.setSearchResults(results);
+						}
+					});
 			}
 			break;
 		}

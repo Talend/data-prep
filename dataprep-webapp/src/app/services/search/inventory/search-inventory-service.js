@@ -10,19 +10,20 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-class InventoryService {
+class SearchInventoryService {
 
-	constructor($q, InventoryRestService, TextFormatService) {
+	constructor($q, SearchInventoryRestService, TextFormatService) {
 		'ngInject';
 		this.deferredCancel = null;
 		this.$q = $q;
-		this.InventoryRestService = InventoryRestService;
+		this.SearchInventoryRestService = SearchInventoryRestService;
 		this.TextFormatService = TextFormatService;
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name cancelPendingGetRequest
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
 	 * @description Cancel the pending search GET request
 	 */
 	cancelPendingGetRequest() {
@@ -35,7 +36,7 @@ class InventoryService {
 	/**
 	 * @ngdoc method
 	 * @name search
-	 * @methodOf data-prep.services.lookup.service:InventoryService
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
 	 * @param {String} searchValue string
 	 * @description Search inventory items
 	 */
@@ -44,7 +45,7 @@ class InventoryService {
 
 		this.deferredCancel = this.$q.defer();
 
-		return this.InventoryRestService.search(searchValue, this.deferredCancel)
+		return this.SearchInventoryRestService.search(searchValue, this.deferredCancel)
 			.then((response) => {
 				return this.addHtmlLabelsAndSort(searchValue, response.data);
 			})
@@ -54,6 +55,7 @@ class InventoryService {
 	/**
 	 * @ngdoc method
 	 * @name addHtmlLabelsAndSort
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
 	 * @param {String} searchValue string
 	 * @param {Object} data data to process
 	 * @description add html label to data based on searchValue and sort the results
@@ -65,6 +67,7 @@ class InventoryService {
 			_.each(data.datasets, function (item) {
 				const itemToDisplay = {};
 
+				itemToDisplay.id = item.id;
 				itemToDisplay.inventoryType = 'dataset';
 				itemToDisplay.author = item.author;
 				itemToDisplay.created = item.created;
@@ -72,7 +75,7 @@ class InventoryService {
 				itemToDisplay.name = item.name;
 				itemToDisplay.path = item.path;
 				itemToDisplay.type = item.type;
-				itemToDisplay.originalItem = item;
+				itemToDisplay.model = item;
 				itemToDisplay.lastModificationDate = item.lastModificationDate;
 				itemToDisplay.tooltipName = item.name;
 				itemToDisplay.owner = item.owner;
@@ -106,4 +109,4 @@ class InventoryService {
 	}
 }
 
-export default InventoryService;
+export default SearchInventoryService;

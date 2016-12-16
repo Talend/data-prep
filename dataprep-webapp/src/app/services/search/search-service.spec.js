@@ -26,56 +26,56 @@ describe('Search service', () => {
 	}));
 
 	describe('searchDocumentation', () => {
-		it('should call documentation service', inject(($rootScope, SearchService, DocumentationService) => {
+		it('should call documentation service', inject(($rootScope, SearchService, SearchDocumentationService) => {
 			// given
-			spyOn(DocumentationService, 'search');
+			spyOn(SearchDocumentationService, 'search');
 
 			// when
 			SearchService.searchDocumentation(searchInput);
 			$rootScope.$digest();
 
 			// then
-			expect(DocumentationService.search).toHaveBeenCalledWith(searchInput);
+			expect(SearchDocumentationService.search).toHaveBeenCalledWith(searchInput);
 		}));
 	});
 
 	describe('searchInventory', () => {
-		it('should call inventory service', inject(($rootScope, SearchService, InventoryService) => {
+		it('should call inventory service', inject(($rootScope, SearchService, SearchInventoryService) => {
 			// given
-			spyOn(InventoryService, 'search');
+			spyOn(SearchInventoryService, 'search');
 
 			// when
 			SearchService.searchInventory(searchInput);
 			$rootScope.$digest();
 
 			// then
-			expect(InventoryService.search).toHaveBeenCalledWith(searchInput);
+			expect(SearchInventoryService.search).toHaveBeenCalledWith(searchInput);
 		}));
 	});
 
 	describe('searchAll', () => {
-		it('should call all services', inject(($rootScope, $q, SearchService, DocumentationService, InventoryService) => {
+		it('should call all services', inject(($rootScope, $q, SearchService, SearchDocumentationService, SearchInventoryService) => {
 			// given
-			spyOn(DocumentationService, 'search').and.returnValue($q.when([]));
-			spyOn(InventoryService, 'search').and.returnValue($q.when([]));
+			spyOn(SearchDocumentationService, 'search').and.returnValue($q.when([]));
+			spyOn(SearchInventoryService, 'search').and.returnValue($q.when([]));
 
 			// when
 			SearchService.searchAll(searchInput);
 			$rootScope.$digest();
 
 			// then
-			expect(DocumentationService.search).toHaveBeenCalledWith(searchInput);
-			expect(InventoryService.search).toHaveBeenCalledWith(searchInput);
+			expect(SearchDocumentationService.search).toHaveBeenCalledWith(searchInput);
+			expect(SearchInventoryService.search).toHaveBeenCalledWith(searchInput);
 		}));
 
-		it('should aggregate results', inject(($rootScope, $q, SearchService, DocumentationService, InventoryService) => {
+		it('should aggregate results', inject(($rootScope, $q, SearchService, SearchDocumentationService, SearchInventoryService) => {
 			let results = null;
 
 			// given
 			const documentationResult = 'documentation';
 			const inventoryResult = 'inventory';
-			spyOn(DocumentationService, 'search').and.returnValue($q.when([documentationResult]));
-			spyOn(InventoryService, 'search').and.returnValue($q.when([inventoryResult]));
+			spyOn(SearchDocumentationService, 'search').and.returnValue($q.when([documentationResult]));
+			spyOn(SearchInventoryService, 'search').and.returnValue($q.when([inventoryResult]));
 
 			// when
 			SearchService.searchAll(searchInput).then((response) => {
@@ -87,27 +87,6 @@ describe('Search service', () => {
 			expect(results.length).toBe(2);
 			expect(results).toContain(documentationResult);
 			expect(results).toContain(inventoryResult);
-		}));
-
-		it('should not aggregate results if search input has changed', inject(($rootScope, $q, state, SearchService, DocumentationService, InventoryService) => {
-			let results = null;
-
-			// given
-			const documentationResult = 'documentation';
-			const inventoryResult = 'inventory';
-			spyOn(DocumentationService, 'search').and.returnValue($q.when([documentationResult]));
-			spyOn(InventoryService, 'search').and.returnValue($q.when([inventoryResult]));
-			stateMock.search.searchInput = searchInput;
-
-			// when
-			SearchService.searchAll(searchInput).then((response) => {
-				results = response;
-			});
-			stateMock.search.searchInput = 'newValue';
-			$rootScope.$digest();
-
-			// then
-			expect(results.length).toBe(0);
 		}));
 	});
 });

@@ -11,19 +11,18 @@
 
  ============================================================================*/
 
-describe('Inventory Rest Service', () => {
-    'use strict';
+describe('Search Inventory Rest Service', () => {
 
     let $httpBackend;
 
-    beforeEach(angular.mock.module('data-prep.services.inventory'));
+    beforeEach(angular.mock.module('data-prep.services.search.inventory'));
 
     beforeEach(inject(($injector, RestURLs) => {
         RestURLs.setServerUrl('');
         $httpBackend = $injector.get('$httpBackend');
     }));
 
-    it('should call inventory search rest service ', inject(($rootScope, $q, InventoryRestService, RestURLs) => {
+    it('should call inventory search rest service ', inject(($rootScope, $q, SearchInventoryRestService, RestURLs) => {
         //given
         let result = null;
         const expectedResult = {
@@ -36,7 +35,7 @@ describe('Inventory Rest Service', () => {
             .respond(200, expectedResult);
 
         //when
-        InventoryRestService.search('test', $q.defer())
+        SearchInventoryRestService.search('test', $q.defer())
             .then((response) => {
                 result = response.data;
             });

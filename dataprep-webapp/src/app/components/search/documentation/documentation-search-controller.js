@@ -15,7 +15,7 @@
  * @ngdoc controller
  * @name data-prep.documentation-search.controller:DocumentationSearchCtrl
  * @description DocumentationSearchCtrl controller.
- * @requires data-prep.services.documentation.service:DocumentationService
+ * @requires data-prep.services.search.documentation:SearchDocumentationService
  *
  */
 class DocumentationSearchCtrl {

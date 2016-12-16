@@ -11,12 +11,13 @@
 
  ============================================================================*/
 
-describe('Inventory Service', () => {
+describe('Search Inventory Service', () => {
 	const results = {
 		data: {
 			folders: [{ name: 'folder test', lastModificationDate: 1 }],
 			preparations: [{ name: 'prep test', lastModificationDate: 2 }],
 			datasets: [{
+				id: 'id',
 				name: 'dataset test',
 				lastModificationDate: 3,
 				author: 'toto',
@@ -31,17 +32,18 @@ describe('Inventory Service', () => {
 		},
 	};
 
-	beforeEach(angular.mock.module('data-prep.services.inventory'));
+	beforeEach(angular.mock.module('data-prep.services.search.inventory'));
 
-	beforeEach(inject(($q, InventoryRestService) => {
-		spyOn(InventoryRestService, 'search').and.returnValue($q.when(results));
+	beforeEach(inject(($q, SearchInventoryRestService) => {
+		spyOn(SearchInventoryRestService, 'search').and.returnValue($q.when(results));
 	}));
 
-	it('should call inventory search rest service and process data', inject(($rootScope, InventoryService) => {
+	it('should call inventory search rest service and process data', inject(($rootScope, SearchInventoryService) => {
 		// given
 		let result = null;
 		const expectedResult = [
 			{
+				id: 'id',
 				inventoryType: 'dataset',
 				author: 'toto',
 				created: 1,
@@ -49,7 +51,7 @@ describe('Inventory Service', () => {
 				name: 'dataset test',
 				path: 'home',
 				type: 'csv',
-				originalItem: results.data.datasets[0],
+				model: results.data.datasets[0],
 				lastModificationDate: 3,
 				tooltipName: 'dataset test',
 				owner: {
@@ -71,7 +73,7 @@ describe('Inventory Service', () => {
 		];
 
 		// when
-		InventoryService.search('test').then((response) => {
+		SearchInventoryService.search('test').then((response) => {
 			result = response;
 		});
 

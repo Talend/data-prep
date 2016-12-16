@@ -13,8 +13,19 @@
 
 import angular from 'angular';
 
+const searchInput = 'lorem ipsum';
+
 describe('Search actions service', () => {
-	beforeEach(angular.mock.module('app.settings.actions'));
+	let stateMock;
+
+	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
+		stateMock = {
+			search: {
+				searchInput,
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
 	describe('dispatch', () => {
 		it('should toggle search input', inject((StateService, SearchActionsService) => {
@@ -63,7 +74,7 @@ describe('Search actions service', () => {
 			const action = {
 				type: '@@search/ALL',
 				payload: {
-					searchInput: 'lorem ipsum',
+					searchInput,
 				},
 			};
 			spyOn(StateService, 'setSearchInput').and.returnValue();
@@ -75,9 +86,32 @@ describe('Search actions service', () => {
 			$rootScope.$digest();
 
 			// then
-			expect(StateService.setSearchInput).toHaveBeenCalledWith('lorem ipsum');
-			expect(SearchService.searchAll).toHaveBeenCalledWith('lorem ipsum');
+			expect(StateService.setSearchInput).toHaveBeenCalledWith(searchInput);
+			expect(SearchService.searchAll).toHaveBeenCalledWith(searchInput);
 			expect(StateService.setSearchResults).toHaveBeenCalledWith(['a', 'b', 'c']);
+		}));
+
+		it('should do not perform search if search input has changed', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
+			// given
+			const action = {
+				type: '@@search/ALL',
+				payload: {
+					searchInput,
+				},
+			};
+			spyOn(StateService, 'setSearchInput').and.returnValue();
+			spyOn(SearchService, 'searchAll').and.returnValue($q.when(['a', 'b', 'c']));
+			spyOn(StateService, 'setSearchResults').and.returnValue();
+
+			// when
+			SearchActionsService.dispatch(action);
+			stateMock.search.searchInput = 'lorem ipsum dolor';
+			$rootScope.$digest();
+
+			// then
+			expect(StateService.setSearchInput).toHaveBeenCalledWith(searchInput);
+			expect(SearchService.searchAll).toHaveBeenCalledWith(searchInput);
+			expect(StateService.setSearchResults).not.toHaveBeenCalled();
 		}));
 	});
 });

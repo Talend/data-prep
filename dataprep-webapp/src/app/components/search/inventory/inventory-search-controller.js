@@ -15,8 +15,7 @@
  * @ngdoc controller
  * @name data-prep.inventory-search.controller:InventorySearchCtrl
  * @description InventorySearchCtrl controller.
- * @requires data-prep.services.inventory.service:InventoryService
- * @requires data-prep.services.documentation.service:DocumentationService
+ * @requires data-prep.services.search:SearchService
  *
  */
 class InventorySearchCtrl {

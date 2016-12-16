@@ -16,14 +16,14 @@ const searchInput = 'barcelona';
 const results = [{}, {}];
 
 describe('Inventory Search controller', () => {
-	let component;
+	let ctrl;
 	let scope;
 
 	beforeEach(angular.mock.module('data-prep.inventory-search'));
 
 	beforeEach(inject(($rootScope, $componentController) => {
 		scope = $rootScope.$new();
-		component = $componentController('inventorySearch', { $scope: scope });
+		ctrl = $componentController('inventorySearch', { $scope: scope });
 	}));
 
 	describe('search', () => {
@@ -32,7 +32,7 @@ describe('Inventory Search controller', () => {
 			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
 
 			// when
-			component.search(searchInput);
+			ctrl.search(searchInput);
 			scope.$digest();
 
 			// then
@@ -44,11 +44,11 @@ describe('Inventory Search controller', () => {
 			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
 
 			// when
-			component.search(searchInput);
+			ctrl.search(searchInput);
 			scope.$digest();
 
 			// then
-			expect(component.results).toEqual(results);
+			expect(ctrl.results).toEqual(results);
 		}));
 
 		it('should NOT set results when they are out of date', inject(($q, SearchService) => {
@@ -56,26 +56,12 @@ describe('Inventory Search controller', () => {
 			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
 
 			// when
-			component.search(searchInput);
-			component.currentInput = 'other';
+			ctrl.search(searchInput);
+			ctrl.currentInput = 'other';
 			scope.$digest();
 
 			// then
-			expect(component.results).not.toEqual(results);
-		}));
-
-		it('should set empty array as results when there are no result', inject(($q, SearchService) => {
-			// given
-			const results = [];
-			spyOn(SearchService, 'searchAll').and.returnValue($q.when(results));
-			component.results = null;
-
-			// when
-			component.search(searchInput);
-			scope.$digest();
-
-			// then
-			expect(component.results).toEqual(results);
+			expect(ctrl.results).not.toEqual(results);
 		}));
 	});
 });

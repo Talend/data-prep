@@ -25,8 +25,8 @@ export default class MenuActionsService {
 			break;
 		}
 		case '@@router/GO_DATASET': {
-			const { method, args, id, originalItem } = action.payload;
-			this.$state[method](...args, { datasetid: (originalItem && originalItem.id) || id });
+			const { method, args, id } = action.payload;
+			this.$state[method](...args, { datasetid: id });
 			break;
 		}
 		case '@@router/GO_FOLDER': {

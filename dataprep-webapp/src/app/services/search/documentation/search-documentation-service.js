@@ -12,22 +12,23 @@
  ============================================================================*/
 const properties = ['url', 'name', 'description'];
 
-class DocumentationService {
+class SearchDocumentationService {
 
-	constructor(DocumentationRestService, TextFormatService) {
+	constructor(SearchDocumentationRestService, TextFormatService) {
 		'ngInject';
-		this.documentationRestService = DocumentationRestService;
+
+		this.searchDocumentationRestService = SearchDocumentationRestService;
 		this.textFormatService = TextFormatService;
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name search
-	 * @methodOf data-prep.services.documentation.service:DocumentationService
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
 	 * @description search documentation with keyword
 	 */
 	search(keyword) {
-		return this.documentationRestService.search(keyword)
+		return this.searchDocumentationRestService.search(keyword)
 			.then((response) => {
 				return _.chain(this._thcParser(response.data)).value();
 			});
@@ -35,8 +36,25 @@ class DocumentationService {
 
 	/**
 	 * @ngdoc method
+	 * @name searchAndHighlight
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
+	 * @description search documentation with keyword and highlight terms
+	 */
+	searchAndHighlight(keyword) {
+		return this.search(keyword)
+			.then((results) => {
+				return results.map((item) => {
+					this.textFormatService.highlight(item, 'name', keyword, 'highlighted');
+					this.textFormatService.highlight(item, 'description', keyword, 'highlighted');
+					return item;
+				});
+			});
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name _thcParser
-	 * @methodOf data-prep.services.documentation.service:DocumentationService
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
 	 * @description Convert Talend help center csv to documentation elements
 	 * @param {string} thcCsv The THC search result to adapt
 	 * @returns {Array} The array of documentation elements
@@ -59,7 +77,7 @@ class DocumentationService {
 	/**
 	 * @ngdoc method
 	 * @name _createDocElement
-	 * @methodOf data-prep.services.documentation.service:DocumentationService
+	 * @methodOf data-prep.services.search.documentation:SearchDocumentationService
 	 * @description Create a document element from array ['url', 'name', 'description']
 	 * @param {Array} parts The documentation parts ['url', 'name', 'description']
 	 * @returns {object} The documentation elements
@@ -77,4 +95,4 @@ class DocumentationService {
 	}
 }
 
-export default DocumentationService;
+export default SearchDocumentationService;

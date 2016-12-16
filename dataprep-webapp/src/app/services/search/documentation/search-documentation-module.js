@@ -12,12 +12,12 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_UTILS_MODULE from '../utils/utils-module';
+import SERVICES_UTILS_MODULE from '../../utils/utils-module';
 
-import DocumentationService from './documentation-service';
-import DocumentationRestService from './rest/documentation-rest-service';
+import SearchDocumentationService from './search-documentation-service';
+import SearchDocumentationRestService from './rest/search-documentation-rest-service';
 
-const MODULE_NAME = 'data-prep.services.documentation';
+const MODULE_NAME = 'data-prep.services.search.documentation';
 
 /**
  * @ngdoc object
@@ -25,7 +25,7 @@ const MODULE_NAME = 'data-prep.services.documentation';
  * @description This module contains the services to manage the documentation
  */
 angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
-    .service('DocumentationService', DocumentationService)
-    .service('DocumentationRestService', DocumentationRestService);
+    .service('SearchDocumentationService', SearchDocumentationService)
+    .service('SearchDocumentationRestService', SearchDocumentationRestService);
 
 export default MODULE_NAME;

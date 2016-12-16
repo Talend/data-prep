@@ -13,9 +13,9 @@
 
 import angular from 'angular';
 
-import SERVICES_INVENTORY_MODULE from '../inventory/inventory-module';
-import SERVICES_DOCUMENTATION_MODULE from '../documentation/documentation-module';
+import SERVICES_SEARCH_INVENTORY_MODULE from './inventory/search-inventory-module';
 import SERVICES_EASTER_EGGS_MODULE from '../easter-eggs/easter-eggs-module';
+import SERVICES_SEARCH_DOCUMENTATION_MODULE from './documentation/search-documentation-module';
 
 import SearchService from './search-service';
 
@@ -24,13 +24,13 @@ const MODULE_NAME = 'data-prep.services.search';
 /**
  * @ngdoc object
  * @name data-prep.services.search
- * @description This module contains the services to search
+ * @description This module contains the services to perform search
  */
 angular.module(MODULE_NAME,
 	[
-		SERVICES_DOCUMENTATION_MODULE,
+		SERVICES_SEARCH_DOCUMENTATION_MODULE,
 		SERVICES_EASTER_EGGS_MODULE,
-		SERVICES_INVENTORY_MODULE,
+		SERVICES_SEARCH_INVENTORY_MODULE,
 	])
 	.service('SearchService', SearchService);
 

@@ -29,19 +29,19 @@ describe('Documentation Search controller', () => {
 	describe('search ', () => {
 		it('should call search service', inject(($q, SearchService) => {
 			// given
-			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(results));
+			spyOn(SearchService, 'searchDocumentationAndHighlight').and.returnValue($q.when(results));
 
 			// when
 			ctrl.search(searchInput);
 			scope.$digest();
 
 			// then
-			expect(SearchService.searchDocumentation).toHaveBeenCalledWith(searchInput);
+			expect(SearchService.searchDocumentationAndHighlight).toHaveBeenCalledWith(searchInput);
 		}));
 
 		it('should set results', inject(($q, SearchService) => {
 			// given
-			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(results));
+			spyOn(SearchService, 'searchDocumentationAndHighlight').and.returnValue($q.when(results));
 
 			// when
 			ctrl.search(searchInput);
@@ -53,7 +53,7 @@ describe('Documentation Search controller', () => {
 
 		it('should NOT set results when the search is out of date', inject(($q, SearchService) => {
 			// given
-			spyOn(SearchService, 'searchDocumentation').and.returnValue($q.when(results));
+			spyOn(SearchService, 'searchDocumentationAndHighlight').and.returnValue($q.when(results));
 
 			// when
 			ctrl.search(searchInput);

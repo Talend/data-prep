@@ -35,7 +35,7 @@ class DocumentationSearchCtrl {
 		this.results = null;
 		this.currentInput = searchInput;
 
-		return this.searchService.searchDocumentation(searchInput)
+		return this.searchService.searchDocumentationAndHighlight(searchInput)
 			.then(response => (this.currentInput === searchInput) && (this.results = response));
 	}
 }

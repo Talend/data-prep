@@ -16,6 +16,7 @@ const LayoutContainer = {
 		<div class="app">
 			<div class="header">
 				<app-header-bar search-toggle="$ctrl.state.search.searchToggle"
+		 						searching="$ctrl.state.search.searching"
 		 						search-input="$ctrl.state.search.searchInput"
 		 						search-results="$ctrl.state.search.searchResults"
 				><app-header-bar/>

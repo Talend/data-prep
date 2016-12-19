@@ -23,6 +23,17 @@ describe('Search', function () {
 			expect(searchState.searchToggle).toBeFalsy();
 		}));
 
+		it('should set searching', inject(function (searchState, SearchStateService) {
+			// given
+			expect(searchState.isSearching).toBeFalsy();
+
+			// when
+			SearchStateService.setSearching(true);
+
+			// then
+			expect(searchState.isSearching).toBeTruthy();
+		}));
+
 		it('should set input search', inject(function (searchState, SearchStateService) {
 			// when
 			SearchStateService.setSearchInput('lorem ipsum');

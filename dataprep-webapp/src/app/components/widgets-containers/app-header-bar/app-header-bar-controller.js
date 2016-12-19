@@ -41,12 +41,16 @@ export default class AppHeaderBarCtrl {
 		if (this.content) {
 			const updatedContent = this.content.slice();
 			const searchConfiguration = updatedContent[1].search;
-			if (changes.searchToggle) {
+			if (changes.searching) {
+				const searching = changes.searching.currentValue;
+				searchConfiguration.searching = searching;
+			}
+			else if (changes.searchToggle) {
 				const searchToggle = changes.searchToggle.currentValue;
 				if (searchToggle) {
 					searchConfiguration.onToggle = this.searchOnToggle;
 					searchConfiguration.value = '';
-					searchConfiguration.items = [];
+					searchConfiguration.items = null;
 				}
 				else {
 					delete searchConfiguration.onToggle;
@@ -56,7 +60,7 @@ export default class AppHeaderBarCtrl {
 				const searchInput = changes.searchInput.currentValue;
 				searchConfiguration.value = searchInput;
 				if (!searchInput) {
-					searchConfiguration.items = [];
+					searchConfiguration.items = null;
 				}
 			}
 			else if (changes.searchResults) {
@@ -92,7 +96,7 @@ export default class AppHeaderBarCtrl {
 		const onBlurAction = this.appSettings.actions[searchSettings.onBlur];
 		const onBlurActionDispatcher = onBlurAction && this.settingsActionsService.createDispatcher(onBlurAction);
 		this.searchOnBlur = (event) => {
-			if (!this.searchInput && onBlurActionDispatcher) {
+			if (onBlurActionDispatcher && !this.searchInput) {
 				onBlurActionDispatcher(event);
 			}
 		};
@@ -126,6 +130,7 @@ export default class AppHeaderBarCtrl {
 			const selectedCategory = this.adaptedSearchResults[sectionIndex];
 			const selectedItem = selectedCategory && selectedCategory.suggestions[itemIndex];
 			const onSelectDispatcher = onSelectDispatcherByType[selectedItem.inventoryType];
+			this.searchOnToggle();
 			if (onSelectDispatcher) {
 				return onSelectDispatcher(event, selectedItem);
 			}
@@ -141,7 +146,7 @@ export default class AppHeaderBarCtrl {
 			onToggle: this.searchOnToggle,
 			onBlur: this.searchOnBlur,
 			onChange: this.searchOnChange,
-			onSelect: this.searchOnToggle && this.searchOnSelect,
+			onSelect: this.searchOnSelect,
 		};
 	}
 

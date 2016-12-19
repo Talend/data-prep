@@ -175,6 +175,7 @@ export function StateService(RouteStateService, routeState,
 
 		// search
 		toggleSearch: SearchStateService.toggle,
+		setSearching: SearchStateService.setSearching,
 		setSearchInput: SearchStateService.setSearchInput,
 		setSearchResults: SearchStateService.setSearchResults,
 	};

@@ -24,6 +24,11 @@ export default class SearchActionsService {
 	dispatch(action) {
 		switch (action.type) {
 		case '@@search/TOGGLE': {
+			if (this.state.search.searchToggle) {
+				this.stateService.setSearching(false);
+				this.stateService.setSearchInput(null);
+				this.stateService.setSearchResults(null);
+			}
 			this.stateService.toggleSearch();
 			break;
 		}
@@ -33,13 +38,20 @@ export default class SearchActionsService {
 				action.payload.searchInput;
 			this.stateService.setSearchInput(searchInput);
 			if (searchInput) {
+				this.stateService.setSearching(true);
 				this.searchService
 					.searchAll(searchInput)
 					.then((results) => {
 						if (this.state.search.searchInput === searchInput) {
 							this.stateService.setSearchResults(results);
 						}
+					})
+					.finally(() => {
+						this.stateService.setSearching(false);
 					});
+			}
+			else {
+				this.stateService.setSearching(false);
 			}
 			break;
 		}

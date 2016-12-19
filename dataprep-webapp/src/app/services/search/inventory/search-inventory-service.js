@@ -47,7 +47,7 @@ class SearchInventoryService {
 
 		return this.SearchInventoryRestService.search(searchValue, this.deferredCancel)
 			.then((response) => {
-				return this.addHtmlLabelsAndSort(searchValue, response.data);
+				return this.addHtmlLabelsAndSort(response.data);
 			})
 			.finally(() => this.deferredCancel = null);
 	}
@@ -56,11 +56,10 @@ class SearchInventoryService {
 	 * @ngdoc method
 	 * @name addHtmlLabelsAndSort
 	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
-	 * @param {String} searchValue string
 	 * @param {Object} data data to process
 	 * @description add html label to data based on searchValue and sort the results
 	 */
-	addHtmlLabelsAndSort(searchValue, data) {
+	addHtmlLabelsAndSort(data) {
 		let inventoryItems = [];
 
 		if (data.datasets && data.datasets.length) {

@@ -139,8 +139,8 @@ export default class AppHeaderBarCtrl {
 		return {
 			...searchSettings,
 			icon: onToggleAction && {
-				name: onToggleAction && onToggleAction.icon,
-				title: onToggleAction && onToggleAction.name,
+				name: onToggleAction.icon,
+				title: onToggleAction.name,
 				bsStyle: 'link',
 			},
 			onToggle: this.searchOnToggle,

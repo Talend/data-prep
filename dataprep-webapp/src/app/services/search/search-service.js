@@ -45,25 +45,11 @@ export default function SearchService($q, SearchDocumentationService, EasterEggs
 			EasterEggsService.enableEasterEgg(searchInput);
 		}
 
-		let results = [];
-
 		const inventoryPromise = searchInventory(searchInput);
 		const documentationPromise = searchDocumentation(searchInput);
 
-		inventoryPromise.then((response) => {
-			results = results.concat(response);
-		});
-		documentationPromise.then((response) => {
-			results = results.concat(response);
-		});
-
-		// if results (doc + inventory) are empty, we create an empty array
-		// the no-result message is based on the definition of results.
-		// It must be an empty array to show the message.
 		return $q
 			.all([inventoryPromise, documentationPromise])
-			.then(() => {
-				return results;
-			});
+			.then(([inventory, documentation]) => inventory.concat(documentation));
 	}
 }

@@ -20,6 +20,7 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.bouncycastle.openssl.EncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,7 @@ public class AESEncryption {
 
     /**
      * Encrypts the specified string and returns its encrypted value.
-     * 
+     *
      * @param src the specified {@link String}
      * @return the encrypted value of the specified {@link String}
      * @throws Exception
@@ -76,7 +77,7 @@ public class AESEncryption {
 
     /**
      * Decrypts the specified string (which is supposed to be encrypted) and returns its original value.
-     * 
+     *
      * @param src the specified {@link String}
      * @return the decrypted value of the specified {@link String}
      * @throws Exception
@@ -91,7 +92,7 @@ public class AESEncryption {
 
     /**
      * Return the decrypted string or the original value if needed.
-     * 
+     *
      * @param name the string name to decrypt (useful for debugging purpose)
      * @param src the string to decrypt.
      * @return the decrypted string or the original value if needed.

@@ -138,6 +138,14 @@ describe('Breadcrumb component', () => {
 			expect(element.find('#copyrights').text().trim()).toBe('current copyRights');
 		});
 
+		it('should render toggle button', () => {
+			// when
+			createElement();
+
+			// then
+			expect(element.find('#toggle-details').length).toBe(1);
+		});
+
 		describe('no builds list', () => {
 			it('should not render builds list', () => {
 				// when
@@ -152,8 +160,7 @@ describe('Breadcrumb component', () => {
 				createElement();
 
 				// then
-				expect(element.find('.modal-body button').length).toBe(1);
-				expect(element.find('.modal-body button').text().trim()).toBe('more');
+				expect(element.find('#toggle-details').text().trim()).toBe('more');
 			});
 		});
 
@@ -184,8 +191,7 @@ describe('Breadcrumb component', () => {
 				scope.$digest();
 
 				// then
-				expect(element.find('.modal-body button').length).toBe(1);
-				expect(element.find('.modal-body button').text().trim()).toBe('less');
+				expect(element.find('#toggle-details').text().trim()).toBe('less');
 			});
 		});
 
@@ -195,7 +201,7 @@ describe('Breadcrumb component', () => {
 				createElement();
 
 				// when
-				element.find('.modal-body button').click();
+				element.find('#toggle-details').click();
 				scope.$digest();
 
 				// then
@@ -210,7 +216,7 @@ describe('Breadcrumb component', () => {
 				expect(element.find('table').length).toBe(1);
 
 				// when
-				element.find('.modal-body button').click();
+				element.find('#toggle-details').click();
 				scope.$digest();
 
 				// then

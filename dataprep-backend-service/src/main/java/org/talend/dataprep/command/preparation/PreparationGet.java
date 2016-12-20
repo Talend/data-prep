@@ -34,17 +34,16 @@ import org.talend.dataprep.exception.TDPException;
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class PreparationDetailsGet extends GenericCommand<InputStream> {
+public class PreparationGet extends GenericCommand<InputStream> {
 
     /**
      * Constructor.
      *
      * @param preparationId the requested preparation id.
      */
-    public PreparationDetailsGet(String preparationId) {
+    public PreparationGet(String preparationId) {
         super(PREPARATION_GROUP);
-        execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + preparationId + "/details"));
-        on(HttpStatus.NO_CONTENT).then(emptyStream());
+        execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + preparationId));
         on(HttpStatus.NOT_FOUND).then((req, resp) -> {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         });

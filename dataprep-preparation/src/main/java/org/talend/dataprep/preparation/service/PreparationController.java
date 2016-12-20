@@ -210,11 +210,24 @@ public class PreparationController {
      * @param id the wanted preparation id.
      * @return the preparation details.
      */
-    @RequestMapping(value = "/preparations/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/{id}/details", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
-    public PreparationDetails get(@ApiParam("id") @PathVariable("id") String id) {
-        return preparationService.get(id);
+    public PreparationDetails getDetails(@ApiParam("id") @PathVariable("id") String id) {
+        return preparationService.getPreparationDetails(id);
+    }
+
+    /**
+     * Return a preparation.
+     *
+     * @param id the wanted preparation id.
+     * @return the preparation details.
+     */
+    @RequestMapping(value = "/preparations/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get preparation", notes = "Return the preparation with provided id.")
+    @Timed
+    public Preparation get(@ApiParam("id") @PathVariable("id") String id) {
+        return preparationService.getPreparation(id);
     }
 
     /**

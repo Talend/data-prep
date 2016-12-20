@@ -151,7 +151,7 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
     protected Preparation getPreparation(final String preparationId) throws IOException {
         final String json = given().when() //
                 .expect().statusCode(200).log().ifError() //
-                .get("/preparations/{id}", preparationId) //
+                .get("/preparations/{id}/details", preparationId) //
                 .asString();
 
         return mapper.readerFor(Preparation.class).readValue(json);

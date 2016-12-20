@@ -300,7 +300,7 @@ public class PreparationControllerTest extends BasePreparationTest {
     }
 
     @Test
-    public void get() throws Exception {
+    public void getDetails() throws Exception {
         // given
         final Preparation preparation = new Preparation("8b6281c5e99c41313a83777c3ab43b06adda9e5c", "1234", rootStep.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0);
@@ -308,7 +308,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         repository.add(preparation);
 
         // when
-        final String preparationDetails = when().get("/preparations/{id}", preparation.id()).asString();
+        final String preparationDetails = when().get("/preparations/{id}/details", preparation.id()).asString();
 
         // then
         final InputStream expected = PreparationControllerTest.class.getResourceAsStream("preparation_1234.json");
@@ -1611,7 +1611,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         Preparation preparation = repository.get(preparationId, Preparation.class);
 
         // when
-        final String preparationDetails = when().get("/preparations/{id}", preparation.id()).asString();
+        final String preparationDetails = when().get("/preparations/{id}/details", preparation.id()).asString();
 
         // then
         assertThat(JsonPath.given(preparationDetails).get("allowDistributedRun"), is(false));

@@ -521,14 +521,10 @@ public class PreparationService {
      * @param id the wanted preparation id.
      * @return the preparation details.
      */
-    public PreparationDetails get(String id) {
+    public PreparationDetails getPreparationDetails(String id) {
         log.debug("Get content of preparation details for #{}.", id);
-        final Preparation preparation = preparationRepository.get(id, Preparation.class);
+        final Preparation preparation = this.getPreparation(id);
 
-        // no preparation found
-        if (preparation == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
-        }
         // Ensure that the preparation is not locked elsewhere
         lock(id);
         final PreparationDetails details = getDetails(preparation);
@@ -567,7 +563,7 @@ public class PreparationService {
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
         log.debug("Adding action to preparation...");
-        Preparation preparation = get(preparationId).getPreparation();
+        Preparation preparation = getPreparationDetails(preparationId).getPreparation();
         List<Action> actions = getVersionedAction(preparationId, "head");
         step.setActions(buildActions(step.getActions()));
         StepDiff actionCreatedColumns = stepDiffDelegate.getActionCreatedColumns(preparation.getRowMetadata(), actions, step.getActions());
@@ -839,7 +835,7 @@ public class PreparationService {
      * @return The preparation with the provided id
      * @throws TDPException when no preparation has the provided id
      */
-    private Preparation getPreparation(final String id) {
+    public Preparation getPreparation(final String id) {
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation == null) {
             log.error("Preparation #{} does not exist", id);

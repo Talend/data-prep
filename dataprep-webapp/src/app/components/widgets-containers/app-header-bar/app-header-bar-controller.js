@@ -166,6 +166,10 @@ export default class AppHeaderBarCtrl {
 					});
 				}
 				break;
+			case 'Escape':
+				event.preventDefault();
+				this.searchOnToggle();
+				break;
 			}
 		};
 

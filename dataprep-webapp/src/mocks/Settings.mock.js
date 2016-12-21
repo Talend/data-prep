@@ -29,8 +29,8 @@ const settingsMock = {
 					folder: '"menu:folders',
 					documentation: 'external:documentation',
 				},
-                onKeyDown: 'search:focus',
-                debounceTimeout: 300
+				onKeyDown: 'search:focus',
+				debounceTimeout: 300,
 			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
 			userMenuActions: {
@@ -435,10 +435,10 @@ const settingsMock = {
 			id: 'search:all',
 			type: '@@search/ALL',
 		},
-        'search:focus': {
-            id: 'search:focus',
-            type: '@@search/FOCUS'
-        },
+		'search:focus': {
+			id: 'search:focus',
+			type: '@@search/FOCUS',
+		},
 		'external:documentation': {
 			id: 'external:documentation',
 			type: '@@external/OPEN_WINDOW',

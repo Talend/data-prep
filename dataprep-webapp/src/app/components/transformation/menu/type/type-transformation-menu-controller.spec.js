@@ -1,257 +1,359 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 describe('Type transform menu controller', function () {
-    'use strict';
+	'use strict';
 
-    var createController;
-    var scope;
-    var currentMetadata = { id: '719b84635c436ef245' };
+	let createController;
+	let scope;
+	let currentMetadata = { id: '719b84635c436ef245' };
+	let stateMock;
 
-    var types = [
-        { id: 'ANY', name: 'any', labelKey: 'ANY' },
-        { id: 'STRING', name: 'string', labelKey: 'STRING' },
-        { id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
-        { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-        { id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
-        { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-        { id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-        { id: 'DATE', name: 'date', labelKey: 'DATE' },
-    ];
+	const types = [
+		{ id: 'ANY', name: 'any', labelKey: 'ANY' },
+		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
+		{ id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
+		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+		{ id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
+		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+	];
 
-    beforeEach(angular.mock.module('data-prep.type-transformation-menu'));
+	const semanticDomains = [
+		{
+			"id": "AIRPORT",
+			"label": "Airport",
+			"frequency": 3.03,
+		},
+		{
+			"id": "CITY",
+			"label": "City",
+			"frequency": 99.24,
+		},
+	];
 
-    beforeEach(inject(function ($rootScope, $controller, $q, state, ColumnTypesService) {
-        scope = $rootScope.$new();
-        createController = function () {
-            var ctrl = $controller('TypeTransformMenuCtrl', {
-                $scope: scope,
-            });
-            ctrl.column = {
-                id: '0001',
-                name: 'awesome cities',
-                domain: 'CITY',
-                domainLabel: 'CITY',
-                domainFrequency: 18,
-                type: 'string',
-                semanticDomains: [
-                    { id: '', label: '', frequency: 15 },
-                    { id: 'CITY', label: 'CITY', frequency: 18 },
-                    { id: 'REGION', label: 'REGION', frequency: 6 },
-                    { id: 'COUNTRY', label: 'COUNTRY', frequency: 17 },
-                ],
-            };
-            return ctrl;
-        };
+	beforeEach(angular.mock.module('data-prep.type-transformation-menu', ($provide) => {
+		stateMock = {
+			playground: {
+				preparation: {
+					id: 'prepId'
+				},
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-        state.playground.dataset = currentMetadata;
-        spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
-    }));
+	beforeEach(inject(($rootScope, $controller, $q, $componentController, state, ColumnTypesService) => {
+		scope = $rootScope.$new();
+		createController = () => {
+			const ctrl = $componentController('typeTransformMenu', {
+				$scope: scope,
+			});
+			ctrl.column = {
+				id: '0001',
+				name: 'awesome cities',
+				domain: 'CITY',
+				domainLabel: 'CITY',
+				domainFrequency: 18,
+				type: 'string',
+				semanticDomains: [
+					{ id: '', label: '', frequency: 15 },
+					{ id: 'CITY', label: 'CITY', frequency: 18 },
+					{ id: 'REGION', label: 'REGION', frequency: 6 },
+					{ id: 'COUNTRY', label: 'COUNTRY', frequency: 17 },
+				],
+			};
+			return ctrl;
+		};
 
-    it('should get column primitive types', inject(function (ColumnTypesService) {
-        //given
-        var expectedTypes = [
-            { id: 'STRING', name: 'string', labelKey: 'STRING' },
-            { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-            { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-            { id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-            { id: 'DATE', name: 'date', labelKey: 'DATE' },
-        ];
+		state.playground.dataset = currentMetadata;
+		spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
+		spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
+	}));
 
-        //when
-        var ctrl = createController();
-        scope.$digest();
+	describe('init', () => {
+		it('should get semantic domains and types on init', inject((ColumnTypesService) => {
+			// given
+			const ctrl = createController();
+			ctrl.column = {
+				id: '0000',
+				name: 'awesome cities',
+				domain: 'CITY',
+				domainLabel: 'CITY',
+				domainFrequency: 18,
+				type: 'string',
+				semanticDomains: [
+					{ id: '', label: '', frequency: 15 },
+					{ id: 'CITY', label: 'CITY', frequency: 18 },
+					{ id: 'REGION', label: 'REGION', frequency: 6 },
+					{ id: 'COUNTRY', label: 'COUNTRY', frequency: 17 },
+				],
+			};
 
-        //then
-        expect(ColumnTypesService.getTypes).toHaveBeenCalled();
-        expect(ctrl.types).toEqual(expectedTypes);
-    }));
+			// when
+			ctrl.$onInit();
+			expect(ColumnTypesService.getColSemanticDomains).not.toHaveBeenCalled();
+			scope.$digest();
 
-    it('should change domain locally and call backend to add a step', inject(function ($q, PlaygroundService) {
-        //given
-        spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
-        var ctrl = createController();
-        var newDomain = {
-            id: 'COUNTRY',
-            label: 'COUNTRY',
-            frequency: 17,
-        };
+			// then
+			expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('preparation', 'prepId', ctrl.column.id);
+		}));
+	});
 
-        //when
-        ctrl.changeDomain(newDomain);
+	describe('semantic domains', () => {
+		it('should get semantic domains of a preparation', inject((ColumnTypesService) => {
+			// given
+			const ctrl = createController();
 
-        //then
-        expect(ctrl.column.domain).toBe('COUNTRY');
-        expect(ctrl.column.domainLabel).toBe('COUNTRY');
-        expect(ctrl.column.domainFrequency).toBe(17);
-        expect(ctrl.currentDomain).toBe('COUNTRY');
-        expect(ctrl.currentSimplifiedDomain).toBe('COUNTRY');
+			// when
+			ctrl.getTypesAndDomains();
+			scope.$digest();
 
-        const expectedParams = [{
-            action: 'domain_change',
-            parameters: {
-                scope: 'column',
-                column_id: '0001',
-                column_name: 'awesome cities',
-                new_domain_id: 'COUNTRY',
-                new_domain_label: 'COUNTRY',
-                new_domain_frequency: 17,
-            }
-        }];
-        expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
-    }));
+			// then
+			expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('preparation', 'prepId', ctrl.column.id);
+			expect(ctrl.semanticDomains).toEqual(semanticDomains.reverse());
+		}));
 
-    it('should revert domain when backend return error', inject(function ($q, PlaygroundService) {
-        //given
-        spyOn(PlaygroundService, 'appendStep').and.returnValue($q.reject());
-        var ctrl = createController();
-        var newDomain = {
-            id: 'COUNTRY',
-            label: 'COUNTRY',
-            frequency: 17,
-        };
+		it('should get semantic domains of a dataset', inject((ColumnTypesService) => {
+			// given
+			stateMock.playground.preparation = null;
+			stateMock.playground.dataset = {
+				id: 'datasetId',
+			};
+			const ctrl = createController();
 
-        //when
-        ctrl.changeDomain(newDomain);
-        scope.$digest();
+			// when
+			ctrl.getTypesAndDomains();
+			scope.$digest();
 
-        //then
-        expect(ctrl.column.domain).toBe('CITY');
-        expect(ctrl.column.domainLabel).toBe('CITY');
-        expect(ctrl.column.domainFrequency).toBe(18);
-        expect(ctrl.currentDomain).toBe('CITY');
-        expect(ctrl.currentSimplifiedDomain).toBe('CITY');
-    }));
+			// then
+			expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('dataset', 'datasetId', ctrl.column.id);
+		}));
 
-    it('should change type and clear domain locally and call backend', inject(function ($q, PlaygroundService) {
-        //given
-        spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
-        var ctrl = createController();
-        var newType = {
-            id: 'integer',
-        };
+		it('should refresh current domain from column domain', () => {
+			// given
+			const ctrl = createController();
 
-        //when
-        ctrl.changeType(newType);
+			// when
+			ctrl.getTypesAndDomains();
+			scope.$digest();
 
-        //then
-        expect(ctrl.column.type).toBe('integer');
-        expect(ctrl.column.domain).toBe('');
-        expect(ctrl.column.domainLabel).toBe('');
-        expect(ctrl.column.domainFrequency).toBe(0);
-        expect(ctrl.currentDomain).toBe('INTEGER');
-        expect(ctrl.currentSimplifiedDomain).toBe('integer');
+			// then
+			expect(ctrl.currentDomain).toBe('CITY');
+			expect(ctrl.currentSimplifiedDomain).toBe('CITY');
+		});
 
-        const expectedParams = [{
-            action: 'type_change',
-            parameters: {
-                scope: 'column',
-                column_id: '0001',
-                column_name: 'awesome cities',
-                new_type: 'integer',
-            }
-        }];
+		it('should refresh current domain from column type', inject((ConverterService) => {
+			// given
+			spyOn(ConverterService, 'simplifyType').and.returnValue();
+			const ctrl = createController();
+			ctrl.column.domain = '';
 
-        expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
-    }));
+			// when
+			ctrl.getTypesAndDomains();
+			scope.$digest();
 
-    it('should revert type and domain when backend return error', inject(function ($q, PlaygroundService) {
-        //given
-        spyOn(PlaygroundService, 'appendStep').and.returnValue($q.reject());
-        var ctrl = createController();
-        var newType = {
-            id: 'integer',
-        };
+			// then
+			expect(ctrl.currentDomain).toBe('STRING');
+			expect(ConverterService.simplifyType).toHaveBeenCalledWith(ctrl.column.type);
+		}));
+	});
 
-        //when
-        ctrl.changeType(newType);
-        scope.$digest();
+	describe('types', () => {
+		it('should get primitive types', inject((ColumnTypesService) => {
+			// given
+			const expectedTypes = [
+				{ id: 'STRING', name: 'string', labelKey: 'STRING' },
+				{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+				{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+				{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+				{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+			];
+			const ctrl = createController();
 
-        //then
-        expect(ctrl.column.type).toBe('string');
-        expect(ctrl.column.domain).toBe('CITY');
-        expect(ctrl.column.domainLabel).toBe('CITY');
-        expect(ctrl.column.domainFrequency).toBe(18);
-        expect(ctrl.currentDomain).toBe('CITY');
-        expect(ctrl.currentSimplifiedDomain).toBe('CITY');
-    }));
+			// when
+			ctrl.getTypesAndDomains();
+			scope.$digest();
 
-    it('should filter concrete domain and order them', function () {
-        //given
-        var ctrl = createController();
+			// then
+			expect(ColumnTypesService.getTypes).toHaveBeenCalled();
+			expect(ctrl.types).toEqual(expectedTypes);
+		}));
+	});
 
-        //when
-        ctrl.adaptDomains();
+	describe('changing domain', () => {
+		it('should change domain locally and call backend to add a step', inject(($q, PlaygroundService) => {
+			//given
+			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
+			var ctrl = createController();
+			var newDomain = {
+				id: 'COUNTRY',
+				label: 'COUNTRY',
+				frequency: 17,
+			};
 
-        //then
-        expect(ctrl.domains).toEqual([
-            { id: 'CITY', label: 'CITY', frequency: 18 },
-            { id: 'COUNTRY', label: 'COUNTRY', frequency: 17 },
-            { id: 'REGION', label: 'REGION', frequency: 6 },
-        ]);
-        expect(ctrl.currentDomain).toBe('CITY');
-        expect(ctrl.currentSimplifiedDomain).toBe('CITY');
-    });
+			//when
+			ctrl.changeDomain(newDomain);
 
-    it('should check decimal (float) type when current type is double', function () {
-        //given
-        var ctrl = createController();
-        ctrl.currentDomain = 'double';
-        var type = { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' };
+			//then
+			expect(ctrl.column.domain).toBe('COUNTRY');
+			expect(ctrl.column.domainLabel).toBe('COUNTRY');
+			expect(ctrl.column.domainFrequency).toBe(17);
+			expect(ctrl.currentDomain).toBe('COUNTRY');
+			expect(ctrl.currentSimplifiedDomain).toBe('COUNTRY');
 
-        //when
-        var result = ctrl.shouldBeChecked(type);
+			const expectedParams = [{
+				action: 'domain_change',
+				parameters: {
+					scope: 'column',
+					column_id: '0001',
+					column_name: 'awesome cities',
+					new_domain_id: 'COUNTRY',
+					new_domain_label: 'COUNTRY',
+					new_domain_frequency: 17,
+				}
+			}];
+			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
+		}));
 
-        //then
-        expect(result).toBe(true);
-    });
+		it('should revert domain when backend return error', inject(($q, PlaygroundService) => {
+			//given
+			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.reject());
+			var ctrl = createController();
+			var newDomain = {
+				id: 'COUNTRY',
+				label: 'COUNTRY',
+				frequency: 17,
+			};
 
-    it('should check decimal (float) type when current type is float', function () {
-        //given
-        var ctrl = createController();
-        ctrl.currentDomain = 'float';
-        var type = { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' };
+			//when
+			ctrl.changeDomain(newDomain);
+			scope.$digest();
 
-        //when
-        var result = ctrl.shouldBeChecked(type);
+			//then
+			expect(ctrl.column.domain).toBe('CITY');
+			expect(ctrl.column.domainLabel).toBe('CITY');
+			expect(ctrl.column.domainFrequency).toBe(18);
+			expect(ctrl.currentDomain).toBe('CITY');
+			expect(ctrl.currentSimplifiedDomain).toBe('CITY');
+		}));
 
-        //then
-        expect(result).toBe(true);
-    });
+		it('should change type and clear domain locally and call backend', inject(($q, PlaygroundService) => {
+			//given
+			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
+			var ctrl = createController();
+			var newType = {
+				id: 'integer',
+			};
 
-    it('should not check type when it does NOT match current domain', function () {
-        //given
-        var ctrl = createController();
-        ctrl.currentDomain = 'beer_name'; // maybe dq library could detect beers names?
-        var type = { id: 'STRING', name: 'string', labelKey: 'STRING' };
+			//when
+			ctrl.changeType(newType);
 
-        //when
-        var result = ctrl.shouldBeChecked(type);
+			//then
+			expect(ctrl.column.type).toBe('integer');
+			expect(ctrl.column.domain).toBe('');
+			expect(ctrl.column.domainLabel).toBe('');
+			expect(ctrl.column.domainFrequency).toBe(0);
+			expect(ctrl.currentDomain).toBe('INTEGER');
+			expect(ctrl.currentSimplifiedDomain).toBe('integer');
 
-        //then
-        expect(result).toBe(false);
-    });
+			const expectedParams = [{
+				action: 'type_change',
+				parameters: {
+					scope: 'column',
+					column_id: '0001',
+					column_name: 'awesome cities',
+					new_type: 'integer',
+				}
+			}];
 
-    it('should check integer type', function () {
-        //given
-        var ctrl = createController();
-        ctrl.currentDomain = 'integer';
-        var type = { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' };
+			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
+		}));
 
-        //when
-        var result = ctrl.shouldBeChecked(type);
+		it('should revert type and domain when backend return error', inject(($q, PlaygroundService) => {
+			//given
+			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.reject());
+			var ctrl = createController();
+			var newType = {
+				id: 'integer',
+			};
 
-        //then
-        expect(result).toBe(true);
-    });
+			//when
+			ctrl.changeType(newType);
+			scope.$digest();
+
+			//then
+			expect(ctrl.column.type).toBe('string');
+			expect(ctrl.column.domain).toBe('CITY');
+			expect(ctrl.column.domainLabel).toBe('CITY');
+			expect(ctrl.column.domainFrequency).toBe(18);
+			expect(ctrl.currentDomain).toBe('CITY');
+			expect(ctrl.currentSimplifiedDomain).toBe('CITY');
+		}));
+	});
+
+	describe('checking the type radio', () => {
+		it('should check decimal (float) type when current type is double', () => {
+			//given
+			var ctrl = createController();
+			ctrl.currentDomain = 'double';
+			var type = { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' };
+
+			//when
+			var result = ctrl.shouldBeChecked(type);
+
+			//then
+			expect(result).toBe(true);
+		});
+
+		it('should check decimal (float) type when current type is float', () => {
+			//given
+			var ctrl = createController();
+			ctrl.currentDomain = 'float';
+			var type = { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' };
+
+			//when
+			var result = ctrl.shouldBeChecked(type);
+
+			//then
+			expect(result).toBe(true);
+		});
+
+		it('should not check type when it does NOT match current domain', () => {
+			//given
+			var ctrl = createController();
+			ctrl.currentDomain = 'beer_name'; // maybe dq library could detect beers names?
+			var type = { id: 'STRING', name: 'string', labelKey: 'STRING' };
+
+			//when
+			var result = ctrl.shouldBeChecked(type);
+
+			//then
+			expect(result).toBe(false);
+		});
+
+		it('should check integer type', () => {
+			//given
+			var ctrl = createController();
+			ctrl.currentDomain = 'integer';
+			var type = { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' };
+
+			//when
+			var result = ctrl.shouldBeChecked(type);
+
+			//then
+			expect(result).toBe(true);
+		});
+	});
 });

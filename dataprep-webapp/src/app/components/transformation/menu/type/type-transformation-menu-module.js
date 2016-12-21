@@ -12,12 +12,11 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_DATASET_MODULE from '../../../../services/dataset/dataset-module';
+import SERVICES_COLUMN_TYPES_MODULE from '../../../../services/column-types/column-types-module';
 import SERVICES_PLAYGROUND_MODULE from '../../../../services/playground/playground-module';
 import SERVICES_UTILS_MODULE from '../../../../services/utils/utils-module';
 
-import TypeTransformMenuCtrl from './type-transformation-menu-controller';
-import TypeTransformMenu from './type-transformation-menu-directive';
+import TypeTransformMenu from './type-transformation-menu-component';
 
 const MODULE_NAME = 'data-prep.type-transformation-menu';
 
@@ -33,11 +32,10 @@ const MODULE_NAME = 'data-prep.type-transformation-menu';
  */
 angular.module(MODULE_NAME,
 	[
-		SERVICES_DATASET_MODULE,
+		SERVICES_COLUMN_TYPES_MODULE,
 		SERVICES_PLAYGROUND_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .controller('TypeTransformMenuCtrl', TypeTransformMenuCtrl)
-    .directive('typeTransformMenu', TypeTransformMenu);
+    .component('typeTransformMenu', TypeTransformMenu);
 
 export default MODULE_NAME;

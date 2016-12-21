@@ -12,34 +12,27 @@
  ============================================================================*/
 
 import angular from 'angular';
-import 'ng-file-upload/dist/angular-file-upload-all';
 import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
-import DatasetSheetPreviewService from './preview/dataset-sheet-preview-service';
-import DatasetListService from './list/dataset-list-service';
-import DatasetRestService from './rest/dataset-rest-service';
-import DatasetService from './dataset-service';
+import ColumnTypesService from './column-types-service';
+import ColumnTypesRestService from './column-types-rest/column-types-rest-service';
 
-const MODULE_NAME = 'data-prep.services.dataset';
+const MODULE_NAME = 'data-prep.services.column-types';
 
 /**
  * @ngdoc object
- * @name data-prep.services.dataset
- * @description This module contains the services to manipulate datasets
- * @requires data-prep.services.folder
+ * @name data-prep.services.column-types
+ * @description manages the types and the domains of columns
  * @requires data-prep.services.state
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
 	[
-		'angularFileUpload', // file upload with progress support
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('DatasetSheetPreviewService', DatasetSheetPreviewService)
-    .service('DatasetRestService', DatasetRestService)
-    .service('DatasetListService', DatasetListService)
-    .service('DatasetService', DatasetService);
+	.service('ColumnTypesService', ColumnTypesService)
+	.service('ColumnTypesRestService', ColumnTypesRestService);
 
 export default MODULE_NAME;

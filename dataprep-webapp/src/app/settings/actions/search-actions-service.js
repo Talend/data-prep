@@ -22,7 +22,6 @@ export default class SearchActionsService {
 	}
 
 	dispatch(action) {
-		console.log(action.type, action.payload);
 		switch (action.type) {
 		case '@@search/TOGGLE': {
 			if (this.state.search.searchToggle) {
@@ -39,7 +38,6 @@ export default class SearchActionsService {
 				this.stateService.setFocusedSectionIndex(focusedSectionIndex);
 				this.stateService.setFocusedItemIndex(focusedItemIndex);
 			}
-			console.log(this.state.search);
 			break;
 		}
 		case '@@search/ALL': {

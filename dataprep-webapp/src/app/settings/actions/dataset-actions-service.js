@@ -34,13 +34,13 @@ export default class DatasetActionsService {
 			const oldSort = this.state.inventory.datasetsSort;
 			const oldOrder = this.state.inventory.datasetsOrder;
 
-			const { sortBy, sortDesc } = action.payload;
-			const sortOrder = sortDesc ? 'desc' : 'asc';
+			const { field, isDescending } = action.payload;
+			const sortOrder = isDescending ? 'desc' : 'asc';
 
-			this.StateService.setDatasetsSortFromIds(sortBy, sortOrder);
+			this.StateService.setDatasetsSortFromIds(field, sortOrder);
 
 			this.DatasetService.refreshDatasets()
-				.then(() => this.StorageService.setDatasetsSort(sortBy))
+				.then(() => this.StorageService.setDatasetsSort(field))
 				.then(() => this.StorageService.setDatasetsOrder(sortOrder))
 				.catch(() => {
 					this.StateService.setDatasetsSortFromIds(oldSort.id, oldOrder.id);

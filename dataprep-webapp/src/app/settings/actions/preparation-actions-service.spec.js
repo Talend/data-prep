@@ -46,9 +46,9 @@ describe('Preparation actions service', () => {
 				const action = {
 					type: '@@preparation/SORT',
 					payload: {
-						sortBy: 'name',
-						sortDesc: true,
-					}
+						field: 'name',
+						isDescending: true,
+					},
 				};
 
 				// when
@@ -66,9 +66,9 @@ describe('Preparation actions service', () => {
 				const action = {
 					type: '@@preparation/SORT',
 					payload: {
-						sortBy: 'name',
-						sortDesc: true,
-					}
+						field: 'name',
+						isDescending: true,
+					},
 				};
 
 				// when
@@ -86,9 +86,9 @@ describe('Preparation actions service', () => {
 				const action = {
 					type: '@@preparation/SORT',
 					payload: {
-						sortBy: 'name',
-						sortDesc: true,
-					}
+						field: 'name',
+						isDescending: true,
+					},
 				};
 
 				// when
@@ -108,8 +108,8 @@ describe('Preparation actions service', () => {
 				const action = {
 					type: '@@preparation/SORT',
 					payload: {
-						sortBy: 'name',
-						sortDesc: true,
+						field: 'name',
+						isDescending: true,
 					}
 				};
 

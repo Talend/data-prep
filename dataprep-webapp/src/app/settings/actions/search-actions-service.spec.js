@@ -40,17 +40,40 @@ describe('Search actions service', () => {
 
 			spyOn(StateService, 'toggleSearch').and.returnValue();
 			spyOn(StateService, 'setSearching').and.returnValue();
-			spyOn(StateService, 'setSearchInput').and.returnValue();
-			spyOn(StateService, 'setSearchResults').and.returnValue();
+			spyOn(StateService, 'setFocusedSectionIndex').and.returnValue();
+			spyOn(StateService, 'setFocusedItemIndex').and.returnValue();
 
 			// when
 			SearchActionsService.dispatch(action);
 
 			// then
-			expect(StateService.toggleSearch).toHaveBeenCalled();
 			expect(StateService.setSearching).toHaveBeenCalledWith(false);
-			expect(StateService.setSearchInput).toHaveBeenCalledWith(null);
-			expect(StateService.setSearchResults).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
+			expect(StateService.toggleSearch).toHaveBeenCalled();
+		}));
+
+		it('should change focused section and item indexes', inject((state, StateService, SearchActionsService) => {
+			// given
+			state.search.searchResults = [];
+
+			const action = {
+				type: '@@search/FOCUS',
+				payload: {
+					focusedSectionIndex: 0,
+					focusedItemIndex: 0,
+				},
+			};
+
+			spyOn(StateService, 'setFocusedSectionIndex').and.returnValue();
+			spyOn(StateService, 'setFocusedItemIndex').and.returnValue();
+
+			// when
+			SearchActionsService.dispatch(action);
+
+			// then
+			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(0);
+			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(0);
 		}));
 
 		it('should do nothing if search input is empty', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
@@ -62,9 +85,10 @@ describe('Search actions service', () => {
 				},
 			};
 			spyOn(StateService, 'setSearching').and.returnValue();
-			spyOn(StateService, 'setSearchInput').and.returnValue();
 			spyOn(StateService, 'setSearchResults').and.returnValue();
 			spyOn(SearchService, 'searchAll').and.returnValue();
+			spyOn(StateService, 'setFocusedSectionIndex').and.returnValue();
+			spyOn(StateService, 'setFocusedItemIndex').and.returnValue();
 
 			// when
 			SearchActionsService.dispatch(action);
@@ -72,9 +96,11 @@ describe('Search actions service', () => {
 
 			// then
 			expect(StateService.setSearching).toHaveBeenCalledWith(false);
-			expect(StateService.setSearchInput).toHaveBeenCalledWith('');
 			expect(SearchService.searchAll).not.toHaveBeenCalled();
-			expect(StateService.setSearchResults).not.toHaveBeenCalled();
+
+			expect(StateService.setSearchResults).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
 		}));
 
 		it('should search everywhere if search input is not empty', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
@@ -89,6 +115,8 @@ describe('Search actions service', () => {
 			spyOn(StateService, 'setSearchInput').and.returnValue();
 			spyOn(StateService, 'setSearchResults').and.returnValue();
 			spyOn(SearchService, 'searchAll').and.returnValue($q.when(['a', 'b', 'c']));
+			spyOn(StateService, 'setFocusedSectionIndex').and.returnValue();
+			spyOn(StateService, 'setFocusedItemIndex').and.returnValue();
 
 			// when
 			SearchActionsService.dispatch(action);
@@ -100,6 +128,8 @@ describe('Search actions service', () => {
 			expect(SearchService.searchAll).toHaveBeenCalledWith(searchInput);
 			expect(StateService.setSearchResults).toHaveBeenCalledWith(['a', 'b', 'c']);
 			expect(StateService.setSearching).toHaveBeenCalledWith(false);
+			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
 		}));
 
 		it('should do not perform search if search input has changed', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
@@ -114,6 +144,8 @@ describe('Search actions service', () => {
 			spyOn(StateService, 'setSearchInput').and.returnValue();
 			spyOn(StateService, 'setSearchResults').and.returnValue();
 			spyOn(SearchService, 'searchAll').and.returnValue($q.when(['a', 'b', 'c']));
+			spyOn(StateService, 'setFocusedSectionIndex').and.returnValue();
+			spyOn(StateService, 'setFocusedItemIndex').and.returnValue();
 
 			// when
 			SearchActionsService.dispatch(action);
@@ -126,6 +158,8 @@ describe('Search actions service', () => {
 			expect(SearchService.searchAll).toHaveBeenCalledWith(searchInput);
 			expect(StateService.setSearchResults).not.toHaveBeenCalled();
 			expect(StateService.setSearching).toHaveBeenCalledWith(false);
+			expect(StateService.setFocusedSectionIndex).toHaveBeenCalledWith(null);
+			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
 		}));
 	});
 });

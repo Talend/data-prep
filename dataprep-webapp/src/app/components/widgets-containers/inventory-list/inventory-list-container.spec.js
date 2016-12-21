@@ -191,7 +191,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-preparation\\:create\\:folder').click();
+				element.find('#list-actions-list-actions-list-actions-preparation\\:create\\:folder').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -261,7 +261,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-preparation\\:create').click();
+				element.find('#list-actions-list-actions-list-actions-preparation\\:create').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -352,8 +352,9 @@ describe('Inventory list container', () => {
 				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
 				expect(lastCallArgs.id).toBe('preparation:sort');
 				expect(lastCallArgs.type).toBe('@@preparation/SORT');
-				expect(lastCallArgs.payload.sortBy).toBe('name');
-				expect(lastCallArgs.payload.sortDesc).toBe(false);
+				console.log(lastCallArgs.payload);
+				expect(lastCallArgs.payload.field).toBe('name');
+				expect(lastCallArgs.payload.isDescending).toBe(false);
 			})
 		);
 	});

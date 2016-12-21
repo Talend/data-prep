@@ -46,7 +46,7 @@ export default class PreparationActionsService {
 			const oldSort = this.state.inventory.preparationsSort;
 			const oldOrder = this.state.inventory.preparationsOrder;
 
-			const { field, isDescending } = action.payload && action.payload.sort;
+			const { field, isDescending } = action.payload;
 			const sortOrder = isDescending ? 'desc' : 'asc';
 
 			this.StateService.setPreparationsSortFromIds(field, sortOrder);

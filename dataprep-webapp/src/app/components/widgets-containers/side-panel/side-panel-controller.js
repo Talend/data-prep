@@ -52,6 +52,5 @@ export default class SidePanelCtrl {
 	adaptToggle() {
 		const action = this.appSettings.actions[this.appSettings.views.sidepanel.onToggleDock];
 		this.toggle = this.SettingsActionsService.createDispatcher(action);
-		this.toggleIcon = action.icon;
 	}
 }

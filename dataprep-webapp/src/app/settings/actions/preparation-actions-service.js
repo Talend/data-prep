@@ -46,13 +46,13 @@ export default class PreparationActionsService {
 			const oldSort = this.state.inventory.preparationsSort;
 			const oldOrder = this.state.inventory.preparationsOrder;
 
-			const { sortBy, sortDesc } = action.payload;
-			const sortOrder = sortDesc ? 'desc' : 'asc';
+			const { field, isDescending } = action.payload && action.payload.sort;
+			const sortOrder = isDescending ? 'desc' : 'asc';
 
-			this.StateService.setPreparationsSortFromIds(sortBy, sortOrder);
+			this.StateService.setPreparationsSortFromIds(field, sortOrder);
 
 			this.refreshCurrentFolder()
-				.then(() => this.StorageService.setPreparationsSort(sortBy))
+				.then(() => this.StorageService.setPreparationsSort(field))
 				.then(() => this.StorageService.setPreparationsOrder(sortOrder))
 				.catch(() => {
 					this.StateService.setPreparationsSortFromIds(oldSort.id, oldOrder.id);

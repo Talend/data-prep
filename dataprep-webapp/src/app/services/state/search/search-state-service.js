@@ -13,7 +13,11 @@
 
 export const searchState = {
 	searchToggle: true,
-	isSearching: false,
+	searching: false,
+	searchInput: null,
+	searchResults: null,
+	focusedSectionIndex: null,
+	focusedItemIndex: null,
 };
 
 /**
@@ -27,13 +31,15 @@ export function SearchStateService() {
 		setSearching,
 		setSearchInput,
 		setSearchResults,
+		setFocusedSectionIndex,
+		setFocusedItemIndex,
 	};
 
 	/**
 	 * @ngdoc method
-	 * @name setSearchInput
+	 * @name toggle
 	 * @methodOf data-prep.services.state.service:SearchStateService
-	 * @description Display the feedback
+	 * @description Toggle search input
 	 */
 	function toggle() {
 		searchState.searchToggle = !searchState.searchToggle;
@@ -43,7 +49,7 @@ export function SearchStateService() {
 	 * @ngdoc method
 	 * @name setSearchInput
 	 * @methodOf data-prep.services.state.service:SearchStateService
-	 * @description Display the feedback
+	 * @description Set search input
 	 */
 	function setSearchInput(searchInput) {
 		searchState.searchInput = searchInput;
@@ -55,17 +61,37 @@ export function SearchStateService() {
 	 * @methodOf data-prep.services.state.service:SearchStateService
 	 * @description Indicate if search is performing
 	 */
-	function setSearching(isSearching) {
-		searchState.isSearching = isSearching;
+	function setSearching(searching) {
+		searchState.searching = searching;
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name setSearchResults
 	 * @methodOf data-prep.services.state.service:SearchStateService
-	 * @description Hide the feedback
+	 * @description Set the search results
 	 */
-	function setSearchResults(results) {
-		searchState.searchResults = results;
+	function setSearchResults(searchResults) {
+		searchState.searchResults = searchResults;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setFocusedSectionIndex
+	 * @methodOf data-prep.services.state.service:SearchStateService
+	 * @description Set the focused section index
+	 */
+	function setFocusedSectionIndex(focusedSectionIndex) {
+		searchState.focusedSectionIndex = focusedSectionIndex;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setFocusedItemIndex
+	 * @methodOf data-prep.services.state.service:SearchStateService
+	 * @description Set the focused item index
+	 */
+	function setFocusedItemIndex(focusedItemIndex) {
+		searchState.focusedItemIndex = focusedItemIndex;
 	}
 }

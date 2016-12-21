@@ -22,7 +22,7 @@ describe('Search actions service', () => {
 		stateMock = {
 			search: {
 				searchToggle: true,
-				isSearching: false,
+				searching: false,
 				searchInput,
 			},
 		};

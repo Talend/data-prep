@@ -17,7 +17,8 @@
           "folder": "menu:folders",
           "documentation": "external:documentation"
         },
-        "debounceTimeout": 200
+        "onKeyDown": "search:focus",
+        "debounceTimeout": 300
       },
       "actions": [
         "onboarding:preparation",
@@ -67,12 +68,19 @@
         }
       },
       "toolbar": {
-        "sortOptions": [
-          { "id": "name", "name": "Name" },
-          { "id": "date", "name": "Creation Date" }
-        ],
-        "actions": {
-          "left": ["preparation:create", "preparation:create:folder"]
+        "sort": {
+          "options": [
+            { "id": "name", "name": "Name" },
+            { "id": "date", "name": "Creation Date" }
+          ]
+        },
+        "actionBar": {
+          "actions": {
+            "left": [
+              "preparation:create",
+              "preparation:create:folder"
+            ]
+          }
         },
         "onSelectSortBy": "preparation:sort",
         "searchLabel": "Find a preparation"
@@ -101,11 +109,15 @@
         }
       },
       "toolbar": {
-        "sortOptions": [
-          { "id": "name", "name": "Name" },
-          { "id": "date", "name": "Creation Date" }
-        ],
-        "actions": [],
+        "sort": {
+          "options": [
+            { "id": "name", "name": "Name" },
+            { "id": "date", "name": "Creation Date" }
+          ]
+        },
+        "actionBar": {
+          "actions": []
+        },
         "onSelectSortBy": "dataset:sort",
         "searchLabel": "Find a dataset"
       }
@@ -420,6 +432,10 @@
     "search:all": {
       "id": "search:all",
       "type": "@@search/ALL"
+    },
+    "search:focus": {
+      "id": "search:focus",
+      "type": "@@search/FOCUS"
     },
     "external:documentation": {
       "id": "external:documentation",

@@ -20,6 +20,7 @@ export default class SettingsActionsService {
 	}
 
 	createDispatcher(action) {
+		console.log(action);
 		return (event, model) => {
 			const adaptedAction = {
 				...action,

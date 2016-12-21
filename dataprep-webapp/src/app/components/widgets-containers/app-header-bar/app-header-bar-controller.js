@@ -45,7 +45,15 @@ export default class AppHeaderBarCtrl {
 				const searching = changes.searching.currentValue;
 				searchConfiguration.searching = searching;
 			}
-			else if (changes.searchToggle) {
+			if (changes.searchFocusedSectionIndex) {
+				const focusedSectionIndex = changes.searchFocusedSectionIndex.currentValue;
+				searchConfiguration.focusedSectionIndex = focusedSectionIndex;
+			}
+			if (changes.searchFocusedItemIndex) {
+				const focusedItemIndex = changes.searchFocusedItemIndex.currentValue;
+				searchConfiguration.focusedItemIndex = focusedItemIndex;
+			}
+			if (changes.searchToggle) {
 				const searchToggle = changes.searchToggle.currentValue;
 				if (searchToggle) {
 					searchConfiguration.onToggle = this.searchOnToggle;
@@ -56,16 +64,16 @@ export default class AppHeaderBarCtrl {
 					delete searchConfiguration.onToggle;
 				}
 			}
-			else if (changes.searchInput) {
+			if (changes.searchInput) {
 				const searchInput = changes.searchInput.currentValue;
 				searchConfiguration.value = searchInput;
 				if (!searchInput) {
 					searchConfiguration.items = null;
 				}
 			}
-			else if (changes.searchResults) {
+			if (changes.searchResults) {
 				const searchResults = changes.searchResults.currentValue;
-				this.adaptedSearchResults = this._adaptSearchResults(searchResults);
+				this.adaptedSearchResults = searchResults && this._adaptSearchResults(searchResults);
 				searchConfiguration.items = this.adaptedSearchResults;
 			}
 			this.content = updatedContent;
@@ -136,6 +144,31 @@ export default class AppHeaderBarCtrl {
 			}
 		};
 
+		// onKeyDown
+		const onKeyDownAction = this.appSettings.actions[searchSettings.onKeyDown];
+		const onKeyDownActionDispatcher = onKeyDownAction && this.settingsActionsService.createDispatcher(onKeyDownAction);
+		this.searchOnKeyDown = (event, { focusedSectionIndex, focusedItemIndex, newFocusedSectionIndex, newFocusedItemIndex }) => {
+			switch (event.key) {
+			case 'ArrowDown':
+			case 'ArrowUp':
+				event.preventDefault();
+				onKeyDownActionDispatcher(event, {
+					focusedSectionIndex: newFocusedSectionIndex,
+					focusedItemIndex: newFocusedItemIndex,
+				});
+				break;
+			case 'Enter':
+				event.preventDefault();
+				if (focusedSectionIndex !== null && focusedItemIndex !== null) {
+					this.searchOnSelect(event, {
+						sectionIndex: focusedSectionIndex,
+						itemIndex: focusedItemIndex,
+					});
+				}
+				break;
+			}
+		};
+
 		return {
 			...searchSettings,
 			icon: onToggleAction && {
@@ -147,6 +180,7 @@ export default class AppHeaderBarCtrl {
 			onBlur: this.searchOnBlur,
 			onChange: this.searchOnChange,
 			onSelect: this.searchOnSelect,
+			onKeyDown: this.searchOnKeyDown,
 		};
 	}
 

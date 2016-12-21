@@ -22,13 +22,15 @@ const settingsMock = {
 			search: {
 				onToggle: 'search:toggle',
 				onBlur: 'search:toggle',
-				onChange: '"search:all',
+				onChange: 'search:all',
 				onSelect: {
-					preparation: '"menu:playground:preparation',
-					dataset: '"menu:playground:dataset',
+					preparation: 'menu:playground:preparation',
+					dataset: 'menu:playground:dataset',
 					folder: '"menu:folders',
 					documentation: 'external:documentation',
 				},
+                onKeyDown: 'search:focus',
+                debounceTimeout: 300
 			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
 			userMenuActions: {
@@ -79,12 +81,16 @@ const settingsMock = {
 				},
 			},
 			toolbar: {
-				sortOptions: [
-					{ id: 'name', name: 'Name' },
-					{ id: 'date', name: 'Creation Date' },
-				],
-				actions: {
-					left: ['preparation:create', 'preparation:create:folder'],
+				sort: {
+					options: [
+						{ id: 'name', name: 'Name' },
+						{ id: 'date', name: 'Creation Date' },
+					],
+				},
+				actionBar: {
+					actions: {
+						left: ['preparation:create', 'preparation:create:folder'],
+					},
 				},
 				onSelectDisplayMode: 'preparation:display-mode',
 				onSelectSortBy: 'preparation:sort',
@@ -114,11 +120,15 @@ const settingsMock = {
 				},
 			},
 			toolbar: {
-				sortOptions: [
-					{ id: 'name', name: 'Name' },
-					{ id: 'date', name: 'Creation Date' },
-				],
-				actions: [],
+				sort: {
+					options: [
+						{ id: 'name', name: 'Name' },
+						{ id: 'date', name: 'Creation Date' },
+					],
+				},
+				actionBar: {
+					actions: [],
+				},
 				onSelectDisplayMode: 'dataset:display-mode',
 				onSelectSortBy: 'dataset:sort',
 				searchLabel: 'Find a dataset',
@@ -425,6 +435,10 @@ const settingsMock = {
 			id: 'search:all',
 			type: '@@search/ALL',
 		},
+        'search:focus': {
+            id: 'search:focus',
+            type: '@@search/FOCUS'
+        },
 		'external:documentation': {
 			id: 'external:documentation',
 			type: '@@external/OPEN_WINDOW',

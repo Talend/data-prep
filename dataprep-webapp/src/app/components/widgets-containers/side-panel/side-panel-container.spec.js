@@ -47,7 +47,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const toggleButton = element.find('nav > button');
+			const toggleButton = element.find('nav > ul > li').eq(0).find('button');
 			expect(toggleButton.attr('title')).toBe('Toggle side panel');
 		});
 
@@ -56,7 +56,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const preparationsButton = element.find('nav > ul > li').eq(0).find('button');
+			const preparationsButton = element.find('nav > ul > li').eq(1).find('button');
 			expect(preparationsButton.attr('title')).toBe('Display Preparations');
 		});
 
@@ -65,7 +65,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const datasetsButton = element.find('nav > ul > li').eq(1).find('button');
+			const datasetsButton = element.find('nav > ul > li').eq(2).find('button');
 			expect(datasetsButton.attr('title')).toBe('Display Datasets');
 		});
 
@@ -78,8 +78,8 @@ describe('Side Panel container', () => {
 			scope.$digest();
 
 			// then
-			expect(element.find('nav > ul > li').eq(0).hasClass('active')).toBe(false);
-			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBe(true);
+			expect(element.find('nav > ul > li').eq(1).hasClass('active')).toBeFalsy();
+			expect(element.find('nav > ul > li').eq(2).hasClass('active')).toBeTruthy();
 		});
 	});
 
@@ -93,8 +93,8 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			const toggleButton = element.find('nav > button');
-			toggleButton.click((e) => { e.preventDefault(); });
+			const toggleButton = element.find('nav > ul > li').eq(0).find('button');
+			toggleButton.click(e => e.preventDefault());
 			toggleButton[0].click();
 
 			// then
@@ -108,8 +108,8 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			const preparationsButton = element.find('nav > ul > li').eq(0).find('button');
-			preparationsButton.click((e) => { e.preventDefault(); });
+			const preparationsButton = element.find('nav > ul > li').eq(1).find('button');
+			preparationsButton.click(e => e.preventDefault());
 			preparationsButton[0].click();
 
 			// then
@@ -123,8 +123,8 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			const datasetsButton = element.find('nav > ul > li').eq(1).find('button');
-			datasetsButton.click((e) => { e.preventDefault(); });
+			const datasetsButton = element.find('nav > ul > li').eq(2).find('button');
+			datasetsButton.click(e => e.preventDefault());
 			datasetsButton[0].click();
 
 			// then

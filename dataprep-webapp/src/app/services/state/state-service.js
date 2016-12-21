@@ -178,5 +178,7 @@ export function StateService(RouteStateService, routeState,
 		setSearching: SearchStateService.setSearching,
 		setSearchInput: SearchStateService.setSearchInput,
 		setSearchResults: SearchStateService.setSearchResults,
+		setFocusedSectionIndex: SearchStateService.setFocusedSectionIndex,
+		setFocusedItemIndex: SearchStateService.setFocusedItemIndex,
 	};
 }

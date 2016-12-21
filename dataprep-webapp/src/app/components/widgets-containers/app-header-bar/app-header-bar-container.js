@@ -24,6 +24,9 @@ const AppHeaderBarContainer = {
 		searchToggle: '<',
 		searchInput: '<',
 		searchResults: '<',
+		searching: '<',
+		searchFocusedSectionIndex: '<',
+		searchFocusedItemIndex: '<',
 	},
 };
 export default AppHeaderBarContainer;

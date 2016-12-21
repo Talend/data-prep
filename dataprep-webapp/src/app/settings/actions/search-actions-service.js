@@ -22,14 +22,24 @@ export default class SearchActionsService {
 	}
 
 	dispatch(action) {
+		console.log(action.type, action.payload);
 		switch (action.type) {
 		case '@@search/TOGGLE': {
 			if (this.state.search.searchToggle) {
 				this.stateService.setSearching(false);
-				this.stateService.setSearchInput(null);
-				this.stateService.setSearchResults(null);
+				this.stateService.setFocusedSectionIndex(null);
+				this.stateService.setFocusedItemIndex(null);
 			}
 			this.stateService.toggleSearch();
+			break;
+		}
+		case '@@search/FOCUS': {
+			const { focusedSectionIndex, focusedItemIndex } = action.payload;
+			if (this.state.search.searchInput && this.state.search.searchResults) {
+				this.stateService.setFocusedSectionIndex(focusedSectionIndex);
+				this.stateService.setFocusedItemIndex(focusedItemIndex);
+			}
+			console.log(this.state.search);
 			break;
 		}
 		case '@@search/ALL': {
@@ -52,7 +62,10 @@ export default class SearchActionsService {
 			}
 			else {
 				this.stateService.setSearching(false);
+				this.stateService.setSearchResults(null);
 			}
+			this.stateService.setFocusedSectionIndex(null);
+			this.stateService.setFocusedItemIndex(null);
 			break;
 		}
 		}

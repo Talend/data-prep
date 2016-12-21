@@ -53,13 +53,19 @@ export default class InventoryListCtrl {
 		if (changes.sortBy) {
 			this.toolbarProps = {
 				...this.toolbarProps,
-				sortBy: changes.sortBy.currentValue,
+				sort: {
+					...this.toolbarProps.sort,
+					field: changes.sortBy.currentValue,
+				},
 			};
 		}
 		if (changes.sortDesc) {
 			this.toolbarProps = {
 				...this.toolbarProps,
-				sortDesc: changes.sortDesc.currentValue,
+				sort: {
+					...this.toolbarProps.sort,
+					isDescending: changes.sortDesc.currentValue,
+				},
 			};
 		}
 	}
@@ -70,21 +76,30 @@ export default class InventoryListCtrl {
 		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
 		const sortByAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
 
-		const onSelectSortBy = sortByAction && this.SettingsActionsService.createDispatcher(sortByAction);
+		const onSelectSortBy = sortByAction ? this.SettingsActionsService.createDispatcher(sortByAction) : () => {};
 		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
-		const onSelectDisplayMode = dispatchDisplayMode && ((event, mode) => dispatchDisplayMode(event, { mode }));
+		const onSelectDisplayMode = dispatchDisplayMode ? ((event, mode) => dispatchDisplayMode(event, { mode })) : () => {};
 
-		const actions = toolbarSettings.actions &&
+		const actions = toolbarSettings.actionBar && toolbarSettings.actionBar.actions &&
 			{
-				left: this.adaptActions(toolbarSettings.actions.left),
-				right: this.adaptActions(toolbarSettings.actions.right),
+				left: this.adaptActions(toolbarSettings.actionBar.actions.left),
+				right: this.adaptActions(toolbarSettings.actionBar.actions.right),
 			};
 
 		this.toolbarProps = {
 			...toolbarSettings,
-			actions,
-			onSelectDisplayMode,
-			onSelectSortBy,
+			actionBar: {
+				...toolbarSettings.actionBar,
+				actions,
+			},
+			display: {
+				...toolbarSettings.display,
+				onChange: onSelectDisplayMode,
+			},
+			sort: {
+				...toolbarSettings.sort,
+				onChange: onSelectSortBy,
+			},
 		};
 	}
 

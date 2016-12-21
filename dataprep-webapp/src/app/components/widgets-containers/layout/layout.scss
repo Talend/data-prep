@@ -31,7 +31,6 @@ $tc-layout-main-min-width: 1000px;
 		@include flex-shrink(0);
 		@include flex-basis(0px);
 		@include align-items(stretch);
-		overflow: auto;
 
 		.main {
 			@include flex-grow(1);

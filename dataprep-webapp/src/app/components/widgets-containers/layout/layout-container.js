@@ -19,6 +19,8 @@ const LayoutContainer = {
 		 						searching="$ctrl.state.search.searching"
 		 						search-input="$ctrl.state.search.searchInput"
 		 						search-results="$ctrl.state.search.searchResults"
+		 						search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
+		 						search-focused-item-index="$ctrl.state.search.focusedItemIndex"
 				><app-header-bar/>
 			</div>
 			<div class="content">

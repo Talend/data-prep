@@ -85,7 +85,9 @@ export default class DatasetActionsService {
 						})
 						.finally(() => {
 							const index = this.renamingList.indexOf(dataset);
-							this.renamingList.splice(index, 1);
+							if (index > -1) {
+								this.renamingList.splice(index, 1);
+							}
 						});
 				}
 			}

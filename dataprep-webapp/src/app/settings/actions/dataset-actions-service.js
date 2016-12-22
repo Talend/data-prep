@@ -125,8 +125,16 @@ export default class DatasetActionsService {
 			break;
 		}
 		case '@@dataset/UPDATE': {
-			this.$document[0].getElementById('inputUpdateDataset').click();
-			this.StateService.setDatasetToUpdate(action.payload.model);
+			const { payload } = action;
+			const modelType = payload.model && payload.model.type;
+			if (modelType && modelType.indexOf('tcomp') > -1) {
+				console.log(payload.model);
+				this.StateService[payload.method](payload.model);
+			}
+			else {
+				this.$document[0].getElementById('inputUpdateDataset').click();
+				this.StateService.setDatasetToUpdate(payload.model);
+			}
 			break;
 		}
 		case '@@dataset/CREATE': {

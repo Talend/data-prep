@@ -86,7 +86,13 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
 
     @After
     public void cleanUp() {
+        folderRepository.clear();
         dataSetMetadataRepository.clear();
+    }
+
+    protected String createFolder(final String path) throws IOException {
+        final Folder folder = folderRepository.addFolder(home.getId(), path);
+        return folder.getId();
     }
 
     protected String createDataset(final String file, final String name, final String type) throws IOException {
@@ -117,12 +123,16 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
     }
 
     protected String createEmptyPreparationFromDataset(final String dataSetId, final String name) throws IOException {
+        return this.createEmptyPreparationFromDataset(home.getId(), dataSetId, name);
+    }
+
+    protected String createEmptyPreparationFromDataset(final String folderId, final String dataSetId, final String name) throws IOException {
         final Response post = given() //
                 .contentType(ContentType.JSON)//
                 .accept(ContentType.ANY) //
                 .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\", \"rowMetadata\":{\"columns\":[]}}")//
                 .when()//
-                .post("/preparations?folderId=" + home.getId());
+                .post("/preparations?folderId=" + folderId);
 
         assertThat(post.getStatusCode(), is(200));
 

@@ -10,21 +10,22 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-class InventoryService {
+class SearchInventoryService {
 
-	constructor($q, InventoryRestService, TextFormatService) {
+	constructor($q, SearchInventoryRestService, TextFormatService) {
 		'ngInject';
 		this.deferredCancel = null;
 		this.$q = $q;
-		this.InventoryRestService = InventoryRestService;
+		this.SearchInventoryRestService = SearchInventoryRestService;
 		this.TextFormatService = TextFormatService;
 	}
 
-    /**
-     * @ngdoc method
-     * @name cancelPendingGetRequest
-     * @description Cancel the pending search GET request
-     */
+	/**
+	 * @ngdoc method
+	 * @name cancelPendingGetRequest
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
+	 * @description Cancel the pending search GET request
+	 */
 	cancelPendingGetRequest() {
 		if (this.deferredCancel) {
 			this.deferredCancel.resolve('user cancel');
@@ -32,39 +33,40 @@ class InventoryService {
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name search
-     * @methodOf data-prep.services.lookup.service:InventoryService
-     * @param {String} searchValue string
-     * @description Search inventory items
-     */
+	/**
+	 * @ngdoc method
+	 * @name search
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
+	 * @param {String} searchValue string
+	 * @description Search inventory items
+	 */
 	search(searchValue) {
 		this.cancelPendingGetRequest();
 
 		this.deferredCancel = this.$q.defer();
 
-		return this.InventoryRestService.search(searchValue, this.deferredCancel)
-            .then((response) => {
-	return this.addHtmlLabelsAndSort(searchValue, response.data);
-})
-            .finally(() => this.deferredCancel = null);
+		return this.SearchInventoryRestService.search(searchValue, this.deferredCancel)
+			.then((response) => {
+				return this.addHtmlLabelsAndSort(response.data);
+			})
+			.finally(() => this.deferredCancel = null);
 	}
 
-    /**
-     * @ngdoc method
-     * @name addHtmlLabelsAndSort
-     * @param {String} searchValue string
-     * @param {Object} data data to process
-     * @description add html label to data based on searchValue and sort the results
-     */
-	addHtmlLabelsAndSort(searchValue, data) {
+	/**
+	 * @ngdoc method
+	 * @name addHtmlLabelsAndSort
+	 * @methodOf data-prep.services.search.inventory:SearchInventoryService
+	 * @param {Object} data data to process
+	 * @description add html label to data based on searchValue and sort the results
+	 */
+	addHtmlLabelsAndSort(data) {
 		let inventoryItems = [];
 
 		if (data.datasets && data.datasets.length) {
 			_.each(data.datasets, function (item) {
 				const itemToDisplay = {};
 
+				itemToDisplay.id = item.id;
 				itemToDisplay.inventoryType = 'dataset';
 				itemToDisplay.author = item.author;
 				itemToDisplay.created = item.created;
@@ -72,7 +74,7 @@ class InventoryService {
 				itemToDisplay.name = item.name;
 				itemToDisplay.path = item.path;
 				itemToDisplay.type = item.type;
-				itemToDisplay.originalItem = item;
+				itemToDisplay.model = item;
 				itemToDisplay.lastModificationDate = item.lastModificationDate;
 				itemToDisplay.tooltipName = item.name;
 				itemToDisplay.owner = item.owner;
@@ -100,14 +102,10 @@ class InventoryService {
 		}
 
 		return _.chain(inventoryItems)
-            .map((item) => {
-	this.TextFormatService.highlight(item, 'name', searchValue, 'highlighted');
-	return item;
-})
-            .sortBy('lastModificationDate')
-            .reverse()
-            .value();
+			.sortBy('lastModificationDate')
+			.reverse()
+			.value();
 	}
 }
 
-export default InventoryService;
+export default SearchInventoryService;

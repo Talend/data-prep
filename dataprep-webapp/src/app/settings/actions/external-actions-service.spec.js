@@ -34,5 +34,24 @@ describe('External actions service', () => {
 			// then
 			expect($window.open).toHaveBeenCalledWith('http://www.google.fr');
 		}));
+
+		it('should open without args', inject(($window, ExternalActionsService) => {
+			// given
+			const action = {
+				type: '@@external/OPEN_WINDOW',
+				payload: {
+					method: 'open',
+					args: [],
+					url: 'http://www.google.fr',
+				}
+			};
+			spyOn($window, 'open').and.returnValue();
+
+			// when
+			ExternalActionsService.dispatch(action);
+
+			// then
+			expect($window.open).toHaveBeenCalledWith('http://www.google.fr');
+		}));
 	});
 });

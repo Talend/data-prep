@@ -15,28 +15,28 @@
  * @ngdoc controller
  * @name data-prep.documentation-search.controller:DocumentationSearchCtrl
  * @description DocumentationSearchCtrl controller.
- * @requires data-prep.services.documentation.service:DocumentationService
+ * @requires data-prep.services.search.documentation:SearchDocumentationService
  *
  */
 class DocumentationSearchCtrl {
 
-	constructor(DocumentationService) {
+	constructor(SearchService) {
 		'ngInject';
-		this.documentationService = DocumentationService;
+		this.searchService = SearchService;
 	}
 
-    /**
-     * @ngdoc method
-     * @name search
-     * @methodOf data-prep.documentation-search.controller:DocumentationSearchCtrl
-     * @description Search based on searchInput
-     */
+	/**
+	 * @ngdoc method
+	 * @name search
+	 * @methodOf data-prep.documentation-search.controller:DocumentationSearchCtrl
+	 * @description Search based on searchInput
+	 */
 	search(searchInput) {
 		this.results = null;
 		this.currentInput = searchInput;
 
-		return this.documentationService.search(searchInput)
-            .then(response => (this.currentInput === searchInput) && (this.results = response));
+		return this.searchService.searchDocumentationAndHighlight(searchInput)
+			.then(response => (this.currentInput === searchInput) && (this.results = response));
 	}
 }
 

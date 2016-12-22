@@ -18,11 +18,16 @@ export const state = {};
  * @name data-prep.services.state.service:StateService
  * @description Entry level for State services
  */
-export function StateService(RouteStateService,	routeState,	PlaygroundStateService,	playgroundState,
-							DatasetStateService,	datasetState,	EasterEggsStateService,	easterEggsState,
-							InventoryStateService,	inventoryState,	FeedbackStateService,	feedbackState,
-							ImportStateService,	importState,	ExportStateService,	exportState,
-							HomeStateService,	homeState)	{
+export function StateService(RouteStateService, routeState,
+                             PlaygroundStateService, playgroundState,
+                             DatasetStateService, datasetState,
+                             EasterEggsStateService, easterEggsState,
+                             InventoryStateService, inventoryState,
+                             FeedbackStateService, feedbackState,
+                             ImportStateService, importState,
+                             ExportStateService, exportState,
+                             HomeStateService, homeState,
+                             SearchStateService, searchState) {
 	'ngInject';
 
 	state.route = routeState;
@@ -34,6 +39,7 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 	state.import = importState;
 	state.export = exportState;
 	state.home = homeState;
+	state.search = searchState;
 
 	return {
 		// route
@@ -166,5 +172,11 @@ export function StateService(RouteStateService,	routeState,	PlaygroundStateServi
 		// export
 		setExportTypes: ExportStateService.setExportTypes,
 		setDefaultExportType: ExportStateService.setDefaultExportType,
+
+		// search
+		toggleSearch: SearchStateService.toggle,
+		setSearching: SearchStateService.setSearching,
+		setSearchInput: SearchStateService.setSearchInput,
+		setSearchResults: SearchStateService.setSearchResults,
 	};
 }

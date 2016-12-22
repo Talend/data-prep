@@ -19,6 +19,17 @@ const settingsMock = {
 				title: 'Talend Data Preparation',
 				onClick: 'menu:home',
 			},
+			search: {
+				onToggle: 'search:toggle',
+				onBlur: 'search:toggle',
+				onChange: '"search:all',
+				onSelect: {
+					preparation: '"menu:playground:preparation',
+					dataset: '"menu:playground:dataset',
+					folder: '"menu:folders',
+					documentation: 'external:documentation',
+				},
+			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
 			userMenuActions: {
 				id: 'user-menu',
@@ -412,6 +423,24 @@ const settingsMock = {
 			payload: {
 				method: 'removeFolder',
 				args: [],
+			},
+		},
+		'search:toggle': {
+			id: 'search:toggle',
+			icon: 'talend-search',
+			type: '@@search/TOGGLE',
+		},
+		'search:all': {
+			id: 'search:all',
+			type: '@@search/ALL',
+		},
+		'external:documentation': {
+			id: 'external:documentation',
+			type: '@@external/OPEN_WINDOW',
+			icon: 'talend-question-circle',
+			name: 'Documentation',
+			payload: {
+				method: 'open',
 			},
 		},
 	},

@@ -21,7 +21,13 @@ export default class ExternalActionsService {
 		switch (action.type) {
 		case '@@external/OPEN_WINDOW': {
 			const { method, args } = action.payload;
-			this.$window[method](...args);
+			let externalActionArgs = args || [];
+			if (!externalActionArgs.length) {
+				externalActionArgs = [
+					action.payload.url,
+				];
+			}
+			this.$window[method](...externalActionArgs);
 			break;
 		}
 		}

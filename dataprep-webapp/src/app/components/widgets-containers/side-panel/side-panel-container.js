@@ -20,6 +20,7 @@ const SidePanelContainer = {
 		 	toggle-icon="$ctrl.toggleIcon"
 			on-toggle-dock="$ctrl.toggle"
 			docked="$ctrl.state.home.sidePanelDocked"
+			watch-depth="reference"
 		/>`,
 	bindings: {
 		id: '<',

@@ -11,55 +11,57 @@
 
  ============================================================================*/
 
+const searchInput = 'barcelona';
+
+const results = [{ url: 'url', name: 'name', description: 'description' }];
+
 describe('Documentation Search controller', () => {
-    'use strict';
+	let scope;
+	let ctrl;
 
-    var component;
-    var scope;
+	beforeEach(angular.mock.module('data-prep.documentation-search'));
 
-    beforeEach(angular.mock.module('data-prep.documentation-search'));
+	beforeEach(inject(($rootScope, $componentController) => {
+		scope = $rootScope.$new();
+		ctrl = $componentController('documentationSearch', { $scope: scope });
+	}));
 
-    beforeEach(inject(($rootScope, $componentController) => {
-        scope = $rootScope.$new();
-        component = $componentController('documentationSearch', { $scope: scope });
-    }));
+	describe('search ', () => {
+		it('should call search service', inject(($q, SearchService) => {
+			// given
+			spyOn(SearchService, 'searchDocumentationAndHighlight').and.returnValue($q.when(results));
 
-    describe('search ', () => {
-        it('should call documentation search service', inject(($q, DocumentationService) => {
-            const results = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(results));
+			// when
+			ctrl.search(searchInput);
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            scope.$digest();
+			// then
+			expect(SearchService.searchDocumentationAndHighlight).toHaveBeenCalledWith(searchInput);
+		}));
 
-            //then
-            expect(DocumentationService.search).toHaveBeenCalledWith('barcelona');
-        }));
+		it('should set results', inject(($q, SearchService) => {
+			// given
+			spyOn(SearchService, 'searchDocumentationAndHighlight').and.returnValue($q.when(results));
 
-        it('should set results', inject(($q, DocumentationService) => {
-            const results = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(results));
+			// when
+			ctrl.search(searchInput);
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            scope.$digest();
+			// then
+			expect(ctrl.results).toBe(results);
+		}));
 
-            //then
-            expect(component.results).toBe(results);
-        }));
+		it('should NOT set results when the search is out of date', inject(($q, SearchService) => {
+			// given
+			spyOn(SearchService, 'searchDocumentationAndHighlight').and.returnValue($q.when(results));
 
-        it('should NOT set results when the search is out of date', inject(($q, DocumentationService) => {
-            const results = [{ url: 'url', name: 'name', description: 'description' }];
-            spyOn(DocumentationService, 'search').and.returnValue($q.when(results));
+			// when
+			ctrl.search(searchInput);
+			ctrl.currentInput = 'other';
+			scope.$digest();
 
-            //when
-            component.search('barcelona');
-            component.currentInput = 'other';
-            scope.$digest();
-
-            //then
-            expect(component.results).not.toBe(results);
-        }));
-    });
+			// then
+			expect(ctrl.results).not.toBe(results);
+		}));
+	});
 });

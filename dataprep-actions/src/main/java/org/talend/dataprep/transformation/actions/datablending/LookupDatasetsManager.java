@@ -49,7 +49,6 @@ public class LookupDatasetsManager {
 
     public static Map<String,DataSetRow> get(String dataSetId) {
         LOGGER.info("Retrieving the DATASET of id: "+ dataSetId);
-        LOGGER.info("Retrieving the DATASET of id: "+ dataSetId);
         return uniqueInstance.getDatasets().get(dataSetId);
     }
 }

@@ -115,7 +115,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
             if (colsToAdd.isEmpty()) {
                 context.setActionStatus(ActionContext.ActionStatus.CANCELED);
             }
-            //
+
             LookupRowMatcher rowMatcher = context.get("rowMatcher", p -> Providers.get(LookupRowMatcher.class, p));
             // Create lookup result columns
             final Map<String, String> parameters = context.getParameters();

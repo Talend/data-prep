@@ -30,6 +30,7 @@ import { importState, ImportStateService } from './import/import-state-service';
 import { exportState, ExportStateService } from './export/export-state-service';
 import { homeState, HomeStateService } from './home/home-state-service';
 import { state, StateService } from './state-service';
+import { searchState, SearchStateService } from './search/search-state-service';
 
 const MODULE_NAME = 'data-prep.services.state';
 
@@ -39,55 +40,58 @@ const MODULE_NAME = 'data-prep.services.state';
  * @description This module contains the service that hold the application state
  */
 angular.module(MODULE_NAME, [])
-    .service('DatasetStateService', DatasetStateService)
-    .constant('datasetState', datasetState)
+	.service('DatasetStateService', DatasetStateService)
+	.constant('datasetState', datasetState)
 
-    .service('EasterEggsStateService', EasterEggsStateService)
-    .constant('easterEggsState', easterEggsState)
+	.service('EasterEggsStateService', EasterEggsStateService)
+	.constant('easterEggsState', easterEggsState)
 
-    .service('FeedbackStateService', FeedbackStateService)
-    .constant('feedbackState', feedbackState)
+	.service('FeedbackStateService', FeedbackStateService)
+	.constant('feedbackState', feedbackState)
 
-    .service('FilterStateService', FilterStateService)
-    .constant('filterState', filterState)
+	.service('FilterStateService', FilterStateService)
+	.constant('filterState', filterState)
 
-    .service('GridStateService', GridStateService)
-    .constant('gridState', gridState)
+	.service('GridStateService', GridStateService)
+	.constant('gridState', gridState)
 
-    .service('InventoryStateService', InventoryStateService)
-    .constant('inventoryState', inventoryState)
+	.service('InventoryStateService', InventoryStateService)
+	.constant('inventoryState', inventoryState)
 
-    .service('LookupStateService', LookupStateService)
-    .constant('lookupState', lookupState)
+	.service('LookupStateService', LookupStateService)
+	.constant('lookupState', lookupState)
 
-    .service('ParametersStateService', ParametersStateService)
-    .constant('parametersState', parametersState)
+	.service('ParametersStateService', ParametersStateService)
+	.constant('parametersState', parametersState)
 
-    .service('PlaygroundStateService', PlaygroundStateService)
-    .constant('playgroundState', playgroundState)
+	.service('PlaygroundStateService', PlaygroundStateService)
+	.constant('playgroundState', playgroundState)
 
-    .service('RecipeStateService', RecipeStateService)
-    .constant('recipeState', recipeState)
+	.service('RecipeStateService', RecipeStateService)
+	.constant('recipeState', recipeState)
 
-    .service('StatisticsStateService', StatisticsStateService)
-    .constant('statisticsState', statisticsState)
+	.service('StatisticsStateService', StatisticsStateService)
+	.constant('statisticsState', statisticsState)
 
-    .service('SuggestionsStateService', SuggestionsStateService)
-    .constant('suggestionsState', suggestionsState)
+	.service('SuggestionsStateService', SuggestionsStateService)
+	.constant('suggestionsState', suggestionsState)
 
-    .service('RouteStateService', RouteStateService)
-    .constant('routeState', routeState)
+	.service('RouteStateService', RouteStateService)
+	.constant('routeState', routeState)
 
-    .service('ImportStateService', ImportStateService)
-    .constant('importState', importState)
+	.service('ImportStateService', ImportStateService)
+	.constant('importState', importState)
 
-    .service('ExportStateService', ExportStateService)
-    .constant('exportState', exportState)
+	.service('ExportStateService', ExportStateService)
+	.constant('exportState', exportState)
 
 	.service('HomeStateService', HomeStateService)
 	.constant('homeState', homeState)
 
-    .service('StateService', StateService)
-    .constant('state', state);
+	.service('StateService', StateService)
+	.constant('state', state)
+
+	.service('SearchStateService', SearchStateService)
+	.constant('searchState', searchState);
 
 export default MODULE_NAME;

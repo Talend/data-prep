@@ -12,17 +12,17 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_STATE_MODULE from '../state/state-module';
-import SERVICES_UTILS_MODULE from '../utils/utils-module';
+import SERVICES_STATE_MODULE from '../../state/state-module';
+import SERVICES_UTILS_MODULE from '../../utils/utils-module';
 
-import InventoryService from './inventory-service';
-import InventoryRestService from './rest/inventory-rest-service';
+import SearchInventoryService from './search-inventory-service';
+import SearchInventoryRestService from './rest/search-inventory-rest-service';
 
-const MODULE_NAME = 'data-prep.services.inventory';
+const MODULE_NAME = 'data-prep.services.search.inventory';
 
 /**
  * @ngdoc object
- * @name data-prep.services.inventory
+ * @name data-prep.services.search.inventory
  * @description This module contains the services to manage the inventory
  */
 angular.module(MODULE_NAME,
@@ -30,7 +30,7 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('InventoryService', InventoryService)
-    .service('InventoryRestService', InventoryRestService);
+    .service('SearchInventoryService', SearchInventoryService)
+    .service('SearchInventoryRestService', SearchInventoryRestService);
 
 export default MODULE_NAME;

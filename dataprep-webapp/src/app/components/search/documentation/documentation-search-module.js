@@ -13,7 +13,7 @@
 
 import angular from 'angular';
 import SEARCH_BAR_MODULE from '../bar/search-bar-module';
-import SERVICES_DOCUMENTATION_MODULE from '../../../services/documentation/documentation-module';
+import SERVICES_SEARCH_MODULE from '../../../services/search/search-module';
 
 import DocumentationSearch from './documentation-search-component';
 
@@ -28,7 +28,7 @@ const MODULE_NAME = 'data-prep.documentation-search';
 angular.module(MODULE_NAME,
 	[
 		SEARCH_BAR_MODULE,
-		SERVICES_DOCUMENTATION_MODULE,
+		SERVICES_SEARCH_MODULE,
 	])
     .component('documentationSearch', DocumentationSearch);
 

@@ -61,6 +61,16 @@ describe('App header bar container', () => {
 			expect(brand.attr('title')).toBe('Talend Data Preparation');
 		});
 
+		it('should create search icon', () => {
+			// when
+			createElement();
+
+			// then
+			const searchBar = element.find('.navbar-form');
+			expect(searchBar.attr('role')).toBe('search');
+			expect(searchBar.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-search');
+		});
+
 		it('should create onboarding icon', () => {
 			// when
 			createElement();

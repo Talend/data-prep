@@ -15,7 +15,11 @@ const LayoutContainer = {
 	template: `
 		<div class="app">
 			<div class="header">
-				<app-header-bar><app-header-bar/>
+				<app-header-bar search-toggle="$ctrl.state.search.searchToggle"
+		 						searching="$ctrl.state.search.searching"
+		 						search-input="$ctrl.state.search.searchInput"
+		 						search-results="$ctrl.state.search.searchResults"
+				><app-header-bar/>
 			</div>
 			<div class="content">
 				<div class="sidemenu">
@@ -29,9 +33,10 @@ const LayoutContainer = {
 			</div>
 		</div>
 	`,
-	controller($state) {
+	controller($state, state) {
 		'ngInject';
 		this.$state = $state;
+		this.state = state;
 	},
 };
 

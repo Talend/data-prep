@@ -6,6 +6,19 @@
         "title": "Talend Data Preparation",
         "onClick": "menu:preparations"
       },
+      "search": {
+        "placeholder": "Search Talend Data Preparation and Documentation",
+        "onToggle": "search:toggle",
+        "onBlur": "search:toggle",
+        "onChange": "search:all",
+        "onSelect": {
+          "preparation": "menu:playground:preparation",
+          "dataset": "menu:playground:dataset",
+          "folder": "menu:folders",
+          "documentation": "external:documentation"
+        },
+        "debounceTimeout": 200
+      },
       "actions": [
         "onboarding:preparation",
         "modal:feedback",
@@ -405,6 +418,25 @@
       "payload": {
         "method": "removeFolder",
         "args": []
+      }
+    },
+    "search:toggle": {
+      "id": "search:toggle",
+      "name": "Toggle search input",
+      "icon": "talend-search",
+      "type": "@@search/TOGGLE"
+    },
+    "search:all": {
+      "id": "search:all",
+      "type": "@@search/ALL"
+    },
+    "external:documentation": {
+      "id": "external:documentation",
+      "type": "@@external/OPEN_WINDOW",
+      "icon": "talend-question-circle",
+      "name": "Documentation",
+      "payload": {
+        "method": "open"
       }
     }
   }

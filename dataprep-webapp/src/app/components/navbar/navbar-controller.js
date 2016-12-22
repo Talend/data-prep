@@ -19,7 +19,6 @@
  * @requires data-prep.services.dataset.service:DatasetService
  * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.onboarding.service:OnboardingService
- * @requires data-prep.services.easter-eggs.service::EasterEggsService
  */
 
 export default function NavbarCtrl($timeout, $state, state, version, copyRights, OnboardingService, DatasetService, StateService) {

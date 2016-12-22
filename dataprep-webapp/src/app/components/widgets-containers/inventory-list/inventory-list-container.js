@@ -25,6 +25,7 @@ const InventoryListContainer = {
 			display-mode="$ctrl.displayMode"
 			list="$ctrl.listProps"
 			toolbar="$ctrl.toolbarProps"
+			watch-depth="reference"
 		/>
 	`,
 	bindings: {

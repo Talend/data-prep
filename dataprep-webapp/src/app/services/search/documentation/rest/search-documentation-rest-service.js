@@ -10,7 +10,8 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-class DocumentationRestService {
+
+class SearchDocumentationRestService {
 
 	constructor($http, documentationSearchURL) {
 		'ngInject';
@@ -21,7 +22,7 @@ class DocumentationRestService {
     /**
      * @ngdoc method
      * @name search
-     * @methodOf data-prep.services.documentation.service:DocumentationRestService
+     * @methodOf data-prep.services.search.documentation:SearchDocumentationRestService
      * @description search documentation with keyword
      */
 	search(keyword) {
@@ -32,4 +33,4 @@ class DocumentationRestService {
 	}
 }
 
-export default DocumentationRestService;
+export default SearchDocumentationRestService;

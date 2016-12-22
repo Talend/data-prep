@@ -15,79 +15,28 @@
  * @ngdoc controller
  * @name data-prep.inventory-search.controller:InventorySearchCtrl
  * @description InventorySearchCtrl controller.
- * @requires data-prep.services.inventory.service:InventoryService
- * @requires data-prep.services.documentation.service:DocumentationService
+ * @requires data-prep.services.search:SearchService
  *
  */
 class InventorySearchCtrl {
 
-	constructor($q, InventoryService, DocumentationService, EasterEggsService) {
+	constructor(SearchService) {
 		'ngInject';
-		this.$q = $q;
-		this.inventoryService = InventoryService;
-		this.documentationService = DocumentationService;
-		this.easterEggsService = EasterEggsService;
+		this.searchService = SearchService;
 	}
 
-    /**
-     * @ngdoc method
-     * @name search
-     * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
-     * @description Search based on searchInput
-     */
+	/**
+	 * @ngdoc method
+	 * @name search
+	 * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
+	 * @description Search based on searchInput
+	 */
 	search(searchInput) {
 		this.results = null;
 		this.currentInput = searchInput;
 
-		if (searchInput === 'star wars') {
-			this.easterEggsService.enableEasterEgg(searchInput);
-		}
-
-		const inventoryPromise = this._searchDoc(searchInput);
-		const docPromise = this._searchInventory(searchInput);
-
-        // if results (doc + inventory) are empty, we create an empty array
-        // the no-result message is based on the definition of results.
-        // It must be an empty array to show the message.
-		return this.$q.all([inventoryPromise, docPromise])
-            .then((responses) => {
-	this.results = this.results || (searchInput === this.currentInput && []);
-	return responses;
-});
-	}
-
-    /**
-     * @ngdoc method
-     * @name _searchDoc
-     * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
-     * @description Search documentation and populate results if not empty
-     */
-	_searchDoc(searchInput) {
-		return this.inventoryService.search(searchInput)
-            .then((response) => {
-	if (searchInput === this.currentInput && response.length) {
-		this.results = (this.results || []).concat(response);
-	}
-
-	return response;
-});
-	}
-
-    /**
-     * @ngdoc method
-     * @name _searchDoc
-     * @methodOf data-prep.inventory-search.controller:InventorySearchCtrl
-     * @description Search inventory and populate results if not empty
-     */
-	_searchInventory(searchInput) {
-		return this.documentationService.search(searchInput)
-            .then((response) => {
-	if (searchInput === this.currentInput && response.length) {
-		this.results = response.concat(this.results || []);
-	}
-
-	return response;
-});
+		return this.searchService.searchAll(searchInput)
+			.then(response => (this.currentInput === searchInput) && (this.results = response));
 	}
 }
 

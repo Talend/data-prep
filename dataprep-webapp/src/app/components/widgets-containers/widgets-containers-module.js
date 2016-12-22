@@ -25,8 +25,8 @@ import LayoutContainer from './layout/layout-container';
 import InventoryListContainer from './inventory-list/inventory-list-container';
 import SidePanelContainer from './side-panel/side-panel-container';
 
-import FOLDER_MODULE from '../../services/folder/folder-module';
 import SETTINGS_MODULE from '../../settings/settings-module';
+import STATE_MODULE from '../../services/state/state-module';
 
 const MODULE_NAME = 'react-talend-components.containers';
 
@@ -34,8 +34,8 @@ angular.module(MODULE_NAME,
 	[
 		'react',
 		'pascalprecht.translate',
-		FOLDER_MODULE,
 		SETTINGS_MODULE,
+		STATE_MODULE,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
@@ -43,7 +43,7 @@ angular.module(MODULE_NAME,
 	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
-    .component('appHeaderBar', AppHeaderBarContainer)
+	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
 	.component('inventoryList', InventoryListContainer)
 	.component('sidePanel', SidePanelContainer)

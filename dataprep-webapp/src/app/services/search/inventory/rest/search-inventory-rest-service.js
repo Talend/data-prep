@@ -13,7 +13,7 @@
 
 /**
  * @ngdoc service
- * @name data-prep.services.inventory.service:InventoryRestService
+ * @name data-prep.services.search.inventory:InventoryRestService
  * @description Inventory service.
  */
 export default function InventoryRestService($http, RestURLs) {
@@ -26,7 +26,7 @@ export default function InventoryRestService($http, RestURLs) {
     /**
      * @ngdoc method
      * @name search
-     * @methodOf data-prep.services.inventory.service:InventoryRestService
+     * @methodOf data-prep.services.search.inventory:InventoryRestService
      * @param {String} searchString The string to search
      * @param {Promise} deferredAbort abort request when resolved
      */

@@ -191,7 +191,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-actions-list-actions-list-actions-preparation\\:create\\:folder').click();
+				element.find('#list-actions-preparation\\:create\\:folder').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
@@ -261,7 +261,7 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-actions-list-actions-list-actions-preparation\\:create').click();
+				element.find('#list-actions-preparation\\:create').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);

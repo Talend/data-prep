@@ -993,9 +993,7 @@ public class DataSetService extends BaseDataSetService {
             parametersToReturn = emptyList();
         } else {
             if (matchingDatasetLocation.isSchemaOriented()) {
-                ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema();
-                parametersAsSchema.setProperties(null);
-                parametersToReturn = parametersAsSchema;
+                parametersToReturn = matchingDatasetLocation.getParametersAsSchema();
             } else {
                 parametersToReturn = matchingDatasetLocation.getParameters();
             }

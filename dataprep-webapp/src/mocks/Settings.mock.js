@@ -26,7 +26,7 @@ const settingsMock = {
 				onSelect: {
 					preparation: 'menu:playground:preparation',
 					dataset: 'menu:playground:dataset',
-					folder: '"menu:folders',
+					folder: 'menu:folders',
 					documentation: 'external:documentation',
 				},
 				onKeyDown: 'search:focus',
@@ -86,14 +86,13 @@ const settingsMock = {
 						{ id: 'name', name: 'Name' },
 						{ id: 'date', name: 'Creation Date' },
 					],
+					onChange: 'preparation:sort',
 				},
 				actionBar: {
 					actions: {
 						left: ['preparation:create', 'preparation:create:folder'],
 					},
 				},
-				onSelectDisplayMode: 'preparation:display-mode',
-				onSelectSortBy: 'preparation:sort',
 				searchLabel: 'Find a preparation',
 			},
 		},
@@ -125,12 +124,11 @@ const settingsMock = {
 						{ id: 'name', name: 'Name' },
 						{ id: 'date', name: 'Creation Date' },
 					],
+					onChange: 'dataset:sort',
 				},
 				actionBar: {
 					actions: [],
 				},
-				onSelectDisplayMode: 'dataset:display-mode',
-				onSelectSortBy: 'dataset:sort',
 				searchLabel: 'Find a dataset',
 			},
 		},

@@ -72,7 +72,8 @@
           "options": [
             { "id": "name", "name": "Name" },
             { "id": "date", "name": "Creation Date" }
-          ]
+          ],
+          "onChange": "preparation:sort"
         },
         "actionBar": {
           "actions": {
@@ -82,7 +83,6 @@
             ]
           }
         },
-        "onSelectSortBy": "preparation:sort",
         "searchLabel": "Find a preparation"
       }
     },
@@ -113,12 +113,12 @@
           "options": [
             { "id": "name", "name": "Name" },
             { "id": "date", "name": "Creation Date" }
-          ]
+          ],
+          "onChange": "dataset:sort"
         },
         "actionBar": {
           "actions": []
         },
-        "onSelectSortBy": "dataset:sort",
         "searchLabel": "Find a dataset"
       }
     }

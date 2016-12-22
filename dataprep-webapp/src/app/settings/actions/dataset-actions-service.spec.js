@@ -36,8 +36,8 @@ describe('Datasets actions service', () => {
 			const action = {
 				type: '@@dataset/SORT',
 				payload: {
-					sortBy: 'name',
-					sortDesc: true,
+					field: 'name',
+					isDescending: true,
 				}
 			};
 
@@ -54,8 +54,8 @@ describe('Datasets actions service', () => {
 				const action = {
 					type: '@@dataset/SORT',
 					payload: {
-						sortBy: 'name',
-						sortDesc: true,
+						field: 'name',
+						isDescending: true,
 					}
 				};
 
@@ -74,8 +74,8 @@ describe('Datasets actions service', () => {
 			const action = {
 				type: '@@dataset/SORT',
 				payload: {
-					sortBy: 'name',
-					sortDesc: true,
+					field: 'name',
+					isDescending: true,
 				}
 			};
 

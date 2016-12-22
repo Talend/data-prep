@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+const NO_OP = () => {};
+
 export default class InventoryListCtrl {
 	constructor($element, $translate, appSettings, SettingsActionsService) {
 		'ngInject';
@@ -73,13 +75,20 @@ export default class InventoryListCtrl {
 	initToolbarProps() {
 		const toolbarSettings = this.appSettings.views[this.viewKey].toolbar;
 
-		const displayModeAction = this.appSettings.actions[toolbarSettings.onSelectDisplayMode];
-		const sortByAction = this.appSettings.actions[toolbarSettings.onSelectSortBy];
-
-		const onSelectSortBy = sortByAction ? this.SettingsActionsService.createDispatcher(sortByAction) : () => {};
+		// display mode action
+		const displayModeAction = toolbarSettings.display &&
+			toolbarSettings.display.onChange &&
+			this.appSettings.actions[toolbarSettings.display.onChange];
 		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
-		const onSelectDisplayMode = dispatchDisplayMode ? ((event, mode) => dispatchDisplayMode(event, { mode })) : () => {};
+		const onDisplayModeChange = dispatchDisplayMode ? ((event, mode) => dispatchDisplayMode(event, { mode })) : NO_OP;
 
+		// sort by action
+		const sortByAction = toolbarSettings.sort &&
+			toolbarSettings.sort.onChange &&
+			this.appSettings.actions[toolbarSettings.sort.onChange];
+		const onSortByChange = sortByAction ? this.SettingsActionsService.createDispatcher(sortByAction) : NO_OP;
+
+		// toolbar actions
 		const actions = toolbarSettings.actionBar && toolbarSettings.actionBar.actions &&
 			{
 				left: this.adaptActions(toolbarSettings.actionBar.actions.left),
@@ -88,17 +97,17 @@ export default class InventoryListCtrl {
 
 		this.toolbarProps = {
 			...toolbarSettings,
-			actionBar: {
+			actionBar: toolbarSettings.actionBar && {
 				...toolbarSettings.actionBar,
 				actions,
 			},
-			display: {
+			display: toolbarSettings.display && {
 				...toolbarSettings.display,
-				onChange: onSelectDisplayMode,
+				onChange: onDisplayModeChange,
 			},
-			sort: {
+			sort: toolbarSettings.sort && {
 				...toolbarSettings.sort,
-				onChange: onSelectSortBy,
+				onChange: onSortByChange,
 			},
 		};
 	}

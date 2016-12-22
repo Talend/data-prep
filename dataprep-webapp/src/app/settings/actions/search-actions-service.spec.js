@@ -132,7 +132,7 @@ describe('Search actions service', () => {
 			expect(StateService.setFocusedItemIndex).toHaveBeenCalledWith(null);
 		}));
 
-		it('should do not perform search if search input has changed', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
+		it('should not set search result if search input is out of date', inject(($q, $rootScope, state, StateService, SearchActionsService, SearchService) => {
 			// given
 			const action = {
 				type: '@@search/ALL',

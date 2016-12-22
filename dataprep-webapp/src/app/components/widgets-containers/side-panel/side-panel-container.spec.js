@@ -26,7 +26,7 @@ describe('Side Panel container', () => {
 		scope = $rootScope.$new();
 
 		createElement = () => {
-			element = angular.element('<side-panel active="active"><side-panel/>');
+			element = angular.element('<side-panel id="\'side-panel\'" active="active"><side-panel/>');
 			body.append(element);
 			$compile(element)(scope);
 			scope.$digest();
@@ -47,7 +47,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const toggleButton = element.find('nav > ul > li').eq(0).find('button');
+			const toggleButton = element.find('#side-panel-toggle-dock');
 			expect(toggleButton.attr('title')).toBe('Toggle side panel');
 		});
 
@@ -56,7 +56,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const preparationsButton = element.find('nav > ul > li').eq(1).find('button');
+			const preparationsButton = element.find('#side-panel-nav-preparations');
 			expect(preparationsButton.attr('title')).toBe('Display Preparations');
 		});
 
@@ -65,7 +65,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const datasetsButton = element.find('nav > ul > li').eq(2).find('button');
+			const datasetsButton = element.find('#side-panel-nav-datasets');
 			expect(datasetsButton.attr('title')).toBe('Display Datasets');
 		});
 
@@ -93,7 +93,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			const toggleButton = element.find('nav > ul > li').eq(0).find('button');
+			const toggleButton = element.find('#side-panel-toggle-dock');
 			toggleButton.click(e => e.preventDefault());
 			toggleButton[0].click();
 
@@ -108,7 +108,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			const preparationsButton = element.find('nav > ul > li').eq(1).find('button');
+			const preparationsButton = element.find('#side-panel-nav-preparations');
 			preparationsButton.click(e => e.preventDefault());
 			preparationsButton[0].click();
 
@@ -123,7 +123,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			const datasetsButton = element.find('nav > ul > li').eq(2).find('button');
+			const datasetsButton = element.find('#side-panel-nav-datasets');
 			datasetsButton.click(e => e.preventDefault());
 			datasetsButton[0].click();
 

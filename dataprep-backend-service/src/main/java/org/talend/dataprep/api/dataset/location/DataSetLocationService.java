@@ -15,6 +15,7 @@ package org.talend.dataprep.api.dataset.location;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSetLocation;
@@ -33,5 +34,18 @@ public class DataSetLocationService {
      */
     public List<DataSetLocation> getAvailableLocations() {
         return locations;
+    }
+
+    public DataSetLocation findLocation(String locationType) {
+        DataSetLocation matchingDatasetLocation = null;
+        if (!StringUtils.isEmpty(locationType)) {
+            for (DataSetLocation location : getAvailableLocations()) {
+                if (locationType.equals(location.getLocationType())) {
+                    matchingDatasetLocation = location;
+                    break;
+                }
+            }
+        }
+        return matchingDatasetLocation;
     }
 }

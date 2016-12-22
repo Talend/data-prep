@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jayway.restassured.http.ContentType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;

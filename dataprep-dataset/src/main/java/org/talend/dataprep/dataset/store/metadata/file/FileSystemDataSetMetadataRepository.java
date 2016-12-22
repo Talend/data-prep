@@ -77,9 +77,6 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
         }
     }
 
-    /**
-     * @see DataSetMetadataRepository#add(DataSetMetadata)
-     */
     @Override
     public void add(DataSetMetadata metadata) {
 

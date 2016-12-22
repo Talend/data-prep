@@ -59,9 +59,6 @@ public class InMemoryDataSetMetadataRepository extends ObjectDataSetMetadataRepo
         return values.stream();
     }
 
-    /**
-     * @see DataSetMetadataRepository#add(DataSetMetadata)
-     */
     @Override
     public void add(DataSetMetadata dataSetMetadata) {
         store.put(dataSetMetadata.getId(), dataSetMetadata);

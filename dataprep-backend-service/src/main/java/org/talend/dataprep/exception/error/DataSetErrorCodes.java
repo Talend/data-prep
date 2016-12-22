@@ -170,7 +170,11 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * Error thrown when an error occurs while adding or updating a dataset.
      */
-    UNABLE_TO_CREATE_OR_UPDATE_DATASET(INTERNAL_SERVER_ERROR.value());
+    UNABLE_TO_CREATE_OR_UPDATE_DATASET(INTERNAL_SERVER_ERROR.value()),
+    /**
+     * Error thrown when an error occurs while adding or updating a dataset.
+     */
+    NOT_A_TCOMP_DATASET(BAD_REQUEST.value());
 
     /**
      * The http status to use.

@@ -31,9 +31,6 @@
     <name>dataprep-backend-service</name>
     <packaging>jar</packaging>
     <artifactId>dataprep-backend-service</artifactId>
-    <properties>
-        <jackson.version>2.6.4</jackson.version>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>

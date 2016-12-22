@@ -91,7 +91,6 @@ import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
-import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -119,6 +118,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -980,14 +980,14 @@ public class DataSetService extends BaseDataSetService {
         return encodings.getSupportedCharsets().stream().map(Charset::displayName).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/datasets/imports/{import}/parameters", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/imports/{import}/parameters", method = GET, consumes = MediaType.ALL_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
     // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented
     // ComponentProperties
     public Object getImportParameters(@PathVariable("import") final String importType) {
-        DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
+        DataSetLocation matchingDatasetLocation = locationsService.findLocation(importType);
         Object parametersToReturn;
         if (matchingDatasetLocation == null) {
             parametersToReturn = emptyList();
@@ -1003,7 +1003,7 @@ public class DataSetService extends BaseDataSetService {
         return parametersToReturn;
     }
 
-    @RequestMapping(value = "/datasets/{id}/datastore/properties", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/{id}/datastore/properties", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the dataset import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented ComponentProperties
@@ -1011,7 +1011,7 @@ public class DataSetService extends BaseDataSetService {
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
         Object parametersToReturn = null;
         if (dataSetMetadata != null) {
-            DataSetLocation matchingDatasetLocation = findDataSetLocation(dataSetMetadata.getLocation().getLocationType());
+            DataSetLocation matchingDatasetLocation = locationsService.findLocation(dataSetMetadata.getLocation().getLocationType());
             if (matchingDatasetLocation == null) {
                 parametersToReturn = emptyList();
             } else {
@@ -1019,7 +1019,6 @@ public class DataSetService extends BaseDataSetService {
                     ComponentProperties parametersAsSchema = matchingDatasetLocation.getParametersAsSchema();
                     parametersAsSchema.setProperties(dataSetMetadata.getLocation().getParametersAsSchema().getProperties());
                     parametersToReturn = parametersAsSchema;
-
                 } else {
                     parametersToReturn = matchingDatasetLocation.getParameters();
                 }
@@ -1028,20 +1027,7 @@ public class DataSetService extends BaseDataSetService {
         return parametersToReturn;
     }
 
-    private DataSetLocation findDataSetLocation(String locationType) {
-        DataSetLocation matchingDatasetLocation = null;
-        if (!StringUtils.isEmpty(locationType)) {
-            for (DataSetLocation location : locationsService.getAvailableLocations()) {
-                if (locationType.equals(location.getLocationType())) {
-                    matchingDatasetLocation = location;
-                    break;
-                }
-            }
-        }
-        return matchingDatasetLocation;
-    }
-
-    @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/datasets/imports", method = GET, consumes = MediaType.ALL_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "list the supported encodings for dataset", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI

@@ -118,7 +118,7 @@ public class BackgroundAnalysis {
                     final DataSetMetadata dataSetMetadata = repository.get(dataSetId);
                     if (dataSetMetadata != null) {
                         dataSetMetadata.getLifecycle().qualityAnalyzed(true);
-                        repository.add(metadata);
+                        repository.save(metadata);
                     }
                 } finally {
                     datasetLock.unlock();
@@ -137,7 +137,7 @@ public class BackgroundAnalysis {
             final DataSetMetadata dataSetMetadata = repository.get(id);
             if (dataSetMetadata != null) {
                 adapter.adapt(dataSetMetadata.getRowMetadata().getColumns(), analyzer.getResult());
-                repository.add(dataSetMetadata);
+                repository.save(dataSetMetadata);
             }
         } finally {
             datasetLock.unlock();

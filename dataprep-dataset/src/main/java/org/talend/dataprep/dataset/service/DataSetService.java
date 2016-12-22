@@ -341,7 +341,7 @@ public class DataSetService extends BaseDataSetService {
             LOG.debug(marker, "Content stored.");
 
             // Create the new data set
-            dataSetMetadataRepository.add(dataSetMetadata);
+            dataSetMetadataRepository.save(dataSetMetadata);
             LOG.debug(marker, "dataset metadata stored {}", dataSetMetadata);
 
             // Queue events (format analysis, content indexing for search...)
@@ -523,7 +523,7 @@ public class DataSetService extends BaseDataSetService {
             LOG.debug(marker, "Content stored.");
 
             // Create the new data set
-            dataSetMetadataRepository.add(target);
+            dataSetMetadataRepository.save(target);
 
             LOG.info(marker, "Copy done --> {}", newId);
 
@@ -554,13 +554,13 @@ public class DataSetService extends BaseDataSetService {
 
                 if (dataSetMetadata.getGovernance().getCertificationStep() == Certification.NONE) {
                     dataSetMetadata.getGovernance().setCertificationStep(Certification.PENDING);
-                    dataSetMetadataRepository.add(dataSetMetadata);
+                    dataSetMetadataRepository.save(dataSetMetadata);
                 } else if (dataSetMetadata.getGovernance().getCertificationStep() == Certification.PENDING) {
                     dataSetMetadata.getGovernance().setCertificationStep(Certification.CERTIFIED);
-                    dataSetMetadataRepository.add(dataSetMetadata);
+                    dataSetMetadataRepository.save(dataSetMetadata);
                 } else if (dataSetMetadata.getGovernance().getCertificationStep() == Certification.CERTIFIED) {
                     dataSetMetadata.getGovernance().setCertificationStep(Certification.NONE);
-                    dataSetMetadataRepository.add(dataSetMetadata);
+                    dataSetMetadataRepository.save(dataSetMetadata);
                 }
 
                 LOG.debug("New certification step is " + dataSetMetadata.getGovernance().getCertificationStep());
@@ -605,7 +605,7 @@ public class DataSetService extends BaseDataSetService {
 
             // Save data set content
             contentStore.storeAsRaw(dataSetMetadata, dataSetContent);
-            dataSetMetadataRepository.add(dataSetMetadata);
+            dataSetMetadataRepository.save(dataSetMetadata);
             publisher.publishEvent(new DataSetRawContentUpdateEvent(dataSetMetadata));
         } finally {
             lock.unlock();
@@ -797,7 +797,7 @@ public class DataSetService extends BaseDataSetService {
                 formatAnalyzer.update(original, metadataForUpdate);
 
                 // save the result
-                dataSetMetadataRepository.add(metadataForUpdate);
+                dataSetMetadataRepository.save(metadataForUpdate);
 
                 // all good mate!! so send that to jms
                 // Asks for a in depth schema analysis (for column type information).
@@ -931,7 +931,7 @@ public class DataSetService extends BaseDataSetService {
             }
 
             // save
-            dataSetMetadataRepository.add(dataSetMetadata);
+            dataSetMetadataRepository.save(dataSetMetadata);
 
             // analyze the updated dataset (not all analysis are performed)
             analyzeDataSet(dataSetId, //

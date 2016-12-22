@@ -78,7 +78,7 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
     }
 
     @Override
-    public void add(DataSetMetadata metadata) {
+    public void save(DataSetMetadata metadata) {
 
         String id = metadata.getId();
 

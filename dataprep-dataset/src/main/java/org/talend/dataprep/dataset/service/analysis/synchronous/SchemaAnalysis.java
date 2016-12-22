@@ -87,7 +87,7 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
                     adapter.adapt(columns, analyzer.getResult());
                     LOGGER.info("Analyzed schema in dataset #{}.", dataSetId);
                     metadata.getLifecycle().schemaAnalyzed(true);
-                    repository.add(metadata);
+                    repository.save(metadata);
                 }
             } catch (Exception e) {
                 LOGGER.error("Unable to analyse schema for dataset " + dataSetId + ".", e);

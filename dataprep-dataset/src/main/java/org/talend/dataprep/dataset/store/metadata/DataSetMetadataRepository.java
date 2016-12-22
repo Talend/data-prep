@@ -58,7 +58,7 @@ public interface DataSetMetadataRepository {
      *
      * @param dataSetMetadata The {@link DataSetMetadata data set} to create or update.
      */
-    void add(DataSetMetadata dataSetMetadata);
+    void save(DataSetMetadata dataSetMetadata);
 
     /**
      * <p>

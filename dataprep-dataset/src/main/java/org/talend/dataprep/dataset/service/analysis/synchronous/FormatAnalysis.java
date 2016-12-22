@@ -150,7 +150,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
         parseColumnNameInformation(metadata.getId(), metadata, format);
 
-        repository.add(metadata);
+        repository.save(metadata);
     }
 
     /**
@@ -196,7 +196,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
             metadata.setDraft(schema.draft());
             if (schema.draft()) {
                 metadata.setSchemaParserResult(schema);
-                repository.add(metadata);
+                repository.save(metadata);
                 LOG.info(Markers.dataset(dataSetId), "format analysed");
                 return;
             }

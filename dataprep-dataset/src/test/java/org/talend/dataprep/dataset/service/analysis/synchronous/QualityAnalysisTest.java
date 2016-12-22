@@ -55,7 +55,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
     @Test
     public void testAnalysis() throws Exception {
         final DataSetMetadata metadata = metadataBuilder.metadata().id("1234").build();
-        dataSetMetadataRepository.add(metadata);
+        dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
         formatAnalysis.analyze("1234");
         contentAnalysis.analyze("1234");
@@ -77,7 +77,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
     public void testAnalysisWithInvalidValues() throws Exception {
         String dsId = "4321";
         final DataSetMetadata metadata = metadataBuilder.metadata().id(dsId).build();
-        dataSetMetadataRepository.add(metadata);
+        dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, DataSetServiceTest.class.getResourceAsStream("../dataset_with_invalid_records.csv"));
         formatAnalysis.analyze(dsId);
         contentAnalysis.analyze(dsId);
@@ -192,7 +192,7 @@ public class QualityAnalysisTest extends DataSetBaseTest {
     private DataSetMetadata initializeDataSetMetadata(InputStream content) {
         String id = String.valueOf(random.nextInt(10000));
         final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
-        dataSetMetadataRepository.add(metadata);
+        dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, content);
         formatAnalysis.analyze(id);
         contentAnalysis.analyze(id);

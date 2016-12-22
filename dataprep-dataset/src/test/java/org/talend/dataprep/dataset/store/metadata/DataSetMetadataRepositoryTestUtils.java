@@ -31,7 +31,7 @@ public class DataSetMetadataRepositoryTestUtils {
         List<DataSetMetadata> expected = metadatas.stream().filter(m -> (!metadata1.equals(m) && metadata1.compatible(m)))
                 .sorted((m1, m2) -> m1.getId().compareTo(m2.getId())).collect(Collectors.toList());
         // when
-        metadatas.stream().forEach(m -> repository.add(m));
+        metadatas.stream().forEach(m -> repository.save(m));
         Iterable<DataSetMetadata> iterable = repository.listCompatible(metadata1.getId());
         List<DataSetMetadata> actual = StreamSupport.stream(iterable.spliterator(), false)
                 .sorted((m1, m2) -> m1.getId().compareTo(m2.getId())).collect(Collectors.toList());

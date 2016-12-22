@@ -48,7 +48,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
     @Test
     public void match() throws Exception {
         // given
-        repository.add(getMetadata("456789"));
+        repository.save(getMetadata("456789"));
 
         // when
         final boolean match = repository.exist("id = 456789");
@@ -64,7 +64,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         // given
         final DataSetMetadata metadata = getMetadata("456789");
         metadata.getLifecycle().setImporting(true);
-        repository.add(metadata);
+        repository.save(metadata);
 
         // when
         final boolean match = repository.exist("lifecycle.importing = true");
@@ -86,7 +86,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         final DataSetMetadata expected = getMetadata("456789");
 
         // when
-        repository.add(expected);
+        repository.save(expected);
         final DataSetMetadata actual = repository.get(expected.getId());
 
         // then
@@ -101,7 +101,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
 
         try {
             // given
-            repository.add(getMetadata(datasetId));
+            repository.save(getMetadata(datasetId));
 
             // when
 
@@ -125,14 +125,14 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
 
         // given
         final DataSetMetadata metadata = getMetadata(id);
-        repository.add(metadata);
+        repository.save(metadata);
 
         // when
         DataSetMetadata update = mapper.readerFor(DataSetMetadata.class)
                 .readValue(this.getClass().getResourceAsStream("dataset_2.json"));
         update = metadataBuilder.metadata().copy(update).id(id).build();
 
-        repository.add(update);
+        repository.save(update);
 
         // then
         final DataSetMetadata actual = repository.get(id);
@@ -148,7 +148,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         // 14 metadata
         int expected = 14;
         for (int i = 1; i <= expected; i++) {
-            repository.add(getMetadata(String.valueOf(i)));
+            repository.save(getMetadata(String.valueOf(i)));
         }
 
         assertEquals(expected, repository.size());
@@ -171,7 +171,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         repository.remove(id);
 
         // given
-        repository.add(getMetadata(id));
+        repository.save(getMetadata(id));
 
         // when
         repository.remove(id);
@@ -190,7 +190,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         // given
         int expected = 26;
         for (int i = 1; i <= expected; i++) {
-            repository.add(getMetadata(String.valueOf(i)));
+            repository.save(getMetadata(String.valueOf(i)));
         }
 
         // when
@@ -219,7 +219,7 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
 
         int count = 11;
         for (int i = 1; i <= count; i++) {
-            repository.add(getMetadata(String.valueOf(i)));
+            repository.save(getMetadata(String.valueOf(i)));
         }
         assertEquals(count, repository.size());
 

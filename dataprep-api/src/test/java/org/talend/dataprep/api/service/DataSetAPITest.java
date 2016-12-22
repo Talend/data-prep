@@ -621,12 +621,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
         dataSetMetadata1.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadata1.setLastModificationDate(Instant.now().getEpochSecond() + 1);
-        dataSetMetadataRepository.add(dataSetMetadata1);
+        dataSetMetadataRepository.save(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
-        dataSetMetadataRepository.add(dataSetMetadata2);
+        dataSetMetadataRepository.save(dataSetMetadata2);
         final DataSetMetadata dataSetMetadata3 = dataSetMetadataRepository.get(dataSetId3);
         dataSetMetadata3.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
-        dataSetMetadataRepository.add(dataSetMetadata3);
+        dataSetMetadataRepository.save(dataSetMetadata3);
 
         // add favorite
         UserData userData = new UserData(security.getUserId(), versionService.version().getVersionId());

@@ -51,7 +51,7 @@ public class SynchronousAnalysisEnd implements SynchronousDataSetAnalyzer {
             if (metadata != null) {
                 metadata.getLifecycle().setImporting(false);
                 LOG.info("Finished content import of data set #{}.", dataSetId);
-                repository.add(metadata);
+                repository.save(metadata);
             } else {
                 LOG.info("Data set #{} no longer exists.", dataSetId); //$NON-NLS-1$
             }

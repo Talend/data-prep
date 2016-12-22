@@ -75,7 +75,7 @@ public class ContentAnalysis implements SynchronousDataSetAnalyzer {
                 updateLimit(metadata);
 
                 metadata.getLifecycle().contentIndexed(true);
-                repository.add(metadata);
+                repository.save(metadata);
                 LOG.info("Indexed content of data set #{}.", dataSetId);
             } else {
                 LOG.info("Data set #{} no longer exists.", dataSetId); //$NON-NLS-1$

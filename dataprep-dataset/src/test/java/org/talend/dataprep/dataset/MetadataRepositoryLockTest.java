@@ -55,7 +55,7 @@ public class MetadataRepositoryLockTest extends DataSetBaseTest {
                 datasetLock.lock();
                 try {
                     Thread.sleep(1000);
-                    metadataRepository.add(dsm1);
+                    metadataRepository.save(dsm1);
                     threadCount.decrementAndGet();
                 } finally {
                     datasetLock.unlock();
@@ -72,7 +72,7 @@ public class MetadataRepositoryLockTest extends DataSetBaseTest {
             DistributedLock datasetLock = metadataRepository.createDatasetMetadataLock("1"); //$NON-NLS-1$
             datasetLock.lock();
             try {
-                metadataRepository.add(dsm2);
+                metadataRepository.save(dsm2);
                 threadCount.decrementAndGet();
             } finally {
                 datasetLock.unlock();

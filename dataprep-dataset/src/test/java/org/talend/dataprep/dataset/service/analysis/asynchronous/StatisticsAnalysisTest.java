@@ -93,7 +93,7 @@ public class StatisticsAnalysisTest extends DataSetBaseTest {
     private DataSetMetadata initializeDataSetMetadata(InputStream content) {
         String id = String.valueOf(random.nextInt(10000));
         final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
-        dataSetMetadataRepository.add(metadata);
+        dataSetMetadataRepository.save(metadata);
         contentStore.storeAsRaw(metadata, content);
         formatAnalysis.analyze(id);
         contentAnalysis.analyze(id);

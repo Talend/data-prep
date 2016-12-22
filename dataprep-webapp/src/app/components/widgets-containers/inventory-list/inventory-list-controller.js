@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+const DROPDOWN_ACTION = 'dropdown';
+
 export default class InventoryListCtrl {
 	constructor($element, $translate, appSettings, SettingsActionsService) {
 		'ngInject';
@@ -165,7 +167,7 @@ export default class InventoryListCtrl {
 			actions.map((actionName) => {
 				const adaptedAction = this.createBaseAction(actionName);
 
-				if (adaptedAction.displayMode === 'dropdown') {
+				if (adaptedAction.displayMode === DROPDOWN_ACTION) {
 					const actionSettings = this.appSettings.actions[actionName];
 					// conf.items is the key where the dropdown items are stored
 					// ex: dataset > preparations is hosted in dataset, with "preparations" key
@@ -183,7 +185,7 @@ export default class InventoryListCtrl {
 				else {
 					const dispatch = this.getActionDispatcher(actionName);
 					adaptedAction.model = hostModel;
-					adaptedAction.onClick = (event, payload) => dispatch(event, payload.model); // TODO remove payload.model, use payload
+					adaptedAction.onClick = (event, payload) => dispatch(event, payload && payload.model);
 				}
 
 				return adaptedAction;

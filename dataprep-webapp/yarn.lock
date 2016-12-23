@@ -996,9 +996,9 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
-bootstrap-talend-theme@0.12.x:
-  version "0.12.4"
-  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.12.4.tgz#f4ee9c8b31b3e0b7f8dbf2a2a508b3a6ea641748"
+bootstrap-talend-theme@0.13.x:
+  version "0.13.6"
+  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.13.6.tgz#2d1534551536a07fb5503f531a91cdbbf62dac03"
   dependencies:
     bootstrap-sass "^3.3.7"
 
@@ -5396,9 +5396,9 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.38.x:
-  version "0.38.3"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.38.3.tgz#0bee679171d29b240239ef4b7e2e8556548c33be"
+react-talend-components@0.33.0:
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.33.0.tgz#976d9c9f4063ba48aecf069a0876c9ec7733f76a"
   dependencies:
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"

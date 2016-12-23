@@ -155,4 +155,26 @@ describe('Import REST Service', () => {
 		// then
 		expect(dataSetId).toBe(expectedResult);
 	}));
+
+	it('should get datastore filled form by dataset id', inject(($rootScope, RestURLs, ImportRestService) => {
+		// given
+		const datasetId = '123-abc-456';
+		const expectedResult = { jsonSchema: {}, uiSchema: {}, properties: {} };
+
+		$httpBackend
+			.expectGET(`${RestURLs.tcompUrl}/datasets/${datasetId}/datastore/properties`)
+			.respond(200, expectedResult);
+
+		// when
+		let datastoreForm = null;
+		ImportRestService.getDatastoreFormByDatasetId(datasetId)
+			.then((response) => {
+				datastoreForm = response.data;
+			});
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		// then
+		expect(datastoreForm).toEqual(expectedResult);
+	}));
 });

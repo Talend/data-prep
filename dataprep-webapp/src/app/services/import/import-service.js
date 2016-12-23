@@ -445,4 +445,33 @@ export default class ImportService {
 					});
 			});
 	}
+
+
+	/**
+	 * @ngdoc method
+	 * @name getDatastoreFormByDatasetId
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Get datastore form for a dataset id
+	 * @returns {Promise} The POST call promise
+	 */
+	getDatastoreFormByDatasetId(datasetId, formData) {
+		return this.manageLoader(
+			this.ImportRestService.getDatastoreFormByDatasetId,
+			[datasetId, formData]
+		);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name editDataset
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Edit dataset for a datastore
+	 * @returns {Promise} The POST call promise
+	 */
+	editDataset(datastoreId, datasetId, formData) {
+		return this.manageLoader(
+			this.ImportRestService.editDataset,
+			[datastoreId, datasetId, formData]
+		);
+	}
 }

@@ -30,7 +30,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
 /**
- * Command that retrieves preparation details (NOT the content !)
+ * Command that retrieves the non consolidated (actions are not retrieved) preparation (NOT the content!)
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)

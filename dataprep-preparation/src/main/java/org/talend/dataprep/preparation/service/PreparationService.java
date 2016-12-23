@@ -835,7 +835,7 @@ public class PreparationService {
      * @return The preparation with the provided id
      * @throws TDPException when no preparation has the provided id
      */
-    public Preparation getPreparation(final String id) {
+    Preparation getPreparation(final String id) {
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation == null) {
             log.error("Preparation #{} does not exist", id);

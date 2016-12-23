@@ -168,6 +168,7 @@ export function StateService(RouteStateService, routeState,
 		// import
 		showImport: ImportStateService.showImport,
 		hideImport: ImportStateService.hideImport,
+		setCurrentImportItem: ImportStateService.setCurrentImportItem,
 
 		// export
 		setExportTypes: ExportStateService.setExportTypes,

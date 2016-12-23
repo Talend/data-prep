@@ -11,21 +11,15 @@
 
  ============================================================================*/
 
-const HomeComponent = {
-	template: `
-		<layout>
-			<ui-view name="home-content"></ui-view>
-		</layout>
+import template from './dataset-edit.html';
 
-		<about></about>
-		<dataset-xls-preview></dataset-xls-preview>
-		<dataset-editor></dataset-editor>
-		<folder-creator></folder-creator>
-		<preparation-copy-move></preparation-copy-move>
-		<preparation-creator></preparation-creator>
-		<insertion-home></insertion-home>
-		<dataset-progress></dataset-progress>
-	`,
+const DatasetEditComponent = {
+	templateUrl: template,
+	controller(state) {
+		'ngInject';
+
+		this.state = state;
+	},
 };
 
-export default HomeComponent;
+export default DatasetEditComponent;

@@ -13,6 +13,7 @@
 
 import angular from 'angular';
 import ABOUT_MODULE from '../about/about-module';
+import DATASET_EDIT_MODULE from '../dataset/edit/dataset-edit.module';
 import DATASET_HEADER_MODULE from '../dataset/header/dataset-header-module';
 import DATASET_LIST_MODULE from '../dataset/list/dataset-list-module';
 import DATASET_PROGRESS_MODULE from '../dataset/progress/dataset-progress-module';
@@ -48,6 +49,7 @@ export default MODULE_NAME;
  * @description This module contains the home page of the app.
  * @requires talend.about
  * @requires talend.widget
+ * @requires data-prep.dataset-edit
  * @requires data-prep.dataset-upload-list
  * @requires data-prep.dataset-header
  * @requires data-prep.dataset-list
@@ -67,6 +69,7 @@ angular.module(MODULE_NAME,
 	[
 		ABOUT_MODULE,
 		DATASET_UPDLOAD_LIST_MODULE,
+		DATASET_EDIT_MODULE,
 		DATASET_HEADER_MODULE,
 		DATASET_LIST_MODULE,
 		DATASET_PROGRESS_MODULE,

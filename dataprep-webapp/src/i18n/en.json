@@ -161,6 +161,9 @@
   "DATASTORE_TEST_CONNECTION": "Test connection",
   "DATASTORE_CONNECTION_SUCCESSFUL": "Connection successful",
 
+  "_comment": "Edit datasets",
+  "EDIT_DATASET": "Edit dataset properties",
+
   "_comment": "Common",
   "LOADING": "Loading...",
   "PROCESSING": "Processing",

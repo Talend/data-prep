@@ -8,16 +8,17 @@
  ============================================================================*/
 
 export const importState = {
-	visible: false,
-	importTypes: [],
 	importItem: null,
+	importTypes: [],
+	visible: false,
 };
 
 export function ImportStateService() {
 	return {
 		hideImport,
+		setCurrentImportItem,
+		setImportTypes,
 		showImport,
-		setVisible,
 	};
 
 	function showImport() {
@@ -28,8 +29,7 @@ export function ImportStateService() {
 		importState.visible = false;
 	}
 
-	function setVisible(importItem) {
+	function setCurrentImportItem(importItem) {
 		importState.importItem = importItem;
-		importState.visible = true;
 	}
 }

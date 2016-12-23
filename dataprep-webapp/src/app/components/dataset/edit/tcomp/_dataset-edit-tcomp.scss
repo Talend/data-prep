@@ -1,0 +1,76 @@
+.tcomp {
+	fieldset {
+		input,
+		textarea {
+			// Material-UI deals by itself with focus style
+			&,
+			&:focus {
+				box-shadow: none;
+			}
+		}
+	}
+
+	.form-actions {
+		display: flex;
+		justify-content: space-between;
+		margin: auto;
+		padding: 10px 0;
+		width: 75%;
+	}
+
+	.datastore,
+	.dataset {
+		text-align: center;
+
+		legend,
+		.field-description,
+		fieldset > div > div {
+			text-align: left;
+		}
+
+		fieldset legend {
+			display: none;
+		}
+
+		fieldset {
+			margin: 0 auto;
+			width: 75%;
+		}
+	}
+
+	.datastore {
+		&.success {
+			position: relative;
+
+			&:before,
+			&:after {
+				content: '';
+				position: absolute;
+				top: -5px;
+				right: -5px;
+				bottom: -5px;
+				left: -5px;
+			}
+
+			&:before {
+				background: white;
+				border-radius: 8px;
+				opacity: .9;
+				z-index: 998;
+			}
+
+			&:after {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				content: attr(data-success-msg);
+				color: $limeade;
+				z-index: 999;
+			}
+		}
+
+		.form-actions {
+			justify-content: flex-end;
+		}
+	}
+}

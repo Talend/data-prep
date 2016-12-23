@@ -126,13 +126,18 @@ export default class DatasetActionsService {
 		}
 		case '@@dataset/UPDATE': {
 			const { payload } = action;
-			const modelType = payload.model && payload.model.type;
-			if (modelType && modelType.indexOf('tcomp') > -1) {
-				this.StateService[payload.method](payload.model);
+			this.$document[0].getElementById('inputUpdateDataset').click();
+			this.StateService.setDatasetToUpdate(payload.model);
+			break;
+		}
+		case '@@dataset/UPDATE_TCOMP': {
+			const { payload } = action;
+			if (payload.model) {
+				this.StateService.setCurrentImportItem(payload.model);
+				this.StateService.showImport();
 			}
 			else {
-				this.$document[0].getElementById('inputUpdateDataset').click();
-				this.StateService.setDatasetToUpdate(payload.model);
+				this.MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 			}
 			break;
 		}

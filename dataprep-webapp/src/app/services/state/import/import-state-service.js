@@ -9,12 +9,15 @@
 
 export const importState = {
 	visible: false,
+	importTypes: [],
+	importItem: null,
 };
 
 export function ImportStateService() {
 	return {
 		hideImport,
 		showImport,
+		setVisible,
 	};
 
 	function showImport() {
@@ -23,5 +26,10 @@ export function ImportStateService() {
 
 	function hideImport() {
 		importState.visible = false;
+	}
+
+	function setVisible(importItem) {
+		importState.importItem = importItem;
+		importState.visible = true;
 	}
 }

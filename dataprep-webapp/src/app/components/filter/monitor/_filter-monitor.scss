@@ -15,17 +15,17 @@
   @include display(flex);
   @include justify-content(space-between);
 
+  .filters {
+    font-weight: bold;
+    padding-right: 10px;
+  }
+
   #filter-monitor-left {
     @include display(flex);
     @include align-items(center);
 
     .checkbox {
       margin: 0;
-    }
-
-    .filters {
-      font-weight: bold;
-      padding-right: 10px;
     }
   }
 

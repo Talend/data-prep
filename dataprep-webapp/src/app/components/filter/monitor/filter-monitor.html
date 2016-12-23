@@ -15,11 +15,11 @@
 
 <div id="filter-monitor">
     <div id="filter-monitor-left"
-         class="pull-left"
-         ng-if="filterMonitorCtrl.filters.length">
+         class="pull-left">
         <span class="filters" translate-once="FILTERS"></span>
         <label class="label-switch"
-               title="{{::'TOOGLE_ALL_FILTERS' | translate}}">
+               title="{{::'TOOGLE_ALL_FILTERS' | translate}}"
+               ng-if="filterMonitorCtrl.filters.length">
             <input type="checkbox"
                    ng-model="filterMonitorCtrl.state"
                    ng-change="filterMonitorCtrl.onToogle()"/>

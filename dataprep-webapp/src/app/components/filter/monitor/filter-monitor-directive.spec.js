@@ -22,6 +22,7 @@ describe('Filter monitor directive', function () {
 
     beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
         $translateProvider.translations('en', {
+            FILTERS: 'Filters',
             NB_LINES_MATCHING_FILTERS: '{{percentage}}% of lines are matching your filter(s)',
         });
         $translateProvider.preferredLanguage('en');
@@ -52,6 +53,14 @@ describe('Filter monitor directive', function () {
     });
 
     describe('render', function () {
+        it('should render filters label', function () {
+            //when
+            createElement();
+
+            //then
+            expect(element.find('#filter-monitor-left').text().trim()).toBe('Filters');
+        });
+
         it('should NOT render "remove all" icon when filters are empty', function () {
             //given
             scope.filters = [];

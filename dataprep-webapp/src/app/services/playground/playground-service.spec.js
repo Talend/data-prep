@@ -66,8 +66,8 @@ describe('Playground Service', () => {
     }));
 
     beforeEach(inject(($q, $state, StateService, DatasetService, RecipeService, DatagridService,
-                       PreparationService, TransformationCacheService, StorageService,
-                       HistoryService, PreviewService, FilterService, StatisticsService) => {
+                       PreparationService, TransformationCacheService,
+                       HistoryService, PreviewService, FilterService) => {
         stateMock.playground.preparationName = '';
         createdPreparation = {
             id: '32cd7869f8426465e164ab85',
@@ -98,8 +98,6 @@ describe('Playground Service', () => {
         spyOn(StateService, 'hideRecipe').and.returnValue();
         spyOn(TransformationCacheService, 'invalidateCache').and.returnValue();
         spyOn(FilterService, 'initFilters').and.returnValue();
-        spyOn(StatisticsService, 'updateFilteredStatistics').and.returnValue();
-        spyOn(StorageService, 'saveFilter').and.returnValue();
     }));
 
     describe('update preparation', () => {
@@ -181,11 +179,10 @@ describe('Playground Service', () => {
         };
         let assertNewPreparationInitialization;
 
-        beforeEach(inject(($rootScope, TransformationCacheService, StatisticsService,
-                           HistoryService, FilterService, StorageService,
+        beforeEach(inject(($rootScope, TransformationCacheService,
+                           HistoryService, FilterService,
                            PreviewService, StateService) => {
             spyOn($rootScope, '$emit').and.returnValue();
-            stateMock.playground.dataset = { id: 'datasetId' };
             assertNewPreparationInitialization = () => {
                 expect(StateService.resetPlayground).toHaveBeenCalled();
                 expect(StateService.setCurrentDataset).toHaveBeenCalledWith(dataset);
@@ -195,8 +192,6 @@ describe('Playground Service', () => {
                 expect(HistoryService.clear).toHaveBeenCalled();
                 expect(PreviewService.reset).toHaveBeenCalledWith(false);
                 expect(FilterService.initFilters).toHaveBeenCalled();
-                expect(StatisticsService.updateFilteredStatistics).toHaveBeenCalled();
-                expect(StorageService.saveFilter).toHaveBeenCalled();
             };
         }));
 
@@ -411,7 +406,6 @@ describe('Playground Service', () => {
                 id: '6845521254541',
                 dataset: { id: '1' },
             };
-            stateMock.playground.preparation = preparation;
 
             // when
             PlaygroundService.load(preparation);
@@ -1608,7 +1602,6 @@ describe('Playground Service', () => {
                 stateMock.playground.recipe.current.steps.push({});
                 return $q.when();
             });
-            stateMock.playground.preparation = { id: 'preparationId' };
         }));
 
         it('should turn on edition mode on dataset playground init', inject(($rootScope, PlaygroundService, StateService) => {

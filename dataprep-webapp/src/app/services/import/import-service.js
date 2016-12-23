@@ -454,10 +454,10 @@ export default class ImportService {
 	 * @description Get datastore form for a dataset id
 	 * @returns {Promise} The POST call promise
 	 */
-	getDatastoreFormByDatasetId(datasetId, formData) {
+	getDatastoreFormByDatasetId(datasetId) {
 		return this.manageLoader(
 			this.ImportRestService.getDatastoreFormByDatasetId,
-			[datasetId, formData]
+			[datasetId]
 		);
 	}
 

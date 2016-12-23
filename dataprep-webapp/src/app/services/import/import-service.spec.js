@@ -371,7 +371,6 @@ describe('Import service', () => {
 	describe('getDatastoreFormByDatasetId', () => {
 		beforeEach(inject(($q, ImportRestService) => {
 			spyOn(ImportRestService, 'getDatastoreFormByDatasetId').and.returnValue($q.when());
-
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
@@ -382,7 +381,7 @@ describe('Import service', () => {
 			ImportService.getDatastoreFormByDatasetId(datasetId);
 
 			// then
-			expect(ImportRestService.createDataset).toHaveBeenCalledWith(datasetId);
+			expect(ImportRestService.getDatastoreFormByDatasetId).toHaveBeenCalledWith(datasetId);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {

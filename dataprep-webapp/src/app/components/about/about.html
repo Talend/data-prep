@@ -48,7 +48,6 @@
             </tbody>
         </table>
 
-        <button class="btn btn-primary" translate-once="MORE" ng-if="!$ctrl.showBuildDetails" ng-click="$ctrl.toggleDetailsDisplay()"></button>
-        <button class="btn btn-primary" translate-once="LESS" ng-if="$ctrl.showBuildDetails" ng-click="$ctrl.toggleDetailsDisplay()"></button>
+        <button class="btn btn-primary" id="toggle-details" translate="{{!$ctrl.showBuildDetails ? 'MORE' : 'LESS'}}" ng-click="$ctrl.toggleDetailsDisplay()"></button>
     </div>
 </talend-modal>

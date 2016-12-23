@@ -66,30 +66,30 @@ export default class DatasetActionsService {
 						'DATASET_CURRENTLY_RENAMING_TITLE',
 						'DATASET_CURRENTLY_RENAMING'
 					);
-					return;
 				}
-
-				if (this.DatasetService.getDatasetByName(cleanName)) {
+				else if (this.DatasetService.getDatasetByName(cleanName)) {
 					this.MessageService.error(
 						'DATASET_NAME_ALREADY_USED_TITLE',
 						'DATASET_NAME_ALREADY_USED'
 					);
-					return;
 				}
+				else {
+					this.renamingList.push(dataset);
 
-				this.renamingList.push(dataset);
-
-				return this.DatasetService.rename(dataset.model, cleanName)
-					.then(() => {
-						this.MessageService.success(
-							'DATASET_RENAME_SUCCESS_TITLE',
-							'DATASET_RENAME_SUCCESS'
-						);
-					})
-					.finally(() => {
-						const index = this.renamingList.indexOf(dataset);
-						this.renamingList.splice(index, 1);
-					});
+					this.DatasetService.rename(dataset.model, cleanName)
+						.then(() => {
+							this.MessageService.success(
+								'DATASET_RENAME_SUCCESS_TITLE',
+								'DATASET_RENAME_SUCCESS'
+							);
+						})
+						.finally(() => {
+							const index = this.renamingList.indexOf(dataset);
+							if (index > -1) {
+								this.renamingList.splice(index, 1);
+							}
+						});
+				}
 			}
 			break;
 		}

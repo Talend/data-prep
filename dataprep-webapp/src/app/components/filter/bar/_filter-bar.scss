@@ -26,12 +26,6 @@
     position: relative;
     width: 100%;
 
-    .search {
-      @include flex-grow(0);
-      @include flex-shrink(0);
-      @include flex-basis(150px);
-    }
-
     .list {
       @include flex-grow(1);
       @include flex-shrink(1);

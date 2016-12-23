@@ -77,6 +77,14 @@ describe('Filter monitor directive', function () {
             expect(statsElement.attr('title')).toBe('25% of lines are matching your filter(s)');
             expect(statsElement.text().trim()).toBe('50/200');
         });
+
+        it('should render filter search', () => {
+            //when
+            createElement();
+
+            //then
+            expect(element.find('filter-search').length).toBe(1);
+        });
     });
 
     describe('actions', function () {

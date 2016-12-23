@@ -12,6 +12,9 @@
   ============================================================================*/
 
 #filter-monitor {
+  @include display(flex);
+  @include justify-content(space-between);
+
   #filter-monitor-left {
     @include display(flex);
     @include align-items(center);
@@ -24,6 +27,12 @@
       font-weight: bold;
       padding-right: 10px;
     }
+  }
+
+  .search {
+    @include flex-grow(0);
+    @include flex-shrink(0);
+    @include flex-basis(200px);
   }
 
   #filter-monitor-right {

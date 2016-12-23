@@ -83,14 +83,6 @@ describe('Filter bar directive', () => {
         expect(FilterManagerService.removeAllFilters).toHaveBeenCalled();
     }));
 
-    it('should render filter search', () => {
-        //when
-        createElement();
-
-        //then
-        expect(element.find('filter-search').length).toBe(1);
-    });
-
     it('should render filter list', () => {
         //when
         createElement();

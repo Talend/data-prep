@@ -11,30 +11,30 @@
 
   ============================================================================*/
 
-describe('Filter search directive', function () {
+describe('Filter search directive', () => {
     'use strict';
 
-    var scope;
-    var createElement;
-    var element;
+    let scope;
+    let createElement;
+    let element;
 
     beforeEach(angular.mock.module('data-prep.filter-search'));
 
-    beforeEach(inject(function ($rootScope, $compile) {
+    beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
-        createElement = function () {
+        createElement = () => {
             element = angular.element('<filter-search></filter-search>');
             $compile(element)(scope);
             scope.$digest();
         };
     }));
 
-    afterEach(function () {
+    afterEach(() => {
         scope.$destroy();
         element.remove();
     });
 
-    it('should render input with auto-complete', function () {
+    it('should render input with auto-complete', () => {
         //when
         createElement();
 
@@ -43,22 +43,22 @@ describe('Filter search directive', function () {
         expect(element.find('input[type="search"]').length).toBe(1);
     });
 
-    it('should stop propagation on ESC key down', function () {
+    it('should stop propagation on ESC key down', () => {
         //given
         createElement();
 
-        var bodyEscEvent = false;
-        var escEventListener = function (event) {
+        let bodyEscEvent = false;
+        const escEventListener = (event) => {
             if (event.keyCode === 27) {
                 bodyEscEvent = true;
             }
         };
 
-        var body = angular.element('body');
+        const body = angular.element('body');
         body.append(element);
         body.keydown(escEventListener);
 
-        var event = angular.element.Event('keydown');
+        const event = angular.element.Event('keydown');
         event.keyCode = 27;
 
         //when
@@ -72,22 +72,22 @@ describe('Filter search directive', function () {
         body.off('keydown', escEventListener);
     });
 
-    it('should propagate on key down other than ESC', function () {
+    it('should propagate on key down other than ESC', () => {
         //given
         createElement();
 
-        var bodyEnterEvent = false;
-        var escEventListener = function (event) {
+        let bodyEnterEvent = false;
+        const escEventListener = (event) => {
             if (event.keyCode === 13) {
                 bodyEnterEvent = true;
             }
         };
 
-        var body = angular.element('body');
+        const body = angular.element('body');
         body.append(element);
         body.keydown(escEventListener);
 
-        var event = angular.element.Event('keydown');
+        const event = angular.element.Event('keydown');
         event.keyCode = 13;
 
         //when
@@ -101,12 +101,12 @@ describe('Filter search directive', function () {
         body.off('keydown', escEventListener);
     });
 
-    it('should empty the input filter search', function () {
+    it('should empty the input filter search', () => {
         //given
         createElement();
-        var ctrl = element.controller('filterSearch');
+        const ctrl = element.controller('filterSearch');
         ctrl.filterSearch = 'toto';
-        var event2 = angular.element.Event('blur');
+        const event2 = angular.element.Event('blur');
 
         //when
         element.find('input[type="search"]').eq(0).trigger(event2);

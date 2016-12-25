@@ -112,7 +112,7 @@ export default function FilterManagerService($timeout, state, StatisticsService,
 	 * @description Wrapper on addFilter method that triggers a digest at the end (use of $timeout)
 	 */
 	function addFilterAndDigest(type, colId, colName, args, removeFilterFn, keyName) {
-		$timeout(addFilter.bind(service, type, colId, colName, args, removeFilterFn, keyName));
+		$timeout(() => this.addFilter(type, colId, colName, args, removeFilterFn, keyName));
 	}
 
 	/**

@@ -12,38 +12,38 @@
   ============================================================================*/
 
 #filter-monitor {
-  @include display(flex);
-  @include justify-content(space-between);
+	@include display(flex);
+	@include justify-content(space-between);
 
-  .filters {
-    font-weight: bold;
-    padding-right: 10px;
-  }
+	#filter-monitor-left {
+		@include display(flex);
+		@include align-items(center);
 
-  #filter-monitor-left {
-    @include display(flex);
-    @include align-items(center);
+		.checkbox {
+			margin: 0;
+		}
 
-    .checkbox {
-      margin: 0;
-    }
-  }
+		.filters {
+			font-weight: bold;
+			padding-right: 10px;
+		}
+	}
 
-  .search {
-    @include flex-grow(0);
-    @include flex-shrink(0);
-    @include flex-basis(200px);
-  }
+	.search {
+		@include flex-grow(0);
+		@include flex-shrink(0);
+		@include flex-basis(200px);
+	}
 
-  #filter-monitor-right {
-    #filters-monitor-stats {
-      font-size: 13px;
-      padding-right: 10px;
+	#filter-monitor-right {
+		#filters-monitor-stats {
+			font-size: 13px;
+			padding-right: 10px;
 
-      .nbLines {
-        font-weight: bold;
-        color: $blue;
-      }
-    }
-  }
+			.nbLines {
+				font-weight: bold;
+				color: $blue;
+			}
+		}
+	}
 }

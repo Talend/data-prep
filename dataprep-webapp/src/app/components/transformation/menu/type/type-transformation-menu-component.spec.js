@@ -19,12 +19,9 @@ describe('Transformation menu component', () => {
     let controller;
     let stateMock;
 
-    const types = [
-        { id: 'ANY', name: 'any', labelKey: 'ANY' },
+    const primitiveTypes = [
         { id: 'STRING', name: 'string', labelKey: 'STRING' },
-        { id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
         { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-        { id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
         { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
         { id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
         { id: 'DATE', name: 'date', labelKey: 'DATE' },
@@ -32,14 +29,14 @@ describe('Transformation menu component', () => {
 
     const semanticDomains = [
         {
-            "id": "AIRPORT",
-            "label": "Airport",
-            "frequency": 3.03,
-        },
-        {
             "id": "CITY",
             "label": "City",
             "frequency": 99.24,
+        },
+        {
+            "id": "AIRPORT",
+            "label": "Airport",
+            "frequency": 3.03,
         },
     ];
 
@@ -48,6 +45,10 @@ describe('Transformation menu component', () => {
             playground: {
                 preparation: {
                     id: 'prepId'
+                },
+                grid: {
+                    semanticDomains,
+                    primitiveTypes,
                 },
             },
         };
@@ -63,9 +64,7 @@ describe('Transformation menu component', () => {
         $translateProvider.preferredLanguage('en');
     }));
 
-    beforeEach(inject(($q, $rootScope, $compile, ColumnTypesService) => {
-        spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
-        spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
+    beforeEach(inject(($q, $rootScope, $compile) => {
 
         scope = $rootScope.$new();
         scope.column = {
@@ -160,7 +159,7 @@ describe('Transformation menu component', () => {
             scope.$digest();
 
             // then
-            expect(controller.changeDomain).toHaveBeenCalledWith(semanticDomains[0]); // because of inverse
+            expect(controller.changeDomain).toHaveBeenCalledWith(semanticDomains[1]);
         });
 
         it('should trigger change type process', () => {
@@ -174,7 +173,7 @@ describe('Transformation menu component', () => {
             scope.$digest();
 
             // then
-            expect(controller.changeType).toHaveBeenCalledWith(types[1]);
+            expect(controller.changeType).toHaveBeenCalledWith(primitiveTypes[0]);
         });
     });
 });

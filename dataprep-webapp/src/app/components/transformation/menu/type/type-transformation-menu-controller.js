@@ -15,79 +15,23 @@
  * @ngdoc controller
  * @name data-prep.type-transformation-menu.controller:TypeTransformMenuCtrl
  * @description Type Transformation menu controller.
- * @requires data-prep.services.column-types.service:ColumnTypesService
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.state.constant:state
  * @requires data-prep.services.utils.service:ConverterService
  */
 export default class TypeTransformMenuCtrl {
-	constructor($scope, state, PlaygroundService, ColumnTypesService, ConverterService) {
+	constructor($scope, state, PlaygroundService, ConverterService) {
 		'ngInject';
 
 		this.state = state;
 		this.$scope = $scope;
 		this.PlaygroundService = PlaygroundService;
 		this.ConverterService = ConverterService;
-		this.ColumnTypesService = ColumnTypesService;
 		this.types = [];
-		this.state = state;
 	}
 
 	$onInit() {
-		this.$scope.$watch(() => this.column, this.getTypesAndDomains.bind(this));
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name getTypesAndDomains
-	 * @methodOf data-prep.transformation-menu.controller:TransformMenuCtrl
-	 * @description get the domains then the types of the column
-	 */
-	getTypesAndDomains() {
-		let inventoryType = '';
-		let inventoryId = '';
-		if (this.state.playground.preparation) {
-			inventoryType = 'preparation';
-			inventoryId = this.state.playground.preparation.id;
-		}
-		else {
-			inventoryType = 'dataset';
-			inventoryId = this.state.playground.dataset.id;
-		}
-		this.ColumnTypesService.getColSemanticDomains(inventoryType, inventoryId, this.column.id)
-			.then(this._adaptDomains.bind(this))
-			// should be after setting the currentDomain
-			.then(this._loadPrimitiveTypes.bind(this));
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name _adaptDomains
-	 * @methodOf data-prep.transformation-menu.controller:TransformMenuCtrl
-	 * @description Adapts the semantic domain list for ui.
-	 */
-	_adaptDomains(semanticDomains) {
-		const domains = _.chain(semanticDomains)
-			.filter('id')
-			.sortBy('frequency')
-			.reverse()
-			.value();
-		this.semanticDomains = domains;
-		this._refreshCurrentDomain();
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name _loadPrimitiveTypes
-	 * @methodOf data-prep.transformation-menu.controller:TransformMenuCtrl
-	 * @description load the primitive types
-	 */
-	_loadPrimitiveTypes() {
-		this.ColumnTypesService.getTypes()
-			.then((types) => {
-				const ignoredTypes = ['double', 'numeric', 'any'];
-				this.types = _.filter(types, type => ignoredTypes.indexOf(type.id.toLowerCase()) === -1);
-			});
+		this.$scope.$watch(() => this.column, this._refreshCurrentDomain.bind(this));
 	}
 
 	/**

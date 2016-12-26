@@ -12,7 +12,6 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_COLUMN_TYPES_MODULE from '../../../../services/column-types/column-types-module';
 import SERVICES_PLAYGROUND_MODULE from '../../../../services/playground/playground-module';
 import SERVICES_UTILS_MODULE from '../../../../services/utils/utils-module';
 
@@ -32,7 +31,6 @@ const MODULE_NAME = 'data-prep.type-transformation-menu';
  */
 angular.module(MODULE_NAME,
 	[
-		SERVICES_COLUMN_TYPES_MODULE,
 		SERVICES_PLAYGROUND_MODULE,
 		SERVICES_UTILS_MODULE,
 	])

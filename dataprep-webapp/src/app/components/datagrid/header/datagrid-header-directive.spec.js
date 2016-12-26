@@ -16,6 +16,31 @@ describe('Datagrid header directive', () => {
     let createElement;
     let element;
     let ctrl;
+    let stateMock;
+    const types = [
+        { id: 'ANY', name: 'any', labelKey: 'ANY' },
+        { id: 'STRING', name: 'string', labelKey: 'STRING' },
+        { id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
+        { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+        { id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
+        { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+        { id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+        { id: 'DATE', name: 'date', labelKey: 'DATE' },
+    ];
+
+    const semanticDomains = [
+        {
+            "id": "AIRPORT",
+            "label": "Airport",
+            "frequency": 3.03,
+        },
+        {
+            "id": "CITY",
+            "label": "City",
+            "frequency": 99.24,
+        },
+    ];
+
     const body = angular.element('body');
     const column = {
         id: '0001',
@@ -28,7 +53,23 @@ describe('Datagrid header directive', () => {
         type: 'string',
     };
 
-    beforeEach(angular.mock.module('data-prep.datagrid-header'));
+    beforeEach(angular.mock.module('data-prep.datagrid-header', ($provide) => {
+        stateMock = {
+            playground: {
+                preparation: {
+                    id: 'prepId',
+                },
+            },
+        };
+        $provide.constant('state', stateMock);
+    }));
+
+    beforeEach(inject(($q, StateService, ColumnTypesService) => {
+        spyOn(StateService, 'setSemanticDomains').and.returnValue();
+        spyOn(StateService, 'setPrimitiveTypes').and.returnValue();
+        spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
+        spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
+    }));
 
     beforeEach(inject(($rootScope, $compile, $timeout) => {
         scope = $rootScope.$new(true);

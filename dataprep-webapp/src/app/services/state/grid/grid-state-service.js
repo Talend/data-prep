@@ -19,6 +19,8 @@ export const gridState = {
 	numericColumns: [],
 	columns: [],
 	selectedColumns: [],
+	semanticDomains: [],
+	primitiveTypes: [],
 };
 
 const NUMERIC_TYPES = ['numeric', 'integer', 'double', 'float', 'decimal'];
@@ -34,6 +36,8 @@ export function GridStateService() {
 
 		changeRangeSelection,
 		setColumnFocus,
+		setSemanticDomains,
+		setPrimitiveTypes,
 		setData,
 		setFilter,
 		setGridSelection,
@@ -138,6 +142,28 @@ export function GridStateService() {
 	 */
 	function setColumnFocus(columnId) {
 		gridState.columnFocus = columnId;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setSemanticDomains
+	 * @methodOf data-prep.services.state.service:GridStateService
+	 * @param {Array} domains the semantic domains of the column
+	 * @description Sets the column semantic domains
+	 */
+	function setSemanticDomains(domains) {
+		gridState.semanticDomains = domains;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setPrimitiveTypes
+	 * @methodOf data-prep.services.state.service:GridStateService
+	 * @param {Array} types the primitive types of the column
+	 * @description Sets the primitive types
+	 */
+	function setPrimitiveTypes(types) {
+		gridState.primitiveTypes = types;
 	}
 
 	/**
@@ -328,6 +354,8 @@ export function GridStateService() {
 	function reset() {
 		gridState.columnFocus = null;
 		gridState.selectedColumns = [];
+		gridState.semanticDomains = [];
+		gridState.primitiveTypes = [];
 		gridState.selectedLine = null;
 		gridState.filteredRecords = [];
 		gridState.filteredOccurences = {};

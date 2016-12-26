@@ -12,328 +12,406 @@
  ============================================================================*/
 
 describe('Datagrid header controller', () => {
-    'use strict';
+	'use strict';
 
-    let createController;
-    let scope;
-    const column = {
-        id: '0001',
-        name: 'Original name',
-        type: 'string',
-    };
+	let createController;
+	let scope;
+	let stateMock;
 
-    const transformationsMock = () => {
-        const transformations = [
-            {
-                name: 'uppercase',
-                category: 'case',
-                actionScope: [],
-                items: null,
-                parameters: null,
-            },
-            {
-                name: 'rename',
-                category: 'column_metadata',
-                actionScope: ['column_metadata'],
-                items: null,
-                parameters: null,
-            },
-            {
-                name: 'lowercase',
-                category: 'case',
-                actionScope: [],
-                items: null,
-                parameters: null,
-            },
-            {
-                name: 'withParam',
-                category: 'case',
-                actionScope: [],
-                items: null,
-                parameters: [
-                    {
-                        name: 'param',
-                        type: 'string',
-                        default: '.',
-                        inputType: 'text',
-                    },
-                ],
-            },
-            {
-                name: 'split',
-                category: 'column_metadata',
-                actionScope: ['column_metadata'],
-                parameters: null,
-                items: [
-                    {
-                        name: 'mode',
-                        values: [
-                            { name: 'noparam' },
-                            {
-                                name: 'regex',
-                                parameters: [
-                                    {
-                                        name: 'regexp',
-                                        type: 'string',
-                                        default: '.',
-                                        inputType: 'text',
-                                    },
-                                ],
-                            },
-                            {
-                                name: 'index',
-                                parameters: [
-                                    {
-                                        name: 'index',
-                                        type: 'integer',
-                                        default: '5',
-                                        inputType: 'number',
-                                    },
-                                ],
-                            },
-                            {
-                                name: 'threeParams',
-                                parameters: [
-                                    {
-                                        name: 'index',
-                                        type: 'numeric',
-                                        default: '5',
-                                        inputType: 'number',
-                                    },
-                                    {
-                                        name: 'index2',
-                                        type: 'float',
-                                        default: '5',
-                                        inputType: 'number',
-                                    },
-                                    {
-                                        name: 'index3',
-                                        type: 'double',
-                                        default: '5',
-                                        inputType: 'number',
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ];
-        return {
-            allTransformations: transformations,
-        };
-    };
+	const types = [
+		{ id: 'ANY', name: 'any', labelKey: 'ANY' },
+		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
+		{ id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
+		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+		{ id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
+		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+	];
 
-    beforeEach(angular.mock.module('data-prep.datagrid-header'));
+	const semanticDomains = [
+		{
+			"id": "AIRPORT",
+			"label": "Airport",
+			"frequency": 3.03,
+		},
+		{
+			"id": "CITY",
+			"label": "City",
+			"frequency": 99.24,
+		},
+	];
 
-    beforeEach(inject(($rootScope, $controller) => {
-        scope = $rootScope.$new();
+	const column = {
+		id: '0001',
+		name: 'Original name',
+		type: 'string',
+	};
 
-        createController = () => {
-            const ctrlFn = $controller('DatagridHeaderCtrl', {
-                $scope: scope,
-            }, true);
+	const transformationsMock = () => {
+		const transformations = [
+			{
+				name: 'uppercase',
+				category: 'case',
+				actionScope: [],
+				items: null,
+				parameters: null,
+			},
+			{
+				name: 'rename',
+				category: 'column_metadata',
+				actionScope: ['column_metadata'],
+				items: null,
+				parameters: null,
+			},
+			{
+				name: 'lowercase',
+				category: 'case',
+				actionScope: [],
+				items: null,
+				parameters: null,
+			},
+			{
+				name: 'withParam',
+				category: 'case',
+				actionScope: [],
+				items: null,
+				parameters: [
+					{
+						name: 'param',
+						type: 'string',
+						default: '.',
+						inputType: 'text',
+					},
+				],
+			},
+			{
+				name: 'split',
+				category: 'column_metadata',
+				actionScope: ['column_metadata'],
+				parameters: null,
+				items: [
+					{
+						name: 'mode',
+						values: [
+							{ name: 'noparam' },
+							{
+								name: 'regex',
+								parameters: [
+									{
+										name: 'regexp',
+										type: 'string',
+										default: '.',
+										inputType: 'text',
+									},
+								],
+							},
+							{
+								name: 'index',
+								parameters: [
+									{
+										name: 'index',
+										type: 'integer',
+										default: '5',
+										inputType: 'number',
+									},
+								],
+							},
+							{
+								name: 'threeParams',
+								parameters: [
+									{
+										name: 'index',
+										type: 'numeric',
+										default: '5',
+										inputType: 'number',
+									},
+									{
+										name: 'index2',
+										type: 'float',
+										default: '5',
+										inputType: 'number',
+									},
+									{
+										name: 'index3',
+										type: 'double',
+										default: '5',
+										inputType: 'number',
+									},
+								],
+							},
+						],
+					},
+				],
+			},
+		];
+		return {
+			allTransformations: transformations,
+		};
+	};
 
-            ctrlFn.instance.column = column;
-            const ctrl = ctrlFn();
-            scope.$digest();
-            return ctrl;
-        };
-    }));
+	beforeEach(angular.mock.module('data-prep.datagrid-header', ($provide) => {
+		stateMock = {
+			playground: {
+				preparation: {
+					id: 'prepId',
+				},
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-    describe('with transformation list success', () => {
-        beforeEach(inject(($q, TransformationService) => {
-            spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
-        }));
+	beforeEach(inject(($rootScope, $controller) => {
+		scope = $rootScope.$new();
 
-        it('should filter and init only "column_metadata" category', inject((TransformationService) => {
-            //given
-            const ctrl = createController();
+		createController = () => {
+			const ctrlFn = $controller('DatagridHeaderCtrl', {
+				$scope: scope,
+			}, true);
 
-            //when
-            ctrl.initTransformations();
-            scope.$digest();
+			ctrlFn.instance.column = column;
+			const ctrl = ctrlFn();
+			scope.$digest();
+			return ctrl;
+		};
+	}));
 
-            //then
-            expect(TransformationService.getTransformations).toHaveBeenCalledWith('column', column);
-            expect(ctrl.transformations.length).toBe(2);
-            expect(ctrl.transformations[0].name).toBe('rename');
-            expect(ctrl.transformations[1].name).toBe('split');
-        }));
+	describe('init transformation', () => {
 
-        it('should not get transformations if transformations are already initiated', inject((TransformationService) => {
-            //given
-            let ctrl = createController();
-            ctrl.initTransformations();
-            scope.$digest();
+		beforeEach(inject(($q, StateService, ColumnTypesService) => {
+			spyOn(StateService, 'setSemanticDomains').and.returnValue();
+			spyOn(StateService, 'setPrimitiveTypes').and.returnValue();
+			spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
+			spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
+		}));
 
-            //when
-            ctrl.initTransformations();
-            scope.$digest();
+		describe('with transformation list success', () => {
+			beforeEach(inject(($q, TransformationService) => {
+				spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
+			}));
 
-            //then
-            expect(TransformationService.getTransformations.calls.count()).toBe(1);
-        }));
+			it('should filter and init only "column_metadata" category', inject((TransformationService) => {
+				//given
+				const ctrl = createController();
 
-        it('should retrieve transformation list when a column changes', inject((TransformationService) => {
-            //given
-            let ctrl = createController();
-            ctrl.initTransformations();
-            scope.$digest();
+				//when
+				ctrl.initTransformations();
+				scope.$digest();
 
-            ctrl.column = {
-                id: '0001',
-                name: 'New name',
-                type: 'string',
-            };
-            scope.$digest();
+				//then
+				expect(TransformationService.getTransformations).toHaveBeenCalledWith('column', column);
+				expect(ctrl.transformations.length).toBe(2);
+				expect(ctrl.transformations[0].name).toBe('rename');
+				expect(ctrl.transformations[1].name).toBe('split');
+			}));
 
-            //when
-            ctrl.initTransformations();
+			it('should not get transformations if transformations are being fetched', inject((TransformationService) => {
+				//given
+				let ctrl = createController();
+				ctrl.initTransformations();
 
-            //then
-            expect(TransformationService.getTransformations.calls.count()).toBe(2);
-        }));
-    });
+				//when
+				ctrl.initTransformations();
 
-    describe('with transformation list error', () => {
-        beforeEach(inject(($q, TransformationService) => {
-            spyOn(TransformationService, 'getTransformations').and.returnValue($q.reject('server error'));
-        }));
+				//then
+				expect(TransformationService.getTransformations.calls.count()).toBe(1);
+			}));
+		});
 
-        it('should change inProgress and error flags', () => {
-            //given
-            const ctrl = createController();
-            expect(ctrl.transformationsRetrieveError).toBeFalsy();
-            expect(ctrl.initTransformationsInProgress).toBeFalsy();
+		describe('with transformation list error', () => {
+			beforeEach(inject(($q, TransformationService) => {
+				spyOn(TransformationService, 'getTransformations').and.returnValue($q.reject('server error'));
+			}));
 
-            ctrl.transformationsRetrieveError = true;
+			it('should change inProgress and error flags', () => {
+				//given
+				const ctrl = createController();
+				expect(ctrl.transformationsRetrieveError).toBeFalsy();
+				expect(ctrl.initTransformationsInProgress).toBeFalsy();
 
-            //when
-            ctrl.initTransformations();
-            expect(ctrl.initTransformationsInProgress).toBeTruthy();
-            expect(ctrl.transformationsRetrieveError).toBeFalsy();
-            scope.$digest();
+				ctrl.transformationsRetrieveError = true;
 
-            //then
-            expect(ctrl.transformationsRetrieveError).toBeTruthy();
-            expect(ctrl.initTransformationsInProgress).toBeFalsy();
-        });
-    });
+				//when
+				ctrl.initTransformations();
+				expect(ctrl.initTransformationsInProgress).toBeTruthy();
+				expect(ctrl.transformationsRetrieveError).toBeFalsy();
+				scope.$digest();
 
-    describe('update column name', () => {
-        beforeEach(inject(($q, PlaygroundService) => {
-            spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when(true));
-        }));
+				//then
+				expect(ctrl.transformationsRetrieveError).toBeTruthy();
+				expect(ctrl.initTransformationsInProgress).toBeFalsy();
+			});
+		});
 
-        it('should update column name', inject((PlaygroundService) => {
-            //given
-            const ctrl = createController();
-            ctrl.newName = 'new name';
+		describe('fetch semantic domains & primitive types', () => {
+			it('should reset semantic domains and types in the state: when preparation', inject((StateService, ColumnTypesService) => {
+				// given
+				const ctrl = createController();
 
-            //when
-            ctrl.updateColumnName();
+				// when
+				ctrl.initTransformations();
 
-            //then
-            const expectedParams = [{
-                action: 'rename_column',
-                parameters: {
-                    new_column_name: 'new name',
-                    scope: 'column',
-                    column_id: '0001',
-                    column_name: 'Original name',
-                }
-            }];
+				//then
+				expect(StateService.setSemanticDomains).toHaveBeenCalledWith([]);
+				expect(StateService.setPrimitiveTypes).toHaveBeenCalledWith([]);
+				expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('preparation', 'prepId', ctrl.column.id);
+				expect(ColumnTypesService.getTypes).toHaveBeenCalled();
+			}));
 
-            expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
-        }));
+			it('should reset semantic domains and types in the state: when dataset', inject((StateService, ColumnTypesService) => {
+				// given
+				const ctrl = createController();
+				stateMock.playground.preparation = null;
+				stateMock.playground.dataset = {
+					id: 'datasetId',
+				};
 
-        it('should turn off edition mode after name update', () => {
-            //given
-            const ctrl = createController();
-            ctrl.newName = 'new name';
-            ctrl.isEditMode = true;
+				// when
+				ctrl.initTransformations();
 
-            //when
-            ctrl.updateColumnName();
-            scope.$apply();
+				//then
+				expect(StateService.setSemanticDomains).toHaveBeenCalledWith([]);
+				expect(StateService.setPrimitiveTypes).toHaveBeenCalledWith([]);
+				expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('dataset', 'datasetId', ctrl.column.id);
+				expect(ColumnTypesService.getTypes).toHaveBeenCalled();
+			}));
 
-            //then
-            expect(ctrl.isEditMode).toBe(false);
-        });
+			it('should set fetched semantic domains and types in the state', inject(($q, StateService, TransformationService) => {
+				// given
+				const ctrl = createController();
+				const expectedTypes = [
+					{ id: 'STRING', name: 'string', labelKey: 'STRING' },
+					{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+					{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+					{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+					{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+				];
+				spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
 
-        it('should return true when name has changed and is not empty', () => {
-            //given
-            const ctrl = createController();
-            ctrl.newName = 'new name';
+				// when
+				ctrl.initTransformations();
+				scope.$digest();
 
-            //when
-            const hasChanged = ctrl.nameHasChanged();
+				//then
+				expect(StateService.setSemanticDomains).toHaveBeenCalledWith(semanticDomains.reverse());
+				expect(StateService.setPrimitiveTypes).toHaveBeenCalledWith(expectedTypes);
+			}));
+		});
+	});
 
-            //then
-            expect(hasChanged).toBe(true);
-        });
+	describe('update column name', () => {
+		beforeEach(inject(($q, PlaygroundService) => {
+			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when(true));
+		}));
 
-        it('should return false when name is unchanged', () => {
-            //given
-            const ctrl = createController();
-            ctrl.setEditMode(true);
-            ctrl.newName = 'Original name';
+		it('should update column name', inject((PlaygroundService) => {
+			//given
+			const ctrl = createController();
+			ctrl.newName = 'new name';
 
-            //when
-            const hasChanged = ctrl.nameHasChanged();
+			//when
+			ctrl.updateColumnName();
 
-            //then
-            expect(hasChanged).toBeFalsy();
-        });
+			//then
+			const expectedParams = [{
+				action: 'rename_column',
+				parameters: {
+					new_column_name: 'new name',
+					scope: 'column',
+					column_id: '0001',
+					column_name: 'Original name',
+				}
+			}];
 
-        it('should return false when name is falsy', () => {
-            //given
-            const ctrl = createController();
-            ctrl.setEditMode(true);
-            ctrl.newName = '';
+			expect(PlaygroundService.appendStep).toHaveBeenCalledWith(expectedParams);
+		}));
 
-            //when
-            const hasChanged = ctrl.nameHasChanged();
+		it('should turn off edition mode after name update', () => {
+			//given
+			const ctrl = createController();
+			ctrl.newName = 'new name';
+			ctrl.isEditMode = true;
 
-            //then
-            expect(hasChanged).toBeFalsy();
-        });
+			//when
+			ctrl.updateColumnName();
+			scope.$apply();
 
-        it('should update edition mode to true', () => {
-            //given
-            const ctrl = createController();
-            expect(ctrl.isEditMode).toBeFalsy();
+			//then
+			expect(ctrl.isEditMode).toBe(false);
+		});
 
-            //when
-            ctrl.setEditMode(true);
+		it('should return true when name has changed and is not empty', () => {
+			//given
+			const ctrl = createController();
+			ctrl.newName = 'new name';
 
-            //then
-            expect(ctrl.isEditMode).toBeTruthy();
-        });
+			//when
+			const hasChanged = ctrl.nameHasChanged();
 
-        it('should update edition mode to false', () => {
-            //given
-            const ctrl = createController();
-            ctrl.isEditMode = true;
+			//then
+			expect(hasChanged).toBe(true);
+		});
 
-            //when
-            ctrl.setEditMode(false);
+		it('should return false when name is unchanged', () => {
+			//given
+			const ctrl = createController();
+			ctrl.setEditMode(true);
+			ctrl.newName = 'Original name';
 
-            //then
-            expect(ctrl.isEditMode).toBe(false);
-        });
+			//when
+			const hasChanged = ctrl.nameHasChanged();
 
-        it('should reset name when edition mode is set to true', () => {
-            //given
-            const ctrl = createController();
-            ctrl.newName = 'new name';
+			//then
+			expect(hasChanged).toBeFalsy();
+		});
 
-            //when
-            ctrl.setEditMode(true);
+		it('should return false when name is falsy', () => {
+			//given
+			const ctrl = createController();
+			ctrl.setEditMode(true);
+			ctrl.newName = '';
 
-            //then
-            expect(ctrl.newName).toBe('Original name');
-        });
-    });
+			//when
+			const hasChanged = ctrl.nameHasChanged();
+
+			//then
+			expect(hasChanged).toBeFalsy();
+		});
+
+		it('should update edition mode to true', () => {
+			//given
+			const ctrl = createController();
+			expect(ctrl.isEditMode).toBeFalsy();
+
+			//when
+			ctrl.setEditMode(true);
+
+			//then
+			expect(ctrl.isEditMode).toBeTruthy();
+		});
+
+		it('should update edition mode to false', () => {
+			//given
+			const ctrl = createController();
+			ctrl.isEditMode = true;
+
+			//when
+			ctrl.setEditMode(false);
+
+			//then
+			expect(ctrl.isEditMode).toBe(false);
+		});
+
+		it('should reset name when edition mode is set to true', () => {
+			//given
+			const ctrl = createController();
+			ctrl.newName = 'new name';
+
+			//when
+			ctrl.setEditMode(true);
+
+			//then
+			expect(ctrl.newName).toBe('Original name');
+		});
+	});
 });

@@ -19,12 +19,9 @@ describe('Type transform menu controller', function () {
 	let currentMetadata = { id: '719b84635c436ef245' };
 	let stateMock;
 
-	const types = [
-		{ id: 'ANY', name: 'any', labelKey: 'ANY' },
+	const primitiveTypes = [
 		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-		{ id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
 		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-		{ id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
 		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
 		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
 		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
@@ -49,12 +46,16 @@ describe('Type transform menu controller', function () {
 				preparation: {
 					id: 'prepId'
 				},
+				grid: {
+					semanticDomains,
+					primitiveTypes,
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(($rootScope, $controller, $q, $componentController, state, ColumnTypesService) => {
+	beforeEach(inject(($rootScope, $controller, $q, $componentController, state) => {
 		scope = $rootScope.$new();
 		createController = () => {
 			const ctrl = $componentController('typeTransformMenu', {
@@ -78,14 +79,13 @@ describe('Type transform menu controller', function () {
 		};
 
 		state.playground.dataset = currentMetadata;
-		spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
-		spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
 	}));
 
 	describe('init', () => {
-		it('should get semantic domains and types on init', inject((ColumnTypesService) => {
+		it('should get semantic domains and types on init', () => {
 			// given
 			const ctrl = createController();
+			spyOn(ctrl, '_refreshCurrentDomain').and.returnValue();
 			ctrl.column = {
 				id: '0000',
 				name: 'awesome cities',
@@ -103,50 +103,19 @@ describe('Type transform menu controller', function () {
 
 			// when
 			ctrl.$onInit();
-			expect(ColumnTypesService.getColSemanticDomains).not.toHaveBeenCalled();
+			expect(ctrl._refreshCurrentDomain).not.toHaveBeenCalled();
 			scope.$digest();
 
 			// then
-			expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('preparation', 'prepId', ctrl.column.id);
-		}));
-	});
-
-	describe('semantic domains', () => {
-		it('should get semantic domains of a preparation', inject((ColumnTypesService) => {
-			// given
-			const ctrl = createController();
-
-			// when
-			ctrl.getTypesAndDomains();
-			scope.$digest();
-
-			// then
-			expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('preparation', 'prepId', ctrl.column.id);
-			expect(ctrl.semanticDomains).toEqual(semanticDomains.reverse());
-		}));
-
-		it('should get semantic domains of a dataset', inject((ColumnTypesService) => {
-			// given
-			stateMock.playground.preparation = null;
-			stateMock.playground.dataset = {
-				id: 'datasetId',
-			};
-			const ctrl = createController();
-
-			// when
-			ctrl.getTypesAndDomains();
-			scope.$digest();
-
-			// then
-			expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('dataset', 'datasetId', ctrl.column.id);
-		}));
+			expect(ctrl._refreshCurrentDomain).toHaveBeenCalled();
+		});
 
 		it('should refresh current domain from column domain', () => {
 			// given
 			const ctrl = createController();
 
 			// when
-			ctrl.getTypesAndDomains();
+			ctrl._refreshCurrentDomain();
 			scope.$digest();
 
 			// then
@@ -161,34 +130,12 @@ describe('Type transform menu controller', function () {
 			ctrl.column.domain = '';
 
 			// when
-			ctrl.getTypesAndDomains();
+			ctrl._refreshCurrentDomain();
 			scope.$digest();
 
 			// then
 			expect(ctrl.currentDomain).toBe('STRING');
 			expect(ConverterService.simplifyType).toHaveBeenCalledWith(ctrl.column.type);
-		}));
-	});
-
-	describe('types', () => {
-		it('should get primitive types', inject((ColumnTypesService) => {
-			// given
-			const expectedTypes = [
-				{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-				{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-				{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-				{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-				{ id: 'DATE', name: 'date', labelKey: 'DATE' },
-			];
-			const ctrl = createController();
-
-			// when
-			ctrl.getTypesAndDomains();
-			scope.$digest();
-
-			// then
-			expect(ColumnTypesService.getTypes).toHaveBeenCalled();
-			expect(ctrl.types).toEqual(expectedTypes);
 		}));
 	});
 

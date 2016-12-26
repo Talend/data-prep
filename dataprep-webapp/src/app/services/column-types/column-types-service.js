@@ -28,7 +28,7 @@ export default function ColumnTypesService($q, $http, RestURLs, ColumnTypesRestS
      * @description Returns all primitive types
      * @returns {Promise} The GET promise
      */
-	this.getTypes = function getTypes() {
+	this.getTypes = () => {
 		if (types) {
 			return $q.when(types);
 		}
@@ -46,7 +46,7 @@ export default function ColumnTypesService($q, $http, RestURLs, ColumnTypesRestS
 	 * @description Returns all domains
 	 * @returns {Promise} The GET promise
 	 */
-	this.getColSemanticDomains = function getColSemanticDomains(inventoryType, inventoryId, colId) {
+	this.getColSemanticDomains = (inventoryType, inventoryId, colId) => {
 		const baseUrl = inventoryType === 'dataset' ? RestURLs.datasetUrl : RestURLs.preparationUrl;
 		const url = `${baseUrl}/${inventoryId}/columns/${colId}/types`;
 		return ColumnTypesRestService.fetchUrl(url);

@@ -22,20 +22,43 @@ describe('Transformation menu directive', function () {
 		type: 'text',
 	};
 
+	const primitiveTypes = [
+		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
+		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+	];
+
+	const semanticDomains = [
+		{
+			"id": "CITY",
+			"label": "City",
+			"frequency": 99.24,
+		},
+		{
+			"id": "AIRPORT",
+			"label": "Airport",
+			"frequency": 3.03,
+		},
+	];
+
 	beforeEach(angular.mock.module('data-prep.transformation-menu', ($provide) => {
 		const stateMock = {
 			playground: {
 				preparation: {
 					id: 'datasetId',
 				},
+				grid: {
+					semanticDomains,
+					primitiveTypes,
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(function ($q, $rootScope, $compile, ColumnTypesService) {
-		spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when([]));
-		spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when([]));
+	beforeEach(inject(function ($q, $rootScope, $compile) {
 
 		scope = $rootScope.$new();
 		scope.column = column;

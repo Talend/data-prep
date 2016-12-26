@@ -90,6 +90,8 @@ export function StateService(RouteStateService, routeState,
 		setGridSelection: PlaygroundStateService.setGridSelection,
 		toggleColumnSelection: PlaygroundStateService.toggleColumnSelection,
 		changeRangeSelection: PlaygroundStateService.changeRangeSelection,
+		setSemanticDomains: PlaygroundStateService.setSemanticDomains,
+		setPrimitiveTypes: PlaygroundStateService.setPrimitiveTypes,
 
 		// playground - lookup
 		setLookupActions: PlaygroundStateService.setLookupActions,

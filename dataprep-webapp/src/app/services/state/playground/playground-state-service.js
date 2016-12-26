@@ -70,6 +70,8 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setGridSelection: GridStateService.setGridSelection,
 		toggleColumnSelection: GridStateService.toggleColumnSelection,
 		changeRangeSelection: GridStateService.changeRangeSelection,
+		setSemanticDomains: GridStateService.setSemanticDomains,
+		setPrimitiveTypes: GridStateService.setPrimitiveTypes,
 
         // lookup
 		setLookupActions: LookupStateService.setActions,

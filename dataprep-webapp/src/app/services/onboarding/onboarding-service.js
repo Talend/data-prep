@@ -146,6 +146,14 @@ export default class OnboardingService {
 		if (isOnDatasetsRoute) {
 			this.$state.go(HOME_PREPARATIONS_ROUTE, { folderId: this.state.inventory.homeFolderId });
 		}
+		const onTourDone = () => {
+			this.setTourDone(tour);
+			if (isOnDatasetsRoute) {
+				this.$state.go(HOME_DATASETS_ROUTE);
+			}
+
+			this.currentTour = null;
+		};
 
 		this.$timeout(() => {
 			this.currentTour = introJs()
@@ -156,17 +164,8 @@ export default class OnboardingService {
 					doneLabel: 'LET ME TRY',
 					steps: this.createIntroSteps(this.getTour(tour)),
 				})
-				.oncomplete(() => {
-					this.setTourDone(tour);
-				})
-				.onexit(() => {
-					this.setTourDone(tour);
-					if (isOnDatasetsRoute) {
-						this.$state.go(HOME_DATASETS_ROUTE);
-					}
-
-					this.currentTour = null;
-				});
+				.oncomplete(onTourDone)
+				.onexit(onTourDone);
 			this.currentTour.start();
 		}, 200, false);
 	}

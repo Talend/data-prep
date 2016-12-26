@@ -11,10 +11,12 @@
 
  ============================================================================*/
 
+import { HOME_PREPARATIONS_ROUTE } from '../../../index-route';
+
 export const routeState = {
-	previous: 'nav.index.preparations',
+	previous: HOME_PREPARATIONS_ROUTE,
 	previousOptions: { folderId: '' },
-	next: 'nav.index.preparations',
+	next: HOME_PREPARATIONS_ROUTE,
 	nextOptions: { folderId: '' },
 };
 
@@ -38,12 +40,12 @@ export class RouteStateService {
 	}
 
 	resetPrevious() {
-		routeState.previous = 'nav.index.preparations';
+		routeState.previous = HOME_PREPARATIONS_ROUTE;
 		routeState.previousOptions = { folderId: '' };
 	}
 
 	resetNext() {
-		routeState.next = 'nav.index.preparations';
+		routeState.next = HOME_PREPARATIONS_ROUTE;
 		routeState.nextOptions = { folderId: '' };
 	}
 

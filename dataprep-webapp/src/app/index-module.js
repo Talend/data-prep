@@ -26,6 +26,8 @@ import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
 import SETTINGS_MODULE from './settings/settings-module';
 
+import routeConfig from './index-route';
+
 const MODULE_NAME = 'data-prep';
 
 let ws;
@@ -44,7 +46,7 @@ const app = angular.module(MODULE_NAME,
 		APP_MODULE, // app root
 	])
 
-// Performance config
+	// Performance config
 	.config(($httpProvider) => {
 		'ngInject';
 		$httpProvider.useApplyAsync(true);
@@ -63,66 +65,7 @@ const app = angular.module(MODULE_NAME,
 	})
 
 	// Router config
-	.config(($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider) => {
-		'ngInject';
-
-		// override the built-in string type (which is performing the slash encoding)
-		// by registering 'string' type
-		const originalStringMatcher = $urlMatcherFactoryProvider.type('string');
-		const overriddenStringMatcher = _.extend({}, originalStringMatcher, {
-			encode: val => (val !== null ? val.toString() : val),
-			decode: val => (val !== null ? val.toString() : val),
-		});
-		$urlMatcherFactoryProvider.type('string', overriddenStringMatcher);
-
-		// route definitions
-		$stateProvider
-			.state('nav', {
-				abstract: true,
-				template: '<navbar></navbar>',
-			})
-			.state('nav.index', {
-				abstract: true,
-				url: '/index',
-				template: '<home></home>',
-			})
-			.state('nav.index.datasets', {
-				url: '/datasets',
-				views: {
-					'home-content': { template: '<home-dataset></home-dataset>' },
-				},
-			})
-			.state('nav.index.preparations', {
-				url: '/preparations/{folderId}',
-				views: {
-					'home-content': { template: '<home-preparation></home-preparation>' },
-				},
-			})
-			.state('reactHome', {
-				url: '/react',
-				template: '<react-home></react-home>',
-			})
-			.state('reactHome.preparations', {
-				url: '/preparations/{folderId}',
-				views: {
-					'home-content': { template: '<react-home-preparation></react-home-preparation>' },
-				},
-			})
-			.state('reactHome.datasets', {
-				url: '/datasets',
-				views: {
-					'home-content': { template: '<react-home-dataset></react-home-dataset>' },
-				},
-			})
-			.state('playground', {
-				url: '/playground',
-				template: '<playground></playground>',
-				abstract: true,
-			})
-			.state('playground.preparation', { url: '/preparation?prepid' })
-			.state('playground.dataset', { url: '/dataset?datasetid' });
-		$urlRouterProvider.otherwise('/index/preparations/');
-	})
+	.config(routeConfig)
 
 	// Language to use at startup (for now only english)
 	.run(($window, $translate) => {

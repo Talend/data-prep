@@ -1,3 +1,5 @@
+import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
+
 describe('Preparation Service', () => {
     'use strict';
 
@@ -66,7 +68,7 @@ describe('Preparation Service', () => {
                 PreparationService.create(datasetId, name, 'destinationFolder');
 
                 //then
-                expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.preparations', { folderId: $stateParams.folderId });
+                expect(StateService.setPreviousRoute).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: $stateParams.folderId });
             }));
 
             it('should create a new preparation', inject(($rootScope, PreparationService, PreparationRestService) => {

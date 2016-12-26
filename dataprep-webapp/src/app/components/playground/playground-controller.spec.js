@@ -11,6 +11,10 @@
 
  ============================================================================*/
 
+import {
+    HOME_PREPARATIONS_ROUTE,
+} from '../../index-route';
+
 describe('Playground controller', () => {
     let createController;
     let scope;
@@ -56,7 +60,7 @@ describe('Playground controller', () => {
     beforeEach(angular.mock.module('data-prep.playground', ($provide) => {
         stateMock = {
             route: {
-                previous: 'nav.index.preparations',
+                previous: HOME_PREPARATIONS_ROUTE,
             },
             playground: {
                 dataset: {},
@@ -218,7 +222,7 @@ describe('Playground controller', () => {
                 scope.$digest();
                 // then
                 expect(MessageService.error).toHaveBeenCalledWith('PLAYGROUND_FILE_NOT_FOUND_TITLE', 'PLAYGROUND_FILE_NOT_FOUND', { type: 'preparation' });
-                expect($state.go).toHaveBeenCalledWith('nav.index.preparations', undefined);
+                expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, undefined);
             }));
 
             it('should fetch statistics when they are not computed yet', inject(($q, $stateParams, PlaygroundService, StateService) => {
@@ -484,7 +488,7 @@ describe('Playground controller', () => {
 
                 // then
                 expect(MessageService.error).toHaveBeenCalledWith('PLAYGROUND_FILE_NOT_FOUND_TITLE', 'PLAYGROUND_FILE_NOT_FOUND', { type: 'dataset' });
-                expect($state.go).toHaveBeenCalledWith('nav.index.preparations', undefined);
+                expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, undefined);
             }));
         });
     });
@@ -645,7 +649,7 @@ describe('Playground controller', () => {
         beforeEach(inject(($q, PreparationService, StateService) => {
             preparation = { id: '9af874865e42b546', draft: true };
             stateMock.playground.preparation = preparation;
-            stateMock.route.previous = 'nav.index.preparations';
+            stateMock.route.previous = HOME_PREPARATIONS_ROUTE;
 
             spyOn(PreparationService, 'delete').and.returnValue($q.when(true));
             spyOn(StateService, 'resetPlayground').and.returnValue();
@@ -677,7 +681,7 @@ describe('Playground controller', () => {
 
                 // then
                 expect(StateService.resetPlayground).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('nav.index.preparations', undefined);
+                expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, undefined);
             }));
 
             it('should show preparation save/discard modal with implicit preparation if there are steps', () => {
@@ -720,7 +724,7 @@ describe('Playground controller', () => {
 
                 // then
                 expect(StateService.resetPlayground).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('nav.index.preparations', undefined);
+                expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, undefined);
             }));
         });
 
@@ -766,7 +770,7 @@ describe('Playground controller', () => {
 
                 // then
                 expect(StateService.resetPlayground).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('nav.index.preparations', undefined);
+                expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, undefined);
             }));
 
             it('should manage isSaving flag', inject((StateService) => {

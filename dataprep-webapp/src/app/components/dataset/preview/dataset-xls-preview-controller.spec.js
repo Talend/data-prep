@@ -178,7 +178,7 @@ describe('Dataset xls preview controller', () => {
             scope.$digest();
 
             //then
-            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('nav.index.datasets');
+            expect(StateService.setPreviousRoute).toHaveBeenCalledWith('home.datasets');
             expect($state.go).toHaveBeenCalledWith('playground.dataset', { datasetid: '13aa256cf813a25d158' });
         }));
 

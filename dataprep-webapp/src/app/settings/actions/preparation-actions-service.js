@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
+
 export default class PreparationActionsService {
 	constructor($stateParams, state, FolderService, MessageService, PreparationService,
 				StateService, StorageService, TalendConfirmService) {
@@ -61,7 +63,7 @@ export default class PreparationActionsService {
 		}
 		case '@@preparation/FOLDER_FETCH': {
 			const folderId = this.$stateParams.folderId;
-			this.StateService.setPreviousRoute('nav.index.preparations', { folderId });
+			this.StateService.setPreviousRoute(HOME_PREPARATIONS_ROUTE, { folderId });
 			this.StateService.setFetchingInventoryPreparations(true);
 			this.FolderService
 				.init(folderId)

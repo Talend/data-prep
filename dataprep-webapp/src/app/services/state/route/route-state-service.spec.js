@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_PREPARATIONS_ROUTE } from '../../../index-route';
+
 describe('Route state service', () => {
     'use strict';
 
@@ -19,7 +21,7 @@ describe('Route state service', () => {
     describe('previous', () => {
         it('should init previous route', inject((routeState) => {
             //then
-            expect(routeState.previous).toBe('nav.index.preparations');
+            expect(routeState.previous).toBe(HOME_PREPARATIONS_ROUTE);
             expect(routeState.previousOptions).toEqual({ folderId: '' });
         }));
 
@@ -70,7 +72,7 @@ describe('Route state service', () => {
             RouteStateService.resetPrevious();
 
             //then
-            expect(routeState.previous).toBe('nav.index.preparations');
+            expect(routeState.previous).toBe(HOME_PREPARATIONS_ROUTE);
             expect(routeState.previousOptions).toEqual({ folderId: '' });
         }));
     });
@@ -78,7 +80,7 @@ describe('Route state service', () => {
     describe('next', () => {
         it('should init next route', inject((routeState) => {
             //then
-            expect(routeState.next).toBe('nav.index.preparations');
+            expect(routeState.next).toBe(HOME_PREPARATIONS_ROUTE);
             expect(routeState.nextOptions).toEqual({ folderId: '' });
         }));
 
@@ -129,7 +131,7 @@ describe('Route state service', () => {
             RouteStateService.resetNext();
 
             //then
-            expect(routeState.next).toBe('nav.index.preparations');
+            expect(routeState.next).toBe(HOME_PREPARATIONS_ROUTE);
             expect(routeState.nextOptions).toEqual({ folderId: '' });
         }));
     });
@@ -153,9 +155,9 @@ describe('Route state service', () => {
             RouteStateService.reset();
 
             //then
-            expect(routeState.previous).toBe('nav.index.preparations');
+            expect(routeState.previous).toBe(HOME_PREPARATIONS_ROUTE);
             expect(routeState.previousOptions).toEqual({ folderId: '' });
-            expect(routeState.next).toBe('nav.index.preparations');
+            expect(routeState.next).toBe(HOME_PREPARATIONS_ROUTE);
             expect(routeState.nextOptions).toEqual({ folderId: '' });
         }));
     });

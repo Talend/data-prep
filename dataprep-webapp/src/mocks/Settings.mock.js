@@ -138,10 +138,10 @@ const settingsMock = {
 			id: 'menu:preparations',
 			name: 'Preparations',
 			icon: 'talend-dataprep',
-			type: '@@router/GO',
+			type: '@@router/GO_CURRENT_FOLDER',
 			payload: {
 				method: 'go',
-				args: ['reactHome.preparations'],
+				args: ['home.preparations'],
 			},
 		},
 		'menu:datasets': {
@@ -151,7 +151,7 @@ const settingsMock = {
 			type: '@@router/GO',
 			payload: {
 				method: 'go',
-				args: ['reactHome.datasets'],
+				args: ['home.datasets'],
 			},
 		},
 		'menu:folders': {
@@ -161,7 +161,7 @@ const settingsMock = {
 			type: '@@router/GO_FOLDER',
 			payload: {
 				method: 'go',
-				args: ['reactHome.preparations'],
+				args: ['home.preparations'],
 			},
 		},
 		'menu:playground:preparation': {

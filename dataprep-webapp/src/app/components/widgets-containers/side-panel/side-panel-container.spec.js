@@ -74,7 +74,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// when
-			scope.active = 'reactHome.datasets';
+			scope.active = 'home.datasets';
 			scope.$digest();
 
 			// then
@@ -114,8 +114,8 @@ describe('Side Panel container', () => {
 
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO');
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('reactHome.preparations');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO_CURRENT_FOLDER');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('home.preparations');
 		}));
 
 		it('should dispatch datasets button click', inject((SettingsActionsService) => {
@@ -130,7 +130,7 @@ describe('Side Panel container', () => {
 			// then
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@router/GO');
-			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('reactHome.datasets');
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].payload.args[0]).toBe('home.datasets');
 		}));
 	});
 });

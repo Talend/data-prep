@@ -128,11 +128,11 @@
       "id": "menu:preparations",
       "name": "Preparations",
       "icon": "talend-dataprep",
-      "type": "@@router/GO",
+      "type": "@@router/GO_CURRENT_FOLDER",
       "payload": {
         "method": "go",
         "args": [
-          "reactHome.preparations"
+          "home.preparations"
         ]
       }
     },
@@ -144,7 +144,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "reactHome.preparations"
+          "home.preparations"
         ]
       }
     },
@@ -156,7 +156,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "reactHome.datasets"
+          "home.datasets"
         ]
       }
     },

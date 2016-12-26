@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
 
 describe('Preparation actions service', () => {
 	let stateMock;
@@ -175,7 +176,7 @@ describe('Preparation actions service', () => {
 			inject((StateService) => {
 				// then
 				expect(StateService.setPreviousRoute).toHaveBeenCalledWith(
-					'nav.index.preparations',
+					HOME_PREPARATIONS_ROUTE,
 					{ folderId }
 				);
 			})

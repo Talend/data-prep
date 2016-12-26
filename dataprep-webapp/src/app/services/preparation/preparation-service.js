@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_PREPARATIONS_ROUTE } from '../../index-route';
+
 /**
  * @ngdoc service
  * @name data-prep.services.preparation.service:PreparationService
@@ -63,7 +65,7 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 	 * @returns {promise} The POST promise
 	 */
 	function create(datasetId, name, destinationFolder) {
-		StateService.setPreviousRoute('nav.index.preparations', { folderId: $stateParams.folderId });
+		StateService.setPreviousRoute(HOME_PREPARATIONS_ROUTE, { folderId: $stateParams.folderId });
 		return PreparationRestService.create(datasetId, name, destinationFolder)
 			.then((preparationId) => {
 				// get all dataset aggregations per columns from localStorage and save them for the new preparation

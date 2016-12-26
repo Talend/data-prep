@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_DATASETS_ROUTE } from '../../index-route';
+
 export default class DatasetActionsService {
 	constructor($document, $stateParams, state, DatasetService,
 				MessageService, StateService, StorageService,
@@ -48,7 +50,7 @@ export default class DatasetActionsService {
 			break;
 		}
 		case '@@dataset/DATASET_FETCH':
-			this.StateService.setPreviousRoute('nav.index.datasets');
+			this.StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 			this.StateService.setFetchingInventoryDatasets(true);
 			this.DatasetService.init().then(() => {
 				this.StateService.setFetchingInventoryDatasets(false);

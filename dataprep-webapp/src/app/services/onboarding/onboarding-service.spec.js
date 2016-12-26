@@ -11,9 +11,12 @@
 
  ============================================================================*/
 
-describe('Onboarding service', () => {
-    'use strict';
+import {
+    HOME_DATASETS_ROUTE,
+    HOME_PREPARATIONS_ROUTE,
+} from '../../index-route';
 
+describe('Onboarding service', () => {
     const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
     let stateMock;
 
@@ -178,25 +181,25 @@ describe('Onboarding service', () => {
     it('should redirect to "preparations" before starting onboarding', inject(($state, OnboardingService) => {
         // given
         $state.current = {
-            name: 'nav.index.datasets',
+            name: HOME_DATASETS_ROUTE,
         };
 
         // when
         OnboardingService.startTour('preparation');
 
         // then
-        expect($state.go).toHaveBeenCalledWith('nav.index.preparations', { folderId: stateMock.inventory.homeFolderId });
+        expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
     }));
 
     it('should redirect BACK to "datasets" after redirecting to "preparations" ', inject(($timeout, $state, OnboardingService) => {
         // given
         $state.current = {
-            name: 'nav.index.datasets',
+            name: HOME_DATASETS_ROUTE,
         };
 
         expect(OnboardingService.currentTour).toBeFalsy();
         OnboardingService.startTour('preparation');
-        expect($state.go).toHaveBeenCalledWith('nav.index.preparations', { folderId: stateMock.inventory.homeFolderId });
+        expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
 
         // when
         $timeout.flush(200);
@@ -206,6 +209,6 @@ describe('Onboarding service', () => {
         onexit();
 
         // then
-        expect($state.go).toHaveBeenCalledWith('nav.index.datasets');
+        expect($state.go).toHaveBeenCalledWith(HOME_DATASETS_ROUTE);
     }));
 });

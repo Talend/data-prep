@@ -17,6 +17,7 @@ const HomePreparationContainer = {
 			<inventory-list
 				id="'preparations-list'"
 				folders="$ctrl.state.inventory.folder.content.folders"
+				is-loading="$ctrl.state.inventory.isFetchingPreparations"
 				items="$ctrl.state.inventory.folder.content.preparations"
 				sort-by="$ctrl.state.inventory.preparationsSort.id"
 				sort-desc="$ctrl.state.inventory.preparationsOrder.id === 'desc'"

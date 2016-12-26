@@ -10,6 +10,15 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
 .list-item-preparation {
   .tc-list-icon {
     fill: #005393;
@@ -25,5 +34,16 @@
 .list-item-shared-folder {
   .tc-list-icon {
     fill: #00A6CE;
+  }
+}
+
+.fetch-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+
+  .fetch-loader-icon + span {
+    padding-left: 20px;
   }
 }

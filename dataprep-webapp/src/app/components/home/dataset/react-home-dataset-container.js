@@ -26,6 +26,7 @@ const HomeDatasetContainer = {
 			</form>
 			<inventory-list
 				id="'datasets-list'"
+				is-loading="$ctrl.state.inventory.isFetchingDatasets"
 				items="$ctrl.state.inventory.datasets"
 				sort-by="$ctrl.state.inventory.datasetsSort.id"
 				sort-desc="$ctrl.state.inventory.datasetsOrder.id === 'desc'"

@@ -12,9 +12,10 @@
  ============================================================================*/
 
 export default class MenuActionsService {
-	constructor($state) {
+	constructor($state, state) {
 		'ngInject';
 		this.$state = $state;
+		this.state = state;
 	}
 
 	dispatch(action) {
@@ -32,6 +33,12 @@ export default class MenuActionsService {
 		case '@@router/GO_FOLDER': {
 			const { method, args, id } = action.payload;
 			this.$state[method](...args, { folderId: id });
+			break;
+		}
+		case '@@router/GO_CURRENT_FOLDER': {
+			const { method, args } = action.payload;
+			const folderId = this.state.inventory.folder.metadata.id;
+			this.$state[method](...args, { folderId });
 			break;
 		}
 		case '@@router/GO_PREPARATION': {

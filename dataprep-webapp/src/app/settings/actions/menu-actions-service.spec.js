@@ -12,9 +12,25 @@
  ============================================================================*/
 
 import angular from 'angular';
+import {
+	HOME_PREPARATIONS_ROUTE,
+	PLAYGROUND_DATASET_ROUTE,
+	PLAYGROUND_PREPARATION_ROUTE,
+} from '../../index-route';
 
 describe('Menu actions service', () => {
-	beforeEach(angular.mock.module('app.settings.actions'));
+	let stateMock;
+	
+	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
+		stateMock = {
+			inventory: {
+				folder: {
+					metadata: { id: 'currentFolderId' }
+				}
+			}
+		};
+		$provide.constant('state', stateMock);
+	}));
 
 	describe('dispatch', () => {
 		it('should change route', inject(($state, MenuActionsService) => {
@@ -23,7 +39,7 @@ describe('Menu actions service', () => {
 				type: '@@router/GO',
 				payload: {
 					method: 'go',
-					args: ['nav.index.preparations']
+					args: [HOME_PREPARATIONS_ROUTE]
 				}
 			};
 			spyOn($state, 'go').and.returnValue();
@@ -32,7 +48,7 @@ describe('Menu actions service', () => {
 			MenuActionsService.dispatch(action);
 
 			// then
-			expect($state.go).toHaveBeenCalledWith('nav.index.preparations');
+			expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE);
 		}));
 
 		it('should change route with dataset parameters', inject(($state, MenuActionsService) => {
@@ -41,7 +57,7 @@ describe('Menu actions service', () => {
 				type: '@@router/GO_DATASET',
 				payload: {
 					method: 'go',
-					args: ['nav.index.datasets'],
+					args: [PLAYGROUND_DATASET_ROUTE],
 					id: 'acbd'
 				},
 			};
@@ -51,7 +67,7 @@ describe('Menu actions service', () => {
 			MenuActionsService.dispatch(action);
 
 			// then
-			expect($state.go).toHaveBeenCalledWith('nav.index.datasets', { datasetid: 'acbd' });
+			expect($state.go).toHaveBeenCalledWith(PLAYGROUND_DATASET_ROUTE, { datasetid: 'acbd' });
 		}));
 
 		it('should change route with folder parameters', inject(($state, MenuActionsService) => {
@@ -60,7 +76,7 @@ describe('Menu actions service', () => {
 				type: '@@router/GO_FOLDER',
 				payload: {
 					method: 'go',
-					args: ['nav.index.preparations'],
+					args: [HOME_PREPARATIONS_ROUTE],
 					id: 'acbd'
 				},
 			};
@@ -70,7 +86,25 @@ describe('Menu actions service', () => {
 			MenuActionsService.dispatch(action);
 
 			// then
-			expect($state.go).toHaveBeenCalledWith('nav.index.preparations', { folderId: 'acbd' });
+			expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: 'acbd' });
+		}));
+		
+		it('should change route with current folder parameters', inject(($state, MenuActionsService) => {
+			// given
+			const action = {
+				type: '@@router/GO_CURRENT_FOLDER',
+				payload: {
+					method: 'go',
+					args: [HOME_PREPARATIONS_ROUTE],
+				},
+			};
+			spyOn($state, 'go').and.returnValue();
+
+			// when
+			MenuActionsService.dispatch(action);
+
+			// then
+			expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: 'currentFolderId' });
 		}));
 
 		it('should change route with preparation id', inject(($state, MenuActionsService) => {
@@ -79,7 +113,7 @@ describe('Menu actions service', () => {
 				type: '@@router/GO_PREPARATION',
 				payload: {
 					method: 'go',
-					args: ['playground.preparation'],
+					args: [PLAYGROUND_PREPARATION_ROUTE],
 					id: 'acbd'
 				},
 			};
@@ -89,7 +123,7 @@ describe('Menu actions service', () => {
 			MenuActionsService.dispatch(action);
 
 			// then
-			expect($state.go).toHaveBeenCalledWith('playground.preparation', { prepid: 'acbd' });
+			expect($state.go).toHaveBeenCalledWith(PLAYGROUND_PREPARATION_ROUTE, { prepid: 'acbd' });
 		}));
 	});
 });

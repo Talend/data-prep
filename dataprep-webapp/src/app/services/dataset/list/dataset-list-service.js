@@ -144,14 +144,6 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 		switch (item.type) {
 		case 'text/csv': return 'talend-file-csv-o';
 		case 'application/vnd.ms-excel': return 'talend-file-xls-o';
-
-		// TODO move to EE
-		case 'application/vnd.remote-ds.job': return 'talend-file-connect-o';
-		case 'components': return 'talend-file-job-o';
-
-		// TODO need icons
-		case 'application/prs.tcomp-ds.tcomp-JDBCDatastore': return 'talend-flink';
-		case 'application/prs.tcomp-ds.tcomp-SimpleFileIo': return 'talend-hadoop';
 		}
 
 		return 'talend-file-o';

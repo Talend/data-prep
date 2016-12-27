@@ -10,9 +10,9 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-$icon-connect-badge-color: #8ABC00;
+$icon-connect-badge-color: #266092;
 $icon-csv-badge-color: #4F6C00;
-$icon-job-badge-color: #8ABC00;
+$icon-job-badge-color: #266092;
 $icon-xls-badge-color: #8ABC00;
 
 @keyframes rotation {
@@ -42,23 +42,21 @@ $icon-xls-badge-color: #8ABC00;
   }
 }
 
-.list-item-dataset {
-  .ti-file-connect-o-badge {
-    fill: $icon-connect-badge-color;
-  }
+.ti-file-connect-o-badge {
+  fill: $icon-connect-badge-color;
+}
 
-  .ti-file-csv-o-badge {
-    fill: $icon-csv-badge-color;
-  }
+.ti-file-csv-o-badge {
+  fill: $icon-csv-badge-color;
+}
 
-  .ti-file-job-o-badge {
-    fill: $icon-job-badge-color;
-  }
+.ti-file-job-o-badge {
+  fill: $icon-job-badge-color;
+}
 
-  .ti-file-xls-o-badge,
-  .ti-file-xlsx-o-badge {
-    fill: $icon-xls-badge-color;
-  }
+.ti-file-xls-o-badge,
+.ti-file-xlsx-o-badge {
+  fill: $icon-xls-badge-color;
 }
 
 .fetch-loader {

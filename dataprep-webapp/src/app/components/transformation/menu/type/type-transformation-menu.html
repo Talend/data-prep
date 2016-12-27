@@ -17,13 +17,13 @@
     <span translate-once="COLUMN_TYPE_IS"></span>
     <span class="info"> {{ $ctrl.currentSimplifiedDomain }}</span>
     <ul class="submenu">
-        <li ng-repeat="semanticDomain in $ctrl.state.playground.grid.semanticDomains track by semanticDomain.id"
+        <li ng-repeat="semanticDomain in $ctrl.domains track by semanticDomain.id"
             ng-click="$ctrl.changeDomain(semanticDomain)">
             <input type="radio" value="{{ ::semanticDomain.id}}" ng-model="$ctrl.currentDomain"/>
             {{ ::semanticDomain.label | translate }} {{ semanticDomain.frequency }} %
         </li>
         <li class="divider"></li>
-        <li ng-repeat="type in $ctrl.state.playground.grid.primitiveTypes track by type.id"
+        <li ng-repeat="type in $ctrl.types track by type.id"
             ng-click="$ctrl.changeType(type)">
             <input type="radio" value="{{ ::type.id}}" ng-model="$ctrl.currentDomain"
                    ng-checked="$ctrl.shouldBeChecked(type)"/>

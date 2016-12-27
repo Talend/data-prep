@@ -26,6 +26,8 @@ const TypeTransformMenu = {
 	controller: TypeTransformMenuCtrl,
 	bindings: {
 		column: '<',
+		domains: '<',
+		types: '<',
 	},
 };
 

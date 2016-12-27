@@ -19,8 +19,8 @@ export const gridState = {
 	numericColumns: [],
 	columns: [],
 	selectedColumns: [],
-	semanticDomains: [],
-	primitiveTypes: [],
+	semanticDomains: null,
+	primitiveTypes: null,
 };
 
 const NUMERIC_TYPES = ['numeric', 'integer', 'double', 'float', 'decimal'];
@@ -354,8 +354,8 @@ export function GridStateService() {
 	function reset() {
 		gridState.columnFocus = null;
 		gridState.selectedColumns = [];
-		gridState.semanticDomains = [];
-		gridState.primitiveTypes = [];
+		gridState.semanticDomains = null;
+		gridState.primitiveTypes = null;
 		gridState.selectedLine = null;
 		gridState.filteredRecords = [];
 		gridState.filteredOccurences = {};

@@ -21,9 +21,9 @@
                 <ul>
                     <li ng-if="datagridHeaderCtrl.initTransformationsInProgress" translate-once="LOADING"></li>
                     <li ng-if="datagridHeaderCtrl.transformations && !datagridHeaderCtrl.transformations.length" translate-once="NO_TRANSFORMATION"></li>
-                    <transform-menu column="datagridHeaderCtrl.column"
-                                    menu-items="datagridHeaderCtrl.transformations"
-                                    ng-if="datagridHeaderCtrl.transformations.length"></transform-menu>
+                    <transform-menu ng-if="datagridHeaderCtrl.transformations.length"
+                                    column="datagridHeaderCtrl.column"
+                                    menu-items="datagridHeaderCtrl.transformations"></transform-menu>
                 </ul>
             </sc-dropdown-content>
         </sc-dropdown>

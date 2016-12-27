@@ -16,39 +16,63 @@
  * @name data-prep.services.column-types.service:ColumnTypesService
  * @description Column types service
  */
-export default function ColumnTypesService($q, $http, RestURLs, ColumnTypesRestService) {
-	'ngInject';
-
-	let types;
+export default class ColumnTypesService {
+	constructor($q, $http, state, StateService, ColumnTypesRestService) {
+		'ngInject';
+		this.$q = $q;
+		this.$http = $http;
+		this.state = state;
+		this.StateService = StateService;
+		this.ColumnTypesRestService = ColumnTypesRestService;
+	}
 
     /**
      * @ngdoc method
-     * @name getTypes
+     * @name refreshTypes
      * @methodOf data-prep.services.column-types.service:ColumnTypesService
-     * @description Returns all primitive types
+     * @description Get the primitive types and set them in app state
      * @returns {Promise} The GET promise
      */
-	this.getTypes = () => {
+	refreshTypes() {
+		const types = this.state.playground.grid.primitiveTypes;
 		if (types) {
-			return $q.when(types);
+			return this.$q.when(types);
 		}
-		return ColumnTypesRestService.fetchUrl(RestURLs.typesUrl).then((primitiveTypes) => {
-			types = primitiveTypes;
-			return types;
-		});
-	};
 
+		return this.ColumnTypesRestService.fetchTypes()
+			.then((primitiveTypes) => {
+				const ignoredTypes = ['double', 'numeric', 'any'];
+				const filteredTypes = primitiveTypes
+					.filter(type => ignoredTypes.indexOf(type) === -1);
+				this.StateService.setPrimitiveTypes(filteredTypes);
+				return filteredTypes;
+			});
+	}
 
 	/**
 	 * @ngdoc method
-	 * @name getColSemanticDomains
+	 * @name refreshSemanticDomains
 	 * @methodOf data-prep.services.column-types.service:ColumnTypesService
-	 * @description Returns all domains
+	 * @description Fetch the semantic domains of the column and set the in app state
+	 * @param {string} colId the column id
 	 * @returns {Promise} The GET promise
 	 */
-	this.getColSemanticDomains = (inventoryType, inventoryId, colId) => {
-		const baseUrl = inventoryType === 'dataset' ? RestURLs.datasetUrl : RestURLs.preparationUrl;
-		const url = `${baseUrl}/${inventoryId}/columns/${colId}/types`;
-		return ColumnTypesRestService.fetchUrl(url);
-	};
+	refreshSemanticDomains(colId) {
+		this.StateService.setSemanticDomains(null);
+		const inventoryType = this.state.playground.preparation ?
+			'preparation' :
+			'dataset';
+		const inventoryId = this.state.playground.preparation ?
+			this.state.playground.preparation.id :
+			this.state.playground.dataset.id;
+
+		return this.ColumnTypesRestService.fetchDomains(inventoryType, inventoryId, colId)
+			.then((semanticDomains) => {
+				const domains = semanticDomains
+					.filter(domain => domain.id)
+					.sort((d1, d2) => d2.frequency - d1.frequency);
+				this.StateService.setSemanticDomains(domains);
+				return domains;
+			});
+	}
 }

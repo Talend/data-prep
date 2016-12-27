@@ -12,20 +12,38 @@
  ============================================================================*/
 
 export default class ColumnTypesRest {
-	constructor($http) {
+	constructor($http, RestURLs) {
 		'ngInject';
 		this.$http = $http;
+		this.RestURLs = RestURLs;
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name fetchUrl
+	 * @name fetchTypes
 	 * @methodOf data-prep.services.column-types.service:ColumnTypesRestService
-	 * @param {string} url the url to query
-	 * @description fetches the data given a url
-	 * @returns {promise} The data
+	 * @description Fetch the columns static types
+	 * @returns {Promise} The GET promise
 	 */
-	fetchUrl(url) {
+	fetchTypes() {
+		return this.$http.get(this.RestURLs.typesUrl).then(resp => resp.data);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name fetchDomains
+	 * @methodOf data-prep.services.column-types.service:ColumnTypesRestService
+	 * @description Fetch the columns static types
+	 * @param {string} inventoryType the item type (dataset | preparation)
+	 * @param {string} inventoryId the item id
+	 * @param {string} colId the column id
+	 * @returns {Promise} The GET promise
+	 */
+	fetchDomains(inventoryType, inventoryId, colId) {
+		const baseUrl = inventoryType === 'dataset' ?
+			this.RestURLs.datasetUrl :
+			this.RestURLs.preparationUrl;
+		const url = `${baseUrl}/${inventoryId}/columns/${colId}/types`;
 		return this.$http.get(url).then(resp => resp.data);
 	}
 }

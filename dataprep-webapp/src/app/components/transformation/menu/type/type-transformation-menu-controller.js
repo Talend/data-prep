@@ -16,22 +16,20 @@
  * @name data-prep.type-transformation-menu.controller:TypeTransformMenuCtrl
  * @description Type Transformation menu controller.
  * @requires data-prep.services.playground.service:PlaygroundService
- * @requires data-prep.services.state.constant:state
  * @requires data-prep.services.utils.service:ConverterService
  */
 export default class TypeTransformMenuCtrl {
-	constructor($scope, state, PlaygroundService, ConverterService) {
+	constructor(PlaygroundService, ConverterService) {
 		'ngInject';
 
-		this.state = state;
-		this.$scope = $scope;
 		this.PlaygroundService = PlaygroundService;
 		this.ConverterService = ConverterService;
-		this.types = [];
 	}
 
-	$onInit() {
-		this.$scope.$watch(() => this.column, this._refreshCurrentDomain.bind(this));
+	$onChanges(changes) {
+		if (changes.column) {
+			this._refreshCurrentDomain();
+		}
 	}
 
 	/**

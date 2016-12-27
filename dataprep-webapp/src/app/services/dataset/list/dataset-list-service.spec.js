@@ -48,7 +48,7 @@ describe('Dataset List Service', () => {
 				nbLinesHeader: 1,
 				nbLinesFooter: 0,
 				created: '03-30-2015 08:05',
-				type: 'application/vnd.remote-ds.job',
+				type: 'text/csv',
 			},
 			{
 				id: '5e95be9e-88cd-4765-9ecc-ee48cc28b6d5',
@@ -58,7 +58,7 @@ describe('Dataset List Service', () => {
 				nbLinesHeader: 1,
 				nbLinesFooter: 0,
 				created: '03-30-2015 08:06',
-				type: 'components',
+				type: 'unknown',
 			},
 		];
 
@@ -101,7 +101,7 @@ describe('Dataset List Service', () => {
 				creationDate: moment(datasets[2].created).fromNow(),
 				lastModificationDate: moment(datasets[2].lastModificationDate).fromNow(),
 				nbLines: datasets[2].records,
-				icon: 'talend-file-connect-o',
+				icon: 'talend-file-csv-o',
 				displayMode: 'text',
 				className: 'list-item-dataset',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
@@ -116,7 +116,7 @@ describe('Dataset List Service', () => {
 				creationDate: moment(datasets[3].created).fromNow(),
 				lastModificationDate: moment(datasets[3].lastModificationDate).fromNow(),
 				nbLines: datasets[3].records,
-				icon: 'talend-file-job-o',
+				icon: 'talend-file-o',
 				displayMode: 'text',
 				className: 'list-item-dataset',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],

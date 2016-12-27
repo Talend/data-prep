@@ -10,6 +10,9 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+$icon-folder-color: #EAC282;
+$icon-shared-folder-color: #00A6CE;
+$icon-preparation-color: #005393;
 $icon-connect-badge-color: #266092;
 $icon-csv-badge-color: #4F6C00;
 $icon-job-badge-color: #266092;
@@ -26,19 +29,19 @@ $icon-xls-badge-color: #8ABC00;
 
 .list-item-preparation {
   .tc-list-icon {
-    fill: #005393;
+    fill: $icon-preparation-color;
   }
 }
 
 .list-item-folder {
   .tc-list-icon {
-    fill: #EAC282;
+    fill: $icon-folder-color;
   }
 }
 
 .list-item-shared-folder {
   .tc-list-icon {
-    fill: #00A6CE;
+    fill: $icon-shared-folder-color;
   }
 }
 

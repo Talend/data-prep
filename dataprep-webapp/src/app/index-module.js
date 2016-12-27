@@ -100,9 +100,11 @@ window.fetchConfiguration = function fetchConfiguration() {
 				.run((SettingsService, ImportService, ExportService, DatasetService) => {
 					'ngInject';
 					SettingsService.setSettings(appSettings);
-					ImportService.initImport();
 					ExportService.refreshTypes();
 					DatasetService.refreshSupportedEncodings();
+
+					ImportService.initImport()
+						.then(() => SettingsService.refreshSettings());
 				})
 				// Open a keepalive websocket if requested
 				.run(() => {

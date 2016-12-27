@@ -73,6 +73,7 @@
   "CLICK_ADD_DATASETS": "There are no datasets to display. Click on 'Add Dataset' to add a dataset.",
   "CLICK_ADD_PREPARATIONS": "There are no preparations in this folder. Click on 'Add Preparation' to add a preparation.",
   "UPDATE_DATASET_INPUT": "Update Dataset Input",
+  "IMPORT_DATASET_FILE": "Import Dataset Input",
 
   "_comment": "Preparations",
   "LAST_MODIFICATION": "last change",

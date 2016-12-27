@@ -13,6 +13,7 @@
 
 const NO_OP = () => {};
 const DROPDOWN_ACTION = 'dropdown';
+const SPLITDROPDOWN_ACTION = 'splitDropdown';
 
 export default class InventoryListCtrl {
 	constructor($element, $translate, appSettings, SettingsActionsService) {
@@ -180,7 +181,10 @@ export default class InventoryListCtrl {
 	createDropdownActions(items, actionName) {
 		return items.map((item) => {
 			const itemAction = this.createDropdownItemAction(item, actionName);
-			itemAction.label = item.name;
+			itemAction.label = item.label || item.name;
+			if (item.model) {
+				itemAction.model = item.model;
+			}
 			return itemAction;
 		});
 	}
@@ -204,6 +208,13 @@ export default class InventoryListCtrl {
 					// ex: dataset > "open preparation x" is applied to "preparation x"
 					const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamic);
 					adaptedAction.items = staticActions.concat(dynamicActions);
+				}
+				else if (adaptedAction.displayMode === SPLITDROPDOWN_ACTION) {
+					const dispatch = this.getActionDispatcher(actionName);
+					const splitDropdownAction = this.appSettings.actions[actionName];
+					splitDropdownAction.items = this.createDropdownActions(splitDropdownAction.items ? splitDropdownAction.items : [], actionName);
+					splitDropdownAction.onClick = event => dispatch(event);
+					return splitDropdownAction;
 				}
 				else {
 					const dispatch = this.getActionDispatcher(actionName);

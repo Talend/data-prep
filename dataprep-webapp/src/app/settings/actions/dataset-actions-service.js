@@ -14,7 +14,7 @@
 import { HOME_DATASETS_ROUTE } from '../../index-route';
 
 export default class DatasetActionsService {
-	constructor($document, $stateParams, state, DatasetService,
+	constructor($document, $stateParams, state, DatasetService, ImportService,
 				MessageService, StateService, StorageService,
 				TalendConfirmService) {
 		'ngInject';
@@ -22,6 +22,7 @@ export default class DatasetActionsService {
 		this.$stateParams = $stateParams;
 		this.state = state;
 		this.DatasetService = DatasetService;
+		this.ImportService = ImportService;
 		this.MessageService = MessageService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
@@ -124,6 +125,16 @@ export default class DatasetActionsService {
 		case '@@dataset/UPDATE': {
 			this.$document[0].getElementById('inputUpdateDataset').click();
 			this.StateService.setDatasetToUpdate(action.payload.model);
+			break;
+		}
+		case '@@dataset/CREATE': {
+			if (action.payload.model) {
+				this.ImportService.startImport(action.payload.model);
+			}
+			else {
+				// default
+				this.ImportService.startImport(_.find(this.state.import.importTypes, 'defaultImport', true).model || this.state.import.importTypes[0].model);
+			}
 			break;
 		}
 		}

@@ -117,7 +117,9 @@
           "onChange": "dataset:sort"
         },
         "actionBar": {
-          "actions": []
+          "actions": {
+            "left": ["dataset:create"]
+          }
         },
         "searchLabel": "Find a dataset"
       }
@@ -128,11 +130,11 @@
       "id": "menu:preparations",
       "name": "Preparations",
       "icon": "talend-dataprep",
-      "type": "@@router/GO_CURRENT_FOLDER",
+      "type": "@@router/GO",
       "payload": {
         "method": "go",
         "args": [
-          "home.preparations"
+          "reactHome.preparations"
         ]
       }
     },
@@ -144,7 +146,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "home.preparations"
+          "reactHome.preparations"
         ]
       }
     },
@@ -156,7 +158,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "home.datasets"
+          "reactHome.datasets"
         ]
       }
     },
@@ -320,6 +322,14 @@
         "method": "init",
         "args": []
       }
+    },
+    "dataset:create": {
+      "id": "dataset:create",
+      "name": "Add Dataset",
+      "icon": "talend-plus",
+      "type": "@@dataset/CREATE",
+      "bsStyle": "primary",
+      "displayMode": "splitDropdown"
     },
     "preparation:display-mode": {
       "id": "preparation:display-mode",

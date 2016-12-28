@@ -25,10 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationDetails;
+import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.metrics.Timed;
 
@@ -367,5 +364,13 @@ public class PreparationController {
         for (AppendStep step : steps) {
             preparationService.addPreparationAction(preparationId, step);
         }
+    }
+
+    @RequestMapping(value = "/steps/{id}", method = GET)
+    @ApiOperation(value = "Retrieve a specific step.",
+                  notes = "Just find the step for this ID.")
+    @Timed
+    public StepWithActions getStep(@PathVariable("id") final String stepId) {
+        return preparationService.getStepWithActions(stepId);
     }
 }

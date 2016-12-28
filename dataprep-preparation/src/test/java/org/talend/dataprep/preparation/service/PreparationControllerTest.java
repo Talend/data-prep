@@ -32,6 +32,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -47,12 +53,20 @@ import org.talend.dataprep.preparation.BasePreparationTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.util.SortAndOrderHelper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.preparation.service.EntityBuilder.*;
+import static org.talend.dataprep.preparation.service.PreparationControllerTestClient.appendStepsToPrep;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 /**
  * Unit test for the preparation service.
@@ -1607,21 +1621,22 @@ public class PreparationControllerTest extends BasePreparationTest {
     }
 
     @Test
-    public void shouldReturnHTTP203WhenPreparationHasLookupOnDataset() throws Exception {
+    // TODO: this test is not testing what it says it is testing:
+    // The 204 comes from the use of the dataset as preparation base, not in lookup
+    public void shouldReturnHTTP204WhenPreparationHasLookupOnDataset() throws Exception {
         // given
         final String datasetId = "3214a6748bc4f9674c85";
         final String preparationId = createPreparation(datasetId, "My preparation");
         applyTransformation(preparationId, "actions/append_upper_case.json");
 
+        final String lookupDatasetId = "687468453436851";
         final Map<String, String> parametersOnDataset = new HashMap<>();
-        parametersOnDataset.put("lookup_ds_id", datasetId);
+        parametersOnDataset.put("lookup_ds_id", lookupDatasetId);
         final Map<String, String> parametersWithoutDataset = new HashMap<>();
         parametersWithoutDataset.put("other", "other");
 
-        final List<Action> action1 = new ArrayList<>(1);
-        action1.add(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = new ArrayList<>(1);
-        action2.add(Action.Builder.builder().withParameters(parametersOnDataset).build());
+        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
+        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
 
         final PreparationActions prepAction1 = new PreparationActions().append(action1);
         final PreparationActions prepAction2 = new PreparationActions().append(action2);
@@ -1630,10 +1645,40 @@ public class PreparationControllerTest extends BasePreparationTest {
         repository.add(prepAction2);
 
         // when
-        final Response response = when().head("/preparations/use/dataset/{id}", datasetId);
+        final Response response = when().head("/preparations/use/dataset/{id}", lookupDatasetId);
 
         // then
         MatcherAssert.assertThat(response.getStatusCode(), is(204));
+    }
+
+    @Test
+    public void preparationsThatUseDataset_shouldDeleteDatasetIfUsedInLookupNotUsed() throws Exception {
+        // given
+        final String datasetId = "3214a6748bc4f9674c85";
+        final String preparationId = createPreparation(datasetId, "My preparation");
+        applyTransformation(preparationId, "actions/append_upper_case.json");
+
+        final String lookupDatasetId = "687468453436851";
+        final Map<String, String> parametersOnDataset = new HashMap<>();
+        parametersOnDataset.put("lookup_ds_id", lookupDatasetId);
+        final Map<String, String> parametersWithoutDataset = new HashMap<>();
+        parametersWithoutDataset.put("other", "other");
+
+        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
+        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
+
+        final PreparationActions prepAction1 = new PreparationActions().append(action1);
+        final PreparationActions prepAction2 = new PreparationActions().append(action2);
+
+        repository.add(prepAction1);
+        repository.add(prepAction2);
+
+        // when
+        final Response response = when().head("/preparations/use/dataset/{id}", lookupDatasetId);
+
+        // then
+        // Because the lookup action is not used in any preparation:
+        assertThat(response.getStatusCode(), is(404));
     }
 
     @Test

@@ -13,17 +13,17 @@
 
 package org.talend.dataprep.preparation.store;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.talend.dataprep.ServiceBaseTests;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationActions;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 public abstract class PreparationRepositoryTest extends ServiceBaseTests {
 
@@ -108,57 +108,4 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTests {
         assertThat(result, is(false));
     }
 
-    @Test
-    public void findOneStepActionByDataset_should_return_a_lookup_action_that_use_dataset() {
-        // given
-        final String datasetId = "789b61f3128a9bc24a684";
-        final Map<String, String> parametersOnDataset = new HashMap<>();
-        parametersOnDataset.put("lookup_ds_id", datasetId);
-        final Map<String, String> parametersWithoutDataset = new HashMap<>();
-        parametersWithoutDataset.put("other", "other");
-
-        final List<Action> action1 = new ArrayList<>(1);
-        action1.add(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = new ArrayList<>(1);
-        action2.add(Action.Builder.builder().withParameters(parametersOnDataset).build());
-
-        final PreparationActions prepAction1 = new PreparationActions().append(action1);
-        final PreparationActions prepAction2 = new PreparationActions().append(action2);
-
-        getRepository().add(prepAction1);
-        getRepository().add(prepAction2);
-
-        // when
-        final boolean result = getRepository().findOneStepActionByDataset(datasetId);
-
-        // then
-        assertThat(result, is(true));
-    }
-
-    @Test
-    public void findOneStepActionByDataset_should_return_null_when_no_action_use_dataset() {
-        // given
-        final String datasetId = "789b61f3128a9bc24a684";
-        final Map<String, String> parametersOnOtherDataset = new HashMap<>();
-        parametersOnOtherDataset.put("lookup_ds_id", "other");
-        final Map<String, String> parametersWithoutDataset = new HashMap<>();
-        parametersWithoutDataset.put("other", "other");
-
-        final List<Action> action1 = new ArrayList<>(1);
-        action1.add(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = new ArrayList<>(1);
-        action2.add(Action.Builder.builder().withParameters(parametersOnOtherDataset).build());
-
-        final PreparationActions prepAction1 = new PreparationActions().append(action1);
-        final PreparationActions prepAction2 = new PreparationActions().append(action2);
-
-        getRepository().add(prepAction1);
-        getRepository().add(prepAction2);
-
-        // when
-        final boolean result = getRepository().findOneStepActionByDataset(datasetId);
-
-        // then
-        assertThat(result, is(false));
-    }
 }

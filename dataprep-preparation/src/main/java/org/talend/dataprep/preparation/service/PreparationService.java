@@ -13,17 +13,6 @@
 
 package org.talend.dataprep.preparation.service;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
-import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
-import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
-
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -32,7 +21,6 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,9 +48,22 @@ import org.talend.dataprep.preparation.task.PreparationCleaner;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
+import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
+
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.api.preparation.StepWithActions.buildFromStepId;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
+import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 @Component
 public class PreparationService {
@@ -760,11 +761,26 @@ public class PreparationService {
 
     public ResponseEntity<Void> preparationsThatUseDataset(final String datasetId) {
         final boolean preparationUseDataSet = preparationRepository.exist(Preparation.class, "dataSetId = '" + datasetId + "'");
-        final boolean dataSetUsedInLookup = preparationRepository.findOneStepActionByDataset(datasetId);
+        final boolean dataSetUsedInLookup = isDatasetUsedToLookupInPreparationHead(datasetId);
+
         if (!preparationUseDataSet && !dataSetUsedInLookup) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    /** Check if the preparation uses this dataset in its head version. */
+    private boolean isDatasetUsedToLookupInPreparationHead(String datasetId) {
+        boolean usedInHead = false;
+        final String datasetParamName = Lookup.Parameters.LOOKUP_DS_ID.getKey();
+        usedInHead = preparationRepository.list(Preparation.class)
+                .flatMap(p -> getVersionedAction(p.getId(), "head").stream())
+                .filter(a -> a != null)
+                .filter(a -> Objects.equals(a.getName(), Lookup.LOOKUP_ACTION_NAME))
+                .filter(a -> Objects.equals(datasetId, a.getParameters().get(datasetParamName)))
+                .findAny()
+                .isPresent();
+        return usedInHead;
     }
 
     /**
@@ -826,6 +842,17 @@ public class PreparationService {
      */
     private Step getStep(final String stepId) {
         return preparationRepository.get(stepId, Step.class);
+    }
+
+    /**
+     * Get the step from id
+     *
+     * @param stepId The step id
+     * @return Le step with the provided id
+     */
+    public StepWithActions getStepWithActions(final String stepId) {
+        return buildFromStepId(stepId, cId -> preparationRepository.get(cId, PreparationActions.class),
+                sId -> preparationRepository.get(sId, Step.class));
     }
 
     /**

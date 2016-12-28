@@ -1,0 +1,23 @@
+{
+  "actions": [
+    {
+      "action": "lookup",
+      "parameters": {
+        "column_id": "0001",
+        "column_name": "name",
+        "scope": "dataset",
+        "lookup_ds_name": "lookup_ds",
+        "lookup_ds_id": "{lookup_ds_id}",
+        "lookup_ds_url": "should be updated in unit test",
+        "lookup_join_on": "0001",
+        "lookup_join_on_name": "name",
+        "lookup_selected_cols": [
+          {
+            "id": "0002",
+            "name": "firstname"
+          }
+        ]
+      }
+    }
+  ]
+}

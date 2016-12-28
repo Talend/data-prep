@@ -13,32 +13,19 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
-import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
-import static org.talend.dataprep.api.service.PreparationAPITestClient.*;
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.annotation.Resource;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,11 +40,23 @@ import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.api.service.EntityBuilder.buildAction;
+import static org.talend.dataprep.api.service.EntityBuilder.buildParametersMap;
+import static org.talend.dataprep.api.service.PreparationAPITestClient.*;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -896,6 +895,33 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertEquals(testPrepDetailsAfter.actions.get(1), testPrepDetails.actions.get(0));
     }
 
+    /**
+     * Verify a data set is not locked when used by a step that is not used in any preparation.
+     * see <a href="https://jira.talendforge.org/browse/TDP-2562">TDP-2562</a>
+     */
+    @Test
+    public void testSetPreparationHead_TDP_2562() throws Exception {
+        // Three data sets
+        final String lookupDataSetId = createDataset("dataset/dataset.csv", "lookup_ds", "text/csv");
+        final String dataSetId = createDataset("dataset/dataset_cars.csv", "cars", "text/csv");
+
+        String carsPreparationId = createPreparationFromDataset(dataSetId, "cars_preparation");
+
+        String action = IOUtils.toString(getClass().getResource("preparations/cars_lookup_action.json"));
+        applyAction(carsPreparationId, action.replace("{lookup_ds_id}", lookupDataSetId));
+
+        // Try to delete lookup dataset => fail because used
+        expect().statusCode(CONFLICT.value()).when().delete("/api/datasets/{id}", lookupDataSetId);
+
+        PreparationDetailsResponse preparationDetails = PreparationAPITestClient.getPreparationDetails(carsPreparationId);
+        String firstStepId = preparationDetails.steps.get(0);
+
+        // Now undo
+        expect().statusCode(OK.value()).when().put("/api/preparations/{id}/head/{headId}", carsPreparationId, firstStepId);
+
+        // Try again to delete lookup dataset
+        expect().statusCode(OK.value()).when().get("/api/datasets/{id}", lookupDataSetId);
+    }
 
     @Test
     public void shouldGetPreparationColumnTypes() throws Exception {

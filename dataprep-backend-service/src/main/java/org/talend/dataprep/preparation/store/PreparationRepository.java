@@ -15,10 +15,7 @@ package org.talend.dataprep.preparation.store;
 
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.preparation.Identifiable;
-import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.transformation.actions.datablending.Lookup;
 
 /**
  * Base interface for preparation repositories (mongodb & in memory).
@@ -51,14 +48,14 @@ public interface PreparationRepository {
 
     /**
      * Save or update an identifiable object.
-     * 
+     *
      * @param object the identifiable to save.
      */
     void add(Identifiable object);
 
     /**
      * Returns the Identifiable that matches the id and the class or null if none match.
-     * 
+     *
      * @param id the wanted Identifiable id.
      * @param clazz the wanted Identifiable class.
      * @param <T> the type of Identifiable.
@@ -73,30 +70,10 @@ public interface PreparationRepository {
 
     /**
      * Removes the {@link Identifiable identifiable} from repository.
-     * 
+     *
      * @param object The {@link Identifiable identifiable} to be deleted (only {@link Identifiable#getId()} will be used for
      * delete).
      */
     void remove(Identifiable object);
-
-    /**
-     * Find a preparation step action that use the dataset (ex: lookup)
-     * 
-     * @param datasetId The dataset id.
-     * @return A preparation action that use the dataset.
-     */
-    default boolean findOneStepActionByDataset(String datasetId) {
-        if (StringUtils.isEmpty(datasetId)) {
-            return false;
-        }
-        final String datasetParamName = Lookup.Parameters.LOOKUP_DS_ID.getKey();
-        return list(PreparationActions.class) //
-                .filter(actions -> actions != null) // filter out null entries
-                .filter(actions -> actions.getActions().stream() //
-                        .anyMatch(act -> datasetId.equals(act.getParameters().get(datasetParamName)))
-                ) // filter out non lookup on this dataset actions
-                .findFirst() //
-                .isPresent();
-    }
 
 }

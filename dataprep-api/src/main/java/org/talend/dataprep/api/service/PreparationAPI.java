@@ -13,24 +13,18 @@
 
 package org.talend.dataprep.api.service;
 
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.daikon.exception.ExceptionContext.withBuilder;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
-import static org.talend.dataprep.util.SortAndOrderHelper.Order;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.netflix.hystrix.HystrixCommand;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +35,7 @@ import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.StepWithActions;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 import org.talend.dataprep.api.service.api.PreviewDiffParameters;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
@@ -55,17 +50,27 @@ import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.netflix.hystrix.HystrixCommand;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.withBuilder;
+import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @RestController
 public class PreparationAPI extends APIService {
+
+    @Autowired
+    private DataSetAPI dataSetAPI;
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
@@ -372,8 +377,8 @@ public class PreparationAPI extends APIService {
     }
 
     //@formatter:off
-    @RequestMapping(value = "/api/preparations/{id}/head/{headId}", method = PUT, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Delete an action in the preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
+    @RequestMapping(value = "/api/preparations/{id}/head/{headId}", method = PUT)
+    @ApiOperation(value = "Changes the head of the preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
     public void setPreparationHead(@PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") final String preparationId,
                                    @PathVariable(value = "headId") @ApiParam(name = "headId", value = "New head step id") final String headId) {
@@ -383,8 +388,15 @@ public class PreparationAPI extends APIService {
             LOG.debug("Moving preparation #{} head to step '{}'...", preparationId, headId);
         }
 
-        final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, preparationId, headId);
-        command.execute();
+        StepWithActions step = getCommand(FindStep.class, headId).execute();
+        if (step == null) {
+            throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST);
+        } else if (isHeadStepDependingOnDeletedDataSet(step)) {
+            final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, preparationId, headId);
+            command.execute();
+        } else {
+            throw new TDPException(INVALID_HEAD_STEP_USING_DELETED_DATASET);
+        }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Moved preparation #{} head to step '{}'...", preparationId, headId);
@@ -596,6 +608,32 @@ public class PreparationAPI extends APIService {
         } catch (IOException e) {
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
         }
+    }
+
+    private boolean isHeadStepDependingOnDeletedDataSet(StepWithActions step) {
+        final boolean valid;
+        // If root
+        if (step.getParent() == null) {
+            valid = true;
+        } else {
+            List<Action> actions = step.getContent().getActions();
+            boolean oneActionRefersToNonexistentDataset = actions.stream() //
+                    .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
+                    .map(action -> action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey())) //
+                    .filter(dsId -> {
+                        boolean hasNoDataset;
+                        try {
+                            hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
+                        } catch (TDPException e) {
+                            // Dataset could not be retrieved => Main reason is not present
+                            LOG.debug("The data set could not be retrieved: "+e);
+                            hasNoDataset = true;
+                        }
+                        return hasNoDataset;
+                    }).findAny().isPresent();
+            valid = !oneActionRefersToNonexistentDataset && isHeadStepDependingOnDeletedDataSet(step.getParent());
+        }
+        return valid;
     }
 
 }

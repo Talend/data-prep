@@ -11,36 +11,28 @@
 
  ============================================================================*/
 
-describe('Transformation menu directive', function () {
+describe('Transformation menu directive', () => {
 	'use strict';
-	var scope;
-	var createElement;
-	var element;
+	let scope;
+	let createElement;
+	let element;
 
-	var column = {
+	const column = {
 		semanticDomains: [],
 		type: 'text',
 	};
 
 	const primitiveTypes = [
-		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+		{ id: 'STRING', label: 'string', labelKey: 'STRING' },
+		{ id: 'INTEGER', label: 'integer', labelKey: 'INTEGER' },
+		{ id: 'FLOAT', label: 'float', labelKey: 'FLOAT' },
+		{ id: 'BOOLEAN', label: 'boolean', labelKey: 'BOOLEAN' },
+		{ id: 'DATE', label: 'date', labelKey: 'DATE' },
 	];
 
 	const semanticDomains = [
-		{
-			"id": "CITY",
-			"label": "City",
-			"frequency": 99.24,
-		},
-		{
-			"id": "AIRPORT",
-			"label": "Airport",
-			"frequency": 3.03,
-		},
+		{ id: 'AIRPORT', label: 'Airport', frequency: 3.03 },
+		{ id: 'CITY', label: 'City', frequency: 99.24 },
 	];
 
 	beforeEach(angular.mock.module('data-prep.transformation-menu', ($provide) => {
@@ -63,7 +55,7 @@ describe('Transformation menu directive', function () {
 		scope = $rootScope.$new();
 		scope.column = column;
 
-		createElement = function () {
+		createElement = () => {
 			element = angular.element('<transform-menu column="column" menu-items="menu"></transform-menu>');
 			$compile(element)(scope);
 			scope.$digest();
@@ -71,34 +63,34 @@ describe('Transformation menu directive', function () {
 		};
 	}));
 
-	afterEach(function () {
+	afterEach(() => {
 		scope.$destroy();
 		element.remove();
 	});
 
-	it('should render a simple action', function () {
+	it('should render a simple action', () => {
 		//given
 		scope.menu = [{ label: 'uppercase' }];
 
 		//when
-		var element = createElement();
+		const element = createElement();
 
 		//then
 		expect(element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]').text().trim()).toBe('uppercase');
 	});
 
-	it('should render title of a simple action', function () {
+	it('should render title of a simple action', () => {
 		//given
 		scope.menu = [{ label: 'uppercase' }];
 
 		//when
-		var element = createElement();
+		const element = createElement();
 
 		//then
 		expect(element.find('li a[title]').text().trim()).toBe('uppercase');
 	});
 
-	it('should render an action with parameters', function () {
+	it('should render an action with parameters', () => {
 		//given
 		scope.menu = [{
 			name: 'menuWithParam',
@@ -120,10 +112,10 @@ describe('Transformation menu directive', function () {
 		},];
 
 		//when
-		var element = createElement();
+		const element = createElement();
 
 		//then
-		var menuItem = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
+		const menuItem = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
 		expect(menuItem.text().trim()).toBe('menu with param');
 		expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
@@ -131,12 +123,12 @@ describe('Transformation menu directive', function () {
 		menuItem.click();
 
 		//then
-		var paramsElements = angular.element('body').find('.transformation-form');
+		const paramsElements = angular.element('body').find('.transformation-form');
 		expect(paramsElements.length).toBe(1);
 		expect(paramsElements.is(':visible')).toBe(true);
 	});
 
-	it('should render an action with simple choice', function () {
+	it('should render an action with simple choice', () => {
 		//given
 		scope.menu = [{
 			name: 'menuWithParam',
@@ -155,10 +147,10 @@ describe('Transformation menu directive', function () {
 		},];
 
 		//when
-		var element = createElement();
+		const element = createElement();
 
 		//then
-		var menuItem = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
+		const menuItem = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
 		expect(menuItem.text().trim()).toBe('menu with param');
 		expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
@@ -166,12 +158,12 @@ describe('Transformation menu directive', function () {
 		menuItem.click();
 
 		//then
-		var paramsElements = angular.element('body').find('.transformation-form');
+		const paramsElements = angular.element('body').find('.transformation-form');
 		expect(paramsElements.length).toBe(1);
 		expect(paramsElements.is(':visible')).toBe(true);
 	});
 
-	it('should render multiple menu items', function () {
+	it('should render multiple menu items', () => {
 		//given
 		scope.menu = [
 			{ label: 'uppercase' },
@@ -211,17 +203,17 @@ describe('Transformation menu directive', function () {
 		];
 
 		//when
-		var element = createElement();
+		const element = createElement();
 
 		//then
-		var menuItems = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
+		const menuItems = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
 		expect(menuItems.length).toBe(3);
 		expect(menuItems.eq(0).text().trim()).toBe('uppercase');
 		expect(menuItems.eq(1).text().trim()).toBe('menu with choice');
 		expect(menuItems.eq(2).text().trim()).toBe('menu with param');
 	});
 
-	it('should display selected item parameters', function () {
+	it('should display selected item parameters', () => {
 		//given
 		scope.menu = [
 			{ label: 'uppercase' },
@@ -267,17 +259,17 @@ describe('Transformation menu directive', function () {
 			},
 		];
 
-		var element = createElement();
-		var menuItems = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
-		var menuWithChoice = menuItems.eq(1);
-		var menuWithParams = menuItems.eq(2);
+		const element = createElement();
+		const menuItems = element.find('li a[ng-click="menuCtrl.select(menu, \'column\')"]');
+		const menuWithChoice = menuItems.eq(1);
+		const menuWithParams = menuItems.eq(2);
 		expect(angular.element('body').find('.transformation-form').length).toBe(0);
 
 		//when
 		menuWithChoice.click();
 
 		//then : expect params to render choice
-		var paramsElements = angular.element('body').find('.transformation-form');
+		let paramsElements = angular.element('body').find('.transformation-form');
 		expect(paramsElements.length).toBe(1);
 
 		expect(paramsElements.is(':visible')).toBe(true);

@@ -65,10 +65,8 @@ describe('Datagrid header directive', () => {
     }));
 
     beforeEach(inject(($q, StateService, ColumnTypesService) => {
-        spyOn(StateService, 'setSemanticDomains').and.returnValue();
-        spyOn(StateService, 'setPrimitiveTypes').and.returnValue();
-        spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
-        spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
+        spyOn(ColumnTypesService, 'refreshSemanticDomains').and.returnValue($q.when(semanticDomains));
+        spyOn(ColumnTypesService, 'refreshTypes').and.returnValue($q.when(types));
     }));
 
     beforeEach(inject(($rootScope, $compile, $timeout) => {
@@ -127,7 +125,7 @@ describe('Datagrid header directive', () => {
     it('should close dropdown on get transform list error', inject(($timeout, $q, TransformationService) => {
         //given
         createElement();
-        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({}));
+        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({ allTransformations : [] }));
         element.find('.grid-header-caret').click();
         const dropdown = element.find('sc-dropdown').eq(0);
         expect(dropdown.hasClass('show')).toBe(true);
@@ -298,7 +296,7 @@ describe('Datagrid header directive', () => {
     it('should show menu on right click on grid-header if menu is hidden', inject(($q, TransformationService) => {
         //given
         createElement();
-        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({}));
+        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({ allTransformations : []}));
         expect(element.find('sc-dropdown').hasClass('show')).toBeFalsy();
 
         //when

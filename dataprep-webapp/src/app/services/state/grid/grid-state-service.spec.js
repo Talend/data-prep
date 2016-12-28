@@ -341,8 +341,8 @@ describe('Grid state service', () => {
             //then
             expect(gridState.columnFocus).toBe(null);
             expect(gridState.selectedColumns).toEqual([]);
-            expect(gridState.semanticDomains).toEqual([]);
-            expect(gridState.primitiveTypes).toEqual([]);
+            expect(gridState.semanticDomains).toEqual(null);
+            expect(gridState.primitiveTypes).toEqual(null);
             expect(gridState.selectedLine).toBe(null);
             expect(gridState.numericColumns).toEqual([]);
             expect(gridState.filteredRecords).toEqual([]);
@@ -433,7 +433,7 @@ describe('Grid state service', () => {
     });
 
     describe('domains & types', () => {
-        it('should set semntic domains', inject((gridState, GridStateService) => {
+        it('should set semantic domains', inject((gridState, GridStateService) => {
             // given
             const semanticDomains = [];
 

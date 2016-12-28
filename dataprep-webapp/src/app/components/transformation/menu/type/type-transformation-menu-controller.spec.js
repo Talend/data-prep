@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-describe('Type transform menu controller', function () {
+describe('Type transform menu controller', () => {
 	'use strict';
 
 	let createController;
@@ -20,24 +20,16 @@ describe('Type transform menu controller', function () {
 	let stateMock;
 
 	const primitiveTypes = [
-		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+		{ id: 'STRING', label: 'string', labelKey: 'STRING' },
+		{ id: 'INTEGER', label: 'integer', labelKey: 'INTEGER' },
+		{ id: 'FLOAT', label: 'float', labelKey: 'FLOAT' },
+		{ id: 'BOOLEAN', label: 'boolean', labelKey: 'BOOLEAN' },
+		{ id: 'DATE', label: 'date', labelKey: 'DATE' },
 	];
 
 	const semanticDomains = [
-		{
-			"id": "AIRPORT",
-			"label": "Airport",
-			"frequency": 3.03,
-		},
-		{
-			"id": "CITY",
-			"label": "City",
-			"frequency": 99.24,
-		},
+		{ id: 'AIRPORT', label: 'Airport', frequency: 3.03 },
+		{ id: 'CITY', label: 'City', frequency: 99.24 },
 	];
 
 	beforeEach(angular.mock.module('data-prep.type-transformation-menu', ($provide) => {
@@ -68,12 +60,6 @@ describe('Type transform menu controller', function () {
 				domainLabel: 'CITY',
 				domainFrequency: 18,
 				type: 'string',
-				semanticDomains: [
-					{ id: '', label: '', frequency: 15 },
-					{ id: 'CITY', label: 'CITY', frequency: 18 },
-					{ id: 'REGION', label: 'REGION', frequency: 6 },
-					{ id: 'COUNTRY', label: 'COUNTRY', frequency: 17 },
-				],
 			};
 			return ctrl;
 		};
@@ -82,64 +68,64 @@ describe('Type transform menu controller', function () {
 	}));
 
 	describe('init', () => {
-		it('should get semantic domains and types on init', () => {
+		it('should update the selected domain/type on column change', () => {
 			// given
 			const ctrl = createController();
-			spyOn(ctrl, '_refreshCurrentDomain').and.returnValue();
-			ctrl.column = {
+			const nextColumn = {
 				id: '0000',
 				name: 'awesome cities',
-				domain: 'CITY',
-				domainLabel: 'CITY',
+				domain: 'airport',
+				domainLabel: 'AIRPORT',
 				domainFrequency: 18,
 				type: 'string',
-				semanticDomains: [
-					{ id: '', label: '', frequency: 15 },
-					{ id: 'CITY', label: 'CITY', frequency: 18 },
-					{ id: 'REGION', label: 'REGION', frequency: 6 },
-					{ id: 'COUNTRY', label: 'COUNTRY', frequency: 17 },
-				],
 			};
+			ctrl.column = nextColumn;
+
+			expect(ctrl.currentDomain).toBeFalsy();
+			expect(ctrl.currentSimplifiedDomain).toBeFalsy();
 
 			// when
-			ctrl.$onInit();
-			expect(ctrl._refreshCurrentDomain).not.toHaveBeenCalled();
-			scope.$digest();
+			ctrl.$onChanges({ column: nextColumn });
 
 			// then
-			expect(ctrl._refreshCurrentDomain).toHaveBeenCalled();
+			expect(ctrl.currentDomain).toBe('airport');
+			expect(ctrl.currentSimplifiedDomain).toBe('airport');
 		});
 
 		it('should refresh current domain from column domain', () => {
 			// given
 			const ctrl = createController();
+			
+			expect(ctrl.currentDomain).toBeFalsy();
+			expect(ctrl.currentSimplifiedDomain).toBeFalsy();
 
 			// when
 			ctrl._refreshCurrentDomain();
-			scope.$digest();
 
 			// then
 			expect(ctrl.currentDomain).toBe('CITY');
 			expect(ctrl.currentSimplifiedDomain).toBe('CITY');
 		});
 
-		it('should refresh current domain from column type', inject((ConverterService) => {
+		it('should refresh current domain from column type', () => {
 			// given
-			spyOn(ConverterService, 'simplifyType').and.returnValue();
 			const ctrl = createController();
 			ctrl.column.domain = '';
+			ctrl.column.type = 'float';
+
+			expect(ctrl.currentDomain).toBeFalsy();
+			expect(ctrl.currentSimplifiedDomain).toBeFalsy();
 
 			// when
 			ctrl._refreshCurrentDomain();
-			scope.$digest();
 
 			// then
-			expect(ctrl.currentDomain).toBe('STRING');
-			expect(ConverterService.simplifyType).toHaveBeenCalledWith(ctrl.column.type);
-		}));
+			expect(ctrl.currentDomain).toBe('FLOAT');
+			expect(ctrl.currentSimplifiedDomain).toBe('decimal');
+		});
 	});
 
-	describe('changing domain', () => {
+	describe('changeDomain', () => {
 		it('should change domain locally and call backend to add a step', inject(($q, PlaygroundService) => {
 			//given
 			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
@@ -250,7 +236,7 @@ describe('Type transform menu controller', function () {
 		}));
 	});
 
-	describe('checking the type radio', () => {
+	describe('shouldBeChecked', () => {
 		it('should check decimal (float) type when current type is double', () => {
 			//given
 			var ctrl = createController();

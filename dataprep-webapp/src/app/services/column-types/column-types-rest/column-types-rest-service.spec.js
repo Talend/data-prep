@@ -12,44 +12,85 @@
  ============================================================================*/
 
 
-describe('Column types rest Service', () => {
-	'use strict';
+describe('Column types rest service', () => {
+	let $httpBackend;
+	const types = [
+		{ id: 'ANY', label: 'any', labelKey: 'ANY' },
+		{ id: 'STRING', label: 'string', labelKey: 'STRING' },
+		{ id: 'NUMERIC', label: 'numeric', labelKey: 'NUMERIC' },
+		{ id: 'INTEGER', label: 'integer', labelKey: 'INTEGER' },
+		{ id: 'DOUBLE', label: 'double', labelKey: 'DOUBLE' },
+		{ id: 'FLOAT', label: 'float', labelKey: 'FLOAT' },
+		{ id: 'BOOLEAN', label: 'boolean', labelKey: 'BOOLEAN' },
+		{ id: 'DATE', label: 'date', labelKey: 'DATE' },
+	];
 
-	var $httpBackend;
-	var types = [
-		{ id: 'ANY', name: 'any', labelKey: 'ANY' },
-		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-		{ id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
-		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-		{ id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
-		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
+	const semanticDomains = [
+		{ id: 'AIRPORT', label: 'Airport', frequency: 3.03 },
+		{ id: 'CITY', label: 'City', frequency: 99.24 },
 	];
 
 	beforeEach(angular.mock.module('data-prep.services.column-types'));
 
-	beforeEach(inject(function ($rootScope, $injector, RestURLs) {
+	beforeEach(inject(($rootScope, $injector, RestURLs) => {
 		RestURLs.setServerUrl('');
 		$httpBackend = $injector.get('$httpBackend');
 	}));
 
-	it('should get types from backend call', inject(($rootScope, ColumnTypesRestService, RestURLs) => {
+	it('should fetch primitive types', inject(($rootScope, RestURLs, ColumnTypesRestService) => {
 		//given
-		var result = null;
+		let result = null;
 		$httpBackend
 			.expectGET(RestURLs.typesUrl)
-			.respond(200, { data: types });
+			.respond(200, types);
 
 		//when
-		ColumnTypesRestService.fetchUrl(RestURLs.typesUrl).then((response) => {
-			result = response.data;
-		});
-
+		ColumnTypesRestService.fetchTypes()
+			.then((response) => {
+				result = response;
+			});
 		$httpBackend.flush();
 		$rootScope.$digest();
 
 		//then
 		expect(result).toEqual(types);
+	}));
+
+	it('should dataset semantic domains', inject(($rootScope, RestURLs, ColumnTypesRestService) => {
+		//given
+		let result = null;
+		$httpBackend
+			.expectGET(`${RestURLs.datasetUrl}/myDatasetId/columns/myColId/types`)
+			.respond(200, semanticDomains);
+
+		//when
+		ColumnTypesRestService.fetchDomains('dataset', 'myDatasetId', 'myColId')
+			.then((response) => {
+				result = response;
+			});
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(result).toEqual(semanticDomains);
+	}));
+
+	it('should preparation semantic domains', inject(($rootScope, RestURLs, ColumnTypesRestService) => {
+		//given
+		let result = null;
+		$httpBackend
+			.expectGET(`${RestURLs.preparationUrl}/myPrepId/columns/myColId/types`)
+			.respond(200, semanticDomains);
+
+		//when
+		ColumnTypesRestService.fetchDomains('preparation', 'myPrepId', 'myColId')
+			.then((response) => {
+				result = response;
+			});
+		$httpBackend.flush();
+		$rootScope.$digest();
+
+		//then
+		expect(result).toEqual(semanticDomains);
 	}));
 });

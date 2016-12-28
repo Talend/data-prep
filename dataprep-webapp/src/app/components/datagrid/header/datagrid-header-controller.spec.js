@@ -18,30 +18,6 @@ describe('Datagrid header controller', () => {
 	let scope;
 	let stateMock;
 
-	const types = [
-		{ id: 'ANY', name: 'any', labelKey: 'ANY' },
-		{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-		{ id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
-		{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-		{ id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
-		{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-		{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-		{ id: 'DATE', name: 'date', labelKey: 'DATE' },
-	];
-
-	const semanticDomains = [
-		{
-			"id": "AIRPORT",
-			"label": "Airport",
-			"frequency": 3.03,
-		},
-		{
-			"id": "CITY",
-			"label": "City",
-			"frequency": 99.24,
-		},
-	];
-
 	const column = {
 		id: '0001',
 		name: 'Original name',
@@ -179,19 +155,28 @@ describe('Datagrid header controller', () => {
 	describe('init transformation', () => {
 
 		beforeEach(inject(($q, StateService, ColumnTypesService) => {
-			spyOn(StateService, 'setSemanticDomains').and.returnValue();
-			spyOn(StateService, 'setPrimitiveTypes').and.returnValue();
-			spyOn(ColumnTypesService, 'getColSemanticDomains').and.returnValue($q.when(semanticDomains));
-			spyOn(ColumnTypesService, 'getTypes').and.returnValue($q.when(types));
+			spyOn(ColumnTypesService, 'refreshSemanticDomains').and.returnValue();
+			spyOn(ColumnTypesService, 'refreshTypes').and.returnValue();
 		}));
 
-		describe('with transformation list success', () => {
-			beforeEach(inject(($q, TransformationService) => {
-				spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
-			}));
+		it('should refresh domains and types',
+			inject((StateService, ColumnTypesService) => {
+				// given
+				const ctrl = createController();
 
-			it('should filter and init only "column_metadata" category', inject((TransformationService) => {
+				// when
+				ctrl.initTransformations();
+
+				//then
+				expect(ColumnTypesService.refreshSemanticDomains).toHaveBeenCalledWith(ctrl.column.id);
+				expect(ColumnTypesService.refreshTypes).toHaveBeenCalled();
+			})
+		);
+
+		it('should get and init only "column_metadata" category transformations',
+			inject(($q, TransformationService) => {
 				//given
+				spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
 				const ctrl = createController();
 
 				//when
@@ -203,10 +188,13 @@ describe('Datagrid header controller', () => {
 				expect(ctrl.transformations.length).toBe(2);
 				expect(ctrl.transformations[0].name).toBe('rename');
 				expect(ctrl.transformations[1].name).toBe('split');
-			}));
+			})
+		);
 
-			it('should not get transformations if transformations are being fetched', inject((TransformationService) => {
+		it('should NOT get transformations if transformations are being fetched',
+			inject(($q, TransformationService) => {
 				//given
+				spyOn(TransformationService, 'getTransformations').and.returnValue($q.when());
 				let ctrl = createController();
 				ctrl.initTransformations();
 
@@ -215,88 +203,43 @@ describe('Datagrid header controller', () => {
 
 				//then
 				expect(TransformationService.getTransformations.calls.count()).toBe(1);
-			}));
-		});
+			})
+		);
 
-		describe('with transformation list error', () => {
-			beforeEach(inject(($q, TransformationService) => {
-				spyOn(TransformationService, 'getTransformations').and.returnValue($q.reject('server error'));
-			}));
-
-			it('should change inProgress and error flags', () => {
+		it('should NOT get transformations if transformations are already initialized',
+			inject((TransformationService) => {
 				//given
-				const ctrl = createController();
-				expect(ctrl.transformationsRetrieveError).toBeFalsy();
-				expect(ctrl.initTransformationsInProgress).toBeFalsy();
-
-				ctrl.transformationsRetrieveError = true;
+				spyOn(TransformationService, 'getTransformations').and.returnValue();
+				let ctrl = createController();
+				ctrl.transformations = [{}];
 
 				//when
 				ctrl.initTransformations();
-				expect(ctrl.initTransformationsInProgress).toBeTruthy();
-				expect(ctrl.transformationsRetrieveError).toBeFalsy();
-				scope.$digest();
 
 				//then
-				expect(ctrl.transformationsRetrieveError).toBeTruthy();
-				expect(ctrl.initTransformationsInProgress).toBeFalsy();
-			});
-		});
+				expect(TransformationService.getTransformations).not.toHaveBeenCalled();
+			})
+		);
 
-		describe('fetch semantic domains & primitive types', () => {
-			it('should reset semantic domains and types in the state: when preparation', inject((StateService, ColumnTypesService) => {
-				// given
-				const ctrl = createController();
+		it('should change inProgress and error flags on error', inject(($q, TransformationService) => {
+			//given
+			spyOn(TransformationService, 'getTransformations').and.returnValue($q.reject('server error'));
+			const ctrl = createController();
+			expect(ctrl.transformationsRetrieveError).toBeFalsy();
+			expect(ctrl.initTransformationsInProgress).toBeFalsy();
 
-				// when
-				ctrl.initTransformations();
+			ctrl.transformationsRetrieveError = true;
 
-				//then
-				expect(StateService.setSemanticDomains).toHaveBeenCalledWith([]);
-				expect(StateService.setPrimitiveTypes).toHaveBeenCalledWith([]);
-				expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('preparation', 'prepId', ctrl.column.id);
-				expect(ColumnTypesService.getTypes).toHaveBeenCalled();
-			}));
+			//when
+			ctrl.initTransformations();
+			expect(ctrl.initTransformationsInProgress).toBeTruthy();
+			expect(ctrl.transformationsRetrieveError).toBeFalsy();
+			scope.$digest();
 
-			it('should reset semantic domains and types in the state: when dataset', inject((StateService, ColumnTypesService) => {
-				// given
-				const ctrl = createController();
-				stateMock.playground.preparation = null;
-				stateMock.playground.dataset = {
-					id: 'datasetId',
-				};
-
-				// when
-				ctrl.initTransformations();
-
-				//then
-				expect(StateService.setSemanticDomains).toHaveBeenCalledWith([]);
-				expect(StateService.setPrimitiveTypes).toHaveBeenCalledWith([]);
-				expect(ColumnTypesService.getColSemanticDomains).toHaveBeenCalledWith('dataset', 'datasetId', ctrl.column.id);
-				expect(ColumnTypesService.getTypes).toHaveBeenCalled();
-			}));
-
-			it('should set fetched semantic domains and types in the state', inject(($q, StateService, TransformationService) => {
-				// given
-				const ctrl = createController();
-				const expectedTypes = [
-					{ id: 'STRING', name: 'string', labelKey: 'STRING' },
-					{ id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
-					{ id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
-					{ id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
-					{ id: 'DATE', name: 'date', labelKey: 'DATE' },
-				];
-				spyOn(TransformationService, 'getTransformations').and.returnValue($q.when(transformationsMock()));
-
-				// when
-				ctrl.initTransformations();
-				scope.$digest();
-
-				//then
-				expect(StateService.setSemanticDomains).toHaveBeenCalledWith(semanticDomains.reverse());
-				expect(StateService.setPrimitiveTypes).toHaveBeenCalledWith(expectedTypes);
-			}));
-		});
+			//then
+			expect(ctrl.transformationsRetrieveError).toBeTruthy();
+			expect(ctrl.initTransformationsInProgress).toBeFalsy();
+		}));
 	});
 
 	describe('update column name', () => {

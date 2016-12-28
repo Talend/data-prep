@@ -11,6 +11,8 @@
 
   ============================================================================*/
 
+export const IGNORED_TYPES = ['DOUBLE', 'NUMERIC', 'ANY'];
+
 /**
  * @ngdoc service
  * @name data-prep.services.column-types.service:ColumnTypesService
@@ -41,9 +43,8 @@ export default class ColumnTypesService {
 
 		return this.ColumnTypesRestService.fetchTypes()
 			.then((primitiveTypes) => {
-				const ignoredTypes = ['double', 'numeric', 'any'];
 				const filteredTypes = primitiveTypes
-					.filter(type => ignoredTypes.indexOf(type) === -1);
+					.filter(type => IGNORED_TYPES.indexOf(type.id) === -1);
 				this.StateService.setPrimitiveTypes(filteredTypes);
 				return filteredTypes;
 			});

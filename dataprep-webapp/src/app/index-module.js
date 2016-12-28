@@ -97,14 +97,11 @@ window.fetchConfiguration = function fetchConfiguration() {
 					RestURLs.setServerUrl(config.serverUrl);
 				})
 				// Fetch dynamic configuration (export types, supported encodings, ...)
-				.run((SettingsService, ImportService, ExportService, DatasetService) => {
+				.run((SettingsService, ExportService, DatasetService) => {
 					'ngInject';
 					SettingsService.setSettings(appSettings);
 					ExportService.refreshTypes();
 					DatasetService.refreshSupportedEncodings();
-
-					ImportService.initImport()
-						.then(() => SettingsService.refreshSettings());
 				})
 				// Open a keepalive websocket if requested
 				.run(() => {

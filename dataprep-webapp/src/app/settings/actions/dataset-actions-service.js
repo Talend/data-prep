@@ -14,9 +14,10 @@
 import { HOME_DATASETS_ROUTE } from '../../index-route';
 
 export default class DatasetActionsService {
-	constructor($document, $stateParams, state, DatasetService, ImportService,
-				MessageService, StateService, StorageService,
-				TalendConfirmService) {
+	constructor($document, $stateParams, state,
+				StateService, StorageService, DatasetService,
+				ImportService, UploadWorkflowService,
+				MessageService, TalendConfirmService) {
 		'ngInject';
 		this.$document = $document;
 		this.$stateParams = $stateParams;
@@ -27,6 +28,7 @@ export default class DatasetActionsService {
 		this.StateService = StateService;
 		this.StorageService = StorageService;
 		this.TalendConfirmService = TalendConfirmService;
+		this.UploadWorkflowService = UploadWorkflowService;
 
 		this.renamingList = [];
 	}
@@ -136,6 +138,10 @@ export default class DatasetActionsService {
 				const defaultImport = importTypes.find(type => type.defaultImport) || importTypes[0];
 				this.ImportService.startImport(defaultImport);
 			}
+			break;
+		}
+		case '@@dataset/OPEN': {
+			this.UploadWorkflowService.openDataset(action.payload.model);
 			break;
 		}
 		}

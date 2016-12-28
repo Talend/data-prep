@@ -407,5 +407,22 @@ describe('Datasets actions service', () => {
 			// then
 			expect(ImportService.startImport).toHaveBeenCalledWith(defaultType);
 		}));
+
+		it('should open dataset via workflow service', inject((DatasetActionsService, UploadWorkflowService) => {
+			// given
+			const dataset = { id: 'myDatasetId', draft: true };
+			const action = {
+				type: '@@dataset/OPEN',
+				payload: { model: dataset }
+			};
+
+			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
+
+			// when
+			DatasetActionsService.dispatch(action);
+
+			// then
+			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset);
+		}));
 	});
 });

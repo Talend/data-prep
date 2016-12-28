@@ -113,7 +113,7 @@ const settingsMock = {
 					displayModeKey: 'displayMode',
 					iconKey: 'icon',
 					key: 'name',
-					onClick: 'menu:playground:dataset',
+					onClick: 'dataset:open',
 					onEditCancel: 'inventory:cancel-edit',
 					onEditSubmit: 'dataset:submit-edit',
 				},
@@ -248,6 +248,12 @@ const settingsMock = {
 			payload: {
 				method: 'logout',
 			},
+		},
+		'dataset:open': {
+			id: 'dataset:open',
+			name: 'Open dataset',
+			icon: '',
+			type: '@@dataset/OPEN',
 		},
 		'dataset:display-mode': {
 			id: 'dataset:display-mode',

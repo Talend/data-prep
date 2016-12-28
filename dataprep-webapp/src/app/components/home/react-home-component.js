@@ -17,12 +17,12 @@ const HomeComponent = {
 			<ui-view name="home-content"></ui-view>
 		</layout>
 
+		<about></about>
 		<dataset-xls-preview></dataset-xls-preview>
 		<folder-creator></folder-creator>
 		<preparation-copy-move></preparation-copy-move>
 		<preparation-creator></preparation-creator>
 		<insertion-home></insertion-home>
-		<about></about>
 	`,
 };
 

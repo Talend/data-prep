@@ -209,7 +209,7 @@ describe('Import service', () => {
 			}
 		},
 		{
-			defaultImport: false,
+			defaultImport: true,
 			label: 'Local File',
 			model: {
 				locationType: 'local',
@@ -532,34 +532,6 @@ describe('Import service', () => {
 		}));
 	});
 
-
-	describe('startDefaultImport', inject(() => {
-		it('should call the first import type if no defaultImportType', inject(() => {
-			// given
-			StateMock.import.importTypes[2].defaultImport = false;
-
-			// when
-			spyOn(ImportService, 'startImport');
-			ImportService.startDefaultImport();
-
-			// then
-			expect(ImportService.startImport).toHaveBeenCalledWith(StateMock.import.importTypes[0].model);
-		}));
-
-		it('should call the default import type', inject((ImportService) => {
-
-			// given
-			StateMock.import.importTypes[2].defaultImport = true;
-
-			// when
-			spyOn(ImportService, 'startImport');
-			ImportService.startDefaultImport();
-
-			// then
-			expect(ImportService.startImport).toHaveBeenCalledWith(StateMock.import.importTypes[2].model);
-		}));
-	}));
-
 	describe('startImport', () => {
 		it('should start import from local file', inject((ImportService) => {
 			// when
@@ -576,7 +548,7 @@ describe('Import service', () => {
 
 			// then
 			expect(ImportService.currentInputType).toEqual(StateMock.import.importTypes[0].model);
-			expect(StateService.setShowImportModal).toBe(true);
+			expect(StateService.setShowImportModal).toHaveBeenCalledWith(true);
 		}));
 
 		it('should start import from remote with dynamic parameters', inject((ImportService, $q, $rootScope) => {
@@ -712,7 +684,7 @@ describe('Import service', () => {
 		let propertyName;
 		let fakeData;
 
-		beforeEach(inject(() => {
+		beforeEach(inject((ImportService) => {
 			datastoreFormId = 'datastoreFormId';
 			propertyName = 'propertyNameWithTrigger';
 			formData = {
@@ -757,19 +729,20 @@ describe('Import service', () => {
 
 	describe('onDatasetFormCancel', () => {
 
-		it('should reset modal display flag and datastore creation form', inject(($rootScope, ImportService) => {
+		it('should reset modal display flag and datastore creation form', inject(($rootScope, ImportService, StateService) => {
 			// given
-			ImportService.state.import.showImportModal = true;
+
 			ImportService.datastoreForm = {};
 			ImportService.dataStoreId = '';
 			ImportService.datasetForm = {};
 
 			// when
+			spyOn(StateService, 'setShowImportModal');
 			ImportService.onDatasetFormCancel();
 			$rootScope.$apply();
 
 			// then
-			expect(ImportService.state.import.showImportModal).toBeFalsy();
+			expect(StateService.setShowImportModal).toHaveBeenCalledWith(false);
 			expect(ImportService.datastoreForm).toBeNull();
 			expect(ImportService.dataStoreId).toBeNull();
 			expect(ImportService.datasetForm).toBeNull();
@@ -850,9 +823,6 @@ describe('Import service', () => {
 
 		it('should show dataset name popup when name already exists', inject(($rootScope, $q, DatasetService, ImportService) => {
 			// given
-			const dataset = {
-				name: 'my dataset',
-			};
 			spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.reject());
 			expect(ImportService.datasetNameModal).toBeFalsy();
 
@@ -870,12 +840,12 @@ describe('Import service', () => {
 			expect(ImportService.datasetNameModal).toBeFalsy();
 
 			// when
-			ImportService.import(StateMock.import.importTypes[0].model);
+			ImportService.import(importTypes[0]);
 			$rootScope.$apply();
 
 			// then
 			expect(ImportService.datasetNameModal).toBeFalsy();
-			const paramsExpected = { name: 'my dataset', url: '', type: 'hdfs' };
+			const paramsExpected = { url: '', type: 'hdfs', name: 'my dataset'};
 			expect(DatasetService.create).toHaveBeenCalledWith(paramsExpected, 'application/vnd.remote-ds.hdfs', { name: 'my dataset.csv' });
 		}));
 
@@ -922,12 +892,12 @@ describe('Import service', () => {
 		describe('with unique name', () => {
 			beforeEach(inject(($q, DatasetService, ImportService) => {
 				spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.when());
-				ImportService.currentInputType = StateMock.import.importTypes[0].model;
+				ImportService.currentInputType = importTypes[0];
 			}));
 
 			it('should create dataset if name is unique', inject((StateService, $q, $rootScope, DatasetService, ImportService, UploadWorkflowService) => {
 				// given
-				const paramsExpected = { name: 'my cool dataset', url: '', type: 'hdfs' };
+				const paramsExpected = { url: '', type: 'hdfs', name: 'my cool dataset' };
 
 				// when
 				ImportService.onImportNameValidation();

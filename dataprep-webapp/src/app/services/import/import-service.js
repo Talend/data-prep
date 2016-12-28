@@ -15,11 +15,10 @@
  */
 export default class ImportService {
 
-	constructor($document, $rootScope, $translate, appSettings, state, DatasetService, ImportRestService,
-				StateService, TalendConfirmService, UploadWorkflowService, UpdateWorkflowService, SettingsService) {
+	constructor($document, $rootScope, $translate, state, DatasetService, ImportRestService,
+				StateService, TalendConfirmService, UploadWorkflowService, UpdateWorkflowService) {
 		'ngInject';
 
-		this.appSettings = appSettings;
 		this.$document = $document;
 		this.$rootScope = $rootScope;
 		this.$translate = $translate;
@@ -31,7 +30,6 @@ export default class ImportService {
 		this.$translate = $translate;
 		this.state = state;
 		this.DatasetService = DatasetService;
-		this.SettingsService = SettingsService;
 		this.StateService = StateService;
 		this.TalendConfirmService = TalendConfirmService;
 		this.UpdateWorkflowService = UpdateWorkflowService;
@@ -211,6 +209,70 @@ export default class ImportService {
 
 	/**
 	 * @ngdoc method
+	 * @name importDataset
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Create dataset using import parameters
+	 * @param {object} file The file imported from local
+	 * @param {string} name The dataset name
+	 * @param {object} importType The import parameters
+	 */
+	importDataset(file, name, importType) {
+		const params = this.DatasetService.getLocationParamIteration({}, importType.parameters);
+		params.type = importType.locationType;
+		params.name = name;
+
+		const dataset = this.DatasetService.createDatasetInfo(file, name);
+		this.StateService.startUploadingDataset(dataset);
+
+		return this.DatasetService.create(params, importType.contentType, file)
+			.progress((event) => {
+				dataset.progress = parseInt((100.0 * event.loaded) / event.total, 10);
+			})
+			.then((event) => {
+				this.DatasetService.getDatasetById(event.data).then(this.UploadWorkflowService.openDataset);
+			})
+			.catch(() => {
+				dataset.error = true;
+			})
+			.finally(() => {
+				this.StateService.finishUploadingDataset(dataset);
+			});
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name import
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Import step 1 - It checks if the dataset name is available
+	 * If so : the dataset is created
+	 * If not : the new name modal is shown
+	 */
+	import(importType) {
+		const file = this.importDatasetFile ? this.importDatasetFile[0] : null;
+		const datasetName = file ?
+			file.name :
+			_.find(importType.parameters, { name: 'name' }).value;
+
+		// remove file extension and ask final name
+		const name = datasetName.replace(/\.[^/.]+$/, '');
+
+		return this.DatasetService.checkNameAvailability(name)
+			// name available: we create the dataset
+			.then(() => {
+				this.importDataset(file, name, importType);
+			})
+			// name is not available, we ask for a new name
+			.catch(() => {
+				this.datasetName = name;
+				this.datasetNameModal = true;
+			})
+			.finally(() => {
+				this.StateService.setShowImportModal(false);
+			});
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name _getDatastoreFormActions
 	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Populates datastore form actions if they don't exist
@@ -289,7 +351,7 @@ export default class ImportService {
 	/**
 	 * @ngdoc method
 	 * @name onDatastoreFormChange
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Datastore form change handler
 	 * @param formData All data as form properties
 	 * @param formId ID attached to the form
@@ -306,7 +368,7 @@ export default class ImportService {
 	/**
 	 * @ngdoc method
 	 * @name onDatastoreFormSubmit
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Datastore form change handler
 	 * @param uiSpecs All data as form properties
 	 * @param formId ID attached to the form
@@ -329,7 +391,7 @@ export default class ImportService {
 	/**
 	 * @ngdoc method
 	 * @name onDatasetFormChange
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Datastore form change handler
 	 * @param formData All data as form properties
 	 * @param formId ID attached to the form
@@ -345,7 +407,7 @@ export default class ImportService {
 	/**
 	 * @ngdoc method
 	 * @name onDatasetFormSubmit
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Datastore form change handler
 	 * @param uiSpecs
 	 */
@@ -359,71 +421,8 @@ export default class ImportService {
 
 	/**
 	 * @ngdoc method
-	 * @name importDataset
-	 * @description Create dataset using import parameters
-	 * @param {object} file The file imported from local
-	 * @param {string} name The dataset name
-	 * @param {object} importType The import parameters
-	 */
-	importDataset(file, name, importType) {
-		const params = this.DatasetService.getLocationParamIteration({}, importType.parameters);
-		params.type = importType.locationType;
-		params.name = name;
-
-		const dataset = this.DatasetService.createDatasetInfo(file, name);
-		this.StateService.startUploadingDataset(dataset);
-
-		return this.DatasetService.create(params, importType.contentType, file)
-			.progress((event) => {
-				dataset.progress = parseInt((100.0 * event.loaded) / event.total, 10);
-			})
-			.then((event) => {
-				this.DatasetService.getDatasetById(event.data).then(this.UploadWorkflowService.openDataset);
-			})
-			.catch(() => {
-				dataset.error = true;
-			})
-			.finally(() => {
-				this.StateService.finishUploadingDataset(dataset);
-			});
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name import
-	 * @methodOf data-prep.import.controller:ImportCtrl
-	 * @description Import step 1 - It checks if the dataset name is available
-	 * If so : the dataset is created
-	 * If not : the new name modal is shown
-	 */
-	import(importType) {
-		const file = this.importDatasetFile ? this.importDatasetFile[0] : null;
-		const datasetName = file ?
-			file.name :
-			_.find(importType.parameters, { name: 'name' }).value;
-
-		// remove file extension and ask final name
-		const name = datasetName.replace(/\.[^/.]+$/, '');
-
-		return this.DatasetService.checkNameAvailability(name)
-			// name available: we create the dataset
-			.then(() => {
-				this.importDataset(file, name, importType);
-			})
-			// name is not available, we ask for a new name
-			.catch(() => {
-				this.datasetName = name;
-				this.datasetNameModal = true;
-			})
-			.finally(() => {
-				this.StateService.setShowImportModal(false);
-			});
-	}
-
-	/**
-	 * @ngdoc method
 	 * @name uploadDatasetName
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Import step 2 - name entered. It checks if the name is available
 	 * If so : the dataset is created
 	 * If not : the user has to choose to create a new one or the update the existing one
@@ -445,7 +444,7 @@ export default class ImportService {
 	/**
 	 * @ngdoc method
 	 * @name updateOrCreate
-	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @methodOf data-prep.services.import.service:ImportService
 	 * @param {object} file The dataset file
 	 * @param {object} existingDataset The dataset to update
 	 * @param {object} importType The import configuration

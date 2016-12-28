@@ -12,6 +12,10 @@
  ============================================================================*/
 
 import angular from 'angular';
+
+import TALEND_WIDGET_MODULE from '../../components/widgets/widget-module';
+import SERVICES_DATASET_MODULE from '../../services/dataset/dataset-module';
+import SERVICES_DATASET_WORKFLOW_MODULE from '../../services/dataset-workflow/dataset-workflow-module';
 import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
@@ -27,8 +31,11 @@ const MODULE_NAME = 'data-prep.services.import';
  */
 angular.module(MODULE_NAME,
 	[
+		SERVICES_DATASET_MODULE,
+		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
+		TALEND_WIDGET_MODULE,
 	])
     .service('ImportRestService', ImportRestService)
     .service('ImportService', ImportService);

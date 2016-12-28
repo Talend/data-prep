@@ -24,6 +24,9 @@ describe('Home Preparation Container', () => {
 			inventory: {
 				breadcrumb: []
 			},
+			import: {
+				importTypes: [],
+			},
 		};
 		$provide.constant('state', StateMock);
 	}));
@@ -39,7 +42,6 @@ describe('Home Preparation Container', () => {
 
 		spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
 		spyOn(FolderService, 'init').and.returnValue($q.when());
-
 		SettingsService.setSettings(settings);
 	}));
 

@@ -13,7 +13,9 @@
 
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
+import SERVICES_DATASET_WORKFLOW_MODULE from '../../services/dataset-workflow/dataset-workflow-module';
 import SERVICES_FOLDER_MODULE from '../../services/folder/folder-module';
+import SERVICES_IMPORT_MODULE from '../../services/import/import-module';
 import SERVICES_ONBOARDING_MODULE from '../../services/onboarding/onboarding-module';
 import SERVICES_PREPARATION_MODULE from '../../services/preparation/preparation-module';
 import SERVICES_SEARCH_MODULE from '../../services/search/search-module';
@@ -36,7 +38,9 @@ const MODULE_NAME = 'app.settings.actions';
 angular.module(MODULE_NAME,
 	[
 		uiRouter,
+		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_FOLDER_MODULE,
+		SERVICES_IMPORT_MODULE,
 		SERVICES_ONBOARDING_MODULE,
 		SERVICES_PREPARATION_MODULE,
 		SERVICES_STATE_MODULE,

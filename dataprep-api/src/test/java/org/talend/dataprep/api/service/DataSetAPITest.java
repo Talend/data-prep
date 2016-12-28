@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -31,12 +30,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.ValidatableResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,16 +45,18 @@ import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
+import org.talend.dataprep.schema.FormatFamily;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
-import org.talend.dataprep.schema.FormatFamily;
 
 /**
  * Unit test for Data Set API.
@@ -707,6 +706,26 @@ public class DataSetAPITest extends ApiServiceTestBase {
                 .then()
                 .statusCode(200)
                 .content(equalTo(mapper.writeValueAsString(new TCOMPLocationTest().getParametersAsSchema())));
+    }
+
+    @Test
+    public void shouldGetDataSetColumnTypes() throws Exception {
+
+        // given
+        final String dataSetId = createDataset("dataset/dataset.csv", "testDataset", "text/csv");
+
+
+        // when
+        final Response response = when().get("/api/datasets/{preparationId}/columns/{columnId}/types", dataSetId, "0000");
+
+        // then
+        Assert.assertEquals(200, response.getStatusCode());
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
+        for (JsonNode type : rootNode) {
+            assertTrue(type.has("id"));
+            assertTrue(type.has("label"));
+            assertTrue(type.has("frequency"));
+        }
     }
 
     @Component

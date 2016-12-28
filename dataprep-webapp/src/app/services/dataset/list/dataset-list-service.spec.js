@@ -28,6 +28,7 @@ describe('Dataset List Service', () => {
 				nbLinesFooter: 0,
 				created: '03-30-2015 08:06',
 				preparations: [{ name: 'preparation 1' }],
+				type: 'text/csv',
 			},
 			{
 				id: '3b21388c-f54a-4334-9bef-748912d0806f',
@@ -37,6 +38,7 @@ describe('Dataset List Service', () => {
 				nbLinesHeader: 1,
 				nbLinesFooter: 0,
 				created: '03-30-2015 07:35',
+				type: 'application/vnd.ms-excel',
 			},
 			{
 				id: '4d0a2718-bec6-4614-ad6c-8b3b326ff6c7',
@@ -46,6 +48,7 @@ describe('Dataset List Service', () => {
 				nbLinesHeader: 1,
 				nbLinesFooter: 0,
 				created: '03-30-2015 08:05',
+				type: 'text/csv',
 			},
 			{
 				id: '5e95be9e-88cd-4765-9ecc-ee48cc28b6d5',
@@ -55,6 +58,7 @@ describe('Dataset List Service', () => {
 				nbLinesHeader: 1,
 				nbLinesFooter: 0,
 				created: '03-30-2015 08:06',
+				type: 'unknown',
 			},
 		];
 
@@ -67,7 +71,7 @@ describe('Dataset List Service', () => {
 				creationDate: moment(datasets[0].created).fromNow(),
 				lastModificationDate: moment(datasets[0].lastModificationDate).fromNow(),
 				nbLines: datasets[0].records,
-				icon: 'talend-file-cog',
+				icon: 'talend-file-csv-o',
 				displayMode: 'text',
 				className: 'list-item-dataset',
 				actions: ['inventory:edit', 'list:dataset:preparations', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
@@ -82,7 +86,7 @@ describe('Dataset List Service', () => {
 				creationDate: moment(datasets[1].created).fromNow(),
 				lastModificationDate: moment(datasets[1].lastModificationDate).fromNow(),
 				nbLines: datasets[1].records,
-				icon: 'talend-file-cog',
+				icon: 'talend-file-xls-o',
 				displayMode: 'text',
 				className: 'list-item-dataset',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
@@ -97,7 +101,7 @@ describe('Dataset List Service', () => {
 				creationDate: moment(datasets[2].created).fromNow(),
 				lastModificationDate: moment(datasets[2].lastModificationDate).fromNow(),
 				nbLines: datasets[2].records,
-				icon: 'talend-file-cog',
+				icon: 'talend-file-csv-o',
 				displayMode: 'text',
 				className: 'list-item-dataset',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],
@@ -112,7 +116,7 @@ describe('Dataset List Service', () => {
 				creationDate: moment(datasets[3].created).fromNow(),
 				lastModificationDate: moment(datasets[3].lastModificationDate).fromNow(),
 				nbLines: datasets[3].records,
-				icon: 'talend-file-cog',
+				icon: 'talend-file-o',
 				displayMode: 'text',
 				className: 'list-item-dataset',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove', 'dataset:favourite'],

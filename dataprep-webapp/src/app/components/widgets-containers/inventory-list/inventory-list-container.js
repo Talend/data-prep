@@ -20,18 +20,27 @@ import './inventory-list-container.scss';
  */
 const InventoryListContainer = {
 	template: `
-		<pure-list
-			id="$ctrl.id"
-			display-mode="$ctrl.displayMode"
-			list="$ctrl.listProps"
-			toolbar="$ctrl.toolbarProps"
-			watch-depth="reference"
-		/>
+		<div ng-switch="!!$ctrl.isLoading">
+			<div ng-switch-when="true"
+			     class="fetch-loader">
+		        <span class="fetch-loader-icon continuous-rotate"><icon name="'talend-dataprep'"></icon></span>
+		        <span translate-once="LOADING"></span>
+			</div>
+			<pure-list
+				ng-switch-when="false"
+				id="$ctrl.id"
+				display-mode="$ctrl.displayMode"
+				list="$ctrl.listProps"
+				toolbar="$ctrl.toolbarProps"
+				watch-depth="reference"
+			/>
+		</div>
 	`,
 	bindings: {
 		id: '<',
 		displayMode: '<',
 		folders: '<',
+		isLoading: '<',
 		items: '<',
 		sortBy: '<',
 		sortDesc: '<',

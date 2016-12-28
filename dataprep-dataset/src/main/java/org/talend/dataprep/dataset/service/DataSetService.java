@@ -22,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
 import java.io.IOException;
@@ -55,11 +56,11 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.event.DataSetMetadataBeforeUpdateEvent;
 import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
 import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
-import org.talend.dataprep.dataset.service.analysis.synchronous.QualityAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.Import;
 import org.talend.dataprep.dataset.service.api.Import.ImportBuilder;
@@ -75,6 +76,7 @@ import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.schema.DraftValidator;
 import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.schema.FormatFamilyFactory;
@@ -82,6 +84,8 @@ import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -102,12 +106,6 @@ public class DataSetService extends BaseDataSetService {
     static {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-
-    /**
-     * Quality analyzer needed to compute quality on dataset.
-     */
-    @Autowired
-    protected QualityAnalysis qualityAnalyzer;
 
     /**
      * Dataset metadata repository.
@@ -168,6 +166,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Value("${dataset.list.limit:10}")
     private int datasetListLimit;
+
+    @Autowired
+    private AnalyzerService analyzerService;
 
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
@@ -1032,4 +1033,39 @@ public class DataSetService extends BaseDataSetService {
         return supportedImports;
     }
 
+    /**
+     * Return the semantic types for a given dataset / column.
+     *
+     * @param datasetId the datasetId id.
+     * @param columnId the column id.
+     * @return the semantic types for a given dataset / column.
+     */
+    @RequestMapping(value = "/datasets/{datasetId}/columns/{columnId}/types", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
+    @Timed
+    @PublicAPI
+    public List<SemanticDomain> getDataSetColumnSemanticCategories(
+            @ApiParam(value = "The dataset id") @PathVariable String datasetId,
+            @ApiParam(value = "The column id") @PathVariable String columnId) {
+
+        LOG.debug("listing semantic categories for dataset #{} column #{}", datasetId, columnId);
+
+        final DataSetMetadata metadata = dataSetMetadataRepository.get(datasetId);
+        try (final Stream<DataSetRow> records = contentStore.stream(metadata)) {
+
+            final ColumnMetadata columnMetadata = metadata.getRowMetadata().getById(columnId);
+            final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
+
+            analyzer.init();
+            records.map(r -> r.get(columnId)).forEach(analyzer::analyze);
+            analyzer.end();
+
+            final List<Analyzers.Result> analyzerResult = analyzer.getResult();
+            final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
+            statisticsAdapter.adapt(singletonList(columnMetadata), analyzerResult);
+            LOG.debug("found {} for dataset #{}, column #{}", columnMetadata.getSemanticDomains(), datasetId, columnId);
+            return columnMetadata.getSemanticDomains();
+        }
+
+    }
 }

@@ -24,6 +24,14 @@ export default function TransformMenuCtrl($timeout, state, PlaygroundService, Pa
 
 	const vm = this;
 
+	/**
+	 * @ngdoc property
+	 * @name state
+	 * @propertyOf data-prep.transformation-menu.controller:TransformMenuCtrl
+	 * @description State for static and semantic types
+	 */
+	vm.state = state;
+
     /**
      * @ngdoc property
      * @name transformationInProgress

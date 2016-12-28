@@ -11,20 +11,20 @@
 
  ============================================================================*/
 
-import { filter } from 'lodash';
-
 /**
  * @ngdoc controller
  * @name data-prep.datagrid-header.controller:DatagridHeaderCtrl
  * @description Dataset Column Header controller.
- * @requires data-prep.services.state.constant:state
+ * @requires data-prep.services.column-types.service:ColumnTypesService
  * @requires data-prep.services.transformation.service:TransformationService
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.filter.service:FilterService
  */
-export default function DatagridHeaderCtrl($scope, state, TransformationService, ConverterService,
-                                           PlaygroundService, FilterManagerService) {
+export default function DatagridHeaderCtrl($scope,
+                                           TransformationService, ConverterService,
+                                           PlaygroundService, FilterService,
+                                           ColumnTypesService, FilterManagerService) {
 	'ngInject';
 
 	const ACTION_SCOPE = 'column_metadata';
@@ -35,14 +35,6 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
 	vm.converterService = ConverterService;
 	vm.filterManagerService = FilterManagerService;
 	vm.PlaygroundService = PlaygroundService;
-	vm.state = state;
-
-	/**
-	 * @name transformationsMustBeRetrieved
-	 * @description flag to force transformation list to be retrieved
-	 * @type {boolean}
-	 */
-	let transformationsMustBeRetrieved;
 
 	/**
 	 * @ngdoc property
@@ -69,25 +61,25 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
 	 * @description Get transformations from REST call
 	 */
 	vm.initTransformations = function initTransformations() {
-		if (transformationsMustBeRetrieved || (!vm.transformations && !vm.initTransformationsInProgress)) {
+		if (!vm.transformations && !vm.initTransformationsInProgress) {
 			vm.transformationsRetrieveError = false;
 			vm.initTransformationsInProgress = true;
 
 			TransformationService.getTransformations('column', vm.column)
 				.then((columnTransformations) => {
-					vm.transformations = filter(
-						columnTransformations.allTransformations,
-						menu => (menu.actionScope.indexOf(ACTION_SCOPE) !== -1)
-					);
+					vm.transformations = columnTransformations
+						.allTransformations
+						.filter(menu => menu.actionScope.indexOf(ACTION_SCOPE) !== -1);
 				})
 				.catch(() => {
 					vm.transformationsRetrieveError = true;
 				})
 				.finally(() => {
-					transformationsMustBeRetrieved = false;
 					vm.initTransformationsInProgress = false;
 				});
 		}
+		ColumnTypesService.refreshSemanticDomains(vm.column.id);
+		ColumnTypesService.refreshTypes();
 	};
 
 	/**
@@ -155,7 +147,7 @@ export default function DatagridHeaderCtrl($scope, state, TransformationService,
 	$scope.$watch(
 		() => vm.column,
 		() => {
-			transformationsMustBeRetrieved = true;
+			vm.transformations = null;
 		}
 	);
 }

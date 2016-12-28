@@ -46,6 +46,7 @@ import org.talend.dataprep.api.service.api.PreviewDiffParameters;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.preparation.*;
+import org.talend.dataprep.api.service.command.transformation.GetPreparationColumnTypes;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
@@ -54,6 +55,7 @@ import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -529,6 +531,28 @@ public class PreparationAPI extends APIService {
 
     private StreamingResponseBody executePreviewCommand(HystrixCommand<InputStream> transformation) {
         return CommandHelper.toStreaming(transformation);
+    }
+
+
+    /**
+     * Return the semantic types for a given preparation / column.
+     *
+     * @param preparationId the preparation id.
+     * @param columnId the column id.
+     * @param stepId the step id (optional, if not specified, it's 'head')
+     * @return the semantic types for a given preparation / column.
+     */
+    @RequestMapping(value = "/api/preparations/{preparationId}/columns/{columnId}/types", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
+    @Timed
+    @PublicAPI
+    public StreamingResponseBody getPreparationColumnSemanticCategories(
+            @ApiParam(value = "The preparation id") @PathVariable String preparationId,
+            @ApiParam(value = "The column id") @PathVariable String columnId,
+            @ApiParam(value = "The preparation version") @RequestParam(defaultValue = "head") String stepId) {
+
+        LOG.debug("listing semantic types for preparation {} / {}, column {}", preparationId, columnId, stepId);
+        return CommandHelper.toStreaming(getCommand(GetPreparationColumnTypes.class, preparationId, columnId, stepId));
     }
 
     /**

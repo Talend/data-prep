@@ -327,6 +327,8 @@ describe('Grid state service', () => {
             //given
             gridState.columnFocus = '0001';
             gridState.selectedColumns = ['0001'];
+            gridState.semanticDomains = [{}];
+            gridState.primitiveTypes = [{}];
             gridState.selectedLine = 2;
             gridState.numericColumns = [{}, {}];
             gridState.filteredRecords = [{}, {}];
@@ -339,6 +341,8 @@ describe('Grid state service', () => {
             //then
             expect(gridState.columnFocus).toBe(null);
             expect(gridState.selectedColumns).toEqual([]);
+            expect(gridState.semanticDomains).toEqual(null);
+            expect(gridState.primitiveTypes).toEqual(null);
             expect(gridState.selectedLine).toBe(null);
             expect(gridState.numericColumns).toEqual([]);
             expect(gridState.filteredRecords).toEqual([]);
@@ -428,6 +432,29 @@ describe('Grid state service', () => {
         });
     });
 
+    describe('domains & types', () => {
+        it('should set semantic domains', inject((gridState, GridStateService) => {
+            // given
+            const semanticDomains = [];
+
+            // when
+            GridStateService.setSemanticDomains(semanticDomains);
+
+            // then
+            expect(gridState.semanticDomains).toBe(semanticDomains);
+        }));
+
+        it('should set primitive types', inject((gridState, GridStateService) => {
+            // given
+            const primitiveTypes = [];
+
+            // when
+            GridStateService.setPrimitiveTypes(primitiveTypes);
+
+            // then
+            expect(gridState.primitiveTypes).toBe(primitiveTypes);
+        }));
+    });
 
     describe('filtered values', () => {
         const filteredRecords = [

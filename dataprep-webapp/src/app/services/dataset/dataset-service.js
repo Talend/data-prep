@@ -71,6 +71,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		isRenameEnabled,
 		adaptDatasets: DatasetListService.adaptDatasets,
 		getDatasetActions: DatasetListService.getDatasetActions,
+		getDatasetIcon: DatasetListService.getDatasetIcon,
 
 		// content
 		getMetadata: DatasetRestService.getMetadata,

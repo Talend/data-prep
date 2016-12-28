@@ -16,6 +16,31 @@ describe('Datagrid header directive', () => {
     let createElement;
     let element;
     let ctrl;
+    let stateMock;
+    const types = [
+        { id: 'ANY', name: 'any', labelKey: 'ANY' },
+        { id: 'STRING', name: 'string', labelKey: 'STRING' },
+        { id: 'NUMERIC', name: 'numeric', labelKey: 'NUMERIC' },
+        { id: 'INTEGER', name: 'integer', labelKey: 'INTEGER' },
+        { id: 'DOUBLE', name: 'double', labelKey: 'DOUBLE' },
+        { id: 'FLOAT', name: 'float', labelKey: 'FLOAT' },
+        { id: 'BOOLEAN', name: 'boolean', labelKey: 'BOOLEAN' },
+        { id: 'DATE', name: 'date', labelKey: 'DATE' },
+    ];
+
+    const semanticDomains = [
+        {
+            "id": "AIRPORT",
+            "label": "Airport",
+            "frequency": 3.03,
+        },
+        {
+            "id": "CITY",
+            "label": "City",
+            "frequency": 99.24,
+        },
+    ];
+
     const body = angular.element('body');
     const column = {
         id: '0001',
@@ -28,7 +53,21 @@ describe('Datagrid header directive', () => {
         type: 'string',
     };
 
-    beforeEach(angular.mock.module('data-prep.datagrid-header'));
+    beforeEach(angular.mock.module('data-prep.datagrid-header', ($provide) => {
+        stateMock = {
+            playground: {
+                preparation: {
+                    id: 'prepId',
+                },
+            },
+        };
+        $provide.constant('state', stateMock);
+    }));
+
+    beforeEach(inject(($q, StateService, ColumnTypesService) => {
+        spyOn(ColumnTypesService, 'refreshSemanticDomains').and.returnValue($q.when(semanticDomains));
+        spyOn(ColumnTypesService, 'refreshTypes').and.returnValue($q.when(types));
+    }));
 
     beforeEach(inject(($rootScope, $compile, $timeout) => {
         scope = $rootScope.$new(true);
@@ -86,7 +125,7 @@ describe('Datagrid header directive', () => {
     it('should close dropdown on get transform list error', inject(($timeout, $q, TransformationService) => {
         //given
         createElement();
-        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({}));
+        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({ allTransformations : [] }));
         element.find('.grid-header-caret').click();
         const dropdown = element.find('sc-dropdown').eq(0);
         expect(dropdown.hasClass('show')).toBe(true);
@@ -257,7 +296,7 @@ describe('Datagrid header directive', () => {
     it('should show menu on right click on grid-header if menu is hidden', inject(($q, TransformationService) => {
         //given
         createElement();
-        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({}));
+        spyOn(TransformationService, 'getTransformations').and.returnValue($q.when({ allTransformations : []}));
         expect(element.find('sc-dropdown').hasClass('show')).toBeFalsy();
 
         //when

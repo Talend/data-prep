@@ -10,20 +10,69 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
+$icon-folder-color: #EAC282;
+$icon-shared-folder-color: #00A6CE;
+$icon-preparation-color: #005393;
+$icon-connect-badge-color: #266092;
+$icon-csv-badge-color: #4F6C00;
+$icon-job-badge-color: #266092;
+$icon-xls-badge-color: #8ABC00;
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
 .list-item-preparation {
   .tc-list-icon {
-    fill: #005393;
+    fill: $icon-preparation-color;
   }
 }
 
 .list-item-folder {
   .tc-list-icon {
-    fill: #EAC282;
+    fill: $icon-folder-color;
   }
 }
 
 .list-item-shared-folder {
   .tc-list-icon {
-    fill: #00A6CE;
+    fill: $icon-shared-folder-color;
+  }
+}
+
+.ti-file-connect-o-badge {
+  fill: $icon-connect-badge-color;
+}
+
+.ti-file-csv-o-badge {
+  fill: $icon-csv-badge-color;
+}
+
+.ti-file-job-o-badge {
+  fill: $icon-job-badge-color;
+}
+
+.ti-file-xls-o-badge,
+.ti-file-xlsx-o-badge {
+  fill: $icon-xls-badge-color;
+}
+
+#talend-flink {
+  fill: magenta;
+}
+
+.fetch-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+
+  .fetch-loader-icon + span {
+    padding-left: 20px;
   }
 }

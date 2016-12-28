@@ -12,28 +12,27 @@
  ============================================================================*/
 
 import angular from 'angular';
-import SERVICES_PLAYGROUND_MODULE from '../../../../services/playground/playground-module';
-import SERVICES_UTILS_MODULE from '../../../../services/utils/utils-module';
+import SERVICES_STATE_MODULE from '../state/state-module';
+import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
-import TypeTransformMenu from './type-transformation-menu-component';
+import ColumnTypesService from './column-types-service';
+import ColumnTypesRestService from './column-types-rest/column-types-rest-service';
 
-const MODULE_NAME = 'data-prep.type-transformation-menu';
+const MODULE_NAME = 'data-prep.services.column-types';
 
 /**
  * @ngdoc object
- * @name data-prep.type-transformation-menu
- * @description This module contains the controller
- * and directives to manage the type transformation menu items
- * @requires data-prep.services.dataset
- * @requires data-prep.services.playground
+ * @name data-prep.services.column-types
+ * @description manages the types and the domains of columns
  * @requires data-prep.services.state
  * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
 	[
-		SERVICES_PLAYGROUND_MODULE,
+		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .component('typeTransformMenu', TypeTransformMenu);
+	.service('ColumnTypesService', ColumnTypesService)
+	.service('ColumnTypesRestService', ColumnTypesRestService);
 
 export default MODULE_NAME;

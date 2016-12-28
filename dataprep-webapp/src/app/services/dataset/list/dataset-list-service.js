@@ -31,6 +31,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	return {
 		adaptDatasets,
 		getDatasetActions,
+		getDatasetIcon,
 		refreshDatasets,
 		getDatasetsPromise,
 		hasDatasetsPromise,
@@ -100,15 +101,23 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			creationDate: moment(item.created).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			nbLines: item.records,
-			icon: 'talend-file-cog',
 			displayMode: 'text',
 			className: 'list-item-dataset',
+			icon: this.getDatasetIcon(item),
 			actions: this.getDatasetActions(item),
 			preparations: item.preparations,
 			model: item,
 		}));
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name getDatasetActions
+	 * @methodOf data-prep.services.dataset.service:DatasetListService
+	 * @description Return dataset actions
+	 * @param {object} item The dataset
+	 * @returns {string[]} The available actions
+	 */
 	function getDatasetActions(item) {
 		const actions = [
 			'inventory:edit',
@@ -121,6 +130,23 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			actions.splice(1, 0, 'list:dataset:preparations');
 		}
 		return actions;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getDatasetIcon
+	 * @methodOf data-prep.services.dataset.service:DatasetListService
+	 * @description Adapt dataset icon
+	 * @param {object} item The dataset
+	 * @returns {string} The icon name
+	 */
+	function getDatasetIcon(item) {
+		switch (item.type) {
+		case 'text/csv': return 'talend-file-csv-o';
+		case 'application/vnd.ms-excel': return 'talend-file-xls-o';
+		}
+
+		return 'talend-file-o';
 	}
 	/**
 	 * @ngdoc method

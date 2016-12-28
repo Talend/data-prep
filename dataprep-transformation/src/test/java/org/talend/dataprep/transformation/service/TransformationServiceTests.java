@@ -14,9 +14,9 @@
 package org.talend.dataprep.transformation.service;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
@@ -31,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.ContentCache;
@@ -39,6 +40,7 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -77,7 +79,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
 
         // then
         String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"));
-        assertEquals(expectedContent, transformedContent, false);
+        JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
     @Test
@@ -95,7 +97,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
                         "Gloubi-boulga"); // Casimir rules !
 
         // then
-        Assert.assertEquals(415, response.getStatusCode());
+        assertEquals(415, response.getStatusCode());
         assertTrue(response.asString().contains("OUTPUT_TYPE_NOT_SUPPORTED"));
     }
 
@@ -112,7 +114,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
                         "unknown_dataset_id", "JSON");
 
         // then
-        Assert.assertEquals(400, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         assertTrue(response.asString().contains("DATASET_DOES_NOT_EXIST"));
     }
 
@@ -127,7 +129,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
                 .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", "no_preparation_id", dataSetId, "JSON");
 
         // then
-        Assert.assertEquals(500, response.getStatusCode());
+        assertEquals(500, response.getStatusCode());
         assertTrue(response.asString().contains("UNABLE_TO_READ_PREPARATION"));
     }
 
@@ -147,7 +149,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
 
         // then
         String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("uppercase_expected.json"));
-        assertEquals(expectedContent, transformedContent, false);
+        JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
     @Test
@@ -166,7 +168,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
 
         // then
         String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"));
-        assertEquals(expectedContent, transformedContent, false);
+        JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
     @Test
@@ -203,7 +205,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
                 .expect().statusCode(200).log().ifError()//
                 .when() //
                 .get("/apply/preparation/{prepId}/dataset/{datasetId}/{format}", prepId, dsId, "JSON");
-        assertThat(response.getStatusCode(), is(200));
+        Assert.assertThat(response.getStatusCode(), is(200));
     }
 
     @Test
@@ -263,7 +265,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
 
         // then
         String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"));
-        assertEquals(expectedContent, exportContent, false);
+        JSONAssert.assertEquals(expectedContent, exportContent, false);
     }
 
     @Test
@@ -288,7 +290,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
                 JSON,
                 HEAD
         );
-        assertFalse(contentCache.has(key));
+        Assert.assertFalse(contentCache.has(key));
     }
 
     @Test
@@ -303,6 +305,35 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
         final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(dictionary));
         final Object object = ois.readObject();
         Assert.assertEquals(Dictionaries.class, object.getClass());
+    }
+
+    @Test
+    public void shouldGetPreparationColumnTypes() throws Exception {
+
+        // given
+        final String dataSetId = createDataset("communes_france.csv", "communes de France", "text/csv");
+        final String preparationId = createEmptyPreparationFromDataset(dataSetId, "get col types prep");
+
+        // when
+        final Response response = when().get("/preparations/{preparationId}/columns/{columnId}/types", preparationId, "0000");
+
+        // then
+        /*
+         * expected response array of
+         * {
+         *   "id": "CITY",
+         *   "label": "City",
+         *   "frequency": 99.24
+         * }
+         */
+        Assert.assertEquals(200, response.getStatusCode());
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
+        Assert.assertEquals(7, rootNode.size());
+        for (JsonNode type : rootNode) {
+            assertTrue(type.has("id"));
+            assertTrue(type.has("label"));
+            assertTrue(type.has("frequency"));
+        }
     }
 
 }

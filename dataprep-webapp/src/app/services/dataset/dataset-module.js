@@ -16,7 +16,6 @@ import 'ng-file-upload/dist/angular-file-upload-all';
 import SERVICES_STATE_MODULE from '../state/state-module';
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
-import ColumnTypesService from './column-types/column-types-service';
 import DatasetSheetPreviewService from './preview/dataset-sheet-preview-service';
 import DatasetListService from './list/dataset-list-service';
 import DatasetRestService from './rest/dataset-rest-service';
@@ -38,7 +37,6 @@ angular.module(MODULE_NAME,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .service('ColumnTypesService', ColumnTypesService)
     .service('DatasetSheetPreviewService', DatasetSheetPreviewService)
     .service('DatasetRestService', DatasetRestService)
     .service('DatasetListService', DatasetListService)

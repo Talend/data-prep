@@ -896,4 +896,23 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertEquals(testPrepDetailsAfter.actions.get(1), testPrepDetails.actions.get(0));
     }
 
+
+    @Test
+    public void shouldGetPreparationColumnTypes() throws Exception {
+
+        // given
+        final String id = createPreparationFromFile("dataset/dataset.csv", "super preparation", "text/csv");
+
+        // when
+        final Response response = when().get("/api/preparations/{preparationId}/columns/{columnId}/types", id, "0000");
+
+        // then
+        Assert.assertEquals(200, response.getStatusCode());
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
+        for (JsonNode type : rootNode) {
+            assertTrue(type.has("id"));
+            assertTrue(type.has("label"));
+            assertTrue(type.has("frequency"));
+        }
+    }
 }

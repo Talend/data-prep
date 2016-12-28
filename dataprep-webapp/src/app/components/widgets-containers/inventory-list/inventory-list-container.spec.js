@@ -126,6 +126,7 @@ describe('Inventory list container', () => {
 					id="'list'"
 					display-mode="displayMode"
 					folders="folders"
+					is-loading="isLoading"
 					items="items"
 					sort-by="sortBy"
 					sort-desc="sortDesc"
@@ -162,6 +163,16 @@ describe('Inventory list container', () => {
 	}));
 
 	describe('render', () => {
+		it('should render loader', () => {
+			// when
+			scope.isLoading = true;
+			scope.$digest();
+
+			// then
+			expect(element.find('.fetch-loader').length).toBe(1);
+			expect(element.find('.tc-list-display-table').length).toBe(0);
+		});
+
 		it('should render toolbar', () => {
 			// then
 			expect(element.find('div[role="toolbar"]').length).toBe(1);

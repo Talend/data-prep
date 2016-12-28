@@ -15,6 +15,7 @@ import angular from 'angular';
 
 import AppHeaderBar from 'react-talend-components/lib/AppHeaderBar';
 import Breadcrumbs from 'react-talend-components/lib/Breadcrumbs';
+import Icon from 'react-talend-components/lib/Icon';
 import IconsProvider from 'react-talend-components/lib/IconsProvider';
 import SidePanel from 'react-talend-components/lib/SidePanel';
 import List from 'react-talend-components/lib/List';
@@ -42,6 +43,7 @@ angular.module(MODULE_NAME,
 	.directive('pureList', ['reactDirective', reactDirective => reactDirective(List)])
 	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
+	.directive('icon', ['reactDirective', reactDirective => reactDirective(Icon)])
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)

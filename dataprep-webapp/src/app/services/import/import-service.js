@@ -398,8 +398,10 @@ export default class ImportService {
 		this.createDataset(this.dataStoreId, uiSpecs && uiSpecs.formData)
 			.then((response) => {
 				const dataSetId = response.data && response.data.dataSetId;
-				this.DatasetService.getDatasetById(dataSetId).then(this.UploadWorkflowService.openDataset);
-			});
+				return this.DatasetService.getDatasetById(dataSetId);
+			})
+			.then(this.UploadWorkflowService.openDataset)
+			.then(() => this.StateService.hideImport());
 	}
 
 	/**

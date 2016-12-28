@@ -182,9 +182,6 @@ export default class InventoryListCtrl {
 		return items.map((item) => {
 			const itemAction = this.createDropdownItemAction(item, actionName);
 			itemAction.label = item.label || item.name;
-			if (item.model) {
-				itemAction.model = item.model;
-			}
 			return itemAction;
 		});
 	}
@@ -212,9 +209,9 @@ export default class InventoryListCtrl {
 				else if (adaptedAction.displayMode === SPLITDROPDOWN_ACTION) {
 					const dispatch = this.getActionDispatcher(actionName);
 					const splitDropdownAction = this.appSettings.actions[actionName];
-					splitDropdownAction.items = this.createDropdownActions(splitDropdownAction.items ? splitDropdownAction.items : [], actionName);
-					splitDropdownAction.onClick = event => dispatch(event);
-					return splitDropdownAction;
+					adaptedAction.items = this.createDropdownActions(splitDropdownAction.items, actionName);
+					adaptedAction.onClick = event => dispatch(event);
+					return adaptedAction;
 				}
 				else {
 					const dispatch = this.getActionDispatcher(actionName);

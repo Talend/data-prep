@@ -9,20 +9,25 @@
 
 export const importState = {
 	importTypes: [],
-	showImportModal: false,
+	visible: false,
 };
 
 export function ImportStateService() {
 	return {
+		hideImport,
 		setImportTypes,
-		setShowImportModal,
+		showImport,
 	};
 
 	function setImportTypes(importTypes) {
 		importState.importTypes = importTypes;
 	}
 
-	function setShowImportModal(bool) {
-		importState.showImportModal = bool;
+	function showImport() {
+		importState.visible = true;
+	}
+
+	function hideImport() {
+		importState.visible = false;
 	}
 }

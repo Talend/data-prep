@@ -14,17 +14,17 @@
 import angular from 'angular';
 import settings from '../../mocks/Settings.mock';
 
-let StateMock;
+let stateMock;
 
 describe('Settings service', () => {
 
 	beforeEach(angular.mock.module('app.settings', ($provide) => {
-		StateMock = {
+		stateMock = {
 			import: {
 				importTypes: [],
 			},
 		};
-		$provide.constant('state', StateMock);
+		$provide.constant('state', stateMock);
 	}));
 
 	afterEach(inject((SettingsService) => {
@@ -56,7 +56,7 @@ describe('Settings service', () => {
 
 		it('should adapt settings and update local settings', inject(($rootScope, appSettings, SettingsService) => {
 			// given
-			StateMock.import.importTypes = [
+			stateMock.import.importTypes = [
 				{
 					defaultImport: true,
 					label: 'Local File',
@@ -80,7 +80,7 @@ describe('Settings service', () => {
 			$rootScope.$apply();
 
 			// then
-			expect(appSettings.actions['dataset:create'].items).toEqual(StateMock.import.importTypes);
+			expect(appSettings.actions['dataset:create'].items).toEqual(stateMock.import.importTypes);
 		}));
 	});
 

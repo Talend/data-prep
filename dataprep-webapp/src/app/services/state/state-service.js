@@ -167,7 +167,8 @@ export function StateService(RouteStateService, routeState,
 
 		// import
 		setImportTypes: ImportStateService.setImportTypes,
-		setShowImportModal: ImportStateService.setShowImportModal,
+		showImport: ImportStateService.showImport,
+		hideImport: ImportStateService.hideImport,
 
 		// export
 		setExportTypes: ExportStateService.setExportTypes,

@@ -54,14 +54,6 @@ export default ($stateProvider, $urlRouterProvider) => {
 			views: {
 				'home-content': { template: '<react-home-dataset></react-home-dataset>' },
 			},
-			resolve: {
-				homedatasets: function (SettingsService, ImportService) {
-					'ngInject';
-
-					return ImportService.initImport()
-						.then(() => SettingsService.refreshSettings());
-				}
-			},
 		})
 		.state(PLAYGROUND_ROUTE, {
 			abstract: true,

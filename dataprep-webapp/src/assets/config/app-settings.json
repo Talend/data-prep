@@ -130,11 +130,11 @@
       "id": "menu:preparations",
       "name": "Preparations",
       "icon": "talend-dataprep",
-      "type": "@@router/GO",
+      "type": "@@router/GO_CURRENT_FOLDER",
       "payload": {
         "method": "go",
         "args": [
-          "reactHome.preparations"
+          "home.preparations"
         ]
       }
     },
@@ -146,7 +146,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "reactHome.preparations"
+          "home.preparations"
         ]
       }
     },
@@ -158,7 +158,7 @@
       "payload": {
         "method": "go",
         "args": [
-          "reactHome.datasets"
+          "home.datasets"
         ]
       }
     },
@@ -329,7 +329,8 @@
       "icon": "talend-plus",
       "type": "@@dataset/CREATE",
       "bsStyle": "primary",
-      "displayMode": "splitDropdown"
+      "displayMode": "splitDropdown",
+      "items": []
     },
     "preparation:display-mode": {
       "id": "preparation:display-mode",

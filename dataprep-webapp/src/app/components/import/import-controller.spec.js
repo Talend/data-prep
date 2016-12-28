@@ -31,148 +31,128 @@ describe('Import controller', () => {
 			import: {
 				importTypes: [
 					{
+						locationType: 'hdfs',
+						contentType: 'application/vnd.remote-ds.hdfs',
+						parameters: [
+							{
+								name: 'name',
+								type: 'string',
+								implicit: false,
+								canBeBlank: false,
+								format: '',
+								default: '',
+								description: 'Name',
+								label: 'Enter the dataset name:',
+							},
+							{
+								name: 'url',
+								type: 'string',
+								implicit: false,
+								canBeBlank: false,
+								format: 'hdfs://host:port/file',
+								default: '',
+								description: 'URL',
+								label: 'Enter the dataset URL:',
+							},
+						],
 						defaultImport: false,
 						label: 'From HDFS',
-						model: {
-							locationType: 'hdfs',
-							contentType: 'application/vnd.remote-ds.hdfs',
-							parameters: [
-								{
-									name: 'name',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									default: '',
-									description: 'Name',
-									label: 'Enter the dataset name:',
-								},
-								{
-									name: 'url',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: 'hdfs://host:port/file',
-									default: '',
-									description: 'URL',
-									label: 'Enter the dataset URL:',
-								},
-							],
-							defaultImport: false,
-							label: 'From HDFS',
-							title: 'Add HDFS dataset',
-						}
+						title: 'Add HDFS dataset',
 					},
 					{
+						locationType: 'http',
+						contentType: 'application/vnd.remote-ds.http',
+						parameters: [
+							{
+								name: 'name',
+								type: 'string',
+								implicit: false,
+								canBeBlank: false,
+								format: '',
+								default: '',
+								description: 'Name',
+								label: 'Enter the dataset name:',
+							},
+							{
+								name: 'url',
+								type: 'string',
+								implicit: false,
+								canBeBlank: false,
+								format: 'http://',
+								default: '',
+								description: 'URL',
+								label: 'Enter the dataset URL:',
+							},
+						],
 						defaultImport: false,
 						label: 'From HTTP',
-						model: {
-							locationType: 'http',
-							contentType: 'application/vnd.remote-ds.http',
-							parameters: [
-								{
-									name: 'name',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									default: '',
-									description: 'Name',
-									label: 'Enter the dataset name:',
-								},
-								{
-									name: 'url',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: 'http://',
-									default: '',
-									description: 'URL',
-									label: 'Enter the dataset URL:',
-								},
-							],
-							defaultImport: false,
-							label: 'From HTTP',
-							title: 'Add HTTP dataset',
-						}
+						title: 'Add HTTP dataset',
 					},
 					{
-						defaultImport: false,
+						locationType: 'local',
+						contentType: 'text/plain',
+						parameters: [
+							{
+								name: 'datasetFile',
+								type: 'file',
+								implicit: false,
+								canBeBlank: false,
+								format: '*.csv',
+								default: '',
+								description: 'File',
+								label: 'File',
+							},
+						],
+						defaultImport: true,
 						label: 'Local File',
-						model: {
-							locationType: 'local',
-							contentType: 'text/plain',
-							parameters: [
-								{
-									name: 'datasetFile',
-									type: 'file',
-									implicit: false,
-									canBeBlank: false,
-									format: '*.csv',
-									default: '',
-									description: 'File',
-									label: 'File',
-								},
-							],
-							defaultImport: true,
-							label: 'Local File',
-							title: 'Add local file dataset',
-						}
+						title: 'Add local file dataset',
 					},
 					{
+						locationType: 'job',
+						contentType: 'application/vnd.remote-ds.job',
+						parameters: [
+							{
+								name: 'name',
+								type: 'string',
+								implicit: false,
+								canBeBlank: false,
+								format: '',
+								description: 'Name',
+								label: 'Enter the dataset name:',
+								default: '',
+							},
+							{
+								name: 'jobId',
+								type: 'select',
+								implicit: false,
+								canBeBlank: false,
+								format: '',
+								configuration: {
+									values: [
+										{
+											value: '1',
+											label: 'TestInput',
+										},
+									],
+									multiple: false,
+								},
+								description: 'Talend Job',
+								label: 'Select the Talend Job:',
+								default: '',
+							},
+						],
 						defaultImport: false,
 						label: 'From Talend Job',
-						model: {
-							locationType: 'job',
-							contentType: 'application/vnd.remote-ds.job',
-							parameters: [
-								{
-									name: 'name',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									description: 'Name',
-									label: 'Enter the dataset name:',
-									default: '',
-								},
-								{
-									name: 'jobId',
-									type: 'select',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									configuration: {
-										values: [
-											{
-												value: '1',
-												label: 'TestInput',
-											},
-										],
-										multiple: false,
-									},
-									description: 'Talend Job',
-									label: 'Select the Talend Job:',
-									default: '',
-								},
-							],
-							defaultImport: false,
-							label: 'From Talend Job',
-							title: 'Add Talend Job dataset',
-						}
+						title: 'Add Talend Job dataset',
 					},
 					{
+						contentType: 'application/vnd.tcomp-ds.FullExampleDatastore',
 						defaultImport: false,
+						dynamic: true,
 						label: 'From TCOMP example',
-						model: {
-							contentType: 'application/vnd.tcomp-ds.FullExampleDatastore',
-							defaultImport: false,
-							dynamic: true,
-							label: 'From TCOMP example',
-							locationType: 'tcomp-FullExampleDatastore',
-							parameters: [],
-							title: 'Add a TCOMP dataset',
-						}
+						locationType: 'tcomp-FullExampleDatastore',
+						parameters: [],
+						title: 'Add a TCOMP dataset',
 					},
 				],
 			},
@@ -207,7 +187,7 @@ describe('Import controller', () => {
 			ctrl.startDefaultImport();
 
 			// then
-			expect(ctrl.startImport).toHaveBeenCalledWith(StateMock.import.importTypes[0].model);
+			expect(ctrl.startImport).toHaveBeenCalledWith(StateMock.import.importTypes[0]);
 		});
 
 		it('should call the default import type', inject(() => {
@@ -221,7 +201,7 @@ describe('Import controller', () => {
 			ctrl.startDefaultImport();
 
 			// then
-			expect(ctrl.startImport).toHaveBeenCalledWith(StateMock.import.importTypes[2].model);
+			expect(ctrl.startImport).toHaveBeenCalledWith(StateMock.import.importTypes[2]);
 		}));
 	});
 
@@ -231,10 +211,10 @@ describe('Import controller', () => {
 			ctrl = createController();
 
 			// when
-			ctrl.startImport(StateMock.import.importTypes[2].model);
+			ctrl.startImport(StateMock.import.importTypes[2]);
 
 			// then
-			expect(ctrl.currentInputType).toEqual(StateMock.import.importTypes[2].model);
+			expect(ctrl.currentInputType).toEqual(StateMock.import.importTypes[2]);
 			expect(ctrl.showModal).toBe(false);
 		});
 
@@ -243,21 +223,21 @@ describe('Import controller', () => {
 			ctrl = createController();
 
 			// when
-			ctrl.startImport(StateMock.import.importTypes[0].model);
+			ctrl.startImport(StateMock.import.importTypes[0]);
 
 			// then
-			expect(ctrl.currentInputType).toEqual(StateMock.import.importTypes[0].model);
+			expect(ctrl.currentInputType).toEqual(StateMock.import.importTypes[0]);
 			expect(ctrl.showModal).toBe(true);
 		}));
 
 		it('should start import from remote with dynamic parameters', inject((ImportService, $q) => {
 			// given
 			ctrl = createController();
-			StateMock.import.importTypes[0].model.dynamic = true;
+			StateMock.import.importTypes[0].dynamic = true;
 			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: { name: 'url' } }));
 
 			// when
-			ctrl.startImport(StateMock.import.importTypes[0].model);
+			ctrl.startImport(StateMock.import.importTypes[0]);
 			scope.$digest();
 
 			// then
@@ -272,7 +252,7 @@ describe('Import controller', () => {
 			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: fakeData }));
 
 			// when
-			ctrl.startImport(StateMock.import.importTypes[4].model);
+			ctrl.startImport(StateMock.import.importTypes[4]);
 			scope.$digest();
 
 			// then
@@ -536,7 +516,7 @@ describe('Import controller', () => {
 			expect(ctrl.datasetNameModal).toBeFalsy();
 
 			// when
-			ctrl.import(StateMock.import.importTypes[0].model);
+			ctrl.import(StateMock.import.importTypes[0]);
 			scope.$digest();
 
 			// then
@@ -549,7 +529,7 @@ describe('Import controller', () => {
 			expect(ctrl.datasetNameModal).toBeFalsy();
 
 			// when
-			ctrl.import(StateMock.import.importTypes[0].model);
+			ctrl.import(StateMock.import.importTypes[0]);
 			scope.$digest();
 
 			// then
@@ -564,7 +544,7 @@ describe('Import controller', () => {
 			expect(ctrl.datasetNameModal).toBeFalsy();
 
 			// when
-			ctrl.import(StateMock.import.importTypes[0].model);
+			ctrl.import(StateMock.import.importTypes[0]);
 			scope.$digest();
 
 			// then
@@ -601,7 +581,7 @@ describe('Import controller', () => {
 		describe('with unique name', () => {
 			beforeEach(inject(($q, $rootScope, DatasetService) => {
 				spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.when());
-				ctrl.currentInputType = StateMock.import.importTypes[0].model;
+				ctrl.currentInputType = StateMock.import.importTypes[0];
 			}));
 
 			it('should create dataset if name is unique', inject((StateService, $q, $rootScope, DatasetService, UploadWorkflowService) => {
@@ -672,7 +652,7 @@ describe('Import controller', () => {
 				spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
 				spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue($q.when());
 
-				ctrl.currentInputType = StateMock.import.importTypes[0].model;
+				ctrl.currentInputType = StateMock.import.importTypes[0];
 				ctrl.datasetName = dataset.name;
 			}));
 

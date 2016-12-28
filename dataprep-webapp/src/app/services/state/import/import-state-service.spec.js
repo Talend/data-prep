@@ -11,28 +11,40 @@
 
  ============================================================================*/
 
-describe('Import', function () {
-    'use strict';
+describe('Import', () => {
+	beforeEach(angular.mock.module('data-prep.services.state'));
 
-    beforeEach(angular.mock.module('data-prep.services.state'));
+	describe('state service', () => {
+		it('should set import types', inject((importState, ImportStateService) => {
+			// given
+			const imports = [{ name: 'import 1' }, { name: 'import 2' }];
+			// when
+			ImportStateService.setImportTypes(imports);
 
-    describe('state service', function () {
-        it('should set import types', inject(function (importState, ImportStateService) {
-            //given
-            const imports = [{ name: 'import 1' }, { name: 'import 2' }];
-            //when
-            ImportStateService.setImportTypes(imports);
+			// then
+			expect(importState.importTypes).toBe(imports);
+		}));
 
-            //then
-            expect(importState.importTypes).toBe(imports);
-        }));
+		it('should hide import modal ', inject((importState, ImportStateService) => {
+			// given
+			importState.visible = true;
 
-        it('should set show Import Modal ', inject(function (importState, ImportStateService) {
-            //when
-            ImportStateService.setShowImportModal(true);
+			// when
+			ImportStateService.hideImport();
 
-            //then
-            expect(importState.showImportModal).toBe(true);
-        }));
-    });
+			// then
+			expect(importState.visible).toBe(false);
+		}));
+
+		it('should show import modal ', inject((importState, ImportStateService) => {
+			// given
+			importState.visible = false;
+
+			// when
+			ImportStateService.showImport();
+
+			// then
+			expect(importState.visible).toBe(true);
+		}));
+	});
 });

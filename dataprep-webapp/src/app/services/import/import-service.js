@@ -64,28 +64,11 @@ export default class ImportService {
 	 */
 	initImport() {
 		return this.ImportRestService.importTypes()
-			.then((response) => {
-				const adaptImportTypes = this.adaptImportTypes(response.data);
-				this.StateService.setImportTypes(adaptImportTypes);
-				return adaptImportTypes;
+			.then(response => response.data)
+			.then((importTypes) => {
+				this.StateService.setImportTypes(importTypes);
+				return importTypes;
 			});
-	}
-
-
-	/**
-	 * @ngdoc method
-	 * @name adaptImportTypes
-	 * @methodOf data-prep.services.import.service:ImportService
-	 * @description Adapt import types for UI components
-	 * @param {object[]} importTypes The import types
-	 * @returns {object[]} The adapted import types
-	 */
-	adaptImportTypes(importTypes) {
-		return importTypes.map(type => ({
-			defaultImport: type.defaultImport,
-			label: type.label,
-			model: type,
-		}));
 	}
 
 	/**
@@ -188,7 +171,7 @@ export default class ImportService {
 				this.$document.find('#importDatasetFile').eq(0).click();
 				break;
 			default:
-				this.StateService.setShowImportModal(true);
+				this.StateService.showImport();
 				if (this.currentInputType.dynamic) {
 					this._getDatastoreFormActions();
 					this._getDatasetFormActions();
@@ -267,7 +250,7 @@ export default class ImportService {
 				this.datasetNameModal = true;
 			})
 			.finally(() => {
-				this.StateService.setShowImportModal(false);
+				this.StateService.hideImport();
 			});
 	}
 
@@ -332,7 +315,7 @@ export default class ImportService {
 	 * @description Cancel action for modal
 	 */
 	onDatasetFormCancel() {
-		this.StateService.setShowImportModal(false);
+		this.StateService.hideImport();
 		this.datastoreForm = null;
 		this.dataStoreId = null;
 		this.datasetForm = null;

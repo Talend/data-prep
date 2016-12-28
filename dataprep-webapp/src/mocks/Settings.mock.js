@@ -129,7 +129,7 @@ const settingsMock = {
 				actionBar: {
 					actions: {
 						left: ['dataset:create'],
-					}
+					},
 				},
 				searchLabel: 'Find a dataset',
 			},
@@ -322,6 +322,7 @@ const settingsMock = {
 			type: '@@dataset/CREATE',
 			bsStyle: 'primary',
 			displayMode: 'splitDropdown',
+			items: [],
 		},
 		'datasets:fetch': {
 			id: 'datasets:fetch',

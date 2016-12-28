@@ -12,140 +12,27 @@
  ============================================================================*/
 
 describe('Import service', () => {
-	'use strict';
+	let importTypes;
+	let stateMock;
+	const dataset = { id: 'ec4834d9bc2af8', name: 'Customers (50 lines)', draft: false };
 
-	const importTypes = [
-		{
-			locationType: 'hdfs',
-			contentType: 'application/vnd.remote-ds.hdfs',
-			parameters: [
-				{
-					name: 'name',
-					type: 'string',
-					implicit: false,
-					canBeBlank: false,
-					format: '',
-					default: '',
-					description: 'Name',
-					label: 'Enter the dataset name:',
+	beforeEach(angular.mock.module('data-prep.services.import', ($provide) => {
+		stateMock = {
+			inventory: {
+				currentFolder: { id: '', path: '', name: 'Home' },
+				currentFolderContent: {
+					folders: [],
+					datasets: [],
 				},
-				{
-					name: 'url',
-					type: 'string',
-					implicit: false,
-					canBeBlank: false,
-					format: 'hdfs://host:port/file',
-					default: '',
-					description: 'URL',
-					label: 'Enter the dataset URL:',
-				},
-			],
-			defaultImport: false,
-			label: 'From HDFS',
-			title: 'Add HDFS dataset',
-		},
-		{
-			locationType: 'http',
-			contentType: 'application/vnd.remote-ds.http',
-			parameters: [
-				{
-					name: 'name',
-					type: 'string',
-					implicit: false,
-					canBeBlank: false,
-					format: '',
-					default: '',
-					description: 'Name',
-					label: 'Enter the dataset name:',
-				},
-				{
-					name: 'url',
-					type: 'string',
-					implicit: false,
-					canBeBlank: false,
-					format: 'http://',
-					default: '',
-					description: 'URL',
-					label: 'Enter the dataset URL:',
-				},
-			],
-			defaultImport: false,
-			label: 'From HTTP',
-			title: 'Add HTTP dataset',
-		},
-		{
-			locationType: 'local',
-			contentType: 'text/plain',
-			parameters: [
-				{
-					name: 'importDatasetFile',
-					type: 'file',
-					implicit: false,
-					canBeBlank: false,
-					format: '*.csv',
-					default: '',
-					description: 'File',
-					label: 'File',
-				},
-			],
-			defaultImport: true,
-			label: 'Local File',
-			title: 'Add local file dataset',
-		},
-		{
-			locationType: 'job',
-			contentType: 'application/vnd.remote-ds.job',
-			parameters: [
-				{
-					name: 'name',
-					type: 'string',
-					implicit: false,
-					canBeBlank: false,
-					format: '',
-					description: 'Name',
-					label: 'Enter the dataset name:',
-					default: '',
-				},
-				{
-					name: 'jobId',
-					type: 'select',
-					implicit: false,
-					canBeBlank: false,
-					format: '',
-					configuration: {
-						values: [
-							{
-								value: '1',
-								label: 'TestInput',
-							},
-						],
-						multiple: false,
-					},
-					description: 'Talend Job',
-					label: 'Select the Talend Job:',
-					default: '',
-				},
-			],
-			defaultImport: false,
-			label: 'From Talend Job',
-			title: 'Add Talend Job dataset',
-		},
-		{
-			contentType: 'application/vnd.tcomp-ds.FullExampleDatastore',
-			defaultImport: false,
-			dynamic: true,
-			label: 'From TCOMP example',
-			locationType: 'tcomp-FullExampleDatastore',
-			parameters: [],
-			title: 'Add a TCOMP dataset',
-		},
-	];
-
-	const adaptImportTypes = [
-		{
-			defaultImport: false,
-			label: 'From HDFS',
-			model: {
+			},
+			import: { importTypes },
+		};
+		$provide.constant('state', stateMock);
+	}));
+	
+	beforeEach(() => {
+		importTypes = [
+			{
 				locationType: 'hdfs',
 				contentType: 'application/vnd.remote-ds.hdfs',
 				parameters: [
@@ -173,12 +60,8 @@ describe('Import service', () => {
 				defaultImport: false,
 				label: 'From HDFS',
 				title: 'Add HDFS dataset',
-			}
-		},
-		{
-			defaultImport: false,
-			label: 'From HTTP',
-			model: {
+			},
+			{
 				locationType: 'http',
 				contentType: 'application/vnd.remote-ds.http',
 				parameters: [
@@ -206,12 +89,8 @@ describe('Import service', () => {
 				defaultImport: false,
 				label: 'From HTTP',
 				title: 'Add HTTP dataset',
-			}
-		},
-		{
-			defaultImport: true,
-			label: 'Local File',
-			model: {
+			},
+			{
 				locationType: 'local',
 				contentType: 'text/plain',
 				parameters: [
@@ -229,12 +108,8 @@ describe('Import service', () => {
 				defaultImport: true,
 				label: 'Local File',
 				title: 'Add local file dataset',
-			}
-		},
-		{
-			defaultImport: false,
-			label: 'From Talend Job',
-			model: {
+			},
+			{
 				locationType: 'job',
 				contentType: 'application/vnd.remote-ds.job',
 				parameters: [
@@ -271,12 +146,8 @@ describe('Import service', () => {
 				defaultImport: false,
 				label: 'From Talend Job',
 				title: 'Add Talend Job dataset',
-			}
-		},
-		{
-			defaultImport: false,
-			label: 'From TCOMP example',
-			model: {
+			},
+			{
 				contentType: 'application/vnd.tcomp-ds.FullExampleDatastore',
 				defaultImport: false,
 				dynamic: true,
@@ -284,27 +155,10 @@ describe('Import service', () => {
 				locationType: 'tcomp-FullExampleDatastore',
 				parameters: [],
 				title: 'Add a TCOMP dataset',
-			}
-		},
-	];
-	let StateMock;
-	const dataset = { id: 'ec4834d9bc2af8', name: 'Customers (50 lines)', draft: false };
-
-	beforeEach(angular.mock.module('data-prep.services.import', ($provide) => {
-		StateMock = {
-			inventory: {
-				currentFolder: { id: '', path: '', name: 'Home' },
-				currentFolderContent: {
-					folders: [],
-					datasets: [],
-				},
 			},
-			import: {
-				importTypes: adaptImportTypes,
-			},
-		};
-		$provide.constant('state', StateMock);
-	}));
+		];
+	});
+	
 	describe('initImport', () => {
 		it('should fetch import types list from REST call',
 			inject(($rootScope, $q, ImportService, ImportRestService, StateService) => {
@@ -317,7 +171,7 @@ describe('Import service', () => {
 				$rootScope.$digest();
 
 				//then
-				expect(StateService.setImportTypes).toHaveBeenCalledWith(adaptImportTypes);
+				expect(StateService.setImportTypes).toHaveBeenCalledWith(importTypes);
 			})
 		);
 	});
@@ -535,29 +389,29 @@ describe('Import service', () => {
 	describe('startImport', () => {
 		it('should start import from local file', inject((ImportService) => {
 			// when
-			ImportService.startImport(StateMock.import.importTypes[2].model);
+			ImportService.startImport(stateMock.import.importTypes[2]);
 
 			// then
-			expect(ImportService.currentInputType).toEqual(StateMock.import.importTypes[2].model);
+			expect(ImportService.currentInputType).toEqual(stateMock.import.importTypes[2]);
 		}));
 
 		it('should start import from remote', inject((ImportService, StateService) => {
 			// when
-			spyOn(StateService, 'setShowImportModal');
-			ImportService.startImport(StateMock.import.importTypes[0].model);
+			spyOn(StateService, 'showImport').and.returnValue();
+			ImportService.startImport(stateMock.import.importTypes[0]);
 
 			// then
-			expect(ImportService.currentInputType).toEqual(StateMock.import.importTypes[0].model);
-			expect(StateService.setShowImportModal).toHaveBeenCalledWith(true);
+			expect(ImportService.currentInputType).toEqual(stateMock.import.importTypes[0]);
+			expect(StateService.showImport).toHaveBeenCalled();
 		}));
 
 		it('should start import from remote with dynamic parameters', inject((ImportService, $q, $rootScope) => {
 			// given
-			StateMock.import.importTypes[0].model.dynamic = true;
+			stateMock.import.importTypes[0].dynamic = true;
 			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: { name: 'url' } }));
 
 			// when
-			ImportService.startImport(StateMock.import.importTypes[0].model);
+			ImportService.startImport(stateMock.import.importTypes[0]);
 			$rootScope.$apply();
 
 			// then
@@ -571,7 +425,7 @@ describe('Import service', () => {
 			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: fakeData }));
 
 			// when
-			ImportService.startImport(StateMock.import.importTypes[4].model);
+			ImportService.startImport(stateMock.import.importTypes[4]);
 			$rootScope.$apply();
 
 			// then
@@ -731,18 +585,18 @@ describe('Import service', () => {
 
 		it('should reset modal display flag and datastore creation form', inject(($rootScope, ImportService, StateService) => {
 			// given
-
 			ImportService.datastoreForm = {};
 			ImportService.dataStoreId = '';
 			ImportService.datasetForm = {};
+			
+			spyOn(StateService, 'hideImport').and.returnValue();
 
 			// when
-			spyOn(StateService, 'setShowImportModal');
 			ImportService.onDatasetFormCancel();
 			$rootScope.$apply();
 
 			// then
-			expect(StateService.setShowImportModal).toHaveBeenCalledWith(false);
+			expect(StateService.hideImport).toHaveBeenCalled();
 			expect(ImportService.datastoreForm).toBeNull();
 			expect(ImportService.dataStoreId).toBeNull();
 			expect(ImportService.datasetForm).toBeNull();
@@ -818,7 +672,7 @@ describe('Import service', () => {
 			spyOn(StateService, 'startUploadingDataset').and.returnValue();
 			spyOn(StateService, 'finishUploadingDataset').and.returnValue();
 
-			ImportService.currentInputType = StateMock.import.importTypes[0];
+			ImportService.currentInputType = stateMock.import.importTypes[0];
 		}));
 
 		it('should show dataset name popup when name already exists', inject(($rootScope, $q, DatasetService, ImportService) => {
@@ -827,7 +681,7 @@ describe('Import service', () => {
 			expect(ImportService.datasetNameModal).toBeFalsy();
 
 			// when
-			ImportService.import(StateMock.import.importTypes[0].model);
+			ImportService.import(stateMock.import.importTypes[0]);
 			$rootScope.$apply();
 
 			// then
@@ -852,15 +706,15 @@ describe('Import service', () => {
 		it('should close modal if import is successful', inject(($rootScope, $q, DatasetService, ImportService, StateService) => {
 			// given
 			spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.when());
-			spyOn(StateService, 'setShowImportModal');
+			spyOn(StateService, 'hideImport');
 			expect(ImportService.datasetNameModal).toBeFalsy();
 
 			// when
-			ImportService.import(StateMock.import.importTypes[0].model);
+			ImportService.import(stateMock.import.importTypes[0]);
 			$rootScope.$apply();
 
 			// then
-			expect(StateService.setShowImportModal).toHaveBeenCalledWith(false);
+			expect(StateService.hideImport).toHaveBeenCalled();
 		}));
 	});
 
@@ -963,7 +817,7 @@ describe('Import service', () => {
 				spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
 				spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue($q.when());
 
-				ImportService.currentInputType = StateMock.import.importTypes[0].model;
+				ImportService.currentInputType = stateMock.import.importTypes[0];
 				ImportService.datasetName = dataset.name;
 			}));
 

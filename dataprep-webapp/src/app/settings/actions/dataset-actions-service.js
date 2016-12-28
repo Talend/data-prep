@@ -128,12 +128,13 @@ export default class DatasetActionsService {
 			break;
 		}
 		case '@@dataset/CREATE': {
-			if (action.payload.model) {
-				this.ImportService.startImport(action.payload.model);
+			if (action.payload.locationType) {
+				this.ImportService.startImport(action.payload);
 			}
 			else {
-				// default
-				this.ImportService.startImport(_.find(this.state.import.importTypes, 'defaultImport', true).model || this.state.import.importTypes[0].model);
+				const importTypes = this.state.import.importTypes;
+				const defaultImport = importTypes.find(type => type.defaultImport) || importTypes[0];
+				this.ImportService.startImport(defaultImport);
 			}
 			break;
 		}

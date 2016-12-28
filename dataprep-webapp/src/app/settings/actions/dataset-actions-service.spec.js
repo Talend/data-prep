@@ -12,150 +12,136 @@
  ============================================================================*/
 
 import angular from 'angular';
-let StateMock;
+
+const importTypes = [
+	{
+		locationType: 'hdfs',
+		contentType: 'application/vnd.remote-ds.hdfs',
+		parameters: [
+			{
+				name: 'name',
+				type: 'string',
+				implicit: false,
+				canBeBlank: false,
+				format: '',
+				default: '',
+				description: 'Name',
+				label: 'Enter the dataset name:',
+			},
+			{
+				name: 'url',
+				type: 'string',
+				implicit: false,
+				canBeBlank: false,
+				format: 'hdfs://host:port/file',
+				default: '',
+				description: 'URL',
+				label: 'Enter the dataset URL:',
+			},
+		],
+		defaultImport: false,
+		label: 'From HDFS',
+		title: 'Add HDFS dataset',
+	},
+	{
+		locationType: 'http',
+		contentType: 'application/vnd.remote-ds.http',
+		parameters: [
+			{
+				name: 'name',
+				type: 'string',
+				implicit: false,
+				canBeBlank: false,
+				format: '',
+				default: '',
+				description: 'Name',
+				label: 'Enter the dataset name:',
+			},
+			{
+				name: 'url',
+				type: 'string',
+				implicit: false,
+				canBeBlank: false,
+				format: 'http://',
+				default: '',
+				description: 'URL',
+				label: 'Enter the dataset URL:',
+			},
+		],
+		defaultImport: false,
+		label: 'From HTTP',
+		title: 'Add HTTP dataset',
+	},
+	{
+		locationType: 'local',
+		contentType: 'text/plain',
+		parameters: [
+			{
+				name: 'datasetFile',
+				type: 'file',
+				implicit: false,
+				canBeBlank: false,
+				format: '*.csv',
+				default: '',
+				description: 'File',
+				label: 'File',
+			},
+		],
+		defaultImport: true,
+		label: 'Local File',
+		title: 'Add local file dataset',
+	},
+	{
+		locationType: 'job',
+		contentType: 'application/vnd.remote-ds.job',
+		parameters: [
+			{
+				name: 'name',
+				type: 'string',
+				implicit: false,
+				canBeBlank: false,
+				format: '',
+				description: 'Name',
+				label: 'Enter the dataset name:',
+				default: '',
+			},
+			{
+				name: 'jobId',
+				type: 'select',
+				implicit: false,
+				canBeBlank: false,
+				format: '',
+				configuration: {
+					values: [
+						{
+							value: '1',
+							label: 'TestInput',
+						},
+					],
+					multiple: false,
+				},
+				description: 'Talend Job',
+				label: 'Select the Talend Job:',
+				default: '',
+			},
+		],
+		defaultImport: false,
+		label: 'From Talend Job',
+		title: 'Add Talend Job dataset',
+	},
+];
 
 describe('Datasets actions service', () => {
+	let stateMock;
+
 	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
-		StateMock = {
+		stateMock = {
 			inventory: {
 				datasetsSort: {}
 			},
-			import: {
-				importTypes: [
-					{
-						defaultImport: false,
-						label: 'From HDFS',
-						model: {
-							locationType: 'hdfs',
-							contentType: 'application/vnd.remote-ds.hdfs',
-							parameters: [
-								{
-									name: 'name',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									default: '',
-									description: 'Name',
-									label: 'Enter the dataset name:',
-								},
-								{
-									name: 'url',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: 'hdfs://host:port/file',
-									default: '',
-									description: 'URL',
-									label: 'Enter the dataset URL:',
-								},
-							],
-							defaultImport: false,
-							label: 'From HDFS',
-							title: 'Add HDFS dataset',
-						}
-					},
-					{
-						defaultImport: false,
-						label: 'From HTTP',
-						model: {
-							locationType: 'http',
-							contentType: 'application/vnd.remote-ds.http',
-							parameters: [
-								{
-									name: 'name',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									default: '',
-									description: 'Name',
-									label: 'Enter the dataset name:',
-								},
-								{
-									name: 'url',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: 'http://',
-									default: '',
-									description: 'URL',
-									label: 'Enter the dataset URL:',
-								},
-							],
-							defaultImport: false,
-							label: 'From HTTP',
-							title: 'Add HTTP dataset',
-						}
-					},
-					{
-						defaultImport: true,
-						label: 'Local File',
-						model: {
-							locationType: 'local',
-							contentType: 'text/plain',
-							parameters: [
-								{
-									name: 'datasetFile',
-									type: 'file',
-									implicit: false,
-									canBeBlank: false,
-									format: '*.csv',
-									default: '',
-									description: 'File',
-									label: 'File',
-								},
-							],
-							defaultImport: true,
-							label: 'Local File',
-							title: 'Add local file dataset',
-						}
-					}, {
-						defaultImport: false,
-						label: 'From Talend Job',
-						model: {
-							locationType: 'job',
-							contentType: 'application/vnd.remote-ds.job',
-							parameters: [
-								{
-									name: 'name',
-									type: 'string',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									description: 'Name',
-									label: 'Enter the dataset name:',
-									default: '',
-								},
-								{
-									name: 'jobId',
-									type: 'select',
-									implicit: false,
-									canBeBlank: false,
-									format: '',
-									configuration: {
-										values: [
-											{
-												value: '1',
-												label: 'TestInput',
-											},
-										],
-										multiple: false,
-									},
-									description: 'Talend Job',
-									label: 'Select the Talend Job:',
-									default: '',
-								},
-							],
-							defaultImport: false,
-							label: 'From Talend Job',
-							title: 'Add Talend Job dataset',
-						}
-					},
-				],
-			},
+			import: { importTypes },
 		};
-		$provide.constant('state', StateMock);
+		$provide.constant('state', stateMock);
 	}));
 
 	describe('dispatch', () => {
@@ -383,40 +369,13 @@ describe('Datasets actions service', () => {
 
 		it('should create dataset with payload model', inject((DatasetActionsService, ImportService) => {
 			// given
+			const selectedType = importTypes[0];
 			const action = {
 				type: '@@dataset/CREATE',
 				payload: {
 					method: '',
 					args: [],
-					model: {
-						locationType: 'hdfs',
-						contentType: 'application/vnd.remote-ds.hdfs',
-						parameters: [
-							{
-								name: 'name',
-								type: 'string',
-								implicit: false,
-								canBeBlank: false,
-								format: '',
-								default: '',
-								description: 'Name',
-								label: 'Enter the dataset name:',
-							},
-							{
-								name: 'url',
-								type: 'string',
-								implicit: false,
-								canBeBlank: false,
-								format: 'hdfs://host:port/file',
-								default: '',
-								description: 'URL',
-								label: 'Enter the dataset URL:',
-							},
-						],
-						defaultImport: false,
-						label: 'From HDFS',
-						title: 'Add HDFS dataset',
-					},
+					...selectedType,
 				}
 			};
 
@@ -426,11 +385,12 @@ describe('Datasets actions service', () => {
 			DatasetActionsService.dispatch(action);
 
 			// then
-			expect(ImportService.startImport).toHaveBeenCalledWith(action.payload.model);
+			expect(ImportService.startImport).toHaveBeenCalledWith(action.payload);
 		}));
 
-		it('should create dataset with payload model', inject((DatasetActionsService, ImportService) => {
+		it('should create dataset with default type', inject((DatasetActionsService, ImportService) => {
 			// given
+			const defaultType = importTypes[2];
 			const action = {
 				type: '@@dataset/CREATE',
 				payload: {
@@ -439,32 +399,13 @@ describe('Datasets actions service', () => {
 				}
 			};
 
-			spyOn(ImportService, 'startImport');
+			spyOn(ImportService, 'startImport').and.returnValue();
 
 			// when
 			DatasetActionsService.dispatch(action);
 
 			// then
-			expect(ImportService.startImport).toHaveBeenCalledWith(
-				{
-					locationType: 'local',
-					contentType: 'text/plain',
-					parameters: [
-						{
-							name: 'datasetFile',
-							type: 'file',
-							implicit: false,
-							canBeBlank: false,
-							format: '*.csv',
-							default: '',
-							description: 'File',
-							label: 'File',
-						},
-					],
-					defaultImport: true,
-					label: 'Local File',
-					title: 'Add local file dataset',
-				});
+			expect(ImportService.startImport).toHaveBeenCalledWith(defaultType);
 		}));
 	});
 });

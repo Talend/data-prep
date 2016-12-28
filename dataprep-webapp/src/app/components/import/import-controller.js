@@ -63,7 +63,7 @@ export default class ImportCtrl {
 	 */
 	startDefaultImport() {
 		const defaultExportType = _.find(this.importTypes, 'defaultImport', true) || this.importTypes[0];
-		this.startImport(defaultExportType.model);
+		this.startImport(defaultExportType);
 	}
 
 	/**

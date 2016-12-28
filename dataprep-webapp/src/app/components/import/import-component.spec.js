@@ -27,35 +27,33 @@ describe('Import Component', () => {
             import: {
                 importTypes: [
                     {
-                        model: {
-                            locationType: 'hdfs',
-                            contentType: 'application/vnd.remote-ds.hdfs',
-                            parameters: [
-                                {
-                                    name: 'name',
-                                    type: 'string',
-                                    implicit: false,
-                                    canBeBlank: false,
-                                    format: '',
-                                    default: '',
-                                    description: 'Name',
-                                    label: 'Enter the dataset name:',
-                                },
-                                {
-                                    name: 'url',
-                                    type: 'string',
-                                    implicit: false,
-                                    canBeBlank: false,
-                                    format: 'hdfs://host:port/file',
-                                    default: '',
-                                    description: 'URL',
-                                    label: 'Enter the dataset URL:',
-                                },
-                            ],
-                            defaultImport: false,
-                            label: 'From HDFS',
-                            title: 'Add HDFS dataset',
-                        }
+                        locationType: 'hdfs',
+                        contentType: 'application/vnd.remote-ds.hdfs',
+                        parameters: [
+                            {
+                                name: 'name',
+                                type: 'string',
+                                implicit: false,
+                                canBeBlank: false,
+                                format: '',
+                                default: '',
+                                description: 'Name',
+                                label: 'Enter the dataset name:',
+                            },
+                            {
+                                name: 'url',
+                                type: 'string',
+                                implicit: false,
+                                canBeBlank: false,
+                                format: 'hdfs://host:port/file',
+                                default: '',
+                                description: 'URL',
+                                label: 'Enter the dataset URL:',
+                            },
+                        ],
+                        defaultImport: false,
+                        label: 'From HDFS',
+                        title: 'Add HDFS dataset',
                     },
                 ],
             },

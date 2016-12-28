@@ -23,29 +23,19 @@ export function SettingsService($http, state) {
 	};
 
 	function adapSettings(settings) {
-		if (state.import.importTypes && state.import.importTypes.length) {
-			if (settings && settings.actions && settings.actions['dataset:create']) {
-				const newAppSettings = settings;
-				const createDatasetAction = newAppSettings.actions['dataset:create'];
-				newAppSettings.actions['dataset:create'] = {
-					...createDatasetAction,
-					label: createDatasetAction.name,
-					items: state.import.importTypes,
-				};
-				return newAppSettings;
-			}
+		const importTypes = state.import.importTypes;
+		const datasetCreateAction = settings && settings.actions && settings.actions['dataset:create'];
+		if (importTypes.length && datasetCreateAction) {
+			datasetCreateAction.items = importTypes;
 		}
 		return settings;
 	}
 
 	function refreshSettings() {
 		return $http.get('/assets/config/app-settings.json')
-			.then((settings) => {
-				return this.adapSettings(settings.data);
-			})
-			.then((settings) => {
-				return this.setSettings(settings);
-			});
+			.then(response => response.data)
+			.then(settings => this.adapSettings(settings))
+			.then(settings => this.setSettings(settings));
 	}
 
 	function setSettings(settings) {

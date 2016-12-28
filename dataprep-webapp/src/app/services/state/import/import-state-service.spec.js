@@ -26,5 +26,13 @@ describe('Import', function () {
             //then
             expect(importState.importTypes).toBe(imports);
         }));
+
+        it('should set show Import Modal ', inject(function (importState, ImportStateService) {
+            //when
+            ImportStateService.setShowImportModal(true);
+
+            //then
+            expect(importState.showImportModal).toBe(true);
+        }));
     });
 });

@@ -14,8 +14,18 @@
 import angular from 'angular';
 import settings from '../../mocks/Settings.mock';
 
+let StateMock;
+
 describe('Settings service', () => {
-	beforeEach(angular.mock.module('app.settings'));
+
+	beforeEach(angular.mock.module('app.settings', ($provide) => {
+		StateMock = {
+			import: {
+				importTypes: [],
+			},
+		};
+		$provide.constant('state', StateMock);
+	}));
 
 	afterEach(inject((SettingsService) => {
 		SettingsService.clearSettings();
@@ -43,6 +53,35 @@ describe('Settings service', () => {
 			// then
 			expect(appSettings).toEqual(settings);
 		}));
+
+		it('should adapt settings and update local settings', inject(($rootScope, appSettings, SettingsService) => {
+			// given
+			StateMock.import.importTypes = [
+				{
+					defaultImport: true,
+					label: 'Local File',
+					model: {
+						locationType: 'local',
+						defaultImport: true,
+						label: 'Local File',
+					}
+				}
+			];
+
+			$httpBackend
+				.expectGET('/assets/config/app-settings.json')
+				.respond(200, settings);
+
+			expect(appSettings).toEqual({ views: [], actions: [] });
+
+			// when
+			SettingsService.refreshSettings();
+			$httpBackend.flush();
+			$rootScope.$apply();
+
+			// then
+			expect(appSettings.actions['dataset:create'].items).toEqual(StateMock.import.importTypes);
+		}));
 	});
 
 	describe('setSettings', () => {
@@ -64,7 +103,7 @@ describe('Settings service', () => {
 			expect(appSettings).toEqual(newSettings);
 		}));
 	});
-	
+
 	describe('clearSettings', () => {
 		it('should reset settings', inject((appSettings, SettingsService) => {
 			// given

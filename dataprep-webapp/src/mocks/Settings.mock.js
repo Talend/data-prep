@@ -127,7 +127,9 @@ const settingsMock = {
 					onChange: 'dataset:sort',
 				},
 				actionBar: {
-					actions: [],
+					actions: {
+						left: ['dataset:create'],
+					}
 				},
 				searchLabel: 'Find a dataset',
 			},
@@ -312,6 +314,14 @@ const settingsMock = {
 				method: '',
 				args: [],
 			},
+		},
+		'dataset:create': {
+			id: 'dataset:create',
+			name: 'Add Dataset',
+			icon: 'talend-plus',
+			type: '@@dataset/CREATE',
+			bsStyle: 'primary',
+			displayMode: 'splitDropdown',
 		},
 		'datasets:fetch': {
 			id: 'datasets:fetch',

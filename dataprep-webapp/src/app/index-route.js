@@ -3,6 +3,8 @@ export const OLD_INDEX_ROUTE = 'nav.index';
 export const OLD_INDEX_DATASETS_ROUTE = 'nav.index.datasets';
 export const OLD_INDEX_PREPARATIONS_ROUTE = 'nav.index.preparations';
 
+export const LOADING_ROUTE = 'loading';
+
 export const HOME_ROUTE = 'home';
 export const HOME_PREPARATIONS_ROUTE = 'home.preparations';
 export const HOME_DATASETS_ROUTE = 'home.datasets';
@@ -37,6 +39,10 @@ export default ($stateProvider, $urlRouterProvider) => {
 			views: {
 				'home-content': { template: '<home-preparation></home-preparation>' },
 			},
+		})
+		.state(LOADING_ROUTE, {
+			url: '/loading',
+			template: '',
 		})
 		.state(HOME_ROUTE, {
 			abstract: true,

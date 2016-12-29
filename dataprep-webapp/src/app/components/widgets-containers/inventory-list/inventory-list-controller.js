@@ -198,19 +198,19 @@ export default class InventoryListCtrl {
 					const modelItems = hostModel[actionSettings.items];
 					// dropdown static actions are applied to the host model
 					// ex: dataset > "create new preparation action" is applied to the dataset
-					const staticActions = actionSettings.static.map(
+					const staticActions = actionSettings.staticActions.map(
 						staticAction => this.createDropdownItemAction(hostModel, staticAction)
 					);
 					// dropdown dynamic action is the unique action on each item click
 					// ex: dataset > "open preparation x" is applied to "preparation x"
-					const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamic);
+					const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamicAction);
 					adaptedAction.items = staticActions.concat(dynamicActions);
 				}
 				else if (adaptedAction.displayMode === SPLITDROPDOWN_ACTION) {
 					const dispatch = this.getActionDispatcher(actionName);
 					const splitDropdownAction = this.appSettings.actions[actionName];
 					adaptedAction.items = this.createDropdownActions(splitDropdownAction.items, actionName);
-					adaptedAction.onClick = event => dispatch(event);
+					adaptedAction.onClick = event => dispatch(event, { items: splitDropdownAction.items });
 					return adaptedAction;
 				}
 				else {

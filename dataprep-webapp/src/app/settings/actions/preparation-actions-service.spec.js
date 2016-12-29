@@ -384,7 +384,7 @@ describe('Preparation actions service', () => {
 		}));
 	});
 
-	describe('dispatch @@preparation/REMOVE_FOLDER', () => {
+	describe('dispatch @@preparation/FOLDER_REMOVE', () => {
 		const folder = { id: 'folder 1' };
 
 		beforeEach(inject(($rootScope, $q, FolderService, PreparationActionsService) => {
@@ -393,7 +393,7 @@ describe('Preparation actions service', () => {
 			spyOn(FolderService, 'remove').and.returnValue($q.when());
 
 			const action = {
-				type: '@@preparation/REMOVE_FOLDER',
+				type: '@@preparation/FOLDER_REMOVE',
 				payload: {
 					method: 'removeFolder',
 					args: [],

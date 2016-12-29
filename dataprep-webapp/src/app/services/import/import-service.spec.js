@@ -25,7 +25,6 @@ describe('Import service', () => {
 					datasets: [],
 				},
 			},
-			import: { importTypes },
 		};
 		$provide.constant('state', stateMock);
 	}));
@@ -157,23 +156,6 @@ describe('Import service', () => {
 				title: 'Add a TCOMP dataset',
 			},
 		];
-	});
-	
-	describe('initImport', () => {
-		it('should fetch import types list from REST call',
-			inject(($rootScope, $q, ImportService, ImportRestService, StateService) => {
-				//given
-				spyOn(ImportRestService, 'importTypes').and.returnValue($q.when({ data: importTypes }));
-				spyOn(StateService, 'setImportTypes').and.returnValue();
-
-				//when
-				ImportService.initImport();
-				$rootScope.$digest();
-
-				//then
-				expect(StateService.setImportTypes).toHaveBeenCalledWith(importTypes);
-			})
-		);
 	});
 
 	describe('importParameters', () => {
@@ -389,29 +371,29 @@ describe('Import service', () => {
 	describe('startImport', () => {
 		it('should start import from local file', inject((ImportService) => {
 			// when
-			ImportService.startImport(stateMock.import.importTypes[2]);
+			ImportService.startImport(importTypes[2]);
 
 			// then
-			expect(ImportService.currentInputType).toEqual(stateMock.import.importTypes[2]);
+			expect(ImportService.currentInputType).toEqual(importTypes[2]);
 		}));
 
 		it('should start import from remote', inject((ImportService, StateService) => {
 			// when
 			spyOn(StateService, 'showImport').and.returnValue();
-			ImportService.startImport(stateMock.import.importTypes[0]);
+			ImportService.startImport(importTypes[0]);
 
 			// then
-			expect(ImportService.currentInputType).toEqual(stateMock.import.importTypes[0]);
+			expect(ImportService.currentInputType).toEqual(importTypes[0]);
 			expect(StateService.showImport).toHaveBeenCalled();
 		}));
 
 		it('should start import from remote with dynamic parameters', inject((ImportService, $q, $rootScope) => {
 			// given
-			stateMock.import.importTypes[0].dynamic = true;
+			importTypes[0].dynamic = true;
 			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: { name: 'url' } }));
 
 			// when
-			ImportService.startImport(stateMock.import.importTypes[0]);
+			ImportService.startImport(importTypes[0]);
 			$rootScope.$apply();
 
 			// then
@@ -425,7 +407,7 @@ describe('Import service', () => {
 			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: fakeData }));
 
 			// when
-			ImportService.startImport(stateMock.import.importTypes[4]);
+			ImportService.startImport(importTypes[4]);
 			$rootScope.$apply();
 
 			// then
@@ -672,7 +654,7 @@ describe('Import service', () => {
 			spyOn(StateService, 'startUploadingDataset').and.returnValue();
 			spyOn(StateService, 'finishUploadingDataset').and.returnValue();
 
-			ImportService.currentInputType = stateMock.import.importTypes[0];
+			ImportService.currentInputType = importTypes[0];
 		}));
 
 		it('should show dataset name popup when name already exists', inject(($rootScope, $q, DatasetService, ImportService) => {
@@ -681,7 +663,7 @@ describe('Import service', () => {
 			expect(ImportService.datasetNameModal).toBeFalsy();
 
 			// when
-			ImportService.import(stateMock.import.importTypes[0]);
+			ImportService.import(importTypes[0]);
 			$rootScope.$apply();
 
 			// then
@@ -710,7 +692,7 @@ describe('Import service', () => {
 			expect(ImportService.datasetNameModal).toBeFalsy();
 
 			// when
-			ImportService.import(stateMock.import.importTypes[0]);
+			ImportService.import(importTypes[0]);
 			$rootScope.$apply();
 
 			// then
@@ -817,7 +799,7 @@ describe('Import service', () => {
 				spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
 				spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue($q.when());
 
-				ImportService.currentInputType = stateMock.import.importTypes[0];
+				ImportService.currentInputType = importTypes[0];
 				ImportService.datasetName = dataset.name;
 			}));
 

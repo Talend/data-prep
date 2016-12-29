@@ -15,16 +15,6 @@ describe('Import', () => {
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
 	describe('state service', () => {
-		it('should set import types', inject((importState, ImportStateService) => {
-			// given
-			const imports = [{ name: 'import 1' }, { name: 'import 2' }];
-			// when
-			ImportStateService.setImportTypes(imports);
-
-			// then
-			expect(importState.importTypes).toBe(imports);
-		}));
-
 		it('should hide import modal ', inject((importState, ImportStateService) => {
 			// given
 			importState.visible = true;

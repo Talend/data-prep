@@ -41,7 +41,6 @@ export default class ImportService {
 		this.dataStoreId = null;
 		this.updateDatasetFile = null;
 		this.importDatasetFile = null;
-		this.importTypes = this.state.import.importTypes;
 
 		this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
 		this.onDatastoreFormSubmit = this.onDatastoreFormSubmit.bind(this);
@@ -54,21 +53,6 @@ export default class ImportService {
 		this.$rootScope.$emit('talend.loading.start');
 		return method(...args)
 			.finally(() => this.$rootScope.$emit('talend.loading.stop'));
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name initImport
-	 * @methodOf data-prep.services.import.service:ImportService
-	 * @description Initialize the import types list
-	 */
-	initImport() {
-		return this.ImportRestService.importTypes()
-			.then(response => response.data)
-			.then((importTypes) => {
-				this.StateService.setImportTypes(importTypes);
-				return importTypes;
-			});
 	}
 
 	/**

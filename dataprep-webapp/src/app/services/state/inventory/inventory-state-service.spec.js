@@ -207,7 +207,14 @@ describe('Inventory state service', () => {
 
 		it('should set user\'s home folder id', inject((inventoryState, InventoryStateService) => {
 			//given
-			expect(inventoryState.homeFolderId).toBe('Lw==');
+			inventoryState.homeFolderId = 'Lw==';
+			inventoryState.folder = {
+				metadata: { id: 'myFolderId' },
+				content: {
+					folders: [],
+					preparations: [],
+				},
+			};
 			const homeId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
 
 			//when
@@ -215,6 +222,25 @@ describe('Inventory state service', () => {
 
 			//then
 			expect(inventoryState.homeFolderId).toBe(homeId);
+		}));
+
+		it('should set current home folder to user\'s home folder id', inject((inventoryState, InventoryStateService) => {
+			//given
+			inventoryState.homeFolderId = 'Lw==';
+			inventoryState.folder = {
+				metadata: { id: 'Lw==' },
+				content: {
+					folders: [],
+					preparations: [],
+				},
+			};
+			const homeId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
+
+			//when
+			InventoryStateService.setHomeFolderId(homeId);
+
+			//then
+			expect(inventoryState.folder.metadata.id).toBe(homeId);
 		}));
 
 		it('should enable edit mode', inject((inventoryState, InventoryStateService) => {

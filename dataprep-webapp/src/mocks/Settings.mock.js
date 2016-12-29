@@ -33,12 +33,7 @@ const settingsMock = {
 				debounceTimeout: 300,
 			},
 			actions: ['onboarding:preparation', 'modal:feedback', 'external:help'],
-			userMenuActions: {
-				id: 'user-menu',
-				name: 'Mike Tuchen',
-				icon: 'icon-profile',
-				menu: ['user:logout'],
-			},
+			userMenu: 'user:menu',
 		},
 		breadcrumb: {
 			maxItems: 5,
@@ -90,7 +85,7 @@ const settingsMock = {
 				},
 				actionBar: {
 					actions: {
-						left: ['preparation:create', 'preparation:create:folder'],
+						left: ['preparation:create', 'preparation:folder:create'],
 					},
 				},
 				searchLabel: 'Find a preparation',
@@ -194,8 +189,8 @@ const settingsMock = {
 			icon: 'talend-dataprep',
 			displayMode: 'dropdown',
 			items: 'preparations',
-			dynamic: 'menu:playground:preparation',
-			static: ['menu:playground:dataset'],
+			dynamicAction: 'menu:playground:preparation',
+			staticActions: ['menu:playground:dataset'],
 		},
 		'sidepanel:toggle': {
 			id: 'sidepanel:toggle',
@@ -301,11 +296,11 @@ const settingsMock = {
 				args: [],
 			},
 		},
-		'dataset:favourite': {
-			id: 'dataset:favourite',
-			name: 'Add dataset in your favourite list',
+		'dataset:favorite': {
+			id: 'dataset:favorite',
+			name: 'Add dataset in your favorite list',
 			icon: 'talend-star',
-			type: '@@dataset/FAVOURITE',
+			type: '@@dataset/FAVORITE',
 			payload: {
 				method: 'toggleFavorite',
 				args: [],
@@ -370,8 +365,8 @@ const settingsMock = {
 				args: [],
 			},
 		},
-		'preparation:create:folder': {
-			id: 'preparation:create:folder',
+		'preparation:folder:create': {
+			id: 'preparation:folder:create',
 			name: 'Create folder',
 			icon: 'talend-folder',
 			type: '@@preparation/CREATE',
@@ -440,11 +435,11 @@ const settingsMock = {
 				args: [],
 			},
 		},
-		'preparation:remove:folder': {
-			id: 'preparation:remove:folder',
+		'preparation:folder:remove': {
+			id: 'preparation:folder:remove',
 			name: 'Remove folder',
 			icon: 'talend-trash',
-			type: '@@preparation/REMOVE_FOLDER',
+			type: '@@preparation/FOLDER_REMOVE',
 			payload: {
 				method: 'removeFolder',
 				args: [],
@@ -471,6 +466,13 @@ const settingsMock = {
 			payload: {
 				method: 'open',
 			},
+		},
+		'user:menu': {
+			id: 'user:menu',
+			name: 'anonymousUser',
+			icon: 'talend-user-circle',
+			displayMode: 'dropdown',
+			staticActions: ['user:logout'],
 		},
 	},
 };

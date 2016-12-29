@@ -217,7 +217,7 @@ export default class AppHeaderBarCtrl {
 		const navItems = this.appSettings.views.appheaderbar.actions ?
 			this.adaptActions() :
 			[];
-		const userMenu = this.appSettings.views.appheaderbar.userMenuActions ?
+		const userMenu = this.appSettings.views.appheaderbar.userMenu ?
 			this.adaptUserMenu() :
 			[];
 
@@ -252,10 +252,11 @@ export default class AppHeaderBarCtrl {
 	}
 
 	adaptUserMenu() {
-		const { id, name, icon, menu } = this.appSettings
+		const userMenu = this.appSettings
 			.views
 			.appheaderbar
-			.userMenuActions;
+			.userMenu;
+		const { id, name, icon, staticActions } = this.appSettings.actions[userMenu];
 
 		return {
 			type: DROPDOWN,
@@ -265,7 +266,7 @@ export default class AppHeaderBarCtrl {
 					icon,
 					title: name,
 				},
-				items: menu
+				items: staticActions
 					.map(actionName => this.appSettings.actions[actionName])
 					.map(action => ({
 						id: action.id,

@@ -12,29 +12,18 @@ export const appSettings = {
 	views: [],
 };
 
-export function SettingsService($http, state) {
+export function SettingsService($http, RestURLs) {
 	'ngInject';
 
 	return {
-		adapSettings,
 		clearSettings,
 		refreshSettings,
 		setSettings,
 	};
 
-	function adapSettings(settings) {
-		const importTypes = state.import.importTypes;
-		const datasetCreateAction = settings && settings.actions && settings.actions['dataset:create'];
-		if (importTypes.length && datasetCreateAction) {
-			datasetCreateAction.items = importTypes;
-		}
-		return settings;
-	}
-
 	function refreshSettings() {
-		return $http.get('/assets/config/app-settings.json')
+		return $http.get(RestURLs.settingsUrl)
 			.then(response => response.data)
-			.then(settings => this.adapSettings(settings))
 			.then(settings => this.setSettings(settings));
 	}
 

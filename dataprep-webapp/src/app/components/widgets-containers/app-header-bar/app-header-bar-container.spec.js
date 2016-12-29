@@ -100,6 +100,17 @@ describe('App header bar container', () => {
 			expect(onboardingIcon.attr('name')).toBe('Open Online Help');
 			expect(onboardingIcon.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-question-circle');
 		});
+
+		it('should create user menu', () => {
+			// when
+			createElement();
+
+			// then
+			const userMenuToggle = element.find('#user\\:menu');
+			expect(userMenuToggle.text().trim()).toBe('anonymousUser');
+			const logoutMenuItem = element.find('#user\\:logout');
+			expect(logoutMenuItem.text()).toBe('Logout');
+		});
 	});
 
 	describe('onClick', () => {

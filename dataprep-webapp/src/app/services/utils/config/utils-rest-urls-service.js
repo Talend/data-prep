@@ -25,18 +25,19 @@ export default function RestURLs() {
      * @param {string} serverUrl The server url
      */
 	this.setServerUrl = function setServerUrl(serverUrl) {
-		this.datasetUrl = serverUrl + '/api/datasets';
-		this.transformUrl = serverUrl + '/api/transform';
-		this.preparationUrl = serverUrl + '/api/preparations';
-		this.previewUrl = serverUrl + '/api/preparations/preview';
-		this.exportUrl = serverUrl + '/api/export';
 		this.aggregationUrl = serverUrl + '/api/aggregate';
-		this.typesUrl = serverUrl + '/api/types';
+		this.datasetUrl = serverUrl + '/api/datasets';
+		this.exportUrl = serverUrl + '/api/export';
 		this.folderUrl = serverUrl + '/api/folders';
 		this.mailUrl = serverUrl + '/api/mail';
+		this.preparationUrl = serverUrl + '/api/preparations';
+		this.previewUrl = serverUrl + '/api/preparations/preview';
 		this.searchUrl = serverUrl + '/api/search';
-		this.upgradeVersion = serverUrl + '/api/upgrade/check';
+		this.settingsUrl = serverUrl + '/api/settings';
 		this.tcompUrl = serverUrl + '/api/tcomp';
+		this.transformUrl = serverUrl + '/api/transform';
+		this.typesUrl = serverUrl + '/api/types';
+		this.upgradeVersion = serverUrl + '/api/upgrade/check';
 		this.versionUrl = serverUrl + '/api/version';
 	};
 }

@@ -21,12 +21,12 @@ import uiRouter from 'angular-ui-router';
 import APP_MODULE from './components/app/app-module';
 import SERVICES_DATASET_MODULE from './services/dataset/dataset-module';
 import SERVICES_EXPORT_MODULE from './services/export/export-module';
-import SERVICES_IMPORT_MODULE from './services/import/import-module';
 import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
 import SETTINGS_MODULE from './settings/settings-module';
 
 import routeConfig from './index-route';
+import getAppConfiguration from './index-config';
 
 const MODULE_NAME = 'data-prep';
 
@@ -40,7 +40,6 @@ const app = angular.module(MODULE_NAME,
 		SERVICES_REST_MODULE, // rest interceptors
 		SERVICES_DATASET_MODULE, // for configuration
 		SERVICES_EXPORT_MODULE, // for configuration
-		SERVICES_IMPORT_MODULE, // for configuration
 		SERVICES_UTILS_MODULE, // for configuration
 		SETTINGS_MODULE, // app dynamic settings
 		APP_MODULE, // app root
@@ -74,17 +73,8 @@ const app = angular.module(MODULE_NAME,
 	});
 
 window.fetchConfiguration = function fetchConfiguration() {
-	const initInjector = angular.injector(['ng']);
-	const $http = initInjector.get('$http');
-	const $q = initInjector.get('$q');
-
-	return $q.all(
-		[
-			$http.get('/assets/config/config.json'),
-			$http.get('/assets/config/app-settings.json'),
-		])
-		.then(result => result.map(res => res.data))
-		.then(([config, appSettings]) => {
+	return getAppConfiguration()
+		.then(({ config, appSettings }) => {
 			app
 			// Debug config
 				.config(($compileProvider) => {
@@ -101,8 +91,6 @@ window.fetchConfiguration = function fetchConfiguration() {
 					'ngInject';
 					// base settings
 					SettingsService.setSettings(appSettings);
-					// import types and inject them in app settings
-					ImportService.initImport().then(() => SettingsService.refreshSettings());
 					// export types
 					ExportService.refreshTypes();
 					// dataset encodings

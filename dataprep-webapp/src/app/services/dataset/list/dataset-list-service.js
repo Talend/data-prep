@@ -124,7 +124,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			'dataset:update',
 			'dataset:clone',
 			'dataset:remove',
-			'dataset:favourite',
+			'dataset:favorite',
 		];
 		if (item.preparations && item.preparations.length > 0) {
 			actions.splice(1, 0, 'list:dataset:preparations');

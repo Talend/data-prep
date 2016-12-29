@@ -19,7 +19,6 @@ export default function ImportRestService($http, RestURLs) {
 	'ngInject';
 
 	return {
-		importTypes,
 		importParameters,
 		refreshParameters,
 		testConnection,
@@ -27,16 +26,6 @@ export default function ImportRestService($http, RestURLs) {
 		refreshDatasetForm,
 		createDataset,
 	};
-	/**
-	 * @ngdoc method
-	 * @name importTypes
-	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Fetch the available import types
-	 * @returns {Promise}  The GET call promise
-	 */
-	function importTypes() {
-		return $http.get(RestURLs.datasetUrl + '/imports');
-	}
 
 	/**
 	 * @ngdoc method

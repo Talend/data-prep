@@ -34,14 +34,15 @@ describe('Settings service', () => {
 	describe('refreshSettings', () => {
 		let $httpBackend;
 
-		beforeEach(inject(($rootScope, $injector) => {
+		beforeEach(inject(($rootScope, $injector, RestURLs) => {
 			$httpBackend = $injector.get('$httpBackend');
+			RestURLs.setServerUrl('');
 		}));
 
-		it('should get remote settings and update local settings', inject(($rootScope, appSettings, SettingsService) => {
+		it('should get remote settings and update local settings', inject(($rootScope, appSettings, RestURLs, SettingsService) => {
 			// given
 			$httpBackend
-				.expectGET('/assets/config/app-settings.json')
+				.expectGET(RestURLs.settingsUrl)
 				.respond(200, settings);
 
 			expect(appSettings).toEqual({ views: [], actions: [] });
@@ -52,35 +53,6 @@ describe('Settings service', () => {
 
 			// then
 			expect(appSettings).toEqual(settings);
-		}));
-
-		it('should adapt settings and update local settings', inject(($rootScope, appSettings, SettingsService) => {
-			// given
-			stateMock.import.importTypes = [
-				{
-					defaultImport: true,
-					label: 'Local File',
-					model: {
-						locationType: 'local',
-						defaultImport: true,
-						label: 'Local File',
-					}
-				}
-			];
-
-			$httpBackend
-				.expectGET('/assets/config/app-settings.json')
-				.respond(200, settings);
-
-			expect(appSettings).toEqual({ views: [], actions: [] });
-
-			// when
-			SettingsService.refreshSettings();
-			$httpBackend.flush();
-			$rootScope.$apply();
-
-			// then
-			expect(appSettings.actions['dataset:create'].items).toEqual(stateMock.import.importTypes);
 		}));
 	});
 

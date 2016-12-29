@@ -139,7 +139,6 @@ describe('Datasets actions service', () => {
 			inventory: {
 				datasetsSort: {}
 			},
-			import: { importTypes },
 		};
 		$provide.constant('state', stateMock);
 	}));
@@ -248,10 +247,10 @@ describe('Datasets actions service', () => {
 			expect(MessageService.success).toHaveBeenCalled();
 		}));
 
-		it('should add dataset to the favourite list', inject((DatasetService, DatasetActionsService) => {
+		it('should add dataset to the favorite list', inject((DatasetService, DatasetActionsService) => {
 			// given
 			const action = {
-				type: '@@dataset/FAVOURITE',
+				type: '@@dataset/FAVORITE',
 				payload: {
 					method: 'toggleFavorite',
 					args: [],
@@ -396,6 +395,7 @@ describe('Datasets actions service', () => {
 				payload: {
 					method: '',
 					args: [],
+					items: importTypes,
 				}
 			};
 

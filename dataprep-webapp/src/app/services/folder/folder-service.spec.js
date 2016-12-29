@@ -63,7 +63,7 @@ const adaptedFolder = {
 	icon: 'talend-folder',
 	displayMode: 'text',
 	className: 'list-item-folder',
-	actions: ['inventory:edit', 'preparation:remove:folder'],
+	actions: ['inventory:edit', 'preparation:folder:remove'],
 	model: folder,
 };
 
@@ -415,7 +415,7 @@ describe('Folder services', () => {
 			const actions = FolderService.getFolderActions();
 
 			// then
-			expect(actions).toEqual(['inventory:edit', 'preparation:remove:folder']);
+			expect(actions).toEqual(['inventory:edit', 'preparation:folder:remove']);
 		}));
 	});
 });

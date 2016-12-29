@@ -13,32 +13,50 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.command.Defaults.emptyStream;
-import static org.talend.dataprep.command.Defaults.pipeStream;
-
-import java.io.InputStream;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.exception.TDPException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.function.BiFunction;
+
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 /**
  * Command to list dataset import types.
  */
 @Component
 @Scope("request")
-public class DataSetGetImports extends GenericCommand<InputStream> {
+public class DataSetGetImports extends GenericCommand<List<Import>> {
 
-    /**
-     * Constructor.
-     */
     public DataSetGetImports() {
         super(GenericCommand.DATASET_GROUP);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets/imports"));
-        on(HttpStatus.NO_CONTENT).then(emptyStream());
-        on(HttpStatus.OK).then(pipeStream());
+        on(HttpStatus.OK).then(toImportList());
+    }
+
+    /**
+     * Convert HttpResponse to list of Import
+     */
+    private BiFunction<HttpRequestBase, HttpResponse, List<Import>> toImportList() {
+        return (req, resp) -> {
+            try (InputStream input = resp.getEntity().getContent()) {
+                return objectMapper.readValue(input, new TypeReference<List<Import>>(){});
+            } catch (IOException e) {
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
+            } finally {
+                req.releaseConnection();
+            }
+        };
     }
 
 }

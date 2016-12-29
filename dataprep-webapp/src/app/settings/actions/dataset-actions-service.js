@@ -120,7 +120,7 @@ export default class DatasetActionsService {
 				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
 			break;
 		}
-		case '@@dataset/FAVOURITE': {
+		case '@@dataset/FAVORITE': {
 			this.DatasetService[action.payload.method](action.payload.model);
 			break;
 		}
@@ -134,7 +134,7 @@ export default class DatasetActionsService {
 				this.ImportService.startImport(action.payload);
 			}
 			else {
-				const importTypes = this.state.import.importTypes;
+				const importTypes = action.payload.items;
 				const defaultImport = importTypes.find(type => type.defaultImport) || importTypes[0];
 				this.ImportService.startImport(defaultImport);
 			}

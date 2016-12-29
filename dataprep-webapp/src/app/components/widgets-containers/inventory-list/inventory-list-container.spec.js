@@ -79,7 +79,7 @@ const folders = [
 		creationDate: '2 minutes ago',
 		lastModificationDate: '2 minutes ago',
 		icon: 'talend-folder',
-		actions: ['inventory:edit', 'preparation:remove:folder'],
+		actions: ['inventory:edit', 'preparation:folder:remove'],
 		model: {
 			id: 'Lw==',
 			path: '/JSO folder 1',
@@ -97,7 +97,7 @@ const folders = [
 		creationDate: '5 days ago',
 		lastModificationDate: '5 days ago',
 		icon: 'talend-folder',
-		actions: ['inventory:edit', 'preparation:remove:folder'],
+		actions: ['inventory:edit', 'preparation:folder:remove'],
 		model: {
 			id: 'Lw==2',
 			path: '/JSO folder 2',
@@ -202,12 +202,12 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-actions-preparation\\:create\\:folder').click();
+				element.find('#list-actions-preparation\\:folder\\:create').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
 				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:create:folder');
+				expect(lastCallArgs.id).toBe('preparation:folder:create');
 				expect(lastCallArgs.type).toBe('@@preparation/CREATE');
 			})
 		);
@@ -252,13 +252,13 @@ describe('Inventory list container', () => {
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
 				// when
-				element.find('#list-0-preparation\\:remove\\:folder').click();
+				element.find('#list-0-preparation\\:folder\\:remove').click();
 
 				// then
 				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
 				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('preparation:remove:folder');
-				expect(lastCallArgs.type).toBe('@@preparation/REMOVE_FOLDER');
+				expect(lastCallArgs.id).toBe('preparation:folder:remove');
+				expect(lastCallArgs.type).toBe('@@preparation/FOLDER_REMOVE');
 				expect(lastCallArgs.payload.model).toBe(folders[0].model);
 			})
 		);

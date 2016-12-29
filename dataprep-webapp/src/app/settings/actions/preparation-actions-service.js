@@ -104,7 +104,7 @@ export default class PreparationActionsService {
 				.then(() => this.displaySuccess('REMOVE_SUCCESS', preparation));
 			break;
 		}
-		case '@@preparation/REMOVE_FOLDER': {
+		case '@@preparation/FOLDER_REMOVE': {
 			const folder = action.payload.model;
 			this.FolderService.remove(folder.id)
 				.then(() => this.refreshCurrentFolder());

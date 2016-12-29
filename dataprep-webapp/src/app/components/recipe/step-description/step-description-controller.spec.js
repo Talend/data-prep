@@ -181,7 +181,7 @@ describe('Step Description controller', () => {
                     scope.$digest();
 
                     //then
-                    expect(ctrl.stepDescription).toBe('11. Lookup done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">id</span> and <span class="recipe-column-name">id. </span>The column <span class="recipe-column-name">firstname</span> has been added.');
+                    expect(ctrl.stepDescription).toBe('11. Lookup done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">ID</span> and <span class="recipe-column-name">ID. </span>The column <span class="recipe-column-name">FIRSTNAME</span> has been added.');
                 });
 
                 it('should translate description with 2 columns', () => {
@@ -229,7 +229,7 @@ describe('Step Description controller', () => {
                     scope.$digest();
 
                     //then
-                    expect(ctrl.stepDescription).toBe('2. Lookup done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">id</span> and <span class="recipe-column-name">id. </span>The columns <span class="recipe-column-name">firstname</span> and <span class="recipe-column-name">lastname</span> have been added.');
+                    expect(ctrl.stepDescription).toBe('2. Lookup done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">ID</span> and <span class="recipe-column-name">ID. </span>The columns <span class="recipe-column-name">FIRSTNAME</span> and <span class="recipe-column-name">LASTNAME</span> have been added.');
                 });
 
                 it('should translate description with more than 2 columns', () => {
@@ -285,7 +285,7 @@ describe('Step Description controller', () => {
                     scope.$digest();
 
                     //then
-                    expect(ctrl.stepDescription).toBe('3. Lookup done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">id</span> and <span class="recipe-column-name">id. </span>The columns <span class="recipe-column-name">firstname</span>, <span class="recipe-column-name">lastname</span> and <span class="recipe-column-name" title="state, registration">2</span> other(s) have been added.');
+                    expect(ctrl.stepDescription).toBe('3. Lookup done with dataset <span class="recipe-column-name">customers_100_with_pb</span>. Join has been set between <span class="recipe-column-name">ID</span> and <span class="recipe-column-name">ID. </span>The columns <span class="recipe-column-name">FIRSTNAME</span>, <span class="recipe-column-name">LASTNAME</span> and <span class="recipe-column-name" title="state, registration">2</span> other(s) have been added.');
                 });
             });
 

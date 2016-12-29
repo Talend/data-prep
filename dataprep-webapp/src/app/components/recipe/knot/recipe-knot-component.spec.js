@@ -139,7 +139,7 @@ describe('Recipe knot', () => {
         });
     });
 
-    describe('inactive knot', () => {
+    describe('active knot', () => {
         it('should render a single active knot', () => {
             //given
             scope.inactive = false;
@@ -154,6 +154,7 @@ describe('Recipe knot', () => {
             expect(element.find('.line.no-line').length).toBe(2);
 
             expect(element.find('.circle').length).toBe(1);
+            expect(element.find('.circle.concenter').length).toBe(1);
             expect(element.find('.circle.inactive-knot').length).toBe(0);
             expect(element.find('.circle.inactive-knot.to-be-activated').length).toBe(0);
             expect(element.find('.circle.inactive-knot.to-be-deactivated').length).toBe(0);
@@ -178,6 +179,7 @@ describe('Recipe knot', () => {
 
             expect(element.find('.circle.inactive-knot.to-be-activated').length).toBe(0);
             expect(element.find('.circle.to-be-deactivated').length).toBe(1);
+            expect(element.find('.circle.concenter').length).toBe(0);
 
             expect(element.find('.line.bottom-line').length).toBe(1);
             expect(element.find('.line.bottom-line.no-line').length).toBe(0);

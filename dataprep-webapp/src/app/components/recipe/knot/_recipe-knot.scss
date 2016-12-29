@@ -15,49 +15,63 @@ $recipe-knot-active-color: $dark-green !default;
 $recipe-knot-inactive-color: $medium-gray !default;
 
 .knot {
-  @include display(flex);
-  @include flex-direction(column);
-  @include flex-basis(20px);
-  @include flex-grow(0);
-  @include flex-shrink(0);
-  height: 100%;
-  cursor: pointer;
-  align-items: center;
-  position: absolute;
+	@include display(flex);
+	@include flex-direction(column);
+	@include flex-basis(20px);
+	@include flex-grow(0);
+	@include flex-shrink(0);
+	height: 100%;
+	cursor: pointer;
+	align-items: center;
+	position: absolute;
 
-  .line {
-    width: 1px;
-    height: 13px;
-    background: $recipe-knot-active-color;
+	.line {
+		width: 1px;
+		height: 13px;
+		background: $recipe-knot-active-color;
 
-    &.bottom-line {
-      @include flex-grow(1);
-    }
+		&.bottom-line {
+			@include flex-grow(1);
+		}
 
-    &.no-line {
-      background: transparent;
-    }
-  }
+		&.no-line {
+			background: transparent;
+		}
+	}
 
-  .circle {
-    position: relative;
-    width: 17px;
-    height: 17px;
-    background:  $recipe-knot-active-color;
-    border-radius: 50%;
+	.circle {
+		position: relative;
+		width: 17px;
+		height: 17px;
+		background: $recipe-knot-active-color;
+		border-radius: 50%;
+		margin: 2px;
 
-    &.inactive-knot {
-      background: $recipe-knot-inactive-color;
-    }
+		&.concenter {
+			&:before {
+				content: " ";
+				position: absolute;
+				width: 13px;
+				height: 13px;
+				margin-top: 2px;
+				margin-left: 2px;
+				border-radius: 50%;
+				border: 2px solid white;
+			}
+		}
 
-    &.to-be-deactivated {
-      background: transparent;
-      border: 3px solid $recipe-knot-active-color;
-    }
+		&.inactive-knot {
+			background: $recipe-knot-inactive-color;
+		}
 
-    &.to-be-activated {
-      background: $white;
-      border: 3px solid $recipe-knot-inactive-color;
-    }
-  }
+		&.to-be-deactivated {
+			background: transparent;
+			border: 2px solid $recipe-knot-active-color;
+		}
+
+		&.to-be-activated {
+			background: $white;
+			border: 2px solid $recipe-knot-inactive-color;
+		}
+	}
 }

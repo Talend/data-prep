@@ -48,6 +48,17 @@
 
                         <step-description index="$index" step="step"></step-description>
 
+                        <a
+                            href
+                            class="remove-icon"
+                            id="step-remove-{{step.transformation.stepId}}"
+                            ng-click="$ctrl.remove(step, $event)"
+                            title="{{::'REMOVE_STEP' | translate }}"
+                            ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
+                            ng-mouseleave="$ctrl.resetStepToBeDeleted()"
+                            ng-include="'assets/images/shared/delete.svg'">
+                        </a>
+
                         <span class="filter-icon"
                               data-icon="q" ng-if="step.filters.length"
                               title="{{'FILTERS_APPLIED' | translate}} {{$ctrl.getAllFiltersNames(step.filters)}}">
@@ -92,17 +103,8 @@
                              show-bottom-line="!$ctrl.isDragStart && $ctrl.showBottomLine(step)"
                              show-top-line="!$ctrl.isDragStart && $ctrl.showTopLine(step)"
                              to-be-switched="$ctrl.toBeSwitched(step)"
-                             toggle-step="$ctrl.toggleStep(step)"></recipe-knot>
-                <div class="remove-icon"
-                     role="button"
-                     aria-labelledby="{{ 'REMOVE_STEP' | translate }}">
-                    <i data-icon="e"
-                       id="step-remove-{{step.transformation.stepId}}"
-                       ng-click="$ctrl.remove(step, $event)"
-                       ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
-                       ng-mouseleave="$ctrl.resetStepToBeDeleted()"
-                    ></i>
-                </div>
+                             toggle-step="$ctrl.toggleStep(step)">
+                </recipe-knot>
             </div>
         </li>
     </sc-accordion>

@@ -62,8 +62,6 @@ describe('Editable Text widget directive', () => {
 
             const editionGroup = element.find('.editable-text-container').eq(1);
             expect(editionGroup.find('input.edition-text-input').length).toBe(1);
-            expect(editionGroup.find('button.valid-btn').length).toBe(1);
-            expect(editionGroup.find('button.cancel-btn').length).toBe(1);
         });
 
         it('should render with visible edition mode elements', () => {
@@ -146,63 +144,6 @@ describe('Editable Text widget directive', () => {
 
             //then
             expect(scope.editionMode).toBe(true);
-        });
-
-        it('should validate on validation button click', () => {
-            //given
-            scope.editionMode = true;
-            scope.text = 'Jimmy';
-            createElement();
-
-            const ctrl = element.controller('talendEditableText');
-            ctrl.editionText = 'no Jimmy';
-            ctrl.onValidate = jasmine.createSpy('onValidate');
-
-            //when
-            element.find('button.valid-btn').click();
-
-            //then
-            expect(ctrl.onValidate).toHaveBeenCalled();
-        });
-
-        it('should switch to NON edition mode on validation button click', () => {
-            //given
-            scope.editionMode = true;
-            createElement();
-
-            //when
-            element.find('button.valid-btn').click();
-
-            //then
-            expect(scope.editionMode).toBe(false);
-        });
-
-        it('should execute cancel callback on cancel button click', () => {
-            //given
-            scope.editionMode = true;
-            createElement();
-
-            const ctrl = element.controller('talendEditableText');
-            ctrl.onCancel = jasmine.createSpy('onCancel');
-
-            //when
-            element.find('button.cancel-btn').click();
-            scope.$digest();
-
-            //then
-            expect(ctrl.onCancel).toHaveBeenCalled();
-        });
-
-        it('should switch to NON edition mode on cancel button click', () => {
-            //given
-            scope.editionMode = true;
-            createElement();
-
-            //when
-            element.find('button.cancel-btn').click();
-
-            //then
-            expect(scope.editionMode).toBe(false);
         });
 
         it('should execute cancel on input ESC keydown', () => {

@@ -199,7 +199,7 @@ describe('Step Description Component', () => {
             scope.$digest();
 
             //then
-            expect(element.eq(0).text().trim().replace(/\s+/g, ' ')).toBe('2. Lookup done with dataset customers_100_with_pb. Join has been set between id and id. The columns firstname, lastname and 2 other(s) have been added.');
+            expect(element.eq(0).text().trim().replace(/\s+/g, ' ')).toBe('2. Lookup done with dataset customers_100_with_pb. Join has been set between ID and ID. The columns FIRSTNAME, LASTNAME and 2 other(s) have been added.');
         });
     });
 });

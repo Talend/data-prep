@@ -708,22 +708,22 @@ describe('Recipe component', () => {
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
-			RECIPE_ITEM_ON_COL: '{{index}}. {{label}} on column {{columnName}}',
-			RECIPE_ITEM_ON_CELL: '{{index}}. {{label}} on cell',
-			RECIPE_ITEM_ON_LINE: '{{index}}. {{label}} #{{rowId}}',
-			RECIPE_LOOKUP_MADE_ON_COL: 'made on the column',
-			LOOKUP_STEP_DESCRIPTION: '{{index}}. {{label}} done with dataset <span class=\"recipe-column-name\">{{lookupDsName}}</span>. Join has been set between <span class=\"recipe-column-name\">{{mainColName}}</span> and <span class=\"recipe-column-name\">{{lookupColName}}. </span>',
-			ONLY_1_ADDED_COL: 'The column <span class=\"recipe-column-name\">{{firstCol}}</span> has been added.',
-			RECIPE_LOOKUP_JOIN_COLS: 'Join has been set between',
+			RECIPE_ITEM_ON_COL: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">on column</span> {{columnName}}',
+			RECIPE_ITEM_ON_CELL: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">on cell</span>',
+			RECIPE_ITEM_ON_LINE: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">#{{rowId}}</span>',
+			LOOKUP_STEP_DESCRIPTION: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">done with dataset {{lookupDsName}}. Join has been set between </span>{{mainColName}} <span class=\"description-details\">and </span>{{lookupColName}}.',
+			ONLY_1_ADDED_COL: '<span class=\"description-details\">The column </span>{{firstCol}} <span class=\"description-details\"> has been added.</span>',
+			ONLY_2_ADDED_COLS: '<span class=\"description-details\">The columns </span>{{firstCol}} <span class=\"description-details\">and</span> {{secondCol}} <span class=\"description-details\">have been added.</span>',
+			MORE_THEN_2_ADDED_COLS: '<span class=\"description-details\">The columns </span>{{firstCol}}<span class=\"description-details\">,</span> {{secondCol}} <span class=\"description-details\">and </span><span title=\"{{restOfCols}}\">{{restOfColsNbr}}</span> <span class=\"description-details\">other(s) have been added.</span></span></span>',
 			AND: 'and',
 			OTHER: 'other',
-			RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_PLURAL: 'column(s) have been added.',
-			RECIPE_LOOKUP_FOLLOWING_COLS_ADDED_SINGULAR: 'column has been added.',
 		});
 		$translateProvider.preferredLanguage('en');
 	}));
 
-	beforeEach(inject(($rootScope, $compile) => {
+	beforeEach(inject(($rootScope, $compile, $templateCache) => {
+		$templateCache.put('assets/images/shared/delete.svg', '<svg></svg>');
+
 		scope = $rootScope.$new();
 		element = angular.element('<recipe></recipe>');
 		$compile(element)(scope);
@@ -749,10 +749,10 @@ describe('Recipe component', () => {
 
 		// then
 		expect(element.find('.recipe ul sc-accordion-item').length).toBe(4);
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Split on column COL1');
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2. To uppercase on column COL2');
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(2).text().trim().replace(/\s+/g, ' ')).toBe('3. Replace value on cell');
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(3).text().trim().replace(/\s+/g, ' ')).toBe('4. Delete Line #125');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1 Split on column COL1');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(1).text().trim().replace(/\s+/g, ' ')).toBe('2 To uppercase on column COL2');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(2).text().trim().replace(/\s+/g, ' ')).toBe('3 Replace value on cell');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(3).text().trim().replace(/\s+/g, ' ')).toBe('4 Delete Line #125');
 	});
 
 	it('should render recipe Lookup entry', () => {
@@ -763,7 +763,11 @@ describe('Recipe component', () => {
 
 		// then
 		expect(element.find('.recipe ul sc-accordion-item ').length).toBe(1);
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1. Lookup done with dataset customers_100_with_pb. Join has been set between id and id. The column firstname has been added.');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description')
+			.eq(0)
+			.text().trim()
+			.replace(/\s+/g, ' '))
+			.toBe('1 Lookup done with dataset customers_100_with_pb. Join has been set between ID and ID.The column FIRSTNAME has been added.');
 	});
 
 	it('should render early preview step', () => {

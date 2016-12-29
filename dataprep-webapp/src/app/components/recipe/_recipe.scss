@@ -11,8 +11,8 @@
 
   ============================================================================*/
 
-$recipe-step-disabled-color: #9591a0 !default;
-$recipe-step-disabled-background-color: #c5c5c5 !default;
+$recipe-step-disabled-color: $medium-gray !default;
+$recipe-step-disabled-background-color: $light-gray !default;
 
 $recipe-step-background-color: $white !default;
 $recipe-step-border-color: #dedede !default;
@@ -22,7 +22,7 @@ $recipe-step-draggable-background-color: #808080 !default;
 .recipe {
   display: block;
   font-size: 0.95em;
-  padding-right: 15px;
+  padding-right: 25px;
   padding-bottom: 10px;
 
   .step-container {
@@ -30,10 +30,11 @@ $recipe-step-draggable-background-color: #808080 !default;
     @include flex-direction(row);
     @include justify-content(space-between);
     border-bottom: 1px solid $recipe-step-border-color;
+    min-height: 48px;
 
     .step-trigger {
       position: relative;
-      margin-right: 15px;
+      padding-right: 11px;
     }
 
     &.disabled-step {
@@ -78,10 +79,13 @@ $recipe-step-draggable-background-color: #808080 !default;
 
     .remove-icon {
       @include flex-shrink(0);
-      margin: 5px;
       cursor: pointer;
-      color: $medium-gray;
       font-size: 0.5em;
+      svg {
+        height: 20px;
+        width: 20px;
+        fill: $medium-gray;
+      }
     }
 
     .recipe-step {
@@ -104,7 +108,7 @@ $recipe-step-draggable-background-color: #808080 !default;
         .filter-icon {
           color: $dark-gray;
           font-size: 0.65em;
-          padding: 0 0 0 5px;
+          padding: 3px 0 0 5px;
         }
       }
 

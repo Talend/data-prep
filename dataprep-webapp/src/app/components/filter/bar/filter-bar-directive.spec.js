@@ -37,7 +37,7 @@ describe('Filter bar directive', () => {
 
     beforeEach(inject(function ($rootScope, $compile, $templateCache) {
         scope = $rootScope.$new();
-        $templateCache.put('assets/images/filter/delete.svg', '<svg></svg>');
+        $templateCache.put('assets/images/shared/delete.svg', '<svg></svg>');
 
         createElement = () => {
             element = angular.element('<filter-bar></filter-bar>');

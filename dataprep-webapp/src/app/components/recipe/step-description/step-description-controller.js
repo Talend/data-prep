@@ -74,8 +74,8 @@ class StepDescriptionCtrl {
 			index: (this.index + 1),
 			label: this.step.transformation.label,
 			lookupDsName: this.step.actionParameters.parameters.lookup_ds_name,
-			mainColName: this.step.column.name,
-			lookupColName: this.step.actionParameters.parameters.lookup_join_on_name,
+			mainColName: this.step.column.name.toUpperCase(),
+			lookupColName: this.step.actionParameters.parameters.lookup_join_on_name.toUpperCase(),
 		});
 
 		const lookupStepDetails = this._getAddedColumnsInLookup(step);
@@ -107,8 +107,8 @@ class StepDescriptionCtrl {
 		const allAddedCols = _.map(step.actionParameters.parameters.lookup_selected_cols, 'name');
 		return {
 			initialColsNbr: allAddedCols.length,
-			firstCol: allAddedCols.splice(0, 1).join(), // tab = []; tab[0]==>undefined, tab.join()==>''
-			secondCol: allAddedCols.splice(0, 1).join(),
+			firstCol: allAddedCols.splice(0, 1).join().toUpperCase(), // tab = []; tab[0]==>undefined, tab.join()==>''
+			secondCol: allAddedCols.splice(0, 1).join().toUpperCase(),
 			restOfColsNbr: allAddedCols.length,
 			restOfCols: allAddedCols.join(', '),
 		};

@@ -14,160 +14,159 @@ $switch-shadow: 0 2px 5px transparentize(black, 0.6);
 $slide-action-background: $base-background-color;
 
 @mixin slidable-action-bar {
-  .action {
-    background: $slide-action-background;
+	.action {
+		background: $slide-action-background;
 
-    &:hover {
-      background: darken($slide-action-background, 5%);
-    }
-  }
+		&:hover {
+			background: darken($slide-action-background, 5%);
+		}
+	}
 }
 
 @mixin playground-center-layout {
-  .playground-center {
-    @extend .flex-center;
-    @include display(flex);
-    @include flex-direction(column);
+	.playground-center {
+		@extend .flex-center;
+		@include display(flex);
+		@include flex-direction(column);
 
-    background-color: $shadow-gray;
-    position: relative;
+		background-color: $shadow-gray;
+		position: relative;
 
-    #playground-filter-bar {
-      @include flex-grow(0);
-      @include flex-shrink(0);
-    }
+		#playground-filter-bar {
+			@include flex-grow(0);
+			@include flex-shrink(0);
+		}
 
-    #playground-dataset-parameters {
-      @include slidable-top(200px, 0px);
-      > * {
-        margin: 10px;
-      }
-    }
+		#playground-dataset-parameters {
+			@include slidable-top(200px, 0px);
+			> * {
+				margin: 10px;
+			}
+		}
 
-    #playground-datagrid-container {
-      @include display(flex);
-      @include flex-grow(1);
-      @include flex-shrink(1);
-      @include flex-basis(500px);
+		#playground-datagrid-container {
+			@include display(flex);
+			@include flex-grow(1);
+			@include flex-shrink(1);
+			@include flex-basis(500px);
 
-      margin: 0 30px;
-      position: relative;
+			margin: 0 30px;
+			position: relative;
 
-      .datagrid-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-      }
-    }
+			.datagrid-container {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			}
+		}
 
-    .lookup-slide {
-      .content {
-        height: 318px;
-        overflow: hidden;
-      }
-    }
-  }
+		.lookup-slide {
+			.content {
+				height: 318px;
+				overflow: hidden;
+			}
+		}
+	}
 }
 
 @mixin recipe-layout {
-  .playground-recipe {
-    @include slidable-action-bar();
+	.playground-recipe {
+		@include slidable-action-bar();
 
-    > .content {
-      overflow: hidden;
+		> .content {
+			overflow: hidden;
 
-      > .content-container {
-        @include display(flex);
-        @include flex-grow(1);
-        height: 0;
+			> .content-container {
+				@include display(flex);
+				@include flex-grow(1);
+				height: 0;
 
-        .fixed-content {
-          @include flex-column();
-          min-width: 330px;
+				.fixed-content {
+					@include flex-column();
+					min-width: 330px;
 
-          > div {
-            @include flex(0 0 auto);
-          }
+					> div {
+						@include flex(0 0 auto);
+					}
 
-          > recipe {
-            @include display(flex);
-            @include flex-grow(1);
-            height: 0;
+					> recipe {
+						@include display(flex);
+						@include flex-grow(1);
+						height: 0;
 
+						> .recipe {
+							overflow-x: hidden;
+							overflow-y: auto;
+							-ms-overflow-y: scroll;
+						}
+					}
+				}
+			}
+		}
 
-            > .recipe {
-              overflow-x: hidden;
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
+		.steps-header {
+			@include display(flex);
+			border-bottom: 1px solid $shadow-gray;
 
-    .steps-header {
-      @include display(flex);
-      margin: 15px 10px 0 0;
-      border-bottom: 1px solid $shadow-gray;
+			talend-editable-text {
+				padding: 5px 10px;
+				width: 100%;
+			}
 
-      talend-editable-text {
-        padding: 5px;
-        width: 100%;
-      }
-
-      .steps-header-preparation-text {
-        @include ellipsis(85%);
-        padding: 2px 0;
-        font-size: 1.2em;
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-    }
-  }
+			.steps-header-preparation-text {
+				@include ellipsis(85%);
+				padding: 2px 0;
+				font-size: 1.2em;
+				font-weight: 600;
+				text-transform: uppercase;
+			}
+		}
+	}
 }
 
 @mixin suggestions-layout {
-  .playground-suggestions {
-    @include slidable-action-bar();
-  }
+	.playground-suggestions {
+		@include slidable-action-bar();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------BODY--------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------
 .playground-container {
-  $navigation-border: 1px;
-  $navigation-height: 50px;
-  $navigation-all-height: ($navigation-height + $navigation-border);
-  $playground-height: '100vh - ' + $navigation-all-height;
+	$navigation-border: 1px;
+	$navigation-height: 50px;
+	$navigation-all-height: ($navigation-height + $navigation-border);
+	$playground-height: '100vh - ' + $navigation-all-height;
 
-  height: 100vh;
-  @include flex-column();
+	height: 100vh;
+	@include flex-column();
 
-  #playground-header {
-    @include flex-basis($navigation-all-height);
-    @include flex-grow(0);
-    @include flex-shrink(0);
-  }
+	#playground-header {
+		@include flex-basis($navigation-all-height);
+		@include flex-grow(0);
+		@include flex-shrink(0);
+	}
 
-  .playground {
-    @include calc('height', $playground-height);
+	.playground {
+		@include calc('height', $playground-height);
 
-    @include flex-grow(1);
-    @include flex-shrink(1);
+		@include flex-grow(1);
+		@include flex-shrink(1);
 
-    @include flex-row();
-    @include align-items(stretch);
+		@include flex-row();
+		@include align-items(stretch);
 
-    @include recipe-layout();
-    @include playground-center-layout();
-    @include suggestions-layout();
-  }
+		@include recipe-layout();
+		@include playground-center-layout();
+		@include suggestions-layout();
+	}
 }
 
 .preparation-picker-modal {
-  .modal .modal-inner {
-    width: 70vw;
-  }
+	.modal .modal-inner {
+		width: 70vw;
+	}
 }

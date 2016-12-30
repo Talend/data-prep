@@ -19,7 +19,9 @@ import Icon from 'react-talend-components/lib/Icon';
 import IconsProvider from 'react-talend-components/lib/IconsProvider';
 import SidePanel from 'react-talend-components/lib/SidePanel';
 import List from 'react-talend-components/lib/List';
+import Progress from 'react-talend-components/lib/Progress';
 import Form from 'react-talend-forms';
+
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
 import LayoutContainer from './layout/layout-container';
@@ -42,6 +44,7 @@ angular.module(MODULE_NAME,
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
 	.directive('pureList', ['reactDirective', reactDirective => reactDirective(List)])
 	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
+	.directive('pureProgress', ['reactDirective', reactDirective => reactDirective(Progress)])
 	.directive('iconsProvider', ['reactDirective', reactDirective => reactDirective(IconsProvider)])
 	.directive('icon', ['reactDirective', reactDirective => reactDirective(Icon)])
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])

@@ -154,6 +154,7 @@
 
   "_comment": "Add datasets",
   "IMPORT_DATASET": "Add Dataset",
+  "COLLECTING_DATA": "Collecting {{datasetName}} data. Please wait...",
   "IMPORT_WAIT": "Fetching import parameters, please wait...",
   "DATASET_NAME": "Dataset Name:",
   "PREPARATION": "Preparation",

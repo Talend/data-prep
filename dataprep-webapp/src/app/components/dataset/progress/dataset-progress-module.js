@@ -11,20 +11,17 @@
 
  ============================================================================*/
 
-const HomeComponent = {
-	template: `
-		<layout>
-			<ui-view name="home-content"></ui-view>
-		</layout>
+import angular from 'angular';
 
-		<about></about>
-		<dataset-xls-preview></dataset-xls-preview>
-		<folder-creator></folder-creator>
-		<preparation-copy-move></preparation-copy-move>
-		<preparation-creator></preparation-creator>
-		<insertion-home></insertion-home>
-		<dataset-progress></dataset-progress>
-	`,
-};
+import SERVICES_STATE_MODULE from '../../../services/state/state-module';
+import DatasetProgress from './dataset-progress-component';
 
-export default HomeComponent;
+const MODULE_NAME = 'data-prep.dataset-progress';
+
+angular.module(MODULE_NAME,
+	[
+		SERVICES_STATE_MODULE,
+	])
+    .component('datasetProgress', DatasetProgress);
+
+export default MODULE_NAME;

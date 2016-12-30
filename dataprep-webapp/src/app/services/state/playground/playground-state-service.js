@@ -97,8 +97,6 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		selectTransformationsTab: SuggestionsStateService.selectTab,
 		setTransformations: SuggestionsStateService.setTransformations,
 		setTransformationsLoading: SuggestionsStateService.setLoading,
-		setTransformationsForEmptyCells: SuggestionsStateService.setTransformationsForEmptyCells,
-		setTransformationsForInvalidCells: SuggestionsStateService.setTransformationsForInvalidCells,
 		updateFilteredTransformations: SuggestionsStateService.updateFilteredTransformations,
 
         // statistics

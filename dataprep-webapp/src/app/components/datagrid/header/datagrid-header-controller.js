@@ -15,13 +15,14 @@
  * @ngdoc controller
  * @name data-prep.datagrid-header.controller:DatagridHeaderCtrl
  * @description Dataset Column Header controller.
+ * @requires data-prep.services.state.constant:state
  * @requires data-prep.services.column-types.service:ColumnTypesService
  * @requires data-prep.services.transformation.service:TransformationService
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.filter.service:FilterService
  */
-export default function DatagridHeaderCtrl($scope,
+export default function DatagridHeaderCtrl($scope, state,
                                            TransformationService, ConverterService,
                                            PlaygroundService, FilterService,
                                            ColumnTypesService, FilterManagerService) {
@@ -35,6 +36,7 @@ export default function DatagridHeaderCtrl($scope,
 	vm.converterService = ConverterService;
 	vm.filterManagerService = FilterManagerService;
 	vm.PlaygroundService = PlaygroundService;
+	vm.state = state;
 
 	/**
 	 * @ngdoc property

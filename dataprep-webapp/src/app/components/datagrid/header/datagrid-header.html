@@ -61,7 +61,8 @@
             <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
         </li>
         <li class="divider"></li>
-        <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells track by $index" ng-click="datagridHeaderCtrl.PlaygroundService.completeParamsAndAppend(transfo, 'column')">
+        <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells track by $index"
+            ng-click="datagridHeaderCtrl.PlaygroundService.completeParamsAndAppend(transfo, 'column')">
             <a>{{transfo.label}}</a>
         </li>
     </empty-menu-items>
@@ -71,7 +72,8 @@
             <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
         </li>
         <li class="divider"></li>
-        <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForInvalidCells track by $index" ng-click="datagridHeaderCtrl.PlaygroundService.completeParamsAndAppend(transfo, 'column')">
+        <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForInvalidCells track by $index"
+            ng-click="datagridHeaderCtrl.PlaygroundService.completeParamsAndAppend(transfo, 'column')">
             <a>{{transfo.label}}</a>
         </li>
     </invalid-menu-items>

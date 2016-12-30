@@ -117,8 +117,6 @@ export function StateService(RouteStateService, routeState,
 		selectTransformationsTab: PlaygroundStateService.selectTransformationsTab,
 		setTransformations: PlaygroundStateService.setTransformations,
 		setTransformationsLoading: PlaygroundStateService.setTransformationsLoading,
-		setTransformationsForEmptyCells: PlaygroundStateService.setTransformationsForEmptyCells,
-		setTransformationsForInvalidCells: PlaygroundStateService.setTransformationsForInvalidCells,
 		updateFilteredTransformations: PlaygroundStateService.updateFilteredTransformations,
 
 		// playground - Statistics

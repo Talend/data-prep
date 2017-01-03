@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { HOME_DATASETS_ROUTE, HOME_PREPARATIONS_ROUTE } from '../../index-route';
+
 /**
  * @ngdoc controller
  * @name data-prep.playground.controller:PlaygroundCtrl
@@ -332,6 +334,11 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	}
 
 	if ($stateParams.prepid) {
+		StateService.setPreviousRoute(
+			HOME_PREPARATIONS_ROUTE,
+			{ folderId: state.inventory.folder.metadata.id ?
+				state.inventory.folder.metadata.id :
+				state.inventory.homeFolderId });
 		PlaygroundService.startLoader();
 		getPreparationById($stateParams.prepid)
 			.then((preparation) => {
@@ -347,6 +354,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 			});
 	}
 	else if ($stateParams.datasetid) {
+		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		PlaygroundService.startLoader();
 		getDatasetById($stateParams.datasetid)
 			.then(loadDataset)

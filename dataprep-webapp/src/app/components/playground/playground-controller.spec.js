@@ -13,6 +13,7 @@
 
 import {
     HOME_PREPARATIONS_ROUTE,
+    HOME_DATASETS_ROUTE,
 } from '../../index-route';
 
 describe('Playground controller', () => {
@@ -71,6 +72,11 @@ describe('Playground controller', () => {
             inventory: {
                 homeFolderId: 'LW==',
                 currentFolder: { path: 'test' },
+                folder: {
+                    metadata: {
+                        id: 'abcd'
+                    }
+                }
             },
         };
         $provide.constant('state', stateMock);
@@ -112,7 +118,14 @@ describe('Playground controller', () => {
         beforeEach(inject((MessageService, StateService) => {
             spyOn(StateService, 'setIsFetchingStats').and.returnValue();
             spyOn(MessageService, 'error').and.returnValue();
-            stateMock.inventory = { preparations, datasets };
+            stateMock.inventory = {
+                preparations,
+                datasets ,
+                folder: {
+                    metadata: {
+                        id: 'abcd'
+                    }
+            }};
         }));
 
         describe('preparation', () => {
@@ -172,7 +185,7 @@ describe('Playground controller', () => {
                 expect(DatasetService.getMetadata).toHaveBeenCalledWith(preparations[0].dataSetId);
             }));
 
-            it('should load playground', inject(($q, $stateParams, PlaygroundService) => {
+            it('should load playground', inject(($q, $stateParams, PlaygroundService, StateService) => {
                 // given
                 $stateParams.prepid = preparations[0].id;
                 stateMock.playground.data = {
@@ -189,14 +202,17 @@ describe('Playground controller', () => {
                 };
                 spyOn(PlaygroundService, 'startLoader').and.returnValue();
                 spyOn(PlaygroundService, 'load').and.returnValue($q.when());
+                spyOn(StateService, 'setPreviousRoute').and.returnValue();
 
                 // when
                 createController();
                 scope.$digest();
 
                 // then
+
                 expect(PlaygroundService.startLoader).toHaveBeenCalled();
                 expect(PlaygroundService.load).toHaveBeenCalled();
+                expect(StateService.setPreviousRoute).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, {folderId: 'abcd'});
             }));
 
             it('should go back to previous state when preparation content GET return an error', inject(($q, $state, $stateParams, MessageService, PlaygroundService) => {
@@ -345,7 +361,7 @@ describe('Playground controller', () => {
                 };
                 spyOn(PlaygroundService, 'startLoader').and.returnValue();
                 spyOn(PlaygroundService, 'initPlayground').and.returnValue($q.when());
-
+                spyOn(StateService, 'setPreviousRoute').and.returnValue();
                 // when
                 createController();
                 scope.$digest();
@@ -353,6 +369,7 @@ describe('Playground controller', () => {
                 // then
                 expect(PlaygroundService.startLoader).toHaveBeenCalled();
                 expect(StateService.setCurrentDataset).toHaveBeenCalledWith(datasets[0]);
+                expect(StateService.setPreviousRoute).toHaveBeenCalledWith(HOME_DATASETS_ROUTE);
             }));
 
             it('should load playground', inject(($q, $stateParams, PlaygroundService) => {

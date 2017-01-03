@@ -11,8 +11,6 @@
 
 package org.talend.dataprep.parameters.jsonschema;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 /**
  * Representation of dynamic form structure.
  */
@@ -21,40 +19,40 @@ public class ComponentProperties {
     /**
      * Schema that describe the structure of the properties object.
      */
-    private ObjectNode jsonSchema;
+    private JsonSchema jsonSchema;
 
     /**
      * Data container describe by the schema. Can contains any structure of data but will be used by TComp to recreate a
      * {@link org.talend.daikon.properties.Properties} object.
      */
-    private ObjectNode properties;
+    private PropertiesData properties;
 
     /**
      * Front-end behavior description.
      */
-    private ObjectNode uiSchema;
+    private UiSchema uiSchema;
 
-    public ObjectNode getJsonSchema() {
+    public JsonSchema getJsonSchema() {
         return jsonSchema;
     }
 
-    public void setJsonSchema(ObjectNode jsonSchema) {
+    public void setJsonSchema(JsonSchema jsonSchema) {
         this.jsonSchema = jsonSchema;
     }
 
-    public ObjectNode getProperties() {
+    public PropertiesData getProperties() {
         return properties;
     }
 
-    public void setProperties(ObjectNode properties) {
+    public void setProperties(PropertiesData properties) {
         this.properties = properties;
     }
 
-    public ObjectNode getUiSchema() {
+    public UiSchema getUiSchema() {
         return uiSchema;
     }
 
-    public void setUiSchema(ObjectNode uiSchema) {
+    public void setUiSchema(UiSchema uiSchema) {
         this.uiSchema = uiSchema;
     }
 

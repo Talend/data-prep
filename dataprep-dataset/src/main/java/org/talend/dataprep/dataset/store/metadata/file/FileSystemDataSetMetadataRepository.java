@@ -139,7 +139,7 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
         final File folder = getRootFolder();
         final File[] files = folder.listFiles();
         if (files == null) {
-            return Stream.of();
+            return Stream.empty();
         }
 
         return Arrays.stream(files).map(f -> get(f.getName())).filter(m -> m != null);

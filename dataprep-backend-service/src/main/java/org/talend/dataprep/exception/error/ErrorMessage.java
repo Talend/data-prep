@@ -41,31 +41,31 @@ public class ErrorMessage {
 
     /**
      * Returns the desired message to send to the frontend according to the specified error code.
-     * 
+     *
      * @param errorCode the specified error code
      * @param values used to specify the message title
      * @return the desired message to send to the frontend according to the specified error code
      */
-    public static String getMessage(ErrorCode errorCode, String... values) {
+    public static String getMessage(ErrorCode errorCode, Object... values) {
         String title = getMessagePrefix(errorCode) + MESSAGE_SUFFIX;
         return DataprepBundle.message(title, values);
     }
 
     /**
      * Returns the desired message title to send to the frontend according to the specified error code.
-     * 
+     *
      * @param errorCode the specified error code
      * @param values used to specify the message title
      * @return the desired message title to send to the frontend according to the specified error code
      */
-    public static String getMessageTitle(ErrorCode errorCode, String... values) {
+    public static String getMessageTitle(ErrorCode errorCode, Object... values) {
         String title = getMessagePrefix(errorCode) + TITLE_SUFFIX;
-        return DataprepBundle.message( title, values);
+        return DataprepBundle.message(title, values);
     }
 
     /**
      * Returns the prefix message according to the specified error code.
-     * 
+     *
      * @param errorCode the specified error code
      * @return the prefix message according to the specified error code
      */

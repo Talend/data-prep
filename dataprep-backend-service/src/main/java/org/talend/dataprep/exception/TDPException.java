@@ -16,8 +16,10 @@ package org.talend.dataprep.exception;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,10 @@ import org.talend.dataprep.exception.error.ErrorMessage;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Class for all business (TDP) exception.
@@ -44,15 +50,26 @@ public class TDPException extends TalendRuntimeException {
      */
     private boolean error = false;
 
+    private final String message;
+
+    private final String messageTitle;
+
     /**
-     * Full constructor.
+     * Build a Talend exception that can be interpreted throughout the application and handled by the HTTP API to translate into
+     * a meaningful internationalized error message to the end-user.
      *
-     * @param code the error code that holds all the .
-     * @param cause the root cause of this error.
-     * @param context the context of the error when it occurred (used to detail the user error message in frontend).
+     * @param code the error code that identify uniquely this error and bind to an i18ned message
+     * @param cause the root cause if any of this error.
+     * @param context the context of the error depending on the {@link ErrorCode}. It allow i18n messages to be built.
      */
     public TDPException(ErrorCode code, Throwable cause, ExceptionContext context) {
         super(code, cause, context);
+        // Translation done at the object creation
+        List<Object> values;
+        values = context == null ? emptyList() //
+                : stream(context.entries().spliterator(), false).map(Map.Entry::getValue).collect(toList());
+        message = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
+        messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[values.size()]));
     }
 
     /**
@@ -62,7 +79,7 @@ public class TDPException extends TalendRuntimeException {
      * @param cause the root cause of this error.
      */
     public TDPException(ErrorCode code, Throwable cause) {
-        super(code, cause, null);
+        this(code, cause, null);
     }
 
     /**
@@ -72,7 +89,7 @@ public class TDPException extends TalendRuntimeException {
      * @param context the exception context.
      */
     public TDPException(ErrorCode code, ExceptionContext context) {
-        super(code, null, context);
+        this(code, null, context);
     }
 
     /**
@@ -82,17 +99,17 @@ public class TDPException extends TalendRuntimeException {
      * @param context the exception context.
      */
     public TDPException(ErrorCode code, ExceptionContext context, boolean error) {
-        super(code, null, context);
+        this(code, null, context);
         this.error = error;
-    }    
-    
+    }
+
     /**
      * Basic constructor from a JSON error code.
      *
      * @param code an error code serialized to JSON.
      */
     public TDPException(JsonErrorCode code) {
-        super(code, ExceptionContext.build().from(code.getContext()));
+        this(code, ExceptionContext.build().from(code.getContext()));
     }
 
     /**
@@ -101,7 +118,7 @@ public class TDPException extends TalendRuntimeException {
      * @param code the error code that holds all the .
      */
     public TDPException(ErrorCode code) {
-        super(code, null, null);
+        this(code, null, null);
     }
 
     /**
@@ -128,9 +145,6 @@ public class TDPException extends TalendRuntimeException {
 
     private void writeErrorContent(JsonGenerator generator) throws IOException {
         generator.writeStringField("code", getCode().getProduct() + '_' + getCode().getGroup() + '_' + getCode().getCode());
-        List<String> values = getContextValues();
-        String message = ErrorMessage.getMessage(getCode(), values.toArray(new String[values.size()]));
-        String messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new String[values.size()]));
         generator.writeStringField("message", message);
         generator.writeStringField("message_title", messageTitle);
         if (getCause() != null) {
@@ -146,13 +160,4 @@ public class TDPException extends TalendRuntimeException {
         }
     }
 
-    /**
-     * Method needed as long as the context does not expose a values() method.
-     * @return the context values.
-     */
-    private List<String> getContextValues() {
-        List<String> values = new ArrayList<>();
-        getContext().entries().forEach(e -> values.add(e.getValue().toString()));
-        return values;
-    }
 }

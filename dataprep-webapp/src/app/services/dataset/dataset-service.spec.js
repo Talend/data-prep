@@ -53,7 +53,6 @@ describe('Dataset Service', () => {
         spyOn(DatasetListService, 'update').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'delete').and.returnValue($q.when());
         spyOn(DatasetListService, 'clone').and.returnValue($q.when());
-        spyOn(DatasetListService, 'processCertification').and.returnValue($q.when());
         spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when(datasets));
 
         spyOn(DatasetRestService, 'getContent').and.returnValue($q.when({}));
@@ -578,11 +577,6 @@ describe('Dataset Service', () => {
     });
 
     describe('actions enabled', () => {
-        it('should disable ProcessCertification', inject((DatasetService) => {
-            // then
-            expect(DatasetService.isProcessCertificationEnabled()).toBeFalsy();
-        }));
-
         it('should enable remove', inject((DatasetService) => {
             // then
             expect(DatasetService.isRemoveEnabled()).toBeTruthy();

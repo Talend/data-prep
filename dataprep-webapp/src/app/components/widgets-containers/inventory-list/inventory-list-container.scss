@@ -17,62 +17,96 @@ $icon-connect-badge-color: #266092;
 $icon-csv-badge-color: #4F6C00;
 $icon-job-badge-color: #266092;
 $icon-xls-badge-color: #8ABC00;
+$icon-favorite-status: #ffa616;
+$icon-certify-pending-status: #cccccc;
+$icon-certified-status: steelblue;
 
 @keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(359deg);
+	}
 }
 
 .list-item-preparation {
-  .tc-list-icon {
-    fill: $icon-preparation-color;
-  }
+	.tc-list-icon {
+		fill: $icon-preparation-color;
+	}
 }
 
 .list-item-folder {
-  .tc-list-icon {
-    fill: $icon-folder-color;
-  }
+	.tc-list-icon {
+		fill: $icon-folder-color;
+	}
 }
 
+
+.active-favorite-action {
+	.dataset-favorite {
+		visibility: visible;
+		svg {
+			fill: $icon-favorite-status;
+		}
+	}
+}
+
+
+.active-certification-action {
+	.dataset-certify {
+		visibility: visible;
+		svg {
+			fill: $icon-certified-status;
+		}
+	}
+}
+
+.pending-certification-action {
+	.dataset-certify {
+		visibility: visible;
+		svg {
+			fill: $icon-certify-pending-status;
+		}
+	}
+}
+
+
+
 .list-item-shared-folder {
-  .tc-list-icon {
-    fill: $icon-shared-folder-color;
-  }
+	.tc-list-icon {
+		fill: $icon-shared-folder-color;
+	}
 }
 
 .ti-file-connect-o-badge {
-  fill: $icon-connect-badge-color;
+	fill: $icon-connect-badge-color;
 }
 
 .ti-file-csv-o-badge {
-  fill: $icon-csv-badge-color;
+	fill: $icon-csv-badge-color;
 }
 
 .ti-file-job-o-badge {
-  fill: $icon-job-badge-color;
+	fill: $icon-job-badge-color;
 }
 
 .ti-file-xls-o-badge,
 .ti-file-xlsx-o-badge {
-  fill: $icon-xls-badge-color;
+	fill: $icon-xls-badge-color;
 }
 
 #talend-flink {
-  fill: magenta;
+	fill: magenta;
 }
 
 .fetch-loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 50vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
 
-  .fetch-loader-icon + span {
-    padding-left: 20px;
-  }
+	.fetch-loader-icon + span {
+		padding-left: 20px;
+	}
 }

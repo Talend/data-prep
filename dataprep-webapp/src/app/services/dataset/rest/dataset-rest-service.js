@@ -38,7 +38,6 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 		getEncodings,
 		getDatasetByName,
 
-		processCertification,
 		toggleFavorite,
 
 		getCompatiblePreparations,
@@ -180,18 +179,6 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 	function updateMetadata(metadata) {
 		return $http.put(RestURLs.datasetUrl + '/' + metadata.id + '/metadata', metadata);
 	}
-
-    /**
-     * @ngdoc method
-     * @name processCertification
-     * @methodOf data-prep.services.dataset.service:DatasetRestService
-     * @description Ask certification for a dataset
-     * @param {string} datasetId The dataset id
-     */
-	function processCertification(datasetId) {
-		return $http.put(RestURLs.datasetUrl + '/' + datasetId + '/processcertification');
-	}
-
 
     /**
      * @ngdoc method

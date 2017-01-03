@@ -64,8 +64,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 
 		// dataset actions
 		updateColumn: DatasetRestService.updateColumn,
-		processCertification: DatasetListService.processCertification,
 		toggleFavorite: DatasetListService.toggleFavorite,
+		getStatusActions: DatasetListService.getStatusActions,
+		getClassName: DatasetListService.getClassName,
 		isRemoveEnabled,
 		isProcessCertificationEnabled,
 		isRenameEnabled,

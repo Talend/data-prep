@@ -20,7 +20,7 @@ import moment from 'moment';
  * {@link data-prep.services.dataset.service:DatasetService DatasetService} must be the only entry point for datasets</b>
  * @requires data-prep.services.dataset.service:DatasetRestService
  * @requires data-prep.services.state.service:StateService
- * @requires data-prep.services.utils.service:StorageService
+ * @requires data-prep.services.state.constant:state
  */
 export default function DatasetListService($q, state, DatasetRestService, StateService) {
 	'ngInject';
@@ -35,13 +35,14 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 		refreshDatasets,
 		getDatasetsPromise,
 		hasDatasetsPromise,
+		getClassName,
+		getStatusActions,
 
 		create,
 		clone,
 		update,
 		delete: deleteDataset,
 
-		processCertification,
 		toggleFavorite,
 	};
 
@@ -86,6 +87,19 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
 	/**
 	 * @ngdoc method
+	 * @name getStatusActions
+	 * @methodOf data-prep.services.dataset.service:DatasetListService
+	 * @description Returns dataset status actions
+	 * @returns {string[]} The available dataset status actions
+	 */
+	function getStatusActions() {
+		return [
+			'dataset:favorite',
+		];
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name adaptDatasets
 	 * @methodOf data-prep.services.dataset.service:DatasetListService
 	 * @description Adapt datasets for UI components
@@ -102,12 +116,31 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
 			nbLines: item.records,
 			displayMode: 'text',
-			className: 'list-item-dataset',
+			className: this.getClassName(item).join(' '),
 			icon: this.getDatasetIcon(item),
 			actions: this.getDatasetActions(item),
+			statusActions: this.getStatusActions(),
 			preparations: item.preparations,
 			model: item,
 		}));
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getClassName
+	 * @methodOf data-prep.services.dataset.service:DatasetListService
+	 * @description appends the class name to the status action icon
+	 * @param {object} dataset to be adapted
+	 * @returns {string} the class name to append
+	 */
+	function getClassName(dataset) {
+		const classNamesTab = ['list-item-dataset'];
+
+		const statusActions = getStatusActions();
+		if (statusActions.indexOf('dataset:favorite') > -1 && dataset.favorite) {
+			classNamesTab.push('active-favorite-action');
+		}
+		return classNamesTab;
 	}
 
 	/**
@@ -124,7 +157,6 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			'dataset:update',
 			'dataset:clone',
 			'dataset:remove',
-			'dataset:favorite',
 		];
 		if (item.preparations && item.preparations.length > 0) {
 			actions.splice(1, 0, 'list:dataset:preparations');
@@ -148,6 +180,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
 		return 'talend-file-o';
 	}
+
 	/**
 	 * @ngdoc method
 	 * @name clone
@@ -199,19 +232,6 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 		promise.then(() => this.refreshDatasets());
 
 		return promise;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name processCertification
-	 * @methodOf data-prep.services.dataset.service:DatasetService
-	 * @param {object} dataset The target dataset for certification
-	 * @description Ask certification for a dataset and refresh its internal list
-	 * @returns {promise} The pending PUT promise
-	 */
-	function processCertification(dataset) {
-		return DatasetRestService.processCertification(dataset.id)
-			.then(() => this.refreshDatasets());
 	}
 
 	/**

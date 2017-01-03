@@ -414,25 +414,6 @@ describe('Dataset Rest Service', () => {
         }));
     });
 
-    describe('certification', () => {
-        it('should call dataset certification rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
-            //given
-            const datasetId = 'e85afAa78556d5425bc2';
-
-            $httpBackend
-                .expectPUT(RestURLs.datasetUrl + '/e85afAa78556d5425bc2/processcertification')
-                .respond(200);
-
-            //when
-            DatasetRestService.processCertification(datasetId);
-            $httpBackend.flush();
-            $rootScope.$digest();
-
-            //then
-            //expect PUT not to throw any exception
-        }));
-    });
-
     describe('sheet preview', () => {
         it('should call dataset sheet preview service with default sheet', inject(($rootScope, DatasetRestService, RestURLs) => {
             //given

@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import { filter } from 'lodash';
 
 const NO_OP = () => {};
 const DROPDOWN_ACTION = 'dropdown';
@@ -164,6 +165,7 @@ export default class InventoryListCtrl {
 			icon: actionSettings.icon,
 			label: actionSettings.name,
 			bsStyle: actionSettings.bsStyle,
+			className: actionSettings.id.split(':').join('-'),
 		};
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
@@ -223,16 +225,28 @@ export default class InventoryListCtrl {
 			});
 	}
 
+	adaptItemTitleActions(item, index, actionsLabel) {
+		const actions = this.adaptActions(item[actionsLabel], item);
+		actions.forEach((action) => {
+			action.id = `${this.id}-${index}-${action.id}`;
+		});
+		return actions;
+	}
+
 	adaptItemActions(items) {
+		const actionsColumns = filter(this.listProps.columns, { type: 'actions' });
+		let statusActions;
 		return items.map((item, index) => {
-			const actions = this.adaptActions(item.actions, item);
-			actions.forEach((action) => {
-				action.id = `${this.id}-${index}-${action.id}`;
-			});
-			return {
+			const actions = this.adaptItemTitleActions(item, index, 'actions');
+			const adaptedItem = {
 				...item,
 				actions,
 			};
+			actionsColumns.forEach((actionsColumn) => {
+				statusActions = this.adaptItemTitleActions(item, index, actionsColumn.key);
+				adaptedItem[actionsColumn.key] = statusActions;
+			});
+			return adaptedItem;
 		});
 	}
 }

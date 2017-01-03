@@ -369,3 +369,110 @@ describe('Inventory list container', () => {
 		);
 	});
 });
+
+
+const datasets = [
+	{
+		id: '1',
+		type: 'dataset',
+		name: 'AMAA dataset 1',
+		author: 'amaalej',
+		lastModificationDate: '2 minutes ago',
+		dataset: 'Us states',
+		nbLines: 20,
+		icon: 'talend-dataprep',
+		actions: ['inventory:edit', 'dataset:remove'],
+		statusActions: ['dataset:favorite'],
+		model: {
+			id: '1',
+			dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+			name: 'AMAA dataset 1',
+			author: 'amaalej',
+			creationDate: 1427447300000,
+			lastModificationDate: 1427447300300,
+			actions: [],
+		},
+	}
+];
+
+describe('datasets list container', () => {
+	let scope;
+	let createElement;
+	let element;
+	const body = angular.element('body');
+
+	beforeEach(angular.mock.module('react-talend-components.containers'));
+
+	beforeEach(inject(($rootScope, $compile, SettingsService) => {
+		scope = $rootScope.$new(true);
+
+		createElement = () => {
+			element = angular.element(`
+				<inventory-list
+					id="'datasets-list'"
+					display-mode="displayMode"
+					items="items"
+					sort-by="sortBy"
+					sort-desc="sortDesc"
+					view-key="'listview:datasets'"
+				/>
+			`);
+			body.append(element);
+			$compile(element)(scope);
+			scope.$digest();
+		};
+
+		SettingsService.setSettings(settings);
+	}));
+
+	beforeEach(inject((SettingsActionsService) => {
+		// given
+		scope.displayMode = 'table';
+		scope.sortBy = 'name';
+		scope.sortDesc = true;
+		spyOn(SettingsActionsService, 'dispatch').and.returnValue();
+
+		// when
+		createElement();
+		scope.items = datasets;
+		scope.$digest();
+	}));
+
+	afterEach(inject((SettingsService) => {
+		SettingsService.clearSettings();
+		scope.$destroy();
+		element.remove();
+	}));
+
+	describe('render', () => {
+		it('should render datasets', () => {
+			// then
+			const rows = element.find('.tc-list-display-table').eq(0).find('tbody tr');
+			expect(rows.length).toBe(datasets.length);
+			expect(rows.eq(0).find('td').eq(0).text()).toBe('AMAA dataset 1');
+		});
+
+		it('should render favorite icon', () => {
+			// then
+			const rows = element.find('.tc-list-display-table').eq(0).find('tbody tr');
+			expect(rows.eq(0).find('td').eq(1).find('.dataset-favorite').length).toBe(1);
+		});
+	});
+
+	describe('dataset column actions', () => {
+		it('should dispatch favorite toggle', inject((SettingsActionsService) => {
+				// given
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+				// when
+				element.find('#datasets-list-0-dataset\\:favorite').click();
+
+				// then
+				expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+				expect(lastCallArgs.id).toBe('dataset:favorite');
+				expect(lastCallArgs.type).toBe('@@dataset/FAVORITE');
+			})
+		);
+	});
+});

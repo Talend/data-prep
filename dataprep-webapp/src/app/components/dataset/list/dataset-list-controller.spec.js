@@ -290,23 +290,6 @@ describe('Dataset list controller', () => {
         }));
     });
 
-    describe('certification', () => {
-        beforeEach(inject(($q, DatasetService) => {
-            spyOn(DatasetService, 'processCertification').and.returnValue($q.when());
-        }));
-
-        it('should process certification', inject((DatasetService) => {
-            //given
-            const ctrl = createController();
-
-            //when
-            ctrl.processCertification(datasets[0]);
-
-            //then
-            expect(DatasetService.processCertification).toHaveBeenCalledWith(datasets[0]);
-        }));
-    });
-
     describe('clone', () => {
         beforeEach(inject(($q, DatasetService) => {
             spyOn(DatasetService, 'clone').and.returnValue($q.when());

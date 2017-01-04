@@ -11,7 +11,7 @@ module.exports = function (config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['jasmine', 'phantomjs-shim'],
+		frameworks: ['jasmine' ],
 
 		// list of files/patterns to load in the browser
 		files: [
@@ -36,11 +36,7 @@ module.exports = function (config) {
 				loaders: [
 					{ test: /\.js$/, loaders: ['ng-annotate', 'babel'], exclude: /node_modules/ },
 					{ test: /\.(css|scss)$/, loaders: ['style', 'css', 'sass'] },
-					{
-						test: /\.(png|jpg|jpeg|gif)$/,
-						loader: 'url-loader',
-						query: { mimetype: 'image/png' }
-					},
+					{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
 					{ test: /\.html$/, loaders: ['ngtemplate', 'html'] },
 				],
 			},

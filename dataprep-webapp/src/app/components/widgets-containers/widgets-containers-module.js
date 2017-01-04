@@ -15,6 +15,7 @@ import angular from 'angular';
 
 import AppHeaderBar from 'react-talend-components/lib/AppHeaderBar';
 import Breadcrumbs from 'react-talend-components/lib/Breadcrumbs';
+import CollapsiblePanel from 'react-talend-components/lib/CollapsiblePanel';
 import Icon from 'react-talend-components/lib/Icon';
 import IconsProvider from 'react-talend-components/lib/IconsProvider';
 import SidePanel from 'react-talend-components/lib/SidePanel';
@@ -24,6 +25,7 @@ import Form from 'react-talend-forms';
 
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';
+import CollapsiblePanelContainer from './collapsible-panel/collapsible-panel-container';
 import LayoutContainer from './layout/layout-container';
 import InventoryListContainer from './inventory-list/inventory-list-container';
 import SidePanelContainer from './side-panel/side-panel-container';
@@ -42,6 +44,7 @@ angular.module(MODULE_NAME,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(AppHeaderBar)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])
+	.directive('pureCollapsiblePanel', ['reactDirective', reactDirective => reactDirective(CollapsiblePanel)])
 	.directive('pureList', ['reactDirective', reactDirective => reactDirective(List)])
 	.directive('pureSidePanel', ['reactDirective', reactDirective => reactDirective(SidePanel)])
 	.directive('pureProgress', ['reactDirective', reactDirective => reactDirective(Progress)])
@@ -50,6 +53,7 @@ angular.module(MODULE_NAME,
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(Form)])
 	.component('appHeaderBar', AppHeaderBarContainer)
 	.component('breadcrumbs', BreadcrumbContainer)
+	.component('collapsiblePanel', CollapsiblePanelContainer)
 	.component('inventoryList', InventoryListContainer)
 	.component('sidePanel', SidePanelContainer)
 	.component('layout', LayoutContainer);

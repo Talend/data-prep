@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.actions;
 
-import static org.junit.Assert.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -28,6 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.service.Dictionaries;
+
+import static org.junit.Assert.*;
 
 public class RemoteResourceGetterTest {
 
@@ -100,6 +100,7 @@ public class RemoteResourceGetterTest {
         serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
+
         // When
         Map<String, DataSetRow> result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
                 goodDataSetId, "0000");
@@ -110,6 +111,32 @@ public class RemoteResourceGetterTest {
         assertEquals("Sacramento", result.get("CA").values().get("0002"));
         assertEquals("Alabama", result.get("AL").values().get("0001"));
         assertEquals("Montgomery", result.get("AL").values().get("0002"));
+    }
+
+    /**
+     * Created after bug https://jira.talendforge.org/browse/TDP-3098
+     */
+    @Test
+    public void testGetDataSet_withTcompLookup_TDP3098() throws Exception {
+        // Given
+        serverMock.addEndPoint("/api/datasets/*",
+                RemoteResourceGetterTest.class.getResourceAsStream("lookup_dataset_from_Tcomp.json"), header);
+        serverMock.addEndPoint("/login", "", header);
+        String serverUrl = serverMock.getServerUrl();
+        remoteResourceGetter = new RemoteResourceGetter();
+
+        // When
+        Map<String, DataSetRow> result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
+                goodDataSetId, "0000");
+
+        // Then
+        assertEquals(1001, result.size());
+        DataSetRow firstRecord = result.get("1");
+        assertEquals("Helena", firstRecord.get("0001"));
+        assertEquals("Austin", firstRecord.get("0002"));
+        DataSetRow twentyThirdRecord = result.get("23");
+        assertEquals("mwelchm@virginia.edu", twentyThirdRecord.get("0003"));
+        assertEquals("247.82.30.113", twentyThirdRecord.get("0005"));
     }
 
     @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)

@@ -36,7 +36,7 @@ public class ManifestInfo {
      * The ID (from the SCM) of the source's version of the running application
      */
     private String buildId;
-    
+
     /**
      * The unique instance of this singleton class
      */
@@ -44,7 +44,7 @@ public class ManifestInfo {
 
     private ManifestInfo() {
         Properties properties = new Properties();
-        final InputStream gitProperties = ManifestInfo.class.getResourceAsStream("/git.properties");
+        final InputStream gitProperties = ManifestInfo.class.getResourceAsStream("/dataprep-git.properties");
         if (gitProperties != null) {
             try {
                 properties.load(gitProperties);

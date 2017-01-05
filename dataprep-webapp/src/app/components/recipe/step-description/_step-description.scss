@@ -11,11 +11,28 @@
 
   ============================================================================*/
 
-.description-details {
-	color: $medium-gray;
-}
+$step-description-color: $medium-gray;
+$step-description-highlight-color: #333;
+$step-description-index-color: $blue;
 
-.step-number {
-	color: $blue;
-	margin-right: 5px;
+.step-description {
+	color: $step-description-color;
+
+	.step-number {
+		color: $step-description-index-color;
+		margin-right: 5px;
+		font-weight: bold;
+	}
+
+	.step-label {
+		color: $step-description-highlight-color;
+		font-weight: bold;
+	}
+
+	.step-scope {
+		@include ellipsis(200px);
+		color: $step-description-highlight-color;
+		display: table-cell;
+		text-transform: uppercase;
+	}
 }

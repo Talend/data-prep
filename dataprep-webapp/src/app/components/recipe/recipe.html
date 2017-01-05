@@ -36,7 +36,7 @@
                                    on-open="$ctrl.resetParams(step)"
                                    default="$index === ($ctrl.state.playground.recipe.current.reorderedSteps.length - 1)">
 
-                    <trigger class="step-description"
+                    <trigger class="recipe-step-trigger"
                              ng-click="$ctrl.select(step)">
                         <list-item-handler class="reorder-handler"
                                            ng-if="!($first && $last)"
@@ -55,8 +55,8 @@
                             ng-click="$ctrl.remove(step, $event)"
                             title="{{::'REMOVE_STEP' | translate }}"
                             ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
-                            ng-mouseleave="$ctrl.resetStepToBeDeleted()"
-                            ng-include="'assets/images/shared/delete.svg'">
+                            ng-mouseleave="$ctrl.resetStepToBeDeleted()">
+                            <Icon name="'talend-trash'"/>
                         </a>
 
                         <span class="filter-icon"

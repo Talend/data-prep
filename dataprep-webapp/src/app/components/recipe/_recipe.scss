@@ -79,7 +79,6 @@ $recipe-step-draggable-background-color: #808080 !default;
 
     .remove-icon {
       @include flex-shrink(0);
-      cursor: pointer;
       font-size: 0.5em;
       svg {
         height: 20px;
@@ -91,7 +90,7 @@ $recipe-step-draggable-background-color: #808080 !default;
     .recipe-step {
       @include flex-grow(1);
 
-      .step-description {
+      .recipe-step-trigger {
         @include display(flex);
         @include flex-direction(row);
         font-size: .9em;

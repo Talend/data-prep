@@ -33,7 +33,8 @@
            class="filters-remove"
            ng-click="filterBarCtrl.filterManagerService.removeAllFilters()"
            title="{{::'REMOVE_ALL_FILTERS' | translate}}"
-           ng-if="filterBarCtrl.state.playground.filter.gridFilters.length"
-           ng-include="'assets/images/shared/delete.svg'"></button>
+           ng-if="filterBarCtrl.state.playground.filter.gridFilters.length">
+            <Icon name="'talend-trash'"/>
+        </button>
     </div>
 </div>

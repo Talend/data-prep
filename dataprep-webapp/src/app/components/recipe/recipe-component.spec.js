@@ -708,21 +708,19 @@ describe('Recipe component', () => {
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
-			RECIPE_ITEM_ON_COL: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">on column</span> {{columnName}}',
-			RECIPE_ITEM_ON_CELL: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">on cell</span>',
-			RECIPE_ITEM_ON_LINE: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">#{{rowId}}</span>',
-			LOOKUP_STEP_DESCRIPTION: '<b class=\"step-number\">{{index}}</b> <b>{{label}}</b> <span class=\"description-details\">done with dataset {{lookupDsName}}. Join has been set between </span>{{mainColName}} <span class=\"description-details\">and </span>{{lookupColName}}.',
-			ONLY_1_ADDED_COL: '<span class=\"description-details\">The column </span>{{firstCol}} <span class=\"description-details\"> has been added.</span>',
-			ONLY_2_ADDED_COLS: '<span class=\"description-details\">The columns </span>{{firstCol}} <span class=\"description-details\">and</span> {{secondCol}} <span class=\"description-details\">have been added.</span>',
-			MORE_THEN_2_ADDED_COLS: '<span class=\"description-details\">The columns </span>{{firstCol}}<span class=\"description-details\">,</span> {{secondCol}} <span class=\"description-details\">and </span><span title=\"{{restOfCols}}\">{{restOfColsNbr}}</span> <span class=\"description-details\">other(s) have been added.</span></span></span>',
-			AND: 'and',
+			RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
+			RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
+			RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
+			LOOKUP_STEP_DESCRIPTION: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> done with dataset <div class="step-scope" title="{{lookupDsName}}">{{lookupDsName}}</div>. Join has been set between <div class="step-scope" title="{{mainColName}}">{{mainColName}}</div> and <div class="step-scope" title="{{lookupColName}}">{{lookupColName}}</div>. ',
+			ONLY_1_ADDED_COL: 'The column <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> has been added.',
+			ONLY_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> have been added.',
+			MORE_THEN_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="{{restOfCols}}">{{restOfColsNbr}}</span> other(s) have been added.',
 			OTHER: 'other',
 		});
 		$translateProvider.preferredLanguage('en');
 	}));
 
-	beforeEach(inject(($rootScope, $compile, $templateCache) => {
-		$templateCache.put('assets/images/shared/delete.svg', '<svg></svg>');
+	beforeEach(inject(($rootScope, $compile) => {
 
 		scope = $rootScope.$new();
 		element = angular.element('<recipe></recipe>');
@@ -763,11 +761,7 @@ describe('Recipe component', () => {
 
 		// then
 		expect(element.find('.recipe ul sc-accordion-item ').length).toBe(1);
-		expect(element.find('.recipe ul sc-accordion-item trigger step-description')
-			.eq(0)
-			.text().trim()
-			.replace(/\s+/g, ' '))
-			.toBe('1 Lookup done with dataset customers_100_with_pb. Join has been set between ID and ID.The column FIRSTNAME has been added.');
+		expect(element.find('.recipe ul sc-accordion-item trigger step-description').eq(0).text().trim().replace(/\s+/g, ' ')).toBe('1 Lookup done with dataset customers_100_with_pb. Join has been set between id and id. The column firstname has been added.');
 	});
 
 	it('should render early preview step', () => {

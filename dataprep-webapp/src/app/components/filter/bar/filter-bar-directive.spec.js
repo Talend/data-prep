@@ -35,9 +35,8 @@ describe('Filter bar directive', () => {
         $translateProvider.preferredLanguage('en');
     }));
 
-    beforeEach(inject(function ($rootScope, $compile, $templateCache) {
+    beforeEach(inject(function ($rootScope, $compile) {
         scope = $rootScope.$new();
-        $templateCache.put('assets/images/shared/delete.svg', '<svg></svg>');
 
         createElement = () => {
             element = angular.element('<filter-bar></filter-bar>');
@@ -73,7 +72,6 @@ describe('Filter bar directive', () => {
         //given
         createElement();
 
-        const ctrl = element.controller('filterBar');
         spyOn(FilterManagerService, 'removeAllFilters').and.returnValue();
 
         //when

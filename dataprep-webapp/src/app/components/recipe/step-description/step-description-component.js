@@ -19,7 +19,7 @@ const StepDescription = {
 		step: '<',
 	},
 	controller: StepDescriptionCtrl,
-	template: '<span ng-bind-html="$ctrl.stepDescription"></span>',
+	template: '<span ng-bind-html="$ctrl.stepDescription" class="step-description"></span>',
 };
 
 export default StepDescription;

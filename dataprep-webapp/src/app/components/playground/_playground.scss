@@ -109,15 +109,14 @@ $slide-action-background: $base-background-color;
 		.steps-header {
 			@include display(flex);
 			border-bottom: 1px solid $shadow-gray;
+			padding: $padding-normal $padding-smaller $padding-normal $padding-large;
 
 			talend-editable-text {
-				padding: 5px 10px;
 				width: 100%;
 			}
 
 			.steps-header-preparation-text {
 				@include ellipsis(85%);
-				padding: 2px 0;
 				font-size: 1.2em;
 				font-weight: 600;
 				text-transform: uppercase;

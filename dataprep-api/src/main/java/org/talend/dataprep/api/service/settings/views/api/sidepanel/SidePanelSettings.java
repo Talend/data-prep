@@ -1,34 +1,51 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.api.sidepanel;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * Side panel settings
+ * see https://talend.github.io/react-talend-components/?selectedKind=Side%20Panel&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ */
 @JsonInclude(NON_NULL)
 public class SidePanelSettings implements ViewSettings {
-    public static final String VIEW_TYPE = "SidePanel";
 
+    public static final String VIEW_TYPE = TYPE_SIDE_PANEL;
+
+    /**
+     * The key in the views dictionary
+     */
     @JsonIgnore
     private String id;
+
+    /**
+     * The panel toggle action identifier
+     */
     private String onToggleDock;
+
+    /**
+     * The list of actions that represent the items in the menu
+     */
     private List<String> actions;
 
     @Override
@@ -61,8 +78,11 @@ public class SidePanelSettings implements ViewSettings {
     }
 
     public static class Builder {
+
         private String id;
+
         private String onToggleDock;
+
         private List<String> actions = new ArrayList<>();
 
         public Builder id(final String id) {

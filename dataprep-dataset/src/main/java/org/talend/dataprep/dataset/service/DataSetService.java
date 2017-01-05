@@ -20,7 +20,9 @@ import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
@@ -29,7 +31,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,10 +53,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.dataset.*;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
+import org.talend.dataprep.api.dataset.DataSetLocation;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.Import;
+import org.talend.dataprep.api.dataset.Import.ImportBuilder;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.location.DataSetLocationService;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
@@ -62,7 +86,6 @@ import org.talend.dataprep.dataset.event.DataSetRawContentUpdateEvent;
 import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
-import org.talend.dataprep.api.dataset.Import.ImportBuilder;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
@@ -168,7 +191,6 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private AnalyzerService analyzerService;
-
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
@@ -358,14 +380,15 @@ public class DataSetService extends BaseDataSetService {
                     completeWithUserData(dataSetMetadata);
                     dataSet.setMetadata(dataSetMetadata);
                 }
-                Stream<DataSetRow> stream = contentStore.stream(dataSetMetadata, -1);  // Disable line limit
+                Stream<DataSetRow> stream = contentStore.stream(dataSetMetadata, -1); // Disable line limit
                 if (!includeInternalContent) {
                     LOG.debug("Skip internal content when serving data set #{} content.", dataSetId);
                     stream = stream.map(r -> {
                         final Map<String, Object> values = r.values();
                         final Map<String, Object> filteredValues = new HashMap<>(values);
-                        values.forEach((k,v) -> {
-                            if (k != null && k.startsWith(FlagNames.INTERNAL_PROPERTY_PREFIX)) { // Removes technical properties from returned values.
+                        values.forEach((k, v) -> {
+                            if (k != null && k.startsWith(FlagNames.INTERNAL_PROPERTY_PREFIX)) { // Removes technical properties
+                                                                                                 // from returned values.
                                 filteredValues.remove(k);
                             }
                         });
@@ -504,7 +527,6 @@ public class DataSetService extends BaseDataSetService {
             lock.unlock();
         }
     }
-
 
     @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
@@ -962,7 +984,8 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Get the import parameters", notes = "This list can be used by user to change dataset encoding.")
     @Timed
     @PublicAPI
-    // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented ComponentProperties
+    // This method have to return Object because it can either return the legacy List<Parameter> or the new TComp oriented
+    // ComponentProperties
     public Object getImportParameters(@PathVariable("import") final String importType) {
         DataSetLocation matchingDatasetLocation = findDataSetLocation(importType);
         Object parametersToReturn;

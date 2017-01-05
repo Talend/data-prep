@@ -1,31 +1,48 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.api.list;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * List details settings.
+ * This configures the list items display information.
+ */
 @JsonInclude(NON_NULL)
 public class ListDetailsSettings {
+
+    /**
+     * The columns to display. Each column configuration should have a key (the item property key) and a label (the property
+     * display label).
+     */
     private List<Map<String, String>> columns;
+
+    /**
+     * Items extra properties
+     */
     private ListItemsSettings itemProps;
+
+    /**
+     * Items title (main property) configuration
+     */
     private ListTitleSettings titleProps;
 
     public List<Map<String, String>> getColumns() {
@@ -57,11 +74,15 @@ public class ListDetailsSettings {
     }
 
     public static class Builder {
+
         private static final String KEY = "key";
+
         private static final String LABEL = "label";
 
-        private List<Map<String, String>> columns = new ArrayList<>();
+        private final List<Map<String, String>> columns = new ArrayList<>();
+
         private ListItemsSettings itemProps;
+
         private ListTitleSettings titleProps;
 
         public Builder column(final String key, final String label) {

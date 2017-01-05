@@ -20,17 +20,30 @@ import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbS
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
 
+import static org.talend.dataprep.api.service.settings.views.api.ViewSettings.TYPE_APP_HEADER_BAR;
+import static org.talend.dataprep.api.service.settings.views.api.ViewSettings.TYPE_BREADCRUMB;
+import static org.talend.dataprep.api.service.settings.views.api.ViewSettings.TYPE_LIST;
+import static org.talend.dataprep.api.service.settings.views.api.ViewSettings.TYPE_SIDE_PANEL;
+
+/**
+ * Settings that configure a view
+ */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
         property = "VIEW_TYPE"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AppHeaderBarSettings.class, name = "AppHeaderBar"),
-        @JsonSubTypes.Type(value = BreadcrumbSettings.class, name = "Breadcrumb"),
-        @JsonSubTypes.Type(value = ListSettings.class, name = "List"),
-        @JsonSubTypes.Type(value = SidePanelSettings.class, name = "SidePanel")
+        @JsonSubTypes.Type(value = AppHeaderBarSettings.class, name = TYPE_APP_HEADER_BAR),
+        @JsonSubTypes.Type(value = BreadcrumbSettings.class, name = TYPE_BREADCRUMB),
+        @JsonSubTypes.Type(value = ListSettings.class, name = TYPE_LIST),
+        @JsonSubTypes.Type(value = SidePanelSettings.class, name = TYPE_SIDE_PANEL)
 })
 public interface ViewSettings {
+    String TYPE_APP_HEADER_BAR = "AppHeaderBar";
+    String TYPE_BREADCRUMB = "Breadcrumb";
+    String TYPE_LIST = "List";
+    String TYPE_SIDE_PANEL = "SidePanel";
+
     String getId();
 }

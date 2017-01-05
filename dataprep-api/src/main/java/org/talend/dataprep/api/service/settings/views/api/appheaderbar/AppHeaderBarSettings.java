@@ -1,37 +1,66 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.api.appheaderbar;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * An app header bar is a static bar placed on the top of the window
+ * see https://talend.github.io/react-talend-components/?selectedKind=App%20Header%20Bar&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ */
 @JsonInclude(NON_NULL)
 public class AppHeaderBarSettings implements ViewSettings {
-    public static final String VIEW_TYPE = "AppHeaderBar";
 
+    public static final String VIEW_TYPE = TYPE_APP_HEADER_BAR;
+
+    /**
+     * The id that is the key to the view dictionary
+     */
     @JsonIgnore
     private String id;
+
+    /**
+     * The app name
+     */
     private String app;
+
+    /**
+     * The brand link configuration
+     */
     private LinkSettings brandLink;
+
+    /**
+     * The search bar configuration
+     */
     private SearchSettings search;
+
+    /**
+     * The list of actions to display as a list of icons
+     */
     private List<String> actions;
+
+    /**
+     * The user dropdown action
+     */
     private String userMenu;
 
     @Override
@@ -88,21 +117,22 @@ public class AppHeaderBarSettings implements ViewSettings {
     }
 
     public static Builder from(final AppHeaderBarSettings viewSettings) {
-        return builder()
-                .id(viewSettings.getId())
-                .app(viewSettings.getApp())
-                .brandLink(viewSettings.getBrandLink())
-                .search(viewSettings.getSearch())
-                .actions(viewSettings.getActions())
-                .userMenu(viewSettings.getUserMenu());
+        return builder().id(viewSettings.getId()).app(viewSettings.getApp()).brandLink(viewSettings.getBrandLink())
+                .search(viewSettings.getSearch()).actions(viewSettings.getActions()).userMenu(viewSettings.getUserMenu());
     }
 
     public static class Builder {
+
         private String id;
+
         private String app;
+
         private LinkSettings brandLink;
+
         private SearchSettings search;
+
         private List<String> actions = new ArrayList<>();
+
         private String userMenu;
 
         public Builder id(final String id) {

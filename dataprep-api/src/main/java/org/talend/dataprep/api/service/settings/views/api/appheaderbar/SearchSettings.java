@@ -1,33 +1,65 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.api.appheaderbar;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * Search bar settings
+ * see https://talend.github.io/react-talend-components/?selectedKind=App%20Header%20Bar&selectedStory=with%20search%20results&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ */
 @JsonInclude(NON_NULL)
 public class SearchSettings {
+
+    /**
+     * Time in ms of idle time after user typing, before triggering the action
+     */
     private int debounceTimeout;
+
+    /**
+     * Input placeholder
+     */
     private String placeholder;
+
+    /**
+     * Input blur action identifier
+     */
     private String onBlur;
+
+    /**
+     * Input change action identifier
+     */
     private String onChange;
+
+    /**
+     * Input keydown action identifier
+     */
     private String onKeyDown;
+
+    /**
+     * Toggle icon action identifier
+     */
     private String onToggle;
+
+    /**
+     * Result item selection action by type of item
+     */
     private Map<String, String> onSelect;
 
     public int getDebounceTimeout() {
@@ -91,12 +123,19 @@ public class SearchSettings {
     }
 
     public static class Builder {
+
         private int debounceTimeout;
+
         private String placeholder;
+
         private String onBlur;
+
         private String onChange;
+
         private String onKeyDown;
+
         private String onToggle;
+
         private Map<String, String> onSelect = new HashMap<>();
 
         public Builder debounceTimeout(final int debounceTimeout) {

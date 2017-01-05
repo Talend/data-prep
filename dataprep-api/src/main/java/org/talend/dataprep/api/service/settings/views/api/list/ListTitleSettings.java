@@ -1,34 +1,56 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.api.list;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * List items title (main property) settings
+ */
 @JsonInclude(NON_NULL)
 public class ListTitleSettings {
+
+    /**
+     * The item property that represents the title display mode
+     */
     private String displayModeKey;
+
+    /**
+     * The item property that represents the icon name
+     */
     private String iconKey;
+
+    /**
+     * The item property that represents the title
+     */
     private String key;
+
+    /**
+     * The title click action identifier
+     */
     private String onClick;
+
+    /**
+     * The title edition cancel action identifier
+     */
     private String onEditCancel;
+
+    /**
+     * The title edition submit action identifier
+     */
     private String onEditSubmit;
 
     public String getDisplayModeKey() {
@@ -84,11 +106,17 @@ public class ListTitleSettings {
     }
 
     public static class Builder {
+
         private String displayModeKey;
+
         private String iconKey;
+
         private String key;
+
         private String onClick;
+
         private String onEditCancel;
+
         private String onEditSubmit;
 
         public Builder displayModeKey(final String displayModeKey) {

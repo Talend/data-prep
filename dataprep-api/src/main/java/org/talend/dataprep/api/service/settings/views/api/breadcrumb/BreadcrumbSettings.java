@@ -1,31 +1,48 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.views.api.breadcrumb;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * Breadcrumb settings
+ * see https://talend.github.io/react-talend-components/?selectedKind=Breadcrumbs&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ */
 @JsonInclude(NON_NULL)
 public class BreadcrumbSettings implements ViewSettings {
-    public static final String VIEW_TYPE = "Breadcrumb";
 
+    public static final String VIEW_TYPE = TYPE_BREADCRUMB;
+
+    /**
+     * The key in view dictionary
+     */
     @JsonIgnore
     private String id;
+
+    /**
+     * Max number of items before ellipsis
+     */
     private int maxItems;
+
+    /**
+     * Item click action identifier
+     */
     private String onItemClick;
 
     @Override
@@ -58,8 +75,11 @@ public class BreadcrumbSettings implements ViewSettings {
     }
 
     public static class Builder {
+
         private String id;
+
         private int maxItems;
+
         private String onItemClick;
 
         public Builder id(final String id) {

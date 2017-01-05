@@ -8,22 +8,17 @@ import static org.junit.Assert.assertThat;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
 
-import org.hamcrest.Matchers;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
 import org.talend.dataprep.api.service.settings.AppSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-import org.talend.dataprep.api.service.settings.actions.provider.DatasetActions;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AppSettingsAPITest extends ApiServiceTestBase {
 
@@ -50,10 +45,10 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetDisplayMode.getType(), is("@@inventory/DISPLAY_MODE"));
         assertThat(datasetDisplayMode.getPayload().get(PAYLOAD_METHOD_KEY), is("setDatasetsDisplayMode"));
 
-        final ActionSettings datasetFavorite = settings.getActions().get("dataset:favourite");
-        assertThat(datasetFavorite.getName(), is("Add dataset in your favourite list"));
+        final ActionSettings datasetFavorite = settings.getActions().get("dataset:favorite");
+        assertThat(datasetFavorite.getName(), is("Add dataset in your favorite list"));
         assertThat(datasetFavorite.getIcon(), is("talend-star"));
-        assertThat(datasetFavorite.getType(), is("@@dataset/FAVOURITE"));
+        assertThat(datasetFavorite.getType(), is("@@dataset/FAVORITE"));
         assertThat(datasetFavorite.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleFavorite"));
 
         final ActionSettings datasetFetch = settings.getActions().get("datasets:fetch");
@@ -96,7 +91,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalHelp.getIcon(), is("talend-question-circle"));
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
-        assertThat(((List<String>)externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"));
+        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
+                is("https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"));
 
         final ActionSettings inventoryCancelEdit = settings.getActions().get("inventory:cancel-edit");
         assertThat(inventoryCancelEdit.getName(), is("Cancel name edition"));
@@ -114,35 +110,36 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(menuDatasets.getIcon(), is("talend-datastore"));
         assertThat(menuDatasets.getType(), is("@@router/GO"));
         assertThat(menuDatasets.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>)menuDatasets.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.datasets"));
+        assertThat(((List<String>) menuDatasets.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.datasets"));
 
         final ActionSettings menuFolders = settings.getActions().get("menu:folders");
         assertThat(menuFolders.getName(), is("Folders"));
         assertThat(menuFolders.getIcon(), is("talend-folder"));
         assertThat(menuFolders.getType(), is("@@router/GO_FOLDER"));
         assertThat(menuFolders.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>)menuFolders.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
+        assertThat(((List<String>) menuFolders.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
 
         final ActionSettings menuPlaygroundDataset = settings.getActions().get("menu:playground:dataset");
         assertThat(menuPlaygroundDataset.getName(), is("Create new preparation"));
         assertThat(menuPlaygroundDataset.getIcon(), is("talend-plus"));
         assertThat(menuPlaygroundDataset.getType(), is("@@router/GO_DATASET"));
         assertThat(menuPlaygroundDataset.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>)menuPlaygroundDataset.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("playground.dataset"));
+        assertThat(((List<String>) menuPlaygroundDataset.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("playground.dataset"));
 
         final ActionSettings menuPlaygroundPreparation = settings.getActions().get("menu:playground:preparation");
         assertThat(menuPlaygroundPreparation.getName(), is("Open Preparation"));
         assertThat(menuPlaygroundPreparation.getIcon(), is("talend-dataprep"));
         assertThat(menuPlaygroundPreparation.getType(), is("@@router/GO_PREPARATION"));
         assertThat(menuPlaygroundPreparation.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>)menuPlaygroundPreparation.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("playground.preparation"));
+        assertThat(((List<String>) menuPlaygroundPreparation.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
+                is("playground.preparation"));
 
         final ActionSettings menuPreparations = settings.getActions().get("menu:preparations");
         assertThat(menuPreparations.getName(), is("Preparations"));
         assertThat(menuPreparations.getIcon(), is("talend-dataprep"));
         assertThat(menuPreparations.getType(), is("@@router/GO_CURRENT_FOLDER"));
         assertThat(menuPreparations.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>)menuPreparations.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
+        assertThat(((List<String>) menuPreparations.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
 
         final ActionSettings modalAbout = settings.getActions().get("modal:about");
         assertThat(modalAbout.getName(), is("About Data Preparation"));
@@ -156,7 +153,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(modalFeedback.getType(), is("@@modal/SHOW"));
         assertThat(modalFeedback.getPayload().get(PAYLOAD_METHOD_KEY), is("showFeedback"));
 
-        final ActionDropdownSettings listDatasetPreparations = (ActionDropdownSettings)settings.getActions().get("list:dataset:preparations");
+        final ActionDropdownSettings listDatasetPreparations = (ActionDropdownSettings) settings.getActions()
+                .get("list:dataset:preparations");
         assertThat(listDatasetPreparations.getName(), is("Open Preparation"));
         assertThat(listDatasetPreparations.getIcon(), is("talend-dataprep"));
         assertThat(listDatasetPreparations.getItems(), is("preparations"));
@@ -168,7 +166,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(onboardingPreparation.getIcon(), is("talend-board"));
         assertThat(onboardingPreparation.getType(), is("@@onboarding/START_TOUR"));
         assertThat(onboardingPreparation.getPayload().get(PAYLOAD_METHOD_KEY), is("startTour"));
-        assertThat(((List<String>)onboardingPreparation.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("preparation"));
+        assertThat(((List<String>) onboardingPreparation.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("preparation"));
 
         final ActionSettings preparationCopyMove = settings.getActions().get("preparation:copy-move");
         assertThat(preparationCopyMove.getName(), is("Copy/Move preparation"));
@@ -245,7 +243,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final AppHeaderBarSettings ahb = (AppHeaderBarSettings)settings.getViews().get("appheaderbar");
+        final AppHeaderBarSettings ahb = (AppHeaderBarSettings) settings.getViews().get("appheaderbar");
         assertThat(ahb.getApp(), is("Data Preparation"));
         assertThat(ahb.getBrandLink().getTitle(), is("Talend Data Preparation"));
         assertThat(ahb.getBrandLink().getOnClick(), is("menu:preparations"));
@@ -268,7 +266,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final BreadcrumbSettings breadcrumb = (BreadcrumbSettings)settings.getViews().get("breadcrumb");
+        final BreadcrumbSettings breadcrumb = (BreadcrumbSettings) settings.getViews().get("breadcrumb");
         assertThat(breadcrumb.getMaxItems(), is(5));
         assertThat(breadcrumb.getOnItemClick(), is("menu:folders"));
     }
@@ -279,7 +277,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final SidePanelSettings sidePanel = (SidePanelSettings)settings.getViews().get("sidepanel");
+        final SidePanelSettings sidePanel = (SidePanelSettings) settings.getViews().get("sidepanel");
         assertThat(sidePanel.getOnToggleDock(), is("sidepanel:toggle"));
         assertThat(sidePanel.getActions(), contains("menu:preparations", "menu:datasets"));
     }
@@ -290,7 +288,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ListSettings list = (ListSettings)settings.getViews().get("listview:folders");
+        final ListSettings list = (ListSettings) settings.getViews().get("listview:folders");
         assertThat(list.getList().getTitleProps().getOnClick(), is("menu:folders"));
     }
 
@@ -300,7 +298,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ListSettings list = (ListSettings)settings.getViews().get("listview:preparations");
+        final ListSettings list = (ListSettings) settings.getViews().get("listview:preparations");
         assertThat(list.getDidMountActionCreator(), is("preparations:folder:fetch"));
 
         final List<String> keys = map(list.getList().getColumns(), "key");
@@ -319,7 +317,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ids, contains("name", "date"));
         assertThat(names, contains("Name", "Creation Date"));
         assertThat(list.getToolbar().getSort().getOnChange(), is("preparation:sort"));
-        assertThat(list.getToolbar().getActionBar().getActions().get("left"), contains("preparation:create", "preparation:folder:create"));
+        assertThat(list.getToolbar().getActionBar().getActions().get("left"),
+                contains("preparation:create", "preparation:folder:create"));
     }
 
     @Test
@@ -328,7 +327,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ListSettings list = (ListSettings)settings.getViews().get("listview:datasets");
+        final ListSettings list = (ListSettings) settings.getViews().get("listview:datasets");
         assertThat(list.getDidMountActionCreator(), is("datasets:fetch"));
 
         final List<String> keys = map(list.getList().getColumns(), "key");

@@ -1,25 +1,30 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.settings.actions.provider;
 
-import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_ARGS_KEY;
 import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.PAYLOAD_METHOD_KEY;
+import static org.talend.dataprep.api.service.settings.actions.api.ActionSettings.builder;
 
+import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+
+/**
+ * Actions on menus (side panel for example) and route change
+ */
+// @formatter:off
 public interface MenuActions {
-    ActionSettings SIDE_PANEL_TOGGLE = ActionSettings.builder()
+    ActionSettings SIDE_PANEL_TOGGLE = builder()
             .id("sidepanel:toggle")
             .name("Click here to toggle the side panel")
             .icon("talend-arrow-left")
@@ -27,7 +32,7 @@ public interface MenuActions {
             .payload(PAYLOAD_METHOD_KEY, "toggleHomeSidepanel")
             .build();
 
-    ActionSettings MENU_PREPARATIONS = ActionSettings.builder()
+    ActionSettings MENU_PREPARATIONS = builder()
             .id("menu:preparations")
             .name("Preparations")
             .icon("talend-dataprep")
@@ -36,7 +41,7 @@ public interface MenuActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"home.preparations"})
             .build();
 
-    ActionSettings MENU_FOLDERS = ActionSettings.builder()
+    ActionSettings MENU_FOLDERS = builder()
             .id("menu:folders")
             .name("Folders")
             .icon("talend-folder")
@@ -45,7 +50,7 @@ public interface MenuActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"home.preparations"})
             .build();
 
-    ActionSettings MENU_DATASETS = ActionSettings.builder()
+    ActionSettings MENU_DATASETS = builder()
             .id("menu:datasets")
             .name("Datasets")
             .icon("talend-datastore")
@@ -54,7 +59,7 @@ public interface MenuActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"home.datasets"})
             .build();
 
-    ActionSettings MENU_PLAYGROUND_DATASET = ActionSettings.builder()
+    ActionSettings MENU_PLAYGROUND_DATASET = builder()
             .id("menu:playground:dataset")
             .name("Create new preparation")
             .icon("talend-plus")
@@ -63,7 +68,7 @@ public interface MenuActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"playground.dataset"})
             .build();
 
-    ActionSettings MENU_PLAYGROUND_PREPARATION = ActionSettings.builder()
+    ActionSettings MENU_PLAYGROUND_PREPARATION = builder()
             .id("menu:playground:preparation")
             .name("Open Preparation")
             .icon("talend-dataprep")
@@ -72,3 +77,4 @@ public interface MenuActions {
             .payload(PAYLOAD_ARGS_KEY, new String[]{"playground.preparation"})
             .build();
 }
+// @formatter:on

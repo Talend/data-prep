@@ -1,18 +1,17 @@
 package org.talend.dataprep.api.dataset;
 
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.i18n.DataprepBundle;
-import org.talend.dataprep.parameters.Parameter;
+import static java.util.Collections.emptyList;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.i18n.DataprepBundle;
+import org.talend.dataprep.parameters.Parameter;
 
 /**
  * Bean that is used to display the supported import types for dataprep.
  */
 public class Import {
-
 
     private String locationType;
 
@@ -36,7 +35,8 @@ public class Import {
     /**
      * Default constructor for jackson deserialization
      */
-    public Import() {}
+    public Import() {
+    }
 
     /**
      * Constructor.

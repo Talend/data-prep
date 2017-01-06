@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.talend.dataprep.api.service.settings.AppSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionDropdownSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
+import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
 import org.talend.dataprep.api.service.settings.views.api.appheaderbar.AppHeaderBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.ListSettings;
@@ -347,6 +348,40 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(names, contains("Name", "Creation Date"));
         assertThat(list.getToolbar().getSort().getOnChange(), is("dataset:sort"));
         assertThat(list.getToolbar().getActionBar().getActions().get("left"), contains("dataset:create"));
+    }
+
+    @Test
+    public void shouldInsertImportTypesInDatasetCreateDropdown() throws Exception {
+        // when
+        final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
+
+        // then
+        final ActionSplitDropdownSettings datasetCreate = (ActionSplitDropdownSettings) settings.getActions().get("dataset:create");
+        final List<Object> importTypes = datasetCreate.getItems();
+
+        final Map<String, Object> localImport = (Map<String, Object>) importTypes.get(0);
+        assertThat(localImport.get("locationType"), is("local"));
+        assertThat(localImport.get("contentType"), is("text/plain"));
+        assertThat(localImport.get("dynamic"), is(false));
+        assertThat(localImport.get("defaultImport"), is(true));
+        assertThat(localImport.get("label"), is("Local File"));
+        assertThat(localImport.get("title"), is("Add local file dataset"));
+
+        final Map<String, Object> hdfsImport = (Map<String, Object>) importTypes.get(1);
+        assertThat(hdfsImport.get("locationType"), is("hdfs"));
+        assertThat(hdfsImport.get("contentType"), is("application/vnd.remote-ds.hdfs"));
+        assertThat(hdfsImport.get("dynamic"), is(false));
+        assertThat(hdfsImport.get("defaultImport"), is(false));
+        assertThat(hdfsImport.get("label"), is("From HDFS"));
+        assertThat(hdfsImport.get("title"), is("Add HDFS dataset"));
+
+        final Map<String, Object> httpImport = (Map<String, Object>) importTypes.get(2);
+        assertThat(httpImport.get("locationType"), is("http"));
+        assertThat(httpImport.get("contentType"), is("application/vnd.remote-ds.http"));
+        assertThat(httpImport.get("dynamic"), is(false));
+        assertThat(httpImport.get("defaultImport"), is(false));
+        assertThat(httpImport.get("label"), is("From HTTP"));
+        assertThat(httpImport.get("title"), is("Add HTTP dataset"));
     }
 
     private List<String> map(final List<Map<String, String>> list, final String property) {

@@ -474,14 +474,6 @@ public class DataSetAPI extends APIService {
         return CommandHelper.toStreaming(getCommand(DataSetGetImportParameters.class, importType));
     }
 
-    @RequestMapping(value = "/api/datasets/imports", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List supported imports for a dataset.", notes = "Returns the supported import types.")
-    @Timed
-    @PublicAPI
-    public List<Import> listImports() {
-        return getCommand(DataSetGetImports.class).execute();
-    }
-
     /**
      * Return the semantic types for a given dataset / column.
      *

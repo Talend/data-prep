@@ -54,7 +54,7 @@ public class LocalStoreLocation implements DataSetLocation {
 
     @Override
     public String getAcceptedContentType() {
-        return " text/plain";
+        return "text/plain";
     }
 
     @Override

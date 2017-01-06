@@ -162,7 +162,7 @@
   "DATASTORE_CONNECTION_SUCCESSFUL": "Connection successful",
 
   "_comment": "Edit datasets",
-  "EDIT_DATASET": "Edit dataset properties",
+  "EDIT_DATASET": "Edit Dataset",
 
   "_comment": "Common",
   "LOADING": "Loading...",

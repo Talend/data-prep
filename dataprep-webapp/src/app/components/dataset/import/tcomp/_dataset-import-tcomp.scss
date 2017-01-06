@@ -1,0 +1,29 @@
+.tcomp {
+	.datastore,
+	.dataset {
+		text-align: center;
+
+		fieldset {
+			margin: 0 auto;
+			width: 75%;
+
+			legend {
+				display: none;
+			}
+		}
+	}
+
+	.form-actions {
+		display: flex;
+		justify-content: space-between;
+		margin: auto;
+		width: 75%;
+	}
+
+	.datastore {
+		.form-actions {
+			justify-content: flex-end;
+		}
+	}
+}
+

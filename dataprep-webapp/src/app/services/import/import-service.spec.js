@@ -191,23 +191,22 @@ describe('Import service', () => {
 		}));
 	});
 
-	describe('refreshParameters', () => {
+	describe('refreshDatastoreForm', () => {
 		beforeEach(inject(($q, ImportRestService) => {
-			spyOn(ImportRestService, 'refreshParameters').and.returnValue($q.when());
-
+			spyOn(ImportRestService, 'refreshDatastoreForm').and.returnValue($q.when());
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
-			//given
+			// given
 			const formId = 'toto';
 			const propertyName = 'tata';
 			const formData = {};
 
-			//when
-			ImportService.refreshParameters(formId, propertyName, formData);
+			// when
+			ImportService.refreshDatastoreForm(formId, propertyName, formData);
 
-			//then
-			expect(ImportRestService.refreshParameters).toHaveBeenCalledWith(formId, propertyName, formData);
+			// then
+			expect(ImportRestService.refreshDatastoreForm).toHaveBeenCalledWith(formId, propertyName, formData);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
@@ -218,7 +217,7 @@ describe('Import service', () => {
 			spyOn($rootScope, '$emit').and.returnValue();
 
 			//when
-			ImportService.refreshParameters(formId, propertyName, formData);
+			ImportService.refreshDatastoreForm(formId, propertyName, formData);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 
@@ -231,7 +230,6 @@ describe('Import service', () => {
 	describe('testConnection', () => {
 		beforeEach(inject(($q, ImportRestService) => {
 			spyOn(ImportRestService, 'testConnection').and.returnValue($q.when());
-
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
@@ -254,39 +252,6 @@ describe('Import service', () => {
 
 			//when
 			ImportService.testConnection(formId, formData);
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
-			$rootScope.$digest();
-
-			//then
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-
-		}));
-	});
-
-	describe('getDatasetForm', () => {
-		beforeEach(inject(($q, ImportRestService) => {
-			spyOn(ImportRestService, 'getDatasetForm').and.returnValue($q.when());
-
-		}));
-
-		it('should call REST service', inject((ImportService, ImportRestService) => {
-			//given
-			const datastoreId = 'toto';
-
-			//when
-			ImportService.getDatasetForm(datastoreId);
-
-			//then
-			expect(ImportRestService.getDatasetForm).toHaveBeenCalledWith(datastoreId);
-		}));
-
-		it('should manage loader', inject(($rootScope, ImportService) => {
-			//given
-			const datastoreId = 'toto';
-			spyOn($rootScope, '$emit').and.returnValue();
-
-			//when
-			ImportService.getDatasetForm(datastoreId);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 
@@ -368,9 +333,9 @@ describe('Import service', () => {
 		}));
 	});
 
-	describe('getDatastoreFormByDatasetId', () => {
+	describe('getFormsByDatasetId', () => {
 		beforeEach(inject(($q, ImportRestService) => {
-			spyOn(ImportRestService, 'getDatastoreFormByDatasetId').and.returnValue($q.when());
+			spyOn(ImportRestService, 'getFormsByDatasetId').and.returnValue($q.when());
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
@@ -378,10 +343,10 @@ describe('Import service', () => {
 			const datasetId = '123-abc-456';
 
 			// when
-			ImportService.getDatastoreFormByDatasetId(datasetId);
+			ImportService.getFormsByDatasetId(datasetId);
 
 			// then
-			expect(ImportRestService.getDatastoreFormByDatasetId).toHaveBeenCalledWith(datasetId);
+			expect(ImportRestService.getFormsByDatasetId).toHaveBeenCalledWith(datasetId);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
@@ -390,7 +355,7 @@ describe('Import service', () => {
 			spyOn($rootScope, '$emit').and.returnValue();
 
 			// when
-			ImportService.getDatastoreFormByDatasetId(datasetId);
+			ImportService.getFormsByDatasetId(datasetId);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 

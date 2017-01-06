@@ -32,7 +32,6 @@ $datagrid-headercell-font-size: .95em;
   .grid-header-menu {
     @include menu-list;
     box-shadow: none;
-    font-family: $base-font-family;
     padding: 5px;
   }
 

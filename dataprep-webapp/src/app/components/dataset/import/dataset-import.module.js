@@ -11,15 +11,15 @@
 
  ============================================================================*/
 
-import template from './dataset-edit.html';
+import angular from 'angular';
 
-const DatasetEditComponent = {
-	templateUrl: template,
-	controller(state) {
-		'ngInject';
+import TcompDatasetImportComponent from './tcomp/dataset-import-tcomp.component';
 
-		this.state = state;
-	},
-};
+import SERVICES_IMPORT_MODULE from '../../../services/import/import-module';
 
-export default DatasetEditComponent;
+const MODULE_NAME = 'data-prep.dataset-import';
+
+angular.module(MODULE_NAME, [SERVICES_IMPORT_MODULE])
+	.component('tcompDatasetImport', TcompDatasetImportComponent);
+
+export default MODULE_NAME;

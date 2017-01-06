@@ -48,11 +48,12 @@
         state="$ctrl.state.import.visible"
         ng-if="$ctrl.state.import.visible"
         close-button="true"
+        on-close="$ctrl.state.import.importItem = null"
         disable-enter="true">
     <div class="modal-title">{{$ctrl.ImportService.currentInputType.title}}</div>
     <br/>
-    <form name="$ctrl.ImportService.datasetForm"
-          ng-if="!$ctrl.ImportService.datastoreForm"
+    <form ng-if="!$ctrl.ImportService.isTCOMP"
+          name="$ctrl.ImportService.datasetForm"
           ng-submit="$ctrl.ImportService.datasetForm.$valid && $ctrl.ImportService.import($ctrl.ImportService.currentInputType)">
         <transform-params parameters="$ctrl.ImportService.currentInputType.parameters"></transform-params>
         <div class="modal-buttons">
@@ -64,28 +65,9 @@
                     translate-once="OK"></button>
         </div>
     </form>
-    <div class="tcomp">
-        <div class="datastore"
-             ng-if="$ctrl.ImportService.datastoreForm && $ctrl.ImportService.datastoreForm.jsonSchema">
-            <talend-form data="$ctrl.ImportService.datastoreForm"
-                         autocomplete="off"
-                         actions="$ctrl.ImportService.datastoreFormActions"
-                         on-change="$ctrl.ImportService.onDatastoreFormChange"
-                         on-submit="$ctrl.ImportService.onDatastoreFormSubmit"/>
-        </div>
-        <p class="text-right text-success"
-           ng-if="$ctrl.ImportService.datasetForm"
-           translate-once="DATASTORE_CONNECTION_SUCCESSFUL">
-        </p>
-        <div class="dataset"
-             ng-if="$ctrl.ImportService.datasetForm && $ctrl.ImportService.datasetForm.jsonSchema">
-            <talend-form data="$ctrl.ImportService.datasetForm"
-                         autocomplete="off"
-                         actions="$ctrl.ImportService.datasetFormActions"
-                         on-change="$ctrl.ImportService.onDatasetFormChange"
-                         on-submit="$ctrl.ImportService.onDatasetFormSubmit"/>
-        </div>
-    </div>
+    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP"
+                          item="$ctrl.state.import.importItem"
+                          location-type="$ctrl.ImportService.currentInputType.locationType"></tcomp-dataset-import>
 </talend-modal>
 <talend-modal fullscreen="false"
               close-button="true"

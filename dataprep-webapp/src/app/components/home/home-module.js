@@ -13,7 +13,7 @@
 
 import angular from 'angular';
 import ABOUT_MODULE from '../about/about-module';
-import DATASET_EDIT_MODULE from '../dataset/edit/dataset-edit.module';
+import DATASET_IMPORT_MODULE from '../dataset/import/dataset-import.module';
 import DATASET_HEADER_MODULE from '../dataset/header/dataset-header-module';
 import DATASET_LIST_MODULE from '../dataset/list/dataset-list-module';
 import DATASET_PROGRESS_MODULE from '../dataset/progress/dataset-progress-module';
@@ -69,7 +69,7 @@ angular.module(MODULE_NAME,
 	[
 		ABOUT_MODULE,
 		DATASET_UPDLOAD_LIST_MODULE,
-		DATASET_EDIT_MODULE,
+		DATASET_IMPORT_MODULE,
 		DATASET_HEADER_MODULE,
 		DATASET_LIST_MODULE,
 		DATASET_PROGRESS_MODULE,

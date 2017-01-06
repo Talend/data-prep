@@ -19,7 +19,6 @@ const HomeComponent = {
 
 		<about></about>
 		<dataset-xls-preview></dataset-xls-preview>
-		<dataset-editor></dataset-editor>
 		<folder-creator></folder-creator>
 		<preparation-copy-move></preparation-copy-move>
 		<preparation-creator></preparation-creator>

@@ -11,16 +11,17 @@
 
  ============================================================================*/
 
-import DatasetEditTcompCtrl from './dataset-edit-tcomp.controller';
+import DatasetImportTcompAddCtrl from './dataset-import-tcomp.controller';
 
-import template from './dataset-edit-tcomp.html';
+import template from './dataset-import-tcomp.html';
 
-const DatasetEditTcompComponent = {
+const DatasetImportTcompAddComponent = {
 	templateUrl: template,
 	bindings: {
 		item: '<',
+		locationType: '<',
 	},
-	controller: DatasetEditTcompCtrl,
+	controller: DatasetImportTcompAddCtrl,
 };
 
-export default DatasetEditTcompComponent;
+export default DatasetImportTcompAddComponent;

@@ -14,20 +14,20 @@
   -->
 
 <div class="tcomp">
-    <div class="datastore"
-         ng-if="$ctrl.datastoreForm && $ctrl.datastoreForm.jsonSchema"
-         ng-class="{'success': $ctrl.datasetForm && $ctrl.datasetForm.jsonSchema}"
-         data-success-msg="{{ 'DATASTORE_CONNECTION_SUCCESSFUL' | translate }}">
-        <talend-form data="$ctrl.datastoreForm"
-                     autocomplete="off"
+    <div id="datastore-form"
+         class="datastore"
+         ng-if="$ctrl.datastoreForm && $ctrl.datastoreForm.jsonSchema">
+        <talend-form autocomplete="off"
+                     data="$ctrl.datastoreForm"
                      actions="$ctrl.datastoreFormActions"
                      on-change="$ctrl.onDatastoreFormChange"
                      on-submit="$ctrl.onDatastoreFormSubmit"/>
     </div>
-    <div class="dataset"
+    <div id="dataset-form"
+         class="dataset"
          ng-if="$ctrl.datasetForm && $ctrl.datasetForm.jsonSchema">
-        <talend-form data="$ctrl.datasetForm"
-                     autocomplete="off"
+        <talend-form autocomplete="off"
+                     data="$ctrl.datasetForm"
                      actions="$ctrl.datasetFormActions"
                      on-change="$ctrl.onDatasetFormChange"
                      on-submit="$ctrl.onDatasetFormSubmit"/>

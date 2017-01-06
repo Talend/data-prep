@@ -1,10 +1,6 @@
 // Overall Width for Data Inventory and Preparation List
 $max-width: 1140px;
 
-// Typography
-$base-font-family: $helvetica;
-$heading-font-family: $base-font-family;
-
 // Font Sizes
 // NOTE : This value is from bootstrap theme.
 // Since we have to load bitters base after bootstrap to avoid too many regression, this is important,

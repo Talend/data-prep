@@ -37,17 +37,15 @@ describe('Import', () => {
 			expect(importState.visible).toBe(true);
 		}));
 
-		it('should set import visible for an item', inject(function (importState, ImportStateService) {
+		it('should set current import item', inject(function (importState, ImportStateService) {
 			// given
 			const item = { id: 'id' };
-			expect(importState.visible).toBeFalsy();
 			expect(importState.importItem).toBeNull();
 
 			// when
-			ImportStateService.setVisible(item);
+			ImportStateService.setCurrentImportItem(item);
 
 			// then
-			expect(importState.visible).toBeTruthy();
 			expect(importState.importItem).toBe(item);
 		}));
 	});

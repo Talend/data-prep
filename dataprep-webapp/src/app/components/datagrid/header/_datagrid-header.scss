@@ -60,7 +60,6 @@
 	.grid-header-menu {
 		@include menu-list;
 		padding: 0;
-		font-family: $base-font-family;
 		overflow: visible;
 		box-shadow: none;
 	}

@@ -5,7 +5,6 @@ fieldset {
 input,
 label,
 select {
-  font-family: $base-font-family;
   font-size: $base-font-size;
 }
 
@@ -30,7 +29,6 @@ textarea {
   border-radius: $base-border-radius;
   box-shadow: $form-box-shadow;
   box-sizing: border-box;
-  font-family: $base-font-family;
   font-size: $base-font-size;
   margin-bottom: $base-spacing / 2;
   padding: $base-spacing / 3;
@@ -54,6 +52,12 @@ textarea {
 
 input[type="search"] {
   @include appearance(none);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline;
+  margin-right: $small-spacing / 2;
 }
 
 input[type="file"] {

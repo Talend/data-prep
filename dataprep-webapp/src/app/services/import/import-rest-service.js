@@ -20,12 +20,13 @@ export default function ImportRestService($http, RestURLs) {
 
 	return {
 		importParameters,
-		refreshParameters,
+		refreshForm,
 		testConnection,
 		getDatasetForm,
-		refreshDatasetForm,
 		createDataset,
 		getDatastoreFormByDatasetId,
+		getDatasetFormByDatasetId,
+		editDataset,
 	};
 
 	/**
@@ -36,18 +37,29 @@ export default function ImportRestService($http, RestURLs) {
 	 * @returns {Promise}  The GET call promise
 	 */
 	function importParameters(locationType) {
-		return $http.get(RestURLs.datasetUrl + '/imports/' + locationType + '/parameters');
+		return $http.get(`${RestURLs.datasetUrl}/imports/${locationType}/parameters`);
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name refreshParameters
+	 * @name getDatasetForm
 	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Refresh the available import parameters
+	 * @description Fetch the dataset form
 	 * @returns {Promise}  The POST call promise
 	 */
-	function refreshParameters(formId, propertyName, formData) {
-		return $http.post(`${RestURLs.tcompUrl}/properties/${formId}/after/${propertyName}`, formData);
+	function getDatasetForm(datastoreFormData) {
+		return $http.post(`${RestURLs.tcompUrl}/datastores/dataset/properties`, datastoreFormData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshForm
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Refresh the form
+	 * @returns {Promise}  The POST call promise
+	 */
+	function refreshForm(definitionName, propertyName, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/properties/${definitionName}/after/${propertyName}`, formData);
 	}
 
 	/**
@@ -57,30 +69,8 @@ export default function ImportRestService($http, RestURLs) {
 	 * @description Test connection to a datastore
 	 * @returns {Promise} The POST call promise
 	 */
-	function testConnection(formId, formData) {
-		return $http.post(`${RestURLs.tcompUrl}/datastores/${formId}`, formData);
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name getDatasetForm
-	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Get dataset form properties
-	 * @returns {Promise} The GET call promise
-	 */
-	function getDatasetForm(datastoreId) {
-		return $http.get(`${RestURLs.tcompUrl}/datastores/${datastoreId}/dataset/properties`);
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name refreshDatasetForm
-	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Refresh the available dataset form parameters
-	 * @returns {Promise}  The POST call promise
-	 */
-	function refreshDatasetForm(datastoreId, propertyName, formData) {
-		return $http.post(`${RestURLs.tcompUrl}/datastores/${datastoreId}/after/${propertyName}`, formData);
+	function testConnection(definitionName, formsData) {
+		return $http.post(`${RestURLs.tcompUrl}/datastores/${definitionName}/test`, formsData);
 	}
 
 	/**
@@ -90,18 +80,40 @@ export default function ImportRestService($http, RestURLs) {
 	 * @description Create dataset for a datastore
 	 * @returns {Promise} The POST call promise
 	 */
-	function createDataset(datastoreId, formData) {
-		return $http.post(`${RestURLs.tcompUrl}/datastores/${datastoreId}/dataset`, formData);
+	function createDataset(definitionName, formsData) {
+		return $http.post(`${RestURLs.tcompUrl}/datastores/${definitionName}/dataset`, formsData);
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name getDatastoreFormByDatasetId
 	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Get datastore filled form by dataset id
+	 * @description Get filled datastore form by dataset id
 	 * @returns {Promise} The GET call promise
 	 */
 	function getDatastoreFormByDatasetId(datasetId) {
 		return $http.get(`${RestURLs.tcompUrl}/datasets/${datasetId}/datastore/properties`);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getDatasetFormByDatasetId
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Get filled dataset form by dataset id
+	 * @returns {Promise} The GET call promise
+	 */
+	function getDatasetFormByDatasetId(datasetId) {
+		return $http.get(`${RestURLs.tcompUrl}/datasets/${datasetId}/properties`);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name editDataset
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Create dataset for a datastore
+	 * @returns {Promise} The POST call promise
+	 */
+	function editDataset(datasetId, formsData) {
+		return $http.post(`${RestURLs.tcompUrl}/datasets/${datasetId}`, formsData);
 	}
 }

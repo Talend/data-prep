@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.actions.RemoteResourceGetter;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
@@ -41,7 +42,7 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
         this.password = password;
     }
 
-    private Map<String, DataSetRow> getLookupDataset(RemoteResourceGetter clientFormLogin, String dataSetId,
+    private LightweightExportableDataSet getLookupDataset(RemoteResourceGetter clientFormLogin, String dataSetId,
                                                      String joinOnColumn) {
         LOGGER.debug("Retrieving lookup dataset '{}'", dataSetId);
         return clientFormLogin.retrieveLookupDataSet(apiUrl, login, password, dataSetId, joinOnColumn);
@@ -65,13 +66,13 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
         return result;
     }
 
-    public Map<String, LightweightExportableDataSet> retrieveLookupDataSets(List<Action> actions) {
+    public Map<String, LightweightExportableDataSet> retrieveLookupDataSets(List<RunnableAction> actions) {
         final Map<String, LightweightExportableDataSet> result = new HashMap<>();
         final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
         actions.stream() //
                 .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
                 .forEach(action -> {
-                    final Map<String, DataSetRow> lookup = retrieveLookupDataSetFromAction(clientFormLogin, action);
+                    final LightweightExportableDataSet lookup = retrieveLookupDataSetFromAction(clientFormLogin, action);
                     result.put(action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey()), lookup);
                 });
         return result;

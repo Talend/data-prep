@@ -39,7 +39,7 @@
         },
         "domain": "",
         "domainLabel": "",
-        "domainFrequency": 0.0,
+        "domainFrequency": 0,
         "semanticDomains": [],
         "domainForced": false,
         "typeForced": false
@@ -82,7 +82,7 @@
         },
         "domain": "",
         "domainLabel": "",
-        "domainFrequency": 0.0,
+        "domainFrequency": 0,
         "semanticDomains": [],
         "domainForced": false,
         "typeForced": false
@@ -165,16 +165,261 @@
         ],
         "domainForced": false,
         "typeForced": false
+      },
+      {
+        "name": "page_visited",
+        "headerSize": 0,
+        "type": "double",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 2000,
+          "invalidValues": []
+        },
+        "id": "0003",
+        "statistics": {
+          "count": 2000,
+          "valid": 2000,
+          "invalid": 0,
+          "empty": 0,
+          "max": 14,
+          "min": 1,
+          "mean": 6.103499999999999,
+          "variance": 6.520047773886935,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "first_item",
+        "headerSize": 0,
+        "type": "double",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 2000,
+          "invalidValues": []
+        },
+        "id": "0004",
+        "statistics": {
+          "count": 2000,
+          "valid": 2000,
+          "invalid": 0,
+          "empty": 0,
+          "max": 117,
+          "min": 10,
+          "mean": 40.783750000000005,
+          "variance": 750.8482850800394,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "gender",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 2000,
+          "invalidValues": []
+        },
+        "id": "0005",
+        "statistics": {
+          "count": 2000,
+          "valid": 2000,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "GENDER",
+        "domainLabel": "Gender",
+        "domainFrequency": 100,
+        "semanticDomains": [
+          {
+            "id": "CIVILITY",
+            "label": "Civility",
+            "frequency": 32.1
+          },
+          {
+            "id": "GENDER",
+            "label": "Gender",
+            "frequency": 100
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "campain",
+        "headerSize": 0,
+        "type": "boolean",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 2000,
+          "invalidValues": []
+        },
+        "id": "0006",
+        "statistics": {
+          "count": 2000,
+          "valid": 2000,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "revenue",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 2000,
+          "invalidValues": []
+        },
+        "id": "0007",
+        "statistics": {
+          "count": 2000,
+          "valid": 2000,
+          "invalid": 0,
+          "empty": 0,
+          "max": 805,
+          "min": 9,
+          "mean": 147.16049999999998,
+          "variance": 5757.258368934479,
+          "duplicateCount": 0,
+          "distinctCount": 0,
+          "frequencyTable": [],
+          "patternFrequencyTable": [],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
       }
     ]
   },
   "actions": [
     {
-      "action": "delete_invalid",
+      "action": "uppercase",
       "parameters": {
         "column_id": "0002",
         "column_name": "country",
         "row_id": "",
+        "scope": "column"
+      }
+    },
+    {
+      "action": "split",
+      "parameters": {
+        "column_id": "0002",
+        "scope": "column",
+        "limit": "2",
+        "column_name": "country",
+        "row_id": "",
+        "separator": " "
+      }
+    },
+    {
+      "action": "delete_column",
+      "parameters": {
+        "column_id": "0006",
+        "column_name": "campain",
         "scope": "column"
       }
     }

@@ -17,11 +17,11 @@ import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.service.Dictionaries;
 import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
 
-class DictionaryResource implements FunctionResource {
+public class DictionaryResource implements FunctionResource {
 
     private final Dictionaries dictionaries;
 
-    DictionaryResource(Dictionaries dictionaries) {
+    public DictionaryResource(Dictionaries dictionaries) {
         this.dictionaries = dictionaries;
     }
 

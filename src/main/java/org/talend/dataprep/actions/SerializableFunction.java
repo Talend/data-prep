@@ -46,6 +46,10 @@ class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Se
 
     private transient boolean loaded = false;
 
+    private transient long count = 0;
+
+    private transient Schema outputSchema;
+
     SerializableFunction(Pipeline pipeline, StackedNode stackedNode, RowMetadata initialRowMetadata,
             FunctionResource... resources) {
         this.pipeline = pipeline;
@@ -63,6 +67,9 @@ class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Se
             }
             loaded = true;
         }
+        if (count++ % 10000 == 0) {
+            LOG.debug("Current pipeline state: " + pipeline);
+        }
 
         Map<String, String> values = new HashMap<>();
         final List<Schema.Field> fields = indexedRecord.getSchema().getFields();
@@ -78,8 +85,7 @@ class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Se
         final Optional<DataSetRow> result = Optional.ofNullable(stackedNode.pop());
         if (result.isPresent()) {
             final DataSetRow modifiedRow = result.get();
-            final RowMetadata modifiedRowRowMetadata = modifiedRow.getRowMetadata();
-            final Schema outputSchema = RowMetadataUtils.toSchema(modifiedRowRowMetadata);
+            initializeSchema(modifiedRow);
             GenericRecord modifiedRecord = new GenericData.Record(outputSchema);
             final Iterator<Object> iterator = modifiedRow.order().values().values().iterator();
             for (int j = 0; j < outputSchema.getFields().size() && iterator.hasNext(); j++) {
@@ -88,6 +94,15 @@ class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Se
             return modifiedRecord;
         } else {
             return null;
+        }
+    }
+
+    // Lazy init of result Avro schema for later reuse
+    private void initializeSchema(DataSetRow modifiedRow) {
+        if (outputSchema == null) {
+            // Computing Avro schema is rather long, don't do it for each line.
+            final RowMetadata modifiedRowRowMetadata = modifiedRow.getRowMetadata();
+            outputSchema = RowMetadataUtils.toSchema(modifiedRowRowMetadata);
         }
     }
 }

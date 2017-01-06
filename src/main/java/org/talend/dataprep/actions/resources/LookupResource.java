@@ -17,15 +17,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.transformation.actions.datablending.LookupDatasetsManager;
 
-class LookupResource implements FunctionResource {
+public class LookupResource implements FunctionResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LookupResource.class);
 
-    private final Map<String, Map<String, DataSetRow>> lookupDataSets;
+    private final Map<String, LightweightExportableDataSet> lookupDataSets;
 
-    LookupResource(Map<String, Map<String, DataSetRow>> lookupDataSets) {
+    public LookupResource(Map<String, LightweightExportableDataSet> lookupDataSets) {
         this.lookupDataSets = lookupDataSets;
     }
 

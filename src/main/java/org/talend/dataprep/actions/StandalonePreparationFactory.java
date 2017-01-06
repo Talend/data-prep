@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import org.apache.avro.generic.IndexedRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.CorePreparation;
 import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.PreparationParser;
 import org.talend.dataprep.actions.resources.DictionaryResource;
@@ -30,10 +29,11 @@ import org.talend.dataprep.actions.resources.FunctionResource;
 import org.talend.dataprep.actions.resources.FunctionResourceProvider;
 import org.talend.dataprep.actions.resources.LookupResource;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
 import org.talend.dataprep.transformation.service.Dictionaries;
 import org.talend.dataquality.semantic.broadcast.BroadcastIndexObject;
@@ -65,27 +65,41 @@ public class StandalonePreparationFactory {
      * {@link IndexedRecord}
      */
     public Function<IndexedRecord, IndexedRecord> create(final InputStream preparation, FunctionResource... resources) {
-        CorePreparation minimalPreparation = PreparationParser.parseCorePreparation(preparation,
-                allowNonDistributedActions);
+        PreparationMessage minimalPreparation = PreparationParser.parseCorePreparation(preparation);
         return create(minimalPreparation, resources);
     }
 
     public Function<IndexedRecord, IndexedRecord> create(final InputStream preparation, FunctionResourceProvider... providers) {
-        CorePreparation minimalPreparation = PreparationParser.parseCorePreparation(preparation,
-                allowNonDistributedActions);
+        PreparationMessage minimalPreparation = PreparationParser.parseCorePreparation(preparation);
         return create(minimalPreparation, providers);
     }
 
-    public Function<IndexedRecord, IndexedRecord> create(CorePreparation minimalPreparation, FunctionResource... resources) {
-
-        if (minimalPreparation.getActions() == null) {
+    public Function<IndexedRecord, IndexedRecord> create(PreparationMessage preparation, FunctionResourceProvider... providers) {
+        if (preparation.getActions() == null) {
             LOGGER.info("No action defined in preparation, returning identity function");
             return new NoOpFunction();
         }
 
-        RowMetadata rowMetadata = minimalPreparation.getRowMetadata();
+        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions());
 
-        List<Action> actions = PreparationParser.ensureActionRowsExistence(minimalPreparation.getActions());
+        // get the list of resources for function
+        FunctionResource[] resources = Arrays.stream(providers) //
+                .map(provider -> provider.get(actions)) //
+                .collect(Collectors.toList()) //
+                .toArray(new FunctionResource[providers.length]);
+
+        return create(preparation, resources);
+    }
+
+    public Function<IndexedRecord, IndexedRecord> create(PreparationMessage preparation, FunctionResource... resources) {
+        if (preparation.getActions() == null) {
+            LOGGER.info("No action defined in preparation, returning identity function");
+            return new NoOpFunction();
+        }
+
+        RowMetadata rowMetadata = preparation.getRowMetadata();
+
+        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions());
 
         LOGGER.trace("The initial row metadata is: " + rowMetadata);
 
@@ -103,25 +117,6 @@ public class StandalonePreparationFactory {
                 .build();
 
         return new SerializableFunction(pipeline, stackedNode, rowMetadata, resources);
-    }
-
-    public Function<IndexedRecord, IndexedRecord> create(CorePreparation minimalPreparation,
-            FunctionResourceProvider... providers) {
-
-        if (minimalPreparation.getActions() == null) {
-            LOGGER.info("No action defined in preparation, returning identity function");
-            return new NoOpFunction();
-        }
-
-        List<Action> actions = PreparationParser.ensureActionRowsExistence(minimalPreparation.getActions());
-
-        // get the list of resources for function
-        FunctionResource[] resources = Arrays.stream(providers) //
-                .map(provider -> provider.get(actions)) //
-                .collect(Collectors.toList()) //
-                .toArray(new FunctionResource[providers.length]);
-
-        return create(minimalPreparation, resources);
     }
 
     /**

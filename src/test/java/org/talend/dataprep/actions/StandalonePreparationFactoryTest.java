@@ -276,7 +276,7 @@ public class StandalonePreparationFactoryTest {
         // Given
 
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string" });
-        final Function<IndexedRecord, IndexedRecord> function = factory.create(IOUtils.toInputStream("[]"), dictionaryResource);
+        final Function<IndexedRecord, IndexedRecord> function = factory.create(IOUtils.toInputStream("{\"actions\":[]}"), dictionaryResource);
         assertNotNull(function);
         assertEquals("string", record.get(0));
 
@@ -331,18 +331,60 @@ public class StandalonePreparationFactoryTest {
         // When
         final IndexedRecord result1 = function.apply(record1);
         final IndexedRecord result2 = function.apply(record2);
-        final IndexedRecord result3 = function.apply(record2);
+        final IndexedRecord result3 = function.apply(record3);
 
         // Then
+        assertNull(result1);
+
         assertEquals("1", result2.get(0));
         assertEquals("5/24/1982", result2.get(1));
         assertEquals("France", result2.get(2));
         assertEquals(3, result2.getSchema().getFields().size());
 
-        assertEquals("1", result2.get(0));
-        assertEquals("01/01/1970", result2.get(1));
-        assertEquals("United states", result2.get(2));
-        assertEquals(3, result2.getSchema().getFields().size());
+        assertEquals("1", result3.get(0));
+        assertEquals("11/9/1970", result3.get(1));
+        assertEquals("United States", result3.get(2));
+        assertEquals(3, result3.getSchema().getFields().size());
+    }
+
+    @Test
+    public void testSplitUpperDeletePreparation() throws Exception {
+        // Given
+        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1", "01/01/1970", "Taboulistan","6.0", "22.0", "F", "False" , "162"});
+        final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "1", "5/24/1982", "France", "4.0", "44.0", "F", "False", "193"});
+        final IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "1", "11/9/1970", "United States", "7.0", "10.0", "M", "True", "134"});
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream dataSetStream = DefaultActionParserTest.class
+                .getResourceAsStream("split_upper_delete_preparation.json")) {
+            StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
+            function = recipeFunctionFactory.create(dataSetStream);
+        }
+        assertNotNull(function);
+        assertEquals("Taboulistan", record1.get(2));
+        assertEquals("France", record2.get(2));
+        assertEquals("United States", record3.get(2));
+
+        // When
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+        final IndexedRecord result3 = function.apply(record3);
+
+        // Then
+        assertEquals("TABOULISTAN", result1.get(2));
+        assertEquals("FRANCE", result2.get(2));
+        assertEquals("UNITED STATES", result3.get(2));
+
+        assertEquals("TABOULISTAN", result1.get(3));
+        assertEquals("FRANCE", result2.get(3));
+        assertEquals("UNITED", result3.get(3));
+
+        assertEquals("", result1.get(4));
+        assertEquals("", result2.get(4));
+        assertEquals("STATES", result3.get(4));
+
+        assertEquals(9, result1.getSchema().getFields().size());
+        assertEquals(9, result2.getSchema().getFields().size());
+        assertEquals(9, result3.getSchema().getFields().size());
     }
 
     @Test

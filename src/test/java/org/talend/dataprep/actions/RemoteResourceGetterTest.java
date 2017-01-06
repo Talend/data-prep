@@ -25,6 +25,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.transformation.service.Dictionaries;
 
 import static org.junit.Assert.*;
@@ -102,15 +103,15 @@ public class RemoteResourceGetterTest {
         remoteResourceGetter = new RemoteResourceGetter();
 
         // When
-        Map<String, DataSetRow> result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
+        LightweightExportableDataSet result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
                 goodDataSetId, "0000");
 
         // Then
         assertEquals(5, result.size());
-        assertEquals("California", result.get("CA").values().get("0001"));
-        assertEquals("Sacramento", result.get("CA").values().get("0002"));
-        assertEquals("Alabama", result.get("AL").values().get("0001"));
-        assertEquals("Montgomery", result.get("AL").values().get("0002"));
+        assertEquals("California", result.getRecords().get("CA").get("0001"));
+        assertEquals("Sacramento", result.getRecords().get("CA").get("0002"));
+        assertEquals("Alabama", result.getRecords().get("AL").get("0001"));
+        assertEquals("Montgomery", result.getRecords().get("AL").get("0002"));
     }
 
     /**
@@ -126,15 +127,15 @@ public class RemoteResourceGetterTest {
         remoteResourceGetter = new RemoteResourceGetter();
 
         // When
-        Map<String, DataSetRow> result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
+        LightweightExportableDataSet result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
                 goodDataSetId, "0000");
 
         // Then
         assertEquals(1001, result.size());
-        DataSetRow firstRecord = result.get("1");
+        Map<String, String> firstRecord = result.getRecords().get("1");
         assertEquals("Helena", firstRecord.get("0001"));
         assertEquals("Austin", firstRecord.get("0002"));
-        DataSetRow twentyThirdRecord = result.get("23");
+        Map<String, String> twentyThirdRecord = result.getRecords().get("23");
         assertEquals("mwelchm@virginia.edu", twentyThirdRecord.get("0003"));
         assertEquals("247.82.30.113", twentyThirdRecord.get("0005"));
     }
@@ -171,7 +172,7 @@ public class RemoteResourceGetterTest {
             oos.writeObject(o);
         }
         serverMock.addEndPoint("/login", "", header);
-        serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(bos.toByteArray()), header);
+        serverMock.addEndPoint("/api/create/dictionary", new ByteArrayInputStream(bos.toByteArray()), header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
         // When

@@ -17,22 +17,33 @@ import java.util.Deque;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
-class StackedNode extends BasicNode {
+class StackedNode extends BasicNode implements Monitored {
 
     /** For the serialization interface. */
     private static final long serialVersionUID = 1L;
 
     private transient Deque<DataSetRow> stack;
 
+    private long totalTime;
+
+    private long count;
+
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
-        if (!row.isDeleted()) {
-            getStack().push(row);
+        final long start = System.currentTimeMillis();
+        try {
+            if (!row.isDeleted()) {
+                getStack().push(row);
+            }
+            super.receive(row, metadata);
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+            count++;
         }
-        super.receive(row, metadata);
     }
 
     private Deque<DataSetRow> getStack() {
@@ -50,5 +61,15 @@ class StackedNode extends BasicNode {
     @Override
     public Node copyShallow() {
         return new StackedNode();
+    }
+
+    @Override
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    @Override
+    public long getCount() {
+        return count;
     }
 }

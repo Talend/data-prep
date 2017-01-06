@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.LightweightExportableDataSetUtils;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
+import org.talend.dataprep.api.dataset.DataSetDataReader;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.transformation.service.Dictionaries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,7 +95,7 @@ public class RemoteResourceGetter {
      * @param joinOnColumn the column used to join the lookup data set
      * @return a map which associates to each value of the joint column its corresponding data set row
      */
-    private Map<String, DataSetRow> mapLookupDataSet(String apiUrl, Header jwt, String dataSetId, String joinOnColumn) {
+    private LightweightExportableDataSet mapLookupDataSet(String apiUrl, Header jwt, String dataSetId, String joinOnColumn) {
         String url = apiUrl + "/api/datasets/" + dataSetId + "?fullContent=true&includeTechnicalProperties=true";
         HttpGet request = new HttpGet(url);
         request.addHeader(jwt);
@@ -117,14 +119,14 @@ public class RemoteResourceGetter {
      * @param joinOnColumn the column used to join the lookup data set
      * @return a map which associates to each value of the joint column its corresponding data set row
      */
-    public Map<String, DataSetRow> retrieveLookupDataSet(String apiUrl, String login, String password, String dataSetId,
+    public LightweightExportableDataSet retrieveLookupDataSet(String apiUrl, String login, String password, String dataSetId,
             String joinOnColumn) {
         Header jwt = login(apiUrl, login, password);
         return mapLookupDataSet(apiUrl, jwt, dataSetId, joinOnColumn);
     }
 
     public Dictionaries retrieveDictionaries(String apiUrl, String login, String password) {
-        String url = apiUrl + "/api/transform/dictionary";
+        String url = apiUrl + "/api/create/dictionary";
         HttpGet request = new HttpGet(url);
         request.addHeader(login(apiUrl, login, password));
         try (final CloseableHttpResponse response = client.execute(request)) {

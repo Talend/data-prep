@@ -23,8 +23,8 @@
                 <form id="chart-control-form"
                       class="chart-control-form"
                       ng-submit="$ctrl.changeAggregation()">
-                    <div>
-                        <span translate-once="COLUMN"></span>
+                    <div class="form-group">
+                        <label translate-once="COLUMN"></label>
                         <select id="chart-control-aggregation-column"
                                 ng-model="$ctrl.selected.column"
                                 ng-options="column.name for column in $ctrl.filteredNumericColumns track by column.id"
@@ -33,8 +33,8 @@
                         </select>
                     </div>
 
-                    <div ng-if="$ctrl.selected.column">
-                        <span translate-once="AGGREGATION"></span>
+                    <div ng-if="$ctrl.selected.column" class="form-group">
+                        <label translate-once="AGGREGATION"></label>
                         <select id="chart-control-aggregation-type"
                                 ng-model="$ctrl.selected.aggregation"
                                 ng-options="aggreg | translate for aggreg in $ctrl.aggregations track by aggreg"

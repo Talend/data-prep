@@ -12,134 +12,134 @@
   ============================================================================*/
 
 @mixin slidable-common($size, $actionSize) {
-  @include flex(0 0 $size);
+	flex: 0 0 $size;
 
-  @include display(flex);
-  @include flex-wrap(nowrap);
-  @include justify-content(space-between);
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-between;
 
-  &.slide-hide-add,
-  &.slide-hide-remove.slide-hide-remove-active {
-    > .content {
-      overflow: hidden;
-    }
-  }
+	&.slide-hide-add,
+	&.slide-hide-remove.slide-hide-remove-active {
+		> .content {
+			overflow: hidden;
+		}
+	}
 
-  > .action {
-    @include flex(0 0 $actionSize);
-  }
+	> .action {
+		flex: 0 0 $actionSize;
+	}
 }
 
 @mixin slidable-width($size, $actionSize) {
-  $width: $size - $actionSize;
-  @include slidable-common($size, $actionSize);
-  @include flex-direction(row);
-  @include transition(0.20s ease flex);
+	$width: $size - $actionSize;
+	@include slidable-common($size, $actionSize);
+	flex-direction: row;
+	@include transition(0.20s ease flex);
 
-  &.slide-hide {
-    flex: 0 0 $actionSize !important;
-    > .content {
-      width: 0;
-    }
-  }
+	&.slide-hide {
+		flex: 0 0 $actionSize !important;
+		> .content {
+			width: 0;
+		}
+	}
 
-  > .content {
-    @include transition(0.20s ease width);
-    width: $width;
-    overflow-x: hidden;
-    overflow-y: auto;
+	> .content {
+		@include transition(0.20s ease width);
+		width: $width;
+		overflow-x: hidden;
+		overflow-y: auto;
 
-    > .content-container {
-      min-width: $width;
-    }
-  }
+		> .content-container {
+			min-width: $width;
+		}
+	}
 }
 
 @mixin slidable-height($size, $actionSize) {
-  $height: $size - $actionSize;
-  @include slidable-common($size, $actionSize);
-  @include flex-direction(column);
-  @include transition(0.20s ease transform);
+	$height: $size - $actionSize;
+	@include slidable-common($size, $actionSize);
+	flex-direction: column;
+	@include transition(0.20s ease transform);
 
-  position: absolute;
-  background: $white;
-  width: 100%;
-  z-index: 10;
+	position: absolute;
+	background: $white;
+	width: 100%;
+	z-index: 10;
 
-  > .content {
-    height: $height;
-    overflow: auto;
+	> .content {
+		height: $height;
+		overflow: auto;
 
-    > .content-container {
-      min-height: $height;
-    }
-  }
+		> .content-container {
+			min-height: $height;
+		}
+	}
 }
 
 @mixin slidable-left($size, $actionSize) {
-  @include slidable-width($size, $actionSize);
+	@include slidable-width($size, $actionSize);
 }
 
 @mixin slidable-right($size, $actionSize) {
-  @include slidable-width($size, $actionSize);
+	@include slidable-width($size, $actionSize);
 }
 
 @mixin slidable-top($size, $actionSize) {
-  @include slidable-height($size, $actionSize);
-  top: 0;
-  &.slide-hide {
-    transform: translateY(-100%);
-  }
+	@include slidable-height($size, $actionSize);
+	top: 0;
+	&.slide-hide {
+		transform: translateY(-100%);
+	}
 }
 
 @mixin slidable-bottom($size, $actionSize) {
-  @include slidable-height($size, $actionSize);
-  bottom: 0;
-  &.slide-hide {
-    transform: translateY(100%);
-  }
+	@include slidable-height($size, $actionSize);
+	bottom: 0;
+	&.slide-hide {
+		transform: translateY(100%);
+	}
 }
 
 .slidable {
-  position: relative; //important for jquery ui resizable
+	position: relative; //important for jquery ui resizable
 
-  &.slide-left {
-    @include slidable-left(350px, 20px);
-  }
+	&.slide-left {
+		@include slidable-left(350px, 20px);
+	}
 
-  &.slide-right {
-    @include slidable-right(350px, 20px);
-  }
+	&.slide-right {
+		@include slidable-right(350px, 20px);
+	}
 
-  &.slide-top {
-    @include slidable-top(350px, 20px);
-  }
+	&.slide-top {
+		@include slidable-top(350px, 20px);
+	}
 
-  &.slide-bottom {
-    @include slidable-bottom(350px, 20px);
-  }
+	&.slide-bottom {
+		@include slidable-bottom(350px, 20px);
+	}
 
-  > .content {
-    order: 2;
-  }
+	> .content {
+		order: 2;
+	}
 
-  > .action {
-    cursor: pointer;
-    font-size: 3em;
+	> .action {
+		cursor: pointer;
+		font-size: 3em;
 
-    @include display(flex);
-    @include align-items(center);
-    @include justify-content(center);
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
-    order: 3;
+		order: 3;
 
-    &.right,
-    &.bottom {
-      order: 1;
-    }
-  }
+		&.right,
+		&.bottom {
+			order: 1;
+		}
+	}
 
-  &.no-transition {
-    transition : none !important;
-  }
+	&.no-transition {
+		transition: none !important;
+	}
 }

@@ -12,10 +12,10 @@
   ============================================================================*/
 
 .inventory-header {
-    @include display(flex);
-    @include flex-direction(row-reverse);
-    @include align-items(flex-end);
-    @include justify-content(space-between);
+    display: flex;
+    align-direction: row-reverse;
+    align-items: flex-end;
+    justify-content: space-between;
 
     border-bottom: 1px solid #CECECE;
     font-size: 0.9em;
@@ -29,9 +29,9 @@
         padding: 5px 15px;
     }
     .inventory-sort {
-        @include display(flex);
-        @include align-items(center);
-        @include justify-content(flex-end);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
 
         .button-switch {
             background: $white;

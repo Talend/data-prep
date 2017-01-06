@@ -27,7 +27,7 @@ $subheader-background: $light-gray;
 
     > ul {
       @include flex-row();
-      @include align-items(center);
+      align-items: center;
       margin-left: 18%;
       padding-top: 10px;
     }

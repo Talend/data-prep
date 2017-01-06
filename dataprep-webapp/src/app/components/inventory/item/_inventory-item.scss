@@ -48,8 +48,8 @@ body {
 }
 
 .inventory-item {
-  @include flex-grow(0);
-  @include flex-shrink(0);
+  flex-grow: 0;
+  flex-shrink: 0;
 
   @include flex-row();
   border-bottom: 1px solid #CECECE;
@@ -69,16 +69,16 @@ body {
   }
 
   .inventory-action-favorite {
-    @include flex-grow(0);
-    @include flex-shrink(0);
+    flex-grow: 0;
+    flex-shrink: 0;
 
-    @include display(flex);
-    @include align-items(center);
-    @include justify-content(flex-end);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 
     .btn-icon {
       @include flex-row();
-      @include align-items(center);
+      align-items: center;
 
       opacity: 1;
 
@@ -102,7 +102,7 @@ body {
   }
 
   .inventory-text {
-    @include flex-grow(1);
+    flex-grow: 1;
   }
 
   &:hover {
@@ -119,11 +119,11 @@ body {
     }
 
     .inventory-actions {
-      @include display(flex);
-      @include flex-grow(0);
-      @include flex-shrink(0);
-      @include align-items(center);
-      @include justify-content(flex-end);
+      display: flex;
+      flex-grow: 0;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: flex-end;
 
       .divider {
         background: $white;
@@ -134,7 +134,7 @@ body {
 
       .btn-icon {
         @include flex-row();
-        @include align-items(center);
+        align-items: center;
 
         height: 45px;
         border-radius: 5px;
@@ -194,11 +194,11 @@ body {
   }
 
   .inventory-icon {
-    @include display(flex);
-    @include flex-grow(0);
-    @include flex-shrink(0);
-    @include flex-basis(50px);
-    @include align-items(center);
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 50px;
+    align-items: center;
 
     padding: 0 3px;
     position: relative;
@@ -227,7 +227,7 @@ body {
 
   .inventory-text {
     @include flex-column();
-    @include justify-content(center);
+    justify-content: center;
     padding-left: 10px;
 
     .inventory-title {

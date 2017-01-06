@@ -39,8 +39,8 @@
 <talend-modal fullscreen="false"
               state="exportCtrl.showModal"
               close-button="true">
-    <div class="modal-header">
-        <h3 class="modal-title">{{exportCtrl.selectedType.title}}</h3>
+    <div class="modal-title">
+        {{exportCtrl.selectedType.title}}
     </div>
     <form name="exportCtrl.exportForm"
           ng-submit="exportCtrl.exportForm.$valid && exportCtrl.saveAndExport()">

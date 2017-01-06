@@ -12,8 +12,8 @@
   ============================================================================*/
 
 .theme-filter {
-    @include flex-grow(0);
-    @include flex-shrink(0);
+    flex-grow: 0;
+    flex-shrink: 0;
     @include flex-row();
 
     height: 60px;
@@ -26,9 +26,9 @@
     }
 
     .theme-filter-icon {
-        @include display(flex);
-        @include justify-content(center);
-        @include align-items(center);
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
         width: 40px;
         color: orange;
@@ -36,7 +36,7 @@
 
     .theme-filter-text {
         @include flex-column();
-        @include justify-content(center);
+        justify-content: center;
         padding-left: 10px;
 
         .theme-filter-title {

@@ -45,7 +45,7 @@ typeahead {
 	position: relative;
 
 	.typeahead-container {
-		@include display(flex);
+		display: flex;
 		position: relative;
 		height: $typeahead-height;
 	}
@@ -112,8 +112,8 @@ typeahead {
 
 		.no-results,
 		.searching {
-			@include display(flex);
-			@include justify-content(center);
+			display: flex;
+			justify-content: center;
 			color: $black;
 			font-weight: 900;
 			padding: 10px;

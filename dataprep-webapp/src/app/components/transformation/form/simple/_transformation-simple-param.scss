@@ -12,10 +12,10 @@
   ============================================================================*/
 
 .param {
-	@include display(flex);
-	@include flex-direction(column);
-	@include justify-content(flex-start);
-	@include align-items(stretch);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: stretch;
 
 	div:hover {
 		position: relative;
@@ -26,28 +26,28 @@
 	}
 
 	.param-row {
-		@include display(flex);
-		@include flex-direction(row);
-		@include flex-wrap(wrap);
-		@include align-items(center);
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
 
 		padding: 10px;
 		font-size: .9em;
 
 		.param-name {
-			@include flex-basis(45px);
-			@include flex-grow(1);
+			flex-basis: 45px;
+			flex-grow: 1;
 
 			padding-right: 5px;
 		}
 
 		.param-input {
-			@include flex-basis(120px);
-			@include flex-grow(2);
+			flex-basis: 120px;
+			flex-grow: 2;
 		}
 
 		.param-error {
-			@include flex-basis(100%);
+			flex-basis: 100%;
 		}
 	}
 }

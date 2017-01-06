@@ -15,13 +15,13 @@
   font-size: .95em;
   height: 30px;
 
-  @include display(flex);
-  @include align-items(center);
+  display: flex;
+  align-items: center;
 
   .add-item {
-    @include flex-basis(30px);
-    @include flex-shrink(0);
-    @include flex-grow(0);
+    flex-basis: 30px;
+    flex-shrink: 0;
+    flex-grow: 0;
 
     .add-button {
       height: 29px;
@@ -35,11 +35,11 @@
   }
 
   .back-forth-btn {
-    @include display(flex);
-    @include align-items(center);
-    @include flex-basis(50px);
-    @include flex-shrink(0);
-    @include flex-grow(0);
+    display: flex;
+    align-items: center;
+    flex-basis: 50px;
+    flex-shrink: 0;
+    flex-grow: 0;
 
     text-align: center;
 
@@ -78,9 +78,9 @@
   }
 
   .items-list-wrapper{
-    @include flex-basis(200px);
-    @include flex-shrink(1);
-    @include flex-grow(1);
+    flex-basis: 200px;
+    flex-shrink: 1;
+    flex-grow: 1;
 
     overflow: hidden;
 
@@ -93,7 +93,7 @@
   .items-list {
     height: 29px;
     float: left;
-    @include display(flex);
+    display: flex;
     transition: transform 0.25s linear;
 
     .item-label {

@@ -14,9 +14,9 @@
 $folder-tree-node-btn-click-area:    10px !default;
 
 .folder-tree-node {
-  @include display(flex);
-  @include align-items(center);
-  @include flex-wrap(nowrap);
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
   cursor: pointer;
 
   &.folder-selected {
@@ -51,13 +51,13 @@ $folder-tree-node-btn-click-area:    10px !default;
   }
 
   .folder-icon {
-    @include flex-basis(30px);
-    @include flex-grow(0);
+    flex-basis: 30px;
+    flex-grow: 0;
     text-align: center;
   }
 
   .folder-name {
-    @include flex-grow(1);
+    flex-grow: 1;
     text-transform: uppercase;
     padding-left: 10px;
 

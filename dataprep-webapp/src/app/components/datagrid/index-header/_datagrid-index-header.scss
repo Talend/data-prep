@@ -15,8 +15,8 @@ $datagrid-header-bkg-active: darken($datagrid-header-bkg, 10%);
 $datagrid-headercell-font-size: .95em;
 
 .grid-index-header {
-  @include display(flex);
-  @include justify-content(space-between);
+  display: flex;
+  justify-content: space-between;
 
   height: 56px;
   background-color: $datagrid-header-bkg;

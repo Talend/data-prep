@@ -22,15 +22,15 @@
   }
 
   .param-buttons {
-    @include display(flex);
-    @include align-items(center);
-    @include flex-direction(row-reverse);
-    @include justify-content(space-between);
+    display: flex;
+    align-items: center;
+    align-direction: row-reverse;
+    justify-content: space-between;
     padding: 0 10px;
 
     a {
       color: $dark-blue;
-      font-size: .8em; 
+      font-size: .8em;
     }
 
     a:hover{

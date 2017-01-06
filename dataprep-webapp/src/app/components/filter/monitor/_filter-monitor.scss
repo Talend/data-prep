@@ -12,12 +12,12 @@
   ============================================================================*/
 
 #filter-monitor {
-	@include display(flex);
-	@include justify-content(space-between);
+	display: flex;
+	justify-content: space-between;
 
 	#filter-monitor-left {
-		@include display(flex);
-		@include align-items(center);
+		display: flex;
+		align-items: center;
 
 		.checkbox {
 			margin: 0;
@@ -30,9 +30,9 @@
 	}
 
 	.search {
-		@include flex-grow(0);
-		@include flex-shrink(0);
-		@include flex-basis(200px);
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-basis: 200px;
 	}
 
 	#filter-monitor-right {

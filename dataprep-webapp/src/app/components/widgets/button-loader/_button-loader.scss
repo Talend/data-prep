@@ -13,7 +13,7 @@
 
 button.talend-button-loader {
     > * {
-        @include display(flex);
+        display: flex;
     }
 
     .talend-button-loader-icon {

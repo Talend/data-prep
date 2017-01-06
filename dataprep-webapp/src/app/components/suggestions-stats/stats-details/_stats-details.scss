@@ -22,15 +22,15 @@
   }
 
   .two-columns-values {
-    @include display(flex);
-    @include flex-wrap(wrap);
-    @include justify-content(space-around);
-    @include flex-direction(row);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    flex-direction: row;
 
     .stat-table {
       width: auto;
-      @include flex-grow(0);
-      @include flex-shrink(0);
+      flex-grow: 0;
+      flex-shrink: 0;
 
       td {
         border: 0;

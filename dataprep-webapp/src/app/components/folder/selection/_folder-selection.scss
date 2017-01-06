@@ -1,9 +1,9 @@
 .folders-modal {
   padding: 10px 0;
 
-  @include display(flex);
-  @include flex-direction(column);
-  @include align-items(stretch);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
   .action-search {
     float: right;

@@ -14,29 +14,29 @@ $lookup-datagrid-height: 273px;
 
 .lookup {
 
-  @include display(flex);
-  @include flex-direction(column);
+  display: flex;
+  flex-direction: column;
 
   .lookup-header {
-    @include flex-basis(15px);
-    @include flex-grow(0);
-    @include flex-shrink(0);
+    flex-basis: 15px;
+    flex-grow: 0;
+    flex-shrink: 0;
     border-top: 1px solid $medium-gray;
   }
 
   .lookup-container {
-    @include flex-basis($lookup-datagrid-height);
-    @include flex-grow(0);
-    @include flex-shrink(0);
+    flex-basis: $lookup-datagrid-height;
+    flex-grow: 0;
+    flex-shrink: 0;
     border-top: 1px solid $medium-gray;
     border-bottom: 1px solid $medium-gray;
 
-    @include display(flex);
+    display: flex;
 
     #lookup-left {
-      @include flex-basis(200px);
-      @include flex-grow(1);
-      @include flex-shrink(1);
+      flex-basis: 200px;
+      flex-grow: 1;
+      flex-shrink: 1;
 
       height: $lookup-datagrid-height;
       position: relative;
@@ -50,9 +50,9 @@ $lookup-datagrid-height: 273px;
     }
 
     #lookup-right {
-      @include flex-basis(350px);
-      @include flex-grow(0);
-      @include flex-shrink(0);
+      flex-basis: 350px;
+      flex-grow: 0;
+      flex-shrink: 0;
 
       background-color: $shadow-gray;
       position: relative;
@@ -82,19 +82,19 @@ $lookup-datagrid-height: 273px;
   }
 
   .lookup-footer {
-    @include flex-basis(30px);
-    @include flex-grow(0);
-    @include flex-shrink(0);
+    flex-basis: 30px;
+    flex-grow: 0;
+    flex-shrink: 0;
   }
 }
 
 .add-dataset-lookup .inventory {
 
   .inventory-sort {
-    @include display(flex);
-    @include flex-direction(row);
-    @include align-items(center);
-    @include justify-content(flex-end);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
 
     height: 30px;
     font-weight: 300;
@@ -134,9 +134,9 @@ $lookup-datagrid-height: 273px;
     position: relative;
 
     .inventory-item-empty {
-      @include display(flex);
+      display: flex;
       @include flex-row();
-      @include justify-content(center);
+      justify-content: center;
 
       position: absolute;
       top: 50%;
@@ -145,24 +145,24 @@ $lookup-datagrid-height: 273px;
       font-weight: bold;
     }
     .inventory-item-row {
-      @include display(flex);
-      @include flex-direction(row);
-      @include align-items(center);
-      @include flex-basis(80px);
-      @include flex-grow(0);
-      @include flex-shrink(0);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-basis: 80px;
+      flex-grow: 0;
+      flex-shrink: 0;
 
       .add-dataset-input {
-        @include flex-basis(30px);
-        @include flex-grow(0);
-        @include flex-shrink(0);
+        flex-basis: 30px;
+        flex-grow: 0;
+        flex-shrink: 0;
         outline: none;
       }
 
       inventory-item {
-        @include flex-basis(200px);
-        @include flex-grow(1);
-        @include flex-shrink(1);
+        flex-basis: 200px;
+        flex-grow: 1;
+        flex-shrink: 1;
 
         .inventory-icon {
           padding: 5px 3px 0 3px;

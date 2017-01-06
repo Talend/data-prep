@@ -6,33 +6,33 @@ $important-color: $dark-blue;
 $standard-color: $black;
 
 .inventory-tile-list {
-  @include display(flex);
-  @include flex-wrap(wrap);
+  display: flex;
+  flex-wrap: wrap;
   overflow-y: auto;
   height: 60vh;
 
   > * {
-    @include flex-basis(300px);
+    flex-basis: 300px;
   }
 }
 
 .inventory-tile {
   @include flex-row();
-  @include align-items(stretch);
+  align-items: stretch;
 
   .information {
-    @include flex-shrink(1);
-    @include flex-grow(1);
+    flex-shrink: 1;
+    flex-grow: 1;
   }
 
   .actions {
-    @include flex-basis(25px);
-    @include flex-shrink(0);
-    @include flex-grow(0);
+    flex-basis: 25px;
+    flex-shrink: 0;
+    flex-grow: 0;
 
     @include flex-column();
-    @include align-items(center);
-    @include justify-content(space-between);
+    align-items: center;
+    justify-content: space-between;
   }
 }
 

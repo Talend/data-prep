@@ -26,15 +26,15 @@ $slide-action-background: $base-background-color;
 @mixin playground-center-layout {
 	.playground-center {
 		@extend .flex-center;
-		@include display(flex);
-		@include flex-direction(column);
+		display: flex;
+		flex-direction: column;
 
 		background-color: $shadow-gray;
 		position: relative;
 
 		#playground-filter-bar {
-			@include flex-grow(0);
-			@include flex-shrink(0);
+			flex-grow: 0;
+			flex-shrink: 0;
 		}
 
 		#playground-dataset-parameters {
@@ -45,10 +45,10 @@ $slide-action-background: $base-background-color;
 		}
 
 		#playground-datagrid-container {
-			@include display(flex);
-			@include flex-grow(1);
-			@include flex-shrink(1);
-			@include flex-basis(500px);
+			display: flex;
+			flex-grow: 1;
+			flex-shrink: 1;
+			flex-basis: 500px;
 
 			margin: 0 30px;
 			position: relative;
@@ -79,8 +79,8 @@ $slide-action-background: $base-background-color;
 			overflow: hidden;
 
 			> .content-container {
-				@include display(flex);
-				@include flex-grow(1);
+				display: flex;
+				flex-grow: 1;
 				height: 0;
 
 				.fixed-content {
@@ -88,12 +88,12 @@ $slide-action-background: $base-background-color;
 					min-width: 330px;
 
 					> div {
-						@include flex(0 0 auto);
+						flex: 0 0 auto;
 					}
 
 					> recipe {
-						@include display(flex);
-						@include flex-grow(1);
+						display: flex;
+						flex-grow: 1;
 						height: 0;
 
 						> .recipe {
@@ -107,7 +107,7 @@ $slide-action-background: $base-background-color;
 		}
 
 		.steps-header {
-			@include display(flex);
+			display: flex;
 			border-bottom: 1px solid $shadow-gray;
 			padding: $padding-normal $padding-smaller $padding-normal $padding-large;
 
@@ -144,19 +144,19 @@ $slide-action-background: $base-background-color;
 	@include flex-column();
 
 	#playground-header {
-		@include flex-basis($navigation-all-height);
-		@include flex-grow(0);
-		@include flex-shrink(0);
+		flex-basis: $navigation-all-height;
+		flex-grow: 0;
+		flex-shrink: 0;
 	}
 
 	.playground {
 		@include calc('height', $playground-height);
 
-		@include flex-grow(1);
-		@include flex-shrink(1);
+		flex-grow: 1;
+		flex-shrink: 1;
 
 		@include flex-row();
-		@include align-items(stretch);
+		align-items: stretch;
 
 		@include recipe-layout();
 		@include playground-center-layout();

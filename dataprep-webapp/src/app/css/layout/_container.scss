@@ -21,20 +21,20 @@ body {
 /*********************************************************************************************************************/
 @mixin flex-row-center() {
   @include flex-row();
-  @include align-items(center);
-  @include justify-content(center);
+  align-items: center;
+  justify-content: center;
 }
 
 @mixin flex-column() {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
 }
 
 @mixin flex-row() {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(row);
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
 }
 
 .flex-row {
@@ -49,14 +49,14 @@ body {
 /*********************************************************************************************************************/
 .flex-side {
   box-shadow: 0 2px 8px rgba(0,0,0,.5);
-  @include flex-grow(0);
-  @include flex-shrink(0);
-  @include flex-basis(300px);
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 300px;
 }
 
 .flex-left-panel {
   @extend .flex-side;
-  @include flex-basis(200px);
+  flex-basis: 200px;
   box-shadow: $box-shadow-to-right;
 }
 
@@ -66,9 +66,9 @@ body {
 }
 
 .flex-center {
-  @include flex-basis(500px);
-  @include flex-shrink(1);
-  @include flex-grow(1);
+  flex-basis: 500px;
+  flex-shrink: 1;
+  flex-grow: 1;
 
   overflow-x: hidden;
   overflow-y: hidden;
@@ -79,16 +79,16 @@ body {
 /*********************************************************************************************************************/
 
 @mixin flex-fixed($size: 300px) {
-  @include flex-grow(0);
-  @include flex-shrink(1);
-  @include flex-basis($size);
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: $size;
   overflow: auto;
 }
 
 @mixin flex-flexible($size: 300px) {
-  @include flex-grow(1);
-  @include flex-shrink(1);
-  @include flex-basis($size);
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: $size;
   overflow: auto;
 }
 
@@ -101,15 +101,15 @@ body {
   @include flex-column();
 
   .header {
-    @include flex-grow(0);
+    flex-grow: 0;
   }
 
   .content {
-    @include flex-grow(1);
+    flex-grow: 1;
     @include flex-column();
   }
 
   .footer {
-    @include flex-grow(0);
+    flex-grow: 0;
   }
 }

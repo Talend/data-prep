@@ -25,18 +25,18 @@
 }
 
 .inventory-feedback-datasets-list {
-    @include display(flex);
-    @include justify-content(space-between);
-    @include align-items(center);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     color: $dark-gray;
     width: 100%;
     height: 100%;
 
     .inventory-info-content {
-        @include display(flex);
+        display: flex;
         @include flex-row();
-        @include justify-content(center);
+        justify-content: center;
 
         width: 100%;
 

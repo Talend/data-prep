@@ -4,6 +4,7 @@ const SASS_DATA = require('./sass.conf');
 
 const path = require('path');
 const webpack = require('webpack');
+const autoprefixer = require('autoprefixer');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -33,8 +34,8 @@ function getDefaultConfig(options) {
 			preLoaders: [],
 			loaders: [
 				{ test: /\.js$/, loaders: ['ng-annotate', 'babel?cacheDirectory'], exclude: /node_modules/ },
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-components/,},
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-components/, }, //css moodules  local scope
+				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'postcss', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-components/,},
+				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'postcss', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-components/, }, //css moodules  local scope
 				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
 				{ test: /\.html$/, loaders: ['ngtemplate', 'html'], exclude: INDEX_TEMPLATE_PATH },
 				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,  loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff" },
@@ -53,6 +54,9 @@ function getDefaultConfig(options) {
 		],
 		sassLoader: {
 			data: SASS_DATA,
+		},
+		postcss: function () {
+			return [autoprefixer({ browsers: ['last 2 versions'] })];
 		},
 		cache: true,
 		devtool: options.devtool,

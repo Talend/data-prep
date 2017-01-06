@@ -29,8 +29,8 @@ $list-navbars-height: $navbars-height + $list-header-height;
     margin: auto;
 
     @include flex-row();
-    @include flex-grow(1);
-    @include justify-content(center);
+    flex-grow: 1;
+    justify-content: center;
 
     .side-menu {
         @extend .flex-left-panel;
@@ -49,7 +49,7 @@ $list-navbars-height: $navbars-height + $list-header-height;
     .home {
 
         &-content {
-            @include flex-grow(1);
+            flex-grow: 1;
         }
 
         &-main {
@@ -61,7 +61,7 @@ $list-navbars-height: $navbars-height + $list-header-height;
 
             .inventory-list-header,
             .upload-list-container {
-                @include flex-shrink(0);
+                flex-shrink: 0;
             }
 
             .inventory-list-container {

@@ -12,17 +12,17 @@
   ============================================================================*/
 
 breadcrumb {
-  @include display(flex);
-  @include align-items(center);
-  @include flex-wrap(nowrap);
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .breadcrumb-item {
-  @include flex-grow(0);
-  @include flex-shrink(0);
+  flex-grow: 0;
+  flex-shrink: 0;
 
-  @include display(flex);
-  @include align-items(center);
+  display: flex;
+  align-items: center;
 
   .name {
     @include ellipsis(300px);

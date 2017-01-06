@@ -17,13 +17,17 @@
 
   .chart-control {
     @include flex-row();
-    @include align-items(center);
+    align-items: center;
 
     .chart-control-options {
       border: 1px solid;
       border-radius: 3px;
       padding: 5px;
       text-transform: uppercase;
+
+      label {
+        font-family: $sourcesanspro;
+      }
 
       .chart-control-trigger {
         @include ellipsis(140px);
@@ -38,7 +42,7 @@
 
       .chart-control-buttons {
         @include flex-row();
-        @include justify-content(flex-end);
+        justify-content: flex-end;
         margin-top: 10px;
       }
     }

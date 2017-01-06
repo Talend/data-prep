@@ -19,11 +19,11 @@ $recipe-knot-top-line-width: 1px;
 $recipe-knot-line-spacing: 2px;
 
 .knot {
-	@include display(flex);
-	@include flex-direction(column);
-	@include flex-basis(20px);
-	@include flex-grow(0);
-	@include flex-shrink(0);
+	display: flex;
+	flex-direction: column;
+	flex-basis: 20px;
+	flex-grow: 0;
+	flex-shrink: 0;
 	height: 100%;
 	cursor: pointer;
 	align-items: center;
@@ -36,7 +36,7 @@ $recipe-knot-line-spacing: 2px;
 		margin-bottom: $recipe-knot-line-spacing;
 
 		&.bottom-line {
-			@include flex-grow(1);
+			flex-grow: 1;
 			margin-top: $recipe-knot-line-spacing;
 			margin-bottom: 0;
 		}

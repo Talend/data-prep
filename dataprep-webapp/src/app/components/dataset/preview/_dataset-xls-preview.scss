@@ -17,21 +17,21 @@
 
   padding: 10px 20px;
 
-  @include display(flex);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
-  @include flex-wrap(wrap);
-  @include align-items(stretch);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: stretch;
 
   .form-row {
-    @include display(flex);
-    @include flex-direction(row);
-    @include flex-wrap(wrap);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   .form-title {
-    @include flex-grow(1);
-    @include flex-basis(150px);
+    flex-grow: 1;
+    flex-basis: 150px;
     padding: 5px 5px 0 0;
 
     @include media($medium-screen) {
@@ -40,8 +40,8 @@
   }
 
   .form-value {
-    @include flex-grow(2);
-    @include flex-basis(300px);
+    flex-grow: 2;
+    flex-basis: 300px;
 
     input, select {
       margin: 0;

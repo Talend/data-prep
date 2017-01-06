@@ -1,19 +1,19 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.folder.store;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,8 @@ import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.FolderErrorCodes;
 import org.talend.dataprep.security.Security;
 
 import com.google.common.collect.Lists;
@@ -104,13 +106,13 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
 
         final Iterable<Folder> homeChildren = getFolderRepository().children(homeFolderId);
 
-        Assertions.assertThat(homeChildren).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(homeChildren).isNotNull().isNotEmpty().hasSize(1);
         Folder firstChild = homeChildren.iterator().next();
         // When moving a folder, it is its parent that is modified in the UNIX filesystem, not itself.
-        Assertions.assertThat(firstChild).isEqualToIgnoringGivenFields(foo, "creationDate", "lastModificationDate");
+        assertThat(firstChild).isEqualToIgnoringGivenFields(foo, "creationDate", "lastModificationDate");
 
         Iterable<Folder> barChildren = getFolderRepository().children(bar.getId());
-        Assertions.assertThat(barChildren).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(barChildren).isNotNull().isNotEmpty().hasSize(1);
     }
 
     /**
@@ -124,22 +126,22 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         long sizeBefore = getFolderRepository().size();
         final Folder foo = getFolderRepository().addFolder(homeFolderId, "/foo");
         long sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 1);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 1);
 
         // make sure /foo is listed as children
         Iterable<Folder> iterable = getFolderRepository().children(homeFolderId);
         List<Folder> folders = Lists.newArrayList(iterable);
-        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
 
         // remove /foo
         getFolderRepository().removeFolder(foo.getId());
         sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore);
+        assertThat(sizeAfter).isEqualTo(sizeBefore);
 
         // make sure it's removed
         iterable = getFolderRepository().children(homeFolderId);
         folders = Lists.newArrayList(iterable);
-        Assertions.assertThat(folders).isNotNull().isEmpty();
+        assertThat(folders).isNotNull().isEmpty();
     }
 
     /**
@@ -162,16 +164,16 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         List<Folder> folders = new ArrayList<>();
         iterable.forEach(folders::add);
 
-        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(folders).isNotNull().isNotEmpty().hasSize(2);
 
         // testing child of /bar
 
         iterable = getFolderRepository().children(beer.getId());
         folders = Lists.newArrayList(iterable);
 
-        Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
-        Assertions.assertThat(StringUtils.strip(folders.get(0).getPath(), "/")).isEqualToIgnoringCase("beer/bar");
-        Assertions.assertThat(folders.get(0).getName()).isEqualToIgnoringCase("bar");
+        assertThat(folders).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(StringUtils.strip(folders.get(0).getPath(), "/")).isEqualToIgnoringCase("beer/bar");
+        assertThat(folders.get(0).getName()).isEqualToIgnoringCase("bar");
 
         getFolderRepository().removeFolder(bar.getId());
 
@@ -179,23 +181,23 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         iterable = getFolderRepository().children(beer.getId());
         folders = Lists.newArrayList(iterable);
 
-        Assertions.assertThat(folders).isNotNull().isEmpty();
+        assertThat(folders).isNotNull().isEmpty();
 
         // testing the whole size
 
         long sizeAfter = getFolderRepository().size();
 
-        Assertions.assertThat(sizeAfter).isEqualTo(2);
+        assertThat(sizeAfter).isEqualTo(2);
         getFolderRepository().removeFolder(foo.getId());
         getFolderRepository().removeFolder(beer.getId());
 
         sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore);
+        assertThat(sizeAfter).isEqualTo(sizeBefore);
 
         iterable = getFolderRepository().children(homeFolderId);
         folders = Lists.newArrayList(iterable);
 
-        Assertions.assertThat(folders).isNotNull().isEmpty();
+        assertThat(folders).isNotNull().isEmpty();
 
     }
 
@@ -210,7 +212,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Folder foo = getFolderRepository().addFolder(homeFolderId, "foo");
         Folder foobeer = getFolderRepository().addFolder(foo.getId(), "beer");
         long sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
 
         assertChildrenSize(homeFolderId, 1);
 
@@ -226,17 +228,17 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Iterable<FolderEntry> folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
 
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
         folderEntries = getFolderRepository().findFolderEntries("bordeaux", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
         folderEntries = getFolderRepository().findFolderEntries("littlecreatures", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
         getFolderRepository().removeFolderEntry(foo.getId(), "littlecreatures", DATASET);
 
@@ -247,13 +249,13 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
 
-        Assertions.assertThat(entries).isNotNull().isEmpty();
+        assertThat(entries).isNotNull().isEmpty();
 
         getFolderRepository().removeFolder(foo.getId());
 
         sizeAfter = getFolderRepository().size();
 
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore);
+        assertThat(sizeAfter).isEqualTo(sizeBefore);
 
         assertChildrenSize(homeFolderId, 0);
 
@@ -264,7 +266,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
      * This test create one child under root assert size, child list then create three folder entries then delete
      * expect exception
      */
-    @Test(expected = NotEmptyFolderException.class)
+    @Test
     public void create_child_with_two_entries_then_remove_expect_exception() throws Exception {
 
         long sizeBefore = getFolderRepository().size();
@@ -272,7 +274,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Folder foobeer = getFolderRepository().addFolder(foo.getId(), "/beer");
         long sizeAfter = getFolderRepository().size();
 
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
 
         assertChildrenSize(homeFolderId, 1);
 
@@ -289,24 +291,29 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Iterable<FolderEntry> folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
 
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
         folderEntries = getFolderRepository().findFolderEntries("bordeaux", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
         folderEntries = getFolderRepository().findFolderEntries("littlecreatures", DATASET);
         entries.clear();
         folderEntries.forEach(entries::add);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
         folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
 
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize( 2 );
+        assertThat(entries).isNotNull().isNotEmpty().hasSize( 2 );
 
-        getFolderRepository().removeFolder(foo.getId());
+        try {
+            getFolderRepository().removeFolder(foo.getId());
+            fail("Should throw exception because folder is not empty.");
+        } catch (TDPException e) {
+            assertEquals(e.getCode(), FolderErrorCodes.FOLDER_NOT_EMPTY);
+        }
 
     }
 
@@ -323,7 +330,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Folder foo = getFolderRepository().addFolder(homeFolderId, "foo");
         Folder bar = getFolderRepository().addFolder(homeFolderId, "bar");
         long sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
         assertChildrenSize(homeFolderId, 2);
 
         //  bordeaux in /foo
@@ -331,19 +338,19 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         getFolderRepository().addFolderEntry(wineEntry, foo.getId());
         Iterable<FolderEntry> folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
 
         // copy bordeaux in /bar
         getFolderRepository().copyFolderEntry(wineEntry, bar.getId());
         folderEntries = getFolderRepository().entries(bar.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
         assertFolderEntry(entries.get(0), "bordeaux", DATASET);
 
         // still in foo as it's a copy
         folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
 
     }
 
@@ -365,7 +372,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Folder foo = getFolderRepository().addFolder(homeFolderId, "foo");
         Folder bar = getFolderRepository().addFolder(homeFolderId, "bar");
         long sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
         assertChildrenSize(homeFolderId, 2);
 
         // bordeaux in /foo
@@ -373,19 +380,19 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         getFolderRepository().addFolderEntry(wineEntry, foo.getId());
         Iterable<FolderEntry> folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1).contains(wineEntry);
 
         // move bordeaux to /bar
         getFolderRepository().moveFolderEntry(wineEntry, foo.getId(), bar.getId());
         folderEntries = getFolderRepository().entries(bar.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
         assertFolderEntry(entries.get(0), "bordeaux", DATASET);
 
         // not in foo as it's a move
         folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isEmpty();
+        assertThat(entries).isNotNull().isEmpty();
 
     }
 
@@ -398,7 +405,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         getFolderRepository().addFolder(foo.getId(), "bar");
         long sizeAfter = getFolderRepository().size();
 
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 3);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 3);
 
         assertChildrenSize(homeFolderId, 1);
 
@@ -414,22 +421,22 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         Iterable<FolderEntry> folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         List<FolderEntry> entries = Lists.newArrayList(folderEntries);
 
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
         folderEntries = getFolderRepository().findFolderEntries("bordeaux", DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(2);
 
         folderEntries = getFolderRepository().findFolderEntries("littlecreatures", DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
         getFolderRepository().removeFolderEntry(foo.getId(), "littlecreatures", DATASET);
 
         folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
 
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
         assertChildrenSize(foo.getId(), 2);
 
@@ -440,7 +447,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         // test FolderEntry moved as well
         folderEntries = getFolderRepository().entries(foo.getId(), DATASET);
         entries = Lists.newArrayList(folderEntries);
-        Assertions.assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(entries).isNotNull().isNotEmpty().hasSize(1);
 
         getFolderRepository().removeFolderEntry(foo.getId(), "bordeaux", DATASET);
     }
@@ -456,7 +463,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         final Folder foo = getFolderRepository().addFolder(homeFolderId, "foo");
         getFolderRepository().addFolder(homeFolderId, "bar");
         long sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 2);
 
         assertChildrenSize(homeFolderId, 2);
 
@@ -471,7 +478,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         getFolderRepository().addFolder(wine.getId(), "verygoodWInE");
 
         sizeAfter = getFolderRepository().size();
-        Assertions.assertThat(sizeAfter).isEqualTo(sizeBefore + 2 + 9);
+        assertThat(sizeAfter).isEqualTo(sizeBefore + 2 + 9);
 
         // when / then
         assertOnSearch("foo", false, 1);
@@ -573,8 +580,8 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         final Folder home = getFolderRepository().getHome();
 
         // then
-        assertThat(home.getPath(), is("/"));
-        assertThat(home.getOwnerId(), is(security.getUserId()));
+        Assert.assertThat(home.getPath(), is("/"));
+        Assert.assertThat(home.getOwnerId(), is(security.getUserId()));
         assertNull(home.getParentId());
     }
 
@@ -587,22 +594,22 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         final Folder fetchedFolder = getFolderRepository().getFolderById(jsoFolder.getId());
 
         // then
-        assertThat(fetchedFolder, equalTo(jsoFolder));
+        Assert.assertThat(fetchedFolder, equalTo(jsoFolder));
     }
 
     private void assertChildrenSize(String folder, int childrenNumber) {
         Iterable<Folder> iterable = getFolderRepository().children(folder);
         List<Folder> folders = Lists.newArrayList(iterable);
         if (childrenNumber > 0) {
-            Assertions.assertThat(folders).isNotNull().isNotEmpty().hasSize(childrenNumber);
+            assertThat(folders).isNotNull().isNotEmpty().hasSize(childrenNumber);
         } else {
-            Assertions.assertThat(folders).isNotNull().isEmpty();
+            assertThat(folders).isNotNull().isEmpty();
         }
     }
 
     private void assertOnSearch(final String query, final boolean strict, final int foundNumber) {
         Iterable<Folder> folders = getFolderRepository().searchFolders(query, strict);
-        Assertions.assertThat(Lists.newArrayList(folders)).isNotNull().isNotEmpty().hasSize(foundNumber);
+        assertThat(Lists.newArrayList(folders)).isNotNull().isNotEmpty().hasSize(foundNumber);
     }
 
 }

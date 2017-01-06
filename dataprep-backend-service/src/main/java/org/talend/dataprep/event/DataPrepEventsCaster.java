@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -24,9 +23,13 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.task.TaskExecutor;
 
 /**
- * ApplicationEventMulticaster for the DataSet component.
- *
- * It wraps both a synchronous and an asynchronous ApplicationEventMulticasters.
+ * <p>
+ * An {@link org.springframework.context.event.ApplicationEventMulticaster ApplicationEventMulticaster} for the DataSet
+ * component.
+ * </p>
+ * <p>
+ * It wraps both a synchronous and an asynchronous ApplicationEventMulticaster.
+ * </p>
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 public class DataPrepEventsCaster extends SimpleApplicationEventMulticaster {

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -17,7 +16,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Model a folder infos.
+ * Model a folder info.
  */
 public class FolderInfo implements Serializable {
 

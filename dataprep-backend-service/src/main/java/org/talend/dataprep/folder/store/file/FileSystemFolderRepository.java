@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -12,6 +11,16 @@
 // ============================================================================
 
 package org.talend.dataprep.folder.store.file;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderBuilder.folder;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.*;
+import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_EMPTY;
+import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
+import static org.talend.dataprep.folder.store.file.FileSystemUtils.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -47,7 +56,6 @@ import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.folder.store.NotEmptyFolderException;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.StringsHelper;
 
@@ -239,11 +247,11 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public void removeFolder(String folderId) throws NotEmptyFolderException {
+    public void removeFolder(String folderId) {
         final Path path = pathsConverter.toPath(fromId(folderId));
 
         if (hasEntry(path)) {
-            throw new NotEmptyFolderException("The folder or a child contains data");
+            throw new TDPException(FOLDER_NOT_EMPTY);
         } else {
             try {
                 FileUtils.deleteDirectory(path.toFile());

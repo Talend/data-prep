@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -27,11 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @see <a href="https://docs.oracle.com/cd/E23095_01/Platform.93/ATGProgGuide/html/s0204propertiesfileformat01.html">
- * The properties file specification</a>.
+ * <p>
+ * See also the properties file <a href="https://docs.oracle.com/cd/E23095_01/Platform.93/ATGProgGuide/html/s0204propertiesfileformat01.html">
+ * specification</a>.
+ * </p>
  * <p>
  * Based on the apache {@link PropertiesConfiguration} for properties parsing and saving. This method tends to modify
  * the properties file layout.
+ * </p>
  */
 public class PropertiesEncryption {
 
@@ -61,7 +63,7 @@ public class PropertiesEncryption {
 
     /**
      * Applies the specified function to the specified set of parameters contained in the input file.
-     * 
+     *
      * @param input The specified name of file to encrypt
      * @param mustBeModified the specified set of parameters
      * @param function the specified function to apply to the set of specified parameters
@@ -90,7 +92,7 @@ public class PropertiesEncryption {
 
     /**
      * Encrypts the specified string if it is not already encrypted and returns the encrypted string.
-     * 
+     *
      * @param input the specified input to be encrypted
      * @return the encrypted string
      */
@@ -111,7 +113,7 @@ public class PropertiesEncryption {
 
     /**
      * Decrypts the specified string if it is not already decrypted and returns the decrypted string.
-     * 
+     *
      * @param input the specified input to be decrypted
      * @return the decrypted string
      */

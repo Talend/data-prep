@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.folder.store;
 
@@ -62,12 +61,12 @@ public interface FolderRepository {
 
 
     /**
-     * Remove folder and content recursively only if no entry is found.
-     * 
+     * Remove folder and content recursively only if no entry is found. Throws a {@link TDPException} with
+     * {@link org.talend.dataprep.exception.error.FolderErrorCodes#FOLDER_NOT_EMPTY} error.
+     *
      * @param folderId the folderId to remove only the last part is removed.
-     * @throws NotEmptyFolderException if folder recursively contains any entries (dataset etc...)
      */
-    void removeFolder(String folderId) throws NotEmptyFolderException;
+    void removeFolder(String folderId);
 
     /**
      * Rename a folder and its content recursively.
@@ -136,7 +135,7 @@ public interface FolderRepository {
 
     /**
      * used mainly for testing purpose
-     * 
+     *
      * @return the number of created {@link Folder}
      */
     long size();

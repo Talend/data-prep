@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -34,8 +33,8 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderInfo;
 import org.talend.dataprep.api.folder.FolderTreeNode;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.folder.store.NotEmptyFolderException;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.Security;
 
@@ -158,11 +157,7 @@ public class FolderService {
     @ApiOperation(value = "Remove a Folder", produces = APPLICATION_JSON_VALUE, notes = "Remove the folder")
     @Timed
     public void removeFolder(@PathVariable String id) {
-        try {
-            folderRepository.removeFolder(id);
-        } catch (NotEmptyFolderException e) {
-            throw new TDPException(FOLDER_NOT_EMPTY, e);
-        }
+        folderRepository.removeFolder(id);
     }
 
     /**

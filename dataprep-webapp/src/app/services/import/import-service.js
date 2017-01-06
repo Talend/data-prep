@@ -112,19 +112,19 @@ export default class ImportService {
 		);
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name editDataset
-	 * @methodOf data-prep.services.import.service:ImportService
-	 * @description Edit dataset for a datastore
-	 * @returns {Promise} The POST call promise
-	 */
-	editDataset(datasetId, formsData) {
-		return this.manageLoader(
-			this.ImportRestService.editDataset,
-			[datasetId, formsData]
-		);
-	}
+	// /**
+	//  * @ngdoc method
+	//  * @name editDataset
+	//  * @methodOf data-prep.services.import.service:ImportService
+	//  * @description Edit dataset for a datastore
+	//  * @returns {Promise} The POST call promise
+	//  */
+	// editDataset(datasetId, formsData) {
+	// 	return this.manageLoader(
+	// 		this.ImportRestService.editDataset,
+	// 		[datasetId, formsData]
+	// 	);
+	// }
 
 	/**
 	 * @ngdoc method

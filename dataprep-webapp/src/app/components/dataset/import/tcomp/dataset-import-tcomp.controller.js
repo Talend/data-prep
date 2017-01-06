@@ -194,7 +194,7 @@ export default class DatasetImportTcompCtrl {
 	onDatasetFormSubmit(uiSpecs) {
 		this.submitLock = true;
 		const $datastoreFormSubmit = this.$document.find('#datastore-form [type="submit"]').eq(0);
-		if ($datastoreFormSubmit) {
+		if ($datastoreFormSubmit.length) {
 			const { formData } = uiSpecs;
 			this.datasetFormData = formData;
 			const datastoreFormSubmitElm = $datastoreFormSubmit[0];

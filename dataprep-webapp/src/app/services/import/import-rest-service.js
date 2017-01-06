@@ -24,9 +24,10 @@ export default function ImportRestService($http, RestURLs) {
 		testConnection,
 		getDatasetForm,
 		createDataset,
-		getDatastoreFormByDatasetId,
-		getDatasetFormByDatasetId,
-		editDataset,
+		// TODO
+		// getDatastoreFormByDatasetId,
+		// getDatasetFormByDatasetId,
+		// editDataset,
 	};
 
 	/**
@@ -84,36 +85,39 @@ export default function ImportRestService($http, RestURLs) {
 		return $http.post(`${RestURLs.tcompUrl}/datastores/${definitionName}/dataset`, formsData);
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name getDatastoreFormByDatasetId
-	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Get filled datastore form by dataset id
-	 * @returns {Promise} The GET call promise
-	 */
-	function getDatastoreFormByDatasetId(datasetId) {
-		return $http.get(`${RestURLs.tcompUrl}/datasets/${datasetId}/datastore/properties`);
-	}
+	// TODO
+	// /**
+	//  * @ngdoc method
+	//  * @name getDatastoreFormByDatasetId
+	//  * @methodOf data-prep.services.import.service:ImportRestService
+	//  * @description Get filled datastore form by dataset id
+	//  * @returns {Promise} The GET call promise
+	//  */
+	// function getDatastoreFormByDatasetId(datasetId) {
+	// 	return $http.get(`${RestURLs.tcompUrl}/datasets/${datasetId}/datastore/properties`);
+	// }
 
-	/**
-	 * @ngdoc method
-	 * @name getDatasetFormByDatasetId
-	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Get filled dataset form by dataset id
-	 * @returns {Promise} The GET call promise
-	 */
-	function getDatasetFormByDatasetId(datasetId) {
-		return $http.get(`${RestURLs.tcompUrl}/datasets/${datasetId}/properties`);
-	}
+	// TODO
+	// /**
+	//  * @ngdoc method
+	//  * @name getDatasetFormByDatasetId
+	//  * @methodOf data-prep.services.import.service:ImportRestService
+	//  * @description Get filled dataset form by dataset id
+	//  * @returns {Promise} The GET call promise
+	//  */
+	// function getDatasetFormByDatasetId(datasetId) {
+	// 	return $http.get(`${RestURLs.tcompUrl}/datasets/${datasetId}/properties`);
+	// }
 
-	/**
-	 * @ngdoc method
-	 * @name editDataset
-	 * @methodOf data-prep.services.import.service:ImportRestService
-	 * @description Create dataset for a datastore
-	 * @returns {Promise} The POST call promise
-	 */
-	function editDataset(datasetId, formsData) {
-		return $http.post(`${RestURLs.tcompUrl}/datasets/${datasetId}`, formsData);
-	}
+	// TODO
+	// /**
+	//  * @ngdoc method
+	//  * @name editDataset
+	//  * @methodOf data-prep.services.import.service:ImportRestService
+	//  * @description Create dataset for a datastore
+	//  * @returns {Promise} The POST call promise
+	//  */
+	// function editDataset(datasetId, formsData) {
+	// 	return $http.post(`${RestURLs.tcompUrl}/datasets/${datasetId}`, formsData);
+	// }
 }

@@ -191,9 +191,9 @@ describe('Import service', () => {
 		}));
 	});
 
-	describe('refreshDatastoreForm', () => {
+	describe('refreshForm', () => {
 		beforeEach(inject(($q, ImportRestService) => {
-			spyOn(ImportRestService, 'refreshDatastoreForm').and.returnValue($q.when());
+			spyOn(ImportRestService, 'refreshForm').and.returnValue($q.when());
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
@@ -203,27 +203,26 @@ describe('Import service', () => {
 			const formData = {};
 
 			// when
-			ImportService.refreshDatastoreForm(formId, propertyName, formData);
+			ImportService.refreshForm(formId, propertyName, formData);
 
 			// then
-			expect(ImportRestService.refreshDatastoreForm).toHaveBeenCalledWith(formId, propertyName, formData);
+			expect(ImportRestService.refreshForm).toHaveBeenCalledWith(formId, propertyName, formData);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
-			//given
+			// given
 			const formId = 'toto';
 			const propertyName = 'tata';
 			const formData = {};
 			spyOn($rootScope, '$emit').and.returnValue();
 
-			//when
-			ImportService.refreshDatastoreForm(formId, propertyName, formData);
+			// when
+			ImportService.refreshForm(formId, propertyName, formData);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 
-			//then
+			// then
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-
 		}));
 	});
 
@@ -261,43 +260,6 @@ describe('Import service', () => {
 		}));
 	});
 
-	describe('refreshDatasetForm', () => {
-		beforeEach(inject(($q, ImportRestService) => {
-			spyOn(ImportRestService, 'refreshDatasetForm').and.returnValue($q.when());
-
-		}));
-
-		it('should call REST service', inject((ImportService, ImportRestService) => {
-			//given
-			const datastoreId = 'toto';
-			const propertyName = 'tata';
-			const formData = {};
-
-			//when
-			ImportService.refreshDatasetForm(datastoreId, propertyName, formData);
-
-			//then
-			expect(ImportRestService.refreshDatasetForm).toHaveBeenCalledWith(datastoreId, propertyName, formData);
-		}));
-
-		it('should manage loader', inject(($rootScope, ImportService) => {
-			//given
-			const datastoreId = 'toto';
-			const propertyName = 'tata';
-			const formData = {};
-			spyOn($rootScope, '$emit').and.returnValue();
-
-			//when
-			ImportService.refreshDatasetForm(datastoreId, propertyName, formData);
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
-			$rootScope.$digest();
-
-			//then
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-
-		}));
-	});
-
 	describe('createDataset', () => {
 		beforeEach(inject(($q, ImportRestService) => {
 			spyOn(ImportRestService, 'createDataset').and.returnValue($q.when());
@@ -305,57 +267,25 @@ describe('Import service', () => {
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
-			//given
-			const datastoreId = 'toto';
-			const formData = {};
-
-			//when
-			ImportService.createDataset(datastoreId, formData);
-
-			//then
-			expect(ImportRestService.createDataset).toHaveBeenCalledWith(datastoreId, formData);
-		}));
-
-		it('should manage loader', inject(($rootScope, ImportService) => {
-			//given
-			const datastoreId = 'toto';
-			const formData = {};
-			spyOn($rootScope, '$emit').and.returnValue();
-
-			//when
-			ImportService.createDataset(datastoreId, formData);
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
-			$rootScope.$digest();
-
-			//then
-			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-
-		}));
-	});
-
-	describe('getFormsByDatasetId', () => {
-		beforeEach(inject(($q, ImportRestService) => {
-			spyOn(ImportRestService, 'getFormsByDatasetId').and.returnValue($q.when());
-		}));
-
-		it('should call REST service', inject((ImportService, ImportRestService) => {
 			// given
-			const datasetId = '123-abc-456';
+			const definitionName = 'toto';
+			const formsData = {};
 
 			// when
-			ImportService.getFormsByDatasetId(datasetId);
+			ImportService.createDataset(definitionName, formsData);
 
 			// then
-			expect(ImportRestService.getFormsByDatasetId).toHaveBeenCalledWith(datasetId);
+			expect(ImportRestService.createDataset).toHaveBeenCalledWith(definitionName, formsData);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
 			// given
-			const datasetId = '123-abc-456';
+			const definitionName = 'toto';
+			const formsData = {};
 			spyOn($rootScope, '$emit').and.returnValue();
 
 			// when
-			ImportService.getFormsByDatasetId(datasetId);
+			ImportService.createDataset(definitionName, formsData);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 
@@ -626,6 +556,38 @@ describe('Import service', () => {
 			expect(DatasetService.getDatasetById).not.toHaveBeenCalled();
 		}));
 	});
+
+	// TODO
+	// describe('getFormsByDatasetId', () => {
+	// 	beforeEach(inject(($q, ImportRestService) => {
+	// 		spyOn(ImportRestService, 'getFormsByDatasetId').and.returnValue($q.when());
+	// 	}));
+	//
+	// 	it('should call REST service', inject((ImportService, ImportRestService) => {
+	// 		// given
+	// 		const datasetId = '123-abc-456';
+	//
+	// 		// when
+	// 		ImportService.getFormsByDatasetId(datasetId);
+	//
+	// 		// then
+	// 		expect(ImportRestService.getFormsByDatasetId).toHaveBeenCalledWith(datasetId);
+	// 	}));
+	//
+	// 	it('should manage loader', inject(($rootScope, ImportService) => {
+	// 		// given
+	// 		const datasetId = '123-abc-456';
+	// 		spyOn($rootScope, '$emit').and.returnValue();
+	//
+	// 		// when
+	// 		ImportService.getFormsByDatasetId(datasetId);
+	// 		expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+	// 		$rootScope.$digest();
+	//
+	// 		// then
+	// 		expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+	// 	}));
+	// });
 
 	describe('import', () => {
 		let uploadDefer;

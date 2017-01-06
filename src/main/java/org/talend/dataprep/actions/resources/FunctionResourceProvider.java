@@ -15,6 +15,7 @@ package org.talend.dataprep.actions.resources;
 import java.util.List;
 
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 
 /**
  * A factory interface for creating {@link FunctionResource resources}.
@@ -27,6 +28,6 @@ public interface FunctionResourceProvider {
      * @param actions The list of {@link Action actions} to generate {@link FunctionResource resources} from.
      * @return A {@link FunctionResource} ready to be included in a {@link org.talend.dataprep.actions.SerializableFunction}.
      */
-    FunctionResource get(List<Action> actions);
+    FunctionResource get(List<RunnableAction> actions);
 
 }

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.actions.RemoteResourceGetter;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.service.Dictionaries;
 
@@ -43,7 +44,7 @@ public class DictionaryFunctionResourceProvider implements FunctionResourceProvi
         this.password = password;
     }
 
-    private Dictionaries retrieveDictionaries(List<Action> actions) {
+    private Dictionaries retrieveDictionaries(List<RunnableAction> actions) {
         boolean requireDictionary = false;
         for (Action action : actions) {
             final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
@@ -66,7 +67,7 @@ public class DictionaryFunctionResourceProvider implements FunctionResourceProvi
     }
 
     @Override
-    public FunctionResource get(List<Action> actions) {
+    public FunctionResource get(List<RunnableAction> actions) {
         return new DictionaryResource(retrieveDictionaries(actions));
     }
 }

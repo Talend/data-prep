@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.actions.RemoteResourceGetter;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 
 public class LookupFunctionResourceProvider implements FunctionResourceProvider {
@@ -64,7 +65,7 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
         return result;
     }
 
-    private Map<String, Map<String, DataSetRow>> retrieveLookupDataSets(List<Action> actions) {
+    private Map<String, Map<String, DataSetRow>> retrieveLookupDataSets(List<RunnableAction> actions) {
         final Map<String, Map<String, DataSetRow>> result = new HashMap<>();
         final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
         actions.stream() //
@@ -78,7 +79,7 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
 
 
     @Override
-    public FunctionResource get(List<Action> actions) {
+    public FunctionResource get(List<RunnableAction> actions) {
         return new LookupResource(retrieveLookupDataSets(actions));
     }
 }

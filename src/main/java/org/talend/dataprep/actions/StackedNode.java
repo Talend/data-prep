@@ -17,6 +17,7 @@ import java.util.Deque;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 class StackedNode extends BasicNode {
@@ -44,5 +45,10 @@ class StackedNode extends BasicNode {
     DataSetRow pop() {
         final Deque<DataSetRow> dataSetRows = getStack();
         return dataSetRows.isEmpty() ? null : dataSetRows.pop();
+    }
+
+    @Override
+    public Node copyShallow() {
+        return new StackedNode();
     }
 }

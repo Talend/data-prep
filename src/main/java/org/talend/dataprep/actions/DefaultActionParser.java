@@ -34,11 +34,11 @@ import org.talend.dataprep.actions.resources.FunctionResourceProvider;
 import org.talend.dataprep.actions.resources.LookupFunctionResourceProvider;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
+import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -100,16 +100,16 @@ public class DefaultActionParser implements ActionParser {
      * @param actionsAsString the json representation of the list of action
      * @return a list of actions from its json representation
      */
-    private List<Action> getActions(String actionsAsString) {
+    private List<RunnableAction> getActions(String actionsAsString) {
         try {
             final JsonNode jsonNode = mapper.readTree(actionsAsString);
             if (!jsonNode.isArray()) {
                 throw new IllegalArgumentException("Expected array at stream start");
             }
 
-            List<Action> parsedActions = new ArrayList<>();
+            List<RunnableAction> parsedActions = new ArrayList<>();
             jsonNode.elements().forEachRemaining(n -> {
-                final Action parsedAction = parseAction(n);
+                final RunnableAction parsedAction = parseAction(n);
                 if (parsedAction != null) {
                     parsedActions.add(parsedAction);
                 }
@@ -126,7 +126,7 @@ public class DefaultActionParser implements ActionParser {
      * @param n a json node corresponding to an action
      * @return returns the Action instance corresponding to the specified json node
      */
-    private Action parseAction(JsonNode n) {
+    private RunnableAction parseAction(JsonNode n) {
         String actionName = n.get("action").asText();
         LOGGER.info("New action: {}", actionName);
         final ActionDefinition actionDefinition = actionRegistry.get(actionName);
@@ -162,7 +162,7 @@ public class DefaultActionParser implements ActionParser {
                 parametersAsMap.put(next.getKey(), parseParameter(value));
             }
             // Create action
-            final Action action = actionFactory.create(actionDefinition, parametersAsMap);
+            final RunnableAction action = actionFactory.create(actionDefinition, parametersAsMap);
             LOGGER.info("Wrap action execution for '{}' with parameters '{}'.", actionDefinition.getClass().getName(),
                     parametersAsMap);
             ActionContext context = new ActionContext(new TransformationContext());
@@ -241,7 +241,7 @@ public class DefaultActionParser implements ActionParser {
         }
 
         // Get the list of actions
-        List<Action> actions = getActions(actionNode.toString());
+        List<RunnableAction> actions = getActions(actionNode.toString());
 
         // get the list of resources for function
         FunctionResource[] resources = providers.stream() //

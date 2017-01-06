@@ -8,7 +8,6 @@
  ============================================================================*/
 
 export const importState = {
-	importTypes: [],
 	visible: false,
 };
 

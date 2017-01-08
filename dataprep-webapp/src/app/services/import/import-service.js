@@ -112,19 +112,33 @@ export default class ImportService {
 		);
 	}
 
-	// /**
-	//  * @ngdoc method
-	//  * @name editDataset
-	//  * @methodOf data-prep.services.import.service:ImportService
-	//  * @description Edit dataset for a datastore
-	//  * @returns {Promise} The POST call promise
-	//  */
-	// editDataset(datasetId, formsData) {
-	// 	return this.manageLoader(
-	// 		this.ImportRestService.editDataset,
-	// 		[datasetId, formsData]
-	// 	);
-	// }
+	/**
+	 * @ngdoc method
+	 * @name getFormsByDatasetId
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Get filled datastore and dataset forms
+	 * @returns {Promise} The POST call promise
+	 */
+	getFormsByDatasetId(datasetId) {
+		return this.manageLoader(
+			this.ImportRestService.getFormsByDatasetId,
+			[datasetId]
+		);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name editDataset
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Edit dataset for a datastore
+	 * @returns {Promise} The POST call promise
+	 */
+	editDataset(datasetId, formsData) {
+		return this.manageLoader(
+			this.ImportRestService.editDataset,
+			[datasetId, formsData]
+		);
+	}
 
 	/**
 	 * @ngdoc method
@@ -190,6 +204,12 @@ export default class ImportService {
 			});
 	}
 
+	create() {
+		return this.DatasetService
+			.getDatasetById(event.data)
+			.then(this.UploadWorkflowService.openDataset);
+	}
+
 	/**
 	 * @ngdoc method
 	 * @name import
@@ -207,7 +227,8 @@ export default class ImportService {
 		// remove file extension and ask final name
 		const name = datasetName.replace(/\.[^/.]+$/, '');
 
-		return this.DatasetService.checkNameAvailability(name)
+		return this.DatasetService
+			.checkNameAvailability(name)
 			// name available: we create the dataset
 			.then(() => {
 				this.importDataset(file, name, importType);

@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
+
 /**
  * @ngdoc controller
  * @name data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
@@ -43,14 +45,24 @@ export default class DatasetImportTcompCtrl {
 		const item = changes.item && changes.item.currentValue;
 		const locationType = changes.locationType && changes.locationType.currentValue;
 		if (item) {
-			// TODO
+			this.importService
+				.getFormsByDatasetId(this.item.id)
+				.then((response) => {
+					const { data } = response;
+					const { dataStoreFormData, dataSetFormData } = data;
+					this._getDatastoreFormActions();
+					this.datastoreForm = dataStoreFormData;
+					this._getDatasetFormActions();
+					this.datasetForm = dataSetFormData;
+				});
 		}
 		else if (locationType) {
 			this.importService
 				.importParameters(locationType)
 				.then((response) => {
+					const { data } = response;
 					this._getDatastoreFormActions();
-					this.datastoreForm = response.data;
+					this.datastoreForm = data;
 				});
 		}
 	}
@@ -104,11 +116,7 @@ export default class DatasetImportTcompCtrl {
 	 * @description Cancel action for modal
 	 */
 	onDatasetFormCancel() {
-		this.stateService.hideImport();
-		this.datastoreForm = null;
-		this.datasetForm = null;
-		this.datasetFormData = null;
-		this.submitLock = false;
+		this._reset();
 	}
 
 	/**
@@ -144,7 +152,12 @@ export default class DatasetImportTcompCtrl {
 				dataStoreProperties: formData,
 				dataSetProperties: this.datasetFormData,
 			};
-			this._onCreate(formsData);
+			if (this.item) {
+				this._edit(formsData);
+			}
+			else {
+				this._create(formsData);
+			}
 		}
 		else {
 			this.importService
@@ -193,16 +206,43 @@ export default class DatasetImportTcompCtrl {
 	 */
 	onDatasetFormSubmit(uiSpecs) {
 		this.submitLock = true;
-		const $datastoreFormSubmit = this.$document.find('#datastore-form [type="submit"]').eq(0);
+		const $datastoreFormSubmit = this.$document.find(DATASTORE_SUBMIT_SELECTOR).eq(0);
 		if ($datastoreFormSubmit.length) {
 			const { formData } = uiSpecs;
 			this.datasetFormData = formData;
 			const datastoreFormSubmitElm = $datastoreFormSubmit[0];
 			datastoreFormSubmitElm.click();
 		}
+		else {
+			this.submitLock = false;
+		}
 	}
 
-	_onCreate(formsData) {
+	/**
+	 * @ngdoc method
+	 * @name _reset
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Reset state after submit
+	 * @private
+	 */
+	_reset() {
+		this.stateService.hideImport();
+		this.stateService.setCurrentImportItem(null);
+		this.datastoreForm = null;
+		this.datasetForm = null;
+		this.datasetFormData = null;
+		this.submitLock = false;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _create
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Create dataset with both forms data
+	 * @param formsData Datastore and dataset properties
+	 * @private
+	 */
+	_create(formsData) {
 		this.importService
 			.createDataset(this.locationType, formsData)
 			.then((response) => {
@@ -211,10 +251,20 @@ export default class DatasetImportTcompCtrl {
 				return this.datasetService.getDatasetById(dataSetId);
 			})
 			.then(this.uploadWorkflowService.openDataset)
-			.then(() => this.stateService.hideImport())
-			.finally(() => {
-				this.datasetFormData = null;
-				this.submitLock = false;
-			});
+			.finally(this._reset);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _edit
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Edit dataset with both forms data
+	 * @param formsData Datastore and dataset properties
+	 * @private
+	 */
+	_edit(formsData) {
+		this.importService
+			.editDataset(this.item.id, formsData)
+			.finally(this._reset);
 	}
 }

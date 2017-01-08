@@ -48,9 +48,15 @@
         state="$ctrl.state.import.visible"
         ng-if="$ctrl.state.import.visible"
         close-button="true"
-        on-close="$ctrl.state.import.importItem = null"
+        on-close="$ctrl.ImportService.StateService.setCurrentImportItem(null)"
         disable-enter="true">
-    <div class="modal-title">{{$ctrl.ImportService.currentInputType.title}}</div>
+    <div class="modal-title"
+         ng-if="!$ctrl.state.import.importItem">
+        {{$ctrl.ImportService.currentInputType.title}}
+    </div>
+    <div class="modal-title"
+         ng-if="$ctrl.state.import.importItem"
+         translate-once="EDIT_DATASET"></div>
     <br/>
     <form ng-if="!$ctrl.ImportService.isTCOMP"
           name="$ctrl.ImportService.datasetForm"

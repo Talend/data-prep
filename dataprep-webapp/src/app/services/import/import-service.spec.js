@@ -557,37 +557,69 @@ describe('Import service', () => {
 		}));
 	});
 
-	// TODO
-	// describe('getFormsByDatasetId', () => {
-	// 	beforeEach(inject(($q, ImportRestService) => {
-	// 		spyOn(ImportRestService, 'getFormsByDatasetId').and.returnValue($q.when());
-	// 	}));
-	//
-	// 	it('should call REST service', inject((ImportService, ImportRestService) => {
-	// 		// given
-	// 		const datasetId = '123-abc-456';
-	//
-	// 		// when
-	// 		ImportService.getFormsByDatasetId(datasetId);
-	//
-	// 		// then
-	// 		expect(ImportRestService.getFormsByDatasetId).toHaveBeenCalledWith(datasetId);
-	// 	}));
-	//
-	// 	it('should manage loader', inject(($rootScope, ImportService) => {
-	// 		// given
-	// 		const datasetId = '123-abc-456';
-	// 		spyOn($rootScope, '$emit').and.returnValue();
-	//
-	// 		// when
-	// 		ImportService.getFormsByDatasetId(datasetId);
-	// 		expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
-	// 		$rootScope.$digest();
-	//
-	// 		// then
-	// 		expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-	// 	}));
-	// });
+	describe('getFormsByDatasetId', () => {
+		beforeEach(inject(($q, ImportRestService) => {
+			spyOn(ImportRestService, 'getFormsByDatasetId').and.returnValue($q.when());
+		}));
+
+		it('should call REST service', inject((ImportService, ImportRestService) => {
+			// given
+			const datasetId = '123-abc-456';
+
+			// when
+			ImportService.getFormsByDatasetId(datasetId);
+
+			// then
+			expect(ImportRestService.getFormsByDatasetId).toHaveBeenCalledWith(datasetId);
+		}));
+
+		it('should manage loader', inject(($rootScope, ImportService) => {
+			// given
+			const datasetId = '123-abc-456';
+			spyOn($rootScope, '$emit').and.returnValue();
+
+			// when
+			ImportService.getFormsByDatasetId(datasetId);
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			$rootScope.$digest();
+
+			// then
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+		}));
+	});
+
+	describe('editDataset', () => {
+		const datasetId = '123-abc-456';
+		const formsData = {
+			dataStoreProperties: {},
+			dataSetProperties: {},
+		};
+
+		beforeEach(inject(($q, ImportRestService) => {
+			spyOn(ImportRestService, 'editDataset').and.returnValue($q.when());
+		}));
+
+		it('should call REST service', inject((ImportService, ImportRestService) => {
+			// when
+			ImportService.editDataset(datasetId, formsData);
+
+			// then
+			expect(ImportRestService.editDataset).toHaveBeenCalledWith(datasetId, formsData);
+		}));
+
+		it('should manage loader', inject(($rootScope, ImportService) => {
+			// given
+			spyOn($rootScope, '$emit').and.returnValue();
+
+			// when
+			ImportService.editDataset(datasetId);
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			$rootScope.$digest();
+
+			// then
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+		}));
+	});
 
 	describe('import', () => {
 		let uploadDefer;
@@ -639,7 +671,7 @@ describe('Import service', () => {
 
 			// then
 			expect(ImportService.datasetNameModal).toBeFalsy();
-			const paramsExpected = { url: '', type: 'hdfs', name: 'my dataset'};
+			const paramsExpected = { url: '', type: 'hdfs', name: 'my dataset' };
 			expect(DatasetService.create).toHaveBeenCalledWith(paramsExpected, 'application/vnd.remote-ds.hdfs', { name: 'my dataset.csv' });
 		}));
 

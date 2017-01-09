@@ -39,6 +39,10 @@ export default class DatasetImportTcompCtrl {
 		this.onDatasetFormChange = this.onDatasetFormChange.bind(this);
 		this.onDatasetFormCancel = this.onDatasetFormCancel.bind(this);
 		this.onDatasetFormSubmit = this.onDatasetFormSubmit.bind(this);
+
+		this._create = this._create.bind(this);
+		this._edit = this._edit.bind(this);
+		this._reset = this._reset.bind(this);
 	}
 
 	$onChanges(changes) {
@@ -55,7 +59,7 @@ export default class DatasetImportTcompCtrl {
 					this._getDatasetFormActions();
 					this.datasetForm = dataSetFormData;
 				})
-				.catch(this._reset());
+				.catch(this._reset);
 		}
 		else if (locationType) {
 			this.importService
@@ -65,7 +69,7 @@ export default class DatasetImportTcompCtrl {
 					this._getDatastoreFormActions();
 					this.datastoreForm = data;
 				})
-				.catch(this._reset());
+				.catch(this._reset);
 		}
 	}
 
@@ -154,12 +158,10 @@ export default class DatasetImportTcompCtrl {
 				dataStoreProperties: formData,
 				dataSetProperties: this.datasetFormData,
 			};
-			if (this.item) {
-				this._edit(formsData);
-			}
-			else {
-				this._create(formsData);
-			}
+			const action = this.item ? this._edit : this._create;
+			action(formsData)
+				.then(this.uploadWorkflowService.openDataset)
+				.then(this._reset);
 		}
 		else {
 			this.importService
@@ -245,15 +247,13 @@ export default class DatasetImportTcompCtrl {
 	 * @private
 	 */
 	_create(formsData) {
-		this.importService
+		return this.importService
 			.createDataset(this.locationType, formsData)
 			.then((response) => {
 				const { data } = response;
 				const { dataSetId } = data;
 				return this.datasetService.getDatasetById(dataSetId);
-			})
-			.then(this.uploadWorkflowService.openDataset)
-			.finally(this._reset);
+			});
 	}
 
 	/**
@@ -265,8 +265,9 @@ export default class DatasetImportTcompCtrl {
 	 * @private
 	 */
 	_edit(formsData) {
-		this.importService
-			.editDataset(this.item.id, formsData)
-			.finally(this._reset);
+		const itemId = this.item.id;
+		return this.importService
+			.editDataset(itemId, formsData)
+			.then(() => this.datasetService.getDatasetById(itemId));
 	}
 }

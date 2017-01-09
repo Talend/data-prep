@@ -24,6 +24,10 @@
 		}
 	}
 
+	.form-control + label {
+		left: 0;
+	}
+
 	.form-actions {
 		display: flex;
 		justify-content: space-between;

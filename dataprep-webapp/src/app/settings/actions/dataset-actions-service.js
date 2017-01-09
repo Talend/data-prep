@@ -130,14 +130,17 @@ export default class DatasetActionsService {
 			this.StateService.setDatasetToUpdate(payload.model);
 			break;
 		}
-		case '@@dataset/UPDATE_TCOMP': {
+		case '@@dataset/TCOMP_EDIT': {
 			const { payload } = action;
 			if (payload.model) {
 				this.StateService.setCurrentImportItem(payload.model);
 				this.StateService.showImport();
 			}
 			else {
-				this.MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+				this.MessageService.error(
+					'SERVER_ERROR_TITLE',
+					'GENERIC_ERROR'
+				);
 			}
 			break;
 		}

@@ -28,7 +28,7 @@ const preparationTour = [
 	},
 	{
 		element: '#preparations-list-actions-preparation\\:create',
-		title: '<center>Add preparation</center>',
+		title: '<center>Create preparation</center>',
 		content: 'Click here to add a preparation and start cleansing your data.',
 		position: 'right',
 		tooltipPosition: 'right',

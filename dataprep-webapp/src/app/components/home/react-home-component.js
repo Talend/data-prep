@@ -25,6 +25,21 @@ const HomeComponent = {
 		<insertion-home></insertion-home>
 		<dataset-progress></dataset-progress>
 	`,
+	controller($state, $timeout, OnboardingService) {
+		'ngInject';
+
+		this.$onInit = function $onInit() {
+			const tourId = 'preparation';
+			if (($state.current.name === 'home.preparations' || $state.current.name === 'home.datasets') &&
+				!$state.params.prepid &&
+				!$state.params.datasetid &&
+				OnboardingService.shouldStartTour(tourId)) {
+				$timeout(() => {
+					OnboardingService.startTour(tourId);
+				}, 1000, false);
+			}
+		};
+	},
 };
 
 export default HomeComponent;

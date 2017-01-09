@@ -81,13 +81,11 @@ public abstract class BaseDataSetService {
     /**
      * Make sure the given name is not used by another dataset. If yes, throws a TDPException.
      *
-     * @param id   the dataset id to
      * @param name the name to check.
      */
-    protected void checkIfNameIsAvailable(String id, String name) {
+    protected void checkIfNameIsAvailable(String name) {
         if (dataSetMetadataRepository.exist("name = '" + name + "'")) {
             final ExceptionContext context = ExceptionContext.build() //
-                    .put("id", id) //
                     .put("name", name);
             throw new TDPException(DATASET_NAME_ALREADY_USED, context, true);
         }

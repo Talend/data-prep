@@ -304,7 +304,7 @@ public class DataSetService extends BaseDataSetService {
         LOG.debug(marker, "Creating...");
 
         // check that the name is not already taken
-        checkIfNameIsAvailable(id, name);
+        checkIfNameIsAvailable(name);
 
         // get the location out of the content type and the request body
         final DataSetLocation location;
@@ -489,7 +489,7 @@ public class DataSetService extends BaseDataSetService {
             lock.lock(); // lock to ensure any asynchronous analysis is completed.
 
             // check that the name is not already taken
-            checkIfNameIsAvailable(dataSetId, newName);
+            checkIfNameIsAvailable(newName);
 
             // Create copy (based on original data set metadata)
             final String newId = UUID.randomUUID().toString();

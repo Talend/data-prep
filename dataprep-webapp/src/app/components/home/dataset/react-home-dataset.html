@@ -58,7 +58,7 @@
          ng-if="$ctrl.state.import.importItem"
          translate-once="EDIT_DATASET"></div>
     <br/>
-    <form ng-if="!$ctrl.ImportService.isTCOMP"
+    <form ng-if="!($ctrl.ImportService.isTCOMP || $ctrl.state.import.importItem)"
           name="$ctrl.ImportService.datasetForm"
           ng-submit="$ctrl.ImportService.datasetForm.$valid && $ctrl.ImportService.import($ctrl.ImportService.currentInputType)">
         <transform-params parameters="$ctrl.ImportService.currentInputType.parameters"></transform-params>
@@ -71,7 +71,7 @@
                     translate-once="OK"></button>
         </div>
     </form>
-    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP"
+    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP || $ctrl.state.import.importItem"
                           item="$ctrl.state.import.importItem"
                           location-type="$ctrl.ImportService.currentInputType.locationType"></tcomp-dataset-import>
 </talend-modal>

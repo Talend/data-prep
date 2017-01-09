@@ -204,12 +204,6 @@ export default class ImportService {
 			});
 	}
 
-	create() {
-		return this.DatasetService
-			.getDatasetById(event.data)
-			.then(this.UploadWorkflowService.openDataset);
-	}
-
 	/**
 	 * @ngdoc method
 	 * @name import

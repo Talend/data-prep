@@ -49,7 +49,7 @@ export default MODULE_NAME;
  * @description This module contains the home page of the app.
  * @requires talend.about
  * @requires talend.widget
- * @requires data-prep.dataset-edit
+ * @requires data-prep.dataset-import
  * @requires data-prep.dataset-upload-list
  * @requires data-prep.dataset-header
  * @requires data-prep.dataset-list

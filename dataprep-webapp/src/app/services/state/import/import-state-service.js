@@ -9,7 +9,6 @@
 
 export const importState = {
 	importItem: null,
-	importTypes: [],
 	visible: false,
 };
 
@@ -17,7 +16,6 @@ export function ImportStateService() {
 	return {
 		hideImport,
 		setCurrentImportItem,
-		setImportTypes,
 		showImport,
 	};
 

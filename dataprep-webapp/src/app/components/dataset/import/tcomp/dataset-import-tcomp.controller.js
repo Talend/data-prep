@@ -54,7 +54,8 @@ export default class DatasetImportTcompCtrl {
 					this.datastoreForm = dataStoreFormData;
 					this._getDatasetFormActions();
 					this.datasetForm = dataSetFormData;
-				});
+				})
+				.catch(this._reset());
 		}
 		else if (locationType) {
 			this.importService
@@ -63,7 +64,8 @@ export default class DatasetImportTcompCtrl {
 					const { data } = response;
 					this._getDatastoreFormActions();
 					this.datastoreForm = data;
-				});
+				})
+				.catch(this._reset());
 		}
 	}
 

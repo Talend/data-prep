@@ -14,10 +14,12 @@
 import CollapsiblePanelCtrl from './collapsible-panel-controller';
 
 const CollapsiblePanelContainer = {
-	template: `<pure-collapsible-panel
-					header="$ctrl.header"
-					content="$ctrl.content">
-					</pure-collapsible-panel>`,
+	template: `
+		<pure-collapsible-panel
+			header="$ctrl.header"
+			content="$ctrl.item.content">
+		</pure-collapsible-panel>
+	`,
 	bindings: {
 		item: '<',
 	},

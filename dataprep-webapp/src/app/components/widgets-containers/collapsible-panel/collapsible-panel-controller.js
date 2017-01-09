@@ -15,48 +15,73 @@ const STATUS_DISPLAY_MODE = 'status';
 const ACTION_DISPLAY_MODE = 'action';
 
 export default class CollapsiblePanelCtrl {
-	constructor($state, state, appSettings, SettingsActionsService) {
+	constructor(appSettings, SettingsActionsService) {
 		'ngInject';
-		this.$state = $state;
-		this.state = state;
 		this.appSettings = appSettings;
 		this.SettingsActionsService = SettingsActionsService;
 		this.actionsDispatchers = [];
 	}
 
 	$onChanges() {
-		this.init();
-	}
-	init() {
 		this.adaptHeader();
-		this.content = this.item.content;
 	}
+
 	adaptHeader() {
 		this.header = this.item
 			.header
 			.map((headerItem) => {
-				if (headerItem.displayMode === STATUS_DISPLAY_MODE) {
-					if (headerItem.actions && headerItem.actions.length) {
-						const statusActions =  headerItem.actions.map(
-							action => this.createItemAction(this.item.model, action)
-						);
-						return {
-							...headerItem,
-							actions: statusActions,
-						};
-					}
+				switch (headerItem.displayMode) {
+				case STATUS_DISPLAY_MODE:
+					return this.adaptStatusItem(headerItem);
+				case ACTION_DISPLAY_MODE:
+					return this.adaptActionItem(headerItem);
+				default:
+					return headerItem;
 				}
-				else if (headerItem.displayMode === ACTION_DISPLAY_MODE) {
-					if (headerItem.action) {
-						const action = this.createItemAction(this.item.model, headerItem.action);
-						return {
-							displayMode: ACTION_DISPLAY_MODE,
-							...action,
-						};
-					}
-				}
-				return headerItem;
 			});
+	}
+
+	adaptStatusItem(statusItem) {
+		const actions = statusItem.actions;
+		if (!actions || !actions.length) {
+			return statusItem;
+		}
+
+		const statusActions = actions.map(
+			action => this.createItemAction(this.item, action)
+		);
+		return {
+			...statusItem,
+			actions: statusActions,
+		};
+	}
+
+	adaptActionItem(actionItem) {
+		const action = actionItem.action;
+		if (!action) {
+			return actionItem;
+		}
+
+		const adaptedAction = this.createItemAction(this.item, action);
+		adaptedAction.displayMode = ACTION_DISPLAY_MODE;
+		return adaptedAction;
+	}
+
+	createItemAction(item, actionName) {
+		const itemOnClick = this.getActionDispatcher(actionName);
+		const itemAction = this.createBaseAction(actionName);
+		itemAction.onClick = event => itemOnClick(event, item);
+		return itemAction;
+	}
+
+	getActionDispatcher(actionName) {
+		let dispatcher = this.actionsDispatchers[actionName];
+		if (!dispatcher) {
+			const actionSettings = this.appSettings.actions[actionName];
+			dispatcher = this.SettingsActionsService.createDispatcher(actionSettings);
+			this.actionsDispatchers[actionName] = dispatcher;
+		}
+		return dispatcher;
 	}
 
 	createBaseAction(actionName) {
@@ -70,22 +95,4 @@ export default class CollapsiblePanelCtrl {
 			hideLabel: actionSettings.hideLabel,
 		};
 	}
-
-	getActionDispatcher(actionName) {
-		let dispatcher = this.actionsDispatchers[actionName];
-		if (!dispatcher) {
-			const actionSettings = this.appSettings.actions[actionName];
-			dispatcher = this.SettingsActionsService.createDispatcher(actionSettings);
-			this.actionsDispatchers[actionName] = dispatcher;
-		}
-		return dispatcher;
-	}
-
-	createItemAction(item, actionName) {
-		const itemOnClick = this.getActionDispatcher(actionName);
-		const itemAction = this.createBaseAction(actionName);
-		itemAction.onClick = event => itemOnClick(event, item);
-		return itemAction;
-	}
-
 }

@@ -165,29 +165,28 @@ describe('Import service', () => {
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
-			//given
+			// given
 			const locationType = 'toto';
 
-			//when
+			// when
 			ImportService.importParameters(locationType);
 
-			//then
+			// then
 			expect(ImportRestService.importParameters).toHaveBeenCalledWith(locationType);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
-			//given
+			// given
 			const locationType = 'toto';
 			spyOn($rootScope, '$emit').and.returnValue();
 
-			//when
+			// when
 			ImportService.importParameters(locationType);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 
-			//then
+			// then
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-
 		}));
 	});
 
@@ -232,29 +231,29 @@ describe('Import service', () => {
 		}));
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
-			//given
+			// given
 			const formId = 'toto';
 			const formData = {};
 
-			//when
+			// when
 			ImportService.testConnection(formId, formData);
 
-			//then
+			// then
 			expect(ImportRestService.testConnection).toHaveBeenCalledWith(formId, formData);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
-			//given
+			// given
 			const formId = 'toto';
 			const formData = {};
 			spyOn($rootScope, '$emit').and.returnValue();
 
-			//when
+			// when
 			ImportService.testConnection(formId, formData);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 
-			//then
+			// then
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
 
 		}));
@@ -291,269 +290,6 @@ describe('Import service', () => {
 
 			// then
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
-		}));
-	});
-
-	describe('startImport', () => {
-		it('should start import from local file', inject((ImportService) => {
-			// when
-			ImportService.startImport(importTypes[2]);
-
-			// then
-			expect(ImportService.currentInputType).toEqual(importTypes[2]);
-		}));
-
-		it('should start import from remote', inject((ImportService, StateService) => {
-			// when
-			spyOn(StateService, 'showImport').and.returnValue();
-			ImportService.startImport(importTypes[0]);
-
-			// then
-			expect(ImportService.currentInputType).toEqual(importTypes[0]);
-			expect(StateService.showImport).toHaveBeenCalled();
-		}));
-
-		it('should start import from remote with dynamic parameters', inject((ImportService, $q, $rootScope) => {
-			// given
-			importTypes[0].dynamic = true;
-			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: { name: 'url' } }));
-
-			// when
-			ImportService.startImport(importTypes[0]);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.importParameters).toHaveBeenCalledWith('hdfs');
-			expect(ImportService.currentInputType.parameters).toEqual({ name: 'url' });
-		}));
-
-		it('should start import from tcomp', inject(($rootScope, ImportService, $q) => {
-			// given
-			const fakeData = { jsonSchema: {} };
-			spyOn(ImportService, 'importParameters').and.returnValue($q.when({ data: fakeData }));
-
-			// when
-			ImportService.startImport(importTypes[4]);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.importParameters).toHaveBeenCalledWith('tcomp-FullExampleDatastore');
-			expect(ImportService.datastoreForm).toEqual(fakeData);
-		}));
-	});
-
-	describe('onDatastoreFormChange', () => {
-		let formData;
-		let formId;
-		let propertyName;
-		let fakeData;
-
-		beforeEach(inject(() => {
-			formId = 'formId';
-			propertyName = 'propertyNameWithTrigger';
-			formData = {
-				propertyName: 'propertyValue1',
-			};
-			fakeData = {
-				jsonSchema: {},
-				uiSchema: {},
-				properties: {
-					propertyName: 'propertyValue2',
-				},
-			};
-		}));
-
-		it('should refresh parameters', inject(($rootScope, ImportService, $q) => {
-			// given
-			spyOn(ImportService, 'refreshParameters').and.returnValue($q.when({ data: fakeData }));
-
-			// when
-			ImportService.onDatastoreFormChange(formData, formId, propertyName);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.refreshParameters).toHaveBeenCalledWith(formId, propertyName, formData);
-			expect(ImportService.datastoreForm).toEqual(fakeData);
-		}));
-
-		it('should not refresh parameters if promise fails', inject(($rootScope, ImportService, $q) => {
-			// given
-			spyOn(ImportService, 'refreshParameters').and.returnValue($q.reject());
-
-			// when
-			ImportService.onDatastoreFormChange(formData, formId, propertyName);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.refreshParameters).toHaveBeenCalledWith(formId, propertyName, formData);
-			expect(ImportService.datastoreForm).not.toEqual(fakeData);
-		}));
-	});
-
-	describe('onDatastoreFormSubmit', () => {
-		let definitionName;
-		let uiSpecs;
-		let fakeDatastoreId;
-		let fakeDatasetForm;
-
-		beforeEach(inject(() => {
-			definitionName = 'formId';
-			uiSpecs = {
-				formData: {
-					propertyName: 'propertyValue1',
-				},
-			};
-			fakeDatastoreId = 'abc-123-def';
-			fakeDatasetForm = {
-				jsonSchema: {},
-				uiSchema: {},
-			};
-		}));
-
-		it('should get datastore id while testing connection', inject(($rootScope, $q, ImportService) => {
-			// given
-			spyOn(ImportService, 'testConnection').and.returnValue($q.when({ data: { dataStoreId: fakeDatastoreId } }));
-			spyOn(ImportService, 'getDatasetForm').and.returnValue($q.when({ data: fakeDatasetForm }));
-
-			// when
-			ImportService.onDatastoreFormSubmit(uiSpecs, definitionName);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.testConnection).toHaveBeenCalledWith(definitionName, uiSpecs.formData);
-			expect(ImportService.dataStoreId).toEqual(fakeDatastoreId);
-			expect(ImportService.getDatasetForm).toHaveBeenCalledWith(fakeDatastoreId);
-			expect(ImportService.datasetForm).toEqual(fakeDatasetForm);
-		}));
-
-		it('should not get datastore id if promise fails', inject(($rootScope, $q, ImportService) => {
-			// given
-			spyOn(ImportService, 'testConnection').and.returnValue($q.reject());
-
-			// when
-			ImportService.onDatastoreFormSubmit(uiSpecs, definitionName);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.testConnection).toHaveBeenCalledWith(definitionName, uiSpecs.formData);
-			expect(ImportService.dataStoreId).toBeFalsy();
-		}));
-	});
-
-	describe('onDatasetFormChange', () => {
-		let formData;
-		let datastoreFormId;
-		let propertyName;
-		let fakeData;
-
-		beforeEach(inject((ImportService) => {
-			datastoreFormId = 'datastoreFormId';
-			propertyName = 'propertyNameWithTrigger';
-			formData = {
-				propertyName: 'propertyValue1',
-			};
-			fakeData = {
-				jsonSchema: {},
-				uiSchema: {},
-				properties: {
-					propertyName: 'propertyValue2',
-				},
-			};
-			ImportService.dataStoreId = datastoreFormId;
-		}));
-
-		it('should refresh dataset form', inject(($rootScope, ImportService, $q) => {
-			// given
-			spyOn(ImportService, 'refreshDatasetForm').and.returnValue($q.when({ data: fakeData }));
-
-			// when
-			ImportService.onDatasetFormChange(formData, null, propertyName);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.refreshDatasetForm).toHaveBeenCalledWith(datastoreFormId, propertyName, formData);
-			expect(ImportService.datasetForm).toEqual(fakeData);
-		}));
-
-		it('should not refresh dataset form if promise fails', inject(($rootScope, ImportService, $q) => {
-			// given
-			spyOn(ImportService, 'refreshDatasetForm').and.returnValue($q.reject());
-
-			// when
-			ImportService.onDatasetFormChange(formData, null, propertyName);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.refreshDatasetForm).toHaveBeenCalledWith(datastoreFormId, propertyName, formData);
-			expect(ImportService.datasetForm).not.toEqual(fakeData);
-		}));
-	});
-
-	describe('onDatasetFormCancel', () => {
-
-		it('should reset modal display flag and datastore creation form', inject(($rootScope, ImportService, StateService) => {
-			// given
-			ImportService.datastoreForm = {};
-			ImportService.dataStoreId = '';
-			ImportService.datasetForm = {};
-
-			spyOn(StateService, 'hideImport').and.returnValue();
-
-			// when
-			ImportService.onDatasetFormCancel();
-			$rootScope.$apply();
-
-			// then
-			expect(StateService.hideImport).toHaveBeenCalled();
-			expect(ImportService.datastoreForm).toBeNull();
-			expect(ImportService.dataStoreId).toBeNull();
-			expect(ImportService.datasetForm).toBeNull();
-		}));
-	});
-
-	describe('onDatasetFormSubmit', () => {
-		let dataStoreId;
-		let uiSpecs;
-		let fakeDatasetId;
-
-		beforeEach(inject((ImportService) => {
-			dataStoreId = 'datastoreId';
-			uiSpecs = {
-				formData: {
-					propertyName: 'propertyValue1',
-				},
-			};
-			fakeDatasetId = 'abc-123-def';
-			ImportService.dataStoreId = dataStoreId;
-		}));
-
-		it('should open dataset', inject(($rootScope, $q, ImportService, DatasetService, UploadWorkflowService) => {
-			// given
-			spyOn(ImportService, 'createDataset').and.returnValue($q.when({ data: { dataSetId: fakeDatasetId } }));
-			spyOn(DatasetService, 'getDatasetById').and.returnValue($q.when());
-			spyOn(UploadWorkflowService, 'openDataset');
-
-			// when
-			ImportService.onDatasetFormSubmit(uiSpecs, dataStoreId);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.createDataset).toHaveBeenCalledWith(dataStoreId, uiSpecs.formData);
-			expect(DatasetService.getDatasetById).toHaveBeenCalledWith(fakeDatasetId);
-		}));
-
-		it('should not open dataset if promise fails', inject(($rootScope, $q, ImportService, DatasetService) => {
-			// given
-			spyOn(ImportService, 'createDataset').and.returnValue($q.reject());
-			spyOn(DatasetService, 'getDatasetById').and.returnValue();
-
-			// when
-			ImportService.onDatasetFormSubmit(uiSpecs, dataStoreId);
-			$rootScope.$apply();
-
-			// then
-			expect(ImportService.createDataset).toHaveBeenCalledWith(dataStoreId, uiSpecs.formData);
-			expect(DatasetService.getDatasetById).not.toHaveBeenCalled();
 		}));
 	});
 

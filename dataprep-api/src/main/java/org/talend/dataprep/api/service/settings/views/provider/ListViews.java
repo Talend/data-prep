@@ -24,6 +24,10 @@ import static org.talend.dataprep.api.service.settings.actions.provider.MenuActi
 import static org.talend.dataprep.api.service.settings.actions.provider.PreparationActions.*;
 import static org.talend.dataprep.api.service.settings.views.api.actionsbar.ActionsBarSettings.ActionsPosition.LEFT;
 
+/**
+ * Lists configuration
+ */
+// @formatter:off
 public interface ListViews {
     ViewSettings FOLDERS_LIST = ListSettings.builder()
             .id("listview:folders")
@@ -88,6 +92,7 @@ public interface ListViews {
             .list(
                     ListDetailsSettings.builder()
                             .column("name", "Name")
+                            .column("statusActions", "", "actions")
                             .column("author", "Author")
                             .column("creationDate", "Created")
                             .column("nbLines", "Lines")
@@ -122,3 +127,4 @@ public interface ListViews {
             )
             .build();
 }
+// @formatter:on

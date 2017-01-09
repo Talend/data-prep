@@ -79,6 +79,8 @@ public class ListDetailsSettings {
 
         private static final String LABEL = "label";
 
+        private static final String TYPE = "type";
+
         private final List<Map<String, String>> columns = new ArrayList<>();
 
         private ListItemsSettings itemProps;
@@ -86,9 +88,17 @@ public class ListDetailsSettings {
         private ListTitleSettings titleProps;
 
         public Builder column(final String key, final String label) {
+           this.column(key, label, null);
+            return this;
+        }
+
+        public Builder column(final String key, final String label, final String type) {
             final Map<String, String> keyValue = new HashMap<>(2);
             keyValue.put(KEY, key);
             keyValue.put(LABEL, label);
+            if(type != null) {
+                keyValue.put(TYPE, type);
+            }
             this.columns.add(keyValue);
             return this;
         }

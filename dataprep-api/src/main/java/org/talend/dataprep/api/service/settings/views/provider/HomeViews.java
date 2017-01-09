@@ -24,6 +24,10 @@ import static org.talend.dataprep.api.service.settings.actions.provider.MenuActi
 import static org.talend.dataprep.api.service.settings.actions.provider.SearchActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
 
+/**
+ * Home elements configuration
+ */
+// @formatter:off
 public interface HomeViews {
     ViewSettings APP_HEADER_BAR = AppHeaderBarSettings.builder()
             .id("appheaderbar")
@@ -67,3 +71,4 @@ public interface HomeViews {
             .action(MENU_DATASETS.getId())
             .build();
 }
+// @formatter:on

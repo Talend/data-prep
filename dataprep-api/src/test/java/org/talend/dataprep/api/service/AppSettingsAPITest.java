@@ -333,8 +333,10 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
-        assertThat(keys, contains("name", "author", "creationDate", "nbLines"));
-        assertThat(labels, contains("Name", "Author", "Created", "Lines"));
+        final List<String> types = map(list.getList().getColumns(), "type");
+        assertThat(keys, contains("name", "statusActions", "author", "creationDate", "nbLines"));
+        assertThat(labels, contains("Name", "", "Author", "Created", "Lines"));
+        assertThat(types, contains(null, "actions", null, null, null));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
         assertThat(list.getList().getTitleProps().getKey(), is("name"));
@@ -356,7 +358,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ActionSplitDropdownSettings datasetCreate = (ActionSplitDropdownSettings) settings.getActions().get("dataset:create");
+        final ActionSplitDropdownSettings datasetCreate = (ActionSplitDropdownSettings) settings.getActions()
+                .get("dataset:create");
         final List<Object> importTypes = datasetCreate.getItems();
 
         final Map<String, Object> localImport = (Map<String, Object>) importTypes.get(0);

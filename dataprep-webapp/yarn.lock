@@ -5394,9 +5394,9 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.41.0:
-  version "0.41.0"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.41.0.tgz#41d729d55ff9959e716ed0074ce35d62928a7601"
+react-talend-components@0.47.2:
+  version "0.47.2"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.47.2.tgz#39ea344be96b57c1f2246dc1b1b72130251d8331"
   dependencies:
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"
@@ -6349,9 +6349,9 @@ table@^3.7.8:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
-talend-icons@0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.14.0.tgz#4238af402e513eb4c6ce0eb7bc67c39dba0b1371"
+talend-icons@0.14.2:
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.14.2.tgz#ccbac5202b86ba4a55daf8b5adfa59492a889f20"
 
 tapable@^0.1.8, tapable@~0.1.8:
   version "0.1.10"

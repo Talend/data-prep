@@ -57,7 +57,7 @@ export default function ImportRestService($http, RestURLs) {
 	 * @description Refresh the form
 	 * @returns {Promise}  The POST call promise
 	 */
-	function refreshForm(definitionName, propertyName, formData) {
+	function refreshForm(propertyName, formData) {
 		return $http.post(`${RestURLs.tcompUrl}/datastores/properties/trigger/after/${propertyName}`, formData);
 	}
 

@@ -91,10 +91,10 @@ export default class ImportService {
 	 * @description Refresh the form
 	 * @returns {Promise}  The POST call promise
 	 */
-	refreshForm(definitionName, propertyName, formData) {
+	refreshForm(propertyName, formData) {
 		return this.manageLoader(
 			this.ImportRestService.refreshForm,
-			[definitionName, propertyName, formData]
+			[propertyName, formData]
 		);
 	}
 

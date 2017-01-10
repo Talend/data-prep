@@ -197,26 +197,24 @@ describe('Import service', () => {
 
 		it('should call REST service', inject((ImportService, ImportRestService) => {
 			// given
-			const formId = 'toto';
 			const propertyName = 'tata';
 			const formData = {};
 
 			// when
-			ImportService.refreshForm(formId, propertyName, formData);
+			ImportService.refreshForm(propertyName, formData);
 
 			// then
-			expect(ImportRestService.refreshForm).toHaveBeenCalledWith(formId, propertyName, formData);
+			expect(ImportRestService.refreshForm).toHaveBeenCalledWith(propertyName, formData);
 		}));
 
 		it('should manage loader', inject(($rootScope, ImportService) => {
 			// given
-			const formId = 'toto';
 			const propertyName = 'tata';
 			const formData = {};
 			spyOn($rootScope, '$emit').and.returnValue();
 
 			// when
-			ImportService.refreshForm(formId, propertyName, formData);
+			ImportService.refreshForm(propertyName, formData);
 			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
 			$rootScope.$digest();
 

@@ -135,7 +135,7 @@ export default class DatasetImportTcompCtrl {
 	 */
 	onDatastoreFormChange(formData, definitionName = this.locationType, propertyName) {
 		this.importService
-			.refreshForm(definitionName, propertyName, formData)
+			.refreshForm(propertyName, formData)
 			.then((response) => {
 				const { data } = response;
 				this.datastoreForm = data;
@@ -193,7 +193,7 @@ export default class DatasetImportTcompCtrl {
 	 * @param propertyName Property which has triggered change handler
 	 */
 	onDatasetFormChange(formData, definitionName = this.locationType, propertyName) {
-		this.importService.refreshForm(definitionName, propertyName, formData)
+		this.importService.refreshForm(propertyName, formData)
 			.then((response) => {
 				const { data } = response;
 				this.datasetForm = data;

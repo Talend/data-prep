@@ -71,11 +71,11 @@ describe('Import REST Service', () => {
 		const expectedResult = { jsonSchema: {}, uiSchema: {} };
 
 		$httpBackend
-			.expectPOST(`${RestURLs.tcompUrl}/properties/${definitionName}/after/${propertyName}`, formData)
+			.expectPOST(`${RestURLs.tcompUrl}/datastores/properties/trigger/after/${propertyName}`, formData)
 			.respond(200, expectedResult);
 
 		// when
-		ImportRestService.refreshForm(definitionName, propertyName, formData)
+		ImportRestService.refreshForm(propertyName, formData)
 			.then((response) => {
 				params = response.data;
 			});
@@ -107,17 +107,16 @@ describe('Import REST Service', () => {
 	it('should refresh dataset form properties', inject(($rootScope, RestURLs, ImportRestService) => {
 		// given
 		const propertyName = 'propertyName';
-		const definitionName = 'definitionName';
 		const formData = { propertyName: 'abc' };
 		const expectedResult = { jsonSchema: {}, uiSchema: {}, properties: {} };
 
 		$httpBackend
-			.expectPOST(`${RestURLs.tcompUrl}/properties/${definitionName}/after/${propertyName}`, formData)
+			.expectPOST(`${RestURLs.tcompUrl}/datastores/properties/trigger/after/${propertyName}`, formData)
 			.respond(200, expectedResult);
 
 		// when
 		let datasetForm = null;
-		ImportRestService.refreshForm(definitionName, propertyName, formData)
+		ImportRestService.refreshForm(propertyName, formData)
 			.then((response) => {
 				datasetForm = response.data;
 			});

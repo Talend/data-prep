@@ -61,7 +61,7 @@ describe('Dataset Import TCOMP controller', () => {
 			scope.$digest();
 
 			// then
-			expect(ImportService.refreshForm).toHaveBeenCalledWith(definitionName, propertyName, uiSpecs);
+			expect(ImportService.refreshForm).toHaveBeenCalledWith(propertyName, uiSpecs);
 			expect(ctrl.datastoreForm).toEqual(fakeData);
 		}));
 
@@ -74,7 +74,7 @@ describe('Dataset Import TCOMP controller', () => {
 			scope.$digest();
 
 			// then
-			expect(ImportService.refreshForm).toHaveBeenCalledWith(definitionName, propertyName, uiSpecs);
+			expect(ImportService.refreshForm).toHaveBeenCalledWith(propertyName, uiSpecs);
 			expect(ctrl.datastoreForm).not.toEqual(fakeData);
 		}));
 	});
@@ -217,7 +217,7 @@ describe('Dataset Import TCOMP controller', () => {
 			scope.$digest();
 
 			// then
-			expect(ImportService.refreshForm).toHaveBeenCalledWith(definitionName, propertyName, formData);
+			expect(ImportService.refreshForm).toHaveBeenCalledWith(propertyName, formData);
 			expect(ctrl.datasetForm).toEqual(fakeData);
 		}));
 
@@ -230,7 +230,7 @@ describe('Dataset Import TCOMP controller', () => {
 			scope.$digest();
 
 			// then
-			expect(ImportService.refreshForm).toHaveBeenCalledWith(definitionName, propertyName, formData);
+			expect(ImportService.refreshForm).toHaveBeenCalledWith(propertyName, formData);
 			expect(ctrl.datasetForm).not.toEqual(fakeData);
 		}));
 	});

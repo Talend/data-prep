@@ -17,7 +17,7 @@
     <div id="datastore-form"
          class="datastore"
          ng-if="$ctrl.datastoreForm && $ctrl.datastoreForm.jsonSchema">
-        <talend-form autocomplete="off"
+        <talend-form autocomplete="'nope'"
                      data="$ctrl.datastoreForm"
                      actions="$ctrl.datastoreFormActions"
                      on-change="$ctrl.onDatastoreFormChange"
@@ -26,7 +26,7 @@
     <div id="dataset-form"
          class="dataset"
          ng-if="$ctrl.datasetForm && $ctrl.datasetForm.jsonSchema">
-        <talend-form autocomplete="off"
+        <talend-form autocomplete="'nope'"
                      data="$ctrl.datasetForm"
                      actions="$ctrl.datasetFormActions"
                      on-change="$ctrl.onDatasetFormChange"

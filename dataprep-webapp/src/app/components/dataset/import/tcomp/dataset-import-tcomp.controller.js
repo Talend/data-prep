@@ -19,7 +19,7 @@ const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
  * @description TCOMP Dataset Import controller
  */
 export default class DatasetImportTcompCtrl {
-	constructor($document, $translate, state, StateService, MessageService, ImportService, UploadWorkflowService) {
+	constructor($document, $translate, state, DatasetService, StateService, MessageService, ImportService, UploadWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
@@ -27,6 +27,7 @@ export default class DatasetImportTcompCtrl {
 
 		this.state = state;
 
+		this.datasetService = DatasetService;
 		this.importService = ImportService;
 		this.messageService = MessageService;
 		this.stateService = StateService;
@@ -205,6 +206,12 @@ export default class DatasetImportTcompCtrl {
 	 * @name onDatasetFormSubmit
 	 * @methodOf data-prep.import.controller:ImportCtrl
 	 * @description Datastore form change handler
+	 * Both forms need to be submitted so we have to put a latch in order to submit data store and data set forms data
+	 * One way to do that, it's to trigger onClick event on data store form submit button
+	 *  1. Second form submit -> save second form data
+	 *  2. Trigger click event on first form submit button -> save first form data
+	 *  3. Second form submit -> aggregate both forms data and send it
+	 * @see onDatastoreFormSubmit
 	 * @param uiSpecs
 	 */
 	onDatasetFormSubmit(uiSpecs) {
@@ -251,7 +258,7 @@ export default class DatasetImportTcompCtrl {
 			.then((response) => {
 				const { data } = response;
 				const { dataSetId } = data;
-				return dataSetId;
+				return this.datasetService.getDatasetById(dataSetId);
 			});
 	}
 
@@ -267,6 +274,6 @@ export default class DatasetImportTcompCtrl {
 		const itemId = this.item.id;
 		return this.importService
 			.editDataset(itemId, formsData)
-			.then(() => itemId);
+			.then(() => this.item);
 	}
 }

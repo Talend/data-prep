@@ -51,14 +51,14 @@
         on-close="$ctrl.ImportService.resetImport()"
         disable-enter="true">
     <div class="modal-title"
-         ng-if="!$ctrl.state.import.importItem">
+         ng-if="!$ctrl.state.import.item">
         {{$ctrl.ImportService.currentInputType.title}}
     </div>
     <div class="modal-title"
-         ng-if="$ctrl.state.import.importItem"
+         ng-if="$ctrl.state.import.item"
          translate-once="EDIT_DATASET"></div>
     <br/>
-    <form ng-if="!($ctrl.ImportService.isTCOMP || $ctrl.state.import.importItem)"
+    <form ng-if="!($ctrl.ImportService.isTCOMP || $ctrl.state.import.item)"
           name="$ctrl.ImportService.datasetForm"
           ng-submit="$ctrl.ImportService.datasetForm.$valid && $ctrl.ImportService.import($ctrl.ImportService.currentInputType)">
         <transform-params parameters="$ctrl.ImportService.currentInputType.parameters"></transform-params>
@@ -71,8 +71,8 @@
                     translate-once="OK"></button>
         </div>
     </form>
-    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP || $ctrl.state.import.importItem"
-                          item="$ctrl.state.import.importItem"
+    <tcomp-dataset-import ng-if="$ctrl.ImportService.isTCOMP || $ctrl.state.import.item"
+                          item="$ctrl.state.import.item"
                           location-type="$ctrl.ImportService.currentInputType.locationType"></tcomp-dataset-import>
 </talend-modal>
 <talend-modal fullscreen="false"

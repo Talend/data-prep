@@ -80,6 +80,7 @@ describe('Dataset Import TCOMP controller', () => {
 	});
 
 	describe('onDatastoreFormSubmit', () => {
+		let dataset;
 		let definitionName;
 		let uiSpecs;
 		let fakeDatastoreForm;
@@ -88,6 +89,7 @@ describe('Dataset Import TCOMP controller', () => {
 
 		beforeEach(inject(() => {
 			ctrl = createController();
+			dataset = { id: 'dataSetId' };
 			definitionName = 'definitionName';
 			uiSpecs = {
 				formData: {},
@@ -147,13 +149,14 @@ describe('Dataset Import TCOMP controller', () => {
 			expect(ctrl.datasetForm).toBeUndefined();
 		}));
 
-		it('should create dataset', inject(($q, ImportService, UploadWorkflowService) => {
+		it('should create dataset', inject(($q, DatasetService, ImportService, UploadWorkflowService) => {
 			// given
 			ctrl.submitLock = true;
 			ctrl.locationType = definitionName;
 			ctrl.datasetFormData = {};
 
 			spyOn(ImportService, 'createDataset').and.returnValue($q.when({ data: { dataSetId: 'dataSetId' } }));
+			spyOn(DatasetService, 'getDatasetById').and.returnValue($q.when(dataset));
 			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
 
 			// when
@@ -162,14 +165,14 @@ describe('Dataset Import TCOMP controller', () => {
 
 			// then
 			expect(ImportService.createDataset).toHaveBeenCalledWith(definitionName, fakeFormsData);
-			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith('dataSetId');
+			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset);
 			expect(ctrl.submitLock).toBeFalsy();
 		}));
 
 		it('should edit dataset', inject(($q, ImportService, UploadWorkflowService) => {
 			// given
 			ctrl.submitLock = true;
-			ctrl.item = { id: 'dataSetId' };
+			ctrl.item = dataset;
 			ctrl.datasetFormData = {};
 
 			spyOn(ImportService, 'editDataset').and.returnValue($q.when());
@@ -181,7 +184,7 @@ describe('Dataset Import TCOMP controller', () => {
 
 			// then
 			expect(ImportService.editDataset).toHaveBeenCalledWith('dataSetId', fakeFormsData);
-			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith('dataSetId');
+			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset);
 			expect(ctrl.submitLock).toBeFalsy();
 		}));
 	});
@@ -278,8 +281,8 @@ describe('Dataset Import TCOMP controller', () => {
 			spyOn($document, 'find').and.returnValue({
 				eq: () => [{
 					click: () => {
-					}
-				}]
+					},
+				}],
 			});
 
 			// when

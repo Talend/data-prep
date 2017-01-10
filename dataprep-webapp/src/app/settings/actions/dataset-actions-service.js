@@ -15,9 +15,9 @@ import { HOME_DATASETS_ROUTE } from '../../index-route';
 
 export default class DatasetActionsService {
 	constructor($document, $stateParams, state,
-				StateService, StorageService, DatasetService,
-				ImportService, UploadWorkflowService,
-				MessageService, TalendConfirmService) {
+	            StateService, StorageService, DatasetService,
+	            ImportService, UploadWorkflowService,
+	            MessageService, TalendConfirmService) {
 		'ngInject';
 		this.$document = $document;
 		this.$stateParams = $stateParams;
@@ -132,10 +132,8 @@ export default class DatasetActionsService {
 		}
 		case '@@dataset/TCOMP_EDIT': {
 			const { payload } = action;
-			if (payload.model) {
-				this.StateService.setCurrentImportItem(payload.model);
-				this.StateService.showImport();
-			}
+			this.StateService.setCurrentImportItem(payload.model);
+			this.StateService.showImport();
 			break;
 		}
 		case '@@dataset/CREATE': {

@@ -27,7 +27,7 @@ export function ImportStateService() {
 		importState.visible = false;
 	}
 
-	function setCurrentImportItem(importItem) {
-		importState.item = importItem;
+	function setCurrentImportItem(item) {
+		importState.item = item;
 	}
 }

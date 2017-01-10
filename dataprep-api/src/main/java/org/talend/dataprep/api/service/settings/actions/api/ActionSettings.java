@@ -64,9 +64,24 @@ public class ActionSettings {
     private String type;
 
     /**
+     * Is the action a link (no button style)
+     */
+    private Boolean link;
+
+    /**
+     * Does the label should be hidden (icon only). The label will be in the tooltip
+     */
+    private Boolean hideLabel;
+
+    /**
      * The bootstrap style (ex: primary to apply the primary color)
      */
     private String bsStyle;
+
+    /**
+     * The bootstrap size (ex: small to render a small button)
+     */
+    private String bsSize;
 
     /**
      * Can hold any extra static information to pass to the action function
@@ -105,12 +120,36 @@ public class ActionSettings {
         this.type = type;
     }
 
+    public Boolean getHideLabel() {
+        return hideLabel;
+    }
+
+    public void setHideLabel(Boolean hideLabel) {
+        this.hideLabel = hideLabel;
+    }
+
+    public Boolean getLink() {
+        return link;
+    }
+
+    public void setLink(Boolean link) {
+        this.link = link;
+    }
+
     public String getBsStyle() {
         return bsStyle;
     }
 
     public void setBsStyle(String bsStyle) {
         this.bsStyle = bsStyle;
+    }
+
+    public String getBsSize() {
+        return bsSize;
+    }
+
+    public void setBsSize(String bsSize) {
+        this.bsSize = bsSize;
     }
 
     public Map<String, Object> getPayload() {
@@ -140,7 +179,13 @@ public class ActionSettings {
 
         private String type;
 
+        private Boolean link;
+
+        private Boolean hideLabel;
+
         private String bsStyle;
+
+        private String bsSize;
 
         private Map<String, Object> payload = new HashMap<>();
 
@@ -164,8 +209,23 @@ public class ActionSettings {
             return this;
         }
 
+        public Builder isLink() {
+            this.link = true;
+            return this;
+        }
+
+        public Builder hideLabel() {
+            this.hideLabel = true;
+            return this;
+        }
+
         public Builder bsStyle(final String bsStyle) {
             this.bsStyle = bsStyle;
+            return this;
+        }
+
+        public Builder bsSize(final String bsSize) {
+            this.bsSize = bsSize;
             return this;
         }
 
@@ -185,7 +245,10 @@ public class ActionSettings {
             action.setName(this.name);
             action.setIcon(this.icon);
             action.setType(this.type);
+            action.setLink(this.link);
+            action.setHideLabel(this.hideLabel);
             action.setBsStyle(this.bsStyle);
+            action.setBsSize(this.bsSize);
             action.setPayload(this.payload.isEmpty() ? null : this.payload);
             return action;
         }

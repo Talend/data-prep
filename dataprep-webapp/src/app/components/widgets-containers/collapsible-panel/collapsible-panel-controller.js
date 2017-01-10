@@ -92,6 +92,7 @@ export default class CollapsiblePanelCtrl {
 			label: actionSettings.name,
 			bsStyle: actionSettings.bsStyle,
 			bsSize: actionSettings.bsSize,
+			link: actionSettings.link,
 			hideLabel: actionSettings.hideLabel,
 		};
 	}

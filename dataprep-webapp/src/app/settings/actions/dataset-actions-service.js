@@ -136,12 +136,6 @@ export default class DatasetActionsService {
 				this.StateService.setCurrentImportItem(payload.model);
 				this.StateService.showImport();
 			}
-			else {
-				this.MessageService.error(
-					'SERVER_ERROR_TITLE',
-					'GENERIC_ERROR'
-				);
-			}
 			break;
 		}
 		case '@@dataset/CREATE': {

@@ -48,7 +48,7 @@
         state="$ctrl.state.import.visible"
         ng-if="$ctrl.state.import.visible"
         close-button="true"
-        on-close="$ctrl.ImportService.StateService.setCurrentImportItem(null)"
+        on-close="$ctrl.ImportService.resetImport()"
         disable-enter="true">
     <div class="modal-title"
          ng-if="!$ctrl.state.import.importItem">

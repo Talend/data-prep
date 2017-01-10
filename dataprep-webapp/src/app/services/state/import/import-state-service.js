@@ -8,7 +8,7 @@
  ============================================================================*/
 
 export const importState = {
-	importItem: null,
+	item: null,
 	visible: false,
 };
 
@@ -28,6 +28,6 @@ export function ImportStateService() {
 	}
 
 	function setCurrentImportItem(importItem) {
-		importState.importItem = importItem;
+		importState.item = importItem;
 	}
 }

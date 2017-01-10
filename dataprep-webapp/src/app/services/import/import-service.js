@@ -15,12 +15,11 @@
  */
 export default class ImportService {
 
-	constructor($document, $rootScope, $translate, state, DatasetService, ImportRestService, StateService, TalendConfirmService, UploadWorkflowService, UpdateWorkflowService) {
+	constructor($document, $rootScope, state, DatasetService, ImportRestService, StateService, TalendConfirmService, UploadWorkflowService, UpdateWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
 		this.$rootScope = $rootScope;
-		this.$translate = $translate;
 
 		this.state = state;
 
@@ -54,6 +53,16 @@ export default class ImportService {
 			this.ImportRestService.importParameters,
 			[locationType]
 		);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name resetImport
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Reset import state
+	 */
+	resetImport() {
+		this.StateService.setCurrentImportItem(null);
 	}
 
 	/**

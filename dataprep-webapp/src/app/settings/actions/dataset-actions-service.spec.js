@@ -366,6 +366,29 @@ describe('Datasets actions service', () => {
 			expect(MessageService.error).toHaveBeenCalledWith('DATASET_NAME_ALREADY_USED_TITLE', 'DATASET_NAME_ALREADY_USED');
 		}));
 
+		it('should edit TCOMP dataset', inject((DatasetActionsService, StateService) => {
+			// given
+			const dataset = {};
+			const action = {
+				type: '@@dataset/TCOMP_EDIT',
+				payload: {
+					method: '',
+					args: [],
+					model: dataset,
+				},
+			};
+
+			spyOn(StateService, 'setCurrentImportItem').and.returnValue();
+			spyOn(StateService, 'showImport').and.returnValue();
+
+			// when
+			DatasetActionsService.dispatch(action);
+
+			// then
+			expect(StateService.setCurrentImportItem).toHaveBeenCalledWith(dataset);
+			expect(StateService.showImport).toHaveBeenCalled();
+		}));
+
 		it('should create dataset with payload model', inject((DatasetActionsService, ImportService) => {
 			// given
 			const selectedType = importTypes[0];

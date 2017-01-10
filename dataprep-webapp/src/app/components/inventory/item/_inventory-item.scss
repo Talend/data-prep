@@ -11,248 +11,255 @@
 
   ============================================================================*/
 body {
-  > .dropdown-menu {
-    min-width: 500px;
+	> .dropdown-menu {
+		min-width: 500px;
 
-    &:before {
-      top: -1.2em;
-    }
+		&:before {
+			top: -1.2em;
+		}
 
-    ul.inventory-actions-related-item-menu {
-      color: $black;
+		ul.inventory-actions-related-item-menu {
+			color: $black;
 
-      > li {
-        border: none;
-        font-size: 0.8em;
-        padding: 10px;
+			> li {
+				border: none;
+				font-size: 0.8em;
+				padding: 10px;
 
-        &:hover {
-          cursor: pointer;
-          background-color: $light-gray;
-        }
+				&:hover {
+					cursor: pointer;
+					background-color: $light-gray;
+				}
 
-        .inventory-actions-related-item-name {
-          font-size: 1.15em;
-          font-weight: bold;
-          text-transform: uppercase;
-          @include ellipsis(350px);
-          vertical-align: bottom;
-        }
-      }
-    }
-  }
+				.inventory-actions-related-item-name {
+					font-size: 1.15em;
+					font-weight: bold;
+					text-transform: uppercase;
+					@include ellipsis(350px);
+					vertical-align: bottom;
+				}
+			}
+		}
+	}
 }
+
 .inventory-list {
-  @include flex-column();
-  overflow: auto;
+	@include flex-column();
+	overflow: auto;
 }
 
 .inventory-item {
-  flex-grow: 0;
-  flex-shrink: 0;
+	flex-grow: 0;
+	flex-shrink: 0;
 
-  @include flex-row();
-  border-bottom: 1px solid #CECECE;
-  height: 80px;
-  padding: 10px;
+	@include flex-row();
+	border-bottom: 1px solid #CECECE;
+	height: 80px;
+	padding: 10px;
 
-  a {
-    cursor: pointer;
+	a {
+		cursor: pointer;
 
-    &:hover, &:focus {
-      text-decoration: none;
-    }
-  }
+		&:hover, &:focus {
+			text-decoration: none;
+		}
+	}
 
-  .inventory-actions {
-    display: none;
-  }
+	.inventory-actions {
+		display: none;
+	}
 
-  .inventory-action-favorite {
-    flex-grow: 0;
-    flex-shrink: 0;
+	.inventory-action-favorite {
+		flex-grow: 0;
+		flex-shrink: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
 
-    .btn-icon {
-      @include flex-row();
-      align-items: center;
+		.btn-icon {
+			@include flex-row();
+			align-items: center;
 
-      opacity: 1;
+			opacity: 1;
 
-      height: 45px;
-      border-radius: 5px;
-      padding: 0 10px;
-      margin: 0 5px;
+			height: 45px;
+			border-radius: 5px;
+			padding: 0 10px;
+			margin: 0 5px;
 
-      color: $white;
-      font-family: $iconsfont;
-      font-size: 1.1em;
+			color: $white;
+			font-family: $iconsfont;
+			font-size: 1.1em;
 
-      &:hover {
-        background-color: $background-blue;
-      }
-    }
+			&:hover {
+				background-color: $background-blue;
+			}
+		}
 
-    .favorite-true {
-      color: $orange;
-    }
-  }
+		.favorite-true {
+			color: $orange;
+		}
+	}
 
-  .inventory-text {
-    flex-grow: 1;
-  }
+	.inventory-text {
+		flex-grow: 1;
+	}
 
-  &:hover {
-    background-color: tint($pale-blue, 30%);
+	&:hover {
+		background-color: tint($pale-blue, 30%);
 
-    .btn-transparent {
-      opacity: 1;
-    }
+		.btn-transparent {
+			opacity: 1;
+		}
 
-    .inventory-text {
-      .edit-btn {
-        display: block;
-      }
-    }
+		.inventory-text {
+			.edit-btn {
+				display: block;
+			}
+		}
 
-    .inventory-actions {
-      display: flex;
-      flex-grow: 0;
-      flex-shrink: 0;
-      align-items: center;
-      justify-content: flex-end;
+		.inventory-actions {
+			display: flex;
+			flex-grow: 0;
+			flex-shrink: 0;
+			align-items: center;
+			justify-content: flex-end;
 
-      .divider {
-        background: $white;
-        height: 45px;
-        width: 1px;
-        margin: 0 5px;
-      }
+			.divider {
+				background: $white;
+				height: 45px;
+				width: 1px;
+				margin: 0 5px;
+			}
 
-      .btn-icon {
-        @include flex-row();
-        align-items: center;
+			.btn-icon {
+				@include flex-row();
+				align-items: center;
 
-        height: 45px;
-        border-radius: 5px;
-        padding: 0 10px;
-        margin: 0 5px;
+				height: 45px;
+				border-radius: 5px;
+				padding: 0 10px;
+				margin: 0 5px;
 
-        color: $white;
-        font-family: $iconsfont;
-        font-size: 1.1em;
+				color: $white;
+				font-family: $iconsfont;
+				font-size: 1.1em;
 
-        &:hover {
-          background-color: $background-blue;
-        }
-      }
+				&:hover {
+					background-color: $background-blue;
+				}
+			}
 
-      .inventory-actions-related-item {
-        padding-right: 0;
-        height: 45px;
+			.inventory-actions-related-item {
+				padding-right: 0;
+				height: 45px;
 
-        .line-separator {
-          display: none;
-        }
+				.line-separator {
+					display: none;
+				}
 
-        .btn {
-          padding: 0;
-          font-size: 1.0em;
-          color: $white;
+				.btn {
+					padding: 0;
+					font-size: 1.0em;
+					color: $white;
 
-          &:hover, &:focus {
-            background-color: $background-blue;
-          }
-        }
+					&:hover, &:focus {
+						background-color: $background-blue;
+					}
+				}
 
-        .button-dropdown-main-icon, .caret {
-          color: $white;
-        }
-        .button-dropdown,
-        .button-dropdown button.button-dropdown-main,
-        .button-dropdown button.button-dropdown-side {
-          border: none;
-          background: transparent;
-          padding: 0;
+				.button-dropdown-main-icon, .caret {
+					color: $white;
+				}
+				.button-dropdown,
+				.button-dropdown button.button-dropdown-main,
+				.button-dropdown button.button-dropdown-side {
+					border: none;
+					background: transparent;
+					padding: 0;
 
-          .button-dropdown-side {
-            width: 20px;
-          }
+					.button-dropdown-side {
+						width: 20px;
+					}
 
-          .button-dropdown-main-icon {
-            @include flex-row-center();
-            @include filter(none);
-            font-size: 1em;
-            padding: 0;
-          }
-        }
-      }
-    }
-  }
+					.button-dropdown-main-icon {
+						@include flex-row-center();
+						@include filter(none);
+						font-size: 1em;
+						padding: 0;
+					}
+				}
+			}
+		}
+	}
 
-  .inventory-icon {
-    display: flex;
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 50px;
-    align-items: center;
+	.inventory-icon {
+		display: flex;
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-basis: 50px;
+		align-items: center;
 
-    padding: 0 3px;
-    position: relative;
+		padding: 0 3px;
+		position: relative;
 
-    img {
-      width: 40px;
-    }
+		img {
+			width: 40px;
+		}
 
-    .pin {
-      position: absolute;
-      left: 0;
-      top: -5px;
-      width: 25px;
-    }
+		svg {
+			margin-left: -0.5rem;
+			height: 4rem;
+			width: 4rem;
+		}
 
-    .preparation-icon-div {
-      font-size: 1.3em;
-      color: darken($pale-blue, 15%);
-    }
+		.pin {
+			position: absolute;
+			left: 0;
+			top: -5px;
+			width: 25px;
+		}
 
-    .documentation-icon-div {
-      font-size: 1.3em;
-      color: $dark-blue;
-    }
-  }
+		.preparation-icon-div {
+			font-size: 1.3em;
+			color: darken($pale-blue, 15%);
+		}
 
-  .inventory-text {
-    @include flex-column();
-    justify-content: center;
-    padding-left: 10px;
+		.documentation-icon-div {
+			font-size: 1.3em;
+			color: $dark-blue;
+		}
+	}
 
-    .inventory-title {
-      padding: 3px 0;
-      cursor: pointer;
+	.inventory-text {
+		@include flex-column();
+		justify-content: center;
+		padding-left: 10px;
 
-      color: $black;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
+		.inventory-title {
+			padding: 3px 0;
+			cursor: pointer;
 
-    .inventory-description {
-      color: $medium-gray;
-      font-weight: 300;
-      font-size: .8em;
-      max-height: 2.8em;
-    }
+			color: $black;
+			font-weight: 700;
+			text-transform: uppercase;
+		}
 
-    .edition-text-input {
-      padding: 4px;
-      width: 220px;
-    }
+		.inventory-description {
+			color: $medium-gray;
+			font-weight: 300;
+			font-size: .8em;
+			max-height: 2.8em;
+		}
 
-    .edit-btn {
-      display: none;
-    }
-  }
+		.edition-text-input {
+			padding: 4px;
+			width: 220px;
+		}
+
+		.edit-btn {
+			display: none;
+		}
+	}
 }

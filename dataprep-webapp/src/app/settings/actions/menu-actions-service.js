@@ -21,8 +21,8 @@ export default class MenuActionsService {
 	dispatch(action) {
 		switch (action.type) {
 		case '@@router/GO': {
-			const { method, args } = action.payload;
-			this.$state[method](...args);
+			const { method, args, folderId } = action.payload;
+			this.$state[method](...args, { folderId });
 			break;
 		}
 		case '@@router/GO_DATASET': {

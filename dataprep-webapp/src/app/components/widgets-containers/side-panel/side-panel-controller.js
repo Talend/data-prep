@@ -24,6 +24,7 @@ export default class SidePanelCtrl {
 
 	$onChanges(changes) {
 		if (changes.active) {
+			this.actions[0].payload.folderId = this.state.inventory.folder.metadata.id;
 			this.actions = this.actions.map(action => ({
 				...action,
 				active: changes.active.currentValue === action.payload.args[0],

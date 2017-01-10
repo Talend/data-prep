@@ -37,7 +37,6 @@ export default class DatasetImportTcompCtrl {
 		this.onDatastoreFormSubmit = this.onDatastoreFormSubmit.bind(this);
 
 		this.onDatasetFormChange = this.onDatasetFormChange.bind(this);
-		this.onDatasetFormCancel = this.onDatasetFormCancel.bind(this);
 		this.onDatasetFormSubmit = this.onDatasetFormSubmit.bind(this);
 
 		this._create = this._create.bind(this);
@@ -103,7 +102,7 @@ export default class DatasetImportTcompCtrl {
 				{
 					style: 'default',
 					type: 'button',
-					onClick: this.onDatasetFormCancel,
+					onClick: this._reset(),
 					label: this.$translate.instant('CANCEL'),
 				},
 				{
@@ -113,16 +112,6 @@ export default class DatasetImportTcompCtrl {
 				},
 			];
 		}
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name onDatasetFormCancel
-	 * @methodOf data-prep.import.controller:ImportCtrl
-	 * @description Cancel action for modal
-	 */
-	onDatasetFormCancel() {
-		this._reset();
 	}
 
 	/**

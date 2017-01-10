@@ -238,32 +238,6 @@ describe('Dataset Import TCOMP controller', () => {
 		}));
 	});
 
-	describe('onDatasetFormCancel', () => {
-
-		it('should reset modal display flag and datastore creation form', inject((StateService) => {
-			// given
-			spyOn(StateService, 'hideImport').and.returnValue();
-			spyOn(StateService, 'setCurrentImportItem').and.returnValue();
-			ctrl.datastoreForm = {};
-			ctrl.datasetForm = {};
-			ctrl.datasetFormData = {};
-			ctrl.submitLock = true;
-			ctrl = createController();
-
-			// when
-			ctrl.onDatasetFormCancel();
-			scope.$digest();
-
-			// then
-			expect(StateService.hideImport).toHaveBeenCalled();
-			expect(StateService.setCurrentImportItem).toHaveBeenCalledWith(null);
-			expect(ctrl.datastoreForm).toBeNull();
-			expect(ctrl.datasetForm).toBeNull();
-			expect(ctrl.datasetFormData).toBeNull();
-			expect(ctrl.submitLock).toBeFalsy();
-		}));
-	});
-
 	describe('onDatasetFormSubmit', () => {
 		let uiSpecs;
 

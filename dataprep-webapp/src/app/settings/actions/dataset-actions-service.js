@@ -14,10 +14,8 @@
 import { HOME_DATASETS_ROUTE } from '../../index-route';
 
 export default class DatasetActionsService {
-	constructor($document, $stateParams, state,
-	            StateService, StorageService, DatasetService,
-	            ImportService, UploadWorkflowService,
-	            MessageService, TalendConfirmService) {
+	constructor($document, $stateParams, state, StateService, StorageService, DatasetService,
+				ImportService, UploadWorkflowService, MessageService, TalendConfirmService) {
 		'ngInject';
 		this.$document = $document;
 		this.$stateParams = $stateParams;

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -31,22 +30,24 @@ public class CSVFormat extends ExportFormat {
     /** CSV format type name. */
     public static final String CSV = "CSV";
 
+    public static final SelectParameter CSV_DELIMITERS = SelectParameter.Builder.builder().name("csvSeparator") //
+            .item(";", "semiColon") //
+            .item("\u0009", "tabulation") //
+            .item(" ", "space") //
+            .item(",", "comma") //
+            .item("|", "pipe") //
+            .defaultValue(";") //
+            .canBeBlank(true) //
+            .radio(true) //
+            .build();
+
     /**
      * Default constructor.
      */
     public CSVFormat() {
         //@formatter:off
         super("CSV", "text/csv", ".csv", true, false,
-                Arrays.asList(SelectParameter.Builder.builder().name("csvSeparator") //
-                        .item(";", "semiColon") //
-                        .item("\u0009", "tabulation") //
-                        .item(" ", "space") //
-                        .item(",", "comma") //
-                        .item("|", "pipe") //
-                        .defaultValue(";") //
-                        .canBeBlank(true) //
-                        .radio(true) //
-                        .build(),
+                Arrays.asList(CSV_DELIMITERS,
                 new Parameter("fileName", ParameterType.STRING, StringUtils.EMPTY, false, false) //
         ));
         //@formatter:on

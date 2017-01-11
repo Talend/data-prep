@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,8 +12,6 @@
 
 package org.talend.dataprep.transformation.service;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.http.client.HttpClient;
@@ -31,6 +28,7 @@ import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 import org.talend.dataprep.transformation.service.export.StandardExportStrategy;
+import org.talend.dataprep.util.OrderedBeans;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -71,7 +69,7 @@ public abstract class BaseTransformationService {
     protected ApplicationContext applicationContext;
 
     @Autowired
-    protected List<StandardExportStrategy> sampleExportStrategies;
+    protected OrderedBeans<StandardExportStrategy> sampleExportStrategies;
 
     /**
      * Return the format that matches the given name or throw an error if the format is unknown.
@@ -92,15 +90,14 @@ public abstract class BaseTransformationService {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
         // Full run execution (depends on the export parameters).
         try {
-            final Optional<? extends ExportStrategy> electedStrategy = sampleExportStrategies.stream() //
+            final Optional<? extends ExportStrategy> electedStrategy = sampleExportStrategies //
                     .filter(exportStrategy -> exportStrategy.accept(parameters)) //
-                    .sorted(Comparator.comparingInt(ExportStrategy::order)) //
                     .findFirst();
             if (electedStrategy.isPresent()) {
                 LOG.debug("Strategy for execution: {}", electedStrategy.get().getClass());
                 return electedStrategy.get().execute(parameters);
             } else {
-                throw new IllegalArgumentException("Not valid export parameters (no preparation id nor data set id.");
+                throw new IllegalArgumentException("Not valid export parameters (no preparation id nor data set id).");
             }
         } catch (TDPException e) {
             throw e;

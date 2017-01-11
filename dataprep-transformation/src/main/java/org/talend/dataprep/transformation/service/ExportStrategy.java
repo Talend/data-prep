@@ -86,11 +86,6 @@ public abstract class ExportStrategy {
     protected SecurityProxy securityProxy;
 
     /**
-     * @return A arbitrary order to prioritize strategies.
-     */
-    public abstract int order();
-
-    /**
      * Return whether this export strategy is applicable to the parameters or not.
      * @param parameters Export parameters (can be null).
      * @return <code>true</code> if export strategy is applicable to parameters.

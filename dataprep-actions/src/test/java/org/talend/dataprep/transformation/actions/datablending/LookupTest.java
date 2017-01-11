@@ -18,27 +18,28 @@ import static org.talend.dataprep.transformation.actions.common.ImplicitParamete
 import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.*;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
-import org.talend.dataprep.transformation.actions.common.ActionMetadataTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -255,37 +256,47 @@ public class LookupTest extends AbstractMetadataBaseTest {
     }
 
     private void cacheUsStates() {
-        Map<String, DataSetRow> usStates = new HashMap<>();
+        LightweightExportableDataSet usStates = new LightweightExportableDataSet();
 
-        ColumnMetadata[] columnArrays = {ColumnMetadata.Builder.column().name("Postal").domain("US_STATE").type(Type.STRING).build(),
+        ColumnMetadata[] columnArrays = {
+                ColumnMetadata.Builder.column().name("Postal").domain("US_STATE").type(Type.STRING).build(),
                 ColumnMetadata.Builder.column().name("State").domain("US_STATE").type(Type.STRING).build(),
-                ColumnMetadata.Builder.column().name("Capital").domain("CITY").type(Type.STRING).build()};
+                ColumnMetadata.Builder.column().name("Capital").domain("CITY").type(Type.STRING).build() };
         List<ColumnMetadata> columns = Arrays.stream(columnArrays).collect(Collectors.toList());
+        usStates.setMetadata(new RowMetadata(columns));
 
+        Map<String, String>[] rows = new HashMap[5];
+        rows[0] = getValuesMap("GA", "Georgia", "Atlanta");
+        rows[1] = getValuesMap("FL", "Florida", "Tallahassee");
+        rows[2] = getValuesMap("IL", "Illinois", "Springfield");
+        rows[3] = getValuesMap("TX", "Texas", "Austin");
+        rows[4] = getValuesMap("CA", "California", "Sacramento");
 
-        DataSetRow[] rows = { ActionMetadataTestUtils.getRow("GA", "Georgia", "Atlanta"),
-                ActionMetadataTestUtils.getRow("FL", "Florida", "Tallahassee"),
-                ActionMetadataTestUtils.getRow("IL", "Illinois", "Springfield"),
-                ActionMetadataTestUtils.getRow("TX", "Texas", "Austin"),
-                ActionMetadataTestUtils.getRow("CA", "California", "Sacramento")};
-
-                Arrays.stream(rows).forEach(r -> r.getRowMetadata().setColumns(columns));
-        Arrays.stream(rows).forEach(r -> usStates.put((String)r.values().get("0000"), r));
+        Arrays.stream(rows).forEach(r -> usStates.addRecord((String) r.get("0000"), r));
 
         LookupDatasetsManager.put("us_states", usStates);
     }
 
     private void cacheNBA() {
-        Map<String, DataSetRow> usStates = new HashMap<>();
-        DataSetRow row = ActionMetadataTestUtils.getRow("Southwest", "Dallas Mavericks", "Dallas", "TX", "American Airlines Center", "",
+        LightweightExportableDataSet usStates = new LightweightExportableDataSet();
+        Map<String, String> values = getValuesMap("Southwest", "Dallas Mavericks", "Dallas", "TX", "American Airlines Center", "",
                 "32.790556°N 96.810278°W");
+        DataSetRow row = new DataSetRow(values);
         row.getRowMetadata().getColumns().get(1).setName("Team");
         row.getRowMetadata().getColumns().get(4).setName("Stadium");
         row.getRowMetadata().getColumns().get(6).setName("Coordinates");
 
-        usStates.put("TX", row);
+        usStates.setMetadata(row.getRowMetadata());
+        usStates.addRecord("TX", values);
 
         LookupDatasetsManager.put("nba", usStates);
+    }
+
+    public static Map<String, String> getValuesMap(String... values) {
+        DecimalFormat format = new DecimalFormat("0000");
+        Map<String, String> map = new HashMap<>();
+        IntStream.range(0, values.length).forEach(i -> map.put(format.format(i), values[i]));
+        return map;
     }
 
 }

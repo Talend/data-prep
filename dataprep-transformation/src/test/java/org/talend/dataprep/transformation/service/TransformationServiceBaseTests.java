@@ -1,23 +1,26 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.service;
 
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
+import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
@@ -34,12 +44,9 @@ import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Response;
 
 /**
  * Base class for TransformationService integration tests.
@@ -55,9 +62,6 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
     protected ConfigurableEnvironment environment;
 
     @Autowired
-    private TransformationServiceUrlRuntimeUpdater urlUpdater;
-
-    @Autowired
     protected DataSetMetadataRepository dataSetMetadataRepository;
 
     @Autowired
@@ -68,6 +72,9 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
     /** The dataprep ready to use jackson object mapper. */
     @Autowired
     protected ObjectMapper mapper;
+
+    @Autowired
+    private TransformationServiceUrlRuntimeUpdater urlUpdater;
 
     @Before
     public void setUp() {
@@ -122,17 +129,53 @@ public abstract class TransformationServiceBaseTests extends TransformationBaseT
 
     }
 
+    protected DataSetMetadata getMetadata(final String dataSetId) throws IOException {
+
+        final Response get = given() //
+                .contentType(ContentType.JSON) //
+                .expect().statusCode(200).log().ifError() //
+                .when() //
+                .get("/datasets/{id}/metadata", dataSetId);
+
+        final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(get.asInputStream());
+        assertNotNull(dataSet);
+
+        return dataSet.getMetadata();
+
+    }
+
     protected String createEmptyPreparationFromDataset(final String dataSetId, final String name) throws IOException {
         return this.createEmptyPreparationFromDataset(home.getId(), dataSetId, name);
     }
 
-    protected String createEmptyPreparationFromDataset(final String folderId, final String dataSetId, final String name) throws IOException {
+    protected String createEmptyPreparationFromDataset(final String folderId, final String dataSetId, final String name)
+            throws IOException {
         final Response post = given() //
                 .contentType(ContentType.JSON)//
                 .accept(ContentType.ANY) //
                 .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\", \"rowMetadata\":{\"columns\":[]}}")//
                 .when()//
                 .post("/preparations?folderId=" + folderId);
+
+        assertThat(post.getStatusCode(), is(200));
+
+        final String preparationId = post.getBody().asString();
+        assertThat(preparationId, notNullValue());
+        assertThat(preparationId, not(""));
+
+        return preparationId;
+    }
+
+    protected String createEmptyPreparationFromDatasetWithMetadata(final String dataSetId, final String name) throws IOException {
+
+        RowMetadata rowMetadata = getMetadata(dataSetId).getRowMetadata();
+        String metadata = mapper.writeValueAsString(rowMetadata);
+        final Response post = given() //
+                .contentType(ContentType.JSON)//
+                .accept(ContentType.ANY) //
+                .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId + "\", \"rowMetadata\":" + metadata + "}")//
+                .when()//
+                .post("/preparations?folderId=" + home.getId());
 
         assertThat(post.getStatusCode(), is(200));
 

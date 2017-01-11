@@ -20,12 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.transformation.actions.PrototypeScope;
 
 /**
@@ -37,7 +40,7 @@ public class DefaultLookupRowMatcher implements LookupRowMatcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLookupRowMatcher.class);
 
-    private final Map<String, DataSetRow> cache;
+    private final LightweightExportableDataSet cache;
 
     private final String datasetId;
 
@@ -48,23 +51,40 @@ public class DefaultLookupRowMatcher implements LookupRowMatcher {
         this.datasetId = parameters.get(LOOKUP_DS_ID.getKey());
         this.cache = LookupDatasetsManager.get(datasetId);
 
-        Optional<DataSetRow> optionalFirstRow = cache.values().stream().findFirst();
-        if (optionalFirstRow.isPresent()) {
-            DataSetRow firstRow = optionalFirstRow.get();
-            if (firstRow != null && firstRow.getRowMetadata() != null && firstRow.getRowMetadata().getColumns() != null) {
-                emptyRow = getEmptyRow(firstRow.getRowMetadata().getColumns());
-            }
-        } else {
-            LOGGER.warn("The dataset with id '" + datasetId + "' has no row");
+        if (cache == null) {
+            throw new IllegalArgumentException("The lookup data set could not be found");
         }
+
+        if (cache.getMetadata() != null) {
+            emptyRow = getEmptyRow(cache.getMetadata().getColumns());
+        } else {
+            LOGGER.warn("The data set with id '" + datasetId + "' has no metadata");
+            Optional<Map<String, String>> optionalFirstRow = cache.getRecords().values().stream().findFirst();
+            if (optionalFirstRow.isPresent()) {
+                Map<String, String> firstRow = optionalFirstRow.get();
+                List<ColumnMetadata> columns = IntStream.range(0, firstRow.size()).mapToObj(i -> {
+                    ColumnMetadata columnMetadata = new ColumnMetadata();
+                    columnMetadata.setName("COL" + i);
+                    return columnMetadata;
+                }).collect(Collectors.toList());
+
+                emptyRow = getEmptyRow(columns);
+            } else {
+                LOGGER.warn("The data set with id '" + datasetId + "' has no records");
+            }
+        }
+        if (cache.getRecords().isEmpty()) {
+            LOGGER.warn("The  lookup data set identified with");
+        }
+
     }
 
     @Override
     public DataSetRow getMatchingRow(String joinOn, String joinValue) {
-        DataSetRow result = cache.get(joinValue);
-        if (result != null) {
-            LOGGER.debug("Looking for value" + joinValue + " and found " + result.values());
-            return result;
+        Map<String, String> values = cache.getRecords().get(joinValue);
+        if (values != null) {
+            LOGGER.debug("Looking for value" + joinValue + " and found " + values.values());
+            return new DataSetRow(cache.getMetadata(), values);
         } else {
             LOGGER.debug("Looking for value" + joinValue + " and found: null");
             return emptyRow;

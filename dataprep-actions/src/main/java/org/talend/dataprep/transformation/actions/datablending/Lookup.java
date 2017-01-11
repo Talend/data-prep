@@ -157,7 +157,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
         // get the matching lookup row
         DataSetRow matchingRow = rowMatcher.getMatchingRow(joinOn, joinValue);
 
-        LOGGER.info("For "+ joinValue+" I have found this matching row: "+matchingRow.values().values());
+        LOGGER.trace("For "+ joinValue+" I have found this matching row: "+matchingRow.values().values());
 
         // get the columns to add
         List<LookupSelectedColumnParameter> colsToAdd = getColsToAdd(parameters);

@@ -43,7 +43,9 @@ public enum TransformationErrorCodes implements ErrorCode {
     UNEXPECTED_EXCEPTION(500),
     UNABLE_TO_READ_LOOKUP_DATASET(500),
     UNABLE_CREATE_SAMPLE(500),
-    UNABLE_TO_PERFORM_PREVIEW(500);
+    UNABLE_TO_PERFORM_PREVIEW(500),
+    UNABLE_TO_PERFORM_EXPORT(500),
+    EXPORT_NOT_FOUND(404, "id");
 
     /** The http status to use. */
     private int httpStatus;

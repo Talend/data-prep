@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -36,11 +35,6 @@ import com.fasterxml.jackson.core.JsonParser;
  */
 @Component
 public class DataSetExportStrategy extends StandardExportStrategy {
-
-    @Override
-    public int order() {
-        return 2;
-    }
 
     @Override
     public boolean accept(ExportParameters parameters) {

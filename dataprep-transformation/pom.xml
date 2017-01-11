@@ -42,6 +42,10 @@
             <classifier>lib</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-backend-common</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

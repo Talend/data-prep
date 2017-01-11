@@ -19,6 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -56,11 +78,6 @@ public class OptimizedExportStrategy extends StandardExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
-
-    @Override
-    public int order() {
-        return 0; // Ensure this is the first strategy tried.
-    }
 
     @Override
     public boolean accept(ExportParameters parameters) {

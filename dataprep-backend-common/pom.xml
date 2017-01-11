@@ -149,6 +149,9 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <classifier>streams</classifier>
+                        </configuration>
                     </execution>
                     <execution>
                         <goals>
@@ -160,6 +163,16 @@
 
         </plugins>
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 
     <licenses>
         <license>

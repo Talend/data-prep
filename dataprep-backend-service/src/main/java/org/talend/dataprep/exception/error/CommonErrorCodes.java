@@ -79,7 +79,11 @@ public enum CommonErrorCodes implements ErrorCode {
     /**
      * Job is already running: TAC only allows one run of the task.
      */
-    JOB_ALREADY_RUNNING(BAD_GATEWAY.value());
+    JOB_ALREADY_RUNNING(BAD_GATEWAY.value()),
+    /**
+     * If we are unable to connect to streams
+     */
+    UNABLE_TO_CONNECT_TO_STREAMS(BAD_GATEWAY.value());
 
     /** The http status to use. */
     private int httpStatus;

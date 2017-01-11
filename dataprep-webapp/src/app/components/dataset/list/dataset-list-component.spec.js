@@ -112,25 +112,25 @@ describe('DatasetList component', () => {
         expect(element.find('.inventory-item').length).toBe(3);
 
         let icon = element.find('.inventory-icon').eq(0);
-        let iconSrc = icon.find('img')[0].src;
+        let iconName = icon.find('icon').attr('name');
         let certificationIcon = icon.find('.pin');
-        expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
+        expect(strEndsWith(iconName, '\'talend-file-csv-o\'')).toBe(true);
         expect(certificationIcon.length).toBe(0);
         expect(element.find('.inventory-title').eq(0).text().indexOf('US States')).toBe(0);
         expect(element.find('.inventory-description').eq(0).text()).toBe('owned by anonymousUser, created ' + momentize('1437020219741') + ', contains  lines');
 
         icon = element.find('.inventory-icon').eq(1);
-        iconSrc = icon.find('img')[0].src;
+        iconName = icon.find('icon').attr('name');
         certificationIcon = icon.find('.pin')[0].src;
-        expect(strEndsWith(iconSrc, '/assets/images/inventory/xls_file.png')).toBe(true);
+        expect(strEndsWith(iconName, '\'talend-file-xls-o\'')).toBe(true);
         expect(strEndsWith(certificationIcon, '/assets/images/inventory/certification-pending.png')).toBe(true);
         expect(element.find('.inventory-title').eq(1).text().indexOf('Customers')).toBe(0);
         expect(element.find('.inventory-description').eq(1).text()).toBe('owned by anonymousUser, created ' + momentize('143702021974') + ', contains  lines');
 
         icon = element.find('.inventory-icon').eq(2);
-        iconSrc = icon.find('img')[0].src;
+        iconName = icon.find('icon').attr('name');
         certificationIcon = icon.find('.pin')[0].src;
-        expect(strEndsWith(iconSrc, '/assets/images/inventory/generic_file.png')).toBe(true);
+        expect(strEndsWith(iconName, '\'talend-file-o\'')).toBe(true);
         expect(strEndsWith(certificationIcon, '/assets/images/inventory/certification-certified.png')).toBe(true);
         expect(element.find('.inventory-title').eq(2).text().indexOf('Customers 2')).toBe(0);
         expect(element.find('.inventory-description').eq(2).text()).toBe('owned by anonymousUser, created ' + momentize('14370202197') + ', contains  lines');

@@ -21,13 +21,13 @@
          ng-click="$ctrl.open($ctrl.item)">
 
         <div ng-switch-when="dataset" ng-switch="$ctrl.itemType($ctrl.item)">
-            <img ng-src="/assets/images/inventory/csv_file.png" ng-switch-when="text/csv"/>
-            <img ng-src="/assets/images/inventory/xls_file.png" ng-switch-when="application/vnd.ms-excel"/>
-            <img ng-src="/assets/images/inventory/live_dataset_file.png" ng-switch-when="application/vnd.remote-ds.job"/>
-            <img ng-src="/assets/images/inventory/job_file.png" ng-switch-when="components"/>
-            <icon name="'talend-file-database-o'" ng-switch-when="application/prs.tcomp-ds.tcomp-JDBCDatastore"/>
+            <icon name="'talend-file-csv-o'" ng-switch-when="text/csv"/>
+            <icon name="'talend-file-xls-o'" ng-switch-when="application/vnd.ms-excel"/>
+            <icon name="'talend-file-connect-o'" ng-switch-when="application/vnd.remote-ds.job"/>
+            <icon name="'talend-file-job-o'" ng-switch-when="components"/>
+            <icon name="'talend-table'" ng-switch-when="application/prs.tcomp-ds.tcomp-JDBCDatastore"/>
             <icon name="'talend-file-hdfs-o'" ng-switch-when="application/prs.tcomp-ds.tcomp-SimpleFileIoDatastore"/>
-            <img ng-src="/assets/images/inventory/generic_file.png" ng-switch-default/>
+            <icon name="'talend-file-o'" ng-switch-default/>
             <img ng-src="/assets/images/inventory/certification-{{$ctrl.item.certificationStep | lowercase}}.png"
                  class="pin"
                  ng-if="$ctrl.item.certificationStep!='NONE'"/>

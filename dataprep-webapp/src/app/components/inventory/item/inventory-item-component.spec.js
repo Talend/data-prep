@@ -143,8 +143,8 @@ describe('InventoryItem component', () => {
 
             // then
             const icon = element.find('.inventory-icon').eq(0);
-            const iconSrc = icon.find('img')[0].src;
-            expect(strEndsWith(iconSrc, '/assets/images/inventory/csv_file.png')).toBe(true);
+            const iconName = icon.find('icon').attr('name');
+            expect(iconName).toBe('\'talend-file-csv-o\'');
         });
 
         it('should select XLS icon', () => {
@@ -153,8 +153,8 @@ describe('InventoryItem component', () => {
 
             // then
             const icon = element.find('.inventory-icon').eq(0);
-            const iconSrc = icon.find('img')[0].src;
-            expect(strEndsWith(iconSrc, '/assets/images/inventory/xls_file.png')).toBe(true);
+            const iconName = icon.find('icon').attr('name');
+            expect(iconName).toBe('\'talend-file-xls-o\'');
         });
 
         it('should select JOB icon', () => {
@@ -163,8 +163,8 @@ describe('InventoryItem component', () => {
 
             // then
             const icon = element.find('.inventory-icon').eq(0);
-            const iconSrc = icon.find('img')[0].src;
-            expect(strEndsWith(iconSrc, '/assets/images/inventory/live_dataset_file.png')).toBe(true);
+            const iconName = icon.find('icon').attr('name');
+            expect(iconName).toBe('\'talend-file-connect-o\'');
         });
 
         it('should select JOB icon for components tag', () => {
@@ -173,11 +173,11 @@ describe('InventoryItem component', () => {
 
             // then
             const icon = element.find('.inventory-icon').eq(0);
-            const iconSrc = icon.find('img')[0].src;
-            expect(strEndsWith(iconSrc, '/assets/images/inventory/job_file.png')).toBe(true);
+            const iconName = icon.find('icon').attr('name');
+            expect(iconName).toBe('\'talend-file-job-o\'');
         });
 
-        it('should not display update for job dattaset', () => {
+        it('should not display update for job dataset', () => {
             // when
             createElement(job_dataset);
 

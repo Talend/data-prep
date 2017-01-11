@@ -441,7 +441,6 @@ describe('Inventory list container', () => {
 		it('should render favorite action', () => {
 			// then
 			const rows = element.find('.tc-list-display-table').eq(0).find('tbody tr');
-			console.log(rows.eq(0).find('td').eq(1)[0]);
 			expect(rows.eq(0).find('td').eq(1).find('#list-0-dataset\\:favorite').length).toBe(1);
 		});
 

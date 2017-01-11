@@ -19,26 +19,23 @@ const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
  * @description TCOMP Dataset Import controller
  */
 export default class DatasetImportTcompCtrl {
-	constructor($document, $translate, state, DatasetService, StateService, MessageService, ImportService, UploadWorkflowService) {
+	constructor($document, $translate, DatasetService, MessageService, ImportService, UploadWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
 		this.$translate = $translate;
 
-		this.state = state;
-
 		this.datasetService = DatasetService;
 		this.importService = ImportService;
 		this.messageService = MessageService;
-		this.stateService = StateService;
 		this.uploadWorkflowService = UploadWorkflowService;
 
 		this.onDatastoreFormChange = this.onDatastoreFormChange.bind(this);
 		this.onDatastoreFormSubmit = this.onDatastoreFormSubmit.bind(this);
-
+		this._getDatastoreFormActions = this._getDatastoreFormActions.bind(this);
 		this.onDatasetFormChange = this.onDatasetFormChange.bind(this);
 		this.onDatasetFormSubmit = this.onDatasetFormSubmit.bind(this);
-
+		this._getDatasetFormActions = this._getDatasetFormActions.bind(this);
 		this._create = this._create.bind(this);
 		this._edit = this._edit.bind(this);
 		this._reset = this._reset.bind(this);
@@ -166,11 +163,11 @@ export default class DatasetImportTcompCtrl {
 					.then(this._reset);
 			}
 			controlledSubmitPromise.finally(() => {
-				this.currentPropertyName = null;
-				this.submitLock = false;
+			this.currentPropertyName = null;
+			this.submitLock = false;
 			});
 		}
-		// Datastore test connection
+		// Datastore form submit
 		else {
 			this.importService
 				.testConnection(definitionName, formData)
@@ -252,13 +249,13 @@ export default class DatasetImportTcompCtrl {
 	 * @private
 	 */
 	_reset() {
-		this.stateService.hideImport();
-		this.stateService.setCurrentImportItem(null);
 		this.datastoreForm = null;
 		this.datasetForm = null;
 		this.datasetFormData = null;
 		this.submitLock = false;
 		this.currentPropertyName = null;
+		this.importService.StateService.hideImport();
+		this.importService.StateService.setCurrentImportItem(null);
 	}
 
 	/**

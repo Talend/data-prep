@@ -55,16 +55,22 @@ $recipe-step-draggable-background-color: #808080 !default;
       }
     }
 
-    .reorder-handler {
-      margin-right: 5px;
+    .reorder-handler + step-description {
+      @include transition(margin-left .1s linear);
+      margin-left: 0;
     }
 
     .reorder-handler,
     .remove-icon {
+      @include transition(opacity .1s linear);
       opacity: 0;
     }
 
     &:hover {
+      .reorder-handler + step-description {
+        margin-left: 10px;
+      }
+
       .reorder-handler,
       .remove-icon {
         opacity: 1;
@@ -173,7 +179,7 @@ $recipe-step-draggable-background-color: #808080 !default;
 
   &-item-handle {
     &:hover {
-      background-color: darken($recipe-step-background-color, 1%);
+      background-color: darken($recipe-step-background-color, 2%);
     }
   }
 

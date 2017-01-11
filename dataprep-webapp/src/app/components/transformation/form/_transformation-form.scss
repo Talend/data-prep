@@ -37,4 +37,10 @@
         text-decoration: underline;
     }
   }
+
+  form {
+    input, select {
+      padding: 5px;
+    }
+  }
 }

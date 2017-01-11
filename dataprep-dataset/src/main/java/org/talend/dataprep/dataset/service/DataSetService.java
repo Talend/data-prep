@@ -20,9 +20,7 @@ import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
@@ -31,16 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,23 +42,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.*;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
-import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.api.dataset.Import.ImportBuilder;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.location.DataSetLocationService;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.location.locator.DataSetLocatorService;
@@ -351,7 +328,7 @@ public class DataSetService extends BaseDataSetService {
     /**
      * Returns the <b>full</b> data set content for given id.
      *
-     * @param metadata  If <code>true</code>, includes data set metadata information.
+     * @param metadata If <code>true</code>, includes data set metadata information.
      * @param dataSetId A data set id.
      * @return The full data set.
      */
@@ -360,10 +337,8 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @ResponseBody
     public Callable<DataSet> get(
-            @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata,
-            //
-            @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent", value = "Include internal content in the response") boolean includeInternalContent,
-            //
+            @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata, //
+            @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent", value = "Include internal content in the response") boolean includeInternalContent, //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId) {
         return () -> {
             final Marker marker = Markers.dataset(dataSetId);
@@ -633,11 +608,9 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @ResponseBody
     public DataSet preview(
-            @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata,
-            //
+            @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata, //
             @RequestParam(defaultValue = "") @ApiParam(name = "sheetName", value = "Sheet name to preview") String sheetName, //
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId //
-    ) {
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the requested data set") String dataSetId) {
 
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
 
@@ -830,8 +803,7 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "set or unset a dataset as favorite", notes = "Specify if a dataset is or is not a favorite for the current user.")
     @Timed
     public void setFavorites(
-            @RequestParam(defaultValue = "false") @ApiParam(name = "unset", value = "if true then unset the dataset as favorite, if false (default value) set the favorite flag") boolean unset,
-            //
+            @RequestParam(defaultValue = "false") @ApiParam(name = "unset", value = "if true then unset the dataset as favorite, if false (default value) set the favorite flag") boolean unset, //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the favorite data set, do nothing is the id does not exist.") String dataSetId) {
         String userId = security.getUserId();
         // check that dataset exists

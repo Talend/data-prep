@@ -139,8 +139,8 @@ public class DataSetAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
         }
-        HystrixCommand<String> creation = getCommand(UpdateDataSet.class, id, dataSetContent);
-        creation.execute();
+        HystrixCommand<String> updateDataSetCommand = getCommand(UpdateDataSet.class, id, dataSetContent);
+        updateDataSetCommand.execute();
         LOG.debug("Dataset creation or update for #{} done.", id);
     }
 

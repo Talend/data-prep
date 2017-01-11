@@ -22,7 +22,7 @@ $recipe-step-draggable-background-color: #808080 !default;
 .recipe {
   display: block;
   font-size: 0.95em;
-  padding-right: 25px;
+  padding-right: 5px;
   padding-bottom: 10px;
 
   .step-container {
@@ -34,7 +34,6 @@ $recipe-step-draggable-background-color: #808080 !default;
 
     .step-trigger {
       position: relative;
-      padding-right: 9px;
     }
 
     &.disabled-step {
@@ -166,7 +165,6 @@ $recipe-step-draggable-background-color: #808080 !default;
     sc-accordion-item {
       .trigger-container {
         cursor: move;
-        margin-left: -5px;
       }
 
       .content-container {

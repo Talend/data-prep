@@ -102,7 +102,7 @@ export default class DatasetImportTcompCtrl {
 				{
 					style: 'default',
 					type: 'button',
-					onClick: this._reset(),
+					onClick: this._reset,
 					label: this.$translate.instant('CANCEL'),
 				},
 				{

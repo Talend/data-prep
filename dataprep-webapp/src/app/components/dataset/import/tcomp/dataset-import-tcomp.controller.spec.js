@@ -30,6 +30,64 @@ describe('Dataset Import TCOMP controller', () => {
 		};
 	}));
 
+	describe('$onChanges', () => {
+		beforeEach(inject(() => {
+			ctrl = createController();
+		}));
+
+
+		describe('with location type', () => {
+			it('should get data store form', inject(($q, ImportService) => {
+				// given
+				const dataStoreFormData = {};
+				spyOn(ImportService, 'importParameters').and.returnValue($q.when({
+					data: dataStoreFormData,
+				}));
+
+				// when
+				ctrl.$onChanges({
+					locationType: {
+						currentValue: 'locationType',
+					},
+				});
+				scope.$digest();
+
+				// then
+				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
+				expect(ctrl.datasetForm).toBeUndefined();
+			}));
+		});
+
+		describe('with item', () => {
+			it('should retrieve forms', inject(($q, ImportService) => {
+				// given
+				const dataStoreFormData = {};
+				const dataSetFormData = {};
+				spyOn(ImportService, 'getFormsByDatasetId').and.returnValue($q.when({
+					data: {
+						dataStoreFormData,
+						dataSetFormData,
+					},
+				}));
+
+				// when
+				ctrl.item = { id: 'id' };
+				ctrl.$onChanges({
+					item: {
+						currentValue: {
+							id: 'id',
+						},
+					},
+				});
+				scope.$digest();
+
+				// then
+				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
+				expect(ctrl.datasetForm).toBe(dataSetFormData);
+			}));
+		});
+	});
+
 	describe('onDatastoreFormChange', () => {
 		let definitionName;
 		let uiSpecs;

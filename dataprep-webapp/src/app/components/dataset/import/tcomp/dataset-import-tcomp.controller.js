@@ -42,6 +42,7 @@ export default class DatasetImportTcompCtrl {
 		this._create = this._create.bind(this);
 		this._edit = this._edit.bind(this);
 		this._reset = this._reset.bind(this);
+		this._simulateDatastoreSubmit = this._simulateDatastoreSubmit.bind(this);
 	}
 
 	$onChanges(changes) {
@@ -123,7 +124,7 @@ export default class DatasetImportTcompCtrl {
 	 * @param definitionName ID attached to the form
 	 * @param propertyName Property which has triggered change handler
 	 */
-	onDatastoreFormChange(formData, definitionName = this.locationType, propertyName) {
+	onDatastoreFormChange(formData, definitionName, propertyName) {
 		this.importService
 			.refreshForm(propertyName, formData)
 			.then((response) => {
@@ -147,11 +148,29 @@ export default class DatasetImportTcompCtrl {
 				dataStoreProperties: formData,
 				dataSetProperties: this.datasetFormData,
 			};
-			const action = this.item ? this._edit : this._create;
-			action(formsData)
-				.then(this.uploadWorkflowService.openDataset)
-				.then(this._reset);
+			let controlledSubmitPromise;
+			// Dataset form change
+			if (this.currentPropertyName) {
+				controlledSubmitPromise = this.importService
+					.refreshForms(this.currentPropertyName, formsData)
+					.then((response) => {
+						const { data } = response;
+						this.datasetForm = data;
+					});
+			}
+			// Dataset form submit
+			else {
+				const action = this.item ? this._edit : this._create;
+				controlledSubmitPromise = action(formsData)
+					.then(this.uploadWorkflowService.openDataset)
+					.then(this._reset);
+			}
+			controlledSubmitPromise.finally(() => {
+				this.currentPropertyName = null;
+				this.submitLock = false;
+			});
 		}
+		// Datastore test connection
 		else {
 			this.importService
 				.testConnection(definitionName, formData)
@@ -160,7 +179,7 @@ export default class DatasetImportTcompCtrl {
 					'DATASTORE_CONNECTION_SUCCESSFUL'
 				))
 				.then(() => {
-					if (!this.item) {
+					if (!this.item && !this.datasetForm) {
 						this.importService
 							.getDatasetForm(formData)
 							.then((response) => {
@@ -177,37 +196,45 @@ export default class DatasetImportTcompCtrl {
 	 * @ngdoc method
 	 * @name onDatasetFormChange
 	 * @methodOf data-prep.import.controller:ImportCtrl
-	 * @description Datastore form change handler
+	 * @description Dataset form change handler
 	 * @param formData All data as form properties
 	 * @param definitionName ID attached to the form
 	 * @param propertyName Property which has triggered change handler
 	 */
-	onDatasetFormChange(formData, definitionName = this.locationType, propertyName) {
-		this.importService.refreshForm(propertyName, formData)
-			.then((response) => {
-				const { data } = response;
-				this.datasetForm = data;
-			});
+	onDatasetFormChange(formData, definitionName, propertyName) {
+		this.currentPropertyName = propertyName;
+		this._simulateDatastoreSubmit(formData);
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name onDatasetFormSubmit
 	 * @methodOf data-prep.import.controller:ImportCtrl
-	 * @description Datastore form change handler
+	 * @description Dataset form submit handler
+	 * @see onDatastoreFormSubmit
+	 * @param uiSpecs
+	 */
+	onDatasetFormSubmit(uiSpecs) {
+		const { formData } = uiSpecs;
+		this._simulateDatastoreSubmit(formData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _simulateDatastoreSubmit
+	 * @methodOf data-prep.import.controller:ImportCtrl
+	 * @description Simulate datastore form submit after saving dataset form data
 	 * Both forms need to be submitted so we have to put a latch in order to submit data store and data set forms data
 	 * One way to do that, it's to trigger onClick event on data store form submit button
 	 *  1. Second form submit -> save second form data
 	 *  2. Trigger click event on first form submit button -> save first form data
 	 *  3. Second form submit -> aggregate both forms data and send it
-	 * @see onDatastoreFormSubmit
-	 * @param uiSpecs
+	 * @private
 	 */
-	onDatasetFormSubmit(uiSpecs) {
+	_simulateDatastoreSubmit(formData) {
 		this.submitLock = true;
 		const $datastoreFormSubmit = this.$document.find(DATASTORE_SUBMIT_SELECTOR).eq(0);
 		if ($datastoreFormSubmit.length) {
-			const { formData } = uiSpecs;
 			this.datasetFormData = formData;
 			const datastoreFormSubmitElm = $datastoreFormSubmit[0];
 			datastoreFormSubmitElm.click();
@@ -231,6 +258,7 @@ export default class DatasetImportTcompCtrl {
 		this.datasetForm = null;
 		this.datasetFormData = null;
 		this.submitLock = false;
+		this.currentPropertyName = null;
 	}
 
 	/**

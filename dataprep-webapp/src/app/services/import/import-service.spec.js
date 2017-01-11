@@ -223,6 +223,39 @@ describe('Import service', () => {
 		}));
 	});
 
+	describe('refreshForms', () => {
+		beforeEach(inject(($q, ImportRestService) => {
+			spyOn(ImportRestService, 'refreshForms').and.returnValue($q.when());
+		}));
+
+		it('should call REST service', inject((ImportService, ImportRestService) => {
+			// given
+			const propertyName = 'tata';
+			const formsData = {};
+
+			// when
+			ImportService.refreshForms(propertyName, formsData);
+
+			// then
+			expect(ImportRestService.refreshForms).toHaveBeenCalledWith(propertyName, formsData);
+		}));
+
+		it('should manage loader', inject(($rootScope, ImportService) => {
+			// given
+			const propertyName = 'tata';
+			const formsData = {};
+			spyOn($rootScope, '$emit').and.returnValue();
+
+			// when
+			ImportService.refreshForms(propertyName, formsData);
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+			$rootScope.$digest();
+
+			// then
+			expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+		}));
+	});
+
 	describe('testConnection', () => {
 		beforeEach(inject(($q, ImportRestService) => {
 			spyOn(ImportRestService, 'testConnection').and.returnValue($q.when());

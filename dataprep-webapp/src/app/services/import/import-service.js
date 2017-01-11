@@ -109,6 +109,20 @@ export default class ImportService {
 
 	/**
 	 * @ngdoc method
+	 * @name refreshForms
+	 * @methodOf data-prep.services.import.service:ImportService
+	 * @description Refresh the forms
+	 * @returns {Promise}  The POST call promise
+	 */
+	refreshForms(propertyName, formsData) {
+		return this.manageLoader(
+			this.ImportRestService.refreshForms,
+			[propertyName, formsData]
+		);
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name createDataset
 	 * @methodOf data-prep.services.import.service:ImportService
 	 * @description Create dataset for a datastore

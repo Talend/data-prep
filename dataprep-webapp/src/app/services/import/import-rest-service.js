@@ -23,6 +23,7 @@ export default function ImportRestService($http, RestURLs) {
 		refreshForm,
 		testConnection,
 		getDatasetForm,
+		refreshForms,
 		createDataset,
 		getFormsByDatasetId,
 		editDataset,
@@ -59,6 +60,17 @@ export default function ImportRestService($http, RestURLs) {
 	 */
 	function refreshForm(propertyName, formData) {
 		return $http.post(`${RestURLs.tcompUrl}/datastores/properties/trigger/after/${propertyName}`, formData);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshForms
+	 * @methodOf data-prep.services.import.service:ImportRestService
+	 * @description Refresh the forms
+	 * @returns {Promise}  The POST call promise
+	 */
+	function refreshForms(propertyName, formData) {
+		return $http.post(`${RestURLs.tcompUrl}/datasets/properties/trigger/after/${propertyName}`, formData);
 	}
 
 	/**

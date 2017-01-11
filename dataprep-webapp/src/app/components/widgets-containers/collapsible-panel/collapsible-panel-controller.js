@@ -25,6 +25,7 @@ export default class CollapsiblePanelCtrl {
 	$onChanges() {
 		this.adaptHeader();
 	}
+
 	adaptHeaderItem(headerItem) {
 		switch (headerItem.displayMode) {
 		case STATUS_DISPLAY_MODE:
@@ -41,7 +42,7 @@ export default class CollapsiblePanelCtrl {
 			.header
 			.map((headerItem) => {
 				if (Array.isArray(headerItem)) {
-					return headerItem.map((item) => this.adaptHeaderItem(item));
+					return headerItem.map(item => this.adaptHeaderItem(item));
 				}
 				return this.adaptHeaderItem(headerItem);
 			});

@@ -85,7 +85,7 @@ public class AnalyzerService {
     }
 
     public AnalyzerService(CategoryRecognizerBuilder builder) {
-        this(System.getProperty("java.io.tmpdir") + "/org.talend.dataquality.semantic", //
+        this(System.getProperty("java.io.tmpdir") + "/tdp/org.talend.dataquality.semantic", //
                 "singleton", //
                 builder);
     }

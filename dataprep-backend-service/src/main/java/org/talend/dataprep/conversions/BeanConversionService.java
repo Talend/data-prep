@@ -19,6 +19,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.BeanUtils;
@@ -73,8 +75,12 @@ public class BeanConversionService implements ConversionService {
     }
 
     public void register(Registration registration) {
-        registrations.computeIfPresent(registration.modelClass, (registrationClass, existing) -> registration.merge(existing));
-        registrations.put(registration.modelClass, registration);
+        final Registration existingRegistration = registrations.get(registration.modelClass);
+        if (existingRegistration != null) {
+            registrations.put(registration.modelClass, existingRegistration.merge(registration));
+        } else {
+            registrations.put(registration.modelClass, registration);
+        }
     }
 
     public boolean has(Class<?> modelClass) {
@@ -179,14 +185,34 @@ public class BeanConversionService implements ConversionService {
             this.customs = customs;
         }
 
+        /**
+         * Merge another {@link Registration registration} (and merge same conversions into a single custom rule).
+         *
+         * @param other The other {@link Registration registration} to merge with. Please note {@link Registration#modelClass}
+         * <b>MUST</b> be the same (in {@link #equals(Object)} sense).
+         * @return The current registration with all custom merged from other's.
+         */
         public Registration<T> merge(Registration<T> other) {
             if (!other.modelClass.equals(this.modelClass)) {
                 throw new IllegalArgumentException("Cannot merge incompatible model registration (" + other.modelClass
                         + " is not equal to " + this.modelClass + ")");
             }
-            this.convertedClasses = (Class<?>[]) ArrayUtils.addAll(this.convertedClasses, other.convertedClasses);
+            this.convertedClasses = Stream.of(ArrayUtils.addAll(this.convertedClasses, other.convertedClasses)) //
+                    .collect(Collectors.toSet()) //
+                    .toArray(new Class<?>[0]);
             for (Map.Entry<Class<?>, BiFunction<Object, Object, Object>> entry : other.customs.entrySet()) {
-                this.customs.put(entry.getKey(), entry.getValue());
+                if (customs.containsKey(entry.getKey())) {
+                    // Group custom rule from other registration with existing (can't use andThen() due to type issue).
+                    final BiFunction<Object, Object, Object> otherCustom = entry.getValue();
+                    final BiFunction<Object, Object, Object> currentCustom = customs.get(entry.getKey());
+                    final BiFunction<Object, Object, Object> mergedCustom = (o, o2) -> {
+                        final Object initial = currentCustom.apply(o, o2);
+                        return otherCustom.apply(o, initial);
+                    };
+                    this.customs.put(entry.getKey(), mergedCustom);
+                } else {
+                    this.customs.put(entry.getKey(), entry.getValue());
+                }
             }
             return this;
         }

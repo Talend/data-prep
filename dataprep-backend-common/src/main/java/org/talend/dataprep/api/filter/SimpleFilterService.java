@@ -36,6 +36,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.date.DateManipulator;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -75,7 +76,7 @@ public class SimpleFilterService implements FilterService {
 
     private final DateManipulator dateManipulator = new DateManipulator();
 
-    private DateParser dateParser = new DateParser(new AnalyzerService());
+    private DateParser dateParser;
 
     @Override
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
@@ -373,7 +374,7 @@ public class SimpleFilterService implements FilterService {
 
             return safeDate(r -> {
                 final ColumnMetadata columnMetadata = rowMetadata.getById(columnId);
-                final LocalDateTime columnValue = dateParser.parse(r.get(columnId), columnMetadata);
+                final LocalDateTime columnValue = getDateParser().parse(r.get(columnId), columnMetadata);
                 return minDate.compareTo(columnValue) == 0 || (minDate.isBefore(columnValue) && maxDate.isAfter(columnValue));
             });
         } catch (Exception e) {
@@ -381,6 +382,13 @@ public class SimpleFilterService implements FilterService {
             throw new IllegalArgumentException(
                     "Unsupported query, malformed date 'range' (expected timestamps in min and max properties).");
         }
+    }
+
+    private synchronized DateParser getDateParser() {
+        if (dateParser == null) {
+            dateParser = new DateParser(Providers.get(AnalyzerService.class));
+        }
+        return dateParser;
     }
 
     /**

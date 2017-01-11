@@ -1078,7 +1078,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         applyTransformation(preparationId, "actions/append_copy_lastname.json");
 
         // then
-        Optional<Step> first = repository.list(Step.class).filter(s -> Objects.equals(s.getParent().id(), rootStep.getId()))
+        Optional<Step> first = repository.list(Step.class) //
+                .filter(s -> s.getParent() != null && Objects.equals(s.getParent().id(), rootStep.getId())) //
                 .findFirst();
 
         assertTrue(first.isPresent());

@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.api.preparation;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,6 @@ public class AppendStep {
     private StepDiff diff = new StepDiff();
 
     private List<Action> actions = new ArrayList<>(1);
-    private RowMetadata rowMetadata;
 
     public List<Action> getActions() {
         return actions;
@@ -40,11 +37,4 @@ public class AppendStep {
         return diff;
     }
 
-    public void setRowMetadata(RowMetadata rowMetadata) {
-        this.rowMetadata = rowMetadata;
-    }
-
-    public RowMetadata getRowMetadata() {
-        return rowMetadata;
-    }
 }

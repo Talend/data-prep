@@ -914,7 +914,6 @@ public class PreparationService {
                 final AppendStep appendStep = new AppendStep();
                 appendStep.setDiff(step.getDiff());
                 appendStep.setActions(current.subList(previous.size(), current.size()));
-                appendStep.setRowMetadata(step.getRowMetadata());
                 return appendStep;
             }).collect(toList());
         }
@@ -1184,7 +1183,6 @@ public class PreparationService {
 
         // Create new step from new content
         final Step newHead = new Step(head, newContent, versionService.version().getVersionId(), appendStep.getDiff());
-        newHead.setRowMetadata(appendStep.getRowMetadata());
         preparationRepository.add(newHead);
 
         // TODO Could we get the new step id?

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -24,26 +23,27 @@ import org.talend.daikon.exception.error.ErrorCode;
  * Transformation error codes.
  */
 public enum TransformationErrorCodes implements ErrorCode {
-                                                           // 400
-                                                           BAD_LOOKUP_PARAMETER(400),
-                                                           UNABLE_TO_USE_EXPORT(400, "format"),
-                                                           EXPORT_IN_PROGRESS(400),
-                                                           UNSUPPORTED_SAMPLE_TYPE(400, "type"),
-                                                           UNSUPPORTED_SAMPLE_STATUS_UPDATE(400, "status"),
-                                                           // 403
-                                                           INSUFFICIENT_ROLE(403),
-                                                           // 404
-                                                           UNKNOWN_DYNAMIC_ACTION(404, "value"),
-                                                           NO_RUNNING_SAMPLING(404, "preparation"),
-                                                           // 415
-                                                           OUTPUT_TYPE_NOT_SUPPORTED(415),
-                                                           // 500
-                                                           UNABLE_TO_COMPUTE_DATASET_ACTIONS(500),
-                                                           UNABLE_TO_TRANSFORM_DATASET(500),
-                                                           UNEXPECTED_EXCEPTION(500),
-                                                           UNABLE_TO_READ_LOOKUP_DATASET(500),
-                                                           UNABLE_CREATE_SAMPLE(500),
-                                                           UNABLE_TO_PERFORM_PREVIEW(500);
+    // 400
+    BAD_LOOKUP_PARAMETER(400),
+    UNABLE_TO_USE_EXPORT(400, "format"),
+    EXPORT_IN_PROGRESS(400),
+    UNSUPPORTED_SAMPLE_TYPE(400, "type"),
+    UNSUPPORTED_SAMPLE_STATUS_UPDATE(400, "status"),
+    UNABLE_TO_CANCEL_EXECUTION(404, "id"),
+    // 403
+    INSUFFICIENT_ROLE(403),
+    // 404
+    UNKNOWN_DYNAMIC_ACTION(404, "value"),
+    NO_RUNNING_SAMPLING(404, "preparation"),
+    // 415
+    OUTPUT_TYPE_NOT_SUPPORTED(415),
+    // 500
+    UNABLE_TO_COMPUTE_DATASET_ACTIONS(500),
+    UNABLE_TO_TRANSFORM_DATASET(500),
+    UNEXPECTED_EXCEPTION(500),
+    UNABLE_TO_READ_LOOKUP_DATASET(500),
+    UNABLE_CREATE_SAMPLE(500),
+    UNABLE_TO_PERFORM_PREVIEW(500);
 
     /** The http status to use. */
     private int httpStatus;
@@ -53,7 +53,7 @@ public enum TransformationErrorCodes implements ErrorCode {
 
     /**
      * default constructor.
-     * 
+     *
      * @param httpStatusCode the http status to use.
      */
     TransformationErrorCodes(final int httpStatusCode) {

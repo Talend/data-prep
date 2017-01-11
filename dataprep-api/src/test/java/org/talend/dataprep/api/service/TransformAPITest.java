@@ -62,7 +62,6 @@ public class TransformAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    @Ignore // see TDP-3189
     public void testTransformTwoActions() throws Exception {
         // given
         final String preparationId = createPreparationFromFile("dataset/dataset.csv", "another test Dataset", "text/csv");
@@ -113,6 +112,7 @@ public class TransformAPITest extends ApiServiceTestBase {
     }
 
     @Test
+    @Ignore // see TDP-3189
     public void testSuggestActionParams_should_return_dynamic_params_with_preparation_step() throws Exception {
         // given
         final String preparationId = createPreparationFromFile("transformation/cluster_dataset.csv", "testClustering", "text/csv");

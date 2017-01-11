@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.configuration;
 
 import org.slf4j.Logger;
@@ -16,8 +29,8 @@ public class Analyzers implements DisposableBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Analyzers.class);
 
-    /** Where the data quality indexes are extracted (default to ${java.io.tmpdir}/org.talend.dataquality.semantic). */
-    @Value("${dataquality.indexes.file.location:${java.io.tmpdir}/org.talend.dataquality.semantic}")
+    /** Where the data quality indexes are extracted (default to ${java.io.tmpdir}/tdp/org.talend.dataquality.semantic). */
+    @Value("${dataquality.indexes.file.location:${java.io.tmpdir}/tdp/org.talend.dataquality.semantic}")
     private String dataqualityIndexesLocation;
 
     @Value("#{'${luceneIndexStrategy:singleton}'}")
@@ -33,6 +46,7 @@ public class Analyzers implements DisposableBean {
 
     @Bean
     public AnalyzerService analyzerService() {
+        LOGGER.info("Data Quality strategy is {} and located in {}", luceneIndexStrategy, dataqualityIndexesLocation);
         return new AnalyzerService(dataqualityIndexesLocation, //
                 luceneIndexStrategy, //
                 CategoryRecognizerBuilder.newBuilder().lucene());

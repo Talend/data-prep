@@ -163,8 +163,8 @@ export default class DatasetImportTcompCtrl {
 					.then(this._reset);
 			}
 			controlledSubmitPromise.finally(() => {
-			this.currentPropertyName = null;
-			this.submitLock = false;
+				this.currentPropertyName = null;
+				this.submitLock = false;
 			});
 		}
 		// Datastore form submit

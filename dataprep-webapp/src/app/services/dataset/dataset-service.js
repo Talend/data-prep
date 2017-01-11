@@ -68,7 +68,6 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		getStatusActions: DatasetListService.getStatusActions,
 		getClassName: DatasetListService.getClassName,
 		isRemoveEnabled,
-		isProcessCertificationEnabled,
 		isRenameEnabled,
 		adaptDatasets: DatasetListService.adaptDatasets,
 		getDatasetActions: DatasetListService.getDatasetActions,
@@ -161,16 +160,6 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 				StorageService.removeAllAggregations(dataset.id);
 				return response;
 			});
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name isProcessCertificationEnabled
-	 * @methodOf data-prep.services.dataset.service:DatasetService
-	 * @description check if Process Certification is enabled
-	 */
-	function isProcessCertificationEnabled() {
-		return false;
 	}
 
 	/**

@@ -109,6 +109,30 @@ const folders = [
 	},
 ];
 
+const datasets = [
+	{
+		id: '1',
+		type: 'dataset',
+		name: 'AMAA dataset 1',
+		author: 'amaalej',
+		lastModificationDate: '2 minutes ago',
+		dataset: 'Us states',
+		nbLines: 20,
+		icon: 'talend-dataprep',
+		actions: ['inventory:edit', 'dataset:remove'],
+		statusActions: ['dataset:favorite'],
+		model: {
+			id: '1',
+			dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+			name: 'AMAA dataset 1',
+			author: 'amaalej',
+			creationDate: 1427447300000,
+			lastModificationDate: 1427447300300,
+			actions: [],
+		},
+	}
+];
+
 describe('Inventory list container', () => {
 	let scope;
 	let createElement;
@@ -130,7 +154,7 @@ describe('Inventory list container', () => {
 					items="items"
 					sort-by="sortBy"
 					sort-desc="sortDesc"
-					view-key="'listview:preparations'"
+					view-key="viewKey"
 					folder-view-key="'listview:folders'"
 				/>
 			`);
@@ -143,17 +167,7 @@ describe('Inventory list container', () => {
 	}));
 
 	beforeEach(inject((SettingsActionsService) => {
-		// given
-		scope.displayMode = 'table';
-		scope.sortBy = 'name';
-		scope.sortDesc = true;
 		spyOn(SettingsActionsService, 'dispatch').and.returnValue();
-
-		// when
-		createElement();
-		scope.items = preparations;
-		scope.folders = folders;
-		scope.$digest();
 	}));
 
 	afterEach(inject((SettingsService) => {
@@ -163,6 +177,20 @@ describe('Inventory list container', () => {
 	}));
 
 	describe('render', () => {
+		beforeEach(() => {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:preparations';
+
+			// when
+			createElement();
+			scope.items = preparations;
+			scope.folders = folders;
+			scope.$digest();
+		});
+
 		it('should render loader', () => {
 			// when
 			scope.isLoading = true;
@@ -196,6 +224,20 @@ describe('Inventory list container', () => {
 	});
 
 	describe('folder actions', () => {
+		beforeEach(() => {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:preparations';
+
+			// when
+			createElement();
+			scope.items = preparations;
+			scope.folders = folders;
+			scope.$digest();
+		});
+
 		it('should dispatch folder creation',
 			inject((SettingsActionsService) => {
 				// given
@@ -265,6 +307,19 @@ describe('Inventory list container', () => {
 	});
 
 	describe('preparation actions', () => {
+		beforeEach(() => {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:preparations';
+
+			// when
+			createElement();
+			scope.items = preparations;
+			scope.folders = folders;
+			scope.$digest();
+		});
 
 		it('should dispatch preparation creation',
 			inject((SettingsActionsService) => {
@@ -368,111 +423,40 @@ describe('Inventory list container', () => {
 			})
 		);
 	});
-});
 
+	describe('dataset actions', () => {
+		beforeEach(() => {
+			// given
+			scope.displayMode = 'table';
+			scope.sortBy = 'name';
+			scope.sortDesc = true;
+			scope.viewKey = 'listview:datasets';
 
-const datasets = [
-	{
-		id: '1',
-		type: 'dataset',
-		name: 'AMAA dataset 1',
-		author: 'amaalej',
-		lastModificationDate: '2 minutes ago',
-		dataset: 'Us states',
-		nbLines: 20,
-		icon: 'talend-dataprep',
-		actions: ['inventory:edit', 'dataset:remove'],
-		statusActions: ['dataset:favorite'],
-		model: {
-			id: '1',
-			dataSetId: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-			name: 'AMAA dataset 1',
-			author: 'amaalej',
-			creationDate: 1427447300000,
-			lastModificationDate: 1427447300300,
-			actions: [],
-		},
-	}
-];
-
-describe('datasets list container', () => {
-	let scope;
-	let createElement;
-	let element;
-	const body = angular.element('body');
-
-	beforeEach(angular.mock.module('react-talend-components.containers'));
-
-	beforeEach(inject(($rootScope, $compile, SettingsService) => {
-		scope = $rootScope.$new(true);
-
-		createElement = () => {
-			element = angular.element(`
-				<inventory-list
-					id="'datasets-list'"
-					display-mode="displayMode"
-					items="items"
-					sort-by="sortBy"
-					sort-desc="sortDesc"
-					view-key="'listview:datasets'"
-				/>
-			`);
-			body.append(element);
-			$compile(element)(scope);
+			// when
+			createElement();
+			scope.items = datasets;
 			scope.$digest();
-		};
-
-		SettingsService.setSettings(settings);
-	}));
-
-	beforeEach(inject((SettingsActionsService) => {
-		// given
-		scope.displayMode = 'table';
-		scope.sortBy = 'name';
-		scope.sortDesc = true;
-		spyOn(SettingsActionsService, 'dispatch').and.returnValue();
-
-		// when
-		createElement();
-		scope.items = datasets;
-		scope.$digest();
-	}));
-
-	afterEach(inject((SettingsService) => {
-		SettingsService.clearSettings();
-		scope.$destroy();
-		element.remove();
-	}));
-
-	describe('render', () => {
-		it('should render datasets', () => {
-			// then
-			const rows = element.find('.tc-list-display-table').eq(0).find('tbody tr');
-			expect(rows.length).toBe(datasets.length);
-			expect(rows.eq(0).find('td').eq(0).text()).toBe('AMAA dataset 1');
 		});
 
-		it('should render favorite icon', () => {
+		it('should render favorite action', () => {
 			// then
 			const rows = element.find('.tc-list-display-table').eq(0).find('tbody tr');
-			expect(rows.eq(0).find('td').eq(1).find('.dataset-favorite').length).toBe(1);
+			console.log(rows.eq(0).find('td').eq(1)[0]);
+			expect(rows.eq(0).find('td').eq(1).find('#list-0-dataset\\:favorite').length).toBe(1);
 		});
-	});
 
-	describe('dataset column actions', () => {
 		it('should dispatch favorite toggle', inject((SettingsActionsService) => {
-				// given
-				expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+			// given
+			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
 
-				// when
-				element.find('#datasets-list-0-dataset\\:favorite').click();
+			// when
+			element.find('#list-0-dataset\\:favorite').click();
 
-				// then
-				//expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
-				const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
-				expect(lastCallArgs.id).toBe('dataset:favorite');
-				expect(lastCallArgs.type).toBe('@@dataset/FAVORITE');
-			})
-		);
+			// then
+			//expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
+			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+			expect(lastCallArgs.id).toBe('dataset:favorite');
+			expect(lastCallArgs.type).toBe('@@dataset/FAVORITE');
+		}));
 	});
 });

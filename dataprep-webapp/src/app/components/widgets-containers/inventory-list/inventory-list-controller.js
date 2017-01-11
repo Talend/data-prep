@@ -10,7 +10,6 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import { filter } from 'lodash';
 
 const NO_OP = () => {};
 const DROPDOWN_ACTION = 'dropdown';
@@ -52,7 +51,7 @@ export default class InventoryListCtrl {
 			const allItems = (this.folders || []).concat(this.items || []);
 			this.listProps = {
 				...this.listProps,
-				items: this.adaptItemActions(allItems),
+				items: this.adaptItemsActions(allItems),
 			};
 		}
 		if (changes.sortBy) {
@@ -165,7 +164,6 @@ export default class InventoryListCtrl {
 			icon: actionSettings.icon,
 			label: actionSettings.name,
 			bsStyle: actionSettings.bsStyle,
-			className: actionSettings.id.split(':').join('-'),
 		};
 		if (actionSettings.displayMode) {
 			baseAction.displayMode = actionSettings.displayMode;
@@ -225,26 +223,24 @@ export default class InventoryListCtrl {
 			});
 	}
 
-	adaptItemTitleActions(item, index, actionsLabel) {
-		const actions = this.adaptActions(item[actionsLabel], item);
-		actions.forEach((action) => {
+	adaptItemActions(item, actions, index) {
+		const adaptedActions = this.adaptActions(actions, item);
+		adaptedActions.forEach((action) => {
 			action.id = `${this.id}-${index}-${action.id}`;
 		});
-		return actions;
+		return adaptedActions;
 	}
 
-	adaptItemActions(items) {
-		const actionsColumns = filter(this.listProps.columns, { type: 'actions' });
-		let statusActions;
+	adaptItemsActions(items) {
+		const actionsColumns = this.listProps.columns.filter(column => column.type === 'actions');
 		return items.map((item, index) => {
-			const actions = this.adaptItemTitleActions(item, index, 'actions');
+			const actions = this.adaptItemActions(item, item.actions, index);
 			const adaptedItem = {
 				...item,
 				actions,
 			};
-			actionsColumns.forEach((actionsColumn) => {
-				statusActions = this.adaptItemTitleActions(item, index, actionsColumn.key);
-				adaptedItem[actionsColumn.key] = statusActions;
+			actionsColumns.forEach(({ key }) => {
+				adaptedItem[key] = this.adaptItemActions(item, item[key], index);
 			});
 			return adaptedItem;
 		});

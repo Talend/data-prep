@@ -18,9 +18,9 @@ import moment from 'moment';
  * @description Dataset grid service. This service holds the dataset list like a cache and consume DatasetRestService to access to the REST api<br/>
  * <b style="color: red;">WARNING : do NOT use this service directly.
  * {@link data-prep.services.dataset.service:DatasetService DatasetService} must be the only entry point for datasets</b>
+ * @requires data-prep.services.state.constant:state
  * @requires data-prep.services.dataset.service:DatasetRestService
  * @requires data-prep.services.state.service:StateService
- * @requires data-prep.services.state.constant:state
  */
 export default function DatasetListService($q, state, DatasetRestService, StateService) {
 	'ngInject';
@@ -87,19 +87,6 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 
 	/**
 	 * @ngdoc method
-	 * @name getStatusActions
-	 * @methodOf data-prep.services.dataset.service:DatasetListService
-	 * @description Returns dataset status actions
-	 * @returns {string[]} The available dataset status actions
-	 */
-	function getStatusActions() {
-		return [
-			'dataset:favorite',
-		];
-	}
-
-	/**
-	 * @ngdoc method
 	 * @name adaptDatasets
 	 * @methodOf data-prep.services.dataset.service:DatasetListService
 	 * @description Adapt datasets for UI components
@@ -129,18 +116,25 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 * @ngdoc method
 	 * @name getClassName
 	 * @methodOf data-prep.services.dataset.service:DatasetListService
-	 * @description appends the class name to the status action icon
-	 * @param {object} dataset to be adapted
-	 * @returns {string} the class name to append
+	 * @description Get the class names to apply on the dataset item display
+	 * @param {object} dataset The dataset
+	 * @returns {string} the class names
 	 */
 	function getClassName(dataset) {
-		const classNamesTab = ['list-item-dataset'];
+		return dataset.favorite ?
+			['list-item-favorite'] :
+			[];
+	}
 
-		const statusActions = getStatusActions();
-		if (statusActions.indexOf('dataset:favorite') > -1 && dataset.favorite) {
-			classNamesTab.push('active-favorite-action');
-		}
-		return classNamesTab;
+	/**
+	 * @ngdoc method
+	 * @name getStatusActions
+	 * @methodOf data-prep.services.dataset.service:DatasetListService
+	 * @description Returns dataset status actions
+	 * @returns {string[]} The available dataset status actions
+	 */
+	function getStatusActions() {
+		return ['dataset:favorite'];
 	}
 
 	/**

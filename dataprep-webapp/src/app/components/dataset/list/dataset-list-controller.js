@@ -45,7 +45,6 @@ export default class DatasetListCtrl {
 
 		// TODO refacto inventory item to take function and remove this
 		this.uploadUpdatedDatasetFile = this.uploadUpdatedDatasetFile.bind(this);
-		this.processCertification = this.processCertification.bind(this);
 		this.remove = this.remove.bind(this);
 		this.rename = this.rename.bind(this);
 		this.clone = this.clone.bind(this);
@@ -137,18 +136,6 @@ export default class DatasetListCtrl {
 				const index = this.renamingList.indexOf(dataset);
 				this.renamingList.splice(index, 1);
 			});
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name processCertification
-	 * @methodOf data-prep.dataset-list.controller:DatasetListCtrl
-	 * @description Ask certification for a dataset
-	 * @param {object[]} dataset Ask certification for the dataset
-	 */
-	processCertification(dataset) {
-		this.DatasetService
-			.processCertification(dataset);
 	}
 
 	/**

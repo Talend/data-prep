@@ -73,7 +73,7 @@ describe('Dataset List Service', () => {
 				nbLines: datasets[0].records,
 				icon: 'talend-file-csv-o',
 				displayMode: 'text',
-				className: 'list-item-dataset',
+				className: '',
 				actions: ['inventory:edit', 'list:dataset:preparations', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: datasets[0].preparations,
@@ -89,7 +89,7 @@ describe('Dataset List Service', () => {
 				nbLines: datasets[1].records,
 				icon: 'talend-file-xls-o',
 				displayMode: 'text',
-				className: 'list-item-dataset',
+				className: '',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: undefined,
@@ -105,7 +105,7 @@ describe('Dataset List Service', () => {
 				nbLines: datasets[2].records,
 				icon: 'talend-file-csv-o',
 				displayMode: 'text',
-				className: 'list-item-dataset',
+				className: '',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: undefined,
@@ -121,7 +121,7 @@ describe('Dataset List Service', () => {
 				nbLines: datasets[3].records,
 				icon: 'talend-file-o',
 				displayMode: 'text',
-				className: 'list-item-dataset',
+				className: '',
 				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: undefined,
@@ -438,32 +438,27 @@ describe('Dataset List Service', () => {
 		}));
 	});
 
-	describe('dataset class name (row)', () => {
-		it('should return dataset class without active favorite', inject((DatasetListService) => {
+	describe('getClassName', () => {
+		it('should return favorite class', inject((DatasetListService) => {
 			// given
-			const dataset = {};
+			const dataset = { favorite: true };
 
 			// when
 			const classNames = DatasetListService.getClassName(dataset);
 
 			// then
-			expect(classNames.length).toBe(1);
-			expect(classNames[0]).toBe('list-item-dataset');
+			expect(classNames).toEqual(['list-item-favorite']);
 		}));
 
-		it('should return dataset class with active favorite', inject((DatasetListService) => {
+		it('should return empty array when dataset is not favorite', inject((DatasetListService) => {
 			// given
-			const dataset = {
-				favorite: true,
-			};
+			const dataset = { favorite: false };
 
 			// when
 			const classNames = DatasetListService.getClassName(dataset);
 
 			// then
-			expect(classNames.length).toBe(2);
-			expect(classNames[0]).toBe('list-item-dataset');
-			expect(classNames[1]).toBe('active-favorite-action');
+			expect(classNames).toEqual([]);
 		}));
 	});
 });

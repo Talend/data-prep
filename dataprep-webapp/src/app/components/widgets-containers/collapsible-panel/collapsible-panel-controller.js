@@ -25,19 +25,25 @@ export default class CollapsiblePanelCtrl {
 	$onChanges() {
 		this.adaptHeader();
 	}
+	adaptHeaderItem(headerItem) {
+		switch (headerItem.displayMode) {
+		case STATUS_DISPLAY_MODE:
+			return this.adaptStatusItem(headerItem);
+		case ACTION_DISPLAY_MODE:
+			return this.adaptActionItem(headerItem);
+		default:
+			return headerItem;
+		}
+	}
 
 	adaptHeader() {
 		this.header = this.item
 			.header
 			.map((headerItem) => {
-				switch (headerItem.displayMode) {
-				case STATUS_DISPLAY_MODE:
-					return this.adaptStatusItem(headerItem);
-				case ACTION_DISPLAY_MODE:
-					return this.adaptActionItem(headerItem);
-				default:
-					return headerItem;
+				if (Array.isArray(headerItem)) {
+					return headerItem.map((item) => this.adaptHeaderItem(item));
 				}
+				return this.adaptHeaderItem(headerItem);
 			});
 	}
 

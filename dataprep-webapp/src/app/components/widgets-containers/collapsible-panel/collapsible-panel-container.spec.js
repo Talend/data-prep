@@ -53,7 +53,7 @@ const content = {
 	description: 'Description3',
 };
 
-describe('Breadcrumb container', () => {
+describe('CollapsiblePanel container', () => {
 	let scope;
 	let createElement;
 	let element;
@@ -167,5 +167,22 @@ describe('Breadcrumb container', () => {
 		// then
 		expect(element.find('.panel-heading > div').eq(0).text().trim()).toBe(simpleItem.label);
 		expect(element.find('.panel-heading > div').eq(1).text().trim()).toBe(badgeItem.label);
+	});
+
+	it('should render simple and badge text in the same group', () => {
+		// given
+		scope.exportFullRun = {
+			header: [[simpleItem, badgeItem]],
+			content: [],
+		};
+
+		// when
+		createElement();
+
+		// then
+		expect(element.find('.panel-heading > div').length).toBe(1);
+
+		expect(element.find('.panel-heading > div').eq(0).find('span').eq(0).text().trim()).toBe(simpleItem.label);
+		expect(element.find('.panel-heading > div').eq(0).find('span').eq(1).text().trim()).toBe(badgeItem.label);
 	});
 });

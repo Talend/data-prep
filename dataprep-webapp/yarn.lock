@@ -5394,9 +5394,9 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.47.2:
-  version "0.47.2"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.47.2.tgz#39ea344be96b57c1f2246dc1b1b72130251d8331"
+react-talend-components@0.48.0:
+  version "0.48.0"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.48.0.tgz#cf22180d13323bca5bd5fd777dc9c323187fff76"
   dependencies:
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"

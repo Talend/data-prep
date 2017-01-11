@@ -2,6 +2,13 @@ import _ from 'lodash';
 import 'moment';
 import moment from 'moment-jdateformatparser';
 
+const SPECIAL_JAVA_PATTERNS = [
+	{
+		java: 'yyyy-MM-dd HH:mm:ss.S',
+		js: 'YYYY-MM-DD HH:mm:ss.S',
+	},
+];
+
 /**
  * @name convertJavaDateFormatToMomentDateFormat
  * @description convert Java Date Format To Moment Date Format
@@ -11,24 +18,25 @@ function convertJavaDateFormatToMomentDateFormat(javaDateFormat) {
 	let openQuote = false;
 	let pattern = javaDateFormat;
 
-    // * simple quote (') is used in java petterns to escape things.
-    // In moment, we use brackets ([])
-    // * escaped quotes ('') should be converted to simple quote
-    // * words between quotes ('content') should be converted
-    // to words between brackets ([content])
+	// * simple quote (') is used in java petterns to escape things.
+	// In moment, we use brackets ([])
+	// * escaped quotes ('') should be converted to simple quote
+	// * words between quotes ('content') should be converted
+	// to words between brackets ([content])
 	pattern = pattern
-        .replace(/\'\'/g, '#tdpQuote') // escape ('') to a unique replacement word
-        .replace(/\'/g, () => {        // deal with word between quotes --> words between brackets
-	openQuote = !openQuote;
-	return openQuote ? '[' : ']';
-})
-        .replace(/#tdpQuote/g, '\'');  // replace original ('') to simple quotes
+		.replace(/\'\'/g, '#tdpQuote') // escape ('') to a unique replacement word
+		.replace(/\'/g, () => {        // deal with word between quotes --> words between brackets
+			openQuote = !openQuote;
+			return openQuote ? '[' : ']';
+		})
+		.replace(/#tdpQuote/g, '\'');  // replace original ('') to simple quotes
 
-    // toMomentFormatString will modify all the characters (even those between branckets)
-    // we save those escaped parts, convert the pattern and replace the parts
-    // that should be escaped
+	// toMomentFormatString will modify all the characters (even those between branckets)
+	// we save those escaped parts, convert the pattern and replace the parts
+	// that should be escaped
 	const patternEscapedParts = pattern.match(/\[.*\]/g);
-	pattern = moment().toMomentFormatString(pattern);
+	const patternToApply = _.find(SPECIAL_JAVA_PATTERNS, { java: pattern });
+	pattern = patternToApply ? patternToApply.js : moment().toMomentFormatString(pattern);
 	let escapedPartIndex = 0;
 	pattern = pattern.replace(/\[.*\]/g, () => {
 		return patternEscapedParts[escapedPartIndex++];
@@ -80,12 +88,12 @@ function convertPatternToRegexp(pattern) {
  */
 function isDatePattern(pattern) {
 	return (pattern.indexOf('d') > -1 ||
-    pattern.indexOf('M') > -1 ||
-    pattern.indexOf('y') > -1 ||
-    pattern.indexOf('H') > -1 ||
-    pattern.indexOf('h') > -1 ||
-    pattern.indexOf('m') > -1 ||
-    pattern.indexOf('s') > -1);
+	pattern.indexOf('M') > -1 ||
+	pattern.indexOf('y') > -1 ||
+	pattern.indexOf('H') > -1 ||
+	pattern.indexOf('h') > -1 ||
+	pattern.indexOf('m') > -1 ||
+	pattern.indexOf('s') > -1);
 }
 
 /**
@@ -138,14 +146,14 @@ function patternOccurrenceWorker(parameters) {
 		const matchingFn = valueMatchPatternFn(pattern);
 
 		patternFrequency.filteredOccurrences = !filteredRecords ?
-            patternFrequency.occurrences :
-            _.chain(filteredRecords)
-                .pluck(columnId)
-                .filter(matchingFn)
-                .groupBy(value => value)
-                .mapValues('length')
-                .reduce((accu, value) => accu + value, 0)
-                .value();
+			patternFrequency.occurrences :
+			_.chain(filteredRecords)
+				.pluck(columnId)
+				.filter(matchingFn)
+				.groupBy(value => value)
+				.mapValues('length')
+				.reduce((accu, value) => accu + value, 0)
+				.value();
 	});
 
 	return patternFrequencyTable;

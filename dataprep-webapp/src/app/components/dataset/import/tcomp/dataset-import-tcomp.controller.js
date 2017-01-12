@@ -152,8 +152,7 @@ export default class DatasetImportTcompCtrl {
 				controlledSubmitPromise = this.importService
 					.refreshForms(this.currentPropertyName, formsData)
 					.then((response) => {
-						const { data } = response;
-						this.datasetForm = data;
+						this.datasetForm = response.data;
 					});
 			}
 			// Dataset form submit

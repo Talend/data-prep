@@ -56,6 +56,36 @@ describe('Dataset Import TCOMP controller', () => {
 				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
 				expect(ctrl.datasetForm).toBeUndefined();
 			}));
+
+			it('should get data set form if test connection button is disabled', inject(($q, ImportService) => {
+				// given
+				const dataStoreFormData = {
+					properties: {
+						tdp_isTestConnectionEnabled: false,
+					},
+				};
+				const dataSetFormData = {
+					properties: {},
+				};
+				spyOn(ImportService, 'importParameters').and.returnValue($q.when({
+					data: dataStoreFormData,
+				}));
+				spyOn(ImportService, 'getDatasetForm').and.returnValue($q.when({
+					data: dataSetFormData,
+				}));
+
+				// when
+				ctrl.$onChanges({
+					locationType: {
+						currentValue: 'locationType',
+					},
+				});
+				scope.$digest();
+
+				// then
+				expect(ctrl.datastoreForm).toBe(dataStoreFormData);
+				expect(ctrl.datasetForm).toBe(dataSetFormData);
+			}));
 		});
 
 		describe('with item', () => {

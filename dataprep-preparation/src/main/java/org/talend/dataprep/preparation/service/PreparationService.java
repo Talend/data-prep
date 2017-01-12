@@ -19,6 +19,7 @@ import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.CONFLICT_TO_LOCK_RESOURCE;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
 import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
@@ -437,7 +438,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        checkPreparationLock(id);
         preparationCleaner.removePreparationOrphanSteps(preparationToDelete.getId());
         preparationRepository.remove(preparationToDelete);
 
@@ -465,7 +466,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        checkPreparationLock(id);
         log.debug("Updating preparation with id {}: {}", preparation.id(), previousPreparation);
 
         Preparation updated = previousPreparation.merge(preparation);
@@ -557,8 +558,6 @@ public class PreparationService {
         log.debug("Get content of preparation details for #{}.", id);
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
 
-        // Ensure that the preparation is not locked elsewhere
-        lock(id);
         final PreparationMessage details = beanConversionService.convert(preparation, PreparationMessage.class);
         log.info("returning details for {} -> {}", id, details);
         return details;
@@ -585,9 +584,6 @@ public class PreparationService {
     }
 
     public List<String> getSteps(String id) {
-        // Ensure that the preparation is not locked elsewhere
-        lock(id);
-
         log.debug("Get steps of preparation for #{}.", id);
         final Step step = getStep(id);
         return preparationUtils.listStepsIds(step.id(), preparationRepository);
@@ -634,7 +630,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        checkPreparationLock(id);
 
         log.debug("Current head for preparation #{}: {}", id, preparation.getHeadId());
 
@@ -666,7 +662,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
+        checkPreparationLock(preparationId);
         log.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
 
         // Get steps from "step to modify" to the head
@@ -724,7 +720,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(id);
+        checkPreparationLock(id);
         deleteAction(preparation, stepToDeleteId);
 
     }
@@ -743,7 +739,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
+        checkPreparationLock(preparationId);
         setPreparationHead(preparation, head);
     }
 
@@ -759,8 +755,6 @@ public class PreparationService {
 
         final Preparation preparation = preparationRepository.get(id, Preparation.class);
         if (preparation != null) {
-            // Ensure that the preparation is not locked elsewhere
-            lock(id);
             final String stepId = getStepId(version, preparation);
             final Step step = getStep(stepId);
             return getActions(step);
@@ -824,7 +818,7 @@ public class PreparationService {
         final Preparation preparation = getPreparation(preparationId);
 
         // Ensure that the preparation is not locked elsewhere
-        lock(preparationId);
+        checkPreparationLock(preparationId);
 
         reorderSteps(preparation, stepId, parentStepId);
     }
@@ -944,7 +938,6 @@ public class PreparationService {
      * @param preparationId the specified preparation identifier
      * @throws TDPException if the lock is hold by another user
      */
-
     private void lock(String preparationId) {
 
         final String userId = security.getUserId();
@@ -962,10 +955,40 @@ public class PreparationService {
         } else {
             log.debug("Unable to lock Preparation {} for user {}. Already locked by user {}", preparationId, userId,
                     lockedResource.getUserId());
-            // TODO: We must find a way to avoid printing stack trace when such a kind of non critical exceptions occurs
-            throw new TDPException(CommonErrorCodes.CONFLICT_TO_LOCK_RESOURCE,
-                    build().put("id", lockedResource.getUserDisplayName()));
+            throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()), false);
         }
+    }
+
+    /**
+     * Check that the given preparation is locked by the current user <b>without</b> setting a lock on the preparation.
+     *
+     * If the user has the lock, the lock is updated (to delay the expiration)
+     *
+     * @param preparationId the specified preparation identifier.
+     * @throws TDPException if the lock is hold by another user.
+     */
+    private void checkPreparationLock(String preparationId) {
+
+        final String userId = security.getUserId();
+
+        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
+        if (preparation == null) {
+            log.warn("Cannot check a lock on a preparation that does not exists (#{})", preparationId);
+            return;
+        }
+
+        LockedResource lockedResource = lockedResourceRepository.get(preparation);
+        if (!lockedResourceRepository.lockOwned(lockedResource, userId)) {
+            log.debug("Preparation #{} is already locked by another user : {}", preparationId, lockedResource.getUserId());
+            throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()), false);
+        }
+
+        // update the lock TTL
+        LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
+        lockedResourceRepository.tryLock(preparation, userInfo);
+
+        log.debug("Preparation {} locked for user {}.", preparationId, userId);
+
     }
 
     /**

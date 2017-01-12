@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import { find } from 'lodash';
-
 /**
  * @ngdoc service
  * @name data-prep.services.export.service:ExportService
@@ -32,48 +30,52 @@ export default class ExportService {
 		this.state = state;
 	}
 
-    /**
-     * @ngdoc method
-     * @name getType
-     * @methodOf data-prep.services.export.service:ExportService
-     * @param {String} id the export type id
-     * @description Get the type by id
-     */
+	/**
+	 * @ngdoc method
+	 * @name getType
+	 * @methodOf data-prep.services.export.service:ExportService
+	 * @param {String} id the export type id
+	 * @description Get the type by id
+	 */
 	getType(id) {
 		return _.find(this.state.export.exportTypes, { id });
 	}
 
-    /**
-     * @ngdoc method
-     * @name setExportParams
-     * @methodOf data-prep.services.export.service:ExportService
-     * @param {Object} params The export params
-     * @description Set the export parameters in app state and storage
-     */
+	/**
+	 * @ngdoc method
+	 * @name setExportParams
+	 * @methodOf data-prep.services.export.service:ExportService
+	 * @param {Object} params The export params
+	 * @description Set the export parameters in app state and storage
+	 */
 	setExportParams(params) {
 		this.StorageService.saveExportParams(params);
 		this.StateService.setDefaultExportType(params);
 	}
 
-    /**
-     * @ngdoc method
-     * @name refreshTypes
-     * @methodOf data-prep.services.export.service:ExportService
-     * @description Refresh the export types list and save default if no parameters has been saved yet
-     */
-	refreshTypes() {
-		return this.ExportRestService.exportTypes()
-            .then((exportTypes) => {
-	let defaultExportParams = this.StorageService.getExportParams();
+	/**
+	 * @ngdoc method
+	 * @name refreshTypes
+	 * @methodOf data-prep.services.export.service:ExportService
+	 * @description Refresh the export types available for the entity
+	 * It saves default if no parameters has been saved yet
+	 * @param {string} entityType preparations | datasets
+	 * @param {string} entityId The entity id
+	 */
+	refreshTypes(entityType, entityId) {
+		this.StateService.resetExportTypes();
+		return this.ExportRestService.exportTypes(entityType, entityId)
+			.then((exportTypes) => {
+				let defaultExportParams = this.StorageService.getExportParams();
 
-	if (!defaultExportParams) {
-		const exportType = find(exportTypes, { defaultExport: 'true' });
-		defaultExportParams = { exportType: exportType.id };
-		this.StorageService.saveExportParams(defaultExportParams);
-	}
+				if (!defaultExportParams) {
+					const exportType = exportTypes.find(type => type.defaultExport === 'true');
+					defaultExportParams = { exportType: exportType.id };
+					this.StorageService.saveExportParams(defaultExportParams);
+				}
 
-	this.StateService.setExportTypes(exportTypes);
-	this.StateService.setDefaultExportType(defaultExportParams);
-});
+				this.StateService.setExportTypes(exportTypes);
+				this.StateService.setDefaultExportType(defaultExportParams);
+			});
 	}
 }

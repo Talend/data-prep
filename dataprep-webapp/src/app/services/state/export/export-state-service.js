@@ -21,6 +21,7 @@ export function ExportStateService() {
 	return {
 		setExportTypes,
 		setDefaultExportType,
+		reset,
 	};
 
 	function setExportTypes(exportTypes) {
@@ -29,5 +30,10 @@ export function ExportStateService() {
 
 	function setDefaultExportType(exportType) {
 		exportState.defaultExportType = exportType;
+	}
+
+	function reset() {
+		exportState.exportTypes = [];
+		exportState.defaultExportType = {};
 	}
 }

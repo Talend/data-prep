@@ -31,8 +31,12 @@ export default class ExportRestService {
      * @methodOf data-prep.services.export.service:ExportRestService
      * @description Fetch the available export types
      * @returns {Promise}  The GET call promise
+     * @param {string} entityType preparations | datasets
+     * @param {string} entityId The entity id
      */
-	exportTypes() {
-		return this.$http.get(this.url + '/formats').then(resp => resp.data);
+	exportTypes(entityType, entityId) {
+		return this.$http
+			.get(`${this.url}/formats/${entityType}/${entityId}`)
+			.then(resp => resp.data);
 	}
 }

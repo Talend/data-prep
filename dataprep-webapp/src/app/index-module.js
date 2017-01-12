@@ -20,7 +20,6 @@ import uiRouter from 'angular-ui-router';
 
 import APP_MODULE from './components/app/app-module';
 import SERVICES_DATASET_MODULE from './services/dataset/dataset-module';
-import SERVICES_EXPORT_MODULE from './services/export/export-module';
 import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
 import SETTINGS_MODULE from './settings/settings-module';
@@ -39,7 +38,6 @@ const app = angular.module(MODULE_NAME,
 		uiRouter,
 		SERVICES_REST_MODULE, // rest interceptors
 		SERVICES_DATASET_MODULE, // for configuration
-		SERVICES_EXPORT_MODULE, // for configuration
 		SERVICES_UTILS_MODULE, // for configuration
 		SETTINGS_MODULE, // app dynamic settings
 		APP_MODULE, // app root
@@ -86,13 +84,11 @@ window.fetchConfiguration = function fetchConfiguration() {
 					'ngInject';
 					RestURLs.setServerUrl(config.serverUrl);
 				})
-				// Fetch dynamic configuration (export types, supported encodings, ...)
-				.run((SettingsService, ImportService, ExportService, DatasetService) => {
+				// Fetch dynamic configuration (supported encodings, ...)
+				.run((SettingsService, DatasetService) => {
 					'ngInject';
 					// base settings
 					SettingsService.setSettings(appSettings);
-					// export types
-					ExportService.refreshTypes();
 					// dataset encodings
 					DatasetService.refreshSupportedEncodings();
 				})

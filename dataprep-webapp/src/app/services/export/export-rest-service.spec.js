@@ -12,8 +12,6 @@
  ============================================================================*/
 
 describe('Export REST Service', () => {
-    'use strict';
-
     let $httpBackend;
     const exportTypes = [
         {
@@ -56,15 +54,15 @@ describe('Export REST Service', () => {
         $httpBackend = $injector.get('$httpBackend');
     }));
 
-    it('should get all export types', inject(($rootScope, RestURLs, ExportRestService) => {
+    it('should get export types', inject(($rootScope, RestURLs, ExportRestService) => {
         //given
         let types = null;
         $httpBackend
-            .expectGET(RestURLs.exportUrl + '/formats')
+            .expectGET(`${RestURLs.exportUrl}/formats/datasets/myDatasetId`)
             .respond(200, exportTypes);
 
         //when
-        ExportRestService.exportTypes()
+        ExportRestService.exportTypes('datasets', 'myDatasetId')
             .then((response) => {
                 types = response;
             });

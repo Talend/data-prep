@@ -15,6 +15,7 @@ import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import SERVICES_DATAGRID_MODULE from '../datagrid/datagrid-module';
 import SERVICES_DATASET_MODULE from '../dataset/dataset-module';
+import SERVICES_EXPORT_MODULE from '../export/export-module';
 import SERVICES_FILTER_MODULE from '../filter/filter-module';
 import SERVICES_HISTORY_MODULE from '../history/history-module';
 import SERVICES_LOOKUP_MODULE from '../lookup/lookup-module';
@@ -36,6 +37,7 @@ const MODULE_NAME = 'data-prep.services.playground';
  * @description This module contains the services to load the playground
  * @requires data-prep.services.datagrid
  * @requires data-prep.services.dataset
+ * @requires data-prep.services.export
  * @requires data-prep.services.filter
  * @requires data-prep.services.history
  * @requires data-prep.services.onboarding
@@ -51,6 +53,7 @@ angular.module(MODULE_NAME,
 		uiRouter,
 		SERVICES_DATAGRID_MODULE,
 		SERVICES_DATASET_MODULE,
+		SERVICES_EXPORT_MODULE,
 		SERVICES_FILTER_MODULE,
 		SERVICES_HISTORY_MODULE,
 		SERVICES_LOOKUP_MODULE,

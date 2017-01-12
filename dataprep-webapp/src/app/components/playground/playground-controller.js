@@ -282,8 +282,8 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	 * @name loadPreparation
 	 * @description open a preparation
 	 */
-	function loadPreparation() {
-		PlaygroundService.load(state.playground.preparation)
+	function loadPreparation(preparation) {
+		PlaygroundService.load(preparation)
 			.then(() => {
 				if (shouldFetchStatistics()) {
 					fetchStatistics();
@@ -297,40 +297,14 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	 * @name loadDataset
 	 * @description open a dataset
 	 */
-	function loadDataset() {
-		PlaygroundService.initPlayground(state.playground.dataset)
+	function loadDataset(dataset) {
+		PlaygroundService.initPlayground(dataset)
 			.then(() => {
 				if (shouldFetchStatistics()) {
 					fetchStatistics();
 				}
 			})
 			.catch(() => errorGoBack(true, { type: 'dataset' }));
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name getDatasetById
-	 * @description get dataset metadata by Id
-	 */
-	function getDatasetById(id) {
-		return DatasetService.getMetadata(id)
-			.then((dataset) => {
-				StateService.setCurrentDataset(dataset);
-				return dataset;
-			});
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name getPreparationById
-	 * @description get preparation detail by id
-	 */
-	function getPreparationById(id) {
-		return PreparationService.getDetails(id)
-			.then((preparation) => {
-				StateService.setCurrentPreparation(preparation);
-				return preparation;
-			});
 	}
 
 	/**
@@ -353,22 +327,20 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	if ($stateParams.prepid) {
 		StateService.setPreviousRoute(
 			HOME_PREPARATIONS_ROUTE,
-			{ folderId: state.inventory.folder.metadata.id },
+			{ folderId: state.inventory.folder.metadata.id }
 		);
-
 		if (!shouldReloadPreparation()) {
 			return;
 		}
 
 		PlaygroundService.startLoader();
-		getPreparationById($stateParams.prepid)
+		PreparationService.getDetails($stateParams.prepid)
 			.then((preparation) => {
-				loadPreparation();
+				loadPreparation(preparation);
 				return preparation;
 			})
-			.then((preparation) => {
-				return getDatasetById(preparation.dataSetId);
-			})
+			.then(preparation => DatasetService.getMetadata(preparation.dataSetId))
+			.then(dataset => StateService.setCurrentDataset(dataset))
 			.catch(() => {
 				PlaygroundService.stopLoader();
 				return errorGoBack(false);
@@ -377,7 +349,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	else if ($stateParams.datasetid) {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		PlaygroundService.startLoader();
-		getDatasetById($stateParams.datasetid)
+		DatasetService.getMetadata($stateParams.datasetid)
 			.then(loadDataset)
 			.catch(() => {
 				PlaygroundService.stopLoader();

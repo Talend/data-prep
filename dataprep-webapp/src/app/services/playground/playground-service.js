@@ -44,7 +44,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
                                           state, StateService, StepUtilsService,
                                           DatasetService, DatagridService, StorageService, FilterService,
                                           FilterAdapterService, PreparationService, PreviewService,
-                                          RecipeService, TransformationCacheService,
+                                          RecipeService, TransformationCacheService, ExportService,
                                           StatisticsService, HistoryService,
                                           OnboardingService, MessageService) {
 	'ngInject';
@@ -113,6 +113,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		HistoryService.clear();
 
 		// init
+		StateService.setPreparationName(preparation ? preparation.name : dataset.name);
 		StateService.setCurrentDataset(dataset);
 		StateService.setCurrentData(data);
 		StateService.setCurrentPreparation(preparation);
@@ -120,6 +121,18 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		FilterService.initFilters(dataset, preparation);
 		updateGridSelection(dataset, preparation);
 		this.updatePreparationDetails();
+
+		// preparation specific init
+		if (preparation) {
+			StateService.showRecipe();
+			ExportService.refreshTypes('preparations', preparation.id);
+		}
+
+		// dataset specific init
+		else {
+			StateService.setNameEditionMode(true);
+			ExportService.refreshTypes('datasets', dataset.id);
+		}
 	}
 
 	/**
@@ -149,12 +162,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		startLoader();
 		return DatasetService.getContent(dataset.id, true)
 			.then(data => checkRecords(data))
-			.then((data) => {
-				StateService.setPreparationName(dataset.name);
-				reset.call(this, dataset, data);
-				StateService.hideRecipe();
-				StateService.setNameEditionMode(true);
-			})
+			.then(data => reset.call(this, dataset, data))
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
 					$timeout(OnboardingService.startTour('playground'), 300, false);
@@ -181,13 +189,13 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	function load(preparation, sampleType = 'HEAD') {
 		startLoader();
 		return PreparationService.getContent(preparation.id, 'head', sampleType)
-			.then((response) => {
-				StateService.setPreparationName(preparation.name);
-				reset.call(this, state.playground.dataset ? state.playground.dataset : { id: preparation.dataSetId }, response, preparation, sampleType);
-				StateService.showRecipe();
-				StateService.setNameEditionMode(false);
-				return response;
-			})
+			.then(data => reset.call(
+				this,
+				state.playground.dataset ? state.playground.dataset : { id: preparation.dataSetId },
+				data,
+				preparation,
+				sampleType
+			))
 			.finally(stopLoader);
 	}
 
@@ -291,12 +299,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		}
 
 		return PreparationService.getDetails(state.playground.preparation.id)
-			.then((resp) => {
-				const isRecipeEmpty = !state.playground.recipe.current.steps.length;
-				RecipeService.refresh(resp);
-				if (isRecipeEmpty && state.playground.recipe.current.steps.length) {
+			.then((preparation) => {
+				const recipeWasEmpty = !state.playground.recipe.current.steps.length;
+				RecipeService.refresh(preparation);
+				const recipeIsEmpty = !state.playground.recipe.current.steps.length;
+
+				if (recipeWasEmpty && !recipeIsEmpty) {
 					StateService.showRecipe();
-					$state.go('playground.preparation', { prepid: state.playground.preparation.id });
+					$state.go('playground.preparation', { prepid: preparation.id });
 				}
 
 				if (OnboardingService.shouldStartTour('recipe') &&
@@ -304,7 +314,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 					StateService.showRecipe();
 					$timeout(OnboardingService.startTour('recipe'), 300, false);
 				}
-				return resp;
+				return preparation;
 			});
 	}
 

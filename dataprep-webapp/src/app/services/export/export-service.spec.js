@@ -140,11 +140,11 @@ describe('Export service', () => {
     it('should get export types and set them in app state',
         inject(($rootScope, ExportService, StateService, ExportRestService) => {
             // when
-            ExportService.refreshTypes();
+            ExportService.refreshTypes('datasets', 'myDatasetId');
             $rootScope.$digest();
 
             // then
-            expect(ExportRestService.exportTypes).toHaveBeenCalled();
+            expect(ExportRestService.exportTypes).toHaveBeenCalledWith('datasets', 'myDatasetId');
             expect(StateService.setExportTypes).toHaveBeenCalledWith(exportTypes);
         }));
 
@@ -154,7 +154,7 @@ describe('Export service', () => {
             spyOn(StorageService, 'getExportParams').and.returnValue();
 
             // when
-            ExportService.refreshTypes();
+            ExportService.refreshTypes('datasets', 'myDatasetId');
             $rootScope.$digest();
 
             // then
@@ -170,7 +170,7 @@ describe('Export service', () => {
             spyOn(StorageService, 'getExportParams').and.returnValue(savedExportParams);
 
             // when
-            ExportService.refreshTypes();
+            ExportService.refreshTypes('datasets', 'myDatasetId');
             $rootScope.$digest();
 
             // then

@@ -173,6 +173,7 @@ export function StateService(RouteStateService, routeState,
 		// export
 		setExportTypes: ExportStateService.setExportTypes,
 		setDefaultExportType: ExportStateService.setDefaultExportType,
+		resetExportTypes: ExportStateService.reset,
 
 		// search
 		toggleSearch: SearchStateService.toggle,

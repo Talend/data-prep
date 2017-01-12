@@ -19,10 +19,11 @@ const DATASTORE_SUBMIT_SELECTOR = '#datastore-form [type="submit"]';
  * @description TCOMP Dataset Import controller
  */
 export default class DatasetImportTcompCtrl {
-	constructor($document, $translate, DatasetService, MessageService, ImportService, UploadWorkflowService) {
+	constructor($document, $timeout, $translate, DatasetService, MessageService, ImportService, UploadWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
+		this.$timeout = $timeout;
 		this.$translate = $translate;
 
 		this.datasetService = DatasetService;
@@ -249,13 +250,15 @@ export default class DatasetImportTcompCtrl {
 	 * @private
 	 */
 	_reset() {
-		this.datastoreForm = null;
-		this.datasetForm = null;
-		this.datasetFormData = null;
-		this.submitLock = false;
-		this.currentPropertyName = null;
-		this.importService.StateService.hideImport();
-		this.importService.StateService.setCurrentImportItem(null);
+		this.$timeout(() => {
+			this.datastoreForm = null;
+			this.datasetForm = null;
+			this.datasetFormData = null;
+			this.submitLock = false;
+			this.currentPropertyName = null;
+			this.importService.StateService.hideImport();
+			this.importService.StateService.setCurrentImportItem(null);
+		});
 	}
 
 	/**

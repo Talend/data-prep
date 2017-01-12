@@ -245,6 +245,24 @@ describe('Dataset Import TCOMP controller', () => {
 			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset);
 			expect(ctrl.submitLock).toBeFalsy();
 		}));
+
+		it('should refresh dataset', inject(($q, ImportService) => {
+			// given
+			ctrl.submitLock = true;
+			ctrl.currentPropertyName = 'currentPropertyName';
+			ctrl.datasetFormData = fakeDatasetForm.properties;
+
+			spyOn(ImportService, 'refreshForms').and.returnValue($q.when(fakeDatastoreForm.properties));
+
+			// when
+			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			scope.$digest();
+
+			// then
+			expect(ImportService.refreshForms).toHaveBeenCalledWith('currentPropertyName', fakeFormsData);
+			expect(ctrl.currentPropertyName).toBeNull();
+			expect(ctrl.submitLock).toBeFalsy();
+		}));
 	});
 
 	describe('onDatasetFormChange', () => {

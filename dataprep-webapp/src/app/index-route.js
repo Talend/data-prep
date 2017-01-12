@@ -66,7 +66,7 @@ export default ($stateProvider, $urlRouterProvider) => {
 			url: '/playground',
 			template: '<playground></playground>',
 		})
-		.state(PLAYGROUND_PREPARATION_ROUTE, { url: '/preparation?prepid' })
+		.state(PLAYGROUND_PREPARATION_ROUTE, { url: '/preparation?prepid&{reload:bool}' })
 		.state(PLAYGROUND_DATASET_ROUTE, { url: '/dataset?datasetid' });
 
 	$urlRouterProvider.otherwise(DEFAULT_HOME_URL);

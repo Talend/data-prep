@@ -333,12 +333,33 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 			});
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name shouldReloadPreparation
+	 * @description Check if the preparation should be reloaded.
+	 * The preparation is not reloaded if (and) :
+	 * - the current playground preparation is the one we want
+	 * - the route param "reload" is not set explicitly to false
+	 */
+	function shouldReloadPreparation() {
+		const currentPrep = state.playground.preparation;
+		if (!currentPrep || $stateParams.prepid !== currentPrep.id) {
+			return true;
+		}
+
+		return $stateParams.reload !== false;
+	}
+
 	if ($stateParams.prepid) {
 		StateService.setPreviousRoute(
 			HOME_PREPARATIONS_ROUTE,
-			{ folderId: state.inventory.folder.metadata.id ?
-				state.inventory.folder.metadata.id :
-				state.inventory.homeFolderId });
+			{ folderId: state.inventory.folder.metadata.id },
+		);
+
+		if (!shouldReloadPreparation()) {
+			return;
+		}
+
 		PlaygroundService.startLoader();
 		getPreparationById($stateParams.prepid)
 			.then((preparation) => {

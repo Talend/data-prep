@@ -17,7 +17,7 @@
     <div class="inventory-item"
          ng-repeat="dataset in uploadListCtrl.datasets track by $index">
         <div class="inventory-icon">
-            <img src="/assets/images/inventory/generic_file.png"/>
+            <icon name="'talend-file-o'"/>
         </div>
         <div class="inventory-text" ng-switch="dataset.error">
             <div class="inventory-title">{{dataset.name}}</div>

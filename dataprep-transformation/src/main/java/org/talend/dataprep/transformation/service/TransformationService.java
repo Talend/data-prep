@@ -663,6 +663,34 @@ public class TransformationService extends BaseTransformationService {
                 .collect(toList());
     }
 
+    /**
+     * Get the available export formats for preparation
+     */
+    @RequestMapping(value = "/export/formats/preparations/{preparationId}", method = GET)
+    @ApiOperation(value = "Get the available format types for the preparation")
+    @Timed
+    public List<ExportFormat> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
+        final Preparation preparation = getPreparation(preparationId);
+        final DataSetMetadata metadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId()).execute();
+        return getPreparationExportTypesForDataSet(metadata.getId());
+    }
+
+    /**
+     * Get the available export formats for dataset.
+     */
+    @RequestMapping(value = "/export/formats/datasets/{dataSetId}", method = GET)
+    @ApiOperation(value = "Get the available format types for the preparation")
+    @Timed
+    public List<ExportFormat> getPreparationExportTypesForDataSet(@PathVariable String dataSetId) {
+        final DataSetMetadata metadata = context.getBean(DataSetGetMetadata.class, dataSetId).execute();
+
+        return formatRegistrationService.getExternalFormats().stream() //
+                .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
+                .filter(ExportFormat::isEnabled) //
+                .filter(f -> f.isCompatible(metadata)) //
+                .collect(toList());
+    }
+
     @RequestMapping(value = "/dictionary", method = GET, produces = APPLICATION_OCTET_STREAM_VALUE)
     @ApiOperation(value = "Get current dictionary (as serialized object).")
     @Timed

@@ -1,37 +1,57 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.format;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 
 /**
  * Test the CSV format.
  */
 public class CSVFormatTest extends BaseFormatTest {
 
+    private CSVFormat format;
+
+    @Before
+    public void setUp() throws Exception {
+        format = new CSVFormat();
+    }
+
     @Test
     public void csv() throws IOException {
-        testFormat(new CSVFormat(), "csv.json");
+        testFormat(format, "csv.json");
     }
 
     @Test
     public void testOrder() throws Exception {
-        assertThat(new CSVFormat().getOrder(), is(0));
+        assertThat(format.getOrder(), is(0));
+    }
+
+    @Test
+    public void shouldBeCompatibleWithAll() throws Exception {
+        assertTrue(format.isCompatible(null));
+        assertTrue(format.isCompatible(new DataSetMetadata()));
+    }
+
+    @Test
+    public void shouldSupportSampling() throws Exception {
+        assertTrue(format.supportSampling());
     }
 }

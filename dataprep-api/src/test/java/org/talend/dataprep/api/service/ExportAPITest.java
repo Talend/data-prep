@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -330,4 +331,29 @@ public class ExportAPITest extends ApiServiceTestBase {
 
     }
 
+    @Test
+    public void testDataSetExports() throws Exception {
+        // given
+        final String datasetId = createDataset("export/export_dataset.csv", "testExport", "text/csv");
+
+        // when
+        final Response exportFormats = given().get("/api/export/formats/datasets/" + datasetId);
+
+        // then
+        final JsonNode dataSetResponseNode = mapper.readTree(exportFormats.asInputStream());
+        assertEquals(2, dataSetResponseNode.size());
+    }
+
+    @Test
+    public void testPreparationExports() throws Exception {
+        // given
+        final String preparationId = createPreparationFromFile("export/export_dataset.csv", "testExport", "text/csv");
+
+        // when
+        final Response exportFormats = given().get("/api/export/formats/preparations/" + preparationId);
+
+        // then
+        final JsonNode preparationResponseNode = mapper.readTree(exportFormats.asInputStream());
+        assertEquals(2, preparationResponseNode.size());
+    }
 }

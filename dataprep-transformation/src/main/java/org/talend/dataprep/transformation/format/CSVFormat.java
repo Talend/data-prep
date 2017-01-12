@@ -16,6 +16,7 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -56,5 +57,15 @@ public class CSVFormat extends ExportFormat {
     @Override
     public int getOrder() {
         return 0;
+    }
+
+    @Override
+    public boolean isCompatible(DataSetMetadata metadata) {
+        return true;
+    }
+
+    @Override
+    public boolean supportSampling() {
+        return true;
     }
 }

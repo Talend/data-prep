@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -15,8 +14,8 @@ package org.talend.dataprep.format.export;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.format.export.json.ExportFormatSerializer;
 import org.talend.dataprep.i18n.DataprepBundle;
 import org.talend.dataprep.parameters.Parameter;
@@ -154,4 +153,18 @@ public abstract class ExportFormat extends Parameterizable {
         return DataprepBundle.message("export." + name + ".title");
     }
 
+    /**
+     * Check whether export format is compatible with data set metadata.
+     *
+     * @param metadata The data set metadata.
+     * @return <code>true</code> if the export format can be used using {@link DataSetMetadata metadata} as input,
+     * <code>false</code> otherwise.
+     */
+    public abstract boolean isCompatible(DataSetMetadata metadata);
+
+    /**
+     * @return <code>true</code> if this export format can be used for exporting samples, <code>false</code> otherwise. Export
+     * formats dedicated to full run (and only full run) should return <code>false</code>.
+     */
+    public abstract boolean supportSampling();
 }

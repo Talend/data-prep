@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -28,14 +27,17 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.service.command.export.DataSetExportTypes;
 import org.talend.dataprep.api.service.command.export.Export;
 import org.talend.dataprep.api.service.command.export.ExportTypes;
+import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
@@ -124,6 +126,28 @@ public class ExportAPI extends APIService {
     @PublicAPI
     public StreamingResponseBody exportTypes() {
         final HystrixCommand<InputStream> command = getCommand(ExportTypes.class);
+        return CommandHelper.toStreaming(command);
+    }
+
+    /**
+     * Get the available export formats for preparation
+     */
+    @RequestMapping(value = "/api/export/formats/preparations/{preparationId}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get the available format types for preparation.")
+    @Timed
+    public StreamingResponseBody exportTypesForPreparation(@PathVariable("preparationId") String preparationId) {
+        final HystrixCommand<InputStream> command = getCommand(PreparationExportTypes.class, preparationId);
+        return CommandHelper.toStreaming(command);
+    }
+
+    /**
+     * Get the available export formats for dataset
+     */
+    @RequestMapping(value = "/api/export/formats/datasets/{dataSetId}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get the available format types for preparation.")
+    @Timed
+    public StreamingResponseBody exportTypesForDataSet(@PathVariable("dataSetId") String dataSetId) {
+        final HystrixCommand<InputStream> command = getCommand(DataSetExportTypes.class, dataSetId);
         return CommandHelper.toStreaming(command);
     }
 }

@@ -24,6 +24,7 @@ import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
@@ -135,7 +136,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
     @Test
     public void uppercaseAction() throws Exception {
         // given
-        String dataSetId = createDataset("input_dataset.csv", "uppercase", "text/csv");
+        String dataSetId = createDataset("input_dataset.csv", "uppercase" + UUID.randomUUID().toString(), "text/csv");
         String preparationId = createEmptyPreparationFromDataset(dataSetId, "uppercase prep");
         applyActionFromFile(preparationId, "uppercase_action.json");
         applyActionFromFile(preparationId, "lowercase_filtered_action.json");
@@ -304,7 +305,7 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
         // then
         final ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(dictionary));
         final Object object = ois.readObject();
-        Assert.assertEquals(Dictionaries.class, object.getClass());
+        assertEquals(Dictionaries.class, object.getClass());
     }
 
     @Test
@@ -326,9 +327,9 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
          *   "frequency": 99.24
          * }
          */
-        Assert.assertEquals(200, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
-        Assert.assertEquals(7, rootNode.size());
+        assertEquals(7, rootNode.size());
         for (JsonNode type : rootNode) {
             assertTrue(type.has("id"));
             assertTrue(type.has("label"));
@@ -336,4 +337,23 @@ public class TransformationServiceTests extends TransformationServiceBaseTests {
         }
     }
 
+    @Test
+    public void shouldGetPreparationExportTypes() throws Exception {
+        // given
+        final String dataSetId = createDataset("communes_france.csv", "communes de France", "text/csv");
+        final String preparationId = createEmptyPreparationFromDataset(dataSetId, "get col types prep");
+
+        // when
+        final Response preparationResponse = when().get("/export/formats/preparations/{preparationId}", preparationId);
+        final Response dataSetResponse = when().get("/export/formats/datasets/{dataSetId}", dataSetId);
+
+        // then
+        assertEquals(200, preparationResponse.getStatusCode());
+        assertEquals(200, dataSetResponse.getStatusCode());
+        final JsonNode preparationResponseNode = mapper.readTree(preparationResponse.asInputStream());
+        final JsonNode dataSetResponseNode = mapper.readTree(dataSetResponse.asInputStream());
+        assertEquals(2, preparationResponseNode.size());
+        assertEquals(2, dataSetResponseNode.size());
+        assertEquals(preparationResponseNode, dataSetResponseNode);
+    }
 }

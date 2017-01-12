@@ -438,7 +438,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(id);
+        lock(id);
         preparationCleaner.removePreparationOrphanSteps(preparationToDelete.getId());
         preparationRepository.remove(preparationToDelete);
 
@@ -466,7 +466,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(id);
+        lock(id);
         log.debug("Updating preparation with id {}: {}", preparation.id(), previousPreparation);
 
         Preparation updated = previousPreparation.merge(preparation);
@@ -630,7 +630,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(id);
+        lock(id);
 
         log.debug("Current head for preparation #{}: {}", id, preparation.getHeadId());
 
@@ -662,7 +662,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(preparationId);
+        lock(preparationId);
         log.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
 
         // Get steps from "step to modify" to the head
@@ -720,7 +720,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(id);
+        lock(id);
         deleteAction(preparation, stepToDeleteId);
 
     }
@@ -739,7 +739,7 @@ public class PreparationService {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(preparationId);
+        lock(preparationId);
         setPreparationHead(preparation, head);
     }
 
@@ -818,7 +818,7 @@ public class PreparationService {
         final Preparation preparation = getPreparation(preparationId);
 
         // Ensure that the preparation is not locked elsewhere
-        checkPreparationLock(preparationId);
+        lock(preparationId);
 
         reorderSteps(preparation, stepId, parentStepId);
     }
@@ -959,37 +959,6 @@ public class PreparationService {
         }
     }
 
-    /**
-     * Check that the given preparation is locked by the current user <b>without</b> setting a lock on the preparation.
-     *
-     * If the user has the lock, the lock is updated (to delay the expiration)
-     *
-     * @param preparationId the specified preparation identifier.
-     * @throws TDPException if the lock is hold by another user.
-     */
-    private void checkPreparationLock(String preparationId) {
-
-        final String userId = security.getUserId();
-
-        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        if (preparation == null) {
-            log.warn("Cannot check a lock on a preparation that does not exists (#{})", preparationId);
-            return;
-        }
-
-        LockedResource lockedResource = lockedResourceRepository.get(preparation);
-        if (!lockedResourceRepository.lockOwned(lockedResource, userId)) {
-            log.debug("Preparation #{} is already locked by another user : {}", preparationId, lockedResource.getUserId());
-            throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()), false);
-        }
-
-        // update the lock TTL
-        LockUserInfo userInfo = new LockUserInfo(userId, security.getUserDisplayName());
-        lockedResourceRepository.tryLock(preparation, userInfo);
-
-        log.debug("Preparation {} locked for user {}.", preparationId, userId);
-
-    }
 
     /**
      * Marks the specified preparation (identified by <i>preparationId</i>) as unlocked by the user identified by the

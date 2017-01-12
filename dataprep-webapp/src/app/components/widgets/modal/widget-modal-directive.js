@@ -186,7 +186,11 @@ export default function TalendModal($timeout) {
 				 * and stop click propagation in inner modal to avoid a click on the dismiss screen
 				 */
 				const attachListeners = () => {
-					iElement.find('.talend-modal-close').on('click', hideModal);
+					innerElement.on('click', (e) => {
+						if (e.target.classList.contains('talend-modal-close')) {
+							hideModal();
+						}
+					});
 
 					// Close action on modal background click
 					if (!ctrl.disableCloseOnBackgroundClick) {

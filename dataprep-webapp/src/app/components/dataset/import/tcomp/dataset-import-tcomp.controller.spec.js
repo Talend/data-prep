@@ -247,7 +247,7 @@ describe('Dataset Import TCOMP controller', () => {
 			spyOn(ImportService, 'testConnection').and.returnValue();
 			spyOn(ImportService, 'createDataset').and.returnValue();
 			spyOn(ImportService, 'editDataset').and.returnValue();
-			spyOn(ImportService, 'refreshForm').and.returnValue();
+			spyOn(ImportService, 'refreshForms').and.returnValue();
 
 			// when
 			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
@@ -256,7 +256,7 @@ describe('Dataset Import TCOMP controller', () => {
 			expect(ImportService.testConnection).not.toHaveBeenCalled();
 			expect(ImportService.createDataset).not.toHaveBeenCalled();
 			expect(ImportService.editDataset).not.toHaveBeenCalled();
-			expect(ImportService.refreshForm).not.toHaveBeenCalled();
+			expect(ImportService.refreshForms).not.toHaveBeenCalled();
 		}));
 
 		it('should create dataset', inject(($q, DatasetService, ImportService, UploadWorkflowService) => {

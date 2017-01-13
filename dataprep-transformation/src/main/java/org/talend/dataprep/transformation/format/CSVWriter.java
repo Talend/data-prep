@@ -59,7 +59,7 @@ public class CSVWriter implements TransformerWriter {
 
     /**
      * Simple constructor with default separator value.
-     * 
+     *
      * @param output where this writer should... write !
      */
     public CSVWriter(final OutputStream output) {
@@ -68,7 +68,7 @@ public class CSVWriter implements TransformerWriter {
 
     /**
      * Constructor.
-     * 
+     *
      * @param output where to write the dataset.
      * @param parameters parameters to get the separator from.
      */
@@ -116,7 +116,7 @@ public class CSVWriter implements TransformerWriter {
     @Override
     public void write(final DataSetRow row) throws IOException {
         // values need to be written in the same order as the columns
-        recordsWriter.writeNext(row.toArray(DataSetRow.SKIP_TDP_ID));
+        recordsWriter.writeNext(row.order().toArray(DataSetRow.SKIP_TDP_ID));
     }
 
     /**

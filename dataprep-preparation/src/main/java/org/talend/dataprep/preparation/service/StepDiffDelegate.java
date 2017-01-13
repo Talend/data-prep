@@ -11,6 +11,7 @@ import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 
 // TODO: find a good name
 @Component
@@ -18,13 +19,14 @@ public class StepDiffDelegate {
 
     public StepDiff getActionCreatedColumns(RowMetadata metadata, List<RunnableAction> currentActions, List<RunnableAction> newActions) {
         RowMetadata workingMetadata = metadata.clone();
-        compileActionOnMetadata(workingMetadata, currentActions);
+        compileActionOnMetadata(new TransformationContext(), workingMetadata, currentActions);
         return getActionCreatedColumns(workingMetadata, newActions);
     }
 
     public StepDiff getActionCreatedColumns(RowMetadata metadataRef, List<RunnableAction> actions) {
         RowMetadata workingMetadata = metadataRef.clone();
-        compileActionOnMetadata(workingMetadata, actions);
+        TransformationContext transformationContext = new TransformationContext();
+        compileActionOnMetadata(transformationContext, workingMetadata, actions);
 
         workingMetadata.diff(metadataRef);
 
@@ -39,8 +41,8 @@ public class StepDiffDelegate {
         return stepDiff;
     }
 
-    private void compileActionOnMetadata(RowMetadata workingMetadata, List<RunnableAction> actions) {
-        ActionContext contextWithMetadata = new ActionContext(null, workingMetadata);
+    private void compileActionOnMetadata(TransformationContext transformationContext, RowMetadata workingMetadata, List<RunnableAction> actions) {
+        ActionContext contextWithMetadata = new ActionContext(transformationContext, workingMetadata);
         for (RunnableAction action : actions) {
             action.getRowAction().compile(contextWithMetadata);
         }

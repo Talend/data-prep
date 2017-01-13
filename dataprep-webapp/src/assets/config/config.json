@@ -3,6 +3,6 @@
   "serverKeepAliveUrl": "",
   "enableDebug": false,
   "version": "2.0.0-SNAPSHOT",
-  "copyRights": "© 2016 Talend. All Rights Reserved",
+  "copyRights": "© 2017 Talend. All Rights Reserved",
   "documentationSearchURL" : "https://www.talendforge.org/find/api/index.php?source=DATA%20PREP&condition=AND&max=5"
 }

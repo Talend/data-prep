@@ -236,7 +236,7 @@ describe('Dataset Import TCOMP controller', () => {
 			expect(ctrl.datasetForm).toBeUndefined();
 		}));
 
-		it('should do nothing if datastore form without button is submitted', inject(() => {
+		it('should do nothing if datastore form without button is submitted', inject((ImportService) => {
 			// given
 			ctrl.submitLock = false;
 			ctrl.datastoreForm = {
@@ -244,13 +244,19 @@ describe('Dataset Import TCOMP controller', () => {
 					tdp_isTestConnectionEnabled: false,
 				},
 			};
+			spyOn(ImportService, 'testConnection').and.returnValue();
+			spyOn(ImportService, 'createDataset').and.returnValue();
+			spyOn(ImportService, 'editDataset').and.returnValue();
+			spyOn(ImportService, 'refreshForm').and.returnValue();
 
 			// when
-			const onSubmitAction = ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
-			scope.$digest();
+			ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
 
 			// then
-			expect(onSubmitAction).toBeFalsy();
+			expect(ImportService.testConnection).not.toHaveBeenCalled();
+			expect(ImportService.createDataset).not.toHaveBeenCalled();
+			expect(ImportService.editDataset).not.toHaveBeenCalled();
+			expect(ImportService.refreshForm).not.toHaveBeenCalled();
 		}));
 
 		it('should create dataset', inject(($q, DatasetService, ImportService, UploadWorkflowService) => {

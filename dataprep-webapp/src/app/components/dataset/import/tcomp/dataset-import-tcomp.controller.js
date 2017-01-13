@@ -66,14 +66,17 @@ export default class DatasetImportTcompCtrl {
 					const { properties } = data;
 					this._getDatastoreFormActions(properties);
 					this.datastoreForm = data;
-					if (properties && !properties.tdp_isTestConnectionEnabled) {
-						this.importService
-							.getDatasetForm(properties)
+					return properties;
+				})
+				.then((formData) => {
+					const hasTestConnectionBtn = formData && formData.tdp_isTestConnectionEnabled;
+					if (!hasTestConnectionBtn) {
+						return this.importService
+							.getDatasetForm(formData)
 							.then(({ data }) => {
 								this._getDatasetFormActions();
 								this.datasetForm = data;
-							})
-							.catch(this._reset);
+							});
 					}
 				})
 				.catch(this._reset);

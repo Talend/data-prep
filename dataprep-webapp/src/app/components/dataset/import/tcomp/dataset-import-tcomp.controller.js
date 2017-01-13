@@ -69,18 +69,31 @@ export default class DatasetImportTcompCtrl {
 					return properties;
 				})
 				.then((formData) => {
-					const hasTestConnectionBtn = formData && formData.tdp_isTestConnectionEnabled;
-					if (!hasTestConnectionBtn) {
-						return this.importService
-							.getDatasetForm(formData)
-							.then(({ data }) => {
-								this._getDatasetFormActions();
-								this.datasetForm = data;
-							});
+					const hasHiddenTestConnectionBtn = formData && !formData.tdp_isTestConnectionEnabled;
+					if (hasHiddenTestConnectionBtn) {
+						return this._initDatasetForm(formData);
 					}
 				})
 				.catch(this._reset);
 		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name _initDatasetForm
+	 * @methodOf data-prep.dataset-import-tcomp:DatasetImportTcompCtrl
+	 * @description Initialize dataset form from datastore form data
+	 * @param formData Datastore form data
+	 * @returns {Promise}
+	 * @private
+	 */
+	_initDatasetForm(formData) {
+		return this.importService
+			.getDatasetForm(formData)
+			.then(({ data }) => {
+				this._getDatasetFormActions();
+				this.datasetForm = data;
+			});
 	}
 
 	/**
@@ -191,12 +204,7 @@ export default class DatasetImportTcompCtrl {
 				))
 				.then(() => {
 					if (!this.item && !this.datasetForm) {
-						this.importService
-							.getDatasetForm(formData)
-							.then(({ data }) => {
-								this._getDatasetFormActions();
-								this.datasetForm = data;
-							});
+						return this._initDatasetForm(formData);
 					}
 				});
 		}

@@ -35,7 +35,6 @@ describe('Dataset Import TCOMP controller', () => {
 			ctrl = createController();
 		}));
 
-
 		describe('with location type', () => {
 			it('should get data store form', inject(($q, ImportService) => {
 				// given
@@ -235,6 +234,23 @@ describe('Dataset Import TCOMP controller', () => {
 			expect(MessageService.success).not.toHaveBeenCalled();
 			expect(ImportService.getDatasetForm).not.toHaveBeenCalled();
 			expect(ctrl.datasetForm).toBeUndefined();
+		}));
+
+		it('should do nothing if datastore form without button is submitted', inject(() => {
+			// given
+			ctrl.submitLock = false;
+			ctrl.datastoreForm = {
+				properties: {
+					tdp_isTestConnectionEnabled: false,
+				},
+			};
+
+			// when
+			const onSubmitAction = ctrl.onDatastoreFormSubmit(uiSpecs, definitionName);
+			scope.$digest();
+
+			// then
+			expect(onSubmitAction).toBeFalsy();
 		}));
 
 		it('should create dataset', inject(($q, DatasetService, ImportService, UploadWorkflowService) => {

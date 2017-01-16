@@ -51,6 +51,38 @@ export default class TransformationUtilsService {
 		});
 	}
 
+
+	/**
+	 * @ngdoc method
+	 * @name extractParams
+	 * @methodOf data-prep.services.transformation.service:TransformationUtilsService
+	 * @description [PRIVATE] Inner function for recursively gather params
+	 * @param {object} paramsAccu The parameters values accumulator
+	 * @param {array} parameters The parameters array
+	 * @param {string} paramsNamePrefix The parameter name prefix
+	 * @returns {object} The parameters
+	 */
+	extractParams(paramsAccu, parameters, paramsNamePrefix) {
+		if (parameters) {
+			_.forEach(parameters, (paramItem) => {
+				paramsAccu[paramsNamePrefix ? paramsNamePrefix + paramItem.name : paramItem.name] =
+					typeof (paramItem.value) !== 'undefined' ?
+						paramItem.value :
+						paramItem.default;
+
+				// deal with select inline parameters
+				if (paramItem.type === 'select') {
+					const selectedValue = _.find(
+						paramItem.configuration.values,
+						{ value: paramItem.value }
+					);
+					this.extractParams(paramsAccu, selectedValue.parameters, paramsNamePrefix);
+				}
+			});
+		}
+		return paramsAccu;
+	}
+
     /**
      * @ngdoc method
      * @name insertType

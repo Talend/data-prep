@@ -16,40 +16,9 @@
  * @name data-prep.transformation-form.controller:TransformFormCtrl
  * @description Transformation parameters controller.
  */
-export default function TransformFormCtrl() {
+export default function TransformFormCtrl(TransformationUtilsService) {
 	const vm = this;
-
-    /**
-     * @ngdoc method
-     * @name getParamIteration
-     * @methodOf data-prep.transformation-form.controller:TransformFormCtrl
-     * @description [PRIVATE] Inner function for recursively gather params
-     * @param {object} paramsAccu The parameters values accumulator
-     * @param {array} parameters The parameters array
-     * @returns {object} The parameters
-     */
-	function getParamIteration(paramsAccu, parameters) {
-		if (parameters) {
-			_.forEach(parameters, (paramItem) => {
-				paramsAccu[paramItem.name] =
-                    typeof (paramItem.value) !== 'undefined' ?
-                        paramItem.value :
-                        paramItem.default;
-
-                // deal with select inline parameters
-				if (paramItem.type === 'select') {
-					const selectedValue = _.find(
-                        paramItem.configuration.values,
-                        { value: paramItem.value }
-                    );
-					getParamIteration(paramsAccu, selectedValue.parameters);
-				}
-			});
-		}
-
-		return paramsAccu;
-	}
-
+	vm.TransformationUtilsService = TransformationUtilsService;
     /**
      * @ngdoc method
      * @name getParams
@@ -58,7 +27,7 @@ export default function TransformFormCtrl() {
      * @returns {object} - the parameters
      */
 	function getParams() {
-		return getParamIteration({}, vm.transformation.parameters);
+		return vm.TransformationUtilsService.extractParams({}, vm.transformation.parameters, '');
 	}
 
     /**
@@ -72,18 +41,17 @@ export default function TransformFormCtrl() {
 		const params = {};
 		if (vm.transformation.cluster) {
 			_.chain(vm.transformation.cluster.clusters)
-                .filter('active')
-                .forEach((cluster) => {
-	const replaceValue = cluster.replace.value;
-	_.forEach(cluster.parameters, (param) => {
-		if (param.value) {
-			params[param.name] = replaceValue;
+				.filter('active')
+				.forEach((cluster) => {
+					const replaceValue = cluster.replace.value;
+					_.forEach(cluster.parameters, (param) => {
+						if (param.value) {
+							params[param.name] = replaceValue;
+						}
+					});
+				})
+				.value();
 		}
-	});
-})
-                .value();
-		}
-
 		return params;
 	}
 

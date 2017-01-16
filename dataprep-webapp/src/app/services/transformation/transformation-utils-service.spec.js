@@ -650,6 +650,70 @@ describe('Transformation Utils Service', () => {
             })
         );
 
+        it('should extract parameterized choice params',
+            inject((TransformationUtilsService) => {
+                // given
+                const parameters = [
+                    {
+                        name: 'mode',
+                        type: 'select',
+                        value: 'regex',
+                        configuration: {
+                            values: [
+                                {
+                                    name: 'regex',
+                                    value: 'regex',
+                                    parameters: [
+                                        { name: 'regex', type: 'text', default: '', value: 'param1Value' },
+                                        { name: 'comment', type: 'text', default: '', value: 'my comment' },
+                                    ],
+                                },
+                                { name: 'index', value: 'index' },
+                            ],
+                        },
+                    },
+                ];
+
+                // when
+                const extractedParams = TransformationUtilsService.extractParams({}, parameters, '');
+
+                // then
+                expect(extractedParams).toEqual({ mode: 'regex', regex: 'param1Value', comment: 'my comment' });
+            })
+        );
+
+        it('should extract parameterized choice params with prefix',
+            inject((TransformationUtilsService) => {
+                // given
+                const parameters = [
+                    {
+                        name: 'mode',
+                        type: 'select',
+                        value: 'regex',
+                        configuration: {
+                            values: [
+                                {
+                                    name: 'regex',
+                                    value: 'regex',
+                                    parameters: [
+                                        { name: 'regex', type: 'text', default: '', value: 'param1Value' },
+                                        { name: 'comment', type: 'text', default: '', value: 'my comment' },
+                                    ],
+                                },
+                                { name: 'index', value: 'index' },
+                            ],
+                        },
+                    },
+                ];
+
+                // when
+                const extractedParams = TransformationUtilsService.extractParams({}, parameters, 'params.');
+
+                // then
+                expect(extractedParams).toEqual({ 'params.mode': 'regex', 'params.regex': 'param1Value', 'params.comment': 'my comment' });
+            })
+        );
+
         it('should insert input types',
             inject((TransformationUtilsService) => {
                 // given

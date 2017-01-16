@@ -11,10 +11,7 @@
 
   ============================================================================*/
 $icon-folder-color: #EAC282;
-$icon-shared-folder-color: #00A6CE;
 $icon-preparation-color: #005393;
-$icon-certified-color: steelblue;
-$icon-certify-pending-color: #CCCCCC;
 $icon-favorite-color: #FFA616;
 $icon-connect-badge-color: #266092;
 $icon-csv-badge-color: #4F6C00;
@@ -51,30 +48,6 @@ $icon-xls-badge-color: #8ABC00;
 	}
 }
 
-.list-item-certification {
-	button[id^="datasets-list-"][id$="dataset:certify"] {
-		visibility: visible;
-		svg {
-			fill: $icon-certified-color;
-		}
-	}
-}
-
-.list-item-pending-certification {
-	button[id^="datasets-list-"][id$="dataset:certify"] {
-		visibility: visible;
-		svg {
-			fill: $icon-certify-pending-color;
-		}
-	}
-}
-
-.list-item-shared-folder {
-	.tc-list-icon {
-		fill: $icon-shared-folder-color;
-	}
-}
-
 .ti-file-connect-o-badge {
 	fill: $icon-connect-badge-color;
 }
@@ -90,10 +63,6 @@ $icon-xls-badge-color: #8ABC00;
 .ti-file-xls-o-badge,
 .ti-file-xlsx-o-badge {
 	fill: $icon-xls-badge-color;
-}
-
-#talend-flink {
-	fill: magenta;
 }
 
 .fetch-loader {

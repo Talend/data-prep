@@ -14,9 +14,10 @@
   -->
 <div class="typeahead-container" >
     <i  class="search-icon"
-        ng-include="'assets/images/header/search.svg'"
         ng-class="{inverse: typeaheadCtrl.inputVisible}"
-        ng-click="typeaheadCtrl.toogleSearchInput()"></i>
+        ng-click="typeaheadCtrl.toogleSearchInput()">
+        <icon name="'talend-search'" />
+    </i>
     <input type="text"
            class="search-input"
            placeholder="{{typeaheadCtrl.placeholder}}"

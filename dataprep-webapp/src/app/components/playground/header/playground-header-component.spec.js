@@ -23,17 +23,9 @@ describe('Playground header component', () => {
 
 	beforeEach(inject(($injector) => {
 		$httpBackend = $injector.get('$httpBackend');
-		$httpBackend.whenGET('assets/images/header/edit.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/board.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/info.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/close_big.svg').respond(200, '<svg></svg>');
 		$httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '<svg></svg>');
 		$httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/search.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/dataprep.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/visible.svg').respond(200, '<svg></svg>');
+		$httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '<svg></svg>');
 	}));
 
 	beforeEach(inject(($rootScope, $compile, $httpBackend) => {

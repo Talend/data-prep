@@ -31,21 +31,23 @@
                 <li>
                     <a id="onboarding-icon"
                        ng-click="navbarCtrl.startTour('preparation')"
-                       translate-once-title="ONBOARDING"
-                       ng-include="'assets/images/header/board.svg'"></a>
+                       translate-once-title="ONBOARDING">
+                        <icon name="'talend-board'" />
+                    </a>
                 </li>
                 <li ng-if="!navbarCtrl.state.ee">
                     <a id="message-icon"
                        ng-click="navbarCtrl.openFeedbackForm()"
-                       translate-once-title="FEEDBACK_TOOLTIP"
-                       ng-include="'assets/images/header/bubble.svg'"></a>
+                       translate-once-title="FEEDBACK_TOOLTIP">
+                        <icon name="'talend-bubble'" />
+                    </a>
                 </li>
                 <li>
                     <a id="online-help-icon"
                        href="https://help.talend.com/pages/viewpage.action?pageId=266307043&utm_medium=dpdesktop&utm_source=header"
                        target="_blank"
-                       translate-once-title="ONLINE_HELP_TOOLTIP"
-                       ng-include="'assets/images/header/info.svg'">
+                       translate-once-title="ONLINE_HELP_TOOLTIP">
+                        <icon name="'talend-info-circle'" />
                     </a>
                 </li>
             </ul>

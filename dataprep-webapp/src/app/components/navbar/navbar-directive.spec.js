@@ -18,7 +18,6 @@ describe('Navbar directive', () => {
 	let createElement;
 	let element;
 	let stateMock;
-	let $httpBackend;
 
 	beforeEach(angular.mock.module('data-prep.navbar', ($provide) => {
 		stateMock = {
@@ -27,20 +26,11 @@ describe('Navbar directive', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(($injector) => {
-		$httpBackend = $injector.get('$httpBackend');
-		$httpBackend.whenGET('assets/images/header/board.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/info.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/search.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/bubble.svg').respond(200, '<svg></svg>');
-	}));
-
-	beforeEach(inject(($rootScope, $compile, $httpBackend) => {
+	beforeEach(inject(($rootScope, $compile) => {
 		scope = $rootScope.$new();
 		createElement = () => {
 			element = angular.element('<navbar></navbar>');
 			$compile(element)(scope);
-			$httpBackend.flush(); // resolve svg files
 			scope.$digest();
 			return element;
 		};

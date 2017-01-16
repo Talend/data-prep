@@ -30,8 +30,8 @@
                 <li>
                     <a id="playground-close-icon"
                        ng-click="$ctrl.onClose()"
-                       translate-once-title="CLOSE_ICON_TOOLTIP"
-                       ng-include="'assets/images/header/close_big.svg'">
+                       translate-once-title="CLOSE_ICON_TOOLTIP">
+                        <icon name="'talend-cross'" />
                     </a>
                 </li>
             </ul>
@@ -42,15 +42,15 @@
                 <li>
                     <a id="playground-onboarding-icon"
                        translate-once-title="ONBOARDING"
-                       ng-click="$ctrl.onOnboarding()"
-                       ng-include="'assets/images/header/board.svg'">
+                       ng-click="$ctrl.onOnboarding()">
+                        <icon name="'talend-board'" />
                     </a>
                 </li>
                 <li ng-if="$ctrl.feedbackVisible">
                     <a id="playground-feedback-icon"
                        ng-click="$ctrl.onFeedback()"
-                       translate-once-title="FEEDBACK_TOOLTIP"
-                       ng-include="'assets/images/header/bubble.svg'">
+                       translate-once-title="FEEDBACK_TOOLTIP">
+                        <icon name="'talend-bubble'" />
                     </a>
                 </li>
                 <li>
@@ -71,15 +71,15 @@
                     <a id="playground-gear-icon"
                        ng-click="$ctrl.onParameters()"
                        ng-class="{pressed: $ctrl.parametersVisible}"
-                       translate-once-title="DATAGRID_PARAMETERS_GEAR"
-                       ng-include="'assets/images/header/edit.svg'">
+                       translate-once-title="DATAGRID_PARAMETERS_GEAR">
+                        <icon name="'talend-cog'" />
                     </a>
                 </li>
                 <li ng-if="$ctrl.preparationPicker">
                     <a id="playground-preparation-picker-icon"
                        ng-click="$ctrl.onPreparationPicker()"
-                       translate-once-title="CHOOSE_PREPARATION_TO_APPLY"
-                       ng-include="'assets/images/header/dataprep.svg'">
+                       translate-once-title="CHOOSE_PREPARATION_TO_APPLY">
+                        <icon name="'talend-dataprep'" />
                     </a>
                 </li>
                 <li>
@@ -98,7 +98,9 @@
             </ul>
 
             <div id="preview-container" class="preview" ng-if="$ctrl.preview">
-                <span class="preview-icon" ng-include="'assets/images/header/visible.svg'"></span>
+                <span class="preview-icon">
+                    <icon name="'talend-eye'" />
+                </span>
                 <span translate-once="PREVIEW"></span>
             </div>
         </div>

@@ -64,6 +64,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		setRecipePreviewSteps: RecipeStateService.setPreviewSteps,
 		restoreRecipeBeforePreview: RecipeStateService.restoreBeforePreview,
 		disableRecipeStepsAfter: RecipeStateService.disableStepsAfter,
+		setRecipeAllowDistributedRun: RecipeStateService.setAllowDistributedRun,
 
         // datagrid
 		setColumnFocus: GridStateService.setColumnFocus,

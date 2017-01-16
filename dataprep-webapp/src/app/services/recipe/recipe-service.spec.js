@@ -479,6 +479,7 @@ describe('Recipe service', function () {
         spyOn(StateService, 'setRecipeSteps').and.callFake((initialStep, steps) => {
             stateMock.playground.recipe.current.steps = steps;
         });
+	    spyOn(StateService, 'setRecipeAllowDistributedRun').and.returnValue();
         spyOn(StateService, 'setRecipePreviewSteps').and.returnValue();
         spyOn(StateService, 'restoreRecipeBeforePreview').and.returnValue();
     }));
@@ -515,6 +516,7 @@ describe('Recipe service', function () {
 
             //then
             expect(StateService.setRecipeSteps).toHaveBeenCalled();
+	        expect(StateService.setRecipeAllowDistributedRun).toHaveBeenCalled();
             const args = StateService.setRecipeSteps.calls.argsFor(0);
             const steps = args[1];
 

@@ -23,6 +23,7 @@ export const recipeState = {
 	},
 	beforePreview: null,
 	hoveredStep: null,
+	allowDistributedRun: true,
 };
 
 export function RecipeStateService() {
@@ -35,47 +36,48 @@ export function RecipeStateService() {
 		restoreBeforePreview,
 		disableStepsAfter,
 		reset,
+		setAllowDistributedRun,
 	};
 
-    /**
-     * @ngdoc method
-     * @name show
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @description Show the recipe
-     */
+	/**
+	 * @ngdoc method
+	 * @name show
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @description Show the recipe
+	 */
 	function show() {
 		recipeState.visible = true;
 	}
 
-    /**
-     * @ngdoc method
-     * @name hide
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @description Hide the recipe
-     */
+	/**
+	 * @ngdoc method
+	 * @name hide
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @description Hide the recipe
+	 */
 	function hide() {
 		recipeState.visible = false;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setHoveredStep
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @param {object} step The hovered step
-     * @description set the currently hovered step
-     */
+	/**
+	 * @ngdoc method
+	 * @name setHoveredStep
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @param {object} step The hovered step
+	 * @description set the currently hovered step
+	 */
 	function setHoveredStep(step) {
 		recipeState.hoveredStep = step;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setSteps
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @param {object} initialStep The initialStep (no step)
-     * @param {array} steps The new recipe steps
-     * @description Set the new recipe steps
-     */
+	/**
+	 * @ngdoc method
+	 * @name setSteps
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @param {object} initialStep The initialStep (no step)
+	 * @param {array} steps The new recipe steps
+	 * @description Set the new recipe steps
+	 */
 	function setSteps(initialStep, steps) {
 		recipeState.initialStep = initialStep;
 		recipeState.current = {
@@ -86,15 +88,15 @@ export function RecipeStateService() {
 		recipeState.beforePreview = null;
 	}
 
-    /**
-     * @ngdoc method
-     * @name setPreviewSteps
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @param {array} previewSteps The preview recipe steps
-     * @description Set the preview recipe steps
-     */
+	/**
+	 * @ngdoc method
+	 * @name setPreviewSteps
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @param {array} previewSteps The preview recipe steps
+	 * @description Set the preview recipe steps
+	 */
 	function setPreviewSteps(previewSteps) {
-        // save current steps
+		// save current steps
 		recipeState.beforePreview = recipeState.beforePreview || recipeState.current;
 
 		recipeState.current = {
@@ -105,12 +107,12 @@ export function RecipeStateService() {
 		disableStepsAfter(null); // enable all steps
 	}
 
-    /**
-     * @ngdoc method
-     * @name restoreBeforePreview
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @description Set the preview recipe steps
-     */
+	/**
+	 * @ngdoc method
+	 * @name restoreBeforePreview
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @description Set the preview recipe steps
+	 */
 	function restoreBeforePreview() {
 		if (!recipeState.beforePreview) return;
 
@@ -119,13 +121,13 @@ export function RecipeStateService() {
 		disableStepsAfter(recipeState.current.lastActiveStep);
 	}
 
-    /**
-     * @ngdoc method
-     * @name disableStepsAfter
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @param {object} step The starting step
-     * @description Disable all steps after the provided one
-     */
+	/**
+	 * @ngdoc method
+	 * @name disableStepsAfter
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @param {object} step The starting step
+	 * @description Disable all steps after the provided one
+	 */
 	function disableStepsAfter(step) {
 		let stepFound = step === recipeState.initialStep;
 		_.forEach(recipeState.current.steps, (nextStep) => {
@@ -135,12 +137,12 @@ export function RecipeStateService() {
 		recipeState.current.lastActiveStep = step;
 	}
 
-    /**
-     * @ngdoc method
-     * @name reset
-     * @methodOf data-prep.services.state.service:RecipeStateService
-     * @description Reset the recipe state
-     */
+	/**
+	 * @ngdoc method
+	 * @name reset
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @description Reset the recipe state
+	 */
 	function reset() {
 		recipeState.visible = false;
 		recipeState.initialStep = null;
@@ -154,5 +156,16 @@ export function RecipeStateService() {
 			reorderedSteps: [],
 			lastActiveStep: null,
 		};
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setAllowDistributedRun
+	 * @methodOf data-prep.services.state.service:RecipeStateService
+	 * @description Set if the recipe could be run in distributed environment
+	 * @param allowDistributedRun
+	 */
+	function setAllowDistributedRun(allowDistributedRun) {
+		recipeState.allowDistributedRun = allowDistributedRun;
 	}
 }

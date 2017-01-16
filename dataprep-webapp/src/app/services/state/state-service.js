@@ -84,6 +84,7 @@ export function StateService(RouteStateService, routeState,
 		setRecipePreviewSteps: PlaygroundStateService.setRecipePreviewSteps,
 		restoreRecipeBeforePreview: PlaygroundStateService.restoreRecipeBeforePreview,
 		disableRecipeStepsAfter: PlaygroundStateService.disableRecipeStepsAfter,
+		setRecipeAllowDistributedRun: PlaygroundStateService.setRecipeAllowDistributedRun,
 
 		// playground - grid
 		setColumnFocus: PlaygroundStateService.setColumnFocus,

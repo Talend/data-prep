@@ -31,6 +31,9 @@ import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.ErrorMessage;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -57,7 +60,7 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
-     * this field if set to <code>true</code> will prevent {@link TDPExceptionController} to log a stack trace
+     * this field if set to <code>true</code> will prevent {@link TDPExceptionController} to log a stack trace.
      */
     private boolean error = false;
 
@@ -140,34 +143,23 @@ public class TDPException extends TalendRuntimeException {
     }
 
     @Override
-    public void writeTo(Writer writer) {
-
-        try {
-            JsonGenerator generator = (new JsonFactory()).createGenerator(writer);
-            generator.writeStartObject();
-            writeErrorContent(generator);
-            generator.writeEndObject();
-            generator.flush();
-        } catch (IOException e) {
-            LOGGER.error("Unable to write exception to " + writer + ".", e);
-        }
-
+    public String getMessage() {
+        return message;
     }
 
-    private void writeErrorContent(JsonGenerator generator) throws IOException {
-        generator.writeStringField("code", getCode().getProduct() + '_' + getCode().getGroup() + '_' + getCode().getCode());
-        generator.writeStringField("message", message);
-        generator.writeStringField("message_title", messageTitle);
-        if (getCause() != null) {
-            generator.writeStringField("cause", getCause().getMessage());
-        }
-        if (getContext() != null) {
-            generator.writeFieldName("context");
-            generator.writeStartObject();
-            for (Map.Entry<String, Object> entry : getContext().entries()) {
-                generator.writeStringField(entry.getKey(), entry.getValue().toString());
-            }
-            generator.writeEndObject();
+    public String getMessageTitle() {
+        return messageTitle;
+    }
+
+    @Override
+    public void writeTo(Writer writer) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+            objectMapper.writeValue(writer, TdpExceptionDto.from(this));
+            writer.flush();
+        } catch (IOException e) {
+            LOGGER.error("Unable to write exception to " + writer + ".", e);
         }
     }
 

@@ -17,24 +17,6 @@
  * @description InventoryItemCtrl controller.
  */
 export default class InventoryItemCtrl {
-
-    /**
-     * @ngdoc method
-     * @name getItemHrefLink
-     * @methodOf data-prep.inventory-item:InventoryItemCtrl
-     * @description return the href link of the item
-     */
-	getItemHrefLink() {
-		switch (this.type) {
-		case 'dataset':
-			return '#/playground/dataset?datasetid=' + this.item.id;
-		case 'preparation':
-			return '#/playground/preparation?prepid=' + this.item.id;
-		case 'folder':
-			return '#/index/preparations/' + this.item.id;
-		}
-	}
-
     /**
      * @ngdoc method
      * @name itemType
@@ -44,38 +26,5 @@ export default class InventoryItemCtrl {
      */
 	itemType(item) {
 		return item.tag ? item.tag : item.type;
-	}
-
-    /**
-     * @ngdoc method
-     * @name openRelatedInventoryItem
-     * @methodOf data-prep.inventory-item:InventoryItemCtrl
-     * @params {Object} relatedInventory the related inventory item
-     * @description opens the inventory related to the current inventory item
-     */
-	openRelatedInventoryItem(relatedInventory) {
-		if (this.openRelatedInventory) {
-			this.openRelatedInventory(relatedInventory);
-		}
-	}
-
-    /**
-     * @ngdoc method
-     * @name getTooltipContent
-     * @methodOf data-prep.inventory-item:InventoryItemCtrl
-     * @description creates the object used to construct the tooltip
-     * @params {Object} isRelatedInventory if the related inventory item
-     * @returns {Object} the object to construct the tooltip with
-     */
-	getTooltipContent(isRelatedInventory) {
-		return isRelatedInventory && this.relatedInventories && this.relatedInventories.length ?
-			{
-				type: this.relatedInventoriesType,
-				name: this.relatedInventories[0].name,
-			} :
-			{
-				type: this.type,
-				name: this.item.tooltipName ? this.item.tooltipName : this.item.name,
-			};
 	}
 }

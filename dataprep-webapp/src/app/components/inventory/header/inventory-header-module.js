@@ -13,12 +13,10 @@
 
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
-import PREPARATION_CREATOR from '../../preparation/creator/preparation-creator-module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_UTILS_MODULE from '../../../services/utils/utils-module';
 
-import InventoryHeaderCtrl from './inventory-header-controller';
-import InventoryHeaderDirective from './inventory-header-directive';
+import InventoryHeaderComponent from './inventory-header-component';
 
 const MODULE_NAME = 'data-prep.inventory-header';
 
@@ -32,11 +30,9 @@ const MODULE_NAME = 'data-prep.inventory-header';
 angular.module(MODULE_NAME,
 	[
 		ngTranslate,
-		PREPARATION_CREATOR,
 		TALEND_WIDGET_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
-    .controller('InventoryHeaderCtrl', InventoryHeaderCtrl)
-    .directive('inventoryHeader', InventoryHeaderDirective);
+    .component('inventoryHeader', InventoryHeaderComponent);
 
 export default MODULE_NAME;

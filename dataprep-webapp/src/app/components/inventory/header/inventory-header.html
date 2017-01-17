@@ -33,46 +33,4 @@
         </talend-button-switch>
         <div translate-once="SORT_ORDER"></div>
     </div>
-
-    <div ng-if="!$ctrl.canCreateFolder"
-         class="primary">
-            <import></import>
-    </div>
-
-    <div class="preparations-list-header"
-         ng-if="$ctrl.canCreateFolder">
-        <button id="add-preparation"
-                class="btn btn-success"
-                ng-click="$ctrl.onAddPreparation()"
-                translate-once="ADD_PREPARATION"></button>
-        <button id="add-folder-button"
-                class="btn btn-default"
-                ng-click="$ctrl.openFolderModal()"
-                translate-once="CREATE_FOLDER"></button>
-    </div>
 </div>
-
-<talend-modal id="create-folder-modal"
-              fullscreen="false"
-              close-button="true"
-              state="$ctrl.folderNameModal"
-              ng-if="$ctrl.canCreateFolder && $ctrl.folderNameModal"
-              disable-enter="true">
-    <span translate-once="ENTER_FOLDER_NAME"></span>
-    <form name="$ctrl.folderNameForm" ng-submit="$ctrl.folderNameForm.$valid && $ctrl.addFolder()">
-        <input id="create-folder-name"
-               type="text"
-               ng-model="$ctrl.folderName"
-               ng-model-options="{debounce: { default: 300, blur: 0 }}"
-               unique-folder="$ctrl.folderList"/>
-
-        <div class="modal-buttons">
-            <button type="button"
-                    class="btn talend-modal-close btn-default modal-secondary-button"
-                    translate-once="CANCEL"></button>
-            <button class="btn btn-primary modal-primary-button"
-                    translate-once="OK"
-                    ng-disabled="$ctrl.folderNameForm.$invalid"></button>
-        </div>
-    </form>
-</talend-modal>

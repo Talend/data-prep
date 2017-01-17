@@ -12,20 +12,20 @@
  ============================================================================*/
 
 import angular from 'angular';
-import BREADCRUMB_MODULE from '../../breadcrumb/breadcrumb-module';
-import SERVICES_FOLDER_MODULE from '../../../services/folder/folder-module';
-import SERVICES_STATE_MODULE from '../../../services/state/state-module';
+import INVENTORY_COPY_MOVE_MODULE from './copy-move/inventory-copy-move-module';
+import INVENTORY_HEADER_MODULE from './header/inventory-header-module';
+import INVENTORY_ITEM_MODULE from './item/inventory-item-module';
+import INVENTORY_TILE_MODULE from './tile/inventory-tile-module';
 
-import PreparationBreadcrumbComponent from './preparation-breadcrumb-component';
 
-const MODULE_NAME = 'data-prep.preparation-breadcrumb';
+const MODULE_NAME = 'data-prep.inventory';
+
+export default MODULE_NAME;
 
 angular.module(MODULE_NAME,
 	[
-		BREADCRUMB_MODULE,
-		SERVICES_FOLDER_MODULE,
-		SERVICES_STATE_MODULE,
-	])
-    .component('preparationBreadcrumb', PreparationBreadcrumbComponent);
-
-export default MODULE_NAME;
+		INVENTORY_COPY_MOVE_MODULE,
+		INVENTORY_HEADER_MODULE,
+		INVENTORY_ITEM_MODULE,
+		INVENTORY_TILE_MODULE,
+	]);

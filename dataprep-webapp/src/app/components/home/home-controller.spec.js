@@ -11,107 +11,37 @@
 
  ============================================================================*/
 
-describe('Home controller', () => {
-    'use strict';
 
-    let ctrl;
-    let createController;
-    let scope;
-    let $httpBackend;
-    let StateMock;
-    const DATA_INVENTORY_PANEL_KEY = 'org.talend.dataprep.data_inventory_panel_display';
-    const dataset = { id: 'ec4834d9bc2af8', name: 'Customers (50 lines)', draft: false };
+describe('home controller', () => {
+	let scope;
+	let createController;
+	let $stateMock;
 
-    beforeEach(angular.mock.module('data-prep.home', ($provide) => {
-        StateMock = {
-            dataset: { uploadingDatasets: [] },
-            inventory: {},
-        };
-        $provide.constant('state', StateMock);
-    }));
+	beforeEach(angular.mock.module('data-prep.home'));
 
-    beforeEach(inject(($injector) => {
-        $httpBackend = $injector.get('$httpBackend');
-        $httpBackend.when('GET', 'i18n/en.json').respond({});
-        $httpBackend.when('GET', 'i18n/fr.json').respond({});
-    }));
+	beforeEach(inject(($rootScope, $componentController, OnboardingService) => {
+		scope = $rootScope.$new();
+		createController = ($stateMock) => $componentController('home', { $scope: scope, $state: $stateMock });
 
-    beforeEach(inject(($rootScope, $componentController) => {
-        scope = $rootScope.$new();
+		spyOn(OnboardingService, 'shouldStartTour').and.returnValue(true);
+		spyOn(OnboardingService, 'startTour').and.returnValue();
+	}));
 
-        createController = () => $componentController('home', { $scope: scope });
-    }));
+	it('should call onboarding service', inject(($timeout, OnboardingService) => {
+		// given
+		$stateMock = {
+			current: {
+				name: 'home.preparations'
+			},
+			params: {},
+		};
+		const ctrl = createController($stateMock);
 
-    afterEach(inject(($window) => {
-        $window.localStorage.removeItem(DATA_INVENTORY_PANEL_KEY);
-    }));
+		// when
+		ctrl.$onInit();
+		$timeout.flush(1000);
 
-    it('should init right panel state with value from local storage', inject(($window) => {
-        //given
-        $window.localStorage.setItem(DATA_INVENTORY_PANEL_KEY, 'true');
-
-        //when
-        ctrl = createController();
-
-        //then
-        expect(ctrl.showRightPanel).toBe(true);
-    }));
-
-    describe('with created controller', () => {
-        beforeEach(inject(() => {
-            ctrl = createController();
-        }));
-
-        describe('right panel management', () => {
-            it('should toggle right panel flag', inject(() => {
-                //given
-                expect(ctrl.showRightPanel).toBe(false);
-
-                //when
-                ctrl.toggleRightPanel();
-
-                //then
-                expect(ctrl.showRightPanel).toBe(true);
-
-                //when
-                ctrl.toggleRightPanel();
-
-                //then
-                expect(ctrl.showRightPanel).toBe(false);
-            }));
-
-            it('should save toggled state in local storage', inject(($window) => {
-                //given
-                expect(JSON.parse($window.localStorage.getItem(DATA_INVENTORY_PANEL_KEY))).toBeFalsy();
-
-                //when
-                ctrl.toggleRightPanel();
-
-                //then
-                expect(JSON.parse($window.localStorage.getItem(DATA_INVENTORY_PANEL_KEY))).toBeTruthy();
-                //when
-                ctrl.toggleRightPanel();
-
-                //then
-                expect(JSON.parse($window.localStorage.getItem(DATA_INVENTORY_PANEL_KEY))).toBeFalsy();
-            }));
-
-            it('should update right panel icon', inject(() => {
-                //given
-                expect(ctrl.showRightPanelIcon).toBe('u');
-
-                //when
-                ctrl.toggleRightPanel();
-
-                //then
-                expect(ctrl.showRightPanelIcon).toBe('t');
-
-                //when
-                ctrl.toggleRightPanel();
-
-                //then
-                expect(ctrl.showRightPanelIcon).toBe('u');
-            }));
-        });
-    });
+		// then
+		expect(OnboardingService.startTour).toHaveBeenCalledWith('preparation');
+	}));
 });

@@ -25,8 +25,6 @@ describe('Inventory header directive', () => {
 			SORT_ORDER: 'order',
 			NAME_SORT: 'name',
 			ASC_ORDER: 'asc',
-			ADD_PREPARATION: 'Add Preparation',
-			CREATE_FOLDER: 'Create Folder',
 		});
 		$translateProvider.preferredLanguage('en');
 	}));
@@ -46,10 +44,8 @@ describe('Inventory header directive', () => {
 		scope.order = scope.orderList[0];
 		scope.onSortChange = jasmine.createSpy('onSortChange');
 		scope.onOrderChange = jasmine.createSpy('onOrderChange');
-		scope.createFolder = jasmine.createSpy('createFolder');
-		scope.onAddPreparation = jasmine.createSpy('onAddPreparation');
 
-		createElement = (options) => {
+		createElement = () => {
 			const html = `
                 <inventory-header
                     sort="sort"
@@ -58,9 +54,7 @@ describe('Inventory header directive', () => {
                     order-list="orderList"
                     folder-list="folderList"
                     on-sort-change="onSortChange(sort)"
-                    on-order-change="onOrderChange(order)"
-                    on-add-preparation="onAddPreparation()"
-                    ${options && options.createFolder ? 'on-folder-creation="createFolder(name)"' : ''}>
+                    on-order-change="onOrderChange(order)">
                 </inventory-header>
             `;
 			element = angular.element(html);
@@ -73,90 +67,6 @@ describe('Inventory header directive', () => {
 	afterEach(() => {
 		scope.$destroy();
 		element.remove();
-	});
-
-	describe('add preparation', () => {
-		it('should call add preparation callback', () => {
-			// given
-			const options = { createFolder: true };
-
-			createElement(options);
-
-			// when
-			element.find('#add-preparation').click();
-
-			// then
-			expect(scope.onAddPreparation).toHaveBeenCalled();
-		});
-	});
-
-	describe('create folder', () => {
-		it('should render "add folder" button', () => {
-			// given
-			const options = { createFolder: true };
-
-			// when
-			createElement(options);
-
-			// then
-			expect(element.find('#add-folder-button').length).toBe(1);
-		});
-
-		it('should transform "add folder" button label into uppercase', () => {
-			// given
-			const options = { createFolder: true };
-
-			// when
-			createElement(options);
-
-			// then
-			expect(element.find('#add-folder-button').eq(0).text()).toBe('Create Folder');
-		});
-
-		it('should NOT render "add folder" button', () => {
-			// when
-			createElement();
-
-			// then
-			expect(element.find('#add-folder-button').length).toBe(0);
-		});
-
-		it('should open create folder modal on button click', () => {
-			//given
-			const options = { createFolder: true };
-			createElement(options);
-
-			expect(angular.element('body #create-folder-modal').length).toBe(0);
-
-			// when
-			element.find('#add-folder-button').eq(0).click();
-
-			// then
-			expect(angular.element('body #create-folder-modal').length).toBe(1);
-		});
-	});
-
-	describe('Add Inventory', () => {
-		it('should render add preparation button', () => {
-			//when
-			const options = { createFolder: true };
-			createElement(options);
-
-			//then
-			expect(angular.element('#add-preparation').length).toBe(1);
-			expect(angular.element('#add-preparation').eq(0).text()).toBe('Add Preparation');
-			expect(angular.element('import').length).toBe(0);
-		});
-
-		it('should render add dataset button', () => {
-			//when
-			const options = { createFolder: false };
-			createElement(options);
-
-			//then
-			expect(angular.element('#add-preparation').length).toBe(0);
-			expect(angular.element('import').length).toBe(1);
-		});
 	});
 
 	describe('sort control', () => {

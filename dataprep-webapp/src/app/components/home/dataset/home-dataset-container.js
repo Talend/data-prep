@@ -6,7 +6,7 @@
  along with this program; if not, write to Talend SA
  9 rue Pages 92150 Suresnes, France
  ============================================================================*/
-import template from './react-home-dataset.html';
+import template from './home-dataset.html';
 
 const HomeDatasetContainer = {
 	templateUrl: template,

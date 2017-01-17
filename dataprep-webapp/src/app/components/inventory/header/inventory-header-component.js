@@ -11,13 +11,19 @@
 
  ============================================================================*/
 
-import angular from 'angular';
-import sunchoke from 'sunchoke';
-import BreadcrumbComponent from './breadcrumb-component';
+import template from './inventory-header.html';
 
-const MODULE_NAME = 'data-prep.breadcrumb';
+const InventoryHeaderComponent = {
+	bindings: {
+		sort: '<',
+		order: '<',
+		folderList: '<',
+		sortList: '<',
+		orderList: '<',
+		onSortChange: '&',
+		onOrderChange: '&',
+	},
+	templateUrl: template,
+};
 
-angular.module(MODULE_NAME, [sunchoke.dropdown])
-    .component('breadcrumb', BreadcrumbComponent);
-
-export default MODULE_NAME;
+export default InventoryHeaderComponent;

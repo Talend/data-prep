@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import ngTranslate from 'angular-translate';
 import FOLDER_SELECTION from '../../folder/selection/folder-selection-module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 
@@ -27,6 +28,7 @@ const MODULE_NAME = 'data-prep.inventory-copy-move';
  */
 angular.module(MODULE_NAME,
 	[
+		ngTranslate,
 		FOLDER_SELECTION,
 		TALEND_WIDGET_MODULE,
 	])

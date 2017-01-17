@@ -13,9 +13,9 @@
 
 import angular from 'angular';
 import DATASET_UPDLOAD_LIST_MODULE from '../../dataset/upload-list/dataset-upload-list-module';
-import IMPORT_MODULE from '../../import/import-module';
 import INVENTORY_ITEM_MODULE from '../../inventory/item/inventory-item-module';
 import SERVICES_DATASET_MODULE from '../../../services/dataset/dataset-module';
+import SERVICES_DATASET_WORKFLOW_MODULE from '../../../services/dataset-workflow/dataset-workflow-module';
 import SERVICES_PREPARATION_MODULE from '../../../services/preparation/preparation-module';
 import SERVICES_UTILS_MODULE from '../../../services/utils/utils-module';
 
@@ -33,9 +33,9 @@ const MODULE_NAME = 'data-prep.preparation-creator';
 angular.module(MODULE_NAME,
 	[
 		DATASET_UPDLOAD_LIST_MODULE,
-		IMPORT_MODULE,
 		INVENTORY_ITEM_MODULE,
 		SERVICES_DATASET_MODULE,
+		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_PREPARATION_MODULE,
 		SERVICES_UTILS_MODULE,
 	])

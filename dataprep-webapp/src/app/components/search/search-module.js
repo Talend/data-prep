@@ -11,21 +11,18 @@
 
  ============================================================================*/
 
-import template from './import.html';
+import angular from 'angular';
+import SEARCH_BAR_MODULE from './bar/search-bar-module';
+import SEARCH_DOCUMENTATION_MODULE from './documentation/documentation-search-module';
+import SEARCH_INVENTORY_MODULE from './inventory/inventory-search-module';
 
-/**
- * @ngdoc directive
- * @name data-prep.data-prep.import.component:ImportComponent
- * @description This directive display a import component
- * @restrict E
- * @usage <import></import>
- */
+const MODULE_NAME = 'data-prep.search';
 
-import ImportCtrl from './import-controller';
+export default MODULE_NAME;
 
-const ImportComponent = {
-	templateUrl: template,
-	controller: ImportCtrl,
-};
-
-export default ImportComponent;
+angular.module(MODULE_NAME,
+	[
+		SEARCH_BAR_MODULE,
+		SEARCH_DOCUMENTATION_MODULE,
+		SEARCH_INVENTORY_MODULE,
+	]);

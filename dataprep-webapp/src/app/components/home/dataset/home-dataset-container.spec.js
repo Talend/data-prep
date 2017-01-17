@@ -13,35 +13,25 @@
 
 import settings from '../../../../mocks/Settings.mock';
 
-describe('Home Preparation Container', () => {
+describe('Home Dataset Container', () => {
 	let scope;
 	let createElement;
 	let element;
-	let StateMock;
 
-	beforeEach(angular.mock.module('data-prep.home', ($provide) => {
-		StateMock = {
-			inventory: {
-				breadcrumb: []
-			},
-			import: {
-				importTypes: [],
-			},
-		};
-		$provide.constant('state', StateMock);
-	}));
+	beforeEach(angular.mock.module('data-prep.home'));
 
-	beforeEach(inject(($q, $rootScope, $compile, StateService, FolderService, SettingsService) => {
+	beforeEach(inject(($q, $rootScope, $compile, StateService, DatasetService, SettingsService) => {
 		scope = $rootScope.$new(true);
 		createElement = () => {
-			element = angular.element('<react-home-preparation></react-home-preparation>');
+			element = angular.element('<home-dataset></home-dataset>');
 			$compile(element)(scope);
 			scope.$digest();
 			return element;
 		};
 
-		spyOn(StateService, 'setFetchingInventoryPreparations').and.returnValue();
-		spyOn(FolderService, 'init').and.returnValue($q.when());
+		spyOn(StateService, 'setFetchingInventoryDatasets').and.returnValue();
+		spyOn(DatasetService, 'init').and.returnValue($q.when());
+
 		SettingsService.setSettings(settings);
 	}));
 
@@ -50,19 +40,19 @@ describe('Home Preparation Container', () => {
 		element.remove();
 	});
 
-	it('should render breadcrumbs', () => {
-		//when
-		createElement();
-
-		//then
-		expect(element.find('breadcrumbs').length).toBe(1);
-	});
-
-	it('should render preparation-list', () => {
+	it('should render dataset-list', () => {
 		//when
 		createElement();
 
 		//then
 		expect(element.find('inventory-list').length).toBe(1);
+	});
+
+	it('should render inputUpdateDataset', () => {
+		//when
+		createElement();
+
+		//then
+		expect(element.find('#inputUpdateDataset').length).toBe(1);
 	});
 });

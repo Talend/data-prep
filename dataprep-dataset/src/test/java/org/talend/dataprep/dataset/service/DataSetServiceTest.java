@@ -1165,6 +1165,20 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(favoritesResp, hasItems(dsId1, dsId2));
     }
 
+    /** See https://jira.talendforge.org/browse/TDP-3296 **/
+    @Test
+    public void testGetFavoritesDatasetList_noFavoriteForUserListNoDataset() {
+
+        String dsId1 = UUID.randomUUID().toString();
+        String dsId2 = UUID.randomUUID().toString();
+
+        dataSetMetadataRepository.save(metadataBuilder.metadata().id(dsId1).build());
+        dataSetMetadataRepository.save(metadataBuilder.metadata().id(dsId2).build());
+
+        List<String> favoritesResp = when().get("/datasets?favorite=true").as(new ArrayList<String>().getClass());
+        assertTrue(favoritesResp.isEmpty());
+    }
+
     @Test
     public void testSetUnsetFavoriteDataSet() throws IOException {
         String dsId1 = UUID.randomUUID().toString();

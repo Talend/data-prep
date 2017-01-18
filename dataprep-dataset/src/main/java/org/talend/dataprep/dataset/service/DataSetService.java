@@ -196,6 +196,9 @@ public class DataSetService extends BaseDataSetService {
                             .stream()
                             .map(ds -> '\'' + ds + '\'')
                             .collect(Collectors.joining(",")) + "]");
+                } else {
+                    // Wants favorites but user has no favorite
+                    return emptyList();
                 }
             }
             if (certified) {

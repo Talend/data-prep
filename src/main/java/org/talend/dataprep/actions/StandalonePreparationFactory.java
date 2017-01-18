@@ -80,7 +80,7 @@ public class StandalonePreparationFactory {
             return new NoOpFunction();
         }
 
-        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions());
+        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions(), allowNonDistributedActions);
 
         // get the list of resources for function
         FunctionResource[] resources = Arrays.stream(providers) //
@@ -99,7 +99,7 @@ public class StandalonePreparationFactory {
 
         RowMetadata rowMetadata = preparation.getRowMetadata();
 
-        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions());
+        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions(), allowNonDistributedActions);
 
         LOGGER.trace("The initial row metadata is: " + rowMetadata);
 

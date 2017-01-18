@@ -12,19 +12,32 @@
 
 package org.talend.dataprep.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
+import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.PreparationParser;
 import org.talend.dataprep.StandalonePreparation;
+import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 public class PreparationParserTest {
+
+    ActionRegistry registry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
+
+    ActionFactory factory = new ActionFactory();
 
     @Test
     public void testActionSample() throws Exception {
@@ -52,9 +65,50 @@ public class PreparationParserTest {
 
         assertNotNull(preparation);
         assertNotNull(preparation.getActions());
-        List<RunnableAction> actionsWithRowActions = PreparationParser.ensureActionRowsExistence(preparation.getActions());
+        List<RunnableAction> actionsWithRowActions = PreparationParser.ensureActionRowsExistence(preparation.getActions(), false);
         actionsWithRowActions.size();
 
     }
 
+    @Test
+    public void testIgnoreNonDistributableActions() throws Exception {
+        registry.findAll() //
+                .filter(actionDefinition -> actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) //
+                .map(actionDefinition -> {
+                    final Map<String, String> emptyParameters;
+                    if (actionDefinition.acceptScope(ScopeCategory.CELL)) {
+                        emptyParameters = new HashMap<String, String>() {
+
+                            {
+                                put(SCOPE.getKey(), "cell");
+                                put(ROW_ID.getKey(), "0");
+                                put(COLUMN_ID.getKey(), "0");
+                            }
+                        };
+                    } else if (actionDefinition.acceptScope(ScopeCategory.COLUMN)) {
+                        emptyParameters = new HashMap<String, String>() {
+
+                            {
+                                put(SCOPE.getKey(), "column");
+                                put(COLUMN_ID.getKey(), "0");
+                            }
+                        };
+                    } else if (actionDefinition.acceptScope(ScopeCategory.LINE)) {
+                        emptyParameters = new HashMap<String, String>() {
+
+                            {
+                                put(SCOPE.getKey(), "line");
+                                put(ROW_ID.getKey(), "0");
+                            }
+                        };
+                    } else if (actionDefinition.acceptScope(ScopeCategory.DATASET)) {
+                        emptyParameters = Collections.singletonMap(SCOPE.getKey(), "dataset");
+                    } else {
+                        emptyParameters = Collections.singletonMap(SCOPE.getKey(), "unknown");
+                    }
+                    final Action runnableAction = factory.create(actionDefinition, emptyParameters);
+                    return PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
+                }) //
+                .forEach(runnableActions -> assertTrue(runnableActions.isEmpty()));
+    }
 }

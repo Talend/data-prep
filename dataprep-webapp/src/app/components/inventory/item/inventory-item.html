@@ -30,10 +30,7 @@
                  class="pin"
                  ng-if="$ctrl.item.certificationStep!='NONE'"/>
         </div>
-        <div class="preparation-icon-div" ng-switch-when="preparation" data-icon="c"></div>
         <div class="documentation-icon-div" ng-switch-when="documentation" data-icon="l"></div>
-        <div ng-switch-when="folder" class="folder-icon" insertion-folder-icon folder="$ctrl.item"><img
-                ng-src="assets/images/folder/folder-icon.png"/></div>
     </div>
 
     <!-- Descriptions -->
@@ -46,12 +43,7 @@
         </div>
     </div>
 
-    <!-- Action Icons -->
-    <div class="inventory-action-favorite">
-        <a ng-if="!$ctrl.item.draft && $ctrl.item.favorite"
-           data-icon="f"
-           class="favorite-true"
-           translate-once-title="FAVORITE_ACTION"
-           translate-values="{type: $ctrl.type, name: $ctrl.item.name}"></a>
-    </div>
+    <icon ng-if="!$ctrl.item.draft && $ctrl.item.favorite"
+       name="'talend-star'"
+       class="favorite"></icon>
 </div>

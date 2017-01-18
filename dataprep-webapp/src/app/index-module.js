@@ -19,6 +19,8 @@ import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
 
 import APP_MODULE from './components/app/app-module';
+import HOME_MODULE from './components/home/home-module';
+import PLAYGROUND_MODULE from './components/playground/playground-module';
 import SERVICES_DATASET_MODULE from './services/dataset/dataset-module';
 import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
@@ -36,11 +38,13 @@ const app = angular.module(MODULE_NAME,
 		ngSanitize,
 		ngTranslate,
 		uiRouter,
-		SERVICES_REST_MODULE, // rest interceptors
-		SERVICES_DATASET_MODULE, // for configuration
-		SERVICES_UTILS_MODULE, // for configuration
-		SETTINGS_MODULE, // app dynamic settings
-		APP_MODULE, // app root
+		SERVICES_REST_MODULE, // configuration: rest interceptors
+		SERVICES_DATASET_MODULE, // configuration: refresh supported encodings
+		SERVICES_UTILS_MODULE, // configuration: register constants (version, ...)
+		SETTINGS_MODULE, // configuration: get app settings
+		HOME_MODULE, // routing: home components
+		PLAYGROUND_MODULE, // routing: playground component
+		APP_MODULE, // bootstrap: app root
 	])
 
 	// Performance config

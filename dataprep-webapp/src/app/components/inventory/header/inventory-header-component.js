@@ -17,7 +17,6 @@ const InventoryHeaderComponent = {
 	bindings: {
 		sort: '<',
 		order: '<',
-		folderList: '<',
 		sortList: '<',
 		orderList: '<',
 		onSortChange: '&',

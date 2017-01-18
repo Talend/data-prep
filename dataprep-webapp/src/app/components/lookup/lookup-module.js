@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import INVENTORY_HEADER_MODULE from '../inventory/header/inventory-header-module';
 import LOOKUP_DATAGRID_HEADER_MODULE from './grid/header/lookup-datagrid-header-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
 import SERVICES_EARLY_PREVIEW_MODULE from '../../services/early-preview/early-preview-module';
@@ -53,6 +54,7 @@ const MODULE_NAME = 'data-prep.lookup';
  */
 angular.module(MODULE_NAME,
 	[
+		INVENTORY_HEADER_MODULE,
 		LOOKUP_DATAGRID_HEADER_MODULE,
 		TALEND_WIDGET_MODULE,
 		SERVICES_DATASET_MODULE,

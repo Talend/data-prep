@@ -22,38 +22,11 @@
     <ul>
         <li ng-repeat="item in $ctrl.items track by $index">
             <a ng-href="{{item.url}}"
-               target="_blank"
-               ng-if="item.inventoryType === 'documentation'">
+               target="_blank">
                 <inventory-item item="item"
                                 type="documentation"
                                 details="{{item.description}}"
                                 class="documentation">
-                </inventory-item>
-            </a>
-            <a ng-href="#/index/preparations/{{item.id}}"
-               target="_self"
-               ng-if="item.inventoryType === 'folder'">
-                <inventory-item item="item"
-                                type="folder"
-                                details="SEARCH_FOLDER_DETAILS">
-                </inventory-item>
-            </a>
-
-            <a ng-href="#/playground/preparation?prepid={{item.id}}"
-               target="_self"
-               ng-if="item.inventoryType === 'preparation'">
-                <inventory-item item="item"
-                                type="preparation"
-                                details="SEARCH_PREPARATION_DETAILS">
-                </inventory-item>
-            </a>
-
-            <a ng-href="#/playground/dataset?datasetid={{item.model.id}}"
-               target="_self"
-               ng-if="item.inventoryType === 'dataset'">
-                <inventory-item details="SEARCH_DATASET_DETAILS"
-                                item="item"
-                                type="dataset">
                 </inventory-item>
             </a>
         </li>

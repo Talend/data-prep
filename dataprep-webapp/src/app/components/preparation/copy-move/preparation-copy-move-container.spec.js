@@ -48,11 +48,14 @@ describe('Preparation copy/move container', () => {
 		element.remove();
 	}));
 
-	it('should render inventory copy/move in a modal', () => {
-		//when
+	it('should render inventory copy/move in a modal', inject(($q, FolderService) => {
+		// given
+		spyOn(FolderService, 'tree').and.returnValue($q.when({ folder: {}, children: [] }));
+		
+		// when
 		createElement();
 
-		//then
+		// then
 		expect(body.find('inventory-copy-move').length).toBe(1);
-	});
+	}));
 });

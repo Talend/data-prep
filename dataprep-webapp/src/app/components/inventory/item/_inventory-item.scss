@@ -20,31 +20,13 @@
 	flex-shrink: 0;
 
 	@include flex-row();
+	align-items: center;
 	border-bottom: 1px solid #CECECE;
 	height: 80px;
 	padding: 10px;
 
 	&:hover {
 		background-color: tint($pale-blue, 30%);
-	}
-
-	.inventory-action-favorite {
-		flex-grow: 0;
-		flex-shrink: 0;
-
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-
-		padding: 0 15px;
-
-		.favorite-true {
-			color: $orange;
-
-			&:hover, &:focus {
-				text-decoration: none;
-			}
-		}
 	}
 
 	.inventory-icon {
@@ -105,5 +87,9 @@
 			font-size: .8em;
 			max-height: 2.8em;
 		}
+	}
+
+	.favorite {
+		color: orange;
 	}
 }

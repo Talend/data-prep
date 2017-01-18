@@ -11,9 +11,7 @@
 
  ============================================================================*/
 
-describe('Inventory header directive', () => {
-	'use strict';
-
+describe('Inventory header component', () => {
 	let createElement;
 	let scope;
 	let element;
@@ -52,7 +50,6 @@ describe('Inventory header directive', () => {
                     order="order"
                     sort-list="sortList"
                     order-list="orderList"
-                    folder-list="folderList"
                     on-sort-change="onSortChange(sort)"
                     on-order-change="onOrderChange(order)">
                 </inventory-header>

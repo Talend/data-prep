@@ -77,25 +77,13 @@
         <div translate-once="ADD_LOOKUP_DATASET_MODAL_TITLE"></div>
         <div class="inventory">
             <div class="inventory-sort">
-                <div translate-once="SORTED_BY"></div>
-                <div class="button-switch">
-                    <talend-button-switch
-                            values="lookupCtrl.state.playground.lookup.sortList"
-                            current-value="lookupCtrl.state.playground.lookup.sort"
-                            display-key="name"
-                            change-action="lookupCtrl.updateSortBy(selected)">
-                    </talend-button-switch>
-                </div>
-                <div translate-once="SORT_IN"></div>
-                <div class="button-switch">
-                    <talend-button-switch
-                            values="lookupCtrl.state.playground.lookup.orderList"
-                            current-value="lookupCtrl.state.playground.lookup.order"
-                            display-key="name"
-                            change-action="lookupCtrl.updateSortOrder(selected)">
-                    </talend-button-switch>
-                </div>
-                <div translate-once="SORT_ORDER"></div>
+                <inventory-header
+                        sort="lookupCtrl.state.playground.lookup.sort"
+                        order="lookupCtrl.state.playground.lookup.order"
+                        sort-list="lookupCtrl.state.playground.lookup.sortList"
+                        order-list="lookupCtrl.state.playground.lookup.orderList"
+                        on-sort-change="lookupCtrl.updateSortBy(sort)"
+                        on-order-change="lookupCtrl.updateSortOrder(order)"></inventory-header>
                 <input type="search"
                        class="dataset-search"
                        id="lookup-dataset-search"

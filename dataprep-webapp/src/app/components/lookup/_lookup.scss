@@ -14,171 +14,154 @@ $lookup-datagrid-height: 273px;
 
 .lookup {
 
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 
-  .lookup-header {
-    flex-basis: 15px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    border-top: 1px solid $medium-gray;
-  }
+	.lookup-header {
+		flex-basis: 15px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		border-top: 1px solid $medium-gray;
+	}
 
-  .lookup-container {
-    flex-basis: $lookup-datagrid-height;
-    flex-grow: 0;
-    flex-shrink: 0;
-    border-top: 1px solid $medium-gray;
-    border-bottom: 1px solid $medium-gray;
+	.lookup-container {
+		flex-basis: $lookup-datagrid-height;
+		flex-grow: 0;
+		flex-shrink: 0;
+		border-top: 1px solid $medium-gray;
+		border-bottom: 1px solid $medium-gray;
 
-    display: flex;
+		display: flex;
 
-    #lookup-left {
-      flex-basis: 200px;
-      flex-grow: 1;
-      flex-shrink: 1;
+		#lookup-left {
+			flex-basis: 200px;
+			flex-grow: 1;
+			flex-shrink: 1;
 
-      height: $lookup-datagrid-height;
-      position: relative;
+			height: $lookup-datagrid-height;
+			position: relative;
 
-      #lookup-add-instruction {
-        position: absolute;
-        top: 45%;
-        left: 0;
-        right: 0;
-      }
-    }
+			#lookup-add-instruction {
+				position: absolute;
+				top: 45%;
+				left: 0;
+				right: 0;
+			}
+		}
 
-    #lookup-right {
-      flex-basis: 350px;
-      flex-grow: 0;
-      flex-shrink: 0;
+		#lookup-right {
+			flex-basis: 350px;
+			flex-grow: 0;
+			flex-shrink: 0;
 
-      background-color: $shadow-gray;
-      position: relative;
+			background-color: $shadow-gray;
+			position: relative;
 
-      .lookup-description {
-        margin-left: 10px;
-        padding-top: 10px;
-        width: 93%;
+			.lookup-description {
+				margin-left: 10px;
+				padding-top: 10px;
+				width: 93%;
 
-        .lookup-step {
-          margin-left: 15px;
-          margin-bottom: 5px;
-          color: $dark-gray;
-        }
+				.lookup-step {
+					margin-left: 15px;
+					margin-bottom: 5px;
+					color: $dark-gray;
+				}
 
-        a {
-          margin-left: 15px;
-          margin-bottom: 5px;
-        }
-      }
-      button {
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-      }
-    }
-  }
+				a {
+					margin-left: 15px;
+					margin-bottom: 5px;
+				}
+			}
+			button {
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+			}
+		}
+	}
 
-  .lookup-footer {
-    flex-basis: 30px;
-    flex-grow: 0;
-    flex-shrink: 0;
-  }
+	.lookup-footer {
+		flex-basis: 30px;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
 }
 
 .add-dataset-lookup .inventory {
 
-  .inventory-sort {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
+	.inventory-sort {
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
 
-    height: 30px;
-    font-weight: 300;
-    padding: 0 5px 0 0;
+		.dataset-search {
+			width: 150px;
+			height: 25px;
+			font-size: 0.8em;
+			padding: 0 20px 0 5px;
+			margin: 0 10px;
+			border-top: 1px solid transparent;
+			border-right: 1px solid transparent;
+			border-left: 1px solid transparent;
+			box-shadow: none;
 
-    .button-switch {
-      color: $black;
-      padding: 0 10px;
-      font-weight: bold;
-      cursor: pointer;
+			&::-ms-clear {
+				display: none;
+			}
+		}
+	}
 
-      &:hover {
-        color: $dark-blue;
-        text-decoration: underline;
-      }
-    }
+	.inventory-list {
+		height: 60vh;
+		position: relative;
 
-    .dataset-search {
-      width: 150px;
-      height: 25px;
-      font-size: 0.8em;
-      padding: 0 20px 0 5px;
-      margin: 5px 10px 5px 50px;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-left: 1px solid transparent;
-      box-shadow: none;
+		.inventory-item-empty {
+			display: flex;
+			@include flex-row();
+			justify-content: center;
 
-      &::-ms-clear {
-          display: none;
-        }
-    }
-  }
+			position: absolute;
+			top: 50%;
+			right: 0;
+			left: 0;
+			font-weight: bold;
+		}
+		.inventory-item-row {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			flex-basis: 80px;
+			flex-grow: 0;
+			flex-shrink: 0;
 
-  .inventory-list {
-    height: 60vh;
-    position: relative;
+			.add-dataset-input {
+				flex-grow: 0;
+				flex-shrink: 0;
+				outline: none;
+			}
 
-    .inventory-item-empty {
-      display: flex;
-      @include flex-row();
-      justify-content: center;
+			inventory-item {
+				flex-basis: 200px;
+				flex-grow: 1;
+				flex-shrink: 1;
 
-      position: absolute;
-      top: 50%;
-      right: 0;
-      left: 0;
-      font-weight: bold;
-    }
-    .inventory-item-row {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      flex-basis: 80px;
-      flex-grow: 0;
-      flex-shrink: 0;
-
-      .add-dataset-input {
-        flex-grow: 0;
-        flex-shrink: 0;
-        outline: none;
-      }
-
-      inventory-item {
-        flex-basis: 200px;
-        flex-grow: 1;
-        flex-shrink: 1;
-
-        .inventory-icon {
-          padding: 5px 3px 0 3px;
-          .pin {
-            top: -2px;
-          }
-        }
-        .inventory-title, .inventory-description {
-          @include ellipsis(600px);
-        }
-        .btn-icon:hover {
-          background-color: transparent;
-        }
-        .btn-transparent:hover {
-          background-color: transparent;
-        }
-      }
-    }
-  }
+				.inventory-icon {
+					padding: 5px 3px 0 3px;
+					.pin {
+						top: -2px;
+					}
+				}
+				.inventory-title, .inventory-description {
+					@include ellipsis(600px);
+				}
+				.btn-icon:hover {
+					background-color: transparent;
+				}
+				.btn-transparent:hover {
+					background-color: transparent;
+				}
+			}
+		}
+	}
 }

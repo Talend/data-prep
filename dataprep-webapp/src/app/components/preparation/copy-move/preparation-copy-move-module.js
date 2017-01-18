@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import INVENTORY_COPY_MOVE_MODULE from '../../inventory/copy-move/inventory-copy-move-module';
 import TALEND_WIDGET_MODULE from '../../widgets/widget-module';
 import SERVICES_FOLDER_MODULE from '../../../services/folder/folder-module';
 import SERVICES_PREPARATION_MODULE from '../../../services/preparation/preparation-module';
@@ -25,6 +26,7 @@ const MODULE_NAME = 'data-prep.preparation-copy-move';
  * @ngdoc object
  * @name data-prep.preparation-copy-move
  * @description This module contains the entities to manage the preparation copy/move
+ * @requires data-prep.inventory-copy-move
  * @requires talend.widget
  * @requires data-prep.services.folder
  * @requires data-prep.services.preparation
@@ -32,6 +34,7 @@ const MODULE_NAME = 'data-prep.preparation-copy-move';
  */
 angular.module(MODULE_NAME,
 	[
+		INVENTORY_COPY_MOVE_MODULE,
 		TALEND_WIDGET_MODULE,
 		SERVICES_FOLDER_MODULE,
 		SERVICES_PREPARATION_MODULE,

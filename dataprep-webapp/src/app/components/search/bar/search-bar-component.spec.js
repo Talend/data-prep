@@ -60,11 +60,11 @@ describe('Search bar component', () => {
         createElement();
 
         //when
-        scope.items = [{ inventoryType: 'dataset' }, { inventoryType: 'preparation' }, { inventoryType: 'documentation' }, { inventoryType: 'folder' }];
+        scope.items = [{ inventoryType: 'documentation' }, { inventoryType: 'documentation' }];
         scope.$apply();
 
         //then
-        expect(element.find('inventory-item').length).toBe(4);
+        expect(element.find('inventory-item').length).toBe(2);
     });
 
     describe('no-result', () => {

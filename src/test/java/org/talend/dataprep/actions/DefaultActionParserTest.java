@@ -266,7 +266,7 @@ public class DefaultActionParserTest {
                 .getResourceAsStream("action_delete_invalid.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
-            serverMock.addEndPoint("/api/create/dictionary", new ByteArrayInputStream(sampleDictionary), header);
+            serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
             function = parser.parse(preparationId);
         }
         assertNotNull(function);
@@ -294,7 +294,7 @@ public class DefaultActionParserTest {
         try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_delete_invalid_email.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
-            serverMock.addEndPoint("/api/create/dictionary", new ByteArrayInputStream(sampleDictionary), header);
+            serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
             function = parser.parse(preparationId);
         }
         assertNotNull(function);
@@ -551,7 +551,7 @@ public class DefaultActionParserTest {
         try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
-            serverMock.addEndPoint("/api/create/dictionary", new ByteArrayInputStream(sampleDictionary), header);
+            serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
             function = parser.parse(preparationId);
         }
         assertNotNull(function);

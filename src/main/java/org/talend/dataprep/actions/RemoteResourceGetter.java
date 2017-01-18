@@ -126,7 +126,7 @@ public class RemoteResourceGetter {
     }
 
     public Dictionaries retrieveDictionaries(String apiUrl, String login, String password) {
-        String url = apiUrl + "/api/create/dictionary";
+        String url = apiUrl + "/api/transform/dictionary";
         HttpGet request = new HttpGet(url);
         request.addHeader(login(apiUrl, login, password));
         try (final CloseableHttpResponse response = client.execute(request)) {

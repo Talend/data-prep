@@ -31,6 +31,7 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.ActionFactory;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
+import org.talend.dataprep.transformation.actions.text.ReplaceOnValue;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 public class PreparationParserTest {
@@ -73,6 +74,7 @@ public class PreparationParserTest {
     @Test
     public void testIgnoreNonDistributableActions() throws Exception {
         registry.findAll() //
+                .filter(actionDefinition -> !(actionDefinition instanceof ReplaceOnValue)) // Done in next unit tests
                 .filter(actionDefinition -> actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) //
                 .map(actionDefinition -> {
                     final Map<String, String> emptyParameters;
@@ -111,4 +113,39 @@ public class PreparationParserTest {
                 }) //
                 .forEach(runnableActions -> assertTrue(runnableActions.isEmpty()));
     }
+
+    @Test
+    public void testIgnoreCellEdition() throws Exception {
+        final ReplaceOnValue replaceOnValue = new ReplaceOnValue();
+        final Map<String, String> emptyParameters = new HashMap<String, String>() {
+
+            {
+                put(SCOPE.getKey(), ScopeCategory.CELL.name());
+                put(COLUMN_ID.getKey(), "0");
+                put(ROW_ID.getKey(), "0");
+            }
+        };
+        final Action runnableAction = factory.create(replaceOnValue, emptyParameters);
+        final List<RunnableAction> runnableActions = PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
+
+        assertTrue(runnableActions.isEmpty());
+    }
+
+    @Test
+    public void testNotIgnoreColumnEdition() throws Exception {
+        final ReplaceOnValue replaceOnValue = new ReplaceOnValue();
+        final Map<String, String> emptyParameters = new HashMap<String, String>() {
+
+            {
+                put(SCOPE.getKey(), ScopeCategory.COLUMN.name());
+                put(COLUMN_ID.getKey(), "0");
+            }
+        };
+        final Action runnableAction = factory.create(replaceOnValue, emptyParameters);
+        final List<RunnableAction> runnableActions = PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
+
+        assertEquals(1, runnableActions.size());
+    }
+
+
 }

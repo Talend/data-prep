@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.dataprep.BaseErrorCodes;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.user.UserGroup;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -45,7 +45,7 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 
 @TestPropertySource(properties = { "security.mode=genericCommandTest", "transformation.service.url=", "preparation.service.url=",
         "dataset.service.url=" })
-public class GenericCommandTest extends ServiceBaseTests {
+public class GenericCommandTest extends ServiceBaseTest {
 
     private static TDPException lastException;
 

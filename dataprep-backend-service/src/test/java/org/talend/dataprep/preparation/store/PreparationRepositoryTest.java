@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.preparation.Preparation;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
-public abstract class PreparationRepositoryTest extends ServiceBaseTests {
+public abstract class PreparationRepositoryTest extends ServiceBaseTest {
 
     protected abstract Preparation getPreparation(String preparationName);
 

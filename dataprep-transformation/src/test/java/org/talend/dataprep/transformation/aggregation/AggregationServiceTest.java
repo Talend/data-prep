@@ -24,7 +24,7 @@ import org.talend.dataprep.transformation.aggregation.api.Operator;
 
 /**
  * Unit test for aggregation service.
- * 
+ *
  * @see AggregationService
  */
 public class AggregationServiceTest extends TransformationBaseTest {
@@ -45,6 +45,6 @@ public class AggregationServiceTest extends TransformationBaseTest {
         service.aggregate(params, new DataSet());
     }
 
-    // aggregation will be tested at service level, see AggregationTests.class
+    // aggregation will be tested at service level, see AggregationTest.class
 
 }

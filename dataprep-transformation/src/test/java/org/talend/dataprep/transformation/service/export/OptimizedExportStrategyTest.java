@@ -32,9 +32,9 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.transformation.cache.CacheKeyGenerator;
 import org.talend.dataprep.transformation.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.service.TransformationServiceBaseTests;
+import org.talend.dataprep.transformation.service.TransformationServiceBaseTest;
 
-public class OptimizedExportStrategyTest extends TransformationServiceBaseTests {
+public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
     /** The root step. */
     @Resource(name = "rootStep")

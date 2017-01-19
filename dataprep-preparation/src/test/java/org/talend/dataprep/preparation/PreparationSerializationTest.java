@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -33,7 +33,7 @@ import org.talend.dataprep.preparation.store.PreparationRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class PreparationSerializationTest extends ServiceBaseTests {
+public class PreparationSerializationTest extends ServiceBaseTest {
 
     @Autowired
     private ObjectMapper mapper;

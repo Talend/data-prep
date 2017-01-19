@@ -18,13 +18,13 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.transformation.api.action.dynamic.cluster.ClusterParameters;
 
 /**
  * Unit test for the dynamic type.
  */
-public class DynamicTypeTest extends ServiceBaseTests {
+public class DynamicTypeTest extends ServiceBaseTest {
 
     /** Spring application context. */
     @Autowired

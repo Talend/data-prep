@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.exception.error.*;
 import org.talend.dataprep.i18n.MessagesBundle;
 
@@ -27,7 +27,7 @@ import org.talend.dataprep.i18n.MessagesBundle;
  * Test that each error code has a message and a message title in the (default language) error message properties file.
  * see org.talend.dataprep/error_messages.properties
  */
-public class ErrorCodeMessagesTest extends ServiceBaseTests {
+public class ErrorCodeMessagesTest extends ServiceBaseTest {
 
     @Autowired
     MessagesBundle messagesBundle;

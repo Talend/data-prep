@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Base class for all unit/integration tests for transformation.
  */
-public abstract class TransformationBaseTest extends ServiceBaseTests {
+public abstract class TransformationBaseTest extends ServiceBaseTest {
 
     @Autowired
     protected DataSetMetadataBuilder metadataBuilder;

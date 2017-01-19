@@ -25,13 +25,13 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.talend.daikon.exception.error.ErrorCode;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.exception.TDPException;
 
 /**
  * @TODO Add a support for internationalized messages
  */
-public class ErrorMessageTest extends ServiceBaseTests {
+public class ErrorMessageTest extends ServiceBaseTest {
 
     @Test
     public void shouldReturnRightErrorMessageWhenHttpStatusIsZero() {

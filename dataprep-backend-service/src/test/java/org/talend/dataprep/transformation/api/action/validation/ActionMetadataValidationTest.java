@@ -25,7 +25,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-public class ActionMetadataValidationTest extends ServiceBaseTests {
+public class ActionMetadataValidationTest extends ServiceBaseTest {
 
     @Autowired
     private ActionMetadataValidation validator;

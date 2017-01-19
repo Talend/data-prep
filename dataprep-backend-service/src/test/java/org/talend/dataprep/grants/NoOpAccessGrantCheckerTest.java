@@ -18,9 +18,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 
-public class NoOpAccessGrantCheckerTest extends ServiceBaseTests {
+public class NoOpAccessGrantCheckerTest extends ServiceBaseTest {
 
     @Autowired
     private AccessGrantChecker accessGrantChecker;

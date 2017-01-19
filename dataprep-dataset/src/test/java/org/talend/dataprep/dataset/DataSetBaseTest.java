@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
@@ -45,7 +45,7 @@ import com.jayway.restassured.RestAssured;
 /**
  * Base class for DataSet integration tests.
  */
-public abstract class DataSetBaseTest extends ServiceBaseTests {
+public abstract class DataSetBaseTest extends ServiceBaseTest {
 
     protected static final String T_SHIRT_100_CSV_EXPECTED_JSON = "../t-shirt_100.csv.expected.json";
 

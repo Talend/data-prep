@@ -44,7 +44,7 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
  *
  * @see ComputeTimeSince
  */
-public class CompareDatesTest extends BaseDateTests {
+public class CompareDatesTest extends BaseDateTest {
 
     /** The action to test. */
     private CompareDates action = new CompareDates();

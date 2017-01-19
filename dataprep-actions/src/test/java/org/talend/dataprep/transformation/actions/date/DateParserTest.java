@@ -37,7 +37,7 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
  * Unit test for the DateParser class.
  * @see DateParser
  */
-public class DateParserTest extends BaseDateTests {
+public class DateParserTest extends BaseDateTest {
 
     /** The action to test. */
     private DateParser action = new DateParser(new AnalyzerService());

@@ -25,14 +25,14 @@ import javax.annotation.Resource;
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.preparation.FixedIdPreparationContent;
 import org.talend.dataprep.preparation.FixedIdStep;
 import org.talend.dataprep.preparation.store.PersistentPreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
-public class PreparationUtilsTest extends ServiceBaseTests {
+public class PreparationUtilsTest extends ServiceBaseTest {
 
     @Autowired
     private PreparationRepository repository;

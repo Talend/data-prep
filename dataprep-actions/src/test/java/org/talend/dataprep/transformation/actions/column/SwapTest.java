@@ -34,7 +34,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
-import org.talend.dataprep.transformation.actions.date.BaseDateTests;
+import org.talend.dataprep.transformation.actions.date.BaseDateTest;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 /**
@@ -42,7 +42,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see Swap
  */
-public class SwapTest extends BaseDateTests {
+public class SwapTest extends BaseDateTest {
 
     /** The action to test. */
     private Swap action = new Swap();

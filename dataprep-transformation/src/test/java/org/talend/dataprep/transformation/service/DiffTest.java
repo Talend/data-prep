@@ -33,7 +33,7 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 /**
  * Diff integration tests.
  */
-public class DiffTests extends TransformationServiceBaseTests {
+public class DiffTest extends TransformationServiceBaseTest {
 
     @Test
     public void should_return_preview() throws Exception {

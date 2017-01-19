@@ -40,6 +40,7 @@
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
         <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
         <tql.version>6.3.1</tql.version>
+        <commons-compress.version>1.13</commons-compress.version>
     </properties>
     <modules>
         <module>../dataprep-backend-common</module>
@@ -405,6 +406,11 @@
                         <artifactId>commons-logging-api</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons-compress.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.datastewardship</groupId>

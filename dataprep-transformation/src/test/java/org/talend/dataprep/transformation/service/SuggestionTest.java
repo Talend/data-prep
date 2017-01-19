@@ -29,7 +29,7 @@ import com.jayway.restassured.path.json.JsonPath;
 /**
  * Integration tests on suggestions.
  */
-public class SuggestionTests extends TransformationServiceBaseTests {
+public class SuggestionTest extends TransformationServiceBaseTest {
 
     @Test
     public void dataSetSuggest() throws Exception {

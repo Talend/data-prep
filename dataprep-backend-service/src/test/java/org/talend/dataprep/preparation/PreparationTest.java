@@ -27,7 +27,7 @@ import javax.annotation.Resource;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
@@ -35,7 +35,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
-public class PreparationTest extends ServiceBaseTests {
+public class PreparationTest extends ServiceBaseTest {
 
     @Autowired
     private PreparationRepository repository;

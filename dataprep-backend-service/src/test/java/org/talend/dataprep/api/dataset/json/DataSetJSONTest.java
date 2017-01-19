@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetContent;
@@ -43,7 +43,7 @@ import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DataSetJSONTest extends ServiceBaseTests {
+public class DataSetJSONTest extends ServiceBaseTest {
 
     @Autowired
     private ObjectMapper mapper;

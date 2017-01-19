@@ -26,7 +26,7 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 /**
  * Base class for all date related unit tests.
  */
-public abstract class BaseDateTests extends AbstractMetadataBaseTest {
+public abstract class BaseDateTest extends AbstractMetadataBaseTest {
 
     /**
      * @param statisticsFileName the statistics file name to use.
@@ -41,7 +41,7 @@ public abstract class BaseDateTests extends AbstractMetadataBaseTest {
     }
 
     protected InputStream getDateTestJsonAsStream(String testFileName) {
-        return BaseDateTests.class.getResourceAsStream(testFileName);
+        return BaseDateTest.class.getResourceAsStream(testFileName);
     }
 
 }

@@ -33,7 +33,7 @@ import com.jayway.restassured.response.Response;
 /**
  * Base tests for transformation service.
  */
-public class BaseTests extends TransformationServiceBaseTests {
+public class BaseTest extends TransformationServiceBaseTest {
 
     @Test
     public void CORSHeaders() throws Exception {

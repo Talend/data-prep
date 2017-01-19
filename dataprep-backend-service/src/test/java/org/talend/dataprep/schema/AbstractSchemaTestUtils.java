@@ -16,14 +16,14 @@ package org.talend.dataprep.schema;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 
 /**
  *
  */
-public abstract class AbstractSchemaTestUtils extends ServiceBaseTests {
+public abstract class AbstractSchemaTestUtils extends ServiceBaseTest {
 
     @Autowired
     protected IoTestUtils ioTestUtils;

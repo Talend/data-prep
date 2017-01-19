@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.env.MockPropertySource;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
@@ -49,7 +49,7 @@ import com.jayway.restassured.specification.RequestSpecification;
 /**
  * Base test for all API service unit.
  */
-public abstract class ApiServiceTestBase extends ServiceBaseTests {
+public abstract class ApiServiceTestBase extends ServiceBaseTest {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApiServiceTestBase.class);
 

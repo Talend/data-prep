@@ -16,11 +16,11 @@ package org.talend.dataprep.lock.store;
 import java.util.Random;
 import java.util.UUID;
 
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 
-public abstract class LockedResourceTestUtils extends ServiceBaseTests {
+public abstract class LockedResourceTestUtils extends ServiceBaseTest {
 
     protected Identifiable getFirstResourceType(String id) {
         return new Resource(id);

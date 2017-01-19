@@ -40,7 +40,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see TimestampToDate
  */
-public class TimestampToDateTest extends BaseDateTests {
+public class TimestampToDateTest extends BaseDateTest {
 
     /** The action to test. */
     private TimestampToDate action = new TimestampToDate();

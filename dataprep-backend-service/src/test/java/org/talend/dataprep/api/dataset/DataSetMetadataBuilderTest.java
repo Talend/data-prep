@@ -27,12 +27,12 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.schema.Schema;
 
-public class DataSetMetadataBuilderTest extends ServiceBaseTests {
+public class DataSetMetadataBuilderTest extends ServiceBaseTest {
 
     @Autowired
     private DataSetMetadataBuilder builder;

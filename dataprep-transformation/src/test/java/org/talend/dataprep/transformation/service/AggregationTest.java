@@ -31,7 +31,7 @@ import com.jayway.restassured.response.Response;
 /**
  * Integration tests for aggregation.
  */
-public class AggregationTests extends TransformationServiceBaseTests {
+public class AggregationTest extends TransformationServiceBaseTest {
 
     @Test
     public void invalidOperation() throws IOException {

@@ -43,7 +43,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
  *
  * @see ChangeDatePattern
  */
-public class ChangeDatePatternTest extends BaseDateTests {
+public class ChangeDatePatternTest extends BaseDateTest {
 
     /** The action to test. */
     private ChangeDatePattern action = new ChangeDatePattern();

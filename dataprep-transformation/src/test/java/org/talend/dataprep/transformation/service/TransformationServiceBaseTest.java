@@ -33,10 +33,6 @@ import org.springframework.mock.env.MockPropertySource;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
@@ -51,9 +47,9 @@ import com.jayway.restassured.response.Response;
 /**
  * Base class for TransformationService integration tests.
  */
-public abstract class TransformationServiceBaseTests extends TransformationBaseTest {
+public abstract class TransformationServiceBaseTest extends TransformationBaseTest {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(TransformationServiceBaseTests.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(TransformationServiceBaseTest.class);
 
     @Value("${local.server.port}")
     protected int port;

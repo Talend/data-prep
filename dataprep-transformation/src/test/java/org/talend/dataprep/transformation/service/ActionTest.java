@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Integration tests on column actions.
  */
-public class ActionTests extends TransformationServiceBaseTests {
+public class ActionTest extends TransformationServiceBaseTest {
 
     @Autowired
     ActionRegistry actionRegistry;
@@ -54,7 +54,7 @@ public class ActionTests extends TransformationServiceBaseTests {
     @Test
     public void columnActions() throws Exception {
         // given
-        final String columnMetadata = IOUtils.toString(ActionTests.class.getResourceAsStream("../suggestions/string_column.json"));
+        final String columnMetadata = IOUtils.toString(ActionTest.class.getResourceAsStream("../suggestions/string_column.json"));
 
         // when
         final String response = given() //
@@ -77,7 +77,7 @@ public class ActionTests extends TransformationServiceBaseTests {
                 .asString();
 
         // then
-        assertThat(response, sameJSONAsFile(ActionTests.class.getResourceAsStream("all_line_scope_actions.json")));
+        assertThat(response, sameJSONAsFile(ActionTest.class.getResourceAsStream("all_line_scope_actions.json")));
     }
 
 }

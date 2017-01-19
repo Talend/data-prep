@@ -41,7 +41,7 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ExtractDateTokensTest extends BaseDateTests {
+public class ExtractDateTokensTest extends BaseDateTest {
 
     /** The action to test. */
     private ExtractDateTokens action = new ExtractDateTokens();

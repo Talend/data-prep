@@ -21,7 +21,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.user.UserData;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Base class for all UserDataRepository implementations.
  */
-public abstract class AbstractUserDataRepositoryTest<U extends UserData> extends ServiceBaseTests {
+public abstract class AbstractUserDataRepositoryTest<U extends UserData> extends ServiceBaseTest {
 
     @Autowired
     private ObjectMapper mapper;

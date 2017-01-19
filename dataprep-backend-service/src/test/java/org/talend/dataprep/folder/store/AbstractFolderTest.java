@@ -29,7 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTests;
+import org.talend.dataprep.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
@@ -37,7 +37,7 @@ import org.talend.dataprep.security.Security;
 
 import com.google.common.collect.Lists;
 
-public abstract class AbstractFolderTest extends ServiceBaseTests {
+public abstract class AbstractFolderTest extends ServiceBaseTest {
 
     /**
      * @return the folder repository to test.

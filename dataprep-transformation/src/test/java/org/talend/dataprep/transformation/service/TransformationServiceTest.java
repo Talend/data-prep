@@ -46,7 +46,7 @@ import com.jayway.restassured.response.Response;
 /**
  * Integration tests on actions.
  */
-public class TransformationServiceTests extends TransformationServiceBaseTests {
+public class TransformationServiceTest extends TransformationServiceBaseTest {
 
     /**
      * Content cache for the tests.

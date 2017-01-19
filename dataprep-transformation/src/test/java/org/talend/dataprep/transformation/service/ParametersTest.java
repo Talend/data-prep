@@ -26,7 +26,7 @@ import com.jayway.restassured.response.Response;
 /**
  * Parameters integration tests.
  */
-public class ParametersTests extends TransformationServiceBaseTests {
+public class ParametersTest extends TransformationServiceBaseTest {
 
     @Test
     public void testDynamicParams_should_return_textclustering_dynamic_params() throws Exception {

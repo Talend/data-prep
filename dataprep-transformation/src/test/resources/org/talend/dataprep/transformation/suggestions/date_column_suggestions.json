@@ -173,7 +173,7 @@
                   "label": "Value"
                 }
               ],
-              "label": "constant_mode"
+              "label": "No other column"
             },
             {
               "value": "other_column_mode",
@@ -189,7 +189,7 @@
                   "label": "Column"
                 }
               ],
-              "label": "other_column_mode"
+              "label": "Another column"
             }
           ],
           "multiple": false
@@ -325,7 +325,7 @@
                   "label": "Value"
                 }
               ],
-              "label": "constant_mode"
+              "label": "No other column"
             },
             {
               "value": "other_column_mode",
@@ -341,7 +341,7 @@
                   "label": "Column"
                 }
               ],
-              "label": "other_column_mode"
+              "label": "Another column"
             }
           ],
           "multiple": false
@@ -409,7 +409,7 @@
           "values": [
             {
               "value": "unknown_separators",
-              "label": "I dont know, best guess"
+              "label": "I don't know, best guess"
             },
             {
               "value": "from_custom_mode",
@@ -445,51 +445,51 @@
           "values": [
             {
               "value": "M/d/yy",
-              "label": "M/d/yy"
+              "label": "American standard"
             },
             {
               "value": "M/d/yy h:mm a",
-              "label": "M/d/yy h:mm a"
+              "label": "American standard with time"
             },
             {
               "value": "dd.MM.yy",
-              "label": "dd.MM.yy"
+              "label": "German standard"
             },
             {
               "value": "dd.MM.yy HH:mm",
-              "label": "dd.MM.yy HH:mm"
+              "label": "German standard with time"
             },
             {
               "value": "dd/MM/yy",
-              "label": "dd/MM/yy"
+              "label": "English standard"
             },
             {
               "value": "dd/MM/yy",
-              "label": "dd/MM/yy"
+              "label": "French standard"
             },
             {
               "value": "dd/MM/yy HH:mm",
-              "label": "dd/MM/yy HH:mm"
+              "label": "French standard with time"
             },
             {
               "value": "dd/MM/yy HH:mm",
-              "label": "dd/MM/yy HH:mm"
+              "label": "English with time"
             },
             {
               "value": "yy/MM/dd",
-              "label": "yy/MM/dd"
+              "label": "Japanese standard"
             },
             {
               "value": "yy/MM/dd H:mm",
-              "label": "yy/MM/dd H:mm"
+              "label": "Japanese standard with time"
             },
             {
               "value": "yyyy-MM-dd",
-              "label": "yyyy-MM-dd"
+              "label": "ISO 8601 date"
             },
             {
               "value": "yyyy-MM-dd'T'HH:mm:ss.SSS",
-              "label": "yyyy-MM-dd'T'HH:mm:ss.SSS"
+              "label": "ISO 8601 date & time"
             },
             {
               "value": "custom",
@@ -608,7 +608,7 @@
           "values": [
             {
               "value": "now_server_side",
-              "label": "now_server_side"
+              "label": "Now"
             },
             {
               "value": "specific_date",
@@ -624,7 +624,7 @@
                   "label": "This date"
                 }
               ],
-              "label": "specific_date"
+              "label": "Specific date"
             },
             {
               "value": "other_column_mode",
@@ -640,7 +640,7 @@
                   "label": "Column"
                 }
               ],
-              "label": "other_column_mode"
+              "label": "Another column"
             }
           ],
           "multiple": false

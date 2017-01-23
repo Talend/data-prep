@@ -1,11 +1,12 @@
 package org.talend.dataprep.api.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -31,7 +32,9 @@ import org.talend.dataprep.security.PublicAPI;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.zafarkhaja.semver.ParseException;
+import com.github.zafarkhaja.semver.Version;
+
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -41,9 +44,6 @@ public class UpgradeAPI extends APIService {
 
     @Autowired
     VersionService service;
-
-    @Autowired
-    ObjectMapper mapper;
 
     @Value("${upgrade.location:}")
     String upgradeVersionLocation;
@@ -60,21 +60,15 @@ public class UpgradeAPI extends APIService {
         return builder.toString();
     }
 
-    // Shared with unit test
-    static com.github.zafarkhaja.semver.Version parseVersion(String s) {
-        final String versionAsString = StringUtils.substringBefore(s, "-");
-        final int[] versionNumbers = new int[3];
-        StringTokenizer tokenizer = new StringTokenizer(versionAsString, ".");
-        int i = 0;
-        while (tokenizer.hasMoreTokens() && i < 3) {
-            try {
-                versionNumbers[i] = Integer.parseInt(tokenizer.nextToken());
-            } catch (NumberFormatException e) {
-                versionNumbers[i] = 0;
-            }
-            i++;
+    static Version fromInternal(org.talend.dataprep.info.Version internalVersion) {
+        String versionId = internalVersion.getVersionId();
+        final String versionAsString = StringUtils.substringBefore(versionId, "-");
+        try {
+            return Version.valueOf(versionAsString);
+        } catch (IllegalArgumentException | ParseException e) {
+            LOGGER.info("Couldn't parse version {}. Message was: {}", versionId, e.getMessage());
+            return Version.forIntegers(0);
         }
-        return com.github.zafarkhaja.semver.Version.forIntegers(versionNumbers[0], versionNumbers[1], versionNumbers[2]);
     }
 
     @PostConstruct
@@ -101,41 +95,17 @@ public class UpgradeAPI extends APIService {
 
         try {
             // Get current version
-            final String versionId = service.version().getVersionId();
-            final com.github.zafarkhaja.semver.Version parsedCurrentVersion = parseVersion(versionId);
+            final Version parsedCurrentVersion = fromInternal(service.version());
 
             // POST to URL that serves a JSON Version object
             LOGGER.debug("Contacting upgrade server @ '{}'", upgradeVersionLocation);
-            HttpClient client = new HttpClient();
-            final PostMethod post = new PostMethod(upgradeVersionLocation);
-            final String response;
-            final StringWriter content = new StringWriter();
-            try (final JsonGenerator generator = mapper.getFactory().createGenerator(content)) {
-                generator.writeStartObject();
-                {
-                    generator.writeStringField("version", versionId);
-                    generator.writeStringField("id", token);
-                }
-                generator.writeEndObject();
-                generator.flush();
-
-                post.setRequestEntity(new StringRequestEntity(content.toString(), MediaType.APPLICATION_JSON.getType(), "UTF-8"));
-                client.executeMethod(post);
-                response = IOUtils.toString(post.getResponseBodyAsStream());
-            } finally {
-                post.releaseConnection();
-            }
-
-            // Read upgrade server response
-            List<UpgradeServerVersion> versions = mapper.readerFor(new TypeReference<List<UpgradeServerVersion>>() {
-            }).readValue(response);
+            List<UpgradeServerVersion> versions = fetchServerUpgradeVersions(service.version());
             LOGGER.debug("{} available version(s) returned by update server: {}", versions.size(), toString(versions));
 
             // Compare current version with available and filter new versions
-            List<UpgradeServerVersion> filteredVersions = versions.stream().filter(v -> {
-                com.github.zafarkhaja.semver.Version parsedRemoteVersion = parseVersion(v.getVersion());
-                return parsedRemoteVersion.compareTo(parsedCurrentVersion) > 0;
-            }).collect(Collectors.toList());
+            List<UpgradeServerVersion> filteredVersions = versions.stream() //
+                    .filter(v -> Version.valueOf(v.getVersion()).greaterThan(parsedCurrentVersion)) //
+                    .collect(Collectors.toList());
             LOGGER.debug("{} possible version(s) for upgrade: {} ", filteredVersions.size(), toString(filteredVersions));
             return filteredVersions;
         } catch (Exception e) {
@@ -143,6 +113,30 @@ public class UpgradeAPI extends APIService {
             LOGGER.debug("Exception occurred during new version check. ", e);
             return Collections.emptyList();
         }
+    }
+
+    private List<UpgradeServerVersion> fetchServerUpgradeVersions(org.talend.dataprep.info.Version version) throws IOException {
+        HttpClient client = new HttpClient();
+        final PostMethod post = new PostMethod(upgradeVersionLocation);
+        final String response;
+        final StringWriter content = new StringWriter();
+        try (final JsonGenerator generator = mapper.getFactory().createGenerator(content)) {
+            generator.writeStartObject();
+            generator.writeStringField("version", version.getVersionId());
+            generator.writeStringField("id", token);
+            generator.writeEndObject();
+            generator.flush();
+
+            post.setRequestEntity(new StringRequestEntity(content.toString(), MediaType.APPLICATION_JSON.getType(), UTF_8.name()));
+            client.executeMethod(post);
+            response = IOUtils.toString(post.getResponseBodyAsStream());
+        } finally {
+            post.releaseConnection();
+        }
+
+        // Read upgrade server response
+        return mapper.readerFor(new TypeReference<List<UpgradeServerVersion>>() {
+        }).readValue(response);
     }
 
 }

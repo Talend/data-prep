@@ -1,5 +1,7 @@
 package org.talend.dataprep.api.service.upgrade;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpgradeServerVersion {
@@ -45,5 +47,20 @@ public class UpgradeServerVersion {
 
     public void setReleaseNoteUrl(String releaseNoteUrl) {
         this.releaseNoteUrl = releaseNoteUrl;
+    }
+
+    @Override
+    @SuppressWarnings("ControlFlowStatementWithoutBraces")
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UpgradeServerVersion that = (UpgradeServerVersion) o;
+        return Objects.equals(version, that.version) && Objects.equals(title, that.title) && Objects.equals(downloadUrl,
+                that.downloadUrl) && Objects.equals(releaseNoteUrl, that.releaseNoteUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(version, title, downloadUrl, releaseNoteUrl);
     }
 }

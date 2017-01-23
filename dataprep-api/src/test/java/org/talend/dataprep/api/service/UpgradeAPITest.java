@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,9 +44,9 @@ public class UpgradeAPITest extends ApiServiceTestBase {
     @Autowired
     VersionService versionService;
 
-    private static String computeNextVersion(VersionService versionService) {
-        final Version parsedVersion = UpgradeAPI.parseVersion(versionService.version().getVersionId());
-        return parsedVersion.incrementMajorVersion().toString();
+    private static Version computeNextVersion(VersionService versionService) {
+        final Version parsedVersion = UpgradeAPI.fromInternal(versionService.version());
+        return parsedVersion.incrementMajorVersion();
     }
 
     @Test
@@ -71,17 +72,24 @@ public class UpgradeAPITest extends ApiServiceTestBase {
 
     @Test
     public void checkStaticUpgradeServer() throws Exception {
-        // When
+        // Given
         // Server deliver always same response based (does *not* depend on sent content)
         upgradeAPI.setUpgradeVersionLocation("http://localhost:" + port + "/upgrade/server/static");
+        final Version nextVersion = computeNextVersion(versionService);
+        UpgradeServerVersion expected = new UpgradeServerVersion();
+        expected.setVersion(nextVersion.toString());
+        expected.setTitle("My Title 2");
+        expected.setDownloadUrl("http://www.amazingdownload.com/2");
+        expected.setReleaseNoteUrl("http://www.amazingrelease.com/2");
+
+        // When
+        String actual = RestAssured.when().get("/api/upgrade/check").asString();
+
+        List<UpgradeServerVersion> actualParsed = mapper.readerFor(UpgradeServerVersion.class).<UpgradeServerVersion>readValues(actual).readAll();
 
         // Then
-        String actual = RestAssured.when().get("/api/upgrade/check").asString();
-        final String nextVersion = computeNextVersion(versionService);
-        assertEquals(
-                "[{\"version\":\"" + nextVersion
-                        + "\",\"title\":\"My Title 2\",\"download_url\":\"http://www.amazingdownload.com/2\",\"release_note_url\":\"http://www.amazingrelease.com/2\"}]",
-                actual, true);
+        Assert.assertEquals(1, actualParsed.size());
+        Assert.assertEquals(expected, actualParsed.get(0));
     }
 
     @Test
@@ -121,13 +129,13 @@ public class UpgradeAPITest extends ApiServiceTestBase {
         @RequestMapping(path = "/upgrade/server/static", method = RequestMethod.POST)
         public List<UpgradeServerVersion> getAvailableVersions() {
             UpgradeServerVersion version1 = new UpgradeServerVersion();
-            version1.version = "0.1";
+            version1.version = Version.forIntegers(0, 1).toString();
             version1.title = "My Title 1";
             version1.downloadUrl = "http://www.amazingdownload.com/1";
             version1.releaseNoteUrl = "http://www.amazingrelease.com/1";
 
             UpgradeServerVersion version2 = new UpgradeServerVersion();
-            version2.version = computeNextVersion(versionService);
+            version2.version = computeNextVersion(versionService).toString();
             version2.title = "My Title 2";
             version2.downloadUrl = "http://www.amazingdownload.com/2";
             version2.releaseNoteUrl = "http://www.amazingrelease.com/2";
@@ -155,7 +163,7 @@ public class UpgradeAPITest extends ApiServiceTestBase {
                 LOGGER.error("Unexpected exception.", e);
             }
             UpgradeServerVersion version1 = new UpgradeServerVersion();
-            version1.version = computeNextVersion(versionService);
+            version1.version = computeNextVersion(versionService).toString();
             version1.title = inputId;
             version1.downloadUrl = inputVersion;
 

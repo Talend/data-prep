@@ -134,6 +134,7 @@ describe('Playground controller', () => {
 				spyOn(PreparationService, 'getDetails').and.returnValue($q.when(preparations[0]));
 				spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasets[0]));
 				spyOn(PlaygroundService, 'startLoader').and.returnValue();
+				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();
 
 				$stateParams.prepid = preparations[0].id;
@@ -151,11 +152,12 @@ describe('Playground controller', () => {
 				};
 			}));
 
-			it('should start loader', inject((PlaygroundService) => {
+			it('should start loader', inject((StateService, PlaygroundService) => {
 				// when
 				createController();
 
 				// then
+				expect(StateService.setIsLoadingPlayground).toHaveBeenCalled();
 				expect(PlaygroundService.startLoader).toHaveBeenCalled();
 			}));
 
@@ -327,6 +329,7 @@ describe('Playground controller', () => {
 			beforeEach(inject(($q, $stateParams, DatasetService, PlaygroundService, StateService) => {
 				spyOn(DatasetService, 'getMetadata').and.returnValue($q.when(datasets[0]));
 				spyOn(PlaygroundService, 'startLoader').and.returnValue();
+				spyOn(StateService, 'setIsLoadingPlayground').and.returnValue();
 				spyOn(StateService, 'setPreviousRoute').and.returnValue();
 
 				// given
@@ -346,11 +349,12 @@ describe('Playground controller', () => {
 				};
 			}));
 
-			it('should startloader', inject((PlaygroundService) => {
+			it('should startloader', inject((StateService, PlaygroundService) => {
 				// when
 				createController();
 
 				// then
+				expect(StateService.setIsLoadingPlayground).toHaveBeenCalled();
 				expect(PlaygroundService.startLoader).toHaveBeenCalled();
 			}));
 

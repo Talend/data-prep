@@ -14,7 +14,8 @@
   -->
 
 <div class="playground-container" tabindex="0">
-    <playground-header preview="playgroundCtrl.previewInProgress()"
+    <playground-header ng-if="!playgroundCtrl.state.playground.isLoading"
+                       preview="playgroundCtrl.previewInProgress()"
                        lookup-visible="playgroundCtrl.state.playground.lookup.visibility"
                        parameters-visible="playgroundCtrl.state.playground.parameters.visible"
                        feedback-visible="!playgroundCtrl.state.ee"
@@ -28,7 +29,7 @@
                        on-preparation-picker="playgroundCtrl.showPreparationPicker()"
     ></playground-header>
 
-    <div class="playground">
+    <div class="playground" ng-if="!playgroundCtrl.state.playground.isLoading">
         <talend-slidable class="playground-recipe slide-hide"
                          visible="playgroundCtrl.state.playground.recipe.visible"
                          side="left">

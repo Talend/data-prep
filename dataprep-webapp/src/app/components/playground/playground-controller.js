@@ -333,6 +333,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 			return;
 		}
 
+		StateService.setIsLoadingPlayground(true);
 		PlaygroundService.startLoader();
 		PreparationService.getDetails($stateParams.prepid)
 			.then((preparation) => {
@@ -348,6 +349,7 @@ export default function PlaygroundCtrl($timeout, $state, $stateParams, state, St
 	}
 	else if ($stateParams.datasetid) {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
+		StateService.setIsLoadingPlayground(true);
 		PlaygroundService.startLoader();
 		DatasetService.getMetadata($stateParams.datasetid)
 			.then(loadDataset)

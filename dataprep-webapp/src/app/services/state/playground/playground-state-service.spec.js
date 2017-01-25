@@ -134,6 +134,17 @@ describe('Playground state service', () => {
             expect(playgroundState.isSavingPreparation).toBe(true);
         }));
 
+        it('should set loading flag', inject((playgroundState, PlaygroundStateService) => {
+            //given
+            expect(playgroundState.isLoading).toBeFalsy();
+
+            //when
+            PlaygroundStateService.setIsLoading(true);
+
+            //then
+            expect(playgroundState.isLoading).toBe(true);
+        }));
+
         it('should set set Lookup Visibility flag', inject((playgroundState, LookupStateService, PlaygroundStateService) => {
             //given
             playgroundState.grid = {
@@ -483,6 +494,7 @@ describe('Playground state service', () => {
             playgroundState.nameEditionMode = true;
             playgroundState.preparation = {};
             playgroundState.isFetchingStats = true;
+            playgroundState.isLoading = true;
             playgroundState.isSavingPreparation = true;
 
             //when
@@ -495,6 +507,7 @@ describe('Playground state service', () => {
             expect(playgroundState.lookupData).toBe(null);
             expect(playgroundState.preparation).toBe(null);
             expect(playgroundState.isFetchingStats).toBe(false);
+            expect(playgroundState.isLoading).toBe(false);
             expect(playgroundState.isSavingPreparation).toBe(false);
         }));
 

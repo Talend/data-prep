@@ -12,10 +12,11 @@
  ============================================================================*/
 
 export const playgroundState = {
-	preparationName: '',
-	preparation: null,
 	candidatePreparations: [],
+	isLoading: false,
 	isSavingPreparation: false,
+	preparation: null,
+	preparationName: '',
 	sampleType: 'HEAD',
 };
 
@@ -41,6 +42,7 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		reset,
 		setDataset,
 		setIsFetchingStats,
+		setIsLoading,
 		setIsSavingPreparation,
 		setPreparation,
 		setPreparationName,
@@ -162,6 +164,10 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 		playgroundState.isFetchingStats = value;
 	}
 
+	function setIsLoading(value) {
+		playgroundState.isLoading = value;
+	}
+
 	function setIsSavingPreparation(value) {
 		playgroundState.isSavingPreparation = value;
 	}
@@ -227,11 +233,12 @@ export function PlaygroundStateService(RecipeStateService, recipeState,
 	function reset() {
 		playgroundState.data = null;
 		playgroundState.dataset = null;
-		playgroundState.preparation = null;
+		playgroundState.isFetchingStats = false;
+		playgroundState.isLoading = false;
+		playgroundState.isSavingPreparation = false;
 		playgroundState.nameEditionMode = false;
 		playgroundState.lookupData = null;
-		playgroundState.isFetchingStats = false;
-		playgroundState.isSavingPreparation = false;
+		playgroundState.preparation = null;
 		playgroundState.sampleType = 'HEAD';
 
 		RecipeStateService.reset();

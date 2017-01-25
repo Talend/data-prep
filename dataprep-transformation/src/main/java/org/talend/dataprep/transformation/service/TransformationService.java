@@ -16,8 +16,11 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
@@ -26,8 +29,18 @@ import static org.talend.dataprep.transformation.actions.category.ScopeCategory.
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -43,7 +56,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.daikon.exception.ExceptionContext;
@@ -164,6 +183,9 @@ public class TransformationService extends BaseTransformationService {
 
     @Autowired
     private ContentCache contentCache;
+
+    @Autowired
+    private StatisticsAdapter statisticsAdapter;
 
     /**
      * The root step.
@@ -811,7 +833,13 @@ public class TransformationService extends BaseTransformationService {
     private List<SemanticDomain> getSemanticDomains(DataSetMetadata metadata, String columnId, InputStream records)
             throws IOException {
 
-        final ColumnMetadata columnMetadata = metadata.getRowMetadata().getById(columnId);
+        // copy the column metadata and set the semantic domain forced flag to false to make sure the statistics adapter set all
+        // available domains
+        final ColumnMetadata columnMetadata = column() //
+                .copy(metadata.getRowMetadata().getById(columnId)) //
+                .semanticDomainForce(false) //
+                .build();
+
         final Analyzer<Analyzers.Result> analyzer = analyzerService.build(columnMetadata, SEMANTIC);
         analyzer.init();
 
@@ -824,7 +852,6 @@ public class TransformationService extends BaseTransformationService {
         }
 
         final List<Analyzers.Result> analyzerResult = analyzer.getResult();
-        final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
         statisticsAdapter.adapt(singletonList(columnMetadata), analyzerResult);
 
         return columnMetadata.getSemanticDomains();

@@ -1,0 +1,17 @@
+[
+  {
+    "actions": [
+      {
+        "action": "domain_change",
+        "parameters": {
+          "scope": "column",
+          "column_id": "0005",
+          "column_name": "gender",
+          "new_domain_id": "GENDER",
+          "new_domain_label": "Gender",
+          "new_domain_frequency": 100
+        }
+      }
+    ]
+  }
+]

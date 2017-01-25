@@ -1,0 +1,19 @@
+[
+  {
+    "actions": [
+      {
+        "action": "replace_on_value",
+        "parameters": {
+          "cell_value": {
+            "token": "F",
+            "operator": "equals"
+          },
+          "replace_value": "France",
+          "scope": "column",
+          "column_id": "0005",
+          "column_name": "gender"
+        }
+      }
+    ]
+  }
+]

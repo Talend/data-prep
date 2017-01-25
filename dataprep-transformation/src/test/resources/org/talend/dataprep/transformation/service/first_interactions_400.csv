@@ -1,0 +1,401 @@
+user_id	birth	country	page_visited	first_item	gender	campain	revenue
+4dc1548af	11/9/1970	France	6.0	22.0	F	False	162
+e8f6f7853c	1/31/1983	Chile	8.0	44.0	F	False	148
+5802162c20	6/5/1958	India	4.0	78.0	F		84
+67dc195843	12/30/1899	United States	5.0	44.0	F	False	190
+7c52e0eab6	12/19/1981	India	4.0	15.5	F	True	39
+ef433d39c6	1/23/1991	United States	8.0	42.0	F	True	334
+17b8b214b0	5/24/1982	France	4.0	44.0	F		193
+1c3ddff940	1/5/1971	United States	7.0	10.0	M	True	134
+61a7d084f5	2/11/1963	China	7.0	102.0	F	False	189
+61a7d084f5	2/11/1963	Japan	7.0	42.0	F		227
+ff971288b2	5/28/1973	Singapore	6.0	42.0	F	False	225
+d72e9b958a	12/16/1977	United States	7.0	10.0	F	False	169
+87f89d1fe4	12/18/1950	Russia	3.0	22.0	F	False	125
+87f89d1fe4	12/18/1950	United States	5.0	15.5	F	False	268
+23b5dae249	6/7/1977	Japan	7.0	117.0	M	False	286
+82c97f8fbc	4/4/1987	Nigeria	8.0	10.0	F	False	30
+1208f3603c	10/1/1959	Saudi Arabia	6.0	117.0	M	False	279
+ce7bd68e91	2/1/1958	China	4.0	22.0	F	False	69
+50d150a385	6/7/1966	Mexico	6.0	28.0	M	False	109
+b25f411e02	12/30/1899	Iran	3.0	42.0	F	False	103
+eda2d9d70a	12/9/1979	Italy	10.0	22.0	M	False	128
+c3a94ea2b0	6/24/1954	China	5.0	57.0	F	False	139
+68752ccdb7	12/30/1899	Italy	9.0	78.0	M	False	176
+c73d54ceb4	12/30/1899	Pakistan	3.0	22.0	F	True	27
+d458f3e372	2/11/1978	United States	2.0	44.0	F	True	162
+8ad19a93d3	7/6/1977	United States	4.0	15.5	M	False	154
+3dd642eabf	5/29/1985	Singapore	6.0	42.0	M	False	252
+744e6b6b69	11/23/1966	United States	4.0	44.0	F	False	247
+0c8850d2f7	1/9/1968	Japan	10.0	57.0	F	False	228
+0dbf9ac289	7/21/1979	Russia	4.0	28.0	F	False	111
+323f53ec46	6/7/1972	Germany	4.0	22.0	F	True	131
+0ff83e41eb	7/12/1980	United States	5.0	15.5	M	False	166
+a14684b3c2	9/20/1992	Czech Republic	12.0	44.0	F	True	138
+dd5e044d69	6/11/1972	Australia	8.0	10.0	F	False	156
+5317ff75d9	2/28/1989	Netherlands	4.0	44.0	F	True	177
+33e44f3d61	12/30/1899	United States	5.0	42.0	M	False	175
+107d82bec6	8/24/1963	Belgium	7.0	22.0	F	False	206
+f2d8afa0eb	1/27/1957	Germany	8.0	22.0	F	True	161
+96ebf96df2	5/12/1965	China	2.0	44.0	M	False	94
+54dedcf486	7/29/1990	South Africa	5.0	15.5	F	False	88
+3b1a3d1f80	9/21/1943	India	4.0	15.5	F	False	43
+a34623fabf	1/27/1988	Japan	8.0	10.0	F	True	134
+8a2f7c6e4c	10/27/1945	Japan	9.0	44.0	F	False	240
+6c69226614	8/10/1980	France	1.0	42.0	F	False	145
+a01de4cac3	11/15/1966	Australia	6.0	28.0	F	False	207
+a9206a94c0	11/12/1984	United States	3.0	44.0	M	False	209
+00bdf912c4	9/18/1972	Italy	4.0	28.0	M	True	120
+179a7fa5fb	6/11/1986	Colombia	5.0	102.0	F	True	210
+646eb92052	8/25/1958	Spain	7.0	28.0	F	True	183
+31c8e83fa5	11/19/1986	Brazil	6.0	102.0	F	False	212
+9c5aadb0c2	5/26/1965	Nigeria	6.0	44.0	F	False	64
+1d51c9e033	11/28/1991	Taiwan	6.0	57.0	F	False	260
+364b971135	3/15/1992	Russia	6.0	22.0	M	True	56
+4af00ddbca	12/30/1899	Mexico	3.0	44.0	F	False	113
+20391b0046	6/14/1954	China	6.0	15.5	F	False	85
+70dc2af2de	6/12/1966	Portugal	8.0	22.0	F	True	113
+fd030c2ed2	9/6/1986	Qatar	7.0	15.5	F	True	230
+40b5a2eeae	5/26/1980	China	5.0	22.0	M	True	68
+1a23b835fb	12/23/1989	China	8.0	15.5	F	True	66
+3de2c07555	12/5/1948	Canada	5.0	15.5	F	False	231
+fb8604b0a6	7/9/1952	China	3.0	57.0	M	False	120
+c3d823c5ac	7/22/1975	United States	7.0	22.0	F	False	180
+ac285cfb88	12/29/1972	Turkey	12.0	15.5	F	False	87
+6ef4de836b	3/18/1991	Austria	14.0	57.0	F	False	230
+1efdabf5e9	12/30/1899	United States	8.0	15.5	F	True	135
+eb38117368	12/30/1899	Bangladesh	7.0	44.0	F	False	69
+c5c16f4f13	1/7/1991	Turkey	5.0	42.0	M	False	121
+493067ec34	2/28/1981	China	3.0	44.0	F	False	97
+17a13d04f5	10/25/1970	Turkey	5.0	42.0	M	True	106
+6492c9ca1a	9/22/1971	Romania	5.0	57.0	F	False	134
+f4bc31829c	9/30/1978	India	4.0	44.0	F	False	69
+0e05252c1c	12/30/1899	Spain	13.0	44.0	F	False	98
+e57ed139fe	5/12/1973	Saudi Arabia	4.0	15.5	F	False	151
+d509397d20	12/11/1981	United States	3.0	15.5	F	False	173
+8c9429a3e8	12/30/1899	Australia	7.0	117.0	F	False	251
+58da7637fb	11/25/1990	Bolivia	5.0	44.0	M	False	78
+ac6025cefc	3/24/1983	India	5.0	22.0	M	False	47
+2a804daa5a	11/16/1988	France	6.0	22.0	F	False	199
+d0f60ed40d	9/2/1988	Niger	6.0	22.0	F	False	505
+5e699ec7d9	4/1/1987	Saudi Arabia	4.0	42.0	F	False	197
+5fddecf5fc	6/17/1961	Turkey	5.0	102.0	M	False	219
+0d0509f0c1	12/30/1899	India	3.0	22.0	F	True	45
+88ff7ee13d	4/11/1973	Vietnam	9.0	15.5	F	True	39
+440364d3ed	12/12/1967	United States	5.0	102.0	M	True	259
+b24ec338ab	12/30/1899	Netherlands	5.0	22.0	M	True	126
+269ca47391	7/14/1980	Indonesia	3.0	44.0	F	False	76
+63e3824a6b	7/21/1993	China	8.0	44.0	F	False	101
+88a4ea14c8	7/10/1980	Jordan	7.0	44.0	F	False	84
+145f6fa2ae	5/31/1975	Norway	8.0	22.0	M	False	168
+fc40aa699d	6/26/1942	Brazil	6.0	22.0	F	True	56
+52e1e72e77	9/11/1973	Japan	5.0	15.5	F	False	145
+7f115c147a	8/15/1982	Italy	9.0	102.0	F	False	288
+0e67deba5d	7/11/1988	Australia	6.0	42.0	F	False	249
+8e6ec9b1a4	2/13/1988	Italy	6.0	22.0	M	False	158
+d35bf4de71	7/6/1975	China	5.0	10.0	F	True	56
+6408379aae	1/23/1986	United States	5.0	57.0	M	True	210
+c872008d18	7/10/1985	United States	4.0	42.0	M	False	221
+542c090413	4/14/1965	Spain	6.0	42.0	M	False	175
+52bd364cae	4/22/1985	Italy	6.0	44.0	M	False	183
+76ef72ce98	12/30/1899	Uzbekistan	7.0	44.0	F	False	66
+87bdc34c36	11/30/1978	China	7.0	44.0	F	False	71
+b1fd7312f4	7/21/1974	Mexico	4.0	42.0	M	True	106
+20b0b28d6c	12/30/1899	Cambodia	5.0	78.0	F	True	95
+3207e81a21	5/9/1986	United States	4.0	15.5	F	True	161
+4519db360a	11/15/1995	Austria	9.0	117.0	M	False	237
+e950247701	3/2/1951	India	5.0	15.5	F	True	41
+48d5bad236	10/3/1974	United States	10.0	44.0	F	False	204
+747a57f995	4/4/1970	Israel	5.0	42.0	F	False	180
+9ce5795977	7/27/1979	Benin	7.0	57.0	F	False	126
+8dfe022c07	8/3/1985	China	7.0	44.0	F	True	111
+d275f6f0de	12/30/1899	China	6.0	28.0	M	True	73
+e79ddc2174	7/15/1975	Canada	2.0	15.5	F	False	135
+49dd788d01	11/7/1986	Czech Republic	6.0	22.0	M	False	148
+bd7bcc685a	2/17/1988	Vietnam	5.0	28.0	M	False	54
+a2f789a540	4/2/1979	Italy	8.0	15.5	M	False	124
+db9aa0b2c4	8/23/1984	Sweden	6.0	22.0	F	False	200
+d674855ea8	8/19/1979	Belgium	6.0	44.0	M	True	151
+6fe2253d9c	12/30/1899	India	5.0	102.0	F	False	128
+02e14ea500	10/31/1963	Iran	6.0	15.5	M	False	92
+e562069b54	12/31/1988	Norway	13.0	10.0	F	True	152
+3b44c575a2	4/4/1954	Turkey	6.0	10.0	F	False	116
+0ea44d5f41	11/10/1942	United Kingdom	10.0	28.0	F	False	198
+d36c2842d1	12/30/1899	United States	9.0	117.0	F	False	264
+04c1fec189	9/30/1989	United States	2.0	28.0	F	False	192
+b8ecaa19c4	6/29/1970	Brazil	4.0	10.0	F	True	45
+f4808eb7e3	12/30/1899	Thailand	9.0	22.0	F	False	73
+73d6f57c73	10/23/1988	United States	3.0	117.0	F	False	326
+f531be66e7	4/26/1962	United States	6.0	102.0	F	False	482
+5500597f5b	4/9/1958	Indonesia	9.0	22.0	F	True	54
+16920ca2db	7/17/1986	Ecuador	6.0	44.0	M	True	81
+82f4fbf420	2/29/1988	China	4.0	57.0	F	True	111
+fa10179e90	9/16/1992	Switzerland	2.0	10.0	F	False	144
+38f1bac0f3	6/2/1975	Peru	5.0	10.0	M	True	61
+ca72ffb04d	4/18/1979	Colombia	3.0	15.5	F	False	72
+b5b93cd586	12/30/1899	China	8.0	44.0	F	True	104
+d554d438b2	6/15/1984	Slovakia	4.0	22.0	M	False	128
+f4bb239054	12/30/1899	Italy	6.0	78.0	F	True	170
+c674578835	11/7/1945	Venezuela	8.0	22.0	F	True	91
+e824fe766f	8/17/1959	Saudi Arabia	5.0	42.0	M	True	152
+84442c148f	5/3/1994	United States	11.0	57.0	F	False	222
+26aefafa95	1/28/1975	Saudi Arabia	8.0	22.0	F	False	138
+52e2d50630	12/30/1899	Thailand	5.0	102.0	M	False	156
+03db02fcb7	11/18/1991	China	8.0	44.0	F	False	105
+a0656ac8d9	6/5/1982	Bolivia	4.0	22.0	F	True	52
+52cc8e34b8	6/9/1984	Poland	7.0	44.0	M	False	149
+3d1daea588	12/30/1899	Indonesia	5.0	22.0	M	False	51
+1ead573d1f	7/5/1982	Australia	4.0	42.0	M	False	184
+93c3ffcb42	10/31/1961	Italy	5.0	44.0	F	True	162
+24fe5e59ee	3/17/1973	Russia	12.0	57.0	M	False	159
+cd8ae3179c	11/29/1968	Russia	9.0	15.5	M	False	99
+859291bcc7	10/25/1978	Mexico	9.0	15.5	F	False	91
+41aa11dc7f	12/30/1899	China	9.0	57.0	F	False	109
+8742c10e86	3/20/1985	United Kingdom	7.0	10.0	F	False	184
+e41a6a6bf2	9/16/1970	India	8.0	42.0	M	False	67
+12d8e145a1	2/9/1979	Italy	2.0	78.0	F	False	180
+d581b4e9a6	10/1/1981	Japan	7.0	44.0	M	False	178
+30df93ab6b	7/8/1989	France	12.0	117.0	M	False	261
+4a5388fb9e	4/20/1953	Iran	3.0	117.0	F	False	206
+e17261d5dd	12/30/1899	Malaysia	7.0	102.0	M	False	184
+b6ebfb4295	9/19/1986	China	5.0	15.5	F	True	66
+db79888fd3	7/21/1961	China	8.0	22.0	M	True	42
+5e2cf46fad	11/10/1969	Mexico	6.0	57.0	F	True	131
+01e6a628ba	7/2/1981	Brazil	5.0	57.0	F	True	117
+97f22136b3	5/24/1980	United States	9.0	42.0	F	False	214
+8646100698	11/5/1946	Italy	6.0	15.5	F	False	184
+b4e50a561e	9/17/1969	Egypt	4.0	42.0	F	False	67
+565bede4b1	2/13/1968	United States	6.0	117.0	F	False	323
+414589f448	6/11/1973	United States	7.0	44.0	F	True	175
+1d614ea65d	12/30/1899	Indonesia	12.0	22.0	M	True	50
+83aa17d189	12/20/1982	Russia	3.0	42.0	F	False	129
+ede3af9374	4/21/1963	Ecuador	6.0	15.5	F	False	86
+efd22847e3	9/27/1988	United States	5.0	10.0	M	False	197
+02db622166	4/12/1992	India	9.0	22.0	F	False	38
+dbb8aa97be	12/30/1899	China	7.0	28.0	F	False	77
+0594f434f4	12/11/1961	Poland	7.0	44.0	F	False	180
+56cbf3c9e3	4/22/1980	Italy	3.0	57.0	F	True	115
+45099803fb	4/30/1991	Canada	7.0	42.0	F	False	225
+663ebc9ed1	7/11/1980	United States	6.0	22.0	M	False	92
+d46959f55b	9/3/1960	Australia	9.0	22.0	F	False	228
+4103d0243f	9/12/1982	United Arab Emirates	5.0	57.0	F	False	117
+1c59eb1aae	2/1/1957	Germany	13.0	78.0	F	True	108
+ee55046678	12/6/1974	United Arab Emirates	5.0	15.5	F	False	194
+98212327cc	12/30/1899	China	6.0	15.5	M	False	63
+8524c0c0bc	9/5/1953	Malaysia	5.0	15.5	M	False	115
+6865f12da7	3/3/1982	South Sudan	6.0	15.5	M	False	204
+d8e4a39841	11/25/1977	Brazil	9.0	10.0	F	False	72
+fa203d2371	7/2/1988	United States	6.0	102.0	F	True	310
+fa203d2371	7/2/1988	Japan	9.0	102.0	F	True	158
+e77359e5e5	9/30/1981	Brazil	10.0	15.5	F	False	81
+5806770724	12/30/1899	Germany	3.0	22.0	F	False	136
+022f7cd362	10/9/1954	United States	5.0	15.5	F	False	272
+f797d0b7fa	3/28/1957	Colombia	8.0	22.0	F	False	101
+07533dcf1c	12/20/1939	United States	6.0	57.0	M	False	277
+1d7bbe71e6	6/21/1991	China	9.0	15.5	F	False	73
+d7200556ab	11/7/1985	Italy	5.0	102.0	M	True	224
+a57db2c86f	12/30/1899	Russia	13.0	44.0	F	True	112
+3eb2d6b1ad	2/18/1965	Italy	7.0	42.0	F	False	196
+b4187c8064	12/30/1899	Saudi Arabia	10.0	15.5	F	False	120
+2e796ba0dd	10/7/1994	Turkey	8.0	15.5	M	False	84
+3d284c057f	5/1/1979	Indonesia	13.0	10.0	F	True	39
+49300e4f77	6/26/1973	Japan	7.0	102.0	M	False	256
+6491c93827	1/17/1964	United States	8.0	44.0	F	False	277
+57c4fad1e0	11/12/1987	United States	6.0	102.0	F	True	310
+db4893fcb1	11/15/1990	United States	10.0	102.0	M	True	263
+e30345be1c	3/11/1941	United States	10.0	28.0	F	False	236
+ce385f8d25	12/30/1899	United States	3.0	42.0	M	False	168
+c276ed84e2	12/30/1899	Australia	7.0	117.0	M	True	224
+88ae52f548	12/1/1958	Tanzania	9.0	102.0	F	False	193
+b2af9607f7	2/25/1965	United Kingdom	4.0	42.0	F	True	161
+6b7556bee4	2/3/1983	Mexico	4.0	42.0	M	False	120
+15461b0bf9	6/25/1988	United States	10.0	15.5	F	False	227
+9fa0966606	5/1/1965	Japan	9.0	44.0	M	True	157
+6570c3458c	11/29/1986	United States	5.0	28.0	F	False	247
+c528d8865b	8/10/1983	United States	12.0	28.0	M	False	183
+f22e7ff02c	3/15/1991	Mexico	7.0	22.0	F	False	81
+791dbb5824	7/18/1986	Canada	8.0	22.0	F	False	217
+844b2f25db	4/21/1992	Guatemala	4.0	44.0	F	False	79
+cf9e1dba2d	9/5/1992	United States	7.0	22.0	M	True	149
+f75df4f5d9	2/20/1946	Peru	6.0	78.0	F	False	155
+47042a5473	12/30/1899	China	4.0	28.0	M	False	75
+76f19d982a	10/17/1980	China	8.0	78.0	F	True	125
+4aef2fc207	12/11/1987	Tanzania	5.0	15.5	F	True	65
+d61e96186a	9/17/1979	United States	5.0	44.0	M	False	197
+94cfd925af	6/25/1942	Croatia	7.0	10.0	F	False	140
+642e013e66	4/16/1978	United States	4.0	117.0	M	False	264
+8085977503	9/23/1994	Malaysia	9.0	44.0	M	False	99
+f7113cd9c2	12/5/1965	United States	5.0	15.5	F	False	222
+5a199b5c29	9/22/1972	China	5.0	10.0	F	False	63
+0bdacb69f6	10/29/1962	China	10.0	15.5	F	False	77
+6d5f66f859	12/30/1899	United States	6.0	102.0	F	False	288
+5fe72a4b40	3/4/1983	China	10.0	44.0	F	True	93
+0c272a18b7	12/14/1989	United States	3.0	22.0	M	False	185
+cc455d46ca	4/23/1962	United States	6.0	22.0	F	False	255
+2cc1ea8430	5/5/1967	Japan	5.0	44.0	M	False	221
+c8f2abfeff	12/30/1899	United States	6.0	102.0	F	False	288
+d67f7fe543	6/11/1959	Germany	6.0	44.0	F	False	268
+4ac4847289	2/11/1964	China	5.0	44.0	F	True	95
+40908ac74f	12/30/1899	Germany	7.0	44.0	F	False	171
+c1d04e5bc6	8/12/1965	Finland	8.0	44.0	F	True	168
+1951812fcd	4/5/1991	Ukraine	6.0	10.0	F	True	52
+1951812fcd	4/5/1991	China	2.0	28.0	F	False	79
+7c98437172	5/3/1948	Japan	5.0	15.5	F	True	146
+3e72234204	2/19/1987	Turkey	5.0	22.0	M	True	90
+7d46480f2f	12/30/1899	Belgium	7.0	15.5	F	False	168
+74ce31b772	12/30/1899	Brazil	6.0	42.0	F	False	102
+2e1b96bf0d	4/23/1992	United States	4.0	22.0	F	False	350
+c336637f19	1/3/1981	Russia	5.0	102.0	F	False	221
+1545425430	3/11/1981	Egypt	7.0	15.5	F	False	58
+5158831359	11/15/1985	Russia	4.0	22.0	F	False	120
+d28db1d09a	12/30/1899	Canada	5.0	44.0	M	False	165
+bd58c85350	1/1/1987	China	6.0	57.0	F	False	131
+a39474c193	12/30/1899	Mexico	4.0	57.0	F	False	132
+b6b0c6c609	8/19/1992	United States	7.0	44.0	F	True	185
+434a61904d	6/3/1947	Romania	5.0	22.0	M	False	100
+5f7564754c	12/1/1992	United States	5.0	15.5	F	True	150
+50544a237a	12/30/1899	France	6.0	15.5	F	True	116
+09c64deffd	10/23/1993	India	13.0	28.0	M	False	52
+55df0a0cee	12/30/1899	United States	6.0	22.0	F	False	165
+14f0c9a832	2/13/1946	Mexico	5.0	15.5	M	False	104
+43fe572817	12/30/1899	United Kingdom	2.0	22.0	M	True	117
+4d42598897	5/26/1986	India	3.0	15.5	M	False	41
+64a67aee94	9/27/1969	Germany	4.0	42.0	F	True	157
+20cd941666	11/12/1988	United States	7.0	42.0	M	False	240
+f3086d8c5a	1/15/1980	Honduras	14.0	15.5	M	True	43
+0dc5465b77	4/27/1978	United States	10.0	78.0	M	True	197
+baec5a9d39	10/21/1987	Chile	4.0	42.0	F	False	150
+35effc542d	10/15/1977	China	6.0	22.0	F	True	69
+244bd9e435	9/22/1973	Canada	3.0	28.0	F	False	159
+e11ba02910	2/20/1963	Japan	7.0	15.5	F	False	194
+e422814ed2	12/5/1972	Turkey	6.0	102.0	F	False	200
+60123cc095	5/20/1981	Austria	5.0	28.0	F	True	102
+a5d346dd9b	6/15/1994	New Zealand	5.0	42.0	F	False	155
+e1589cfd71	12/17/1959	Russia	6.0	57.0	F	False	201
+14743cc6f9	12/30/1899	United Kingdom	5.0	22.0	F	True	123
+3428241277	12/30/1899	United States	5.0	22.0	F	False	163
+fce88321c6	4/24/1955	Afghanistan	7.0	44.0	F	False	446
+ecedb85aa4	5/7/1982	United States	1.0	42.0	F	False	171
+efdae46cc5	9/24/1943	Japan	6.0	22.0	M	False	177
+efdae46cc5	9/24/1943	United States	7.0	102.0	F	True	313
+312ff1cc83	5/24/1986	United States	7.0	44.0	F	False	286
+cbe6903e3d	11/2/1990	United States	3.0	15.5	F	True	136
+941ff4b2be	10/29/1962	Sweden	5.0	10.0	M	False	175
+d6f8fe4519	5/14/1961	United States	5.0	10.0	F	False	289
+418c31f57b	8/6/1962	Denmark	5.0	44.0	F	True	177
+d2411b8990	5/9/1991	India	2.0	15.5	M	False	39
+74be074e73	6/29/1987	Finland	9.0	22.0	F	False	195
+13630a5af6	3/30/1982	China	4.0	44.0	F	True	93
+b4ccba4ff9	12/30/1899	Russia	5.0	102.0	M	False	185
+153c0740c2	3/6/1971	India	6.0	117.0	F	False	143
+23c49c5375	7/24/1982	United States	4.0	42.0	F	True	123
+06f1bcf308	4/16/1955	Japan	5.0	15.5	F	True	148
+94f126371a	4/1/1964	Thailand	7.0	57.0	M	False	123
+61d7f27526	12/9/1976	Ukraine	5.0	22.0	M	True	61
+b69dba2e47	12/30/1899	Russia	5.0	102.0	F	True	176
+a78854c3fc	12/30/1899	United States	6.0	42.0	M	False	176
+b8b8a7df83	5/4/1991	China	6.0	22.0	M	False	76
+622cc6372c	11/1/1959	Spain	8.0	102.0	F	True	259
+f5d3ead0a9	2/1/1968	Russia	1.0	44.0	F	False	117
+505e6813cc	6/12/1979	Philippines	8.0	102.0	F	True	130
+b4df17e639	3/25/1986	China	8.0	117.0	M	True	167
+a88c3bfd6f	4/11/1968	United States	5.0	102.0	M	True	255
+a7ff33ab8a	6/18/1960	Japan	4.0	28.0	F	True	153
+d088f3000b	12/30/1899	Ukraine	5.0	57.0	F	False	41
+843b97d2fe	1/13/1986	United States	9.0	15.5	F	True	164
+0f9c5b4c75	4/10/1992	Spain	4.0	57.0	F	False	204
+74f0686666	11/7/1978	China	5.0	28.0	F	True	75
+bc2c0005bc	11/21/1979	Austria	3.0	15.5	F	False	148
+f3c6002722	4/7/1962	China	5.0	28.0	F	True	79
+912122ef0a	4/25/1982	Mongolia	8.0	22.0	M	True	53
+a254a553f3	10/5/1987	China	3.0	22.0	F	False	80
+fa3b4e2c5d	12/30/1899	Italy	5.0	15.5	F	False	120
+fd468d9db2	8/16/1951	Japan	5.0	44.0	M	False	223
+833275bd34	4/15/1959	China	5.0	15.5	M	False	27
+6091d7cec0	8/27/1994	Taiwan	5.0	22.0	F	False	150
+61a364bc8e	11/16/1948	Taiwan	13.0	44.0	F	False	229
+752d48bb29	9/15/1943	United States	8.0	15.5	M	False	208
+3fac3e4919	6/19/1963	Bolivia	4.0	28.0	F	False	64
+e757ffaa24	10/6/1942	Iran	6.0	44.0	F	False	134
+8dab264c6d	4/15/1990	United States	5.0	102.0	M	False	363
+1e1120aa9d	4/2/1977	United States	7.0	42.0	F	False	206
+a22c29d95f	12/22/1993	Croatia	2.0	22.0	M	False	94
+101f87f86c	12/30/1899	Germany	5.0	15.5	M	False	128
+2df8d848a0	12/24/1990	United Kingdom	5.0	15.5	M	False	160
+9da6ea9ed9	2/23/1983	United States	5.0	22.0	F	True	59
+a56db20d2b	5/9/1973	United States	2.0	22.0	F	False	156
+27c51166af	8/10/1970	South Africa	7.0	15.5	M	True	69
+8535c479bc	12/30/1899	China	5.0	22.0	F	True	67
+3073b9cd6f	6/7/1951	Taiwan	8.0	44.0	F	False	273
+0731ed6ca9	8/17/1992	United States	8.0	42.0	F	False	230
+58b3480e43	10/22/1985	Mexico	6.0	22.0	F	False	116
+6b22985793	5/2/1986	Japan	13.0	117.0	F	False	280
+4f34481458	4/25/1967	United States	5.0	44.0	F	False	249
+3c4b939c3a	3/28/1954	China	6.0	22.0	M	False	84
+8900a9ca94	12/30/1899	United States	9.0	102.0	F	False	282
+580e69c15c	5/27/1955	Czech Republic	7.0	15.5	M	False	157
+79439ed988	6/2/1975	Oman	5.0	102.0	F	False	249
+32e5630d1d	12/30/1899	United States	5.0	10.0	F	False	151
+652cf38361	3/31/1990	Sri Lanka	5.0	22.0	M	False	32
+021ca0371d	7/25/1983	Russia	13.0	22.0	M	False	102
+98e7fdfe2e	9/26/1943	Spain	5.0	15.5	F	False	173
+09f2d1e051	10/11/1982	United States	6.0	10.0	F	False	198
+a5659f90f7	7/4/1980	India	4.0	28.0	F	False	53
+db44b9da74	12/30/1899	China	8.0	22.0	F	False	71
+1c33d05663	11/6/1992	France	5.0	22.0	F	False	165
+72f3491a8f	3/30/1983	China	6.0	44.0	F	False	105
+a35f282451	11/10/1979	United States	7.0	44.0	F	True	177
+368eed7439	12/7/1982	United States	10.0	10.0	F	False	188
+aea56d618f	7/7/1947	United States	14.0	22.0	F	False	220
+ddcf7c7311	12/30/1899	China	5.0	57.0	F	True	106
+6635db2046	11/22/1979	United States	9.0	10.0	M	False	155
+b121d378e2	8/19/1987	Indonesia	8.0	57.0	F	False	97
+fd5f30f0af	6/14/1974	China	10.0	57.0	M	False	109
+fd5f30f0af	6/14/1974	United States	3.0	15.5	F	False	159
+294106be50	6/27/1960	United States	4.0	22.0	F	False	372
+c45f74f657	8/16/1961	Taiwan	5.0	57.0	M	True	191
+1acb905327	7/11/1986	India	5.0	10.0	M	False	36
+b99b21601a	7/25/1988	Suriname	5.0	44.0	M	False	119
+a48ef8c0da	5/10/1984	Switzerland	8.0	42.0	M	False	209
+724f596264	12/30/1899	Thailand	6.0	42.0	F	False	94
+b7e8beecc3	12/30/1899	India	8.0	22.0	F	False	46
+bf5e0024af	5/11/1940	India	4.0	15.5	M	True	39
+17d4952d55	12/30/1899	Egypt	1.0	44.0	F	True	79
+2f6f10694d	3/4/1965	South Africa	11.0	57.0	F	False	136
+36445304c4	1/3/1969	Spain	10.0	15.5	M	False	128
+5ed13cadd2	2/8/1954	United States	5.0	22.0	M	False	234
+deaecd7f25	8/2/1972	Taiwan	8.0	117.0	F	False	265
+651caeb62e	11/15/1954	United States	1.0	22.0	F	False	169
+6184587e98	7/18/1969	United States	7.0	44.0	M	False	212
+340023fe4c	11/22/1990	Ethiopia	5.0	44.0	F	True	152
+c132c6d84c	5/27/1979	Belarus	6.0	44.0	F	False	126
+daca6ff4c5	4/19/1980	Sweden	6.0	44.0	F	False	201
+13e9754e62	6/1/1971	United States	5.0	28.0	M	True	151
+7f66ce5909	12/30/1899	United States	7.0	44.0	M	False	180
+44fd7ac20b	3/28/1980	Taiwan	6.0	78.0	M	False	208
+ecf1e2606e	12/30/1899	Japan	5.0	44.0	F	False	164
+70d7f76299	3/6/1989	Japan	6.0	102.0	F	False	227
+70d7f76299	3/6/1989	Japan	6.0	28.0	F	False	203
+1b54ec1494	7/8/1959	Spain	5.0	15.5	F	True	30
+c8affcf152	6/24/1976	Albania	6.0	15.5	F	False	56
+65c20c5692	12/11/1992	Egypt	3.0	44.0	M	True	80
+51fffd482c	12/30/1899	United Kingdom	5.0	22.0	M	False	132
+cc0a93ec77	9/25/1972	China	12.0	15.5	F	True	62
+84bad60917	3/20/1983	Germany	7.0	102.0	F	False	352
+0294426836	3/23/1978	United States	11.0	42.0	F	True	145
+149e4e010f	9/19/1973	Philippines	5.0	22.0	F	True	48
+149e4e010f	9/19/1973	United Kingdom	10.0	15.5	F	False	143
+87448632cb	8/2/1972	India	4.0	42.0	M	True	65
+92486766ad	3/24/1950	Iran	3.0	44.0	M	False	121
+cc36dc3632	4/23/1969	Taiwan	5.0	44.0	F	False	203
+eaaad99126	7/10/1974	Switzerland	5.0	15.5	F	False	161
+d2fd6e4555	3/13/1981	United States	8.0	102.0	M	False	221
+3e93f99a38	12/14/1958	Russia	1.0	10.0	F	False	88
+afecbc0a31	9/19/1982	Turkey	5.0	44.0	M	False	122
+f3881b7162	12/23/1967	Germany	11.0	28.0	M	False	162
+07b28fdbd0	12/21/1992	India	4.0	57.0	M	True	81
+65afd7d2b5	4/5/1983	United Kingdom	3.0	102.0	F	False	267
+8e7a1832f5	4/28/1971	India	5.0	42.0	F	False	68
+aaf053048b	5/8/1969	Taiwan	9.0	15.5	F	False	164
+bf95972a89	3/27/1971	China	5.0	22.0	M	False	73
+caa14d5ff6	12/30/1899	Turkey	3.0	44.0	F	True	106

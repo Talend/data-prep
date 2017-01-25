@@ -15,7 +15,10 @@ package org.talend.dataprep.transformation.service;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
@@ -24,6 +27,9 @@ import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
@@ -335,6 +341,33 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
             assertTrue(type.has("label"));
             assertTrue(type.has("frequency"));
         }
+    }
+
+    /**
+     * see https://jira.talendforge.org/browse/TDP-3126
+     */
+    @Test
+    public void shouldGetPreparationColumnTypesWhenDomainIsForced() throws Exception {
+
+        // given
+        final String dataSetId = createDataset("first_interactions_400.csv", "first interactions", "text/csv");
+        final String preparationId = createEmptyPreparationFromDataset(dataSetId, "first interactions");
+        // (force the domain to gender to replace all the 'F' by 'France')
+        applyActionFromFile(preparationId, "change_domain.json");
+        applyActionFromFile(preparationId, "replace_value.json");
+
+        // when
+        final Response response = when().get("/preparations/{preparationId}/columns/{columnId}/types", preparationId, "0005");
+
+        // then
+        assertEquals(200, response.getStatusCode());
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
+        assertEquals(5, rootNode.size());
+        final List<String> actual = new ArrayList<>(5);
+        rootNode.forEach(n -> actual.add(n.get("id").textValue().toUpperCase()));
+        final List<String> expected = Arrays.asList("COUNTRY", "CIVILITY", "GENDER", "LAST_NAME", "FIRST_NAME");
+
+        assertTrue(expected.containsAll(actual));
     }
 
     @Test

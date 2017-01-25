@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.actions;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -24,11 +26,8 @@ import org.apache.http.message.BasicHeader;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.LightweightExportableDataSet;
 import org.talend.dataprep.transformation.service.Dictionaries;
-
-import static org.junit.Assert.*;
 
 public class RemoteResourceGetterTest {
 
@@ -172,7 +171,7 @@ public class RemoteResourceGetterTest {
             oos.writeObject(o);
         }
         serverMock.addEndPoint("/login", "", header);
-        serverMock.addEndPoint("/api/create/dictionary", new ByteArrayInputStream(bos.toByteArray()), header);
+        serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(bos.toByteArray()), header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
         // When
@@ -183,6 +182,5 @@ public class RemoteResourceGetterTest {
         assertNull(result.getDictionary());
         assertNull(result.getKeyword());
     }
-
 
 }

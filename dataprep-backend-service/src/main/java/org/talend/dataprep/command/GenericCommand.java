@@ -23,6 +23,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
@@ -74,10 +76,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Behaviours map. */
     private final Map<HttpStatus, BiFunction<HttpRequestBase, HttpResponse, T>> behavior = new EnumMap<>(HttpStatus.class);
 
-    /** DataPrep security holder. */
-    @Autowired
-    protected Security security;
-
     /** The http client. */
     @Autowired
     protected HttpClient client;
@@ -102,6 +100,8 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Value("${preparation.service.url:}")
     protected String preparationServiceUrl;
 
+    private String authenticationToken;
+
     private Supplier<HttpRequestBase> httpCall;
 
     /** Headers of the response received by the command. Set in the run command. */
@@ -118,6 +118,11 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      */
     protected GenericCommand(HystrixCommandGroupKey group) {
         super(group);
+    }
+
+    @PostConstruct
+    private void initSecurityToken() {
+        authenticationToken = context.getBean(Security.class).getAuthenticationToken();
     }
 
     @Override
@@ -153,7 +158,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         final HttpRequestBase request = httpCall.get();
 
         // update request header with security token
-        String authenticationToken = security.getAuthenticationToken();
         if (StringUtils.isNotBlank(authenticationToken)) {
             request.addHeader(AUTHORIZATION, authenticationToken);
         }

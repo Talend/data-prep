@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.filter.ObjectPredicateVisitor;
 import org.talend.dataprep.lock.DistributedLock;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.tql.parser.Tql;
 
 public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRepositoryAdapter {
@@ -32,7 +34,7 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
     }
 
     @Override
-    public Stream<DataSetMetadata> list(String filter, String sortField, String sortDirection) {
+    public Stream<DataSetMetadata> list(String filter, Sort sortField, Order sortDirection) {
         final Predicate<Object> accept = (Predicate<Object>) Tql.parse(filter)
                 .accept(new ObjectPredicateVisitor(DataSetMetadata.class));
         final Stream<DataSetMetadata> stream = source().filter(accept);

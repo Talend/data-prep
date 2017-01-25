@@ -16,19 +16,21 @@ package org.talend.dataprep.api.service;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order.ASC;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order.DESC;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.CREATION_DATE;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.NAME;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
-import java.time.Instant;
 import java.util.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jayway.restassured.http.ContentType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -283,7 +285,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
 
         // when (sort by date, order is desc)
-        String list = when().get("/api/datasets?sort={sort}&order={order}", "date", "desc").asString();
+        String list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), DESC.camelName()).asString();
 
         // then
         Iterator<JsonNode> elements = mapper.readTree(list).elements();
@@ -294,7 +296,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         }
 
         // when (sort by date, order is desc)
-        list = when().get("/api/datasets?sort={sort}&order={order}", "date", "asc").asString();
+        list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), ASC.camelName()).asString();
 
         // then
         elements = mapper.readTree(list).elements();
@@ -314,7 +316,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId2 = createDataset("dataset/dataset.csv", "bbbb", "text/csv");
 
         // when (sort by date, order is desc)
-        String list = when().get("/api/datasets?sort={sort}&order={order}", "name", "desc").asString();
+        String list = when().get("/api/datasets?sort={sort}&order={order}", NAME.camelName(), DESC.camelName()).asString();
 
         // then
         Iterator<JsonNode> elements = mapper.readTree(list).elements();
@@ -325,7 +327,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         }
 
         // when (sort by date, order is desc)
-        list = when().get("/api/datasets?sort={sort}&order={order}", "date", "asc").asString();
+        list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), ASC.camelName()).asString();
 
         // then
         elements = mapper.readTree(list).elements();
@@ -620,7 +622,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         // Make dataset1 more recent
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
         dataSetMetadata1.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
-        dataSetMetadata1.setLastModificationDate(Instant.now().getEpochSecond() + 1);
+        dataSetMetadata1.setLastModificationDate((now().getEpochSecond() + 1) * 1_000);
         dataSetMetadataRepository.save(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
         dataSetMetadataRepository.save(dataSetMetadata2);

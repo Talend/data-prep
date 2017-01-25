@@ -14,6 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -89,12 +90,14 @@ public class PreparationAPI extends APIService {
     @Timed
     public ResponseEntity<StreamingResponseBody> listPreparations(
             @ApiParam(name = "format", value = "Format of the returned document (can be 'long' or 'short'). Defaults to 'long'.")
-            @RequestParam(value = "format", defaultValue = "long") String format) {
+            @RequestParam(value = "format", defaultValue = "long") String format,
+            @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
         }
         PreparationList.Format listFormat = PreparationList.Format.valueOf(format.toUpperCase());
-        GenericCommand<InputStream> command = getCommand(PreparationList.class, listFormat);
+        GenericCommand<InputStream> command = getCommand(PreparationList.class, listFormat, sort, order);
         return CommandHelper.toStreaming(command);
     }
 
@@ -112,8 +115,8 @@ public class PreparationAPI extends APIService {
     @Timed
     public StreamingResponseBody listCompatibleDatasets(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId,
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE", required = false) Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC", required = false) Order order) {
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate", required = false) Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc", required = false) Order order) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing compatible datasets (pool: {} )...", getConnectionStats());
         }

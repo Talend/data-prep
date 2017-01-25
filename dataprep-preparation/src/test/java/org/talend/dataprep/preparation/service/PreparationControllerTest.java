@@ -148,9 +148,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         List<String> noPreparations = new ArrayList<>();
 
         // then
-        checkSearchFolder(rootFolder.getId(), rootPreparations, SortAndOrderHelper.Sort.DATE.name());
-        checkSearchFolder(threePrepsFolder.getId(), threePreparations, SortAndOrderHelper.Sort.DATE.name());
-        checkSearchFolder(noPrepsFolder.getId(), noPreparations, SortAndOrderHelper.Sort.DATE.name());
+        checkSearchFolder(rootFolder.getId(), rootPreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
+        checkSearchFolder(threePrepsFolder.getId(), threePreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
+        checkSearchFolder(noPrepsFolder.getId(), noPreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
     }
 
     @Test
@@ -173,9 +173,9 @@ public class PreparationControllerTest extends BasePreparationTest {
         List<String> noPreparations = new ArrayList<>();
 
         // then
-        checkSearchFolder(rootFolder.getId(), rootPreparations, SortAndOrderHelper.Sort.DATE.name());
-        checkSearchFolder(threePrepsFolder.getId(), threePreparations, SortAndOrderHelper.Sort.NAME.name());
-        checkSearchFolder(noPrepsFolder.getId(), noPreparations, SortAndOrderHelper.Sort.DATE.name());
+        checkSearchFolder(rootFolder.getId(), rootPreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
+        checkSearchFolder(threePrepsFolder.getId(), threePreparations, SortAndOrderHelper.Sort.NAME.camelName());
+        checkSearchFolder(noPrepsFolder.getId(), noPreparations, SortAndOrderHelper.Sort.CREATION_DATE.camelName());
     }
 
     /**
@@ -190,7 +190,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = given() //
                 .queryParam("folderId", folderId) //
                 .queryParam("sort", sort) //
-                .queryParam("order", "ASC") //
+                .queryParam("order", "asc") //
                 .when().expect().statusCode(200).log().ifError() //
                 .get("/preparations/search");
 
@@ -220,8 +220,8 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Response response = given() //
                 .queryParam("name", name) //
                 .queryParam("exactMatch", exactMatch) //
-                .queryParam("sort", "DATE") //
-                .queryParam("order", "ASC") //
+                .queryParam("sort", "creationDate") //
+                .queryParam("order", "asc") //
                 .when().expect().statusCode(200).log().ifError() //
                 .get("/preparations/search");
 

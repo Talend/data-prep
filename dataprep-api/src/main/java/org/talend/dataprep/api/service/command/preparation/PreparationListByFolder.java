@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 /**
  * Command used to retrieve the preparations from a folder.
@@ -44,14 +46,14 @@ public class PreparationListByFolder extends GenericCommand<InputStream> {
      * @param sort how to sort the preparations.
      * @param order the order to apply to the sort.
      */
-    private PreparationListByFolder(final String folderId, final String sort, final String order) {
+    private PreparationListByFolder(final String folderId, final Sort sort, final Order order) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> {
             try {
                 final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/search");
                 uriBuilder.addParameter("folderId", folderId);
-                uriBuilder.addParameter("sort", sort);
-                uriBuilder.addParameter("order", order);
+                uriBuilder.addParameter("sort", sort.camelName());
+                uriBuilder.addParameter("order", order.camelName());
                 return new HttpGet(uriBuilder.build());
             } catch (URISyntaxException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

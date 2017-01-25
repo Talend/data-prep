@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.lock.DistributedLock;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 /**
  * Interface for all DatasetMetadata repository implementations.
@@ -48,7 +50,7 @@ public interface DataSetMetadataRepository {
      * values are "ASC" or "DESC".
      * @return A {@link Iterable} of {@link DataSetMetadata} that matches <code>filter</code>.
      */
-    Stream<DataSetMetadata> list(String filter, String sortField, String sortDirection);
+    Stream<DataSetMetadata> list(String filter, Sort sortField, Order sortDirection);
 
     /**
      * <p>

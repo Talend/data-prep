@@ -29,6 +29,7 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderInfo;
@@ -41,6 +42,9 @@ import org.talend.dataprep.security.Security;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.talend.dataprep.util.SortAndOrderHelper;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @RestController
 @Api(value = "folders", basePath = "/folders", description = "Operations on folders")
@@ -57,6 +61,14 @@ public class FolderService {
     @Autowired
     private Security security;
 
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
+        // URLs are cleaner in lowercase.
+        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
+        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
+    }
+
     /**
      * List direct sub folders for the given id.
      *
@@ -68,8 +80,8 @@ public class FolderService {
     @ApiOperation(value = "Folder children", produces = APPLICATION_JSON_VALUE, notes = "List all child folders of the one as parameter")
     @Timed
     public Stream<Folder> children(@PathVariable String id,
-                                   @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
-                                   @RequestParam(defaultValue = "DESC") @ApiParam(value = "Order for sort key (desc or asc).") String order) {
+                                   @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
+                                   @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
     //@formatter:on
 
         if (!folderRepository.exists(id)) {

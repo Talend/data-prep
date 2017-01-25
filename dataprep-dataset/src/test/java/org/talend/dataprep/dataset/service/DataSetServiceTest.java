@@ -13,10 +13,10 @@
 
 package org.talend.dataprep.dataset.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static java.time.Instant.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.*;
@@ -24,12 +24,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.LAST_MODIFICATION_DATE;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
@@ -125,7 +125,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         dataSetMetadataRepository.save(metadata3);
 
         // when
-        final String actual = when().get("/datasets/{id}/compatibledatasets?sort=date", dataSetId).asString();
+        final String actual = expect().statusCode(200).log().ifValidationFails().get("/datasets/{id}/compatibledatasets?sort=creationDate", dataSetId).asString();
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
@@ -153,7 +153,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         dataSetMetadataRepository.save(metadata3);
 
         // when
-        final String actual = when().get("/datasets/{id}/compatibledatasets?sort=date&order=asc", dataSetId).asString();
+        final String actual = when().get("/datasets/{id}/compatibledatasets?sort=creationDate&order=asc", dataSetId).asString();
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
@@ -284,7 +284,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     @Test
     public void listDateSort() throws Exception {
-        when().get("/datasets?sort=date").then().statusCode(OK.value()).body(equalTo("[]"));
+        when().get("/datasets?sort=creationDate").then().statusCode(OK.value()).body(equalTo("[]"));
         // Adds 2 data set metadata to store
         String id1 = UUID.randomUUID().toString();
         final DataSetMetadata metadata1 = metadataBuilder.metadata().id(id1).name("AAAA").author("anonymous").created(20)
@@ -295,7 +295,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .formatFamilyId(new CSVFormatFamily().getBeanId()).build();
         dataSetMetadataRepository.save(metadata2);
         // Ensure order by date (most recent first)
-        String actual = when().get("/datasets?sort=date").asString();
+        String actual = when().get("/datasets?sort=creationDate").asString();
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
         String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
@@ -306,7 +306,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     @Test
     public void listDateOrder() throws Exception {
-        when().get("/datasets?sort=date&order=asc").then().statusCode(OK.value()).body(equalTo("[]"));
+        when().get("/datasets?sort=creationDate&order=asc").then().statusCode(OK.value()).body(equalTo("[]"));
         // Adds 2 data set metadata to store
         String id1 = UUID.randomUUID().toString();
         final DataSetMetadata metadata1 = metadataBuilder.metadata().id(id1).name("AAAA").author("anonymous").created(20)
@@ -317,7 +317,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .formatFamilyId(new CSVFormatFamily().getBeanId()).build();
         dataSetMetadataRepository.save(metadata2);
         // Ensure order by date (most recent first)
-        String actual = when().get("/datasets?sort=date&order=desc").asString();
+        String actual = when().get("/datasets?sort=creationDate&order=desc").asString();
         Iterator<JsonNode> elements = mapper.readTree(actual).elements();
         String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
@@ -325,7 +325,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
         }
         // Ensure order by date (oldest first when no order value)
-        actual = when().get("/datasets?sort=date").asString();
+        actual = when().get("/datasets?sort=creationDate").asString();
         elements = mapper.readTree(actual).elements();
         expectedNames = new String[] { "AAAA", "BBBB" };
         i = 0;
@@ -333,7 +333,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
         }
         // Ensure order by date (oldest first)
-        actual = when().get("/datasets?sort=date&order=asc").asString();
+        actual = when().get("/datasets?sort=creationDate&order=asc").asString();
         elements = mapper.readTree(actual).elements();
         expectedNames = new String[] { "BBBB", "AAAA" };
         i = 0;
@@ -1406,7 +1406,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
         dataSetMetadata1.getGovernance().setCertificationStep(Certification.CERTIFIED);
-        dataSetMetadata1.setLastModificationDate(Instant.now().getEpochSecond() + 1);
+        dataSetMetadata1.setLastModificationDate((now().getEpochSecond() + 1) * 1_000);
         dataSetMetadataRepository.save(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
         dataSetMetadataRepository.save(dataSetMetadata2);
@@ -1478,7 +1478,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // only recent
         given()
             .queryParam("limit", "true")
-            .queryParam("sort", "MODIF")
+            .queryParam("sort", LAST_MODIFICATION_DATE.camelName())
         .when()
             .get("/datasets")
         .then()

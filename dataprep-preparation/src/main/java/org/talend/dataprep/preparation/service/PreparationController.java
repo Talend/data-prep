@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.*;
@@ -32,6 +33,9 @@ import org.talend.dataprep.metrics.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.talend.dataprep.util.SortAndOrderHelper;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @RestController
 @Api(value = "preparations", basePath = "/preparations", description = "Operations on preparations")
@@ -39,6 +43,14 @@ public class PreparationController {
 
     @Autowired
     private PreparationService preparationService;
+
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
+        // URLs are cleaner in lowercase.
+        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
+        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
+    }
 
     /**
      * Create a preparation from the http request body.
@@ -66,8 +78,8 @@ public class PreparationController {
     @ApiOperation(value = "List all preparations id", notes = "Returns the list of preparations ids the current user is allowed to see. Creation date is always displayed in UTC time zone. See 'preparations/all' to get all details at once.")
     @Timed
     public Stream<String> list(
-            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "MODIF", required = false) String sort,
-            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
+            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
         return preparationService.list(sort, order);
     }
 
@@ -78,12 +90,12 @@ public class PreparationController {
      * @param order how to order the sort.
      * @return the preparation details.
      */
-    @RequestMapping(value = "/preparations/details", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/preparations/details", method = GET)
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations details the current user is allowed to see. Creation date is always displayed in UTC time zone. This operation return all details on the preparations.")
     @Timed
     public Stream<UserPreparation> listAll(
-            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "MODIF", required = false) String sort,
-            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
+            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
         return preparationService.listAll(sort, order);
     }
 
@@ -116,8 +128,8 @@ public class PreparationController {
             @RequestParam(required = false) @ApiParam(value = "path of the folderId where to look for preparations") String folderId,
             @RequestParam(required = false) @ApiParam("name") String name,
             @RequestParam(defaultValue = "true") @ApiParam("exactMatch") boolean exactMatch,
-            @RequestParam(defaultValue = "MODIF") @ApiParam(value = "Sort key (by name or date).") String sort,
-            @RequestParam(defaultValue = "DESC") @ApiParam(value = "Order for sort key (desc or asc).") String order) {
+            @RequestParam(defaultValue = "lastModificationDate") @ApiParam(value = "Sort key (by name or date).") Sort sort,
+            @RequestParam(defaultValue = "desc") @ApiParam(value = "Order for sort key (desc or asc).") Order order) {
 
         return preparationService.searchPreparations(dataSetId, folderId, name, exactMatch, sort, order);
     }
@@ -153,7 +165,7 @@ public class PreparationController {
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String preparationId,
             @ApiParam(value = "The original folder path of the preparation.") @RequestParam String folder,
             @ApiParam(value = "The new folder path of the preparation.") @RequestParam String destination,
-            @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName)
+            @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "") String newName)
             throws IOException {
         preparationService.move(preparationId, folder, destination, newName);
     }

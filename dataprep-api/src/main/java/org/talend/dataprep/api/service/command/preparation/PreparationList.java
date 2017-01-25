@@ -57,8 +57,8 @@ public class PreparationList extends GenericCommand<InputStream> {
                 uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations/details"); //$NON-NLS-1$
             }
 
-            uriBuilder.addParameter("sort", sort.name());
-            uriBuilder.addParameter("order", order.name());
+            uriBuilder.addParameter("sort", sort.camelName());
+            uriBuilder.addParameter("order", order.camelName());
             return new HttpGet( uriBuilder.build() );
         } catch (URISyntaxException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

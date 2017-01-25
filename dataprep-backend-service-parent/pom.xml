@@ -27,7 +27,6 @@
         <version>2.1.0-SNAPSHOT</version>
         <relativePath>../dataprep-backend/pom.xml</relativePath>
     </parent>
-    <version>2.1.0-SNAPSHOT</version>
     <name>dataprep-backend-service-parent</name>
     <packaging>pom</packaging>
     <artifactId>dataprep-backend-service-parent</artifactId>

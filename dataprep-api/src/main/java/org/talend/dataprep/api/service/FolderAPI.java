@@ -28,12 +28,8 @@ import org.apache.commons.lang.StringUtils;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
@@ -63,6 +59,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import reactor.core.Cancellation;
 import reactor.core.publisher.Flux;
+import org.talend.dataprep.util.SortAndOrderHelper;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @RestController
 public class FolderAPI extends APIService {
@@ -73,6 +72,14 @@ public class FolderAPI extends APIService {
     /** Security proxy let the current thread to borrow another identity for a while. */
     @Autowired
     private SecurityProxy securityProxy;
+
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
+        // URLs are cleaner in lowercase.
+        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
+        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
+    }
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List children folders of the parameter if null list root children.", produces = APPLICATION_JSON_VALUE)
@@ -183,8 +190,8 @@ public class FolderAPI extends APIService {
     @Timed
     public StreamingResponseBody listPreparationsByFolder(
             @PathVariable @ApiParam(name = "id", value = "The destination to search preparations from.") final String id, //
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE") final String sort, //
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC") final String order) {
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") final Sort sort, //
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") final Order order) {
     //@formatter:on
 
         if (LOG.isDebugEnabled()) {

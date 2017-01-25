@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.*;
@@ -64,7 +65,6 @@ import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
-import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -84,6 +84,9 @@ import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
+import org.talend.dataprep.util.SortAndOrderHelper;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
@@ -106,12 +109,6 @@ public class DataSetService extends BaseDataSetService {
     static {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-
-    /**
-     * Dataset metadata repository.
-     */
-    @Autowired
-    protected DataSetMetadataRepository dataSetMetadataRepository;
 
     /**
      * Format analyzer needed to update the schema.
@@ -173,16 +170,24 @@ public class DataSetService extends BaseDataSetService {
     @Autowired
     private AnalyzerService analyzerService;
 
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        // This allow to bind Sort and Order parameters in lower-case even if the key is uppercase.
+        // URLs are cleaner in lowercase.
+        binder.registerCustomEditor(Sort.class, SortAndOrderHelper.getSortPropertyEditor());
+        binder.registerCustomEditor(Order.class, SortAndOrderHelper.getOrderPropertyEditor());
+    }
+
     @RequestMapping(value = "/datasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked", notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
     @Timed
     public Callable<Stream<UserDataSetMetadata>> list(
-            @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(defaultValue = "DATE") String sort,
-            @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(defaultValue = "DESC") String order,
+            @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(defaultValue = "creationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(defaultValue = "desc") Order order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
-            @ApiParam(value = "Only return a limited number of data sets") @RequestParam(defaultValue = "false", required = false) boolean limit) {
+            @ApiParam(value = "Only return a limited number of data sets") @RequestParam(defaultValue = "false") boolean limit) {
         return () -> {
             // Build filter for data sets
             String userId = security.getUserId();
@@ -233,8 +238,8 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     public Iterable<UserDataSetMetadata> listCompatibleDatasets(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set metadata") String dataSetId,
-            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "DATE", required = false) String sort,
-            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "DESC", required = false) String order) {
+            @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "creationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
 
         Spliterator<DataSetMetadata> iterator = dataSetMetadataRepository.listCompatible(dataSetId).spliterator();
 
@@ -242,8 +247,6 @@ public class DataSetService extends BaseDataSetService {
 
         // Return sorted results
         try (Stream<DataSetMetadata> stream = stream(iterator, false)) {
-            String userId = security.getUserId();
-            final UserData userData = userDataRepository.get(userId);
             return stream.filter(metadata -> !metadata.getLifecycle().isImporting()) //
                     .map(m -> conversionService.convert(m, UserDataSetMetadata.class)) //
                     .sorted(comparator) //

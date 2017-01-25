@@ -54,8 +54,8 @@ public class DataSetList extends GenericCommand<InputStream> {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets");
-            uriBuilder.addParameter( "sort", sort.name() );
-            uriBuilder.addParameter( "order", order.name() );
+            uriBuilder.addParameter( "sort", sort.camelName() );
+            uriBuilder.addParameter( "order", order.camelName() );
             uriBuilder.addParameter( "name", name );
             uriBuilder.addParameter( "certified", Boolean.toString(certified));
             uriBuilder.addParameter( "favorite", Boolean.toString(favorite));

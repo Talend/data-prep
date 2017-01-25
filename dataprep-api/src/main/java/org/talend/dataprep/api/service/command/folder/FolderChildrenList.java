@@ -13,7 +13,11 @@
 
 package org.talend.dataprep.api.service.command.folder;
 
-import org.apache.commons.lang.StringUtils;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -23,11 +27,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
-import static org.talend.dataprep.command.Defaults.pipeStream;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 /**
  * List sub folders for the given path.
@@ -44,7 +45,7 @@ public class FolderChildrenList extends GenericCommand<InputStream> {
      * @param order    how to use the sort key.
      */
     // private constructor to ensure IoC
-    private FolderChildrenList(String parentId, String sort, String order) {
+    private FolderChildrenList(String parentId, Sort sort, Order order) {
         super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(parentId, sort, order));
         on(HttpStatus.OK).then(pipeStream());
@@ -60,15 +61,15 @@ public class FolderChildrenList extends GenericCommand<InputStream> {
         this(parentId, null, null);
     }
 
-    private HttpRequestBase onExecute(final String parentId, final String sort, final String order) {
+    private HttpRequestBase onExecute(final String parentId, final Sort sort, final Order order) {
         try {
             final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + parentId + "/children");
 
-            if (StringUtils.isNotBlank(sort)) {
-                uriBuilder.addParameter("sort", sort);
+            if (sort != null) {
+                uriBuilder.addParameter("sort", sort.camelName());
             }
-            if (StringUtils.isNotBlank(order)) {
-                uriBuilder.addParameter("order", order);
+            if (order != null) {
+                uriBuilder.addParameter("order", order.camelName());
             }
 
             return new HttpGet(uriBuilder.build());

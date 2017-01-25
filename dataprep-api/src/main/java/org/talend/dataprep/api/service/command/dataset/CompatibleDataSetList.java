@@ -50,8 +50,8 @@ public class CompatibleDataSetList extends GenericCommand<InputStream> {
 
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/compatibledatasets");
             uriBuilder.addParameter("dataSetId", dataSetId);
-            uriBuilder.addParameter("sort", sort.name());
-            uriBuilder.addParameter("order", order.name());
+            uriBuilder.addParameter("sort", sort.camelName());
+            uriBuilder.addParameter("order", order.camelName());
 
             return new HttpGet(uriBuilder.build());
         } catch (URISyntaxException e) {

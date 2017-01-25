@@ -43,10 +43,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -66,6 +68,8 @@ import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.api.action.ActionParser;
 import org.talend.dataprep.transformation.api.action.validation.ActionMetadataValidation;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @Component
 public class PreparationService {
@@ -73,6 +77,9 @@ public class PreparationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationService.class);
 
     private final ActionFactory factory = new ActionFactory();
+
+    @Autowired
+    private org.springframework.context.ApplicationContext springContext;
 
     /**
      * Where preparation are stored.
@@ -176,10 +183,11 @@ public class PreparationService {
      * @param order how to apply the sort.
      * @return the preparations id list.
      */
-    public Stream<String> list(String sort, String order) {
+    public Stream<String> list(Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (summary).");
         return preparationRepository.list(Preparation.class) //
-                .sorted(getPreparationComparator(sort, order)) //
+                .map(p -> beanConversionService.convert(p, UserPreparation.class)) // Needed to order on preparation size
+                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId()))) //
                 .map(Preparation::id);
     }
 
@@ -190,11 +198,11 @@ public class PreparationService {
      * @param order how to order the sort.
      * @return the preparation details.
      */
-    public Stream<UserPreparation> listAll(String sort, String order) {
+    public Stream<UserPreparation> listAll(Sort sort, Order order) {
         LOGGER.debug("Get list of preparations (with details).");
         return preparationRepository.list(Preparation.class) //
-                .sorted(getPreparationComparator(sort, order)) //
-                .map(p -> beanConversionService.convert(p, UserPreparation.class));
+                .map(p -> beanConversionService.convert(p, UserPreparation.class)) //
+                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
     }
 
     /**
@@ -219,8 +227,7 @@ public class PreparationService {
      * @param order Order for sort key (desc or asc).
      */
     public Stream<UserPreparation> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-                                                           String sort, String order) {
-        // TODO should stream the response à la DataSetRowIterator & DataSetRowStreamSerializer
+                                                        Sort sort, Order order) {
         final Stream<Preparation> result;
 
         if (dataSetId != null) {
@@ -232,8 +239,8 @@ public class PreparationService {
         }
 
         // convert & sort the result
-        return result.sorted(getPreparationComparator(sort, order)) //
-                .map(p -> beanConversionService.convert(p, UserPreparation.class));
+        return result.map(p -> beanConversionService.convert(p, UserPreparation.class)) //
+                .sorted(getPreparationComparator(sort, order, p -> getDatasetMetadata(p.getDataSetId())));
     }
 
     /**
@@ -1238,6 +1245,10 @@ public class PreparationService {
             final List<AppendStep> result = allAppendSteps.subList(lastUnchangedIndex, allAppendSteps.size());
             replaceHistory(preparation, steps.get(lastUnchangedIndex), result);
         }
+    }
+
+    private DataSetMetadata getDatasetMetadata(String datasetId) {
+        return springContext.getBean(DataSetGetMetadata.class, datasetId).execute();
     }
 
 }

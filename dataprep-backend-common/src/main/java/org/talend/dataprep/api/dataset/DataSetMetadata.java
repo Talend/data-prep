@@ -260,21 +260,21 @@ public class DataSetMetadata implements Serializable {
     }
 
     /**
-     * @return the dataset creation date.
+     * @return the dataset creation date in <strong>milliseconds</strong>.
      */
     public long getCreationDate() {
         return creationDate;
     }
 
     /**
-     * @return the dataset last modification date.
+     * @return the dataset last modification date in <strong>milliseconds</strong>.
      */
     public long getLastModificationDate() {
         return lastModificationDate;
     }
 
     /**
-     * @param lastModificationDate the dataset last modification date.
+     * @param lastModificationDate the dataset last modification date in <strong>milliseconds</strong>.
      */
     public void setLastModificationDate(long lastModificationDate) {
         this.lastModificationDate = lastModificationDate;

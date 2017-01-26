@@ -12,7 +12,6 @@
  ============================================================================*/
 
 describe('Storage service', () => {
-    'use strict';
 
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
@@ -483,4 +482,27 @@ describe('Storage service', () => {
         }));
     });
 
+    describe('side panel', () => {
+        const SIDE_PANEL_DOCK_KEY = 'org.talend.dataprep.sidePanel.docked';
+
+        it('should return docked value', inject(($window, StorageService) => {
+            // given
+            expect(StorageService.getSelectedColumns()).toBe(false);
+            $window.localStorage.setItem(SIDE_PANEL_DOCK_KEY, 'true');
+
+            // when
+            const value = StorageService.getSelectedColumns();
+
+            // then
+            expect(value).toBe(true);
+        }));
+
+        it('should save docked value', inject(($window, StorageService) => {
+            // when
+            StorageService.setSidePanelDock(true);
+
+            // then
+            expect($window.localStorage.getItem(SIDE_PANEL_DOCK_KEY)).toEqual('true');
+        }));
+    });
 });

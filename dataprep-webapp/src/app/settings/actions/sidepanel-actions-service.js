@@ -12,15 +12,18 @@
  ============================================================================*/
 
 export default class SidePanelActionsService {
-	constructor(StateService) {
+	constructor(state, StorageService, StateService) {
 		'ngInject';
+		this.state = state;
 		this.StateService = StateService;
+		this.StorageService = StorageService;
 	}
 
 	dispatch(action) {
 		switch (action.type) {
 		case '@@sidepanel/TOGGLE':
 			this.StateService[action.payload.method]();
+			this.StorageService.setSidePanelDock(this.state.home.sidePanelDocked);
 			break;
 		}
 	}

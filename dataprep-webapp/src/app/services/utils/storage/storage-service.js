@@ -12,17 +12,18 @@
  ============================================================================*/
 
 const PREFIX = 'org.talend.dataprep.';
+const DATASETS_ORDER_KEY = 'org.talend.dataprep.datasets.order';
+const DATASETS_SORT_KEY = 'org.talend.dataprep.datasets.sort';
+const EXPORT_PARAMS_KEY = 'org.talend.dataprep.export.params';
+const FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
 const LOOKUP_DATASETS_KEY = 'org.talend.dataprep.lookup_datasets';
 const LOOKUP_DATASETS_SORT_KEY = 'org.talend.dataprep.lookup_datasets_sort';
 const LOOKUP_DATASETS_ORDER_KEY = 'org.talend.dataprep.lookup_datasets_order';
-const DATASETS_SORT_KEY = 'org.talend.dataprep.datasets.sort';
-const DATASETS_ORDER_KEY = 'org.talend.dataprep.datasets.order';
+const PREFIX_FILTER = 'org.talend.dataprep.filter_';
+const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
 const PREPARATIONS_SORT_KEY = 'org.talend.dataprep.preparations.sort';
 const PREPARATIONS_ORDER_KEY = 'org.talend.dataprep.preparations.order';
-const FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
-const EXPORT_PARAMS_KEY = 'org.talend.dataprep.export.params';
-const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
-const PREFIX_FILTER = 'org.talend.dataprep.filter_';
+const SIDE_PANEL_DOCK_KEY = 'org.talend.dataprep.sidePanel.docked';
 
 /**
  * @ngdoc service
@@ -499,4 +500,30 @@ export default class StorageService {
 	setSelectedColumns(id, selectedColumns) {
 		this.setItem(PREFIX_SELECTED_COLUMNS_KEY + id, selectedColumns);
 	}
+
+	// --------------------------------------------------------------------------------------------
+	// ------------------------------------------SIDE PANEL----------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name setSidePanelDock
+	 * @methodOf data-prep.services.utils.service:StorageService
+	 * @param {boolean} docked The side panel dock value
+	 * @description Save the value with the provided key in localStorage.
+	 */
+	setSidePanelDock(docked) {
+		this.setItem(SIDE_PANEL_DOCK_KEY, docked);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getSidePanelDock
+	 * @methodOf data-prep.services.utils.service:StorageService
+	 * @description Get the saved side panel dock value
+	 * @returns {array} The side panel dock value
+	 */
+	getSidePanelDock() {
+		return this.getItem(SIDE_PANEL_DOCK_KEY, false);
+	}
+
 }

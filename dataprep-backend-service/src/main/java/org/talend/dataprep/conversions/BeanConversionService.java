@@ -64,11 +64,14 @@ public class BeanConversionService implements ConversionService {
                     final Method targetPropertyWriteMethod = targetProperty.getWriteMethod();
                     if (targetPropertyWriteMethod != null) {
                         final Type targetReturnType = targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
-                        boolean valid = sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
+                        boolean valid = Object.class.equals(targetPropertyType) ||
+                                sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
                         if (!valid) {
                             discardedProperties.add(sourceProperty.getName());
                         }
                     }
+                } else {
+                    discardedProperties.add(sourceProperty.getName());
                 }
             }
         }

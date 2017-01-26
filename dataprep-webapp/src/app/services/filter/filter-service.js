@@ -688,7 +688,8 @@ export default class FilterService {
 	 * @private
 	 */
 	_createDateRangeFilterFn(colId, values) {
-		const patterns = chain(this.state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
+		const column = this.state.playground.grid.columns.find(col => col.id === colId);
+		const patterns = chain(column.statistics.patternFrequencyTable)
 			.map('pattern')
 			.map(this.TextFormatService.convertJavaDateFormatToMomentDateFormat)
 			.value();

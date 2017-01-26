@@ -505,4 +505,26 @@ describe('Storage service', () => {
             expect($window.localStorage.getItem(SIDE_PANEL_DOCK_KEY)).toEqual('true');
         }));
     });
+    describe('OnBoarding', () => {
+
+        const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
+
+        it('should return the tour options from local storage', inject(($window, StorageService) => {
+            // given
+            expect(StorageService.getTourOptions()).toEqual({});
+            $window.localStorage.setItem(TOUR_OPTIONS_KEY, '{"preparation":true}');
+
+            // then
+            expect(StorageService.getTourOptions()).toEqual({ preparation: true });
+        }));
+
+        it('should save tour options in local storage', inject(($window, StorageService) => {
+            // when
+            StorageService.setTourOptions({ preparation: true });
+
+            // then
+            expect($window.localStorage.getItem(TOUR_OPTIONS_KEY)).toEqual('{"preparation":true}');
+        }));
+    });
+
 });

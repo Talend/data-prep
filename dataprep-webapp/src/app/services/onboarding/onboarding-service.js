@@ -25,8 +25,6 @@ const template =
 	'<div class="introjs-tooltiptitle"><%= title %></div>' +
 	'<div class="introjs-tooltipcontent"><%= content %></div>';
 
-const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
-
 /**
  * @ngdoc service
  * @name data-prep.services.onboarding.service:OnboardingService
@@ -38,7 +36,7 @@ const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
  */
 export default class OnboardingService {
 
-	constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour) {
+	constructor($timeout, $state, $window, state, recipeTour, playgroundTour, preparationTour, StorageService) {
 		'ngInject';
 
 		this.$timeout = $timeout;
@@ -48,6 +46,7 @@ export default class OnboardingService {
 		this.recipeTour = recipeTour;
 		this.playgroundTour = playgroundTour;
 		this.preparationTour = preparationTour;
+		this.StorageService = StorageService;
 	}
 
 	/**
@@ -64,29 +63,6 @@ export default class OnboardingService {
 			position: config.position,
 			intro: _.template(template)(config),
 		}));
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name getTourOptions
-	 * @methodOf data-prep.services.onboarding.service:OnboardingService
-	 * @description Get options from localStorage
-	 * @returns {object} The saved tour config
-	 */
-	getTourOptions() {
-		const tourOptionsString = this.$window.localStorage.getItem(TOUR_OPTIONS_KEY);
-		return tourOptionsString ? JSON.parse(tourOptionsString) : {};
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name setTourOptions
-	 * @methodOf data-prep.services.onboarding.service:OnboardingService
-	 * @param {object} options The options to save
-	 * @description Set options in localStorage
-	 */
-	setTourOptions(options) {
-		this.$window.localStorage.setItem(TOUR_OPTIONS_KEY, JSON.stringify(options));
 	}
 
 	/**
@@ -116,9 +92,9 @@ export default class OnboardingService {
 	 * @description Set tour options as done in localStorage
 	 */
 	setTourDone(tour) {
-		const options = this.getTourOptions();
+		const options = this.StorageService.getTourOptions();
 		options[tour] = true;
-		this.setTourOptions(options);
+		this.StorageService.setTourOptions(options);
 	}
 
 	/**
@@ -130,7 +106,7 @@ export default class OnboardingService {
 	 * @return {boolean} True if the tour has not been completed yet
 	 */
 	shouldStartTour(tour) {
-		const tourOptions = this.getTourOptions();
+		const tourOptions = this.StorageService.getTourOptions();
 		return !tourOptions[tour];
 	}
 

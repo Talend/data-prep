@@ -10,7 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import _ from "lodash";
+import _ from 'lodash';
 
 /**
  * @ngdoc controller
@@ -19,7 +19,7 @@ import _ from "lodash";
  */
 export default class TransformFormCtrl {
 	constructor(TransformationUtilsService) {
-        'ngInject';
+		'ngInject';
 		this.TransformationUtilsService = TransformationUtilsService;
 	}
 

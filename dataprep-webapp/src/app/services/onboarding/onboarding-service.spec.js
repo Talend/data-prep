@@ -17,7 +17,6 @@ import {
 } from '../../index-route';
 
 describe('Onboarding service', () => {
-    const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
     let stateMock;
 
     beforeEach(angular.mock.module('data-prep.services.onboarding', ($provide) => {
@@ -33,14 +32,7 @@ describe('Onboarding service', () => {
         spyOn($state, 'go').and.returnValue();
     }));
 
-    afterEach(inject(($window) => {
-        $window.localStorage.removeItem(TOUR_OPTIONS_KEY);
-    }));
-
-    it('should return true when tour has not been completed yet', inject(($window, OnboardingService) => {
-        // given
-        $window.localStorage.removeItem(TOUR_OPTIONS_KEY);
-
+    it('should return true when tour has not been completed yet', inject((OnboardingService) => {
         // when
         var result = OnboardingService.shouldStartTour('preparation');
 
@@ -48,9 +40,9 @@ describe('Onboarding service', () => {
         expect(result).toBe(true);
     }));
 
-    it('should return false when tour has already been completed', inject(($window, OnboardingService) => {
+    it('should return false when tour has already been completed', inject((OnboardingService, StorageService) => {
         // given
-        $window.localStorage.setItem(TOUR_OPTIONS_KEY, JSON.stringify({ preparation: true }));
+        spyOn(StorageService, 'getTourOptions').and.returnValue({ preparation: true });
 
         // when
         var result = OnboardingService.shouldStartTour('preparation');
@@ -143,9 +135,9 @@ describe('Onboarding service', () => {
         });
     }));
 
-    it('should save "preparation" state in localstorage on tour complete', inject(($timeout, $window, OnboardingService) => {
+    it('should save "preparation" state in localstorage on tour complete', inject(($timeout, OnboardingService, StorageService) => {
         // given
-        $window.localStorage.removeItem(TOUR_OPTIONS_KEY);
+        spyOn(StorageService, 'setTourOptions');
 
         expect(OnboardingService.currentTour).toBeFalsy();
         OnboardingService.startTour('preparation');
@@ -157,14 +149,12 @@ describe('Onboarding service', () => {
         oncomplete();
 
         // then
-        const options = JSON.parse($window.localStorage.getItem(TOUR_OPTIONS_KEY));
-        expect(options.preparation).toBe(true);
+        expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
     }));
 
-    it('should save "preparation" state in localstorage on tour exit', inject(($timeout, $window, OnboardingService) => {
+    it('should save "preparation" state in localstorage on tour exit', inject(($timeout, OnboardingService, StorageService) => {
         // given
-        $window.localStorage.removeItem(TOUR_OPTIONS_KEY);
-
+        spyOn(StorageService, 'setTourOptions');
         expect(OnboardingService.currentTour).toBeFalsy();
         OnboardingService.startTour('preparation');
         $timeout.flush(200);
@@ -174,8 +164,7 @@ describe('Onboarding service', () => {
         onexit();
 
         // then
-        const options = JSON.parse($window.localStorage.getItem(TOUR_OPTIONS_KEY));
-        expect(options.preparation).toBe(true);
+        expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
     }));
 
     it('should redirect to "preparations" before starting onboarding', inject(($state, OnboardingService) => {

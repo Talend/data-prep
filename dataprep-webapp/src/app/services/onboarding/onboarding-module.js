@@ -14,11 +14,13 @@
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import SERVICES_STATE_MODULE from '../state/state-module';
+import SERVICES_UTILS_MODULE from './../utils/utils-module';
 
 import playgroundTour from './onboarding-playground-constants';
 import recipeTour from './onboarding-recipe-constants';
 import preparationTour from './onboarding-preparations-constants';
 import OnboardingService from './onboarding-service';
+
 
 const MODULE_NAME = 'data-prep.services.onboarding';
 
@@ -31,6 +33,7 @@ angular.module(MODULE_NAME,
 	[
 		uiRouter,
 		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
 	])
     .constant('playgroundTour', playgroundTour)
     .constant('recipeTour', recipeTour)

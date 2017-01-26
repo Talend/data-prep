@@ -23,6 +23,7 @@ const PREFIX_FILTER = 'org.talend.dataprep.filter_';
 const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
 const PREPARATIONS_SORT_KEY = 'org.talend.dataprep.preparations.sort';
 const PREPARATIONS_ORDER_KEY = 'org.talend.dataprep.preparations.order';
+const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
 const SIDE_PANEL_DOCK_KEY = 'org.talend.dataprep.sidePanel.docked';
 
 /**
@@ -526,4 +527,29 @@ export default class StorageService {
 		return this.getItem(SIDE_PANEL_DOCK_KEY, false);
 	}
 
+
+	// --------------------------------------------------------------------------------------------
+	// ------------------------------------------OnBoarding----------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getTourOptions
+	 * @methodOf data-prep.services.utils.service:StorageService
+	 * @description Get options from localStorage
+	 * @returns {object} The saved tour config
+	 */
+	getTourOptions() {
+		return this.getItem(TOUR_OPTIONS_KEY, {});
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setTourOptions
+	 * @methodOf data-prep.services.utils.service:StorageService
+	 * @param {object} options The options to save
+	 * @description Set options in localStorage
+	 */
+	setTourOptions(options) {
+		this.setItem(TOUR_OPTIONS_KEY, options);
+	}
 }

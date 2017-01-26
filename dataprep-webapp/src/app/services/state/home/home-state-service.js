@@ -36,13 +36,18 @@ export const homeState = {
 
 export function HomeStateService() {
 	return {
-		toggleSidepanel,
+		setBuilds,
+		setSidePanelDock,
+		toggleAbout,
 		toggleCopyMovePreparation,
 		toggleFolderCreator,
 		togglePreparationCreator,
-		toggleAbout,
-		setBuilds,
+		toggleSidepanel,
 	};
+
+	function setSidePanelDock(docked) {
+		homeState.sidePanelDocked = docked;
+	}
 
 	function toggleSidepanel() {
 		homeState.sidePanelDocked = !homeState.sidePanelDocked;

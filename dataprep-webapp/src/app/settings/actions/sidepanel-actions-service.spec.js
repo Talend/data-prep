@@ -14,10 +14,15 @@
 import angular from 'angular';
 
 describe('Sidepanel actions service', () => {
-	beforeEach(angular.mock.module('app.settings.actions'));
+	let stateMock;
+
+	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
+		stateMock = { home: { sidePanelDocked: true }};
+		$provide.constant('state', stateMock);
+	}));
 
 	describe('dispatch', () => {
-		it('should toggle sidepanel', inject((StateService, SidePanelActionsService) => {
+		beforeEach(inject((StorageService, StateService, SidePanelActionsService) => {
 			// given
 			const action = {
 				"type": "@@sidepanel/TOGGLE",
@@ -27,12 +32,23 @@ describe('Sidepanel actions service', () => {
 				}
 			};
 			spyOn(StateService, 'toggleHomeSidepanel').and.returnValue();
+			spyOn(StorageService, 'setSidePanelDock').and.returnValue();
 
 			// when
 			SidePanelActionsService.dispatch(action);
+		}));
 
+		it('should toggle sidepanel', inject((StateService) => {
 			// then
 			expect(StateService.toggleHomeSidepanel).toHaveBeenCalled();
+		}));
+
+		it('should save docked state in local storage', inject((StorageService) => {
+			// given
+			const docked = stateMock.home.sidePanelDocked;
+
+			// then
+			expect(StorageService.setSidePanelDock).toHaveBeenCalledWith(docked);
 		}));
 	});
 });

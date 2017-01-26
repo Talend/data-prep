@@ -487,11 +487,11 @@ describe('Storage service', () => {
 
         it('should return docked value', inject(($window, StorageService) => {
             // given
-            expect(StorageService.getSelectedColumns()).toBe(false);
+            expect(StorageService.getSidePanelDock()).toBe(false);
             $window.localStorage.setItem(SIDE_PANEL_DOCK_KEY, 'true');
 
             // when
-            const value = StorageService.getSelectedColumns();
+            const value = StorageService.getSidePanelDock();
 
             // then
             expect(value).toBe(true);

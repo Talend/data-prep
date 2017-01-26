@@ -23,6 +23,7 @@ import PREPARATION_COPY_MOVE_MODULE from '../preparation/copy-move/preparation-c
 import SERVICES_DATASET_MODULE from '../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../services/dataset-workflow/dataset-workflow-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
+import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
 import WIDGETS_CONTAINERS_MODULE from '../widgets-containers/widgets-containers-module';
 
@@ -46,10 +47,9 @@ export default MODULE_NAME;
  * @requires data-prep.preparation-creator
  * @requires data-prep.preparation-copy-move
  * @requires data-prep.services.dataset
- * @requires data-prep.services.utils
  * @requires data-prep.services.datasetWorkflowService
  * @requires data-prep.services.state
- * @requires data-prep.services.folder
+ * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
 	[
@@ -62,11 +62,12 @@ angular.module(MODULE_NAME,
 		PREPARATION_CREATOR_MODULE,
 		PREPARATION_COPY_MOVE_MODULE,
 		TALEND_WIDGET_MODULE,
-		WIDGETS_CONTAINERS_MODULE, // react-talend-components containers
+		WIDGETS_CONTAINERS_MODULE,
 
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,
 		SERVICES_STATE_MODULE,
+		SERVICES_UTILS_MODULE,
 	])
 	.component('home', HomeComponent)
 	.component('homeDataset', HomeDatasetComponent)

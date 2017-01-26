@@ -50,12 +50,13 @@ export function StateService(RouteStateService, routeState,
 		resetRoute: RouteStateService.reset.bind(RouteStateService),
 
 		// home
+		setBuilds: HomeStateService.setBuilds,
+		setHomeSidePanelDock: HomeStateService.setSidePanelDock,
 		toggleHomeSidepanel: HomeStateService.toggleSidepanel,
 		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,
 		toggleFolderCreator: HomeStateService.toggleFolderCreator,
 		togglePreparationCreator: HomeStateService.togglePreparationCreator,
 		toggleAbout: HomeStateService.toggleAbout,
-		setBuilds: HomeStateService.setBuilds,
 
 		// playground
 		resetPlayground: PlaygroundStateService.reset,

@@ -35,7 +35,7 @@ describe('Filter bar directive', () => {
         $translateProvider.preferredLanguage('en');
     }));
 
-    beforeEach(inject(function ($rootScope, $compile) {
+    beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
 
         createElement = () => {
@@ -80,6 +80,14 @@ describe('Filter bar directive', () => {
         //then
         expect(FilterManagerService.removeAllFilters).toHaveBeenCalled();
     }));
+
+    it('should render filter search', () => {
+        //when
+        createElement();
+
+        //then
+        expect(element.find('filter-search').length).toBe(1);
+    });
 
     it('should render filter list', () => {
         //when

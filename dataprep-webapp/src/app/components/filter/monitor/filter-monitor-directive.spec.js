@@ -11,16 +11,16 @@
 
   ============================================================================*/
 
-describe('Filter monitor directive', function () {
+describe('Filter monitor directive', () => {
     'use strict';
 
-    var scope;
-    var createElement;
-    var element;
+    let scope;
+    let createElement;
+    let element;
 
     beforeEach(angular.mock.module('data-prep.filter-monitor'));
 
-    beforeEach(angular.mock.module('pascalprecht.translate', function ($translateProvider) {
+    beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
         $translateProvider.translations('en', {
             FILTERS: 'Filters',
             NB_LINES_MATCHING_FILTERS: '{{percentage}}% of lines are matching your filter(s)',
@@ -28,12 +28,12 @@ describe('Filter monitor directive', function () {
         $translateProvider.preferredLanguage('en');
     }));
 
-    beforeEach(inject(function ($rootScope, $compile) {
+    beforeEach(inject(($rootScope, $compile) => {
         scope = $rootScope.$new();
         scope.toogle = () => {
         };
 
-        createElement = function () {
+        createElement = () => {
             element = angular.element('<filter-monitor ' +
                 'filters="filters" ' +
                 'on-toogle="toogle()" ' +
@@ -47,13 +47,13 @@ describe('Filter monitor directive', function () {
         spyOn(scope, 'toogle');
     }));
 
-    afterEach(function () {
+    afterEach(() => {
         scope.$destroy();
         element.remove();
     });
 
-    describe('render', function () {
-        it('should render filters label', function () {
+    describe('render', () => {
+        it('should render filters label', () => {
             //when
             createElement();
 
@@ -61,7 +61,7 @@ describe('Filter monitor directive', function () {
             expect(element.find('#filter-monitor-left').text().trim()).toBe('Filters');
         });
 
-        it('should NOT render "remove all" icon when filters are empty', function () {
+        it('should NOT render "remove all" icon when filters are empty', () => {
             //given
             scope.filters = [];
 
@@ -72,7 +72,7 @@ describe('Filter monitor directive', function () {
             expect(element.find('#reset-filters').length).toBe(0);
         });
 
-        it('should render stats', function () {
+        it('should render stats', () => {
             //given
             scope.percentage = 25;
             scope.nbLines = 50;
@@ -82,28 +82,20 @@ describe('Filter monitor directive', function () {
             createElement();
 
             //then
-            var statsElement = element.find('#filters-monitor-stats').eq(0);
+            const statsElement = element.find('#filters-monitor-stats').eq(0);
             expect(statsElement.attr('title')).toBe('25% of lines are matching your filter(s)');
             expect(statsElement.text().trim()).toBe('50/200');
         });
-
-        it('should render filter search', () => {
-            //when
-            createElement();
-
-            //then
-            expect(element.find('filter-search').length).toBe(1);
-        });
     });
 
-    describe('actions', function () {
-        it('should execute reset callback on "toogle" icon click', function () {
+    describe('actions', () => {
+        it('should execute reset callback on "toogle" icon click', () => {
             //given
             scope.filters = [{}];
             createElement();
 
             //when
-            var ngModelController = element.find('input').controller('ngModel');
+            const ngModelController = element.find('input').controller('ngModel');
             ngModelController.$setViewValue('true');
 
             //then

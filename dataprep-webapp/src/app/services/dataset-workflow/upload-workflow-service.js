@@ -10,7 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-
+import { PLAYGROUND_DATASET_ROUTE } from './../../index-route'
 /**
  * @ngdoc service
  * @name data-prep.services.datasetWorkflowService:UploadWorkflowService
@@ -60,12 +60,17 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
      * @description Try to open a dataset. If it is a draft, we open the draft import wizard instead.
      * @param {object} dataset The dataset to open
      */
-	this.openDataset = function openDataset(dataset) {
+	this.openDataset = function openDataset(dataset, event) {
 		if (dataset.draft) {
 			self.openDraft(dataset, false, '');
 		}
 		else {
-			$state.go('playground.dataset', { datasetid: dataset.id });
+			if(event && (event.button === 0 && (event.ctrlKey|| event.metaKey) || event.button === 1)) {
+				$window.open($state.href(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id }),'_blank');
+			}
+			else {
+				$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
+			}
 		}
 	};
 }

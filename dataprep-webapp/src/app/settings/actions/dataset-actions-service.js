@@ -146,7 +146,7 @@ export default class DatasetActionsService {
 			break;
 		}
 		case '@@dataset/OPEN': {
-			this.UploadWorkflowService.openDataset(action.payload.model);
+			this.UploadWorkflowService.openDataset(action.payload.model, action.event);
 			break;
 		}
 		}

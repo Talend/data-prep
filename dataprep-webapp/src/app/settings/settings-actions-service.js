@@ -27,6 +27,7 @@ export default class SettingsActionsService {
 					...action.payload,
 					...model,
 				},
+				event,
 			};
 			this.$timeout(this.dispatch(adaptedAction));
 		};

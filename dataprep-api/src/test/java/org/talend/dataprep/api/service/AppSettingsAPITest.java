@@ -59,6 +59,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final ActionSettings datasetOpen = settings.getActions().get("dataset:open");
         assertThat(datasetOpen.getName(), is("Open dataset"));
+        assertThat(datasetOpen.getIcon(), is("talend-datastore"));
         assertThat(datasetOpen.getType(), is("@@dataset/OPEN"));
 
         final ActionSettings datasetRemove = settings.getActions().get("dataset:remove");
@@ -256,7 +257,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(ahb.getSearch().getOnToggle(), is("search:toggle"));
         assertThat(ahb.getSearch().getOnSelect().get("folder"), is("menu:folders"));
         assertThat(ahb.getSearch().getOnSelect().get("documentation"), is("external:documentation"));
-        assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("menu:playground:dataset"));
+        assertThat(ahb.getSearch().getOnSelect().get("dataset"), is("dataset:open"));
         assertThat(ahb.getSearch().getOnSelect().get("preparation"), is("menu:playground:preparation"));
         assertThat(ahb.getActions(), contains("onboarding:preparation", "modal:feedback", "external:help", "modal:about"));
     }

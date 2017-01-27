@@ -45,6 +45,7 @@ public interface DatasetActions {
 
     ActionSettings DATASET_OPEN = builder()
             .id("dataset:open")
+            .icon("talend-datastore")
             .name("Open dataset")
             .type("@@dataset/OPEN")
             .build();

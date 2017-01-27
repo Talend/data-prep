@@ -20,6 +20,7 @@ import org.talend.dataprep.api.service.settings.views.api.appheaderbar.SearchSet
 import org.talend.dataprep.api.service.settings.views.api.breadcrumb.BreadcrumbSettings;
 import org.talend.dataprep.api.service.settings.views.api.sidepanel.SidePanelSettings;
 
+import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.MenuActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.SearchActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.WindowActions.*;
@@ -45,7 +46,7 @@ public interface HomeViews {
                             .onChange(SEARCH_ALL.getId())
                             .onKeyDown(SEARCH_FOCUS.getId())
                             .onToggle(SEARCH_TOGGLE.getId())
-                            .onSelect("dataset", MENU_PLAYGROUND_DATASET.getId())
+                            .onSelect("dataset", DATASET_OPEN.getId())
                             .onSelect("documentation", EXTERNAL_DOCUMENTATION.getId())
                             .onSelect("folder", MENU_FOLDERS.getId())
                             .onSelect("preparation", MENU_PLAYGROUND_PREPARATION.getId())

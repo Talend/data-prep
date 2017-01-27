@@ -12,10 +12,20 @@
  ============================================================================*/
 
 export default class MenuActionsService {
-	constructor($state, state) {
+	constructor($state, $window, state) {
 		'ngInject';
 		this.$state = $state;
+		this.$window = $window;
 		this.state = state;
+	}
+
+	executeRouterAction(actionEvent, method, args, param) {
+		if(actionEvent && (actionEvent.button === 0 && (actionEvent.ctrlKey|| actionEvent.metaKey) || actionEvent.button === 1)) {
+			this.$window.open(this.$state.href(...args, param),'_blank');
+		}
+		else {
+			this.$state[method](...args, param);
+		}
 	}
 
 	dispatch(action) {
@@ -25,14 +35,9 @@ export default class MenuActionsService {
 			this.$state[method](...args);
 			break;
 		}
-		case '@@router/GO_DATASET': {
-			const { method, args, id } = action.payload;
-			this.$state[method](...args, { datasetid: id });
-			break;
-		}
 		case '@@router/GO_FOLDER': {
 			const { method, args, id } = action.payload;
-			this.$state[method](...args, { folderId: id });
+			this.executeRouterAction(action.event, method, args, { folderId: id });
 			break;
 		}
 		case '@@router/GO_CURRENT_FOLDER': {
@@ -43,7 +48,7 @@ export default class MenuActionsService {
 		}
 		case '@@router/GO_PREPARATION': {
 			const { method, args, id } = action.payload;
-			this.$state[method](...args, { prepid: id });
+			this.executeRouterAction(action.event, method, args, { prepid: id });
 			break;
 		}
 		}

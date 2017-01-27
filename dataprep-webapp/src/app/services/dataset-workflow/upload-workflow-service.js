@@ -10,7 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import { PLAYGROUND_DATASET_ROUTE } from './../../index-route'
+import { PLAYGROUND_DATASET_ROUTE } from './../../index-route';
 /**
  * @ngdoc service
  * @name data-prep.services.datasetWorkflowService:UploadWorkflowService
@@ -64,13 +64,11 @@ export default function UploadWorkflowService($state, $window, StateService, Dat
 		if (dataset.draft) {
 			self.openDraft(dataset, false, '');
 		}
+		else if (event && ((event.button === 0 && (event.ctrlKey || event.metaKey)) || event.button === 1)) {
+			$window.open($state.href(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id }), '_blank');
+		}
 		else {
-			if(event && (event.button === 0 && (event.ctrlKey|| event.metaKey) || event.button === 1)) {
-				$window.open($state.href(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id }),'_blank');
-			}
-			else {
-				$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
-			}
+			$state.go(PLAYGROUND_DATASET_ROUTE, { datasetid: dataset.id });
 		}
 	};
 }

@@ -20,8 +20,8 @@ export default class MenuActionsService {
 	}
 
 	executeRouterAction(actionEvent, method, args, param) {
-		if(actionEvent && (actionEvent.button === 0 && (actionEvent.ctrlKey|| actionEvent.metaKey) || actionEvent.button === 1)) {
-			this.$window.open(this.$state.href(...args, param),'_blank');
+		if (actionEvent && ((actionEvent.button === 0 && (actionEvent.ctrlKey || actionEvent.metaKey)) || actionEvent.button === 1)) {
+			this.$window.open(this.$state.href(...args, param), '_blank');
 		}
 		else {
 			this.$state[method](...args, param);

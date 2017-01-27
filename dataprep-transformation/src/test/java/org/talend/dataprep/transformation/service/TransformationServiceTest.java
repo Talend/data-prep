@@ -283,10 +283,9 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         applyActionFromFile(preparationId, "failed_transformation.json");
 
         // when
-        given() //
+        final Response response = given() //
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON") //
-                .asString();
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON");
 
         // then
         // Transformation failure

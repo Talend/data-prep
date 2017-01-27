@@ -38,6 +38,7 @@
 
 	&.slide-hide {
 		flex: 0 0 $actionSize !important;
+		max-width: $actionSize; /* Safari 10 */
 		> .content {
 			width: 0;
 		}

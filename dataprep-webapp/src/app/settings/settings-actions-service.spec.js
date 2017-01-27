@@ -60,6 +60,7 @@ describe('Settings actions service', () => {
 					arg1: 'toto',
 					arg2: 'tata',
 				},
+				event: null,
 			};
 
 			// when

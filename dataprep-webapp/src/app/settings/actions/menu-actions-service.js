@@ -32,7 +32,7 @@ export default class MenuActionsService {
 		switch (action.type) {
 		case '@@router/GO': {
 			const { method, args } = action.payload;
-			this.$state[method](...args);
+			this.executeRouterAction(action.event, method, args);
 			break;
 		}
 		case '@@router/GO_FOLDER': {
@@ -43,7 +43,7 @@ export default class MenuActionsService {
 		case '@@router/GO_CURRENT_FOLDER': {
 			const { method, args } = action.payload;
 			const folderId = this.state.inventory.folder.metadata.id;
-			this.$state[method](...args, { folderId });
+			this.executeRouterAction(action.event, method, args, { folderId });
 			break;
 		}
 		case '@@router/GO_PREPARATION': {

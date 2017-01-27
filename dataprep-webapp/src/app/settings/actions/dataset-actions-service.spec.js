@@ -434,9 +434,11 @@ describe('Datasets actions service', () => {
 		it('should open dataset via workflow service', inject((DatasetActionsService, UploadWorkflowService) => {
 			// given
 			const dataset = { id: 'myDatasetId', draft: true };
+			const event = { button: 1 };
 			const action = {
 				type: '@@dataset/OPEN',
-				payload: { model: dataset }
+				payload: { model: dataset },
+				event,
 			};
 
 			spyOn(UploadWorkflowService, 'openDataset').and.returnValue();
@@ -445,7 +447,7 @@ describe('Datasets actions service', () => {
 			DatasetActionsService.dispatch(action);
 
 			// then
-			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset);
+			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset, event);
 		}));
 	});
 });

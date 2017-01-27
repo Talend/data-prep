@@ -29,8 +29,9 @@ describe('UploadWorkflow Service', () => {
     }));
 
     describe('open dataset', () => {
-        beforeEach(inject(($state) => {
+        beforeEach(inject(($state, $window) => {
             spyOn($state, 'href').and.returnValue('absoluetUrl');
+            spyOn($window, 'open').and.returnValue('absoluetUrl');
         }));
 
         it('should redirect to playground when dataset is not a draft', inject(($state, UploadWorkflowService) => {
@@ -42,6 +43,39 @@ describe('UploadWorkflow Service', () => {
 
             //then
             expect($state.go).toHaveBeenCalledWith('playground.dataset', { datasetid: dataset.id });
+        }));
+
+        it('should open datasetin new tab on ctrl-click', inject(($state, $window, UploadWorkflowService) => {
+            //given
+            const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
+
+            //when
+            UploadWorkflowService.openDataset(dataset, { button: 0, ctrlKey: true });
+
+            //then
+            expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
+        }));
+
+        it('should open datasetin new tab on MetaKey-click', inject(($state, $window, UploadWorkflowService) => {
+            //given
+            const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
+
+            //when
+            UploadWorkflowService.openDataset(dataset, { button: 0, metaKey: true });
+
+            //then
+            expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
+        }));
+
+        it('should open datasetin new tab on mousewheel click', inject(($state, $window, UploadWorkflowService) => {
+            //given
+            const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
+
+            //when
+            UploadWorkflowService.openDataset(dataset, { button: 1 });
+
+            //then
+            expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
         }));
 
         it('should open sheet preview when dataset is a draft', inject(($rootScope, UploadWorkflowService, DatasetSheetPreviewService) => {

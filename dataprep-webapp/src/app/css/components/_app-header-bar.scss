@@ -20,7 +20,7 @@ $navbar-svg-icon-size: 20px !default;
 
 		&.inactive {
 			cursor: not-allowed;
-			> svg {
+			svg {
 				fill: darken($navbar-inverse-link-color, 25%);
 			}
 		}

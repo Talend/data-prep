@@ -17,19 +17,11 @@ describe('Playground header component', () => {
 	let scope;
 	let createElement;
 	let element;
-	let $httpBackend;
 
 	beforeEach(angular.mock.module('data-prep.playground'));
 
-	beforeEach(inject(($injector) => {
-		$httpBackend = $injector.get('$httpBackend');
-		$httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '<svg></svg>');
-		$httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '<svg></svg>');
-	}));
-
-	beforeEach(inject(($rootScope, $compile, $httpBackend) => {
-		scope = $rootScope.$new();
+	beforeEach(inject(($rootScope, $compile) => {
+		scope = $rootScope.$new(true);
 
 		createElement = () => {
 			element = angular.element(`
@@ -47,7 +39,6 @@ describe('Playground header component', () => {
                     on-close="onClose()"
                     on-preparation-picker="showPreparationPicker()"></playground-header>`);
 			$compile(element)(scope);
-			$httpBackend.flush(); // to resolve svg files
 			scope.$digest();
 		};
 	}));

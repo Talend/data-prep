@@ -973,9 +973,9 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
-bootstrap-talend-theme@0.13.x:
-  version "0.13.19"
-  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.13.19.tgz#98377b5ff2b21c6480cce21fb8765859a1624f91"
+bootstrap-talend-theme@0.60.3:
+  version "0.60.3"
+  resolved "https://registry.yarnpkg.com/bootstrap-talend-theme/-/bootstrap-talend-theme-0.60.3.tgz#d097624b3c845d22411da6a8ecff1ebf85af3957"
   dependencies:
     bootstrap-sass "^3.3.7"
 
@@ -5394,16 +5394,16 @@ react-prop-types@^0.4.0:
   dependencies:
     warning "^3.0.0"
 
-react-talend-components@0.50.0:
-  version "0.50.0"
-  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.50.0.tgz#26d161c74f6205fbbb46a4efb86d5337696de43c"
+react-talend-components@0.60.3:
+  version "0.60.3"
+  resolved "https://registry.yarnpkg.com/react-talend-components/-/react-talend-components-0.60.3.tgz#6aedb07da9a519b2a32767a8ed89c075230cdac4"
   dependencies:
     react-autowhatever "^7.0.0"
     react-debounce-input "^2.4.2"
 
-react-talend-forms@^0.11.0:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.11.1.tgz#a6b47742d31a7236503b809aa11da4def2eec703"
+react-talend-forms@0.60.3:
+  version "0.60.3"
+  resolved "https://registry.yarnpkg.com/react-talend-forms/-/react-talend-forms-0.60.3.tgz#470aca83981581c793fcc62a9169fd021c59b253"
   dependencies:
     react-jsonschema-form "^0.41.2"
 
@@ -6349,9 +6349,9 @@ table@^3.7.8:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
-talend-icons@^0.16.0:
-  version "0.16.5"
-  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.16.5.tgz#f72b80cc823106182a337041d87195547a914e1d"
+talend-icons@0.60.3:
+  version "0.60.3"
+  resolved "https://registry.yarnpkg.com/talend-icons/-/talend-icons-0.60.3.tgz#b780ca09eda8ac9729d55390d6ab8a389ea75d73"
 
 tapable@^0.1.8, tapable@~0.1.8:
   version "0.1.10"

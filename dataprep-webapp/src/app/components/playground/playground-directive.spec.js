@@ -17,7 +17,6 @@ describe('Playground directive', () => {
 	let element;
 	let ctrl;
 	let stateMock;
-	let $httpBackend;
 
 	const metadata = {
 		id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
@@ -146,13 +145,6 @@ describe('Playground directive', () => {
 			}
 		};
 		$provide.constant('state', stateMock);
-	}));
-
-	beforeEach(inject(($injector) => {
-		$httpBackend = $injector.get('$httpBackend');
-		$httpBackend.whenGET('assets/images/header/right_big.svg').respond(200, '');
-		$httpBackend.whenGET('assets/images/header/left_big.svg').respond(200, '');
-		$httpBackend.whenGET('assets/images/header/lookup.svg').respond(200, '');
 	}));
 
 	beforeEach(inject(($rootScope, $compile) => {

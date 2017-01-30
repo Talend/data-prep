@@ -47,8 +47,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const toggleButton = element.find('#side-panel-toggle-dock');
-			expect(toggleButton.attr('title')).toBe('Toggle side panel');
+			expect(element.find('#side-panel-toggle-dock').length).toBe(1);
 		});
 
 		it('should create preparations button', () => {
@@ -56,8 +55,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const preparationsButton = element.find('#side-panel-nav-preparations');
-			expect(preparationsButton.attr('title')).toBe('Display Preparations');
+			expect(element.find('#side-panel-nav-preparations').length).toBe(1);
 		});
 
 		it('should create datasets button', () => {
@@ -65,8 +63,7 @@ describe('Side Panel container', () => {
 			createElement();
 
 			// then
-			const datasetsButton = element.find('#side-panel-nav-datasets');
-			expect(datasetsButton.attr('title')).toBe('Display Datasets');
+			expect(element.find('#side-panel-nav-datasets').length).toBe(1);
 		});
 
 		it('should set active based on the route state name', () => {

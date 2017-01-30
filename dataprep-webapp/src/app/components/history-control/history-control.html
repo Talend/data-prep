@@ -18,16 +18,16 @@
         <a ng-class="{'inactive': !historyCtrl.service.canUndo()}"
            ng-click="historyCtrl.service.undo()"
            translate-once-title="UNDO_ICON_TOOLTIP"
-           ng-include="'assets/images/header/left_big.svg'"
            alt="UNDO ({{historyCtrl.service.canUndo()}})">
+            <icon name="'talend-arrow-left'"></icon>
         </a>
     </li>
     <li>
         <a ng-click="historyCtrl.service.redo()"
            ng-class="{'inactive': !historyCtrl.service.canRedo()}"
            translate-once-title="REDO_ICON_TOOLTIP"
-           ng-include="'assets/images/header/right_big.svg'"
            alt="REDO ({{historyCtrl.service.canRedo()}})">
+            <icon name="'talend-arrow-right'"></icon>
         </a>
     </li>
 </ul>

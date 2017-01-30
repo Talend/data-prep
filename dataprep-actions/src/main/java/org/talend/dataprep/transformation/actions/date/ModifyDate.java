@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -43,6 +42,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Change the date pattern on a 'date' column.
@@ -140,12 +140,11 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
             break;
         case OTHER_COLUMN_MODE:
             String otherColId = parameters.get(SELECTED_COLUMN_PARAMETER);
-            try {
-                amount = computeAmount(row.get(otherColId));
-            } catch (NumberFormatException e) {
-                // Int this case, do not change the original value
+            if (!NumericHelper.isBigDecimal(row.get(otherColId))) {
+                // In this case, do not change the original value
                 return;
             }
+            amount = computeAmount(row.get(otherColId));
             break;
         default:
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //

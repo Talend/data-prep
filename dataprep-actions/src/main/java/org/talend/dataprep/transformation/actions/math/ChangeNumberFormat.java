@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -38,6 +37,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Change the pattern on a 'number' column.
@@ -264,39 +264,40 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
         columnMetadata.setDomainForced(true);
 
         final String value = row.get(columnId);
-        if (StringUtils.isBlank(value)) {
-            LOGGER.debug("Unable to parse {} value as Number, it is blank", value);
+        final String mode = context.getParameters().get(FROM_SEPARATORS);
+        if (StringUtils.isBlank(value) || (!NumericHelper.isBigDecimal(value) && !CUSTOM.equals(mode))) {
+            LOGGER.debug("Unable to parse {} value as Number, it is blank or not numeric", value);
             return;
         }
 
-        try {
-            BigDecimal bd;
-
-            switch (context.getParameters().get(FROM_SEPARATORS)) {
-            case EU_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(value, ',', '.');
-                break;
-            case CH_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(value, '.', '\'');
-                break;
-            case CUSTOM:
+        final BigDecimal bd;
+        switch (mode) {
+        case EU_SEPARATORS:
+            bd = BigDecimalParser.toBigDecimal(value, ',', '.');
+            break;
+        case CH_SEPARATORS:
+            bd = BigDecimalParser.toBigDecimal(value, '.', '\'');
+            break;
+        case CUSTOM:
+            try {
                 bd = parseCustomNumber(context, value);
                 break;
-            case US_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(value, '.', ',');
-                break;
-            case UNKNOWN_SEPARATORS:
-            default:
-                bd = BigDecimalParser.toBigDecimal(value);
-                break;
+            } catch (Exception e) {
+                // User specified custom separators that doesn't validate value
+                LOGGER.debug("Unable to use custom separators to parse value '{}'", value);
+                return;
             }
-
-            String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);
-
-            row.set(columnId, newValue);
-        } catch (NumberFormatException e) {
-            LOGGER.debug("Unable to parse {} value as Number", value);
+        case US_SEPARATORS:
+            bd = BigDecimalParser.toBigDecimal(value, '.', ',');
+            break;
+        case UNKNOWN_SEPARATORS:
+        default:
+            bd = BigDecimalParser.toBigDecimal(value);
+            break;
         }
+
+        String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);
+        row.set(columnId, newValue);
     }
 
     /**

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -10,6 +9,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
+
 package org.talend.dataprep.transformation.actions.math;
 
 import java.math.BigDecimal;
@@ -31,6 +31,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * This will extract the numeric part
@@ -125,11 +126,9 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
         }
 
         // Test if the input value is a valid number before removing any characters:
-        try {
+        if (NumericHelper.isBigDecimal(value)) {
             // If yes (no exception thrown), return the value as it, no change required:
             return String.valueOf(BigDecimalParser.toBigDecimal(value));
-        } catch (NumberFormatException e) {
-            // If no, continue the process to remove non-numeric chars:
         }
 
         StringCharacterIterator iter = new StringCharacterIterator(value);
@@ -164,12 +163,10 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
             }
         }
 
-        BigDecimal bigDecimal;
-        try {
-            bigDecimal = BigDecimalParser.toBigDecimal(reducedValue.toString());
-        } catch (NumberFormatException e) {
+        if (!NumericHelper.isBigDecimal(reducedValue.toString())) {
             return defaultValue;
         }
+        BigDecimal bigDecimal = BigDecimalParser.toBigDecimal(reducedValue.toString());
 
         if (metricPrefixBefore != null || metricPrefixAfter != null) {
             // the metrix found after use first

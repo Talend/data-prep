@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -33,6 +32,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + TimestampToDate.ACTION_NAME)
 public class TimestampToDate extends AbstractDate implements ColumnAction {
@@ -115,13 +115,12 @@ public class TimestampToDate extends AbstractDate implements ColumnAction {
     }
 
     protected String getTimeStamp(String from, DateTimeFormatter dateTimeFormatter) {
-        try {
-            LocalDateTime date = LocalDateTime.ofEpochSecond(Long.parseLong(from), 0, ZoneOffset.UTC);
-            return dateTimeFormatter.format(date);
-        } catch (NumberFormatException e) {
+        if (!NumericHelper.isBigDecimal(from)) {
             // empty value if the date cannot be parsed
             return StringUtils.EMPTY;
         }
+        LocalDateTime date = LocalDateTime.ofEpochSecond(Long.parseLong(from), 0, ZoneOffset.UTC);
+        return dateTimeFormatter.format(date);
     }
 
     @Override

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -10,6 +9,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
+
 package org.talend.dataprep.transformation.actions.math;
 
 import java.math.BigDecimal;
@@ -26,6 +26,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * This will compute the absolute value for numerical columns.
@@ -43,36 +44,6 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     public Absolute(Type type) {
         this.type = type;
-    }
-
-    /**
-     * Try to parse and return the absolute value of a long value as string
-     *
-     * @param value The value to execute action
-     * @return the absolute value or null
-     */
-    private String executeOnLong(final String value) {
-        try {
-            long longValue = Long.parseLong(value);
-            return Long.toString(Math.abs(longValue));
-        } catch (NumberFormatException nfe1) {
-            return null;
-        }
-    }
-
-    /**
-     * Try to parse and return the absolute value of a long value as string
-     *
-     * @param value The value to execute action
-     * @return the absolute value or null
-     */
-    private String executeOnFloat(final String value) {
-        try {
-            BigDecimal bd = BigDecimalParser.toBigDecimal(value);
-            return bd.abs().toPlainString();
-        } catch (NumberFormatException nfe2) {
-            return null;
-        }
     }
 
     @Override
@@ -100,20 +71,8 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
             return;
         }
         String absValueStr = null;
-        switch (type) {
-        case INTEGER:
-            absValueStr = executeOnLong(value);
-            if (absValueStr == null) {
-                absValueStr = executeOnFloat(value);
-            }
-            break;
-        case DOUBLE:
-        case FLOAT:
-            absValueStr = executeOnFloat(value);
-            if (absValueStr == null) {
-                absValueStr = executeOnLong(value);
-            }
-            break;
+        if(NumericHelper.isBigDecimal(value)) {
+            absValueStr = BigDecimalParser.toBigDecimal(value).abs().toPlainString();
         }
         if (absValueStr != null) {
             row.set(columnId, absValueStr);

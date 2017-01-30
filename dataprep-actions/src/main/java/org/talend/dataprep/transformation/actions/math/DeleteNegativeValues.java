@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -25,6 +24,7 @@ import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.delete.AbstractDelete;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Delete row on a given value.
@@ -56,12 +56,11 @@ public class DeleteNegativeValues extends AbstractDelete {
         if (value == null) {
             return false;
         }
-        try {
-            BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
-            return bd.compareTo(BigDecimal.ZERO) < 0;
-        } catch (NumberFormatException exc) {
+        if (!NumericHelper.isBigDecimal(value)) {
             return false;
         }
+        BigDecimal bd = BigDecimalParser.toBigDecimal(value.trim());
+        return bd.compareTo(BigDecimal.ZERO) < 0;
     }
 
 }

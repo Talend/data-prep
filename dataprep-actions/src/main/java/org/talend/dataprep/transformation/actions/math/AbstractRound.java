@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -10,6 +9,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
+
 package org.talend.dataprep.transformation.actions.math;
 
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
@@ -30,6 +30,7 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Abstract class for Math operation on {@link Type#NUMERIC} values
@@ -72,13 +73,10 @@ public abstract class AbstractRound extends AbstractActionMetadata implements Co
         if (value == null) {
             return;
         }
-
-        try {
+        if (NumericHelper.isBigDecimal(value)) {
             BigDecimal bd = BigDecimalParser.toBigDecimal(value);
             bd = bd.setScale(precision, getRoundingMode());
             row.set(columnId, String.valueOf(bd));
-        } catch (NumberFormatException nfe2) {
-            // Nan: nothing to do, but fail silently (no change in value)
         }
     }
 

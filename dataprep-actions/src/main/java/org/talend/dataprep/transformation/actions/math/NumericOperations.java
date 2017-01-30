@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -41,6 +40,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.util.NumericHelper;
 
 /**
  * Concat action concatenates 2 columns into a new one. The new column name will be "column_source + selected_column."
@@ -182,6 +182,10 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
     }
 
     protected String compute(final String stringOperandOne, final String operator, final String stringOperandTwo) {
+        if (!NumericHelper.isBigDecimal(stringOperandOne) || !NumericHelper.isBigDecimal(stringOperandTwo)) {
+            return StringUtils.EMPTY;
+        }
+
         try {
             final BigDecimal operandOne = BigDecimalParser.toBigDecimal(stringOperandOne);
             final BigDecimal operandTwo = BigDecimalParser.toBigDecimal(stringOperandTwo);
@@ -210,7 +214,7 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
 
             // Format result:
             return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
-        } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
+        } catch (ArithmeticException | NullPointerException e) {
             return StringUtils.EMPTY;
         }
     }

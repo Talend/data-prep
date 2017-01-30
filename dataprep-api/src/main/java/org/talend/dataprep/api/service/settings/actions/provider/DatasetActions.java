@@ -103,7 +103,7 @@ public interface DatasetActions {
     ActionSettings DATASET_CREATE = splitDropdownBuilder()
             .id("dataset:create")
             .name("Add Dataset")
-            .icon("talend-plus")
+            .icon("talend-plus-circle")
             .type("@@dataset/CREATE")
             .bsStyle("primary")
             .build();

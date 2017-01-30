@@ -37,7 +37,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final ActionSettings datasetCreate = settings.getActions().get("dataset:create");
         assertThat(datasetCreate.getName(), is("Add Dataset"));
-        assertThat(datasetCreate.getIcon(), is("talend-plus"));
+        assertThat(datasetCreate.getIcon(), is("talend-plus-circle"));
         assertThat(datasetCreate.getType(), is("@@dataset/CREATE"));
         assertThat(datasetCreate.getBsStyle(), is("primary"));
 
@@ -177,7 +177,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final ActionSettings preparationCreate = settings.getActions().get("preparation:create");
         assertThat(preparationCreate.getName(), is("Create preparation"));
-        assertThat(preparationCreate.getIcon(), is("talend-plus"));
+        assertThat(preparationCreate.getIcon(), is("talend-plus-circle"));
         assertThat(preparationCreate.getType(), is("@@preparation/CREATE"));
         assertThat(preparationCreate.getBsStyle(), is("primary"));
         assertThat(preparationCreate.getPayload().get(PAYLOAD_METHOD_KEY), is("togglePreparationCreator"));

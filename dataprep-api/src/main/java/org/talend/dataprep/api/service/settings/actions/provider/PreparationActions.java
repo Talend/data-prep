@@ -40,7 +40,7 @@ public interface PreparationActions {
     ActionSettings PREPARATION_CREATE = builder()
             .id("preparation:create")
             .name("Create preparation")
-            .icon("talend-plus")
+            .icon("talend-plus-circle")
             .type("@@preparation/CREATE")
             .bsStyle("primary")
             .payload(PAYLOAD_METHOD_KEY, "togglePreparationCreator")

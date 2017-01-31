@@ -268,7 +268,7 @@ public class PreparationService {
      * @return all the preparations that matches the given name.
      */
     private Stream<Preparation> searchByName(String name, boolean exactMatch) {
-        LOGGER.debug("looking for preparations with the name '{}' exact match is ", name, exactMatch);
+        LOGGER.debug("looking for preparations with the name '{}' exact match is {}.", name, exactMatch);
         final String filter;
         if (exactMatch) {
             filter = "name = '" + name + "'";
@@ -322,7 +322,7 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, newId);
         folderRepository.addFolderEntry(folderEntry, destination);
 
-        LOGGER.info("preparation {} copied to folder {} with the name {}", preparationId, destination, newName);
+        LOGGER.debug("copy {} to folder {} with {} as new name", preparationId, destination, name);
         return newId;
     }
 
@@ -443,7 +443,7 @@ public class PreparationService {
         }
         // Ensure that the preparation is not locked elsewhere
         lock(id);
-        LOGGER.debug("Updating preparation with id {}: {}", preparation.id(), previousPreparation);
+        LOGGER.debug("Updating preparation with id {}: {}", preparation.getId(), previousPreparation);
 
         Preparation updated = previousPreparation.merge(preparation);
         if (!updated.id().equals(id)) {

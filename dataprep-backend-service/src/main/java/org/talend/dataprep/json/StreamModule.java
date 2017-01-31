@@ -79,7 +79,7 @@ public class StreamModule extends SimpleModule {
                 } catch (TalendRuntimeException e) {
                     throw new IOException(e); // IOException so it doesn't get swallowed by Jackson
                 } catch (Exception e) {
-                    LOGGER.error("Unable to iterate over values in {}", stream, e);
+                    LOGGER.error("Unable to iterate over values.", e);
                 } finally {
                     try {
                         stream.close();

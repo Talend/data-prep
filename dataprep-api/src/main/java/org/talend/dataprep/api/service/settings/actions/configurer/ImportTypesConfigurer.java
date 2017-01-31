@@ -55,7 +55,7 @@ public class ImportTypesConfigurer extends AppSettingsConfigurer<ActionSettings>
             return toStream(Import.class, mapper, getCommand(DataSetGetImports.class));
         } catch (final TDPException e) {
             LOGGER.error("Unable to get import types", e);
-            return Stream.of();
+            return Stream.empty();
         }
     }
 }

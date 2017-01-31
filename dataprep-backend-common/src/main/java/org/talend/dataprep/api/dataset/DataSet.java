@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -37,7 +36,7 @@ public class DataSet {
 
     public static DataSet empty() {
         DataSet dataSet = new DataSet();
-        dataSet.setRecords(Stream.of());
+        dataSet.setRecords(Stream.empty());
         return dataSet;
     }
 

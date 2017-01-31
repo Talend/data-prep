@@ -55,7 +55,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final ActionSettings datasetFetch = settings.getActions().get("datasets:fetch");
         assertThat(datasetFetch.getName(), is("Fetch all datasets"));
         assertThat(datasetFetch.getType(), is("@@dataset/DATASET_FETCH"));
-        assertThat(datasetFetch.getPayload().get(PAYLOAD_METHOD_KEY), is("init"));
 
         final ActionSettings datasetOpen = settings.getActions().get("dataset:open");
         assertThat(datasetOpen.getName(), is("Open dataset"));
@@ -66,12 +65,11 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetRemove.getName(), is("Remove dataset"));
         assertThat(datasetRemove.getIcon(), is("talend-trash"));
         assertThat(datasetRemove.getType(), is("@@dataset/REMOVE"));
-        assertThat(datasetRemove.getPayload().get(PAYLOAD_METHOD_KEY), is("remove"));
 
         final ActionSettings datasetSort = settings.getActions().get("dataset:sort");
         assertThat(datasetSort.getName(), is("Change dataset sort"));
         assertThat(datasetSort.getType(), is("@@dataset/SORT"));
-        assertThat(datasetSort.getPayload().get(PAYLOAD_METHOD_KEY), is("setDatasetsSortFromIds"));
+        assertThat(datasetSort.getPayload().get(PAYLOAD_METHOD_KEY), is("changeSort"));
 
         final ActionSettings datasetSubmitEdit = settings.getActions().get("dataset:submit-edit");
         assertThat(datasetSubmitEdit.getName(), is("Submit name edition"));
@@ -174,7 +172,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationCopyMove.getName(), is("Copy/Move preparation"));
         assertThat(preparationCopyMove.getIcon(), is("talend-files-o"));
         assertThat(preparationCopyMove.getType(), is("@@preparation/COPY_MOVE"));
-        assertThat(preparationCopyMove.getPayload().get(PAYLOAD_METHOD_KEY), is("copyMove"));
 
         final ActionSettings preparationCreate = settings.getActions().get("preparation:create");
         assertThat(preparationCreate.getName(), is("Create preparation"));
@@ -198,24 +195,22 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(preparationFolderFetch.getName(), is("Fetch preparations from current folder"));
         assertThat(preparationFolderFetch.getIcon(), is("talend-dataprep"));
         assertThat(preparationFolderFetch.getType(), is("@@preparation/FOLDER_FETCH"));
-        assertThat(preparationFolderFetch.getPayload().get(PAYLOAD_METHOD_KEY), is("init"));
 
         final ActionSettings preparationFolderRemove = settings.getActions().get("preparation:folder:remove");
         assertThat(preparationFolderRemove.getName(), is("Remove folder"));
         assertThat(preparationFolderRemove.getIcon(), is("talend-trash"));
         assertThat(preparationFolderRemove.getType(), is("@@preparation/FOLDER_REMOVE"));
-        assertThat(preparationFolderRemove.getPayload().get(PAYLOAD_METHOD_KEY), is("removeFolder"));
+        assertThat(preparationFolderRemove.getPayload().get(PAYLOAD_METHOD_KEY), is("remove"));
 
         final ActionSettings preparationRemove = settings.getActions().get("preparation:remove");
         assertThat(preparationRemove.getName(), is("Remove preparation"));
         assertThat(preparationRemove.getIcon(), is("talend-trash"));
         assertThat(preparationRemove.getType(), is("@@preparation/REMOVE"));
-        assertThat(preparationRemove.getPayload().get(PAYLOAD_METHOD_KEY), is("remove"));
 
         final ActionSettings preparationSort = settings.getActions().get("preparation:sort");
         assertThat(preparationSort.getName(), is("Change preparation sort"));
         assertThat(preparationSort.getType(), is("@@preparation/SORT"));
-        assertThat(preparationSort.getPayload().get(PAYLOAD_METHOD_KEY), is("setPreparationsSortFromIds"));
+        assertThat(preparationSort.getPayload().get(PAYLOAD_METHOD_KEY), is("changeSort"));
 
         final ActionSettings preparationSubmitEdit = settings.getActions().get("preparation:submit-edit");
         assertThat(preparationSubmitEdit.getName(), is("Submit name edition"));
@@ -305,8 +300,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
-        assertThat(keys, contains("name", "author", "creationDate", "lastModificationDate", "dataset", "nbLines", "nbSteps"));
-        assertThat(labels, contains("Name", "Author", "Created", "Modified", "Dataset", "Lines", "Steps"));
+        assertThat(keys, contains("name", "author", "creationDate", "lastModificationDate", "datasetName", "nbSteps"));
+        assertThat(labels, contains("Name", "Author", "Created", "Modified", "Dataset", "Steps"));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
         assertThat(list.getList().getTitleProps().getKey(), is("name"));
@@ -314,11 +309,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(list.getList().getTitleProps().getOnEditCancel(), is("inventory:cancel-edit"));
         assertThat(list.getList().getTitleProps().getOnEditSubmit(), is("preparation:submit-edit"));
 
-        final List<String> ids = map(list.getToolbar().getSort().getOptions(), "id");
-        final List<String> names = map(list.getToolbar().getSort().getOptions(), "name");
-        assertThat(ids, contains("name", "date"));
-        assertThat(names, contains("Name", "Creation Date"));
-        assertThat(list.getToolbar().getSort().getOnChange(), is("preparation:sort"));
         assertThat(list.getToolbar().getActionBar().getActions().get("left"),
                 contains("preparation:create", "preparation:folder:create"));
     }
@@ -335,8 +325,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
         final List<String> types = map(list.getList().getColumns(), "type");
-        assertThat(keys, contains("name", "statusActions", "author", "creationDate", "nbLines"));
-        assertThat(labels, contains("Name", "", "Author", "Created", "Lines"));
+        assertThat(keys, contains("name", "statusActions", "author", "creationDate", "nbRecords"));
+        assertThat(labels, contains("Name", "", "Author", "Created", "Rows"));
         assertThat(types, contains(null, "actions", null, null, null));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
@@ -345,11 +335,6 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(list.getList().getTitleProps().getOnEditCancel(), is("inventory:cancel-edit"));
         assertThat(list.getList().getTitleProps().getOnEditSubmit(), is("dataset:submit-edit"));
 
-        final List<String> ids = map(list.getToolbar().getSort().getOptions(), "id");
-        final List<String> names = map(list.getToolbar().getSort().getOptions(), "name");
-        assertThat(ids, contains("name", "date"));
-        assertThat(names, contains("Name", "Creation Date"));
-        assertThat(list.getToolbar().getSort().getOnChange(), is("dataset:sort"));
         assertThat(list.getToolbar().getActionBar().getActions().get("left"), contains("dataset:create"));
     }
 

@@ -70,7 +70,7 @@ describe('Dataset List Service', () => {
 				author: datasets[0].owner && datasets[0].owner.displayName,
 				creationDate: moment(datasets[0].created).fromNow(),
 				lastModificationDate: moment(datasets[0].lastModificationDate).fromNow(),
-				nbLines: datasets[0].records,
+				nbRecords: datasets[0].records,
 				icon: 'talend-file-csv-o',
 				displayMode: 'text',
 				className: '',
@@ -86,7 +86,7 @@ describe('Dataset List Service', () => {
 				author: datasets[1].owner && datasets[1].owner.displayName,
 				creationDate: moment(datasets[1].created).fromNow(),
 				lastModificationDate: moment(datasets[1].lastModificationDate).fromNow(),
-				nbLines: datasets[1].records,
+				nbRecords: datasets[1].records,
 				icon: 'talend-file-xls-o',
 				displayMode: 'text',
 				className: '',
@@ -102,7 +102,7 @@ describe('Dataset List Service', () => {
 				author: datasets[2].owner && datasets[2].owner.displayName,
 				creationDate: moment(datasets[2].created).fromNow(),
 				lastModificationDate: moment(datasets[2].lastModificationDate).fromNow(),
-				nbLines: datasets[2].records,
+				nbRecords: datasets[2].records,
 				icon: 'talend-file-csv-o',
 				displayMode: 'text',
 				className: '',
@@ -118,7 +118,7 @@ describe('Dataset List Service', () => {
 				author: datasets[3].owner && datasets[3].owner.displayName,
 				creationDate: moment(datasets[3].created).fromNow(),
 				lastModificationDate: moment(datasets[3].lastModificationDate).fromNow(),
-				nbLines: datasets[3].records,
+				nbRecords: datasets[3].records,
 				icon: 'talend-file-o',
 				displayMode: 'text',
 				className: '',
@@ -143,8 +143,12 @@ describe('Dataset List Service', () => {
 	beforeEach(angular.mock.module('data-prep.services.dataset', ($provide) => {
 		stateMock = {
 			inventory: {
-				datasetsSort: sortList[1],
-				datasetsOrder: orderList[1],
+				datasets: {
+					sort: {
+						field: 'date',
+						isDescending: true,
+					}
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -172,7 +176,7 @@ describe('Dataset List Service', () => {
 
 			it('should refresh dataset list', inject(($rootScope, DatasetListService, StateService) => {
 				//given
-				stateMock.inventory.datasets = [{ name: 'my dataset' }, { name: 'my second dataset' }];
+				stateMock.inventory.datasets.content = [{ name: 'my dataset' }, { name: 'my second dataset' }];
 
 				//when
 				DatasetListService.refreshDatasets();
@@ -185,7 +189,7 @@ describe('Dataset List Service', () => {
 			it('should trigger another refresh when one is already pending with different sort condition',
 				inject(($rootScope, DatasetListService, DatasetRestService, StateService) => {
 					//given
-					stateMock.inventory.datasets = [{ name: 'my dataset' }, { name: 'my second dataset' }];
+					stateMock.inventory.datasets.content = [{ name: 'my dataset' }, { name: 'my second dataset' }];
 					DatasetListService.refreshDatasets();
 
 					//when
@@ -209,7 +213,7 @@ describe('Dataset List Service', () => {
 			it('should return datasetsPromise when datasetsPromise is not false', inject((DatasetRestService, DatasetListService) => {
 
 				//given
-				stateMock.inventory.datasets = null;
+				stateMock.inventory.datasets.content = null;
 
 				//when
 				DatasetListService.getDatasetsPromise();
@@ -366,7 +370,7 @@ describe('Dataset List Service', () => {
 
 		it('should delete dataset', inject(($rootScope, DatasetListService, DatasetRestService) => {
 			//given
-			stateMock.inventory.datasets = datasets.slice(0);
+			stateMock.inventory.datasets.content = datasets.slice(0);
 
 			//when
 			DatasetListService.delete(datasets[0]);
@@ -378,7 +382,7 @@ describe('Dataset List Service', () => {
 
 		it('should remove dataset from its internal list', inject(($rootScope, DatasetListService, StateService) => {
 			//given
-			stateMock.inventory.datasets = datasets.slice(0);
+			stateMock.inventory.datasets.content = datasets.slice(0);
 
 			//when
 			DatasetListService.delete(datasets[0]);
@@ -399,7 +403,7 @@ describe('Dataset List Service', () => {
 			const dataset = { name: 'my dataset', favorite: true };
 
 			//when
-			DatasetListService.toggleFavorite(dataset);
+			DatasetListService.toggleFavorite({ model: dataset });
 			$rootScope.$apply();
 
 			//then
@@ -412,7 +416,7 @@ describe('Dataset List Service', () => {
 			const dataset = { name: 'my dataset', favorite: true };
 
 			//when
-			DatasetListService.toggleFavorite(dataset);
+			DatasetListService.toggleFavorite({ model: dataset });
 			$rootScope.$apply();
 
 			//then

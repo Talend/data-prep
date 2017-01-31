@@ -30,21 +30,28 @@ const HOME_FOLDER = {
 };
 
 export const inventoryState = {
-	datasets: null,
 	datasetToUpdate: null,
 
 	sortList,
 	orderList,
-	datasetsSort: sortList[1],
-	datasetsOrder: orderList[1],
-	preparationsSort: sortList[1],
-	preparationsOrder: orderList[1],
 
 	datasetsDisplayMode: 'table',
 	preparationsDisplayMode: 'table',
 
+	datasets: {
+		sort: {
+			field: 'name',
+			isDescending: false,
+		},
+		content: null,
+	},
+
 	homeFolderId: HOME_FOLDER.id,
 	folder: {
+		sort: {
+			field: 'name',
+			isDescending: false,
+		},
 		metadata: HOME_FOLDER,
 		content: {
 			folders: [],
@@ -74,13 +81,9 @@ export function InventoryStateService() {
 		setBreadcrumbChildren,
 
 		setDatasetsSort,
-		setDatasetsOrder,
-		setDatasetsSortFromIds,
 		setDatasetsDisplayMode,
 
 		setPreparationsSort,
-		setPreparationsOrder,
-		setPreparationsSortFromIds,
 		setPreparationsDisplayMode,
 
 		setFetchingDatasets,
@@ -100,8 +103,8 @@ export function InventoryStateService() {
 			break;
 		}
 		case 'dataset': {
-			const datasets = inventoryState.datasets;
-			inventoryState.datasets = fn(datasets);
+			const datasetList = inventoryState.datasets.content;
+			inventoryState.datasets.content = fn(datasetList);
 			break;
 		}
 		}
@@ -188,7 +191,7 @@ export function InventoryStateService() {
 	 * @description Set datasets in Inventory
 	 */
 	function setDatasets(datasets) {
-		inventoryState.datasets = datasets;
+		inventoryState.datasets.content = datasets;
 	}
 
 	/**
@@ -199,7 +202,7 @@ export function InventoryStateService() {
 	 * @description Remove a dataset
 	 */
 	function removeDataset(dataset) {
-		inventoryState.datasets = reject(inventoryState.datasets, { id: dataset.id });
+		inventoryState.datasets.content = reject(inventoryState.datasets.content, { id: dataset.id });
 	}
 
 	/**
@@ -211,7 +214,7 @@ export function InventoryStateService() {
 	 * @description Change the dataset name in folder and datasets list
 	 */
 	function setDatasetName(datasetId, name) {
-		const dataset = find(inventoryState.datasets, { id: datasetId });
+		const dataset = find(inventoryState.datasets.content, { id: datasetId });
 		dataset.name = name;
 	}
 
@@ -237,7 +240,8 @@ export function InventoryStateService() {
 	 * @param {object} content The folder content
 	 */
 	function setFolder(metadata, content) {
-		inventoryState.folder = { metadata, content };
+		inventoryState.folder.metadata = metadata;
+		inventoryState.folder.content = content;
 	}
 
 	/**
@@ -266,35 +270,12 @@ export function InventoryStateService() {
 	 * @ngdoc method
 	 * @name setDatasetsSort
 	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {object} sort The sort type
+	 * @param {string} field The sort field
+	 * @param {boolean} isDescending True if the sort is descending
 	 * @description Set the sort type
 	 */
-	function setDatasetsSort(sort) {
-		inventoryState.datasetsSort = sort;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name setDatasetsOrder
-	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {object} order The order
-	 * @description Set the order
-	 */
-	function setDatasetsOrder(order) {
-		inventoryState.datasetsOrder = order;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name setDatasetsSortFromIds
-	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {string} sortId The sort id
-	 * @param {string} orderId The order id
-	 * @description Set the order by its id
-	 */
-	function setDatasetsSortFromIds(sortId, orderId) {
-		inventoryState.datasetsSort = find(sortList, { id: sortId });
-		inventoryState.datasetsOrder = find(orderList, { id: orderId });
+	function setDatasetsSort(field, isDescending) {
+		inventoryState.datasets.sort = { field, isDescending };
 	}
 
 	/**
@@ -310,37 +291,17 @@ export function InventoryStateService() {
 
 	/**
 	 * @ngdoc method
-	 * @name setPreparationsSort
+	 * @name setPreparationSort
 	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {object} sort The sort type
-	 * @description Set rhe sort type
+	 * @param {string} field The sort field
+	 * @param {boolean} isDescending True if the sort is in descending order
+	 * @description Set the sort
 	 */
-	function setPreparationsSort(sort) {
-		inventoryState.preparationsSort = sort;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name setPreparationsOrder
-	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {object} order The order
-	 * @description Set the order
-	 */
-	function setPreparationsOrder(order) {
-		inventoryState.preparationsOrder = order;
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name setPreparationsOrderFromId
-	 * @methodOf data-prep.services.state.service:InventoryStateService
-	 * @param {string} sortId The sort id
-	 * @param {string} orderId The order id
-	 * @description Set the order by its id
-	 */
-	function setPreparationsSortFromIds(sortId, orderId) {
-		inventoryState.preparationsSort = find(sortList, { id: sortId });
-		inventoryState.preparationsOrder = find(orderList, { id: orderId });
+	function setPreparationsSort(field, isDescending) {
+		inventoryState.folder.sort = {
+			field,
+			isDescending,
+		};
 	}
 
 	/**

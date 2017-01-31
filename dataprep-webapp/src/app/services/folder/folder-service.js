@@ -28,15 +28,17 @@ export default function FolderService($q, state, StateService, FolderRestService
 	return {
 		adaptFolders,
 		adaptPreparations,
+		changeSort,
 		getFolderActions,
 		getPreparationActions,
 		init,
 		refresh,
 		refreshBreadcrumbChildren,
+		refreshCurrentFolder,
 		children,
 		create,
 		rename,
-		remove: FolderRestService.remove,
+		remove,
 		tree: FolderRestService.tree,
 	};
 
@@ -49,7 +51,6 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 */
 	function init(id) {
 		refreshPreparationsSort();
-		refreshPreparationsOrder();
 		return this.refresh(id);
 	}
 
@@ -64,8 +65,8 @@ export default function FolderService($q, state, StateService, FolderRestService
 	function refresh(id) {
 		const folderId = id || state.inventory.homeFolderId;
 
-		const sort = state.inventory.preparationsSort.id;
-		const order = state.inventory.preparationsOrder.id;
+		const sort = state.inventory.folder.sort.field;
+		const order = state.inventory.folder.sort.isDescending ? 'desc' : 'asc';
 
 		const breadcrumbPromise = FolderRestService.getById(folderId);
 		const contentPromise = FolderRestService
@@ -99,8 +100,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 			author: item.owner && item.owner.displayName,
 			creationDate: moment(item.creationDate).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
-			dataset: item.dataset.dataSetName,
-			nbLines: item.dataset.dataSetNbRow,
+			datasetName: item.dataset.dataSetName,
 			nbSteps: item.steps.length - 1, // remove root step
 			icon: 'talend-dataprep',
 			displayMode: 'text',
@@ -179,20 +179,7 @@ export default function FolderService($q, state, StateService, FolderRestService
 	function refreshPreparationsSort() {
 		const savedSort = StorageService.getPreparationsSort();
 		if (savedSort) {
-			StateService.setPreparationsSort(_.find(state.inventory.sortList, { id: savedSort }));
-		}
-	}
-
-	/**
-	 * @ngdoc method
-	 * @methodOf data-prep.services.folder.service:FolderService
-	 * @name refreshPreparationsOrder
-	 * @description Refresh the actual order parameter
-	 */
-	function refreshPreparationsOrder() {
-		const savedSortOrder = StorageService.getPreparationsOrder();
-		if (savedSortOrder) {
-			StateService.setPreparationsOrder(_.find(state.inventory.orderList, { id: savedSortOrder }));
+			StateService.setPreparationsSort(savedSort.field, savedSort.isDescending);
 		}
 	}
 
@@ -232,5 +219,46 @@ export default function FolderService($q, state, StateService, FolderRestService
 	 */
 	function rename(folderId = state.inventory.homeFolderId, newName) {
 		return FolderRestService.rename(folderId, newName);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name changeSort
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Change the folder sort
+	 * @param {string} field The sort field
+	 * @param {string} isDescending True if sort is descending
+	 */
+	function changeSort({ field, isDescending }) {
+		const oldSort = state.inventory.folder.sort;
+		const oldField = oldSort.field;
+		const oldIsDescending = oldSort.isDescending;
+
+		StateService.setPreparationsSort(field, isDescending);
+
+		return this.refreshCurrentFolder()
+			.then(() => StorageService.setPreparationsSort(field, isDescending))
+			.catch(() => StateService.setPreparationsSort(oldField, oldIsDescending));
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name refreshCurrentFolder
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Refresh current folder
+	 */
+	function refreshCurrentFolder() {
+		return this.refresh(state.inventory.folder.metadata.id);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name remove
+	 * @methodOf data-prep.services.folder.service:FolderService
+	 * @description Remove The folder
+	 */
+	function remove({ id }) {
+		return FolderRestService.remove(id)
+			.then(() => this.refreshCurrentFolder());
 	}
 }

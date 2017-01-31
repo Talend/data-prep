@@ -54,70 +54,98 @@ export default class InventoryListCtrl {
 				items: this.adaptItemsActions(allItems),
 			};
 		}
-		if (changes.sortBy) {
-			this.toolbarProps = {
-				...this.toolbarProps,
-				sort: {
-					...this.toolbarProps.sort,
-					field: changes.sortBy.currentValue,
-				},
-			};
+		if (changes.sortBy || changes.sortDesc) {
+			const field = this.sortBy;
+			const isDescending = this.sortDesc;
+			this.toolbarProps = this.changeSort(this.toolbarProps, field, isDescending);
+			this.listProps = this.changeSort(this.listProps, field, isDescending);
 		}
-		if (changes.sortDesc) {
-			this.toolbarProps = {
-				...this.toolbarProps,
-				sort: {
-					...this.toolbarProps.sort,
-					isDescending: changes.sortDesc.currentValue,
-				},
-			};
+	}
+
+	changeSort(subProps, field, isDescending) {
+		if (!subProps.sort) {
+			return subProps;
 		}
+
+		return {
+			...subProps,
+			sort: {
+				...subProps.sort,
+				field,
+				isDescending,
+			},
+		};
 	}
 
 	initToolbarProps() {
 		const toolbarSettings = this.appSettings.views[this.viewKey].toolbar;
 
-		// display mode action
-		const displayModeAction = toolbarSettings.display &&
-			toolbarSettings.display.onChange &&
-			this.appSettings.actions[toolbarSettings.display.onChange];
-		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
-		const onDisplayModeChange = dispatchDisplayMode ? ((event, mode) => dispatchDisplayMode(event, { mode })) : NO_OP;
-
-		// sort by action
-		const sortByAction = toolbarSettings.sort &&
-			toolbarSettings.sort.onChange &&
-			this.appSettings.actions[toolbarSettings.sort.onChange];
-		const onSortByChange = sortByAction ? this.SettingsActionsService.createDispatcher(sortByAction) : NO_OP;
-
-		// toolbar actions
-		const actions = toolbarSettings.actionBar && toolbarSettings.actionBar.actions &&
-			{
-				left: this.adaptActions(toolbarSettings.actionBar.actions.left),
-				right: this.adaptActions(toolbarSettings.actionBar.actions.right),
-			};
-
 		this.toolbarProps = {
 			...toolbarSettings,
-			actionBar: toolbarSettings.actionBar && {
-				...toolbarSettings.actionBar,
-				actions,
-			},
-			display: toolbarSettings.display && {
-				...toolbarSettings.display,
-				onChange: onDisplayModeChange,
-			},
-			sort: toolbarSettings.sort && {
-				...toolbarSettings.sort,
-				onChange: onSortByChange,
-			},
+			actionBar: this.getActionBarProps(toolbarSettings.actionBar),
+			display: this.getDisplayModeProps(toolbarSettings.display),
+			sort: this.getSortProps(toolbarSettings.sort),
 		};
 	}
 
 	initListProps() {
 		const listSettings = this.appSettings.views[this.viewKey].list;
-		const onItemClick = this.getTitleActionDispatcher(this.viewKey, 'onClick');
 
+		this.listProps = {
+			...listSettings,
+			titleProps: this.getListTitleProps(listSettings.titleProps),
+			sort: this.getSortProps(listSettings.sort),
+		};
+	}
+
+	getActionBarProps(actionBarSettings) {
+		return actionBarSettings &&
+			actionBarSettings.actions &&
+			{
+				...actionBarSettings,
+				actions: {
+					left: this.adaptActions(actionBarSettings.actions.left),
+					right: this.adaptActions(actionBarSettings.actions.right),
+				},
+			};
+	}
+
+	getDisplayModeProps(displayModeSettings) {
+		if (!displayModeSettings) {
+			return null;
+		}
+
+		const displayModeAction = displayModeSettings &&
+			displayModeSettings.onChange &&
+			this.appSettings.actions[displayModeSettings.onChange];
+		const dispatchDisplayMode = displayModeAction && this.SettingsActionsService.createDispatcher(displayModeAction);
+		const onDisplayModeChange = dispatchDisplayMode ? ((event, mode) => dispatchDisplayMode(event, { mode })) : NO_OP;
+
+		return {
+			...displayModeSettings,
+			onChange: onDisplayModeChange,
+		};
+	}
+
+	getSortProps(sortSettings) {
+		if (!sortSettings) {
+			return null;
+		}
+
+		const sortByAction = sortSettings &&
+			sortSettings.onChange &&
+			this.appSettings.actions[sortSettings.onChange];
+		const onSortByChange = sortByAction ?
+			this.SettingsActionsService.createDispatcher(sortByAction) :
+			NO_OP;
+		return {
+			...sortSettings,
+			onChange: onSortByChange,
+		};
+	}
+
+	getListTitleProps(titleSettings) {
+		const onItemClick = this.getTitleActionDispatcher(this.viewKey, 'onClick');
 		let onClick = onItemClick;
 		if (this.folderViewKey) {
 			const onFolderClick = this.getTitleActionDispatcher(this.folderViewKey, 'onClick');
@@ -128,16 +156,11 @@ export default class InventoryListCtrl {
 			};
 		}
 
-		const onEditCancel = this.getTitleActionDispatcher(this.viewKey, 'onEditCancel');
-		const onEditSubmit = this.getTitleActionDispatcher(this.viewKey, 'onEditSubmit');
-		this.listProps = {
-			...listSettings,
-			titleProps: {
-				...listSettings.titleProps,
-				onClick,
-				onEditCancel,
-				onEditSubmit,
-			},
+		return {
+			...titleSettings,
+			onClick,
+			onEditCancel: this.getTitleActionDispatcher(this.viewKey, 'onEditCancel'),
+			onEditSubmit: this.getTitleActionDispatcher(this.viewKey, 'onEditSubmit'),
 		};
 	}
 

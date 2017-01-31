@@ -34,7 +34,7 @@ public interface PreparationActions {
             .id("preparation:sort")
             .name("Change preparation sort")
             .type("@@preparation/SORT")
-            .payload(PAYLOAD_METHOD_KEY, "setPreparationsSortFromIds")
+            .payload(PAYLOAD_METHOD_KEY, "changeSort")
             .build();
 
     ActionSettings PREPARATION_CREATE = builder()
@@ -51,7 +51,6 @@ public interface PreparationActions {
             .name("Copy/Move preparation")
             .icon("talend-files-o")
             .type("@@preparation/COPY_MOVE")
-            .payload(PAYLOAD_METHOD_KEY, "copyMove")
             .build();
 
     ActionSettings PREPARATION_SUBMIT_EDIT = builder()
@@ -65,7 +64,6 @@ public interface PreparationActions {
             .name("Remove preparation")
             .icon("talend-trash")
             .type("@@preparation/REMOVE")
-            .payload(PAYLOAD_METHOD_KEY, "remove")
             .build();
 
     ActionSettings PREPARATION_FOLDER_CREATE = builder()
@@ -81,7 +79,6 @@ public interface PreparationActions {
             .name("Fetch preparations from current folder")
             .icon("talend-dataprep")
             .type("@@preparation/FOLDER_FETCH")
-            .payload(PAYLOAD_METHOD_KEY, "init")
             .build();
 
     ActionSettings PREPARATION_FOLDER_REMOVE = builder()
@@ -89,7 +86,7 @@ public interface PreparationActions {
             .name("Remove folder")
             .icon("talend-trash")
             .type("@@preparation/FOLDER_REMOVE")
-            .payload(PAYLOAD_METHOD_KEY, "removeFolder")
+            .payload(PAYLOAD_METHOD_KEY, "remove")
             .build();
 }
 // @formatter:on

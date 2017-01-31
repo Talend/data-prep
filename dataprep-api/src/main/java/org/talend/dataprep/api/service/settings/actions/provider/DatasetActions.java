@@ -54,7 +54,7 @@ public interface DatasetActions {
             .id("dataset:sort")
             .name("Change dataset sort")
             .type("@@dataset/SORT")
-            .payload(PAYLOAD_METHOD_KEY, "setDatasetsSortFromIds")
+            .payload(PAYLOAD_METHOD_KEY, "changeSort")
             .build();
 
     ActionSettings DATASET_SUBMIT_EDIT = builder()
@@ -68,7 +68,6 @@ public interface DatasetActions {
             .name("Remove dataset")
             .icon("talend-trash")
             .type("@@dataset/REMOVE")
-            .payload(PAYLOAD_METHOD_KEY, "remove")
             .build();
 
     ActionSettings DATASET_CLONE = builder()
@@ -98,7 +97,6 @@ public interface DatasetActions {
             .id("datasets:fetch")
             .name("Fetch all datasets")
             .type("@@dataset/DATASET_FETCH")
-            .payload(PAYLOAD_METHOD_KEY, "init")
             .build();
 
     ActionSettings DATASET_CREATE = splitDropdownBuilder()

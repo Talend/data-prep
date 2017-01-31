@@ -33,29 +33,17 @@ export default class DatasetActionsService {
 
 	dispatch(action) {
 		switch (action.type) {
-		case '@@dataset/SORT': {
-			const oldSort = this.state.inventory.datasetsSort;
-			const oldOrder = this.state.inventory.datasetsOrder;
-
-			const { field, isDescending } = action.payload;
-			const sortOrder = isDescending ? 'desc' : 'asc';
-
-			this.StateService.setDatasetsSortFromIds(field, sortOrder);
-
-			this.DatasetService.refreshDatasets()
-				.then(() => this.StorageService.setDatasetsSort(field))
-				.then(() => this.StorageService.setDatasetsOrder(sortOrder))
-				.catch(() => {
-					this.StateService.setDatasetsSortFromIds(oldSort.id, oldOrder.id);
-				});
+		case '@@dataset/SORT':
+		case '@@dataset/FAVORITE': {
+			this.DatasetService[action.payload.method](action.payload);
 			break;
 		}
 		case '@@dataset/DATASET_FETCH':
 			this.StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 			this.StateService.setFetchingInventoryDatasets(true);
-			this.DatasetService.init().then(() => {
-				this.StateService.setFetchingInventoryDatasets(false);
-			});
+			this.DatasetService
+				.init()
+				.then(() => this.StateService.setFetchingInventoryDatasets(false));
 			break;
 		case '@@dataset/SUBMIT_EDIT': {
 			const newName = action.payload.value;
@@ -116,10 +104,6 @@ export default class DatasetActionsService {
 			const dataset = action.payload.model;
 			this.DatasetService.clone(dataset)
 				.then(() => this.MessageService.success('COPY_SUCCESS_TITLE', 'COPY_SUCCESS'));
-			break;
-		}
-		case '@@dataset/FAVORITE': {
-			this.DatasetService[action.payload.method](action.payload.model);
 			break;
 		}
 		case '@@dataset/UPDATE': {

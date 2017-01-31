@@ -58,8 +58,7 @@ const settingsMock = {
 					{ key: 'author', label: 'Author' },
 					{ key: 'creationDate', label: 'Created' },
 					{ key: 'lastModificationDate', label: 'Last change' },
-					{ key: 'dataset', label: 'Dataset' },
-					{ key: 'nbLines', label: 'Nb lines' },
+					{ key: 'datasetName', label: 'Dataset' },
 					{ key: 'nbSteps', label: 'Nb steps' },
 				],
 				items: [],
@@ -73,6 +72,11 @@ const settingsMock = {
 					onClick: 'menu:playground:preparation',
 					onEditCancel: 'inventory:cancel-edit',
 					onEditSubmit: 'preparation:submit-edit',
+				},
+				sort: {
+					field: 'name',
+					isDescending: false,
+					onChange: 'preparation:sort',
 				},
 			},
 			toolbar: {
@@ -99,7 +103,7 @@ const settingsMock = {
 					{ key: 'statusActions', label: '', type: 'actions' },
 					{ key: 'author', label: 'Author' },
 					{ key: 'creationDate', label: 'Created' },
-					{ key: 'nbLines', label: 'Lines' },
+					{ key: 'nbRecords', label: 'Rows' },
 				],
 				items: [],
 				itemProps: {
@@ -112,6 +116,11 @@ const settingsMock = {
 					onClick: 'dataset:open',
 					onEditCancel: 'inventory:cancel-edit',
 					onEditSubmit: 'dataset:submit-edit',
+				},
+				sort: {
+					field: 'name',
+					isDescending: false,
+					onChange: 'dataset:sort',
 				},
 			},
 			toolbar: {
@@ -266,10 +275,6 @@ const settingsMock = {
 			name: 'Change dataset sort',
 			icon: '',
 			type: '@@dataset/SORT',
-			payload: {
-				method: 'setDatasetsSortFromIds',
-				args: [],
-			},
 		},
 		'dataset:submit-edit': {
 			id: 'dataset:submit-edit',

@@ -37,9 +37,9 @@
     <inventory-list
             id="'datasets-list'"
             is-loading="$ctrl.state.inventory.isFetchingDatasets"
-            items="$ctrl.state.inventory.datasets"
-            sort-by="$ctrl.state.inventory.datasetsSort.id"
-            sort-desc="$ctrl.state.inventory.datasetsOrder.id === 'desc'"
+            items="$ctrl.state.inventory.datasets.content"
+            sort-by="$ctrl.state.inventory.datasets.sort.field"
+            sort-desc="$ctrl.state.inventory.datasets.sort.isDescending"
             view-key="'listview:datasets'"
     />
 </div>

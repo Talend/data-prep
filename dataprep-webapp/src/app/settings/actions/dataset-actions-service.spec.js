@@ -137,7 +137,12 @@ describe('Datasets actions service', () => {
 	beforeEach(angular.mock.module('app.settings.actions', ($provide) => {
 		stateMock = {
 			inventory: {
-				datasetsSort: {}
+				datasets: {
+					sort: {
+						field: 'name',
+						isDescending: false,
+					}
+				}
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -152,17 +157,18 @@ describe('Datasets actions service', () => {
 			spyOn(DatasetService, 'delete').and.returnValue($q.when());
 			spyOn(DatasetService, 'rename').and.returnValue($q.when());
 			spyOn(StateService, 'setDatasetsDisplayMode').and.returnValue();
-			spyOn(StateService, 'setDatasetsSortFromIds').and.returnValue();
 			spyOn(StateService, 'setDatasetToUpdate').and.returnValue();
 			spyOn(StorageService, 'setDatasetsSort').and.returnValue();
-			spyOn(StorageService, 'setDatasetsOrder').and.returnValue();
 		}));
 
-		it('should update datasets list sort', inject((StateService, DatasetService, DatasetActionsService) => {
+		it('should change sort', inject((DatasetService, DatasetActionsService) => {
 			// given
+			spyOn(DatasetService, 'changeSort').and.returnValue();
 			const action = {
 				type: '@@dataset/SORT',
 				payload: {
+					method: 'changeSort',
+					args: [],
 					field: 'name',
 					isDescending: true,
 				}
@@ -172,45 +178,7 @@ describe('Datasets actions service', () => {
 			DatasetActionsService.dispatch(action);
 
 			// then
-			expect(StateService.setDatasetsSortFromIds).toHaveBeenCalledWith('name', 'desc');
-		}));
-
-		it('should save sort in local storage',
-			inject(($rootScope, StateService, StorageService, DatasetActionsService) => {
-				// given
-				const action = {
-					type: '@@dataset/SORT',
-					payload: {
-						field: 'name',
-						isDescending: true,
-					}
-				};
-
-				// when
-				DatasetActionsService.dispatch(action);
-				$rootScope.$digest();
-
-				// then
-				expect(StorageService.setDatasetsSort).toHaveBeenCalledWith('name');
-				expect(StorageService.setDatasetsOrder).toHaveBeenCalledWith('desc');
-			})
-		);
-
-		it('should refresh datasets list', inject((DatasetService, DatasetActionsService) => {
-			// given
-			const action = {
-				type: '@@dataset/SORT',
-				payload: {
-					field: 'name',
-					isDescending: true,
-				}
-			};
-
-			// when
-			DatasetActionsService.dispatch(action);
-
-			// then
-			expect(DatasetService.refreshDatasets).toHaveBeenCalled();
+			expect(DatasetService.changeSort).toHaveBeenCalledWith(action.payload);
 		}));
 
 		it('should fetch all datasets', inject((DatasetService, DatasetActionsService) => {
@@ -262,7 +230,7 @@ describe('Datasets actions service', () => {
 			DatasetActionsService.dispatch(action);
 
 			// then
-			expect(DatasetService.toggleFavorite).toHaveBeenCalledWith({ id: 'dataset' });
+			expect(DatasetService.toggleFavorite).toHaveBeenCalledWith(action.payload);
 		}));
 
 		it('should update dataset', inject(($document, StateService, DatasetActionsService) => {

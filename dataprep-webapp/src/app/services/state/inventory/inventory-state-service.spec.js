@@ -86,32 +86,32 @@ describe('Inventory state service', () => {
 		it('should set datasets', inject((inventoryState, InventoryStateService) => {
 			//given
 			inventoryState.preparations = null;
-			inventoryState.datasets = null;
+			inventoryState.datasets.content = null;
 
 			//when
 			InventoryStateService.setDatasets(datasets);
 
 			//then
-			expect(inventoryState.datasets).toBe(datasets);
+			expect(inventoryState.datasets.content).toBe(datasets);
 		}));
 
 		it('should remove a dataset from datasets list', inject((inventoryState, InventoryStateService) => {
 			//given
-			inventoryState.datasets = datasets;
-			expect(inventoryState.datasets.length).toBe(3);
+			inventoryState.datasets.content = datasets;
+			expect(inventoryState.datasets.content.length).toBe(3);
 
 			//when
 			InventoryStateService.removeDataset(datasets[0]);
 
 			//then
-			expect(inventoryState.datasets.length).toBe(2);
-			expect(inventoryState.datasets[0].id).toBe('3b21388c-f54a-4334-9bef-748912d0806f');
-			expect(inventoryState.datasets[1].id).toBe('124568124-8da46-6635-6b5e-7845748fc54');
+			expect(inventoryState.datasets.content.length).toBe(2);
+			expect(inventoryState.datasets.content[0].id).toBe('3b21388c-f54a-4334-9bef-748912d0806f');
+			expect(inventoryState.datasets.content[1].id).toBe('124568124-8da46-6635-6b5e-7845748fc54');
 		}));
 
 		it('should update dataset name', inject((inventoryState, InventoryStateService) => {
 			// given
-			inventoryState.datasets = [
+			inventoryState.datasets.content = [
 				{ id: '1', name: 'toto' },
 				{ id: '2', name: 'tata' },
 				{ id: '3', name: 'titi' },
@@ -122,7 +122,7 @@ describe('Inventory state service', () => {
 			InventoryStateService.setDatasetName('2', 'tonton');
 
 			// then
-			expect(inventoryState.datasets[1].name).toBe('tonton');
+			expect(inventoryState.datasets.content[1].name).toBe('tonton');
 		}));
 
 		it('should set dataset to update', inject((inventoryState, InventoryStateService) => {
@@ -271,77 +271,37 @@ describe('Inventory state service', () => {
 	describe('sort/order', () => {
 		it('should set datasets sort', inject((inventoryState, InventoryStateService) => {
 			//given
-			inventoryState.datasetsSort = '';
+			inventoryState.datasets.sort = {
+				field: 'date',
+				isDescending: false,
+			};
 
 			//when
-			InventoryStateService.setDatasetsSort('name');
+			InventoryStateService.setDatasetsSort('name', true);
 
 			//then
-			expect(inventoryState.datasetsSort).toBe('name');
-		}));
-
-		it('should set datasets order', inject((inventoryState, InventoryStateService) => {
-			//given
-			inventoryState.datasetsOrder = '';
-
-			//when
-			InventoryStateService.setDatasetsOrder('desc');
-
-			//then
-			expect(inventoryState.datasetsOrder).toBe('desc');
+			expect(inventoryState.datasets.sort).toEqual({
+				field: 'name',
+				isDescending: true,
+			});
 		}));
 
 		it('should set preparations sort', inject((inventoryState, InventoryStateService) => {
 			//given
-			inventoryState.preparationsSort = '';
+			inventoryState.folder.sort = {
+				field: 'date',
+				isDescending: false,
+			};
 
 			//when
-			InventoryStateService.setPreparationsSort('name');
+			InventoryStateService.setPreparationsSort('name', true);
 
 			//then
-			expect(inventoryState.preparationsSort).toBe('name');
+			expect(inventoryState.folder.sort).toEqual({
+				field: 'name',
+				isDescending: true,
+			});
 		}));
-
-		it('should set preparations order', inject((inventoryState, InventoryStateService) => {
-			//given
-			inventoryState.preparationsOrder = '';
-
-			//when
-			InventoryStateService.setPreparationsOrder('desc');
-
-			//then
-			expect(inventoryState.preparationsOrder).toBe('desc');
-		}));
-
-		it('should set datasets sort/order from ids',
-			inject((inventoryState, InventoryStateService) => {
-				//given
-				inventoryState.datasetsSort = '';
-				inventoryState.datasetsOrder = '';
-
-				//when
-				InventoryStateService.setDatasetsSortFromIds('name', 'desc');
-
-				//then
-				expect(inventoryState.datasetsSort.id).toBe('name');
-				expect(inventoryState.datasetsOrder.id).toBe('desc');
-			})
-		);
-
-		it('should set preparations sort/order from ids',
-			inject((inventoryState, InventoryStateService) => {
-				//given
-				inventoryState.preparationsSort = '';
-				inventoryState.preparationsOrder = '';
-
-				//when
-				InventoryStateService.setPreparationsSortFromIds('name', 'desc');
-
-				//then
-				expect(inventoryState.preparationsSort.id).toBe('name');
-				expect(inventoryState.preparationsOrder.id).toBe('desc');
-			})
-		);
 	});
 
 	describe('loading', () => {

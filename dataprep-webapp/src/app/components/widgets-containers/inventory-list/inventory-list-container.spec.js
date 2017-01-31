@@ -21,8 +21,7 @@ const preparations = [
 		name: 'JSO prep 1',
 		author: 'jsomsanith',
 		lastModificationDate: '2 minutes ago',
-		dataset: 'Us states',
-		nbLines: 20,
+		datasetName: 'Us states',
 		nbSteps: 3,
 		icon: 'talend-dataprep',
 		actions: ['inventory:edit', 'preparation:copy-move', 'preparation:remove'],
@@ -48,8 +47,7 @@ const preparations = [
 		name: 'JSO prep 2',
 		author: 'jsomsanith',
 		lastModificationDate: '5 days ago',
-		dataset: 'First interaction',
-		nbLines: 400,
+		datasetName: 'First interaction',
 		nbSteps: 2,
 		icon: 'talend-dataprep',
 		actions: ['inventory:edit', 'preparation:copy-move', 'preparation:remove'],
@@ -422,6 +420,19 @@ describe('Inventory list container', () => {
 				expect(lastCallArgs.payload.isDescending).toBe(false);
 			})
 		);
+
+		it('should dispatch sort toggle on name column', inject((SettingsActionsService) => {
+			// given
+			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+			// when
+			element.find('thead tr th button').eq(0).click();
+
+			// then
+			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+			expect(lastCallArgs.id).toBe('preparation:sort');
+			expect(lastCallArgs.type).toBe('@@preparation/SORT');
+		}));
 	});
 
 	describe('dataset actions', () => {
@@ -452,10 +463,22 @@ describe('Inventory list container', () => {
 			element.find('#list-0-dataset\\:favorite').click();
 
 			// then
-			//expect(SettingsActionsService.dispatch.calls.count()).toBe(2);
 			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
 			expect(lastCallArgs.id).toBe('dataset:favorite');
 			expect(lastCallArgs.type).toBe('@@dataset/FAVORITE');
+		}));
+
+		it('should dispatch sort toggle on name column', inject((SettingsActionsService) => {
+			// given
+			expect(SettingsActionsService.dispatch.calls.count()).toBe(1);
+
+			// when
+			element.find('thead tr th button').eq(0).click();
+
+			// then
+			const lastCallArgs = SettingsActionsService.dispatch.calls.argsFor(1)[0];
+			expect(lastCallArgs.id).toBe('dataset:sort');
+			expect(lastCallArgs.type).toBe('@@dataset/SORT');
 		}));
 	});
 });

@@ -68,8 +68,8 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 */
 	function refreshDatasets() {
 		cancelPendingGetRequest();
-		const sort = state.inventory.datasetsSort.id;
-		const order = state.inventory.datasetsOrder.id;
+		const sort = state.inventory.datasets.sort.field;
+		const order = state.inventory.datasets.sort.isDescending ? 'desc' : 'asc';
 
 		deferredCancel = $q.defer();
 		datasetsPromise = DatasetRestService.getDatasets(sort, order, deferredCancel)
@@ -101,7 +101,7 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 			author: item.owner && item.owner.displayName,
 			creationDate: moment(item.created).fromNow(),
 			lastModificationDate: moment(item.lastModificationDate).fromNow(),
-			nbLines: item.records,
+			nbRecords: item.records,
 			displayMode: 'text',
 			className: this.getClassName(item).join(' '),
 			icon: this.getDatasetIcon(item),
@@ -269,13 +269,13 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 * @ngdoc method
 	 * @name toggleFavorite
 	 * @methodOf data-prep.services.dataset.service:DatasetListService
-	 * @param {object} dataset The target dataset to set or unset favorite
+	 * @param {object} model The target dataset to set or unset favorite
 	 * @description Set or Unset the dataset as favorite
 	 * @returns {promise} The pending POST promise
 	 */
-	function toggleFavorite(dataset) {
-		return DatasetRestService.toggleFavorite(dataset)
-			.then(() => dataset.favorite = !dataset.favorite)
+	function toggleFavorite({ model }) {
+		return DatasetRestService.toggleFavorite(model)
+			.then(() => model.favorite = !model.favorite)
 			.then(() => this.refreshDatasets());
 	}
 }

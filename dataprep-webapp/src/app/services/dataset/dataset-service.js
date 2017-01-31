@@ -19,7 +19,7 @@ const filters = [
 		imageUrl: '/assets/images/inventory/recent-datasets.png',
 		title: 'RECENT_DATASETS',
 		description: 'RECENT_DATASETS_DESCRIPTION',
-		getParameters: name => `sort=MODIF&limit=true&name=${name}`,
+		getParameters: name => `sort=lastModificationDate&limit=true&name=${name}`,
 	},
 	{
 		id: 'FAVORITE',
@@ -78,6 +78,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		getContent: DatasetRestService.getContent,
 
 		// dataset getters, refresher
+		changeSort,
 		refreshDatasets: DatasetListService.refreshDatasets,
 		getDatasets,           // promise that resolves datasets list
 		getFilteredDatasets, // retrieve datasets given a set of filters
@@ -114,20 +115,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	function refreshDatasetsSort() {
 		const savedSort = StorageService.getDatasetsSort();
 		if (savedSort) {
-			StateService.setDatasetsSort(_.find(state.inventory.sortList, { id: savedSort }));
-		}
-	}
-
-	/**
-	 * @ngdoc method
-	 * @methodOf data-prep.services.dataset.service:DatasetService
-	 * @name refreshDatasetsOrder
-	 * @description Refresh the actual order parameter
-	 */
-	function refreshDatasetsOrder() {
-		const savedSortOrder = StorageService.getDatasetsOrder();
-		if (savedSortOrder) {
-			StateService.setDatasetsOrder(_.find(state.inventory.orderList, { id: savedSortOrder }));
+			StateService.setDatasetsSort(savedSort.field, savedSort.isDescending);
 		}
 	}
 
@@ -139,7 +127,6 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	 */
 	function init() {
 		refreshDatasetsSort();
-		refreshDatasetsOrder();
 		return DatasetListService.refreshDatasets();
 	}
 
@@ -197,8 +184,8 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 			return DatasetListService.getDatasetsPromise();
 		}
 		else {
-			return state.inventory.datasets !== null ?
-				$q.when(state.inventory.datasets) :
+			return state.inventory.datasets.content !== null ?
+				$q.when(state.inventory.datasets.content) :
 				DatasetListService.refreshDatasets();
 		}
 	}
@@ -226,9 +213,9 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	 */
 	function getDatasetByName(name) {
 		const lowerCaseName = name.toLowerCase();
-		return _.find(state.inventory.datasets, (dataset) => {
-			return dataset.name.toLowerCase() === lowerCaseName;
-		});
+		return state.inventory.datasets.content.find(
+			dataset => dataset.name.toLowerCase() === lowerCaseName
+		);
 	}
 
 	/**
@@ -245,6 +232,25 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 				return dataset.id === datasetId;
 			});
 		});
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name changeSort
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description Change the datasets list sort
+	 * @param {string} field The sort field
+	 * @param {string} isDescending True if sort is descending
+	 */
+	function changeSort({ field, isDescending }) {
+		const oldField = state.inventory.datasets.sort.field;
+		const oldIsDescending = state.inventory.datasets.sort.isDescending;
+
+		StateService.setDatasetsSort(field, isDescending);
+
+		return DatasetListService.refreshDatasets()
+			.then(() => StorageService.setDatasetsSort(field, isDescending))
+			.catch(() => StateService.setDatasetsSort(oldField, oldIsDescending));
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -432,7 +438,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 				return _.map(compatiblePreparations, (candidatePrepa) => {
 					return {
 						preparation: candidatePrepa,
-						dataset: _.find(state.inventory.datasets, { id: candidatePrepa.dataSetId }),
+						dataset: state.inventory.datasets.content.find(dataset => dataset.id === candidatePrepa.dataSetId),
 					};
 				});
 			});

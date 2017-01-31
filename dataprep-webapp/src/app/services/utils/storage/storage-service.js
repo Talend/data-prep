@@ -12,7 +12,6 @@
  ============================================================================*/
 
 const PREFIX = 'org.talend.dataprep.';
-const DATASETS_ORDER_KEY = 'org.talend.dataprep.datasets.order';
 const DATASETS_SORT_KEY = 'org.talend.dataprep.datasets.sort';
 const EXPORT_PARAMS_KEY = 'org.talend.dataprep.export.params';
 const FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
@@ -22,7 +21,6 @@ const LOOKUP_DATASETS_ORDER_KEY = 'org.talend.dataprep.lookup_datasets_order';
 const PREFIX_FILTER = 'org.talend.dataprep.filter_';
 const PREFIX_SELECTED_COLUMNS_KEY = 'org.talend.dataprep.selected_columns_';
 const PREPARATIONS_SORT_KEY = 'org.talend.dataprep.preparations.sort';
-const PREPARATIONS_ORDER_KEY = 'org.talend.dataprep.preparations.order';
 const TOUR_OPTIONS_KEY = 'org.talend.dataprep.tour_options';
 const SIDE_PANEL_DOCK_KEY = 'org.talend.dataprep.sidePanel.docked';
 
@@ -411,28 +409,8 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the datasets sort in localStorage
      */
-	setDatasetsSort(sort) {
-		this.setItem(DATASETS_SORT_KEY, sort);
-	}
-
-    /**
-     * @ngdoc method
-     * @name getDatasetsOrder
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @description Get the datasets order from localStorage
-     */
-	getDatasetsOrder() {
-		return this.getItem(DATASETS_ORDER_KEY);
-	}
-
-    /**
-     * @ngdoc method
-     * @name setDatasetsOrder
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @description Save the datasets order in localStorage
-     */
-	setDatasetsOrder(order) {
-		this.setItem(DATASETS_ORDER_KEY, order);
+	setDatasetsSort(field, isDescending) {
+		this.setItem(DATASETS_SORT_KEY, { field, isDescending });
 	}
 
     /**
@@ -451,30 +429,9 @@ export default class StorageService {
      * @methodOf data-prep.services.utils.service:StorageService
      * @description Save the preparations sort in localStorage
      */
-	setPreparationsSort(sort) {
-		this.setItem(PREPARATIONS_SORT_KEY, sort);
+	setPreparationsSort(field, isDescending) {
+		this.setItem(PREPARATIONS_SORT_KEY, { field, isDescending });
 	}
-
-    /**
-     * @ngdoc method
-     * @name getPreparationsOrder
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @description Get the preparations order from localStorage
-     */
-	getPreparationsOrder() {
-		return this.getItem(PREPARATIONS_ORDER_KEY);
-	}
-
-    /**
-     * @ngdoc method
-     * @name setPreparationsOrder
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @description Save the preparations order in localStorage
-     */
-	setPreparationsOrder(order) {
-		this.setItem(PREPARATIONS_ORDER_KEY, order);
-	}
-
 
     // --------------------------------------------------------------------------------------------
     // ------------------------------------------Selected columns----------------------------------

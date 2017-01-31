@@ -35,8 +35,7 @@ const adaptedPreparation = {
 	author: 'toto',
 	creationDate: 'a few seconds ago',
 	lastModificationDate: 'a few seconds ago',
-	dataset: 'US states',
-	nbLines: 400,
+	datasetName: 'US states',
 	nbSteps: 3,
 	icon: 'talend-dataprep',
 	displayMode: 'text',
@@ -68,28 +67,16 @@ const adaptedFolder = {
 };
 
 describe('Folder services', () => {
-
 	let stateMock;
-
-	const sortList = [
-		{ id: 'name', name: 'NAME_SORT', property: 'name' },
-		{ id: 'date', name: 'DATE_SORT', property: 'created' },
-	];
-
-	const orderList = [
-		{ id: 'asc', name: 'ASC_ORDER' },
-		{ id: 'desc', name: 'DESC_ORDER' },
-	];
 
 	beforeEach(angular.mock.module('data-prep.services.folder', ($provide) => {
 		stateMock = {
 			inventory: {
 				homeFolderId: 'L215L2ZvbGRlcg==',
-
-				sortList: sortList,
-				orderList: orderList,
-				preparationsSort: sortList[0],
-				preparationsOrder: orderList[0],
+				folder: {
+					sort: { field: 'name', isDescending: false },
+					metadata: { id: '3a574ba62c69' },
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -167,32 +154,29 @@ describe('Folder services', () => {
 			//then
 			expect(FolderRestService.rename).toHaveBeenCalledWith(stateMock.inventory.homeFolderId, newName);
 		}));
-
-		it('should call rest remove', inject((FolderService, FolderRestService) => {
-			$;
-			//given
-			const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
-
-			//when
-			FolderService.remove(folderId);
-
-			//then
-			expect(FolderRestService.remove).toHaveBeenCalledWith(folderId);
-		}));
 	});
 
 	describe('init', () => {
-		it('should set the preparation sort when there is a saved one', inject((StateService, StorageService, FolderService) => {
-			// given
-			spyOn(StorageService, 'getPreparationsSort').and.returnValue('date');
-			spyOn(StateService, 'setPreparationsSort').and.returnValue();
+		it('should set the preparation sort when there is a saved one',
+			inject((StateService, StorageService, FolderService) => {
+				// given
+				const savedSort = {
+					field: 'date',
+					isDescending: true,
+				};
+				spyOn(StorageService, 'getPreparationsSort').and.returnValue(savedSort);
+				spyOn(StateService, 'setPreparationsSort').and.returnValue();
 
-			// when
-			FolderService.init('/my/path');
+				// when
+				FolderService.init('/my/path');
 
-			// then
-			expect(StateService.setPreparationsSort).toHaveBeenCalledWith(sortList[1]);
-		}));
+				// then
+				expect(StateService.setPreparationsSort).toHaveBeenCalledWith(
+					savedSort.field,
+					savedSort.isDescending
+				);
+			})
+		);
 
 		it('should NOT set the preparation sort when there is NO saved one', inject((StateService, StorageService, FolderService) => {
 			// given
@@ -204,30 +188,6 @@ describe('Folder services', () => {
 
 			// then
 			expect(StateService.setPreparationsSort).not.toHaveBeenCalled();
-		}));
-
-		it('should set the preparation order when there is a saved one', inject((StateService, StorageService, FolderService) => {
-			// given
-			spyOn(StorageService, 'getPreparationsOrder').and.returnValue('desc');
-			spyOn(StateService, 'setPreparationsOrder').and.returnValue();
-
-			// when
-			FolderService.init('/my/path');
-
-			// then
-			expect(StateService.setPreparationsOrder).toHaveBeenCalledWith(orderList[1]);
-		}));
-
-		it('should NOT set the preparation order when there is NO saved one', inject((StateService, StorageService, FolderService) => {
-			// given
-			spyOn(StorageService, 'getPreparationsOrder').and.returnValue(null);
-			spyOn(StateService, 'setPreparationsOrder').and.returnValue();
-
-			// when
-			FolderService.init('/my/path');
-
-			// then
-			expect(StateService.setPreparationsOrder).not.toHaveBeenCalled();
 		}));
 
 		it('should refresh folder content', inject(($q, FolderRestService, FolderService) => {
@@ -281,8 +241,10 @@ describe('Folder services', () => {
 		it('should get content with sort and order', inject((FolderService, FolderRestService) => {
 			// given
 			const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
-			stateMock.inventory.preparationsSort = sortList[1];
-			stateMock.inventory.preparationsOrder = orderList[1];
+			stateMock.inventory.folder.sort = {
+				field: 'date',
+				isDescending: true,
+			};
 
 			// when
 			FolderService.refresh(folderId);
@@ -306,8 +268,6 @@ describe('Folder services', () => {
 			inject(($rootScope, FolderService, StateService) => {
 				// given
 				const folderId = 'L215L3BlcnNvbmFsL2ZvbGRlcg==';
-				stateMock.inventory.preparationsSort = sortList[1];
-				stateMock.inventory.preparationsOrder = orderList[1];
 
 				// when
 				FolderService.refresh(folderId);
@@ -416,6 +376,103 @@ describe('Folder services', () => {
 
 			// then
 			expect(actions).toEqual(['inventory:edit', 'preparation:folder:remove']);
+		}));
+	});
+
+	describe('changeSort', () => {
+		let refreshMock;
+		const sort = {
+			field: 'date',
+			isDescending: true,
+		};
+
+		beforeEach(inject(($q, FolderService, StateService, StorageService) => {
+			refreshMock = spyOn(FolderService, 'refresh');
+			spyOn(StorageService, 'setPreparationsSort').and.returnValue();
+			spyOn(StateService, 'setPreparationsSort').and.returnValue();
+		}));
+
+		it('should set sort in app state',
+			inject(($q, StateService, FolderService) => {
+				// given
+				refreshMock.and.returnValue($q.when());
+
+				// when
+				FolderService.changeSort(sort);
+
+				// then
+				expect(StateService.setPreparationsSort).toHaveBeenCalledWith('date', true);
+			})
+		);
+
+		it('should refresh current folder',
+			inject(($q, StateService, FolderService) => {
+				// given
+				refreshMock.and.returnValue($q.when());
+
+				// when
+				FolderService.changeSort(sort);
+
+				// then
+				expect(FolderService.refresh).toHaveBeenCalledWith(stateMock.inventory.folder.metadata.id);
+			})
+		);
+
+		it('should save sort in local storage',
+			inject(($rootScope, $q, StateService, StorageService, FolderService) => {
+				// given
+				refreshMock.and.returnValue($q.when());
+
+				// when
+				FolderService.changeSort(sort);
+				$rootScope.$digest();
+
+				// then
+				expect(StorageService.setPreparationsSort).toHaveBeenCalledWith('date', true);
+			})
+		);
+
+		it('should restore sort in app state in case of error',
+			inject(($rootScope, $q, StateService, StorageService, FolderService) => {
+				// given
+				refreshMock.and.returnValue($q.reject());
+
+				// when
+				FolderService.changeSort(sort);
+				expect(StateService.setPreparationsSort).not.toHaveBeenCalledWith('name', false); // old sort
+				$rootScope.$digest();
+
+				// then
+				expect(StorageService.setPreparationsSort).not.toHaveBeenCalled();
+				expect(StateService.setPreparationsSort).toHaveBeenCalledWith('name', false);
+			})
+		);
+	});
+
+	describe('remove', () => {
+		const folder = { id: 'folder 1' };
+
+		beforeEach(inject(($rootScope, $q, FolderRestService, FolderService) => {
+			// given
+			spyOn(FolderService, 'refresh').and.returnValue();
+			spyOn(FolderRestService, 'remove').and.returnValue($q.when());
+
+			// when
+			FolderService.remove(folder);
+			$rootScope.$digest();
+		}));
+
+		it('should remove folder', inject((FolderRestService) => {
+			// then
+			expect(FolderRestService.remove).toHaveBeenCalledWith(folder.id);
+		}));
+
+		it('should refresh current folder', inject((FolderService) => {
+			// given
+			const currentFolderId = stateMock.inventory.folder.metadata.id;
+
+			// then
+			expect(FolderService.refresh).toHaveBeenCalledWith(currentFolderId);
 		}));
 	});
 });

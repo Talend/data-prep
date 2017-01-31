@@ -27,10 +27,6 @@ export default class PreparationActionsService {
 		this.TalendConfirmService = TalendConfirmService;
 	}
 
-	refreshCurrentFolder() {
-		return this.FolderService.refresh(this.state.inventory.folder.metadata.id);
-	}
-
 	displaySuccess(messageKey, preparation) {
 		this.MessageService.success(
 			`${messageKey}_TITLE`,
@@ -44,21 +40,9 @@ export default class PreparationActionsService {
 		case '@@preparation/CREATE':
 			this.StateService[action.payload.method](action.payload);
 			break;
+		case '@@preparation/FOLDER_REMOVE':
 		case '@@preparation/SORT': {
-			const oldSort = this.state.inventory.preparationsSort;
-			const oldOrder = this.state.inventory.preparationsOrder;
-
-			const { field, isDescending } = action.payload;
-			const sortOrder = isDescending ? 'desc' : 'asc';
-
-			this.StateService.setPreparationsSortFromIds(field, sortOrder);
-
-			this.refreshCurrentFolder()
-				.then(() => this.StorageService.setPreparationsSort(field))
-				.then(() => this.StorageService.setPreparationsOrder(sortOrder))
-				.catch(() => {
-					this.StateService.setPreparationsSortFromIds(oldSort.id, oldOrder.id);
-				});
+			this.FolderService[action.payload.method](action.payload);
 			break;
 		}
 		case '@@preparation/FOLDER_FETCH': {
@@ -87,7 +71,7 @@ export default class PreparationActionsService {
 				const nameEdition = type === 'folder' ?
 					this.FolderService.rename(model.id, cleanName) :
 					this.PreparationService.setName(model.id, cleanName);
-				nameEdition.then(() => this.refreshCurrentFolder());
+				nameEdition.then(() => this.FolderService.refreshCurrentFolder());
 			}
 			break;
 		}
@@ -100,14 +84,8 @@ export default class PreparationActionsService {
 					{ type: 'preparation', name: preparation.name }
 				)
 				.then(() => this.PreparationService.delete(preparation))
-				.then(() => this.refreshCurrentFolder())
+				.then(() => this.FolderService.refreshCurrentFolder())
 				.then(() => this.displaySuccess('REMOVE_SUCCESS', preparation));
-			break;
-		}
-		case '@@preparation/FOLDER_REMOVE': {
-			const folder = action.payload.model;
-			this.FolderService.remove(folder.id)
-				.then(() => this.refreshCurrentFolder());
 			break;
 		}
 		}

@@ -16,6 +16,7 @@ package org.talend.dataprep.api.service.settings.views.provider;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 import org.talend.dataprep.api.service.settings.views.api.actionsbar.ActionsBarSettings;
 import org.talend.dataprep.api.service.settings.views.api.list.*;
+import org.talend.dataprep.util.SortAndOrderHelper;
 
 import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.*;
 import static org.talend.dataprep.api.service.settings.actions.provider.InventoryActions.INVENTORY_CANCEL_EDIT;
@@ -51,10 +52,10 @@ public interface ListViews {
                             .column("author", "Author")
                             .column("creationDate", "Created")
                             .column("lastModificationDate", "Modified")
-                            .column("dataset", "Dataset")
-                            .column("nbLines", "Lines")
+                            .column("datasetName", "Dataset")
                             .column("nbSteps", "Steps")
                             .itemProps(ListItemsSettings.builder().classNameKey("className").build())
+                            .sort(ListSortSettings.builder().onChange(PREPARATION_SORT.getId()).build())
                             .titleProps(
                                     ListTitleSettings.builder()
                                             .displayModeKey("displayMode")
@@ -69,13 +70,6 @@ public interface ListViews {
             )
             .toolbar(
                     ToolbarDetailsSettings.builder()
-                            .sort(
-                                    ListSortSettings.builder()
-                                            .options("name", "Name")
-                                            .options("date", "Creation Date")
-                                            .onChange(PREPARATION_SORT.getId())
-                                            .build()
-                            )
                             .actionBar(
                                     ActionsBarSettings.builder()
                                             .action(LEFT, PREPARATION_CREATE.getId())
@@ -95,8 +89,9 @@ public interface ListViews {
                             .column("statusActions", "", "actions")
                             .column("author", "Author")
                             .column("creationDate", "Created")
-                            .column("nbLines", "Lines")
+                            .column("nbRecords", "Rows")
                             .itemProps(ListItemsSettings.builder().classNameKey("className").build())
+                            .sort(ListSortSettings.builder().onChange(DATASET_SORT.getId()).build())
                             .titleProps(
                                     ListTitleSettings.builder()
                                             .displayModeKey("displayMode")
@@ -111,13 +106,6 @@ public interface ListViews {
             )
             .toolbar(
                     ToolbarDetailsSettings.builder()
-                            .sort(
-                                    ListSortSettings.builder()
-                                            .options("name", "Name")
-                                            .options("date", "Creation Date")
-                                            .onChange(DATASET_SORT.getId())
-                                            .build()
-                            )
                             .actionBar(
                                     ActionsBarSettings.builder()
                                             .action(LEFT, DATASET_CREATE.getId())

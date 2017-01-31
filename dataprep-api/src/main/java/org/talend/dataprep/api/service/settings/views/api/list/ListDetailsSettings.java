@@ -41,6 +41,11 @@ public class ListDetailsSettings {
     private ListItemsSettings itemProps;
 
     /**
+     * Sort configuration
+     */
+    private ListSortSettings sort;
+
+    /**
      * Items title (main property) configuration
      */
     private ListTitleSettings titleProps;
@@ -59,6 +64,14 @@ public class ListDetailsSettings {
 
     public void setItemProps(final ListItemsSettings itemProps) {
         this.itemProps = itemProps;
+    }
+
+    public ListSortSettings getSort() {
+        return sort;
+    }
+
+    public void setSort(ListSortSettings sort) {
+        this.sort = sort;
     }
 
     public ListTitleSettings getTitleProps() {
@@ -85,6 +98,8 @@ public class ListDetailsSettings {
 
         private ListItemsSettings itemProps;
 
+        private ListSortSettings sort;
+
         private ListTitleSettings titleProps;
 
         public Builder column(final String key, final String label) {
@@ -108,6 +123,11 @@ public class ListDetailsSettings {
             return this;
         }
 
+        public Builder sort(final ListSortSettings sort) {
+            this.sort = sort;
+            return this;
+        }
+
         public Builder titleProps(final ListTitleSettings titleProps) {
             this.titleProps = titleProps;
             return this;
@@ -117,6 +137,7 @@ public class ListDetailsSettings {
             final ListDetailsSettings settings = new ListDetailsSettings();
             settings.setColumns(this.columns);
             settings.setItemProps(this.itemProps);
+            settings.setSort(this.sort);
             settings.setTitleProps(this.titleProps);
             return settings;
         }

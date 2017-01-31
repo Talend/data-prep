@@ -16,6 +16,7 @@ describe('Dataset Service', () => {
 
     let promiseWithProgress;
     let stateMock;
+    let refreshMock;
 
     const datasets = [{ id: '11', name: 'my dataset' },
         { id: '22', name: 'my second dataset' },
@@ -37,7 +38,10 @@ describe('Dataset Service', () => {
     beforeEach(angular.mock.module('data-prep.services.dataset', ($provide) => {
         stateMock = {
             inventory: {
-                datasets: datasets,
+                datasets: {
+                    sort: { field: 'name', isDescending: false },
+                    content: datasets,
+                },
                 sortList: sortList,
                 orderList: orderList,
             },
@@ -53,7 +57,7 @@ describe('Dataset Service', () => {
         spyOn(DatasetListService, 'update').and.returnValue(promiseWithProgress);
         spyOn(DatasetListService, 'delete').and.returnValue($q.when());
         spyOn(DatasetListService, 'clone').and.returnValue($q.when());
-        spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when(datasets));
+        refreshMock = spyOn(DatasetListService, 'refreshDatasets');
 
         spyOn(DatasetRestService, 'getContent').and.returnValue($q.when({}));
         spyOn(DatasetRestService, 'getSheetPreview').and.returnValue($q.when({}));
@@ -64,16 +68,24 @@ describe('Dataset Service', () => {
     }));
 
     describe('init', () => {
+        beforeEach(inject(($q) => {
+            refreshMock.and.returnValue($q.when(datasets));
+        }));
+        
         it('should set the datasets sort when there is a saved one', inject((StateService, StorageService, DatasetService) => {
             // given
-            spyOn(StorageService, 'getDatasetsSort').and.returnValue('date');
+            const savedSort = {
+                field: 'date',
+                isDescending: true,
+            };
+            spyOn(StorageService, 'getDatasetsSort').and.returnValue(savedSort);
             spyOn(StateService, 'setDatasetsSort').and.returnValue();
 
             // when
             DatasetService.init('/my/path');
 
             // then
-            expect(StateService.setDatasetsSort).toHaveBeenCalledWith(sortList[1]);
+            expect(StateService.setDatasetsSort).toHaveBeenCalledWith(savedSort.field, savedSort.isDescending);
         }));
 
         it('should NOT set the datasets sort when there is NO saved one', inject((StateService, StorageService, DatasetService) => {
@@ -86,30 +98,6 @@ describe('Dataset Service', () => {
 
             // then
             expect(StateService.setDatasetsSort).not.toHaveBeenCalled();
-        }));
-
-        it('should set the datasets order when there is a saved one', inject((StateService, StorageService, DatasetService) => {
-            // given
-            spyOn(StorageService, 'getDatasetsOrder').and.returnValue('desc');
-            spyOn(StateService, 'setDatasetsOrder').and.returnValue();
-
-            // when
-            DatasetService.init('/my/path');
-
-            // then
-            expect(StateService.setDatasetsOrder).toHaveBeenCalledWith(orderList[1]);
-        }));
-
-        it('should NOT set the datasets order when there is NO saved one', inject((StateService, StorageService, DatasetService) => {
-            // given
-            spyOn(StorageService, 'getDatasetsOrder').and.returnValue(null);
-            spyOn(StateService, 'setDatasetsOrder').and.returnValue();
-
-            // when
-            DatasetService.init('/my/path');
-
-            // then
-            expect(StateService.setDatasetsOrder).not.toHaveBeenCalled();
         }));
 
         it('should refresh datasets list', inject(($q, DatasetListService, DatasetService) => {
@@ -126,6 +114,10 @@ describe('Dataset Service', () => {
 
     describe('get', () => {
         describe('all', () => {
+            beforeEach(inject(($q) => {
+                refreshMock.and.returnValue($q.when(datasets));
+            }));
+            
             it('should get a promise that resolve the existing datasets if already fetched', inject(($q, $rootScope, DatasetService, DatasetListService) => {
                 // given
                 spyOn(DatasetListService, 'hasDatasetsPromise').and.returnValue(true);
@@ -157,7 +149,7 @@ describe('Dataset Service', () => {
             it('should get a promise that fetch datasets', inject(($rootScope, DatasetService, DatasetListService) => {
                 // given
                 let results = null;
-                stateMock.inventory.datasets = null;
+                stateMock.inventory.datasets.content = null;
 
                 // when
                 DatasetService.getDatasets()
@@ -182,7 +174,7 @@ describe('Dataset Service', () => {
                 DatasetService.getFilteredDatasets(filter, 'toto');
 
                 // then
-                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('sort=MODIF&limit=true&name=toto' );
+                expect(DatasetRestService.getFilteredDatasets).toHaveBeenCalledWith('sort=lastModificationDate&limit=true&name=toto' );
             }));
 
             it('should fetch favorite datasets', inject((DatasetService, DatasetRestService) => {
@@ -268,7 +260,7 @@ describe('Dataset Service', () => {
     describe('delete', () => {
         it('should delete a dataset', inject(($rootScope, DatasetService, DatasetListService) => {
             // given
-            const dataset = stateMock.inventory.datasets[0];
+            const dataset = stateMock.inventory.datasets.content[0];
 
             // when
             DatasetService.delete(dataset);
@@ -280,7 +272,7 @@ describe('Dataset Service', () => {
 
         it('should remove aggregations from local storage on the removed dataset', inject(($rootScope, DatasetService, StorageService) => {
             // given
-            const dataset = stateMock.inventory.datasets[0];
+            const dataset = stateMock.inventory.datasets.content[0];
             spyOn(StorageService, 'removeAllAggregations').and.returnValue();
 
             // when
@@ -586,5 +578,73 @@ describe('Dataset Service', () => {
             // then
             expect(DatasetService.isRenameEnabled()).toBeTruthy();
         }));
+    });
+
+    describe('changeSort', () => {
+        const sort = {
+            field: 'date',
+            isDescending: true,
+        };
+
+        beforeEach(inject(($q, StateService, StorageService) => {
+            spyOn(StorageService, 'setDatasetsSort').and.returnValue();
+            spyOn(StateService, 'setDatasetsSort').and.returnValue();
+        }));
+
+        it('should set sort in app state',
+            inject(($q, StateService, DatasetService) => {
+                // given
+                refreshMock.and.returnValue($q.when());
+
+                // when
+                DatasetService.changeSort(sort);
+
+                // then
+                expect(StateService.setDatasetsSort).toHaveBeenCalledWith('date', true);
+            })
+        );
+
+        it('should refresh dataset list',
+            inject(($q, DatasetListService, DatasetService) => {
+                // given
+                refreshMock.and.returnValue($q.when());
+
+                // when
+                DatasetService.changeSort(sort);
+
+                // then
+                expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
+            })
+        );
+
+        it('should save sort in local storage',
+            inject(($rootScope, $q, StateService, StorageService, DatasetService) => {
+                // given
+                refreshMock.and.returnValue($q.when());
+
+                // when
+                DatasetService.changeSort(sort);
+                $rootScope.$digest();
+
+                // then
+                expect(StorageService.setDatasetsSort).toHaveBeenCalledWith('date', true);
+            })
+        );
+
+        it('should restore sort in app state in case of error',
+            inject(($rootScope, $q, StateService, StorageService, DatasetService) => {
+                // given
+                refreshMock.and.returnValue($q.reject());
+
+                // when
+                DatasetService.changeSort(sort);
+                expect(StateService.setDatasetsSort).not.toHaveBeenCalledWith('name', false); // old sort
+                $rootScope.$digest();
+
+                // then
+                expect(StorageService.setDatasetsSort).not.toHaveBeenCalled();
+                expect(StateService.setDatasetsSort).toHaveBeenCalledWith('name', false);
+            })
+        );
     });
 });

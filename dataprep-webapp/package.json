@@ -61,7 +61,7 @@
     "react-dom": "^15.4.1",
     "react-talend-components": "0.60.3",
     "react-talend-forms": "0.60.3",
-    "sunchoke": "git+https://github.com/Talend/sunchoke.git#1.0.0",
+    "sunchoke": "git+https://github.com/Talend/sunchoke.git#1.1.0",
     "talend-icons": "0.60.3",
     "uuid": "^2.0.3"
   },

@@ -40,29 +40,9 @@
     <sc-tabs ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
              class="actions-scope"
              selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_TEXT' | translate}}">
-            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_CELL' | translate}}">
-            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
-        </sc-tabs-item>
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_ROW' | translate}}">
-            <div ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedLine">
-                <actions-list class="action-suggestion-tab-items"
-                              actions="actionsSuggestionsCtrl.state.playground.suggestions.line.filteredTransformations"
-                              scope="line"
-                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
-                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
-                              ng-switch-when="true"
-                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
-
-                <div class="watermark"
-                     ng-switch-when="false"
-                     translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
-            </div>
-        </sc-tabs-item>
         <sc-tabs-item tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" is-default="true">
-            <div ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length">
+            <div class="action-search-container"
+                 ng-if="actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length">
                 <input type="search"
                        class="action-search"
                        id="action-suggestions-search"
@@ -82,11 +62,21 @@
             <div ng-if="!actionsSuggestionsCtrl.state.playground.grid.selectedColumns.length"
                  class="watermark"
                  translate-once="SELECT_COLUMN_TO_DISPLAY_ACTIONS"></div>
-
         </sc-tabs-item>
+        <sc-tabs-item tab-title="{{'ACTIONS_TAB_ROW' | translate}}">
+            <div ng-switch="!!actionsSuggestionsCtrl.state.playground.grid.selectedLine">
+                <actions-list class="action-suggestion-tab-items"
+                              actions="actionsSuggestionsCtrl.state.playground.suggestions.line.filteredTransformations"
+                              scope="line"
+                              should-render-category="actionsSuggestionsCtrl.shouldRenderCategory"
+                              should-render-action="actionsSuggestionsCtrl.shouldRenderAction"
+                              ng-switch-when="true"
+                              scroll-to-bottom="actionsSuggestionsCtrl.scrollToBottom"></actions-list>
 
-        <sc-tabs-item tab-title="{{'ACTIONS_TAB_TABLE' | translate}}">
-            <div class="action-suggestion-tab-items watermark" translate-once="NO_FUNCTION"></div>
+                <div class="watermark"
+                     ng-switch-when="false"
+                     translate-once="SELECT_LINE_TO_DISPLAY_ACTIONS"></div>
+            </div>
         </sc-tabs-item>
     </sc-tabs>
 

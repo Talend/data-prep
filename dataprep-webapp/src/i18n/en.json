@@ -266,11 +266,8 @@
   "ALL_LINES": "All Rows",
   "FILTERED_LINED": "Filtered Rows",
   "MULTI_COLUMNS_SELECTED": "{{nb}} columns selected",
-  "ACTIONS_TAB_TEXT": "Text",
-  "ACTIONS_TAB_CELL": "Cell",
   "ACTIONS_TAB_ROW": "Row",
   "ACTIONS_TAB_COLUMN": "Column",
-  "ACTIONS_TAB_TABLE": "Table",
 
   "_comment": "Recipe",
   "FILTERS_APPLIED": "Filters applied",

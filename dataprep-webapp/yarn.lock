@@ -6304,9 +6304,9 @@ style-loader@^0.13.1:
   dependencies:
     loader-utils "^0.2.7"
 
-"sunchoke@git+https://github.com/Talend/sunchoke.git#1.0.0":
-  version "1.0.0"
-  resolved "git+https://github.com/Talend/sunchoke.git#be22e88847c1606830cf9528f831ec44f3534968"
+"sunchoke@git+https://github.com/Talend/sunchoke.git#1.1.0":
+  version "1.1.0"
+  resolved "git+https://github.com/Talend/sunchoke.git#d97a5a01ebf0b0da5ef7bb15d66deaa7eb481c9b"
   dependencies:
     angular "^1.5.3"
     angular-animate "^1.5.3"

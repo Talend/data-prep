@@ -39,20 +39,26 @@
 			flex-shrink: 1;
 			position: relative;
 
-			.action-search {
-				width: 94%;
-				height: 25px;
-				font-size: 0.8em;
-				padding: 0 20px 0 5px;
-				margin: 5px 10px 5px 10px;
-				border-top: 1px solid transparent;
-				border-right: 1px solid transparent;
-				border-left: 1px solid transparent;
-				box-shadow: none;
+			.action-search-container {
+				box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
 
-				&::-ms-clear {
-					display: none;
+				.action-search {
+					width: 94%;
+					height: 25px;
+					font-size: .9em;
+					font-weight: 500;
+					padding: 0 20px 0 5px;
+					margin: 5px 10px 5px 10px;
+					border-top: 1px solid transparent;
+					border-right: 1px solid transparent;
+					border-left: 1px solid transparent;
+					box-shadow: none;
+
+					&::-ms-clear {
+						display: none;
+					}
 				}
+
 			}
 		;
 

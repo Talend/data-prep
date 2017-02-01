@@ -45,7 +45,7 @@ describe('UploadWorkflow Service', () => {
             expect($state.go).toHaveBeenCalledWith('playground.dataset', { datasetid: dataset.id });
         }));
 
-        it('should open datasetin new tab on ctrl-click', inject(($state, $window, UploadWorkflowService) => {
+        it('should open dataset in new tab on ctrl-click', inject(($state, $window, UploadWorkflowService) => {
             //given
             const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
 
@@ -56,7 +56,7 @@ describe('UploadWorkflow Service', () => {
             expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
         }));
 
-        it('should open datasetin new tab on MetaKey-click', inject(($state, $window, UploadWorkflowService) => {
+        it('should open dataset in new tab on MetaKey-click', inject(($state, $window, UploadWorkflowService) => {
             //given
             const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
 
@@ -67,7 +67,7 @@ describe('UploadWorkflow Service', () => {
             expect($window.open).toHaveBeenCalledWith('absoluetUrl', '_blank');
         }));
 
-        it('should open datasetin new tab on mousewheel click', inject(($state, $window, UploadWorkflowService) => {
+        it('should open dataset in new tab on mousewheel click', inject(($state, $window, UploadWorkflowService) => {
             //given
             const dataset = { name: 'Customers (50 lines)', id: 'aA2bc348e933bc2' };
 

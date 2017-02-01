@@ -18,14 +18,8 @@ $icon-csv-badge-color: #4F6C00;
 $icon-job-badge-color: #266092;
 $icon-xls-badge-color: #8ABC00;
 
-@keyframes rotation {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(359deg);
-	}
-}
+$large-screen: em(860) !default;
+$x-large-screen: em(1824) !default;
 
 .list-item-preparation {
 	.tc-list-icon {
@@ -75,3 +69,27 @@ $icon-xls-badge-color: #8ABC00;
 		padding-left: 20px;
 	}
 }
+
+table tbody td {
+	@include media($large-screen) {
+		.btn-link {
+			max-width: 400px;
+		}
+
+		.item-text {
+			max-width: 200px;
+		}
+	}
+
+	@include media($x-large-screen) {
+		.btn-link {
+			max-width: 700px;
+		}
+
+		.item-text {
+			max-width: 250px;
+		}
+	}
+}
+
+

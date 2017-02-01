@@ -12,7 +12,6 @@
  ============================================================================*/
 
 import InventoryListCtrl from './inventory-list-controller';
-import './inventory-list-container.scss';
 
 /**
  * Inventory list container

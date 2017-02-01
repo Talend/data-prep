@@ -34,6 +34,9 @@ public class NumericHelper {
 
     private static final char[] ALLOWED_NUMERIC_CHARACTERS = new char[]{',', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', 'E', 'e', ' ', '\''};
 
+    private NumericHelper() {
+    }
+
     private static boolean isValid(String str, AbstractFormatValidator validator) {
         for (Locale locale : LOCALES) {
             if (validator.isValid(str, locale)) {

@@ -11,55 +11,11 @@
 
   ============================================================================*/
 
-$datagrid-header-bkg: $dark-gray;
-
-.grid-header {
-	$datagrid-header: #266092;
-	$datagrid-header-bkg-active: darken($datagrid-header-bkg, 10%);
-
-	$datagrid-headercell-font-size: .95em;
-
-	background-color: $datagrid-header-bkg;
-	border: 1px solid transparent; /*rgb(221, 221, 221);*/
-	color: $white;
-	text-transform: uppercase;
-	font-family: $monospace;
-	font-weight: 700;
-	font-size: $datagrid-headercell-font-size;
-	cursor: default;
-	padding: 5px 5px 0;
-
-	&:hover {
-		background-color: $datagrid-header-bkg-active;
-		border: 1px solid gray;
-		cursor: default;
-	}
-
-	.grid-header-type {
-		@include ellipsis();
-		height: 100%;
-		text-transform: lowercase;
-		font-size: 0.75em;
-		font-weight: 300;
-		text-align: right;
-		display: block;
-	}
-
-	.talend-dropdown-text-div {
-		overflow: hidden;
-		max-width: 90%;
-		height: 23px;
-		.grid-header-title {
-			width: 100%;
-			height: 100%
-		}
-	}
-}
-
 .add-to-lookup {
-	background-color: $white;
 	font-weight: 700;
 	color: $dark-blue;
+	background-color: $white;
+
 	input[type="checkbox"] {
 		margin-left: 5px;
 		margin-right: 0;

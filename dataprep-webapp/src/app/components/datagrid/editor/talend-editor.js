@@ -76,7 +76,7 @@ export default function TalendEditor(validationFn, translatedMsg) {
                 .focus()
                 .select();
 
-            $checkboxContainer = $('<div class="checkboxContainer"><input type="checkbox">' + translatedMsg + '</div>')
+            $checkboxContainer = $('<div class="checkboxContainer"><form><label><input type="checkbox">' + translatedMsg + '</label></form></div>')
                 .appendTo($container);
             $checkbox = $checkboxContainer.find('input[type="checkbox"]');
         }

@@ -37,6 +37,7 @@ export default function DatagridHeader($timeout) {
 		templateUrl: template,
 		scope: {
 			column: '=',
+			selected: '<',
 		},
 		bindToController: true,
 		controllerAs: 'datagridHeaderCtrl',

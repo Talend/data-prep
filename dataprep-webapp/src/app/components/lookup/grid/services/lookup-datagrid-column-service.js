@@ -72,7 +72,7 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
 	function createColumns(columnsMetadata) {
         // create new SlickGrid columns
 		const colIndexArray = [];
-		const colIndexNameTemplate = '<div class="lookup-slick-header-column-index">#</div>';
+		const colIndexNameTemplate = '<div class="lookup-slick-header-column-index"></div>';
 
         // Add index column
 		colIndexArray.push({

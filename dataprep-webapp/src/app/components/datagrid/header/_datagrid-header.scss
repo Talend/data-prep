@@ -12,17 +12,20 @@
   ============================================================================*/
 
 .grid-header {
+	$datagrid-header-color: $white;
 	$datagrid-header-background: #666666;
 	$datagrid-header-background-active: darken($datagrid-header-background, 10%);
-	$datagrid-header-font-size: .95em;
+
+	$datagrid-header-new-background: #89AC4E;
+	$datagrid-header-updated-background: #AEB260;
+	$datagrid-header-deleted-background: #9D6162;
 
 	padding: 5px 5px 0;
 	height: 40px;
 	font-family: $sourcesanspro;
-	font-weight: 700;
-	font-size: $datagrid-header-font-size;
+	font-size: 1.2rem;
 	text-transform: uppercase;
-	color: $white;
+	color: $datagrid-header-color;
 	background-color: $datagrid-header-background;
 	border-left: #5a5a5a;
 
@@ -36,30 +39,28 @@
 	}
 
 	&.newColumn {
-		background-color: #89AC4E;
+		background-color: $datagrid-header-new-background
 	}
 
 	&.updatedColumn {
-		background-color: #AEB260;
+		background-color: $datagrid-header-updated-background
 	}
 
 	&.deletedColumn {
-		background-color: #9D6162;
+		background-color: $datagrid-header-deleted-background
 	}
 
 	.talend-dropdown-text-div {
 		&-title {
 			padding-right: 1rem;
-			font-size: 1.2rem;
-			font-weight: 400;
 			letter-spacing: 0.06rem;
 		}
 
 		&-title-input {
-			color: #555964;
 			display: table-cell;
 			margin-bottom: 0;
 			padding: 0 0 0 0.5em;
+			color: #555964;
 		}
 	}
 
@@ -74,6 +75,7 @@
 		font-weight: 400;
 		text-align: right;
 		text-transform: lowercase;
+		color: #B3B3B3;
 	}
 
 	&-menu {

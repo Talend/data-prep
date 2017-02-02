@@ -13,8 +13,8 @@
 
 .quality-bar {
   position:relative;
-  height: 14px;
-  line-height: 14px;
+  height: 1rem;
+  line-height: 1rem;
   white-space: nowrap;
   overflow: hidden;
   box-sizing: border-box;
@@ -27,14 +27,6 @@
 
   &.border {
     border: 1px solid white;
-  }
-
-  &.big {
-    height: 25px;
-
-    .sub-bar{
-      line-height: 23px;
-    }
   }
 
   &.center {

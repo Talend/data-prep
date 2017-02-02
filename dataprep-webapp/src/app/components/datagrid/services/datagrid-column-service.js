@@ -37,18 +37,18 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 	let renewAllFlag;
 	let availableHeaders = [];
 
-    /**
-     * contains a backup of the columnsMetadata to find which has been moved after a reorder
-     * @type {Array}
-     */
+	/**
+	 * contains a backup of the columnsMetadata to find which has been moved after a reorder
+	 * @type {Array}
+	 */
 	let originalColumns = [];
 
 	const gridHeaderPreviewTemplate =
-        '<div class="grid-header <%= diffClass %>">' +
-        '   <div class="grid-header-title dropdown-button ng-binding"><%= name || "&nbsp;" %></div>' +
-        '   <div class="grid-header-type ng-binding"><%= simpleType %></div>' +
-        '</div>' +
-        '<div class="quality-bar"><div class="record-unknown"></div></div>';
+		'<div class="grid-header <%= diffClass %>">' +
+		'   <div class="grid-header-title dropdown-button ng-binding"><%= name || "&nbsp;" %></div>' +
+		'   <div class="grid-header-type ng-binding"><%= simpleType %></div>' +
+		'</div>' +
+		'<div class="quality-bar"><div class="record-unknown"></div></div>';
 
 	return {
 		init,
@@ -57,34 +57,34 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		columnsOrderChanged,
 	};
 
-    // --------------------------------------------------------------------------------------------
-    // -----------------------------------------------GRID COLUMNS---------------------------------
-    // --------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	// -----------------------------------------------GRID COLUMNS---------------------------------
+	// --------------------------------------------------------------------------------------------
 
-    /**
-     * @ngdoc method
-     * @name createColumnDefinition
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object} col The column metadata to adapt
-     * @param {boolean} preview Flag that indicates if we are in the preview mode
-     * @description Adapt column metadata to slick column.
-     * <ul>
-     *     <li>
-     *         Non preview mode : The div id depending on index is important.
-     *         It is used as insertion point for the header directive.
-     *     </li>
-     *     <li>Preview mode : we inject directly a fake header</li>
-     * </ul>
-     * @returns {object} The adapted column item
-     */
+	/**
+	 * @ngdoc method
+	 * @name createColumnDefinition
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object} col The column metadata to adapt
+	 * @param {boolean} preview Flag that indicates if we are in the preview mode
+	 * @description Adapt column metadata to slick column.
+	 * <ul>
+	 *     <li>
+	 *         Non preview mode : The div id depending on index is important.
+	 *         It is used as insertion point for the header directive.
+	 *     </li>
+	 *     <li>Preview mode : we inject directly a fake header</li>
+	 * </ul>
+	 * @returns {object} The adapted column item
+	 */
 	function createColumnDefinition(col, preview) {
 		const template = preview ?
-            _.template(gridHeaderPreviewTemplate)({
-	name: col.name,
-	diffClass: DatagridStyleService.getColumnPreviewStyle(col),
-	simpleType: col.domain ? col.domain : ConverterService.simplifyType(col.type),
-}) :
-            '';
+			_.template(gridHeaderPreviewTemplate)({
+				name: col.name,
+				diffClass: DatagridStyleService.getColumnPreviewStyle(col),
+				simpleType: col.domain ? col.domain : ConverterService.simplifyType(col.type),
+			}) :
+			'';
 		const translatedMsg = $translate.instant('APPLY_TO_ALL_CELLS');
 
 		return {
@@ -94,39 +94,39 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 			formatter: DatagridStyleService.columnFormatter(col),
 			tdpColMetadata: col,
 			editor: preview ?
-                null :
-                Slick.Editors.TalendEditor( // eslint-disable-line new-cap
-                    PlaygroundService.editCell,
-                    translatedMsg
-                ),
+				null :
+				Slick.Editors.TalendEditor( // eslint-disable-line new-cap
+					PlaygroundService.editCell,
+					translatedMsg
+				),
 			preview,
 		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name createColumns
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object[]} columnsMetadata Columns details
-     * @param {boolean} preview Flag that indicates if we are in preview mode
-     * @description Two modes :
-     * <ul>
-     *     <li>
-     *         Preview : we save actual headers
-     *         and simulate fake headers with the new preview columns
-     *     </li>
-     *     <li>
-     *         Classic : we map each column to a header.
-     *         This header can be a reused header if the column was the same as before,
-     *         or a new created one otherwise.
-     * </li>
-     * </ul>
-     */
+	/**
+	 * @ngdoc method
+	 * @name createColumns
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object[]} columnsMetadata Columns details
+	 * @param {boolean} preview Flag that indicates if we are in preview mode
+	 * @description Two modes :
+	 * <ul>
+	 *     <li>
+	 *         Preview : we save actual headers
+	 *         and simulate fake headers with the new preview columns
+	 *     </li>
+	 *     <li>
+	 *         Classic : we map each column to a header.
+	 *         This header can be a reused header if the column was the same as before,
+	 *         or a new created one otherwise.
+	 * </li>
+	 * </ul>
+	 */
 	function createColumns(columnsMetadata, preview) {
-        // create new SlickGrid columns
+		// create new SlickGrid columns
 		const colIndexArray = [];
 
-        // Add index column
+		// Add index column
 		colIndexArray.push({
 			id: COLUMN_INDEX_ID,
 			name: '',
@@ -148,18 +148,18 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		return columns;
 	}
 
-    /**
-     * @ngdoc method
-     * @name columnsOrderChanged
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object[]} columnsMetadata Columns details
-     * @param {object[]} originals the optional original columns
-     * if null the field will be used originalColumns
-     * @description method trigger on columns reorder
-     */
+	/**
+	 * @ngdoc method
+	 * @name columnsOrderChanged
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object[]} columnsMetadata Columns details
+	 * @param {object[]} originals the optional original columns
+	 * if null the field will be used originalColumns
+	 * @description method trigger on columns reorder
+	 */
 	function columnsOrderChanged(columnsMetadata, originals) {
 		const original = originals || originalColumns;
-        // the user started reordering but has abandoned his action at the end
+		// the user started reordering but has abandoned his action at the end
 		if (_.map(original, 'tdpColMetadata.id').join() === _.map(columnsMetadata, 'tdpColMetadata.id').join()) {
 			return;
 		}
@@ -177,22 +177,22 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		PlaygroundService.appendStep([{ action: 'reorder', parameters: params }]);
 	}
 
-    /**
-     * @ngdoc method
-     * @name findMovedCols
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param originalCols
-     * @param newCols
-     * @returns Object with fields :
-     *  <ul>
-     *    <li>selected: containing the column id to move</li>
-     *    <li>target: containing the column id where to move</li>
-     *    <li>name: the name of the moved field</li>
-     * @private
-     * @description find which columnMetadata has been moved between the two arrays
-     * during a reorder columns.
-     * We iterate on array and so some comparaisons.
-     */
+	/**
+	 * @ngdoc method
+	 * @name findMovedCols
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param originalCols
+	 * @param newCols
+	 * @returns Object with fields :
+	 *  <ul>
+	 *    <li>selected: containing the column id to move</li>
+	 *    <li>target: containing the column id where to move</li>
+	 *    <li>name: the name of the moved field</li>
+	 * @private
+	 * @description find which columnMetadata has been moved between the two arrays
+	 * during a reorder columns.
+	 * We iterate on array and so some comparaisons.
+	 */
 	function findMovedCols(originalCols, newCols) {
 		const result = {};
 		let index = 0;
@@ -200,12 +200,12 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		let movedCol = null;
 		_.forEach(originalCols, (col) => {
 			if (!movedCol && col.id) {
-                // move forward case
+				// move forward case
 				if (col.id !== newCols[index].id &&
-                    originalCols[index + 1].id === newCols[index].id) {
+					originalCols[index + 1].id === newCols[index].id) {
 					movedCol = col;
 					movedIndex = index;
-                    // find new index of movedCol
+					// find new index of movedCol
 					result.selected = movedCol.id;
 					result.name = _.get(movedCol, 'tdpColMetadata.name');
 					index = 0;
@@ -218,7 +218,7 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 					});
 					return result;
 				}
-                // move backward case
+				// move backward case
 				else if (col.id !== newCols[index].id && col.id === newCols[index + 1].id) {
 					movedCol = col;
 					movedIndex = index;
@@ -234,30 +234,30 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		return result;
 	}
 
-    // --------------------------------------------------------------------------------------------
-    // -----------------------------------------------GRID HEADERS---------------------------------
-    // --------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name destroyHeader
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object} headerDefinition The header definition
-     * that contains scope (the angular scope) and header (the element)
-     * @description Destroy the angular scope and header element
-     */
+	// --------------------------------------------------------------------------------------------
+	// -----------------------------------------------GRID HEADERS---------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name destroyHeader
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object} headerDefinition The header definition
+	 * that contains scope (the angular scope) and header (the element)
+	 * @description Destroy the angular scope and header element
+	 */
 	function destroyHeader(headerDefinition) {
 		headerDefinition.scope.$destroy();
 		headerDefinition.header.remove();
 	}
 
-    /**
-     * @ngdoc method
-     * @name renewAllColumns
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {boolean} value The new flag value
-     * @description Set the 'renewAllFlag' with provided value to control
-     * whether the headers should be reused or recreated
-     */
+	/**
+	 * @ngdoc method
+	 * @name renewAllColumns
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {boolean} value The new flag value
+	 * @description Set the 'renewAllFlag' with provided value to control
+	 * whether the headers should be reused or recreated
+	 */
 	function renewAllColumns(value) {
 		renewAllFlag = value;
 
@@ -267,17 +267,17 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name createHeader
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @description [PRIVATE] Create a column header object containing
-     * <ul>
-     *     <li>the element directive</li>
-     *     <li>The directive scope</li>
-     *     <li>The column metadata</li>
-     * </ul>
-     */
+	/**
+	 * @ngdoc method
+	 * @name createHeader
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @description [PRIVATE] Create a column header object containing
+	 * <ul>
+	 *     <li>the element directive</li>
+	 *     <li>The directive scope</li>
+	 *     <li>The column metadata</li>
+	 * </ul>
+	 */
 	function createHeader(col) {
 		const headerScope = $rootScope.$new(true);
 		headerScope.column = col;
@@ -291,17 +291,17 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name createIndexHeader
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @description [PRIVATE] Create the index column header object containing
-     * <ul>
-     *     <li>the element directive</li>
-     *     <li>The directive scope</li>
-     *     <li>The column metadata</li>
-     * </ul>
-     */
+	/**
+	 * @ngdoc method
+	 * @name createIndexHeader
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @description [PRIVATE] Create the index column header object containing
+	 * <ul>
+	 *     <li>the element directive</li>
+	 *     <li>The directive scope</li>
+	 *     <li>The column metadata</li>
+	 * </ul>
+	 */
 	function createIndexHeader() {
 		const headerScope = $rootScope.$new(true);
 		const headerElement = angular.element('<datagrid-index-header></datagrid-index-header>');
@@ -314,30 +314,30 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name detachAndSaveHeader
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object} event The Slickgrid header destroy event
-     * @param {object} columnsArgs The column header arguments passed by SlickGrid
-     * @description This is part of the process to avoid recreation of the datagrid header
-     * when it is not necessary.
-     * It detach the element and save it with its scope, so it can be reused.
-     * If the 'renewAllFlag' is set to true, the headers are destroyed.
-     * So they are forced to be recreated.
-     */
+	/**
+	 * @ngdoc method
+	 * @name detachAndSaveHeader
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object} event The Slickgrid header destroy event
+	 * @param {object} columnsArgs The column header arguments passed by SlickGrid
+	 * @description This is part of the process to avoid recreation of the datagrid header
+	 * when it is not necessary.
+	 * It detach the element and save it with its scope, so it can be reused.
+	 * If the 'renewAllFlag' is set to true, the headers are destroyed.
+	 * So they are forced to be recreated.
+	 */
 	function detachAndSaveHeader(event, columnsArgs) {
-        // No header to detach on preview
+		// No header to detach on preview
 		const columnDef = columnsArgs.column;
 		if (columnDef.preview) {
 			return;
 		}
 
-        // Destroy the header if explicitly requested
+		// Destroy the header if explicitly requested
 		if (renewAllFlag) {
 			destroyHeader(columnDef);
 		}
-        // Detach and save it otherwise
+		// Detach and save it otherwise
 		else {
 			const scope = columnDef.scope;
 			const header = columnDef.header;
@@ -353,77 +353,77 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name createAndAttachHeader
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object} event The Slickgrid header creation event
-     * @param {object} columnsArgs The column header arguments passed by SlickGrid
-     * @description This is part of the process to avoid recreation od the datagrid header
-     * when it is not necessary.
-     * It fetch an existing saved header to reuse it, or create it otherwise.
-     * The existing header is then updated with the new column metadata.
-     */
+	/**
+	 * @ngdoc method
+	 * @name createAndAttachHeader
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object} event The Slickgrid header creation event
+	 * @param {object} columnsArgs The column header arguments passed by SlickGrid
+	 * @description This is part of the process to avoid recreation od the datagrid header
+	 * when it is not necessary.
+	 * It fetch an existing saved header to reuse it, or create it otherwise.
+	 * The existing header is then updated with the new column metadata.
+	 */
 	function createAndAttachHeader(event, columnsArgs) {
-        // No header to append on preview
+		// No header to append on preview
 		const columnDef = columnsArgs.column;
 		if (columnDef.preview) {
 			return;
 		}
+		const isIndexColumn = columnDef.id === COLUMN_INDEX_ID;
 
-        // Get existing header and remove it from available headers list
-		let headerDefinition = _.find(availableHeaders, { id: columnDef.id });
+		// Get existing header and remove it from available headers list
+		let headerDefinition = availableHeaders.find(header => header.id === columnDef.id);
 		if (headerDefinition) {
 			const headerIndex = availableHeaders.indexOf(headerDefinition);
 			availableHeaders.splice(headerIndex, 1);
 		}
 
-        // Update column metadata in header if there is an available one
+		// Update column metadata in header if there is an available one
 		if (headerDefinition) {
-			if (columnDef.id !== COLUMN_INDEX_ID) {
+			if (!isIndexColumn) {
 				headerDefinition.scope.column = columnDef.tdpColMetadata;
-				headerDefinition.scope.$digest();
 			}
 		}
-        // Create the header if no available created header
+		// Create the header if no available created header
 		else {
-			headerDefinition = columnDef.id === COLUMN_INDEX_ID ?
-                createIndexHeader() :
-                createHeader(columnDef.tdpColMetadata);
+			headerDefinition = isIndexColumn ?
+				createIndexHeader() :
+				createHeader(columnDef.tdpColMetadata);
 		}
 
-        // Update column definition
+		// Update column definition
 		columnDef.scope = headerDefinition.scope;
 		columnDef.header = headerDefinition.header;
 
-        // Append the header
+		// Append the header
 		const node = angular.element(columnsArgs.node);
 		node.append(headerDefinition.header);
 	}
 
-    // --------------------------------------------------------------------------------------------
-    // --------------------------------------------------INIT--------------------------------------
-    // --------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name attachColumnHeaderEvents
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @description Attach listeners for header creation/destroy.
-     * The handler detach and save headers on destroy,
-     * attach (create them if necessary) and update them on render
-     */
+	// --------------------------------------------------------------------------------------------
+	// --------------------------------------------------INIT--------------------------------------
+	// --------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name attachColumnHeaderEvents
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @description Attach listeners for header creation/destroy.
+	 * The handler detach and save headers on destroy,
+	 * attach (create them if necessary) and update them on render
+	 */
 	function attachColumnHeaderEvents() {
 		grid.onBeforeHeaderCellDestroy.subscribe(detachAndSaveHeader);
 		grid.onHeaderCellRendered.subscribe(createAndAttachHeader);
 	}
 
-    /**
-     * @ngdoc method
-     * @name init
-     * @methodOf data-prep.datagrid.service:DatagridColumnService
-     * @param {object} newGrid The new grid
-     * @description Initialize the grid and attach the column listeners
-     */
+	/**
+	 * @ngdoc method
+	 * @name init
+	 * @methodOf data-prep.datagrid.service:DatagridColumnService
+	 * @param {object} newGrid The new grid
+	 * @description Initialize the grid and attach the column listeners
+	 */
 	function init(newGrid) {
 		grid = newGrid;
 		attachColumnHeaderEvents();

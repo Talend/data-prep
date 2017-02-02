@@ -220,7 +220,6 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
 						else {
 							DatagridStyleService.updateColumnsClass(getSelectedColumns());
 						}
-						grid.invalidate();
 					}, 0, false);
 
                     // manage column selection (external)

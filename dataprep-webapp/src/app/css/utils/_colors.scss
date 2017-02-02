@@ -29,9 +29,9 @@ $menus-hover: rgba(138, 188, 0, 0.8);
 $action-hover-background: #a1b2c2;
 
 // toaster
-$color-ok:#8abc00 ;
-$color-warning: #ffcd00 ;
-$color-error: #ce6564 ;
+$color-ok: #8abc00;
+$color-warning: #ffcd00;
+$color-error: #ce6564;
 
 // drop shadows
 $icon-drop-shadow: 0px 1px 1px rgba(0, 0, 0, 1);
@@ -42,7 +42,7 @@ $box-shadow-to-bottom: 3px 3px 18px 3px rgba(0, 0, 0, 0.2);
 
 // colors
 $gray: #F2F2F2;
-$white: #FFFFFF ;
+$white: #FFFFFF;
 $light-blue: #e1eff2;
 $pale-blue: #b1c6d8;
 $blue: #4f93a7;
@@ -51,27 +51,27 @@ $background-blue: #a1b2c2;
 $light-green: #D6D88F;
 $green: #B9BF15;
 $dark-green: #b6be00;
-$dark-gray: #555964 ;
-$medium-gray: #99999a ;
-$shadow-gray: #DDDDDD ;
-$light-gray: #EEEEEF ;
-$super-light-gray: #f5f5f5 ;
-$black: #000000 ;
+$dark-gray: #555964;
+$medium-gray: #99999a;
+$shadow-gray: #DDDDDD;
+$light-gray: #EEEEEF;
+$super-light-gray: #f5f5f5;
+$black: #000000;
 $orange: #ffa616;
 $brown: #B3AF76;
 $dark-brown: #55580D;
 $yellow: #FFD400;
 
 // Quality Bar
-$ok-color: rgb(138, 188, 0);
+$ok-color: $rio-grande;
 $empty-color: $white;
-$nok-color: rgb(247, 168, 0);
-$unknown-color: $medium-gray;
+$nok-color: $lightning-yellow;
+$unknown-color: $alto;
 
 // Preview
-$new-color: #e6efa5;
-$update-color: #c1e9f3;
-$delete-color: $shadow-gray;
+$new-color: #EEFED7;
+$update-color: #FCFFDE;
+$delete-color: #F6DFDF;
 
 //lookup
 $lookup-selected-column: #00a6ce;

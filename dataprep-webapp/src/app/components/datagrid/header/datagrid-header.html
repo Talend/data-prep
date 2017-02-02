@@ -16,7 +16,7 @@
 <div class="grid-header">
     <div class="talend-dropdown-div">
         <sc-dropdown on-open="datagridHeaderCtrl.initTransformations()">
-            <sc-dropdown-trigger class="grid-header-caret" title="{{ datagridHeaderCtrl.column.name }}">&nbsp;</sc-dropdown-trigger>
+            <sc-dropdown-trigger class="grid-header-caret" title="{{ datagridHeaderCtrl.column.name }}"><icon name="'talend-burger'"/></sc-dropdown-trigger>
             <sc-dropdown-content class="grid-header-menu">
                 <ul>
                     <li ng-if="datagridHeaderCtrl.initTransformationsInProgress" translate-once="LOADING"></li>

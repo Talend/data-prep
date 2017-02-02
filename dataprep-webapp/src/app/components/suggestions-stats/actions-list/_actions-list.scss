@@ -12,66 +12,64 @@
   ============================================================================*/
 
 .actions-list {
-  $action-color: tint($black, 20%);
-  $action-background: $super-light-gray;
-  $action-border-color: $super-light-gray;
-  $category-border-color: $shadow-gray;
+	$action-color: $dark-gray;
+	$action-background: $super-light-gray;
+	$action-border-color: $super-light-gray;
+	$action-font-size: 1.4rem;
+	$category-border-color: $shadow-gray;
+	$category-color: #4F93A7;
+	$category-font-size: 1.2rem;
 
-  .actions-category {
-    font-size: 12px;
-    color: #4F93A7;
-    padding: 10px;
-    border-bottom: 1px solid $category-border-color;
-    border-top: 1px solid $category-border-color;
-  }
-  .actions-group {
-    color: $action-color;
+	.actions-category {
+		border-bottom: 1px solid $category-border-color;
+		border-top: 1px solid $category-border-color;
+		color: $category-color;
+		font-size: $category-font-size;
+		padding: 10px;
+	}
 
-    .sc-accordion {
-      font-weight: 500;
-      border-bottom: 1px solid $action-border-color;
-      font-size: .95em;
-      color: $dark-gray;
-      margin-bottom: -1px;
+	.actions-group {
+		sc-accordion-item:last-child {
+			.sc-accordion {
+				border-bottom: none;
+			}
+		}
 
-      &:hover{
-        background-color: $action-background;
-      }
+		.sc-accordion {
+			border-bottom: 1px solid $action-border-color;
+			color: $action-color;
+			font-size: $action-font-size;
+			font-weight: 500;
 
-      &.open {
-        background-color: $action-background;
-      }
+			&:hover,
+			&.open {
+				background-color: $action-background;
+			}
 
-      .trigger {
+			.trigger {
 
-        &-container {
-          position: relative;
-          padding: 7px;
+				&-container {
+					position: relative;
+					padding: 7px;
+				}
 
-          > content {
-            padding: 10px;
-          }
-        }
+				&-label {
+					padding-left: 5px;
 
-        &-label {
-          font-size: 1em;
-          cursor: pointer;
-          padding-left: 5px;
+					&:before {
+						position: absolute;
+						content: '';
+						top: 0;
+						right: 0;
+						bottom: 0;
+						left: 0;
+					}
+				}
+			}
+		}
+	}
 
-          &:before {
-            position: absolute;
-            content: '';
-            top:0;
-            right:0;
-            bottom: 0;
-            left: 0;
-          }
-        }
-      }
-    }
-  }
-
-  .highlighted{
-    font-weight: bold;
-  }
+	.highlighted {
+		font-weight: bold;
+	}
 }

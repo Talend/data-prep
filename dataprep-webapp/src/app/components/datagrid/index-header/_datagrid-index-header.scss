@@ -10,40 +10,27 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-$datagrid-header-bkg: $dark-gray;
-$datagrid-header-bkg-active: darken($datagrid-header-bkg, 10%);
-$datagrid-headercell-font-size: .95em;
 
 .grid-index-header {
-  display: flex;
-  justify-content: space-between;
+	$datagrid-index-header-background: #666666;
+	$datagrid-index-header-background-active: darken($datagrid-index-header-background, 10%);
 
-  height: 56px;
-  background-color: $datagrid-header-bkg;
-  color: $white;
-  font-family: $monospace;
-  font-weight: 700;
-  padding: 5px 5px 0;
+	display: flex;
+	justify-content: space-between;
+	padding: 5px 5px 0;
+	height: 50px;
+	color: $white;
+	background-color: $datagrid-index-header-background;
 
-  &:hover {
-    background-color: $datagrid-header-bkg-active;
-  }
+	&:hover {
+		background-color: $datagrid-index-header-background-active;
+	}
 
-  .grid-header-menu {
-    @include menu-list;
-    padding: 0;
-    box-shadow: none;
-  }
-
-  .talend-dropdown-div {
-    .grid-header-menu-title {
-      display: block;
-      padding: 10px 20px 0;
-      color: $dark-blue;
-    }
-
-    .sc-dropdown-trigger {
-      padding: 0;
-    }
-  }
+	.talend-dropdown-div {
+		.grid-header-menu-title {
+			display: block;
+			padding: 10px 20px 0;
+			color: $dark-blue;
+		}
+	}
 }

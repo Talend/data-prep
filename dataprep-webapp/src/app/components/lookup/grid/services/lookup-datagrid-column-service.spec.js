@@ -70,7 +70,7 @@ describe('Lookup Datagrid column service', function () {
             //then
             expect(createdColumns[0].id).toEqual('tdpId');
             expect(createdColumns[0].field).toEqual('tdpId');
-            expect(createdColumns[0].name).toEqual('<div class="lookup-slick-header-column-index">#</div>');
+            expect(createdColumns[0].name).toEqual('<div class="lookup-slick-header-column-index"></div>');
             expect(createdColumns[0].resizable).toBeFalsy();
             expect(createdColumns[0].selectable).toBeFalsy();
             expect(createdColumns[0].formatter(1, 2, 3)).toEqual('<div class="index-cell">3</div>');
@@ -105,7 +105,7 @@ describe('Lookup Datagrid column service', function () {
             //then
             expect(createdColumns[0].id).toEqual('tdpId');
             expect(createdColumns[0].field).toEqual('tdpId');
-            expect(createdColumns[0].name).toEqual('<div class="lookup-slick-header-column-index">#</div>');
+            expect(createdColumns[0].name).toEqual('<div class="lookup-slick-header-column-index"></div>');
             expect(createdColumns[0].resizable).toBeFalsy();
             expect(createdColumns[0].selectable).toBeFalsy();
             expect(createdColumns[0].formatter(1, 2, 3)).toEqual('<div class="index-cell">3</div>');

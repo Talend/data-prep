@@ -31,12 +31,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.folder.FolderInfo;
 import org.talend.dataprep.api.folder.FolderTreeNode;
+import org.talend.dataprep.exception.error.FolderErrorCodes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -117,6 +119,10 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         //then
         assertThat(response.getStatusCode(), is(409));
+        final String content = response.asString();
+        assertTrue(StringUtils.isNoneBlank(content));
+        assertTrue(content.contains(FolderErrorCodes.FOLDER_NOT_EMPTY.name()));
+
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, hasSize(1));
     }

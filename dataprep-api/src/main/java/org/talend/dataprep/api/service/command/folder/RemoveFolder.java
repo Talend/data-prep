@@ -17,9 +17,11 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE_FOLDER;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -59,7 +61,11 @@ public class RemoveFolder extends GenericCommand<ResponseEntity<String>> {
         for (Header header : response.getAllHeaders()) {
             headers.put(header.getName(), Collections.singletonList(header.getValue()));
         }
-        return new ResponseEntity<>("", headers, status);
+        try {
+            return new ResponseEntity<>(IOUtils.toString(response.getEntity().getContent()), headers, status);
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
     }
 
     private HttpRequestBase onExecute(final String id) {

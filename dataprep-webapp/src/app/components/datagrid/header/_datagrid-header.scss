@@ -16,9 +16,9 @@
 	$datagrid-header-background: #666666;
 	$datagrid-header-background-active: darken($datagrid-header-background, 10%);
 
-	$datagrid-header-new-background: #89AC4E;
-	$datagrid-header-updated-background: #AEB260;
-	$datagrid-header-deleted-background: #9D6162;
+	$datagrid-header-new-background: #929E53;
+	$datagrid-header-updated-background: #B3A666;
+	$datagrid-header-deleted-background: #9A6565;
 
 	padding: 5px 5px 0;
 	height: 40px;
@@ -38,16 +38,24 @@
 		background-color: $datagrid-header-background-active;
 	}
 
+	&.newColumn,
+	&.updatedColumn,
+	&.deletedColumn {
+		.grid-header-type {
+			color: $white;
+		}
+	}
+
 	&.newColumn {
-		background-color: $datagrid-header-new-background
+		background-color: $datagrid-header-new-background;
 	}
 
 	&.updatedColumn {
-		background-color: $datagrid-header-updated-background
+		background-color: $datagrid-header-updated-background;
 	}
 
 	&.deletedColumn {
-		background-color: $datagrid-header-deleted-background
+		background-color: $datagrid-header-deleted-background;
 	}
 
 	.talend-dropdown-text-div {
@@ -56,11 +64,14 @@
 			letter-spacing: 0.06rem;
 		}
 
-		&-title-input {
-			display: table-cell;
+		.grid-header-title-input {
 			margin-bottom: 0;
-			padding: 0 0 0 0.5em;
-			color: #555964;
+			padding: 0;
+			padding-right: 1.5rem;
+			font-family: $sourcesanspro;
+			font-size: 1.2rem;
+			color: $datagrid-header-color;
+			background: transparent;
 		}
 	}
 

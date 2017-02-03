@@ -68,10 +68,13 @@ $empty-color: $white;
 $nok-color: $lightning-yellow;
 $unknown-color: $alto;
 
-// Preview
-$new-color: #EEFED7;
-$update-color: #FCFFDE;
-$delete-color: #F6DFDF;
+// Grid
+$active-color: #E0F2FF;
 
-//lookup
-$lookup-selected-column: #7697C3;
+// Preview
+$new-color: #F2F7D9;
+$update-color: #FFFAE0;
+$delete-color: #F5E0E0;
+
+// Lookup
+$lookup-active-color: $active-color;

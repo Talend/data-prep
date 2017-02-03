@@ -18,7 +18,7 @@ $datagrid-cell-font-size: .80em;
 
 $datagrid-row-header-active-background: #7697C3;
 $datagrid-row-active-header-background: #737373;
-$datagrid-row-active-cells-background: #E1EFFF;
+$datagrid-row-active-cells-background: $active-color;
 $datagrid-row-cell-active-background: $white;
 
 $datagrid-column-active-cells-background: $datagrid-row-active-cells-background;
@@ -350,11 +350,4 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 			}
 		}
 	}
-
-	//--------------------------------------------------Data lookup-------------------------------------------------------
-	//&.lookup {
-	//	.slick-cell.selected {
-	//		background: $lookup-selected-column;
-	//	}
-	//}
 }

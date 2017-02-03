@@ -71,25 +71,15 @@ $x-large-screen: 120em !default;
 }
 
 table tbody td {
-	@include media($large-screen) {
-		.btn-link {
-			max-width: 400px;
+	&:first-child {
+		width: 600px;
+		max-width: 600px;
+		+ td .actions {
+			width: auto;
 		}
-
-		.item-text {
-			max-width: 200px;
-		}
-	}
-
-	@include media($x-large-screen) {
-		.btn-link {
-			max-width: 700px;
-		}
-
-		.item-text {
-			max-width: 250px;
+		@include media($x-large-screen) {
+			width: 900px;
+			max-width: 900px;
 		}
 	}
 }
-
-

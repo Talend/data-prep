@@ -65,11 +65,15 @@ function getDefaultConfig(options) {
 }
 
 function addProdEnvPlugin(config) {
-	config.plugins.push(new webpack.DefinePlugin({
-		'process.env': {
-			NODE_ENV: JSON.stringify("production")
-		}
-	}));
+	config.plugins.push(
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify("production")
+			}
+		}),
+		new webpack.optimize.DedupePlugin(),
+		new webpack.optimize.OccurrenceOrderPlugin()
+	);
 }
 
 function addDevServerConfig(config) {

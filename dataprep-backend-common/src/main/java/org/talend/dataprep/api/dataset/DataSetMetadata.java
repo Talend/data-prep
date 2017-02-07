@@ -67,7 +67,7 @@ public class DataSetMetadata implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    /** Dataset author. */
+    /** Dataset author ID. */
     @JsonProperty("author")
     private String author;
 

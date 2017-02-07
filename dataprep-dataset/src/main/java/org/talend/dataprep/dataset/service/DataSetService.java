@@ -15,7 +15,6 @@ package org.talend.dataprep.dataset.service;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
@@ -217,6 +216,7 @@ public class DataSetService extends BaseDataSetService {
             // Get all data sets according to filter
             try (Stream<DataSetMetadata> stream = dataSetMetadataRepository.list(tqlFilter, sort, order)) {
                 return stream.map(m -> conversionService.convert(m, UserDataSetMetadata.class)) //
+                        .sorted(getDataSetMetadataComparator(sort, order))
                         .limit(limit ? datasetListLimit : Long.MAX_VALUE);
             }
         };

@@ -29,8 +29,10 @@ import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.preparation.service.UserPreparation;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -156,22 +158,25 @@ public final class SortAndOrderHelper {
     /**
      * Return the string comparator to use for the given order name.
      *
-     * @param orderKey the name of the order to apply.
+     * @param orderKey the name of the order to apply. If null, default to {@link Order#ASC}.
      * @return the string comparator to use for the given order name.
      */
     private static Comparator<Comparable> getOrderComparator(Order orderKey) {
         final Comparator<Comparable> comparisonOrder;
-
-        switch (orderKey) {
-        case ASC:
+        if (orderKey == null){
             comparisonOrder = Comparator.naturalOrder();
-            break;
-        case DESC:
-            comparisonOrder = Comparator.reverseOrder();
-            break;
-        default:
-            // this should not be possible
-            throw new TDPException(ILLEGAL_ORDER_FOR_LIST, build().put("order", orderKey));
+        } else {
+            switch (orderKey) {
+            case ASC:
+                comparisonOrder = Comparator.naturalOrder();
+                break;
+            case DESC:
+                comparisonOrder = Comparator.reverseOrder();
+                break;
+            default:
+                // this should not be possible
+                throw new TDPException(ILLEGAL_ORDER_FOR_LIST, build().put("order", orderKey));
+            }
         }
         return comparisonOrder;
     }
@@ -179,8 +184,8 @@ public final class SortAndOrderHelper {
     /**
      * Return a dataset metadata comparator from the given parameters.
      *
-     * @param sortKey  the sort key.
-     * @param orderKey the order key to use.
+     * @param sortKey  the sort key. If null, default to {@link Sort#NAME}.
+     * @param orderKey the order key to use. If null, default to {@link Order#ASC}.
      * @return a dataset metadata comparator from the given parameters.
      */
     public static Comparator<DataSetMetadata> getDataSetMetadataComparator(Sort sortKey, Order orderKey) {
@@ -188,29 +193,33 @@ public final class SortAndOrderHelper {
 
         // Select comparator for sort (either by name or date)
         Function<DataSetMetadata, Comparable> keyExtractor;
-        switch (sortKey) {
-        // In case of API call error, default to NAME sort
-        case DATASET_NAME:
-        case NB_STEPS:
-        case NAME:
+        if (sortKey == null) { // default to NAME sort
             keyExtractor = dataSetMetadata -> dataSetMetadata.getName().toUpperCase();
-            break;
-        case AUTHOR:
-            keyExtractor = dataSetMetadata -> dataSetMetadata.getAuthor().toUpperCase();
-            break;
-        case CREATION_DATE:
-        case DATE:
-            keyExtractor = DataSetMetadata::getCreationDate;
-            break;
-        case LAST_MODIFICATION_DATE:
-            keyExtractor = DataSetMetadata::getLastModificationDate;
-            break;
-        case NB_RECORDS:
-            keyExtractor = metadata -> metadata.getContent().getNbRecords();
-            break;
-        default:
-            // this should not be possible
-            throw new TDPException(ILLEGAL_SORT_FOR_LIST, build().put("sort", sortKey));
+        } else {
+            switch (sortKey) {
+            // In case of API call error, default to NAME sort
+            case DATASET_NAME:
+            case NB_STEPS:
+            case NAME:
+                keyExtractor = dataSetMetadata -> dataSetMetadata.getName().toUpperCase();
+                break;
+            case AUTHOR:
+                keyExtractor = dataSetMetadata -> ((UserDataSetMetadata) dataSetMetadata).getOwner().getDisplayName().toUpperCase();
+                break;
+            case CREATION_DATE:
+            case DATE:
+                keyExtractor = DataSetMetadata::getCreationDate;
+                break;
+            case LAST_MODIFICATION_DATE:
+                keyExtractor = DataSetMetadata::getLastModificationDate;
+                break;
+            case NB_RECORDS:
+                keyExtractor = metadata -> metadata.getContent().getNbRecords();
+                break;
+            default:
+                // this should not be possible
+                throw new TDPException(ILLEGAL_SORT_FOR_LIST, build().put("sort", sortKey));
+            }
         }
         return Comparator.comparing(keyExtractor, comparisonOrder);
     }
@@ -231,37 +240,42 @@ public final class SortAndOrderHelper {
 
         // Select comparator for sort (either by name or date)
         Function<Preparation, Comparable> keyExtractor;
-        switch (sortKey) {
-        // In case of API call error, default to NAME sort
-        case NB_RECORDS:
-        case NAME:
+        if (sortKey == null) { // default to NAME sort
             keyExtractor = preparation -> preparation.getName().toUpperCase();
-            break;
-        case AUTHOR:
-            keyExtractor = preparation -> preparation.getAuthor().toUpperCase();
-            break;
-        case CREATION_DATE:
-        case DATE:
-            keyExtractor = Preparation::getCreationDate;
-            break;
-        case LAST_MODIFICATION_DATE:
-            keyExtractor = Preparation::getLastModificationDate;
-            break;
-        case NB_STEPS:
-            keyExtractor = preparation -> preparation.getSteps().size();
-            break;
-        case DATASET_NAME:
-            if (dataSetFinder != null) {
+        } else {
+            switch (sortKey) {
+            // In case of API call error, default to NAME sort
+            case NB_RECORDS:
+            case NAME:
+                keyExtractor = preparation -> preparation.getName().toUpperCase();
+                break;
+            case AUTHOR:
+                keyExtractor = preparation -> ((UserPreparation) preparation).getOwner().getDisplayName().toUpperCase();
+                break;
+            case CREATION_DATE:
+            case DATE:
+                keyExtractor = Preparation::getCreationDate;
+                break;
+            case LAST_MODIFICATION_DATE:
+                keyExtractor = Preparation::getLastModificationDate;
+                break;
+            case NB_STEPS:
+                keyExtractor = preparation -> preparation.getSteps().size();
+                break;
+            case DATASET_NAME:
+                if (dataSetFinder != null) {
                     keyExtractor = p -> getUpperCaseNameFromNullable(dataSetFinder.apply(p));
-            } else {
-                    log.debug("There is no dataset finding function to sort preparations on dataset name. Default to natural name order.");
+                } else {
+                    log.debug(
+                            "There is no dataset finding function to sort preparations on dataset name. Default to natural name order.");
                     // default to sort on name
                     keyExtractor = preparation -> preparation.getName().toUpperCase();
+                }
+                break;
+            default:
+                // this should not be possible
+                throw new TDPException(ILLEGAL_SORT_FOR_LIST, build().put("sort", sortKey));
             }
-            break;
-        default:
-            // this should not be possible
-            throw new TDPException(ILLEGAL_SORT_FOR_LIST, build().put("sort", sortKey));
         }
         return Comparator.comparing(keyExtractor, comparisonOrder);
     }
@@ -289,25 +303,29 @@ public final class SortAndOrderHelper {
 
         // Select comparator for sort (either by name or date)
         Function<Folder, Comparable> keyExtractor;
-        switch (sortKey) {
-        // In case of API call error, default to NAME sort
-        case AUTHOR:
-        case DATASET_NAME:
-        case NB_RECORDS:
-        case NB_STEPS:
-        case NAME:
-            keyExtractor = Folder::getName;
-            break;
-        case CREATION_DATE:
-        case DATE:
-            keyExtractor = Folder::getCreationDate;
-            break;
-        case LAST_MODIFICATION_DATE:
-            keyExtractor = Folder::getLastModificationDate;
-            break;
-        default:
-            // this should not be possible
-            throw new TDPException(ILLEGAL_SORT_FOR_LIST, build().put("sort", sortKey));
+        if (sortKey == null) { // default to NAME sort
+            keyExtractor = folder -> folder.getName().toUpperCase();
+        } else {
+            switch (sortKey) {
+            // In case of API call error, default to NAME sort
+            case AUTHOR:
+            case DATASET_NAME:
+            case NB_RECORDS:
+            case NB_STEPS:
+            case NAME:
+                keyExtractor = folder -> folder.getName().toUpperCase();
+                break;
+            case CREATION_DATE:
+            case DATE:
+                keyExtractor = Folder::getCreationDate;
+                break;
+            case LAST_MODIFICATION_DATE:
+                keyExtractor = Folder::getLastModificationDate;
+                break;
+            default:
+                // this should not be possible
+                throw new TDPException(ILLEGAL_SORT_FOR_LIST, build().put("sort", sortKey));
+            }
         }
         return Comparator.comparing(keyExtractor, order);
     }

@@ -215,9 +215,11 @@ public class DataSetService extends BaseDataSetService {
 
             // Get all data sets according to filter
             try (Stream<DataSetMetadata> stream = dataSetMetadataRepository.list(tqlFilter, sort, order)) {
-                return stream.map(m -> conversionService.convert(m, UserDataSetMetadata.class)) //
-                        .sorted(getDataSetMetadataComparator(sort, order))
-                        .limit(limit ? datasetListLimit : Long.MAX_VALUE);
+                Stream<UserDataSetMetadata> userDataSetMetadataStream = stream.map(m -> conversionService.convert(m, UserDataSetMetadata.class));
+                if (sort == Sort.AUTHOR || sort == Sort.NAME) { // As theses are not well handled by mongo repository
+                    userDataSetMetadataStream = userDataSetMetadataStream.sorted(getDataSetMetadataComparator(sort, order));
+                }
+                return userDataSetMetadataStream.limit(limit ? datasetListLimit : Long.MAX_VALUE);
             }
         };
     }

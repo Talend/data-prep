@@ -27,26 +27,16 @@ $tc-layout-main-min-width: 1000px;
 	.content {
 		display: flex;
 		flex-direction: row;
-		flex-grow: 1;
-		flex-shrink: 0;
-		flex-basis: 0;
-		align-items: stretch;
-		overflow: auto;
 
 		.main {
 			flex-grow: 1;
-			flex-shrink: 0;
-			flex-basis: 200px;
 			overflow: auto;
-
-			&-wrapper {
-				min-width:$tc-layout-main-min-width;
-			}
+			height: calc(100vh - #{$tc-layout-header-height});
 		}
 
 		.sidemenu {
 			flex-grow: 0;
-			flex-shrink: 1;
+			flex-shrink: 0;
 
 			background-color: $blue;
 		}

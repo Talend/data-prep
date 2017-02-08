@@ -12,37 +12,36 @@
   ~
   ~ ============================================================================
   -->
-<div class="home-content">
-    <form>
-        <label class="sr-only" translate-once="UPDATE_DATASET_INPUT"></label>
-        <input
-                id="inputUpdateDataset"
-                type="file"
-                class="ng-hide"
-                ng-file-select
-                accept="*.csv"
-                ng-model="$ctrl.ImportService.updateDatasetFile"
-                ng-file-change="$ctrl.ImportService.onFileChange()"/>
-        <label class="sr-only" translate-once="IMPORT_DATASET_FILE"></label>
-        <input
-                type="file"
-                id="importDatasetFile"
-                name="datasetFile"
-                class="ng-hide"
-                ng-file-select
-                accept="*.csv"
-                ng-model="$ctrl.ImportService.importDatasetFile"
-                ng-file-change="$ctrl.ImportService.import($ctrl.ImportService.currentInputType)"/>
-    </form>
-    <inventory-list
-            id="'datasets-list'"
-            is-loading="$ctrl.state.inventory.isFetchingDatasets"
-            items="$ctrl.state.inventory.datasets.content"
-            sort-by="$ctrl.state.inventory.datasets.sort.field"
-            sort-desc="$ctrl.state.inventory.datasets.sort.isDescending"
-            view-key="'listview:datasets'"
-    />
-</div>
+
+<inventory-list
+        id="'datasets-list'"
+        is-loading="$ctrl.state.inventory.isFetchingDatasets"
+        items="$ctrl.state.inventory.datasets.content"
+        sort-by="$ctrl.state.inventory.datasets.sort.field"
+        sort-desc="$ctrl.state.inventory.datasets.sort.isDescending"
+        view-key="'listview:datasets'"
+></inventory-list>
+<form>
+    <label class="sr-only" translate-once="UPDATE_DATASET_INPUT"></label>
+    <input
+            id="inputUpdateDataset"
+            type="file"
+            class="ng-hide"
+            ng-file-select
+            accept="*.csv"
+            ng-model="$ctrl.ImportService.updateDatasetFile"
+            ng-file-change="$ctrl.ImportService.onFileChange()"/>
+    <label class="sr-only" translate-once="IMPORT_DATASET_FILE"></label>
+    <input
+            type="file"
+            id="importDatasetFile"
+            name="datasetFile"
+            class="ng-hide"
+            ng-file-select
+            accept="*.csv"
+            ng-model="$ctrl.ImportService.importDatasetFile"
+            ng-file-change="$ctrl.ImportService.import($ctrl.ImportService.currentInputType)"/>
+</form>
 <talend-modal
         fullscreen="false"
         state="$ctrl.state.import.visible"

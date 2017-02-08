@@ -19,21 +19,19 @@ import InventoryListCtrl from './inventory-list-controller';
  */
 const InventoryListContainer = {
 	template: `
-		<div ng-switch="!!$ctrl.isLoading">
-			<div ng-switch-when="true"
-			     class="fetch-loader">
-		        <span class="fetch-loader-icon continuous-rotate"><icon name="'talend-dataprep'"></icon></span>
-		        <span translate-once="LOADING"></span>
-			</div>
-			<pure-list
-				ng-switch-when="false"
-				id="$ctrl.id"
-				display-mode="$ctrl.displayMode"
-				list="$ctrl.listProps"
-				toolbar="$ctrl.toolbarProps"
-				watch-depth="reference"
-			/>
+		<div ng-if="$ctrl.isLoading"
+		     class="fetch-loader">
+	        <span class="fetch-loader-icon continuous-rotate"><icon name="'talend-dataprep'"></icon></span>
+	        <span translate-once="LOADING"></span>
 		</div>
+		<pure-list
+			ng-if="!$ctrl.isLoading"
+			id="$ctrl.id"
+			display-mode="$ctrl.displayMode"
+			list="$ctrl.listProps"
+			toolbar="$ctrl.toolbarProps"
+			watch-depth="reference"
+		/>
 	`,
 	bindings: {
 		id: '<',

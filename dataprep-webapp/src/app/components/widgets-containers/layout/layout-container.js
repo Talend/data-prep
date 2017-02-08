@@ -27,11 +27,7 @@ const LayoutContainer = {
 				<div class="sidemenu">
 					<side-panel id="'side-panel'" active="$ctrl.$state.current.name"><side-panel/>
 				</div>
-				<div class="main">
-					<div class="main-wrapper">
-						<ng-transclude></ng-transclude>
-					</div>
-				</div>
+				<ng-transclude class="main"></ng-transclude>
 			</div>
 		</div>
 	`,

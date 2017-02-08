@@ -23,7 +23,7 @@ const HomePreparationContainer = {
 				sort-desc="$ctrl.state.inventory.folder.sort.isDescending"
 				view-key="'listview:preparations'"
 				folder-view-key="'listview:folders'"
-			/>
+			></inventory-list>
 		</div>
 	`,
 	controller(state) {

@@ -70,24 +70,26 @@ $x-large-screen: 120em !default;
 	}
 }
 
-table tbody td {
-	&:first-child {
-		width: 450px;
-		max-width: 450px;
-		+ td .actions {
-			width: auto;
+.tc-list-display-table {
+	td {
+		&:first-child {
+			width: 450px;
+			max-width: 450px;
+			+ td .actions {
+				width: auto;
+			}
+			@include media($x-large-screen) {
+				width: 700px;
+				max-width: 700px;
+			}
+		}
+		.item-text {
+			max-width: 200px;
 		}
 		@include media($x-large-screen) {
-			width: 700px;
-			max-width: 700px;
-		}
-	}
-	.item-text {
-		max-width: 200px;
-	}
-	@include media($x-large-screen) {
-		.item-text {
-			max-width: 250px;
+			.item-text {
+				max-width: 250px;
+			}
 		}
 	}
 }

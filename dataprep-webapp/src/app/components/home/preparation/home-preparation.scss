@@ -26,5 +26,6 @@ $home-preparation-breadcrumb-height: 82px;
 	.preparations-list {
 		flex: 1 1 0;
 		height: calc(100% - #{$home-preparation-breadcrumb-height});
+		max-height: calc(100% - #{$home-preparation-breadcrumb-height});
 	}
 }

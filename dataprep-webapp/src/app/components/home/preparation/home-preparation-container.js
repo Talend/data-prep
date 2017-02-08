@@ -17,18 +17,17 @@ const HomePreparationContainer = {
 	template: `
 		<div class="home-preparation">
 			<breadcrumbs id="preparations-breadcrumb" class="preparations-breadcrumb" items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
-			<div class="preparations-list">
-				<inventory-list
-					id="'preparations-list'"
-					folders="$ctrl.state.inventory.folder.content.folders"
-					is-loading="$ctrl.state.inventory.isFetchingPreparations"
-					items="$ctrl.state.inventory.folder.content.preparations"
-					sort-by="$ctrl.state.inventory.folder.sort.field"
-					sort-desc="$ctrl.state.inventory.folder.sort.isDescending"
-					view-key="'listview:preparations'"
-					folder-view-key="'listview:folders'"
-				></inventory-list>
-			</div>
+			<inventory-list
+				id="'preparations-list'"
+				class="preparations-list"
+				folders="$ctrl.state.inventory.folder.content.folders"
+				is-loading="$ctrl.state.inventory.isFetchingPreparations"
+				items="$ctrl.state.inventory.folder.content.preparations"
+				sort-by="$ctrl.state.inventory.folder.sort.field"
+				sort-desc="$ctrl.state.inventory.folder.sort.isDescending"
+				view-key="'listview:preparations'"
+				folder-view-key="'listview:folders'"
+			></inventory-list>
 		</div>
 	`,
 	controller(state) {

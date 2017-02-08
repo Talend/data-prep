@@ -153,7 +153,7 @@
   "REMOVE": "Remove",
 
   "_comment": "Export",
-  "EXPORT_WITH_IGNORED_STEPS_WARN": "Actions on rows or an individual cell cannot be processed in a Big Data context and will be ignored.",
+  "EXPORT_WITH_IGNORED_STEPS_WARN": "Functions on rows or an individual cell cannot be processed in a Big Data context and will be ignored.",
 
   "_comment": "Add datasets",
   "IMPORT_DATASET": "Add Dataset",

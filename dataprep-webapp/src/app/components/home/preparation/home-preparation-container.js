@@ -10,20 +10,25 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import './home-preparation.scss';
+
 const HomePreparationContainer = {
 	template: `
-		<div class="home-content">
-			<breadcrumbs id="preparations-breadcrumb" items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
-			<inventory-list
-				id="'preparations-list'"
-				folders="$ctrl.state.inventory.folder.content.folders"
-				is-loading="$ctrl.state.inventory.isFetchingPreparations"
-				items="$ctrl.state.inventory.folder.content.preparations"
-				sort-by="$ctrl.state.inventory.folder.sort.field"
-				sort-desc="$ctrl.state.inventory.folder.sort.isDescending"
-				view-key="'listview:preparations'"
-				folder-view-key="'listview:folders'"
-			></inventory-list>
+		<div class="home-preparation">
+			<breadcrumbs id="preparations-breadcrumb" class="preparations-breadcrumb" items="$ctrl.state.inventory.breadcrumb"></breadcrumbs>
+			<div class="preparations-list">
+				<inventory-list
+					id="'preparations-list'"
+					folders="$ctrl.state.inventory.folder.content.folders"
+					is-loading="$ctrl.state.inventory.isFetchingPreparations"
+					items="$ctrl.state.inventory.folder.content.preparations"
+					sort-by="$ctrl.state.inventory.folder.sort.field"
+					sort-desc="$ctrl.state.inventory.folder.sort.isDescending"
+					view-key="'listview:preparations'"
+					folder-view-key="'listview:folders'"
+				></inventory-list>
+			</div>
 		</div>
 	`,
 	controller(state) {

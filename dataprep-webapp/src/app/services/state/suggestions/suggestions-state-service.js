@@ -18,11 +18,8 @@ const EMPTY_CELLS = 'empty';
 const INVALID_CELLS = 'invalid';
 
 const TAB_INDEXES = {
-	TEXT: 0,
-	CELL: 1,
-	LINE: 2,
-	COLUMN: 3,
-	TABLE: 4,
+	COLUMN: 0,
+	LINE: 1,
 };
 
 function initActions() {

@@ -34,14 +34,14 @@ function getDefaultConfig(options) {
 			preLoaders: [],
 			loaders: [
 				{ test: /\.js$/, loaders: ['ng-annotate', 'babel?cacheDirectory'], exclude: /node_modules/ },
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'postcss', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-/,},
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'postcss', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-/, }, //css moodules  local scope
+				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'postcss', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-/ },
+				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'postcss', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-/ }, // css moodules  local scope
 				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
 				{ test: /\.html$/, loaders: ['ngtemplate', 'html'], exclude: INDEX_TEMPLATE_PATH },
-				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,  loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff" },
-				{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,       loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream" },
-				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,       loader: "file?name=/assets/fonts/[name].[ext]" },
-				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,       loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=image/svg+xml" }
+				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff" },
+				{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream" },
+				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file?name=/assets/fonts/[name].[ext]" },
+				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=image/svg+xml" },
 			]
 		},
 		plugins: [
@@ -49,18 +49,18 @@ function getDefaultConfig(options) {
 			new webpack.ProvidePlugin({
 				$: 'jquery',
 				jQuery: 'jquery',
-				'window.jQuery': 'jquery'
+				'window.jQuery': 'jquery',
 			})
 		],
 		sassLoader: {
 			data: SASS_DATA,
 		},
-		postcss: function () {
+		postcss() {
 			return [autoprefixer({ browsers: ['last 2 versions'] })];
 		},
 		cache: true,
 		devtool: options.devtool,
-		debug: options.debug
+		debug: options.debug,
 	};
 }
 
@@ -87,37 +87,18 @@ function addDevServerConfig(config) {
 		inline: true,
 		progress: true,
 		contentBase: BUILD_PATH,
-		outputPath: BUILD_PATH
+		outputPath: BUILD_PATH,
 	};
 }
 
 function addMinifyConfig(config) {
 	config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-		compress: {
-			warnings: false
-		}
+		compress: { warnings: false },
 	}));
 }
 
 function addStripCommentsConfig(config) {
 	config.module.preLoaders.push({ test: /\.js$/, loader: 'stripcomment', exclude: [/node_modules/, /\.spec\.js$/] });
-}
-
-function addTestConfig(config) {
-	config.isparta = {
-		embedSource: true,
-		noAutoWrap: true,
-		babel: {
-			presets: ['es2015']
-		}
-	};
-	config.module.preLoaders.push({ test: /\.js$/, loader: 'isparta', exclude: [/node_modules/, /\.spec\.js$/] });
-	config.externals = {
-		angular: 'angular'
-	};
-	config.plugins.push(new webpack.ProvidePlugin({
-		angular: 'angular'
-	}));
 }
 
 function addPlugins(config, options) {
@@ -153,7 +134,7 @@ function addPlugins(config, options) {
 			rootModule: appConf.rootModule,
 			env: options.env,
 			template: INDEX_TEMPLATE_PATH,
-			inject: 'head'
+			inject: 'head',
 		}),
 
 		/*
@@ -191,6 +172,24 @@ function addLinterConfig(config) {
 	// }));
 }
 
+function addCoverageConfig(config) {
+	config.module.preLoaders.push(
+		{ test: /\.js$/, loader: 'isparta', exclude: [/node_modules/, /data-prep\//, /\.spec\.js$/] }
+	);
+	config.isparta = {
+		embedSource: true,
+		noAutoWrap: true,
+		babel: {
+			presets: ['es2015'],
+		},
+	};
+}
+
+function removeFilesConfig(config) {
+	config.entry = undefined;
+	config.output = undefined;
+}
+
 /*
  {
  env: ('dev' | 'prod' | 'test'),     // the environment
@@ -200,7 +199,6 @@ function addLinterConfig(config) {
  linter: (true | false),             // enable eslint and sass-lint
  minify: (true | false),             // enable minification/uglification
  stripComments: (true | false),      // remove comments
- test: (true | false)                // configure tests
  }
  */
 module.exports = (options) => {
@@ -208,6 +206,11 @@ module.exports = (options) => {
 
 	if (options.env === 'prod') {
 		addProdEnvPlugin(config);
+	}
+
+	if (options.env === 'test') {
+		addCoverageConfig(config);
+		removeFilesConfig(config);
 	}
 
 	if (options.devServer) {
@@ -221,10 +224,6 @@ module.exports = (options) => {
 
 	if (options.stripComments) {
 		addStripCommentsConfig(config);
-	}
-
-	if (options.test) {
-		addTestConfig(config);
 	}
 
 	if (options.linter) {

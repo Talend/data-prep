@@ -1,8 +1,8 @@
-module.exports = require('./webpack.config.js')({
-    env: 'dev',
-    debug: true,
-    devServer: true,
-    devtool: 'inline-source-map',
-    linter: true,
-    stripComments: true,
+module.exports = require('./webpack.config')({
+	env: 'dev',
+	debug: true,
+	devServer: true,
+	devtool: 'eval',
+	linter: true,
+	stripComments: true,
 });

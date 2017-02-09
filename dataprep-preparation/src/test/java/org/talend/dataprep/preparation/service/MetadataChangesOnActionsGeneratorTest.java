@@ -1,3 +1,16 @@
+//  ============================================================================
+//
+//  Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+//
+//  This source code is available under agreement available at
+//  https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+//  You should have received a copy of the agreement
+//  along with this program; if not, write to Talend SA
+//  9 rue Pages 92150 Suresnes, France
+//
+//  ============================================================================
+
 package org.talend.dataprep.preparation.service;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -6,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
-import static org.talend.dataprep.preparation.service.StepDiffDelegateTest.CompileAnswer.answer;
+import static org.talend.dataprep.preparation.service.MetadataChangesOnActionsGeneratorTest.CompileAnswer.answer;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +38,9 @@ import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StepDiffDelegateTest {
+public class MetadataChangesOnActionsGeneratorTest {
 
-    private StepDiffDelegate stepDiffDelegate = new StepDiffDelegate();
+    private MetadataChangesOnActionsGenerator stepDiffDelegate = new MetadataChangesOnActionsGenerator();
 
     @Mock
     private RunnableAction firstAction;
@@ -54,9 +67,10 @@ public class StepDiffDelegateTest {
         workingMetadata.addColumn(createColumnNamed("ré"));
         workingMetadata.addColumn(createColumnNamed("mi"));
         doAnswer(answer(newArrayList("foo", "bar"), emptyList())).when(firstActionCompiler).compile(any(ActionContext.class));
-        doAnswer(answer(newArrayList("beer"), newArrayList("do", "ré"))).when(secondActionCompiler).compile(any(ActionContext.class));
+        doAnswer(answer(newArrayList("beer"), newArrayList("do", "ré"))).when(secondActionCompiler)
+                .compile(any(ActionContext.class));
 
-        StepDiff stepDiff = stepDiffDelegate.getActionCreatedColumns(workingMetadata, newArrayList(firstAction),
+        StepDiff stepDiff = stepDiffDelegate.computeCreatedColumns(workingMetadata, newArrayList(firstAction),
                 newArrayList(secondAction));
 
         assertEquals(newArrayList("0005"), stepDiff.getCreatedColumns());
@@ -71,7 +85,7 @@ public class StepDiffDelegateTest {
         doAnswer(answer(newArrayList("foo", "bar"), emptyList())).when(firstActionCompiler).compile(any(ActionContext.class));
         doAnswer(answer(emptyList(), newArrayList("do", "ré"))).when(secondActionCompiler).compile(any(ActionContext.class));
 
-        StepDiff stepDiff = stepDiffDelegate.getActionCreatedColumns(workingMetadata, newArrayList(firstAction, secondAction));
+        StepDiff stepDiff = stepDiffDelegate.computeCreatedColumns(newArrayList(firstAction, secondAction), workingMetadata);
 
         assertEquals(newArrayList("0003", "0004"), stepDiff.getCreatedColumns());
     }

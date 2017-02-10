@@ -12,192 +12,195 @@
  ============================================================================*/
 
 import {
-    HOME_DATASETS_ROUTE,
-    HOME_PREPARATIONS_ROUTE,
+	HOME_DATASETS_ROUTE,
+	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
 
 describe('Onboarding service', () => {
-    let stateMock;
+	let stateMock;
 
-    beforeEach(angular.mock.module('data-prep.services.onboarding', ($provide) => {
-        stateMock = {
-            inventory: {
-                homeFolderId: 'Lw==',
-            },
-        };
-        $provide.constant('state', stateMock);
-    }));
+	beforeEach(angular.mock.module('data-prep.services.onboarding', ($provide) => {
+		stateMock = {
+			inventory: {
+				homeFolderId: 'Lw==',
+			},
+		};
+		$provide.constant('state', stateMock);
+	}));
 
-    beforeEach(inject(($state) => {
-        spyOn($state, 'go').and.returnValue();
-    }));
+	beforeEach(inject(($state) => {
+		spyOn($state, 'go').and.returnValue();
+	}));
 
-    it('should return true when tour has not been completed yet', inject((OnboardingService) => {
-        // when
-        var result = OnboardingService.shouldStartTour('preparation');
+	it('should return true when tour has not been completed yet', inject((OnboardingService, StorageService) => {
+		// given
+		spyOn(StorageService, 'getTourOptions').and.returnValue({ preparation: false });
 
-        // then
-        expect(result).toBe(true);
-    }));
+		// when
+		var result = OnboardingService.shouldStartTour('preparation');
 
-    it('should return false when tour has already been completed', inject((OnboardingService, StorageService) => {
-        // given
-        spyOn(StorageService, 'getTourOptions').and.returnValue({ preparation: true });
+		// then
+		expect(result).toBe(true);
+	}));
 
-        // when
-        var result = OnboardingService.shouldStartTour('preparation');
+	it('should return false when tour has already been completed', inject((OnboardingService, StorageService) => {
+		// given
+		spyOn(StorageService, 'getTourOptions').and.returnValue({ preparation: true });
 
-        // then
-        expect(result).toBe(false);
-    }));
+		// when
+		var result = OnboardingService.shouldStartTour('preparation');
 
-    it('should configure intro.js options', inject(($timeout, OnboardingService) => {
-        // given
-        expect(OnboardingService.currentTour).toBeFalsy();
+		// then
+		expect(result).toBe(false);
+	}));
 
-        // when
-        OnboardingService.startTour('preparation');
-        $timeout.flush(200);
+	it('should configure intro.js options', inject(($timeout, OnboardingService) => {
+		// given
+		expect(OnboardingService.currentTour).toBeFalsy();
 
-        // then
-        const options = OnboardingService.currentTour._options;
-        expect(options.nextLabel).toBe('NEXT');
-        expect(options.prevLabel).toBe('BACK');
-        expect(options.skipLabel).toBe('SKIP');
-        expect(options.doneLabel).toBe('LET ME TRY');
-    }));
+		// when
+		OnboardingService.startTour('preparation');
+		$timeout.flush(200);
 
-    it('should create/adapt preparation tour step', inject(($timeout, OnboardingService) => {
-        // given
-        expect(OnboardingService.currentTour).toBeFalsy();
+		// then
+		const options = OnboardingService.currentTour._options;
+		expect(options.nextLabel).toBe('NEXT');
+		expect(options.prevLabel).toBe('BACK');
+		expect(options.skipLabel).toBe('SKIP');
+		expect(options.doneLabel).toBe('LET ME TRY');
+	}));
 
-        // when
-        OnboardingService.startTour('preparation');
-        $timeout.flush(200);
+	it('should create/adapt preparation tour step', inject(($timeout, OnboardingService) => {
+		// given
+		expect(OnboardingService.currentTour).toBeFalsy();
 
-        // then
-        const options = OnboardingService.currentTour._options;
-        expect(options.steps[0]).toEqual({
-            element: '#side-panel-nav-preparations',
-            position: 'right',
-            intro: '<div class="introjs-tooltiptitle"><center>Preparations</center></div><div class="introjs-tooltipcontent">Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.</div>',
-        });
-    }));
+		// when
+		OnboardingService.startTour('preparation');
+		$timeout.flush(200);
 
-    it('should create/adapt playground step', inject(($timeout, OnboardingService) => {
-        // given
-        expect(OnboardingService.currentTour).toBeFalsy();
+		// then
+		const options = OnboardingService.currentTour._options;
+		expect(options.steps[0]).toEqual({
+			element: '#side-panel-nav-preparations',
+			position: 'right',
+			intro: '<div class="introjs-tooltiptitle"><center>Preparations</center></div><div class="introjs-tooltipcontent">Here you can browse through and manage the preparations you created.</br>A preparation is the outcome of the different steps applied to cleanse your data.</div>',
+		});
+	}));
 
-        // when
-        OnboardingService.startTour('playground');
-        $timeout.flush(200);
+	it('should create/adapt playground step', inject(($timeout, OnboardingService) => {
+		// given
+		expect(OnboardingService.currentTour).toBeFalsy();
 
-        // then
-        const options = OnboardingService.currentTour._options;
-        expect(options.steps[0]).toEqual({
-            element: '.no-js',
-            position: 'right',
-            intro: '<div class="introjs-tooltiptitle"><center>Welcome to the preparation view</center></div><div class="introjs-tooltipcontent">In this view, you can apply preparation steps to your dataset.</br>This table represents the result of your preparation.</div>',
-        });
-    }));
+		// when
+		OnboardingService.startTour('playground');
+		$timeout.flush(200);
 
-    it('should create/adapt column selection', inject(($timeout, OnboardingService) => {
-        // given
-        expect(OnboardingService.currentTour).toBeFalsy();
+		// then
+		const options = OnboardingService.currentTour._options;
+		expect(options.steps[0]).toEqual({
+			element: '.no-js',
+			position: 'right',
+			intro: '<div class="introjs-tooltiptitle"><center>Welcome to the preparation view</center></div><div class="introjs-tooltipcontent">In this view, you can apply preparation steps to your dataset.</br>This table represents the result of your preparation.</div>',
+		});
+	}));
 
-        // when
-        OnboardingService.startTour('playground');
-        $timeout.flush(200);
+	it('should create/adapt column selection', inject(($timeout, OnboardingService) => {
+		// given
+		expect(OnboardingService.currentTour).toBeFalsy();
 
-        // then
-        const options = OnboardingService.currentTour._options;
-        expect(options.steps[1]).toEqual({
-            element: '#datagrid .slick-header-columns-right > .slick-header-column',
-            position: 'right',
-            intro: '<div class="introjs-tooltiptitle"><center>Columns</center></div><div class="introjs-tooltipcontent">Select a column to discover the transformation functions you can apply to your data.</div>',
-        });
-    }));
+		// when
+		OnboardingService.startTour('playground');
+		$timeout.flush(200);
 
-    it('should create/adapt recipe tour step', inject(($timeout, OnboardingService) => {
-        // given
-        expect(OnboardingService.currentTour).toBeFalsy();
+		// then
+		const options = OnboardingService.currentTour._options;
+		expect(options.steps[1]).toEqual({
+			element: '#datagrid .slick-header-columns-right > .slick-header-column',
+			position: 'right',
+			intro: '<div class="introjs-tooltiptitle"><center>Columns</center></div><div class="introjs-tooltipcontent">Select a column to discover the transformation functions you can apply to your data.</div>',
+		});
+	}));
 
-        // when
-        OnboardingService.startTour('recipe');
-        $timeout.flush(200);
+	it('should create/adapt recipe tour step', inject(($timeout, OnboardingService) => {
+		// given
+		expect(OnboardingService.currentTour).toBeFalsy();
 
-        // then
-        const options = OnboardingService.currentTour._options;
-        expect(options.steps[0]).toEqual({
-            element: '#help-recipe > .recipe',
-            position: 'right',
-            intro: '<div class="introjs-tooltiptitle"><center>Recipe</center></div><div class="introjs-tooltipcontent">Here is your recipe. A recipe is literally defined as "a set of directions with a list of ingredients for making or preparing something".</br>In Talend Data Preparation, the ingredients are the raw data, called datasets, and the directions are the set of functions applied to the dataset.</br>Here you can preview, edit, delete, activate or deactivate every function included in the recipe you created.</div>',
-        });
-    }));
+		// when
+		OnboardingService.startTour('recipe');
+		$timeout.flush(200);
 
-    it('should save "preparation" state in localstorage on tour complete', inject(($timeout, OnboardingService, StorageService) => {
-        // given
-        spyOn(StorageService, 'setTourOptions');
+		// then
+		const options = OnboardingService.currentTour._options;
+		expect(options.steps[0]).toEqual({
+			element: '#help-recipe > .recipe',
+			position: 'right',
+			intro: '<div class="introjs-tooltiptitle"><center>Recipe</center></div><div class="introjs-tooltipcontent">Here is your recipe. A recipe is literally defined as "a set of directions with a list of ingredients for making or preparing something".</br>In Talend Data Preparation, the ingredients are the raw data, called datasets, and the directions are the set of functions applied to the dataset.</br>Here you can preview, edit, delete, activate or deactivate every function included in the recipe you created.</div>',
+		});
+	}));
 
-        expect(OnboardingService.currentTour).toBeFalsy();
-        OnboardingService.startTour('preparation');
-        $timeout.flush(200);
+	it('should save "preparation" state in localstorage on tour complete', inject(($timeout, OnboardingService, StorageService) => {
+		// given
+		spyOn(StorageService, 'setTourOptions');
 
-        const oncomplete = OnboardingService.currentTour._introCompleteCallback;
+		expect(OnboardingService.currentTour).toBeFalsy();
+		OnboardingService.startTour('preparation');
+		$timeout.flush(200);
 
-        // when
-        oncomplete();
+		const oncomplete = OnboardingService.currentTour._introCompleteCallback;
 
-        // then
-        expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
-    }));
+		// when
+		oncomplete();
 
-    it('should save "preparation" state in localstorage on tour exit', inject(($timeout, OnboardingService, StorageService) => {
-        // given
-        spyOn(StorageService, 'setTourOptions');
-        expect(OnboardingService.currentTour).toBeFalsy();
-        OnboardingService.startTour('preparation');
-        $timeout.flush(200);
-        const onexit = OnboardingService.currentTour._introExitCallback;
+		// then
+		expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
+	}));
 
-        // when
-        onexit();
+	it('should save "preparation" state in localstorage on tour exit', inject(($timeout, OnboardingService, StorageService) => {
+		// given
+		spyOn(StorageService, 'setTourOptions');
+		expect(OnboardingService.currentTour).toBeFalsy();
+		OnboardingService.startTour('preparation');
+		$timeout.flush(200);
+		const onexit = OnboardingService.currentTour._introExitCallback;
 
-        // then
-        expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
-    }));
+		// when
+		onexit();
 
-    it('should redirect to "preparations" before starting onboarding', inject(($state, OnboardingService) => {
-        // given
-        $state.current = {
-            name: HOME_DATASETS_ROUTE,
-        };
+		// then
+		expect(StorageService.setTourOptions).toHaveBeenCalledWith({ preparation: true });
+	}));
 
-        // when
-        OnboardingService.startTour('preparation');
+	it('should redirect to "preparations" before starting onboarding', inject(($state, OnboardingService) => {
+		// given
+		$state.current = {
+			name: HOME_DATASETS_ROUTE,
+		};
 
-        // then
-        expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
-    }));
+		// when
+		OnboardingService.startTour('preparation');
 
-    it('should redirect BACK to "datasets" after redirecting to "preparations" ', inject(($timeout, $state, OnboardingService) => {
-        // given
-        $state.current = {
-            name: HOME_DATASETS_ROUTE,
-        };
+		// then
+		expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
+	}));
 
-        expect(OnboardingService.currentTour).toBeFalsy();
-        OnboardingService.startTour('preparation');
-        expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
+	it('should redirect BACK to "datasets" after redirecting to "preparations" ', inject(($timeout, $state, OnboardingService) => {
+		// given
+		$state.current = {
+			name: HOME_DATASETS_ROUTE,
+		};
 
-        // when
-        $timeout.flush(200);
-        const onexit = OnboardingService.currentTour._introExitCallback;
+		expect(OnboardingService.currentTour).toBeFalsy();
+		OnboardingService.startTour('preparation');
+		expect($state.go).toHaveBeenCalledWith(HOME_PREPARATIONS_ROUTE, { folderId: stateMock.inventory.homeFolderId });
 
-        // when
-        onexit();
+		// when
+		$timeout.flush(200);
+		const onexit = OnboardingService.currentTour._introExitCallback;
 
-        // then
-        expect($state.go).toHaveBeenCalledWith(HOME_DATASETS_ROUTE);
-    }));
+		// when
+		onexit();
+
+		// then
+		expect($state.go).toHaveBeenCalledWith(HOME_DATASETS_ROUTE);
+	}));
 });

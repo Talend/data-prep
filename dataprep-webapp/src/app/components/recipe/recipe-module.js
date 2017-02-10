@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import 'ng-sortable/dist/ng-sortable.min.css';
-
 import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import sunchoke from 'sunchoke';

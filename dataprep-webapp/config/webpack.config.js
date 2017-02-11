@@ -11,7 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SassLintPlugin = require('sasslint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-const extractCSS = new ExtractTextPlugin('styles/[name]-[hash].css');
+const extractCSS = new ExtractTextPlugin({ filename: 'styles/[name]-[hash].css' });
 
 const INDEX_TEMPLATE_PATH = path.resolve(__dirname, '../src/index.html');
 const STYLE_PATH = path.resolve(__dirname, '../src/app/index.scss');
@@ -22,26 +22,58 @@ const BUILD_PATH = path.resolve(__dirname, '../build');
 function getDefaultConfig(options) {
 	return {
 		entry: {
-			app: INDEX_PATH,
 			vendor: VENDOR_PATH,
 			style: STYLE_PATH,
+			app: INDEX_PATH,
 		},
 		output: {
 			path: BUILD_PATH,
 			filename: '[name]-[hash].js',
 		},
 		module: {
-			preLoaders: [],
-			loaders: [
-				{ test: /\.js$/, loaders: ['ng-annotate', 'babel?cacheDirectory'], exclude: /node_modules/ },
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css', 'postcss', 'resolve-url', 'sass?sourceMap']), exclude: /react-talend-/ },
-				{ test: /\.(css|scss)$/, loader: extractCSS.extract(['css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'postcss', 'resolve-url', 'sass?sourceMap']),  include: /react-talend-/ }, // css moodules  local scope
-				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', query: { mimetype: 'image/png' } },
-				{ test: /\.html$/, loaders: ['ngtemplate', 'html'], exclude: INDEX_TEMPLATE_PATH },
-				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff" },
-				{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream" },
-				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file?name=/assets/fonts/[name].[ext]" },
-				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?name=/assets/fonts/[name].[ext]&limit=10000&mimetype=image/svg+xml" },
+			rules: [
+				{
+					test: /\.js$/,
+					use: [
+						{ loader: 'ng-annotate-loader' },
+						{ loader: 'babel-loader', options: { cacheDirectory: true } },
+					],
+					exclude: /node_modules/,
+				},
+				{
+					test: /\.(css|scss)$/,
+					use: extractCSS.extract([
+						{ loader: 'css-loader'},
+						{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
+						{ loader: 'resolve-url-loader' },
+						{ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } }
+					]),
+					exclude: /react-talend-/,
+				},
+				// css moodules local scope
+				{
+					test: /\.(css|scss)$/,
+					use: extractCSS.extract([
+						{ loader: 'css-loader', options: { sourceMap: true, modules: true, importLoaders: 1, localIdentName: '[name]__[local]___[hash:base64:5]' }},
+						{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
+						{ loader: 'resolve-url-loader' },
+						{ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } }
+					]),
+					include: /react-talend-/,
+				},
+				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', options: { mimetype: 'image/png' } },
+				{
+					test: /\.html$/,
+					use: [
+						{loader: 'ngtemplate-loader'},
+						{loader: 'html-loader'},
+					],
+					exclude: INDEX_TEMPLATE_PATH,
+				},
+				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' } },
+				{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/octet-stream' } },
+				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader', options: { name: '/assets/fonts/[name].[ext]'} },
+				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' } },
 			]
 		},
 		plugins: [
@@ -50,17 +82,22 @@ function getDefaultConfig(options) {
 				$: 'jquery',
 				jQuery: 'jquery',
 				'window.jQuery': 'jquery',
+			}),
+			new webpack.LoaderOptionsPlugin({
+				options: {
+					// TODO JSO see if this is necessary
+					context: path.join(__dirname, 'src'),
+					// TODO JSO see if this is necessary
+					debug: options.debug,
+					// needed for resolve-url-loader
+					output: {
+						path: BUILD_PATH,
+					}
+				}
 			})
 		],
-		sassLoader: {
-			data: SASS_DATA,
-		},
-		postcss() {
-			return [autoprefixer({ browsers: ['last 2 versions'] })];
-		},
 		cache: true,
 		devtool: options.devtool,
-		debug: options.debug,
 	};
 }
 
@@ -70,9 +107,7 @@ function addProdEnvPlugin(config) {
 			'process.env': {
 				NODE_ENV: JSON.stringify("production")
 			}
-		}),
-		new webpack.optimize.DedupePlugin(),
-		new webpack.optimize.OccurrenceOrderPlugin()
+		})
 	);
 }
 
@@ -84,21 +119,28 @@ function addDevServerConfig(config) {
 			aggregateTimeout: 300,
 			poll: 1000
 		},
+		compress: true,
 		inline: true,
-		progress: true,
+		//progress: true,
 		contentBase: BUILD_PATH,
-		outputPath: BUILD_PATH,
+		//outputPath: BUILD_PATH,
 	};
 }
 
 function addMinifyConfig(config) {
-	config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-		compress: { warnings: false },
-	}));
+	config.plugins.push(
+		new webpack.optimize.UglifyJsPlugin(),
+		new webpack.LoaderOptionsPlugin({ minimize: true })
+	);
 }
 
 function addStripCommentsConfig(config) {
-	config.module.preLoaders.push({ test: /\.js$/, loader: 'stripcomment', exclude: [/node_modules/, /\.spec\.js$/] });
+	config.module.rules.push({
+		test: /\.js$/,
+		enforce: 'pre',
+		use: 'stripcomment-loader',
+		exclude: [/node_modules/, /\.spec\.js$/],
+	});
 }
 
 function addPlugins(config, options) {
@@ -144,7 +186,7 @@ function addPlugins(config, options) {
 		 *
 		 * See: https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
 		 */
-		new webpack.BannerPlugin(getLicense()),
+		new webpack.BannerPlugin({ banner: getLicense() }),
 
 		/*
 		 * Plugin: webpack.optimize.CommonsChunkPlugin
@@ -160,11 +202,12 @@ function addPlugins(config, options) {
 }
 
 function addLinterConfig(config) {
-	config.eslint = { configFile: path.resolve(__dirname, '../.eslintrc') };
-	config.module.preLoaders.push({
+	config.module.rules.push({
 		test: /src\/.*\.js$/,
-		exclude: /node_modules/,
+		enforce: 'pre',
 		loader: 'eslint-loader',
+		exclude: /node_modules/,
+		options: { configFile: path.resolve(__dirname, '../.eslintrc') }
 	});
 
 	// config.plugins.push(new SassLintPlugin({
@@ -173,16 +216,16 @@ function addLinterConfig(config) {
 }
 
 function addCoverageConfig(config) {
-	config.module.preLoaders.push(
-		{ test: /\.js$/, loader: 'isparta', exclude: [/node_modules/, /data-prep\//, /\.spec\.js$/] }
-	);
-	config.isparta = {
-		embedSource: true,
-		noAutoWrap: true,
-		babel: {
-			presets: ['es2015'],
+	config.module.rules.push({
+		test: /\.js$/,
+		enforce: 'pre',
+		loader: 'istanbul-instrumenter-loader',
+		exclude: [/node_modules/, /data-prep\//, /\.spec\.js$/],
+		options: {
+			autoWrap: false,
+			esModules: true,
 		},
-	};
+	});
 }
 
 function removeFilesConfig(config) {

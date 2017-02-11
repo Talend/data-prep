@@ -14,8 +14,8 @@
 import _ from 'lodash';
 
 /* eslint-disable import/no-extraneous-dependencies */
-const DateOccurrenceWorker = require('worker!./date-occurence.worker');
-const PatternOccurrenceWorker = require('worker!./pattern-occurence.worker');
+const DateOccurrenceWorker = require('worker-loader!./date-occurence.worker');
+const PatternOccurrenceWorker = require('worker-loader!./pattern-occurence.worker');
 /* eslint-enable import/no-extraneous-dependencies */
 
 

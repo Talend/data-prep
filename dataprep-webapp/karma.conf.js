@@ -35,7 +35,7 @@ module.exports = function (config) {
 		},
 
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ['progress', 'coverage'],
+		reporters: ['progress', 'coverage-istanbul'],
 
 		// web server port
 		port: 9876,
@@ -54,9 +54,10 @@ module.exports = function (config) {
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browsers: ['PhantomJS'],
 
-		coverageReporter: {
-			type: 'html',
-			dir: 'coverage/'
+		coverageIstanbulReporter: {
+			reports: [ 'html', 'json-summary' ],
+			dir: 'coverage/',
+			fixWebpackSourcePaths: true
 		},
 
 		// if true, Karma runs tests once and exits

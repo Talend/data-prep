@@ -19,6 +19,8 @@ const INDEX_PATH = path.resolve(__dirname, '../src/app/index-module.js');
 const VENDOR_PATH = path.resolve(__dirname, '../src/vendor.js');
 const BUILD_PATH = path.resolve(__dirname, '../build');
 
+const CHUNKS_ORDER = ['vendor', 'style', 'app'];
+
 function getDefaultConfig(options) {
 	return {
 		entry: {
@@ -121,9 +123,7 @@ function addDevServerConfig(config) {
 		},
 		compress: true,
 		inline: true,
-		//progress: true,
 		contentBase: BUILD_PATH,
-		//outputPath: BUILD_PATH,
 	};
 }
 
@@ -177,6 +177,18 @@ function addPlugins(config, options) {
 			env: options.env,
 			template: INDEX_TEMPLATE_PATH,
 			inject: 'head',
+			// ensure loding order vendor/style/app
+			chunksSortMode: (a, b) => {
+				const aOrder = CHUNKS_ORDER.indexOf(a.names[0]);
+				const bOrder = CHUNKS_ORDER.indexOf(b.names[0]);
+				if (aOrder > bOrder) {
+					return 1;
+				}
+				if (aOrder < bOrder) {
+					return -1;
+				}
+				return 0;
+			}
 		}),
 
 		/*

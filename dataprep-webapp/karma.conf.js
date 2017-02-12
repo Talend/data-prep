@@ -12,12 +12,10 @@ module.exports = function (config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['jasmine' ],
+		frameworks: ['jasmine'],
 
 		// list of files/patterns to load in the browser
-		files: [
-			{ pattern: './spec.bundle.js', watched: false },
-		],
+		files: ['./spec.bundle.js'],
 
 		// files to exclude
 		exclude: [],
@@ -35,7 +33,7 @@ module.exports = function (config) {
 		},
 
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ['progress', 'coverage-istanbul'],
+		reporters: ['progress', 'coverage'],
 
 		// web server port
 		port: 9876,
@@ -54,10 +52,9 @@ module.exports = function (config) {
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browsers: ['PhantomJS'],
 
-		coverageIstanbulReporter: {
-			reports: [ 'html', 'json-summary' ],
-			dir: 'coverage/',
-			fixWebpackSourcePaths: true
+		coverageReporter: {
+			type: 'html',
+			dir: 'coverage/'
 		},
 
 		// if true, Karma runs tests once and exits

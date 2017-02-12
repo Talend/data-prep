@@ -230,18 +230,21 @@ function addCoverageConfig(config) {
 	config.module.rules.push({
 		test: /\.js$/,
 		enforce: 'pre',
-		loader: 'istanbul-instrumenter-loader',
-		exclude: [/node_modules/, /data-prep\//, /\.spec\.js$/],
+		loader: 'isparta-loader',
+		exclude: [/node_modules/, /\.spec\.js$/],
 		options: {
-			autoWrap: false,
-			esModules: true,
+			embedSource: true,
+			noAutoWrap: true,
+			babel: {
+				presets: ['es2015']
+			}
 		},
 	});
 }
 
 function removeFilesConfig(config) {
-	config.entry = undefined;
-	config.output = undefined;
+	delete config.entry;
+	delete config.output;
 }
 
 /*

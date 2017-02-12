@@ -1,3 +1,3 @@
 module.exports = require('./webpack.config')({
-    env: 'test',
+	env: 'test',
 });

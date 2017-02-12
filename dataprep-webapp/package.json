@@ -16,8 +16,8 @@
     "build:dist": "webpack --config config/webpack.config.prod.js --progress --profile --color --display-error-details --display-cached",
     "prebuild:dist": "npm run clean:build",
     "start": "npm run serve",
-    "serve": "webpack-dev-server --config config/webpack.config.dev.js --progress --colors --open",
-    "serve:dist": "webpack-dev-server --config config/webpack.config.prod.js --progress --colors --open --compress",
+    "serve": "webpack-dashboard -- webpack-dev-server --config config/webpack.config.dev.js --progress --colors --open",
+    "serve:dist": "webpack-dashboard -- webpack-dev-server --config config/webpack.config.prod.js --progress --colors --open --compress",
     "test": "karma start",
     "test:ci": "karma start karma.conf.ci.js",
     "test:auto": "karma start --auto",
@@ -115,6 +115,7 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1",
+    "webpack-dashboard": "^0.3.0",
     "webpack-dev-server": "^2.3.0",
     "worker-loader": "^0.7.1",
     "yargs": "^4.8.1"

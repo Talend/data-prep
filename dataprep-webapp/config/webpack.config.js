@@ -4,6 +4,7 @@ const SASS_DATA = require('./sass.conf');
 
 const path = require('path');
 const webpack = require('webpack');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 const autoprefixer = require('autoprefixer');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -79,19 +80,17 @@ function getDefaultConfig(options) {
 			]
 		},
 		plugins: [
+			new DashboardPlugin(),
 			extractCSS,
 			new webpack.ProvidePlugin({
 				$: 'jquery',
 				jQuery: 'jquery',
 				'window.jQuery': 'jquery',
 			}),
+			// for compatibility, needed for some loaders
 			new webpack.LoaderOptionsPlugin({
 				options: {
-					// TODO JSO see if this is necessary
 					context: path.join(__dirname, 'src'),
-					// TODO JSO see if this is necessary
-					debug: options.debug,
-					// needed for resolve-url-loader
 					output: {
 						path: BUILD_PATH,
 					}

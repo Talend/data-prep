@@ -46,7 +46,7 @@ function getDefaultConfig(options) {
 				{
 					test: /\.(css|scss)$/,
 					use: extractCSS.extract([
-						{ loader: 'css-loader'},
+						{ loader: 'css-loader' },
 						{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
 						{ loader: 'resolve-url-loader' },
 						{ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } }
@@ -57,7 +57,7 @@ function getDefaultConfig(options) {
 				{
 					test: /\.(css|scss)$/,
 					use: extractCSS.extract([
-						{ loader: 'css-loader', options: { sourceMap: true, modules: true, importLoaders: 1, localIdentName: '[name]__[local]___[hash:base64:5]' }},
+						{ loader: 'css-loader', options: { sourceMap: true, modules: true, importLoaders: 1, localIdentName: '[name]__[local]___[hash:base64:5]' } },
 						{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
 						{ loader: 'resolve-url-loader' },
 						{ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } }
@@ -68,14 +68,14 @@ function getDefaultConfig(options) {
 				{
 					test: /\.html$/,
 					use: [
-						{loader: 'ngtemplate-loader'},
-						{loader: 'html-loader'},
+						{ loader: 'ngtemplate-loader' },
+						{ loader: 'html-loader' },
 					],
 					exclude: INDEX_TEMPLATE_PATH,
 				},
 				{ test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/font-woff' } },
 				{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'application/octet-stream' } },
-				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader', options: { name: '/assets/fonts/[name].[ext]'} },
+				{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader', options: { name: '/assets/fonts/[name].[ext]' } },
 				{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader', options: { name: '/assets/fonts/[name].[ext]', limit: 10000, mimetype: 'image/svg+xml' } },
 			]
 		},
@@ -93,7 +93,7 @@ function getDefaultConfig(options) {
 					context: path.join(__dirname, 'src'),
 					output: {
 						path: BUILD_PATH,
-					}
+					},
 				}
 			})
 		],
@@ -106,8 +106,8 @@ function addProdEnvPlugin(config) {
 	config.plugins.push(
 		new webpack.DefinePlugin({
 			'process.env': {
-				NODE_ENV: JSON.stringify("production")
-			}
+				NODE_ENV: JSON.stringify('production'),
+			},
 		})
 	);
 }
@@ -118,7 +118,7 @@ function addDevServerConfig(config) {
 		host: appConf.host,
 		watchOptions: {
 			aggregateTimeout: 300,
-			poll: 1000
+			poll: 1000,
 		},
 		compress: true,
 		inline: true,
@@ -156,7 +156,7 @@ function addPlugins(config, options) {
 			{
 				from: 'src/assets/config/config.mine.json',
 				to: 'assets/config/config.json',
-				force: (options.env === 'dev')
+				force: (options.env === 'dev'),
 			},
 			{ from: 'src/i18n', to: 'i18n' },
 		]),
@@ -218,7 +218,7 @@ function addLinterConfig(config) {
 		enforce: 'pre',
 		loader: 'eslint-loader',
 		exclude: /node_modules/,
-		options: { configFile: path.resolve(__dirname, '../.eslintrc') }
+		options: { configFile: path.resolve(__dirname, '../.eslintrc') },
 	});
 
 	// config.plugins.push(new SassLintPlugin({

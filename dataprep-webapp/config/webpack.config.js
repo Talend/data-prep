@@ -24,15 +24,6 @@ const CHUNKS_ORDER = ['vendor', 'style', 'app'];
 
 function getDefaultConfig(options) {
 	return {
-		entry: {
-			vendor: VENDOR_PATH,
-			style: STYLE_PATH,
-			app: INDEX_PATH,
-		},
-		output: {
-			path: BUILD_PATH,
-			filename: '[name]-[hash].js',
-		},
 		module: {
 			rules: [
 				{
@@ -80,7 +71,6 @@ function getDefaultConfig(options) {
 			]
 		},
 		plugins: [
-			new DashboardPlugin(),
 			extractCSS,
 			new webpack.ProvidePlugin({
 				$: 'jquery',
@@ -90,7 +80,7 @@ function getDefaultConfig(options) {
 			// for compatibility, needed for some loaders
 			new webpack.LoaderOptionsPlugin({
 				options: {
-					context: path.join(__dirname, 'src'),
+					context: path.join(__dirname, '../src'),
 					output: {
 						path: BUILD_PATH,
 					},
@@ -102,6 +92,10 @@ function getDefaultConfig(options) {
 	};
 }
 
+function addDashboardPlugin(config) {
+	config.plugins.push(new DashboardPlugin());
+}
+
 function addProdEnvPlugin(config) {
 	config.plugins.push(
 		new webpack.DefinePlugin({
@@ -110,6 +104,22 @@ function addProdEnvPlugin(config) {
 			},
 		})
 	);
+}
+
+function addCoverageConfig(config) {
+	config.module.rules.push({
+		test: /\.js$/,
+		enforce: 'pre',
+		loader: 'isparta-loader',
+		exclude: [/node_modules/, /\.spec\.js$/],
+		options: {
+			embedSource: true,
+			noAutoWrap: true,
+			babel: {
+				presets: ['es2015']
+			}
+		},
+	});
 }
 
 function addDevServerConfig(config) {
@@ -126,20 +136,16 @@ function addDevServerConfig(config) {
 	};
 }
 
-function addMinifyConfig(config) {
-	config.plugins.push(
-		new webpack.optimize.UglifyJsPlugin(),
-		new webpack.LoaderOptionsPlugin({ minimize: true })
-	);
-}
-
-function addStripCommentsConfig(config) {
-	config.module.rules.push({
-		test: /\.js$/,
-		enforce: 'pre',
-		use: 'stripcomment-loader',
-		exclude: [/node_modules/, /\.spec\.js$/],
-	});
+function addFilesConfig(config) {
+	config.entry = {
+		vendor: VENDOR_PATH,
+		style: STYLE_PATH,
+		app: INDEX_PATH,
+	};
+	config.output = {
+		path: BUILD_PATH,
+		filename: '[name]-[hash].js',
+	};
 }
 
 function addPlugins(config, options) {
@@ -212,6 +218,22 @@ function addPlugins(config, options) {
 	);
 }
 
+function addMinifyConfig(config) {
+	config.plugins.push(
+		new webpack.optimize.UglifyJsPlugin(),
+		new webpack.LoaderOptionsPlugin({ minimize: true })
+	);
+}
+
+function addStripCommentsConfig(config) {
+	config.module.rules.push({
+		test: /\.js$/,
+		enforce: 'pre',
+		use: 'stripcomment-loader',
+		exclude: [/node_modules/, /\.spec\.js$/],
+	});
+}
+
 function addLinterConfig(config) {
 	config.module.rules.push({
 		test: /src\/.*\.js$/,
@@ -226,33 +248,14 @@ function addLinterConfig(config) {
 	// }));
 }
 
-function addCoverageConfig(config) {
-	config.module.rules.push({
-		test: /\.js$/,
-		enforce: 'pre',
-		loader: 'isparta-loader',
-		exclude: [/node_modules/, /\.spec\.js$/],
-		options: {
-			embedSource: true,
-			noAutoWrap: true,
-			babel: {
-				presets: ['es2015']
-			}
-		},
-	});
-}
-
-function removeFilesConfig(config) {
-	delete config.entry;
-	delete config.output;
-}
-
 /*
  {
- env: ('dev' | 'prod' | 'test'),     // the environment
- debug: (true | false),              // enable debug
+ coverage: (true | false)            // configure coverage instrumenter
+ dashboard: (true | false)           // enable webpack dashboard plugin
  devtool: 'inline-source-map',       // source map type
- devServer: (true | false),          // configure webpack-dev-server and plugins to generate app
+ devServer: (true | false),          // configure webpack-dev-server
+ entryOutput: (true | false),        // configure entry and output files and plugins to generate full app. For example, test with karma doesn't need that, as the files are managed by karma.
+ env: ('dev' | 'prod' | 'test'),     // the environment
  linter: (true | false),             // enable eslint and sass-lint
  minify: (true | false),             // enable minification/uglification
  stripComments: (true | false),      // remove comments
@@ -261,18 +264,26 @@ function removeFilesConfig(config) {
 module.exports = (options) => {
 	const config = getDefaultConfig(options);
 
-	if (options.env === 'prod') {
-		addProdEnvPlugin(config);
+
+	if (options.coverage) {
+		addCoverageConfig(config);
 	}
 
-	if (options.env === 'test') {
-		addCoverageConfig(config);
-		removeFilesConfig(config);
+	if (options.dashboard) {
+		addDashboardPlugin(config);
 	}
 
 	if (options.devServer) {
 		addDevServerConfig(config);
+	}
+
+	if (options.entryOutput) {
+		addFilesConfig(config);
 		addPlugins(config, options);
+	}
+
+	if (options.env === 'prod') {
+		addProdEnvPlugin(config);
 	}
 
 	if (options.minify) {

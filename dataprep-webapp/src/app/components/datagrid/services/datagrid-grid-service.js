@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import SingleColumnResizePlugin from '../plugins/single-column-resize-plugin';
 import { COLUMN_INDEX_ID } from './datagrid-column-service';
 
 /**
@@ -168,6 +169,7 @@ export default class DatagridGridService {
 			asyncEditorLoadDelay: 150,
 		};
 		this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{ id: 'tdpId' }], options);
+		SingleColumnResizePlugin.apply(this.grid);
 
         // listeners
 		this._attachLongTableListeners();

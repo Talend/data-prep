@@ -29,14 +29,10 @@ $iconsfont: "talend-font";
 }
 
 @font-face {
-  font-family: "talend-font";
-  src: url("./fonts/talend-font.eot");
-  src: url("./fonts/talend-font.eot?#iefix") format("embedded-opentype"),
-  url("./fonts/talend-font.woff") format("woff"),
-  url("./fonts/talend-font.ttf") format("truetype"),
-  url("./fonts/talend-font.svg#talend-font") format("svg");
-  font-weight: normal;
-  font-style: normal;
+	font-family: "talend-font";
+	src: url("./fonts/talend-font.woff") format("woff"), url("./fonts/talend-font.svg#talend-font") format("svg");
+	font-weight: normal;
+	font-style: normal;
 }
 
 [data-icon]:before {

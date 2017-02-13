@@ -35,24 +35,19 @@ function getDefaultConfig(options) {
 					exclude: /node_modules/,
 				},
 				{
-					test: /\.(css|scss)$/,
-					use: extractCSS.extract([
-						{ loader: 'css-loader' },
-						{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
-						{ loader: 'resolve-url-loader' },
-						{ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } }
-					]),
+					test: /\.css$/,
+					use: extractCSS.extract(getCommonStyleLoaders()),
+					exclude: /react-talend-/,
+				},
+				{
+					test: /\.scss$/,
+					use: extractCSS.extract(getSassLoaders()),
 					exclude: /react-talend-/,
 				},
 				// css moodules local scope
 				{
-					test: /\.(css|scss)$/,
-					use: extractCSS.extract([
-						{ loader: 'css-loader', options: { sourceMap: true, modules: true, importLoaders: 1, localIdentName: '[name]__[local]___[hash:base64:5]' } },
-						{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
-						{ loader: 'resolve-url-loader' },
-						{ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } }
-					]),
+					test: /\.scss$/,
+					use: extractCSS.extract(getSassLoaders(true)),
 					include: /react-talend-/,
 				},
 				{ test: /\.(png|jpg|jpeg|gif)$/, loader: 'url-loader', options: { mimetype: 'image/png' } },
@@ -88,6 +83,21 @@ function getDefaultConfig(options) {
 		cache: true,
 		devtool: options.devtool,
 	};
+}
+
+function getCommonStyleLoaders(enableModules) {
+	const cssOptions = enableModules ?
+		{ sourceMap: true, modules: true, importLoaders: 1, localIdentName: '[name]__[local]___[hash:base64:5]' } :
+		{};
+	return [
+		{ loader: 'css-loader', options: cssOptions },
+		{ loader: 'postcss-loader', options: { plugins: () => [autoprefixer({ browsers: ['last 2 versions'] })] } },
+		{ loader: 'resolve-url-loader' }
+	];
+}
+
+function getSassLoaders(enableModules) {
+	return getCommonStyleLoaders(enableModules).concat({ loader: 'sass-loader', options: { sourceMap: true, data: SASS_DATA } });
 }
 
 function addDashboardPlugin(config) {

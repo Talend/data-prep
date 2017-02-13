@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <sc-tabs ng-if="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
+    <sc-tabs ng-show="!actionsSuggestionsCtrl.state.playground.suggestions.isLoading"
              class="actions-scope"
              selected-tab="actionsSuggestionsCtrl.state.playground.suggestions.tab">
         <sc-tabs-item tab-title="{{'ACTIONS_TAB_COLUMN' | translate}}" is-default="true">

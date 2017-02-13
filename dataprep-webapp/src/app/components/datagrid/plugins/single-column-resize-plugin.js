@@ -24,7 +24,7 @@ function freezeOtherColumnsOnDrag(columns, { column, node }) {
 }
 
 export default {
-	apply(grid) {
+	patch(grid) {
 		grid.onHeaderCellRendered.subscribe(
 			(event, columnsArgs) => freezeOtherColumnsOnDrag(grid.getColumns(), columnsArgs)
 		);

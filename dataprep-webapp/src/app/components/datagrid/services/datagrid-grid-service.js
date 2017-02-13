@@ -169,7 +169,7 @@ export default class DatagridGridService {
 			asyncEditorLoadDelay: 150,
 		};
 		this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{ id: 'tdpId' }], options);
-		SingleColumnResizePlugin.apply(this.grid);
+		SingleColumnResizePlugin.patch(this.grid);
 
         // listeners
 		this._attachLongTableListeners();

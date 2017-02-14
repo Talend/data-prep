@@ -36,7 +36,7 @@ public class PreparationCreate extends GenericCommand<String> {
 
     /**
      * Private constructor to ensure the use of IoC.
-     * 
+     *
      * @param preparation the preparation to create.
      * @param folderId the optional folder ID to create the preparation into.
      */

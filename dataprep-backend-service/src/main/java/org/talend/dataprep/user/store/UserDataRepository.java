@@ -23,7 +23,7 @@ public interface UserDataRepository<U extends UserData> {
 
     /**
      * get the {@link UserData} for the given userId from the current storage
-     * 
+     *
      * @param userId, the identifier of the user
      * @return the {@link UserData} for the given userId
      */
@@ -32,14 +32,14 @@ public interface UserDataRepository<U extends UserData> {
 
     /**
      * store the given {@link UserData}
-     * 
+     *
      * @param userData the {@link UserData} to store
      */
     void save(U userData);
 
     /**
      * remove the userData associated with the userId
-     * 
+     *
      * @param userId, the id of the user have it's UserData removed
      */
     void remove(String userId);

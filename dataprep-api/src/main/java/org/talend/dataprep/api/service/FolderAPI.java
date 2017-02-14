@@ -13,11 +13,10 @@
 package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +25,8 @@ import java.util.Queue;
 
 import org.apache.commons.lang.StringUtils;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -34,13 +35,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
-import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
-import org.talend.dataprep.api.service.command.folder.FolderChildrenList;
-import org.talend.dataprep.api.service.command.folder.FolderTree;
-import org.talend.dataprep.api.service.command.folder.GetFolder;
-import org.talend.dataprep.api.service.command.folder.RemoveFolder;
-import org.talend.dataprep.api.service.command.folder.RenameFolder;
-import org.talend.dataprep.api.service.command.folder.SearchFolders;
+import org.talend.dataprep.api.service.command.folder.*;
 import org.talend.dataprep.api.service.command.preparation.PreparationListByFolder;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
@@ -51,17 +46,16 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.dataprep.util.SortAndOrderHelper;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import reactor.core.Cancellation;
 import reactor.core.publisher.Flux;
-import org.talend.dataprep.util.SortAndOrderHelper;
-import org.talend.dataprep.util.SortAndOrderHelper.Order;
-import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @RestController
 public class FolderAPI extends APIService {
@@ -237,24 +231,46 @@ public class FolderAPI extends APIService {
         };
     }
 
-    private static <T> Cancellation writeFluxToJsonArray(Flux<T> flux, String arrayElement, JsonGenerator generator) {
-        return flux.doOnSubscribe(subscription -> {
-            try {
-                generator.writeArrayFieldStart(arrayElement);
-            } catch (IOException e) {
-                LOG.error("Unable to write content.", e);
+    private static <T> void writeFluxToJsonArray(Flux<T> flux, String arrayElement, JsonGenerator generator) {
+        flux.subscribe(new Subscriber<T>() {
+
+            Subscription subscription;
+
+            @Override
+            public void onSubscribe(Subscription s) {
+                try {
+                    generator.writeArrayFieldStart(arrayElement);
+                } catch (IOException e) {
+                    LOG.error("Unable to write content.", e);
+                }
+                subscription = s;
+                s.request(Long.MAX_VALUE);
             }
-        }).doOnComplete(() -> {
-            try {
-                generator.writeEndArray();
-            } catch (IOException e) {
-                LOG.error("Unable to write content.", e);
+
+            @Override
+            public void onNext(T aLong) {
+                try {
+                    generator.writeObject(aLong);
+                } catch (EOFException eofe) {
+                    LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
+                    subscription.cancel();
+                } catch (IOException e) {
+                    LOG.error("Unable to write content.", e);
+                }
             }
-        }).subscribe(o -> {
-            try {
-                generator.writeObject(o);
-            } catch (IOException e) {
-                LOG.error("Unable to write content.", e);
+
+            @Override
+            public void onError(Throwable t) {
+                onComplete();
+            }
+
+            @Override
+            public void onComplete() {
+                try {
+                    generator.writeEndArray();
+                } catch (IOException e) {
+                    LOG.error("Unable to write content.", e);
+                }
             }
         });
     }

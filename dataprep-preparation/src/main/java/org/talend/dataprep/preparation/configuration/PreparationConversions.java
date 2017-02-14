@@ -29,7 +29,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -74,9 +73,8 @@ public class PreparationConversions {
         }
 
         private UserPreparation toUserPreparation(UserPreparation target) {
-            final Security security = applicationContext.getBean(Security.class);
-
             if (target.getOwner() == null) {
+                final Security security = applicationContext.getBean(Security.class);
                 Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
                 target.setOwner(owner);
             }

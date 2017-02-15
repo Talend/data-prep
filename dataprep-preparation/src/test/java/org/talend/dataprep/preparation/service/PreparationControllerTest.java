@@ -19,8 +19,7 @@ import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.preparation.service.EntityBuilder.*;
 import static org.talend.dataprep.preparation.service.PreparationControllerTestClient.appendStepsToPrep;
@@ -355,6 +354,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // Assert that the author is the system user, and not the original author of the prep:
         assertEquals(System.getProperty("user.name"), repository.get(copyId, Preparation.class).getAuthor());
+        // row metadata its nullity after copy caused https://jira.talendforge.org/browse/TDP-3379
+        assertNotNull(repository.get(copyId, Preparation.class).getRowMetadata());
     }
 
     @Test

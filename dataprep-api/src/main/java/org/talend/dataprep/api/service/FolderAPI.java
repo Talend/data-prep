@@ -232,46 +232,62 @@ public class FolderAPI extends APIService {
     }
 
     private static <T> void writeFluxToJsonArray(Flux<T> flux, String arrayElement, JsonGenerator generator) {
-        flux.subscribe(new Subscriber<T>() {
+        flux.subscribe(new WriteJsonArraySubscriber<>(generator, arrayElement));
+    }
 
-            Subscription subscription;
+    private static class WriteJsonArraySubscriber<T> implements Subscriber<T> {
 
-            @Override
-            public void onSubscribe(Subscription s) {
-                try {
-                    generator.writeArrayFieldStart(arrayElement);
-                } catch (IOException e) {
-                    LOG.error("Unable to write content.", e);
-                }
-                subscription = s;
-                s.request(Long.MAX_VALUE);
+        private final JsonGenerator generator;
+
+        private final String arrayElement;
+
+        private Subscription subscription;
+
+        public WriteJsonArraySubscriber(JsonGenerator generator, String arrayElement) {
+            this.generator = generator;
+            this.arrayElement = arrayElement;
+        }
+
+        @Override
+        public void onSubscribe(Subscription s) {
+            try {
+                generator.writeArrayFieldStart(arrayElement);
+            } catch (EOFException eofe) {
+                LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
+                subscription.cancel();
+            } catch (IOException e) {
+                LOG.error("Unable to write content.", e);
             }
+            subscription = s;
+            s.request(Long.MAX_VALUE);
+        }
 
-            @Override
-            public void onNext(T aLong) {
-                try {
-                    generator.writeObject(aLong);
-                } catch (EOFException eofe) {
-                    LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
-                    subscription.cancel();
-                } catch (IOException e) {
-                    LOG.error("Unable to write content.", e);
-                }
+        @Override
+        public void onNext(T aLong) {
+            try {
+                generator.writeObject(aLong);
+            } catch (EOFException eofe) {
+                LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
+                subscription.cancel();
+            } catch (IOException e) {
+                LOG.error("Unable to write content.", e);
             }
+        }
 
-            @Override
-            public void onError(Throwable t) {
-                onComplete();
-            }
+        @Override
+        public void onError(Throwable t) {
+            onComplete();
+        }
 
-            @Override
-            public void onComplete() {
-                try {
-                    generator.writeEndArray();
-                } catch (IOException e) {
-                    LOG.error("Unable to write content.", e);
-                }
+        @Override
+        public void onComplete() {
+            try {
+                generator.writeEndArray();
+            } catch (EOFException eofe) {
+                LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
+            } catch (IOException e) {
+                LOG.error("Unable to write content.", e);
             }
-        });
+        }
     }
 }

@@ -97,6 +97,23 @@ public class Preparation extends Identifiable implements Serializable {
     }
 
     /**
+     * Copy constructor.
+     *
+     * @param origin
+     */
+    public Preparation(Preparation origin) {
+        this.dataSetId = origin.dataSetId;
+        this.rowMetadata = origin.rowMetadata;
+        this.author = origin.author;
+        this.name = origin.name;
+        this.creationDate = origin.creationDate;
+        this.lastModificationDate = origin.lastModificationDate;
+        this.headId = origin.headId;
+        this.appVersion = origin.appVersion;
+        this.steps = origin.steps;
+    }
+
+    /**
      * @return List of the steps id for this preparation.
      * @see org.talend.dataprep.preparation.store.PreparationRepository#get(String, Class)
      */

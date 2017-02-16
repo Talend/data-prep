@@ -23,7 +23,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
-        <log4j.version>2.7</log4j.version>
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <tika.version>1.12</tika.version>
@@ -41,6 +40,8 @@
         <javax.measure.jsr-275.version>0.9.3</javax.measure.jsr-275.version>
         <tql.version>6.3.1</tql.version>
         <commons-compress.version>1.13</commons-compress.version>
+        <!-- avro version must match the one in the studio -->
+        <avro.version>1.7.7</avro.version>
     </properties>
     <modules>
         <module>../dataprep-backend-common</module>
@@ -73,6 +74,18 @@
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -96,6 +109,18 @@
                         <groupId>com.clearspring.analytics</groupId>
                         <artifactId>stream</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -106,6 +131,18 @@
                     <exclusion>
                         <groupId>com.clearspring.analytics</groupId>
                         <artifactId>stream</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -118,6 +155,18 @@
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -128,6 +177,18 @@
                     <exclusion>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -147,6 +208,18 @@
                     <exclusion>
                         <groupId>org.apache.spark</groupId>
                         <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -235,7 +308,7 @@
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
-                <version>1.7.7</version>
+                <version>${avro.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.netflix.hystrix</groupId>
@@ -315,51 +388,10 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
+                <artifactId>log4j-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-to-slf4j</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-                <version>${log4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
+
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -643,8 +675,8 @@
                                     <excludes>
                                         <exclude>org.slf4j:slf4j-simple</exclude>
                                         <exclude>commons-logging:commons-logging-api</exclude>
-                                        <exclude>ch.qos.logback:logback-classic</exclude>
-                                        <exclude>ch.qos.logback:logback-core</exclude>
+                                        <exclude>org.apache.logging.log4j:log4j-core</exclude>
+                                        <exclude>org.apache.logging.log4j:log4j-api</exclude>
                                         <exclude>log4j:log4j</exclude>
                                         <exclude>org.codehaus.jackson:jackson-jaxrs</exclude>
                                         <exclude>org.codehaus.jackson:jackson-xc</exclude>

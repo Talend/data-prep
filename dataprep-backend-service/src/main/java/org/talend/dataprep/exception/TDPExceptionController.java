@@ -40,7 +40,7 @@ public class TDPExceptionController {
      * @param e the TDP exception.
      * @return the http response.
      */
-    @ExceptionHandler({ TDPException.class, TalendRuntimeException.class })
+    @ExceptionHandler({ TalendRuntimeException.class })
     @ResponseBody
     public String handleError(TalendRuntimeException e) {
         if (e instanceof TDPException) {

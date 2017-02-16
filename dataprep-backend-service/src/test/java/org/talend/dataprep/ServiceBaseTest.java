@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -30,8 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@TestPropertySource(properties = {"dataset.asynchronous.analysis=false"})
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = "dataset.asynchronous.analysis=false")
 public abstract class ServiceBaseTest {
 
     @Value("${local.server.port}")

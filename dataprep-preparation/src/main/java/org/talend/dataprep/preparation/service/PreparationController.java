@@ -100,6 +100,20 @@ public class PreparationController {
     }
 
     /**
+     * List all preparation details.
+     *
+     * @param sort  how to sort the preparations.
+     * @param order how to order the sort.
+     * @return the preparation details.
+     */
+    @RequestMapping(value = "/preparations/summaries", method = GET)
+    @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations details the current user is allowed to see. Creation date is always displayed in UTC time zone. This operation return all details on the preparations.")
+    @Timed
+    public Stream<PreparationSummary> listSummary() {
+        return preparationService.listSummary();
+    }
+
+    /**
      * <p>
      * Search preparation entry point.
      * </p>

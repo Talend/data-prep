@@ -112,6 +112,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getList("id").get(0), is(preparationId));
         assertThat(longFormat.getList("actions").size(), is(1));
         assertThat(((List) longFormat.getList("actions").get(0)).size(), is(0));
+
+        // when : long format
+        final JsonPath summaryFormat = when().get("/api/preparations/?format=summary").jsonPath();
+
+        // then
+        assertThat(summaryFormat.getList("id").size(), is(1));
+        assertThat(summaryFormat.getList("id").get(0), is(preparationId));
+        assertThat(summaryFormat.getList("name").size(), is(1));
+        assertThat(summaryFormat.getList("name").get(0), is("testPreparation"));
+        assertThat(summaryFormat.getList("owner").size(), is(1));
+        assertThat(summaryFormat.getList("lastModificationDate").size(), is(1));
+        assertThat(summaryFormat.getList("allowDistributedRun").size(), is(1));
     }
 
     @Test

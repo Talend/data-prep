@@ -89,8 +89,8 @@ public class PreparationAPI extends APIService {
     @ApiOperation(value = "Get all preparations.", notes = "Returns the list of preparations the current user is allowed to see.")
     @Timed
     public ResponseEntity<StreamingResponseBody> listPreparations(
-            @ApiParam(name = "format", value = "Format of the returned document (can be 'long' or 'short'). Defaults to 'long'.")
-            @RequestParam(value = "format", defaultValue = "long") String format,
+            @ApiParam(name = "format", value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.")
+            @RequestParam(value = "format", defaultValue = "summary") String format,
             @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
         if (LOG.isDebugEnabled()) {

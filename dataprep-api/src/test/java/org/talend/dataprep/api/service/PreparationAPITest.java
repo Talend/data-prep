@@ -113,7 +113,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getList("actions").size(), is(1));
         assertThat(((List) longFormat.getList("actions").get(0)).size(), is(0));
 
-        // when : long format
+        // when : summary format
         final JsonPath summaryFormat = when().get("/api/preparations/?format=summary").jsonPath();
 
         // then

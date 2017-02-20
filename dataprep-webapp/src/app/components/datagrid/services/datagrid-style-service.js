@@ -60,7 +60,7 @@ export default class DatagridStyleService {
 	 * @param {object} column The target column
 	 * @param {string} newClass The class to add
 	 */
-	_addClass(column, newClass) {
+	addClass(column, newClass) {
 		column.cssClass = (column.cssClass || '') + ' ' + newClass;
 	}
 
@@ -75,7 +75,7 @@ export default class DatagridStyleService {
 	updateSelectionsClass(column, selectedCols) {
 		if ((selectedCols.length === 1 && column.id === selectedCols[0].id) ||
 			(selectedCols.length > 1 && _.find(selectedCols, { id: column.id }))) {
-			this._addClass(column, 'selected');
+			this.addClass(column, 'selected');
 			column.headerCssClass = 'selected';
 		}
 		else {
@@ -93,7 +93,7 @@ export default class DatagridStyleService {
 	updateNumbersClass(column) {
 		const simplifiedType = this.ConverterService.simplifyType(column.tdpColMetadata.type);
 		if (simplifiedType === 'integer' || simplifiedType === 'decimal') {
-			this._addClass(column, 'numbers');
+			this.addClass(column, 'numbers');
 		}
 	}
 

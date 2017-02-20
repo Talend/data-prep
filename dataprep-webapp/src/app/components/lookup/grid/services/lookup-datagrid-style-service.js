@@ -18,7 +18,7 @@
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.utils.service:TextFormatService
  */
-export default function LookupDatagridStyleService($timeout, ConverterService, TextFormatService) {
+export default function LookupDatagridStyleService($timeout, ConverterService, DatagridStyleService, TextFormatService) {
 	'ngInject';
 
 	let grid;
@@ -44,18 +44,6 @@ export default function LookupDatagridStyleService($timeout, ConverterService, T
 
     /**
      * @ngdoc method
-     * @name addClass
-     * @methodOf data-prep.lookup.service:LookupDatagridStyleService
-     * @description Add a css class to a column
-     * @param {object} column The target column
-     * @param {string} newClass The class to add
-     */
-	function addClass(column, newClass) {
-		column.cssClass = (column.cssClass || '') + ' ' + newClass;
-	}
-
-    /**
-     * @ngdoc method
      * @name updateSelectionClass
      * @methodOf data-prep.lookup.service:LookupDatagridStyleService
      * @description Add 'selected' class if the column is the selected one
@@ -64,21 +52,7 @@ export default function LookupDatagridStyleService($timeout, ConverterService, T
      */
 	function updateSelectionClass(column, selectedCol) {
 		if (column === selectedCol) {
-			addClass(column, 'selected');
-		}
-	}
-
-    /**
-     * @ngdoc method
-     * @name updateNumbersClass
-     * @methodOf data-prep.lookup.service:LookupDatagridStyleService
-     * @description Add the 'number' class to the column if its type is a number type
-     * @param {object} column the target column
-     */
-	function updateNumbersClass(column) {
-		const simplifiedType = ConverterService.simplifyType(column.tdpColMetadata.type);
-		if (simplifiedType === 'integer' || simplifiedType === 'decimal') {
-			addClass(column, 'numbers');
+			DatagridStyleService.addClass(column, 'selected');
 		}
 	}
 
@@ -98,7 +72,7 @@ export default function LookupDatagridStyleService($timeout, ConverterService, T
 			else {
 				column.cssClass = null;
 				updateSelectionClass(column, selectedCol);
-				updateNumbersClass(column);
+				DatagridStyleService.updateNumbersClass(column);
 			}
 		});
 	}

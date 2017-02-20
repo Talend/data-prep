@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import { INDEX_COLUMN_WIDTH, INITIAL_COLUMN_WIDTH} from './datagrid-column-service';
 
 /**
  * @ngdoc service
@@ -20,8 +21,6 @@ export default function DatagridSizeService($window, state) {
 	'ngInject';
 
 	let grid;
-	const MIN_COLUMN_WIDTH = 60;
-	const INITIAL_COLUMN_WIDTH = 120;
 
 	return {
 		init,
@@ -53,7 +52,7 @@ export default function DatagridSizeService($window, state) {
 		const sizesStr = $window.localStorage.getItem(localKey);
 		const sizes = (sizesStr && JSON.parse(sizesStr)) || {};
 		_.forEach(gridColumns, function (col) {
-			col.minWidth = MIN_COLUMN_WIDTH;
+			col.minWidth = INDEX_COLUMN_WIDTH;
 			col.width = sizes[col.id] || INITIAL_COLUMN_WIDTH;
 		});
 

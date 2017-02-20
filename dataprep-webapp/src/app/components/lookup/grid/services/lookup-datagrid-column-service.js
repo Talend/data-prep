@@ -10,7 +10,7 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-
+import { COLUMN_INDEX_ID } from '../../../datagrid/services/datagrid-column-service';
 /**
  * @ngdoc service
  * @name data-prep.lookup.service:LookupDatagridColumnService
@@ -24,103 +24,18 @@
  * @requires data-prep.services.utils.service:ConverterService
  * @requires data-prep.services.state.constant:state
  */
-export default function LookupDatagridColumnService(state, $rootScope, $compile, LookupDatagridStyleService) {
+export default function LookupDatagridColumnService(state, $rootScope, DatagridColumnService) {
 	'ngInject';
 
 	let grid;
-	const colIndexName = 'tdpId';
 
 	return {
 		init,
-		createColumns,
 	};
-
-    //------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------GRID COLUMNS-------------------------------------------
-    //------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name createColumnDefinition
-     * @methodOf data-prep.lookup.service:LookupDatagridColumnService
-     * @param {object} col The column metadata to adapt
-     * @description Adapt column metadata to slick column.
-     * @returns {object} The adapted column item
-     */
-	function createColumnDefinition(col) {
-		return {
-			id: col.id,
-			field: col.id,
-			name: '',
-			formatter: LookupDatagridStyleService.columnFormatter(col),
-			minWidth: 120,
-			tdpColMetadata: col,
-		};
-	}
-
-    /**
-     * @ngdoc method
-     * @name createColumns
-     * @methodOf data-prep.lookup.service:LookupDatagridColumnService
-     * @param {object[]} columnsMetadata Columns details
-     * @description Two modes :
-     * <ul>
-     *     <li>Classic : we map each column to a header. This header can be a reused header if the column was
-     * the same as before, or a new created one otherwise.</li>
-     * </ul>
-     */
-
-	function createColumns(columnsMetadata) {
-        // create new SlickGrid columns
-		const colIndexArray = [];
-		const colIndexNameTemplate = '<div class="lookup-slick-header-column-index"></div>';
-
-        // Add index column
-		colIndexArray.push({
-			id: colIndexName,
-			name: colIndexNameTemplate,
-			field: colIndexName,
-			maxWidth: 45,
-			formatter: function formatterIndex(row, cell, value) {
-				return '<div class="index-cell">' + value + '</div>';
-			},
-
-			resizable: false,
-			selectable: false,
-		});
-
-		return _.union(colIndexArray, _.map(columnsMetadata, function (col) {
-			return createColumnDefinition(col);
-		}));
-	}
 
     //------------------------------------------------------------------------------------------------------
     // -----------------------------------------------GRID HEADERS-------------------------------------------
     //------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name createHeader
-     * @methodOf data-prep.lookup.service:LookupDatagridColumnService
-     * @description [PRIVATE] Create a column header object containing
-     * <ul>
-     *     <li>the element directive</li>
-     *     <li>The directive scope</li>
-     *     <li>The column metadata</li>
-     * </ul>
-     */
-	function createHeader(col) {
-		const headerScope = $rootScope.$new(true);
-		headerScope.column = col;
-		headerScope.added = _.find(state.playground.lookup.columnCheckboxes, { id: col.id });
-		const headerElement = angular.element('<lookup-datagrid-header column="column" added="added"></lookup-datagrid-header>');
-		$compile(headerElement)(headerScope);
-
-		return {
-			id: col.id,
-			scope: headerScope,
-			header: headerElement,
-		};
-	}
-
     /**
      * @ngdoc method
      * @name createAndAttachHeader
@@ -132,11 +47,15 @@ export default function LookupDatagridColumnService(state, $rootScope, $compile,
      */
 	function createAndAttachHeader(event, columnsArgs) {
 		const columnDef = columnsArgs.column;
-		if (columnDef.id === colIndexName) {
+		if (columnDef.id === COLUMN_INDEX_ID) {
 			return;
 		}
 
-		const headerDefinition = createHeader(columnDef.tdpColMetadata);
+		const headerScope = $rootScope.$new(true);
+		headerScope.column = columnDef.tdpColMetadata;
+		headerScope.added = _.find(state.playground.lookup.columnCheckboxes, { id: columnDef.tdpColMetadata.id });
+		const headerElement = angular.element('<lookup-datagrid-header column="column" added="added"></lookup-datagrid-header>');
+		const headerDefinition = DatagridColumnService.createHeader(columnDef.tdpColMetadata, headerElement, headerScope);
 
         // Append the header
 		const node = angular.element(columnsArgs.node);

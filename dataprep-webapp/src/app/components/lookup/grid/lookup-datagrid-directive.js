@@ -24,13 +24,11 @@ import template from './lookup-datagrid.html';
  *
  * @requires data-prep.state.service:state
  * @requires data-prep.lookup.service:LookupDatagridGridService
- * @requires data-prep.lookup.service:LookupDatagridColumnService
  * @requires data-prep.lookup.service:LookupDatagridStyleService
- * @requires data-prep.lookup.service:LookupDatagridTooltipService
  * @restrict E
  */
-export default function LookupDatagrid($timeout, state, LookupDatagridGridService, LookupDatagridColumnService,
-    LookupDatagridStyleService, LookupDatagridTooltipService) {
+export default function LookupDatagrid($timeout, state, DatagridColumnService, DatagridTooltipService, LookupDatagridGridService,
+    LookupDatagridStyleService) {
 	'ngInject';
 
 	return {
@@ -81,7 +79,8 @@ export default function LookupDatagrid($timeout, state, LookupDatagridGridServic
                     // create columns, manage style and size, set columns in grid
 					$timeout.cancel(columnTimeout);
 					columnTimeout = $timeout(function () {
-						columns = LookupDatagridColumnService.createColumns(data.metadata.columns);
+						const colIndexNameTemplate = '<div class="lookup-slick-header-column-index"></div>';
+						columns = DatagridColumnService.createColumns(data.metadata.columns, null, colIndexNameTemplate);
 
 						selectedColumn = stateSelectedColumn ? _.find(columns, { id: stateSelectedColumn.id }) : null;
 
@@ -106,7 +105,7 @@ export default function LookupDatagrid($timeout, state, LookupDatagridGridServic
 
                     // the tooltip ruler is used compute a cell text regardless of the font and zoom used.
                     // To do so, the text is put into an invisible span so that the span can be measured.
-					LookupDatagridTooltipService.tooltipRuler = iElement.find('#lookup-tooltip-ruler').eq(0);
+					DatagridTooltipService.tooltipRuler = iElement.find('#lookup-tooltip-ruler').eq(0);
 				}
 			};
 

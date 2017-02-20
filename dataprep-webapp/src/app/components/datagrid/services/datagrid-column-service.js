@@ -12,6 +12,8 @@
  ============================================================================*/
 
 export const COLUMN_INDEX_ID = 'tdpId';
+const INDEX_COLUMN_WIDTH = 60;
+const INITIAL_COLUMN_WIDTH = 120;
 
 /**
  * @ngdoc service
@@ -54,6 +56,7 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		init,
 		renewAllColumns,
 		createColumns,
+		createHeader,
 		columnsOrderChanged,
 	};
 
@@ -93,6 +96,7 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 			name: template,
 			formatter: DatagridStyleService.columnFormatter(col),
 			tdpColMetadata: col,
+			minWidth: INITIAL_COLUMN_WIDTH,
 			editor: preview ?
 				null :
 				Slick.Editors.TalendEditor( // eslint-disable-line new-cap
@@ -122,16 +126,16 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 	 * </li>
 	 * </ul>
 	 */
-	function createColumns(columnsMetadata, preview) {
+	function createColumns(columnsMetadata, preview, colIndexNameTemplate) {
 		// create new SlickGrid columns
 		const colIndexArray = [];
 
 		// Add index column
 		colIndexArray.push({
 			id: COLUMN_INDEX_ID,
-			name: '',
+			name: colIndexNameTemplate ? colIndexNameTemplate : '',
 			field: COLUMN_INDEX_ID,
-			maxWidth: 60,
+			maxWidth: INDEX_COLUMN_WIDTH,
 			formatter: function formatterIndex(row, cell, value) {
 				return '<div class="index-cell">' + value + '</div>';
 			},
@@ -278,12 +282,8 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 	 *     <li>The column metadata</li>
 	 * </ul>
 	 */
-	function createHeader(col) {
-		const headerScope = $rootScope.$new(true);
-		headerScope.column = col;
-		const headerElement = angular.element('<datagrid-header column="column"></datagrid-header>');
+	function createHeader(col, headerElement, headerScope) {
 		$compile(headerElement)(headerScope);
-
 		return {
 			id: col.id,
 			scope: headerScope,
@@ -387,9 +387,15 @@ export default function DatagridColumnService($rootScope, $compile, $log, $trans
 		}
 		// Create the header if no available created header
 		else {
-			headerDefinition = isIndexColumn ?
-				createIndexHeader() :
-				createHeader(columnDef.tdpColMetadata);
+			if (isIndexColumn) {
+				headerDefinition = createIndexHeader();
+			}
+			else {
+				const headerScope = $rootScope.$new(true);
+				headerScope.column = columnDef.tdpColMetadata;
+				const headerElement = angular.element('<datagrid-header column="column"></datagrid-header>');
+				headerDefinition = createHeader(columnDef.tdpColMetadata, headerElement, headerScope);
+			}
 		}
 
 		// Update column definition

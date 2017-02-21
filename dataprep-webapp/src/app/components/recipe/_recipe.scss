@@ -55,22 +55,16 @@ $recipe-step-draggable-background-color: #808080 !default;
       }
     }
 
-    .reorder-handler + step-description {
-      @include transition(margin-left .1s linear);
-      margin-left: 0;
+    .reorder-handler {
+      margin-right: 5px;
     }
 
     .reorder-handler,
     .remove-icon {
-      @include transition(opacity .1s linear);
       opacity: 0;
     }
 
     &:hover {
-      .reorder-handler + step-description {
-        margin-left: 10px;
-      }
-
       .reorder-handler,
       .remove-icon {
         opacity: 1;
@@ -167,6 +161,7 @@ $recipe-step-draggable-background-color: #808080 !default;
     sc-accordion-item {
       .trigger-container {
         cursor: move;
+        margin-left: -5px;
       }
 
       .content-container {

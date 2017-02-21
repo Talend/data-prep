@@ -45,7 +45,6 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
 		controllerAs: 'datagridCtrl',
 		controller() {
 			this.state = state;
-			this.datagridTooltipService = DatagridTooltipService;
 			this.datagridHeight = '100%';
 		},
 
@@ -294,7 +293,7 @@ export default function Datagrid($timeout, state, DatagridGridService, DatagridC
 
                     // the tooltip ruler is used compute a cell text regardless of the font and zoom used.
                     // To do so, the text is put into an invisible span so that the span can be measured.
-					DatagridTooltipService.tooltipRuler = iElement.find('#tooltip-ruler').eq(0);
+					state.playground.grid.tooltipRuler = iElement.find('#tooltip-ruler').eq(0);
 				}
 			}
 

@@ -18,41 +18,7 @@
  * @requires data-prep.services.state.constant:state
  * @requires data-prep.lookup.service:DatagridTooltipService
  */
-export default function LookupDatagridCtrl(state, DatagridTooltipService) {
+export default function LookupDatagridCtrl(state) {
 	'ngInject';
-
-	this.DatagridTooltipService = DatagridTooltipService;
 	this.state = state;
 }
-
-/**
- * @ngdoc property
- * @name tooltip
- * @propertyOf data-prep.lookup.controller:LookupDatagridCtrl
- * @description The tooltip infos
- * This is bound to {@link data-prep.lookup.service:DatagridTooltipService LookupDatagridTooltipServicee}.tooltip
- */
-Object.defineProperty(LookupDatagridCtrl.prototype,
-    'tooltip', {
-	enumerable: true,
-	configurable: false,
-	get() {
-		return this.DatagridTooltipService.tooltip;
-	},
-});
-
-/**
- * @ngdoc property
- * @name showTooltip
- * @propertyOf data-prep.lookup.controller:LookupDatagridCtrl
- * @description The tooltip display flag
- * This is bound to {@link data-prep.lookup.service:DatagridTooltipService LookupDatagridTooltipServicee}.showTooltip
- */
-Object.defineProperty(LookupDatagridCtrl.prototype,
-    'showTooltip', {
-	enumerable: true,
-	configurable: false,
-	get() {
-		return this.DatagridTooltipService.showTooltip;
-	},
-});

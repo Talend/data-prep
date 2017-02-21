@@ -21,15 +21,11 @@
 export default function DatagridTooltipService($timeout, state, TextFormatService) {
 	'ngInject';
 
-	let grid;
 	let tooltipTimeout;
 	let tooltipShowPromise;
 	const tooltipDelay = 300;
 
 	const service = {
-		showTooltip: false,
-		tooltip: {},
-		tooltipRuler: null,
 		init,
 	};
 	return service;
@@ -61,29 +57,29 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
      * @param {object} event The Slickgrid cell enter event
      * @description Update the tooltip component and display with a delay
      */
-	function createTooltip(event) {
-		tooltipTimeout = $timeout(function () {
+	function createTooltip(event, grid, gridState) {
+		tooltipTimeout = $timeout(() => {
 			const cell = grid.getCellFromEvent(event);
 			if (!cell) {
 				return;
 			}
 
 			const row = cell.row;
-			const item = state.playground.grid.dataView.getItem(row);
+			const item = gridState.dataView.getItem(row);
 
 			const column = grid.getColumns()[cell.cell];
 			const value = item[column.id] + '';
 
-			if (shouldShowTooltip(value, cell)) {
-				tooltipShowPromise = $timeout(function () {
-					service.tooltip = {
+			if (shouldShowTooltip(value, cell, grid, gridState)) {
+				tooltipShowPromise = $timeout(() => {
+					gridState.tooltip = {
 						position: {
 							x: event.clientX,
 							y: event.clientY,
 						},
 						htmlStr: TextFormatService.adaptToGridConstraints(value),
 					};
-					service.showTooltip = true;
+					gridState.showTooltip = true;
 				});
 			}
 		}, tooltipDelay, false);
@@ -96,9 +92,9 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
      * @param {object} event The Slickgrid cell enter event
      * @description Cancel the old tooltip promise if necessary and create a new one
      */
-	function updateTooltip(event) {
+	function updateTooltip(event, grid, gridState) {
 		cancelTooltip();
-		createTooltip(event);
+		createTooltip(event, grid, gridState);
 	}
 
     /**
@@ -107,11 +103,11 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
      * @methodOf data-prep.datagrid.service:DatagridTooltipService
      * @description Cancel the old tooltip promise if necessary and hide the tooltip
      */
-	function hideTooltip() {
+	function hideTooltip(gridState) {
 		cancelTooltip();
-		if (service.showTooltip) {
-			$timeout(function () {
-				service.showTooltip = false;
+		if (gridState.showTooltip) {
+			$timeout(() => {
+				gridState.showTooltip = false;
 			});
 		}
 	}
@@ -124,7 +120,7 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
      * @param {string} text the text to display
      * @param {object} cell The cell containing the text
      */
-	function shouldShowTooltip(text, cell) {
+	function shouldShowTooltip(text, cell, grid, gridState) {
         // do NOT show if content is empty
 		if (text === '') {
 			return false;
@@ -138,7 +134,7 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
 
         // heavy check based on div size
 		const box = grid.getCellNodeBox(cell.row, cell.cell);
-		const ruler = service.tooltipRuler;
+		const ruler = gridState.tooltipRuler;
 		ruler.text(textConverted);
 
         // return if the content is bigger than the displayed box by computing the diff between the displayed box
@@ -152,12 +148,12 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
      * @methodOf data-prep.datagrid.service:DatagridTooltipService
      * @description Attach cell hover for tooltips listeners
      */
-	function attachTooltipListener() {
+	function attachTooltipListener(grid, gridState) {
         // show tooltip on hover
-		grid.onMouseEnter.subscribe(updateTooltip);
+		grid.onMouseEnter.subscribe((event) => updateTooltip(event, grid, gridState));
 
         // hide tooltip on leave
-		grid.onMouseLeave.subscribe(hideTooltip);
+		grid.onMouseLeave.subscribe((event) => hideTooltip(gridState));
 	}
 
     /**
@@ -167,8 +163,7 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
      * @param {object} newGrid The new grid
      * @description Initialize the grid and attach the tooltips listeners
      */
-	function init(newGrid) {
-		grid = newGrid;
-		attachTooltipListener();
+	function init(grid, gridState) {
+		attachTooltipListener(grid, gridState);
 	}
 }

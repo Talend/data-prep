@@ -105,7 +105,7 @@ export default function LookupDatagrid($timeout, state, DatagridColumnService, D
 
                     // the tooltip ruler is used compute a cell text regardless of the font and zoom used.
                     // To do so, the text is put into an invisible span so that the span can be measured.
-					DatagridTooltipService.tooltipRuler = iElement.find('#lookup-tooltip-ruler').eq(0);
+					state.playground.lookup.tooltipRuler = iElement.find('#lookup-tooltip-ruler').eq(0);
 				}
 			};
 

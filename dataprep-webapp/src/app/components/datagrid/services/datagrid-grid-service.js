@@ -143,7 +143,7 @@ export default class DatagridGridService {
      */
 	_initGridServices() {
 		_.forEach(this.gridServices, (service) => {
-			service.init(this.grid);
+			service.init(this.grid, this.state.playground.grid);
 		});
 	}
 
@@ -170,6 +170,11 @@ export default class DatagridGridService {
 		};
 		this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{ id: 'tdpId' }], options);
 		SingleColumnResizePlugin.patch(this.grid);
+
+		//TODO
+		this.state.playground.grid.showTooltip = false;
+		this.state.playground.grid.tooltip = {};
+		this.state.playground.grid.tooltipRuler = null;
 
         // listeners
 		this.attachLongTableListeners(this.state.playground.grid);

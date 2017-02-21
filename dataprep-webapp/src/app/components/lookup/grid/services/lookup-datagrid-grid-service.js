@@ -101,7 +101,7 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
      */
 	function initGridServices() {
 		_.forEach(gridServices, function (service) {
-			service.init(grid);
+			service.init(grid, state.playground.lookup);
 		});
 	}
 

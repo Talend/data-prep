@@ -1,6 +1,22 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.transformation.cache;
 
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +38,7 @@ public class CacheKeyGenerator {
      */
     public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, final String stepId,
             final String format, final ExportParameters.SourceType sourceType) {
-        return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, null);
+        return this.generateContentKey(datasetId, preparationId, stepId, format, sourceType, Collections.emptyMap());
     }
 
     /**
@@ -30,8 +46,12 @@ public class CacheKeyGenerator {
      * When source type is HEAD, the user id is not included in cache key, as the HEAD sample is common for all users
      */
     public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, final String stepId,
-            final String format, final ExportParameters.SourceType sourceType, final String parameters) {
-        final String actualParameters = parameters == null ? StringUtils.EMPTY : parameters;
+            final String format, final ExportParameters.SourceType sourceType, final Map<String, String> parameters) {
+        final String actualParameters = parameters == null ? StringUtils.EMPTY : parameters.entrySet().stream() //
+                .sorted(Comparator.comparing(Map.Entry::getKey)) //
+                .map(Map.Entry::getValue) //
+                .reduce((s1, s2) -> s1 + s2) //
+                .orElse(StringUtils.EMPTY);
         final ExportParameters.SourceType actualSourceType = sourceType == null ? HEAD : sourceType;
         final String actualUserId = actualSourceType == HEAD ? null : security.getUserId();
 
@@ -105,7 +125,7 @@ public class CacheKeyGenerator {
 
         private String format;
 
-        private String parameters;
+        private Map<String, String> parameters;
 
         private String preparationId;
 
@@ -144,7 +164,7 @@ public class CacheKeyGenerator {
             return this;
         }
 
-        public ContentCacheKeyBuilder parameters(final String parameters) {
+        public ContentCacheKeyBuilder parameters(final Map<String, String> parameters) {
             this.parameters = parameters;
             return this;
         }

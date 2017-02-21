@@ -13,6 +13,7 @@
 package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.*;
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -329,7 +330,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .preparationId(preparationId)
                 .stepId("step1")
                 .format(JSON)
-                .parameters("")
+                .parameters(emptyMap())
                 .sourceType(FILTER)
                 .build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {

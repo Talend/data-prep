@@ -30,7 +30,7 @@ public class JsonFormatTest extends BaseFormatTest {
     private JsonFormat format;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         format = new JsonFormat();
     }
 

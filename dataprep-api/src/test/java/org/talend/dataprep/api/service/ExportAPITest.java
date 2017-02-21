@@ -18,13 +18,13 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.talend.dataprep.format.export.ExportFormat;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -72,7 +71,8 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
     private Locale previousLocale;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        super.setUp();
         previousLocale = Locale.getDefault();
         Locale.setDefault(ENGLISH);
     }
@@ -583,7 +583,7 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
 
     /**
      * Make sure the given file name is recognized as an excel file.
-     * 
+     *
      * @param fileName the excel file name to open.
      */
     private void checkExcelFile(String fileName) throws IOException {

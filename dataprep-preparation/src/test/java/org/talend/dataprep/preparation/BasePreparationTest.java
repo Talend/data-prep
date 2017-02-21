@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -35,7 +34,6 @@ import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
@@ -66,7 +64,6 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
 
     @Before
     public void setUp() {
-        RestAssured.port = port;
         home = folderRepository.getHome();
     }
 

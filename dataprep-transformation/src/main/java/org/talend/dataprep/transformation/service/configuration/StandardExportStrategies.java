@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.transformation.service.configuration;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +23,20 @@ import org.talend.dataprep.util.OrderedBeans;
 public class StandardExportStrategies {
 
     @Bean
-    OrderedBeans<StandardExportStrategy> exportStrategies(ApplyPreparationExportStrategy applyPreparationExportStrategy,
-            DataSetExportStrategy dataSetExportStrategy, OptimizedExportStrategy optimizedExportStrategy,
-            PreparationExportStrategy preparationExportStrategy) {
+    OrderedBeans<StandardExportStrategy> exportStrategies(ApplyPreparationExportStrategy applyPreparationExportStrategy, //
+            DataSetExportStrategy dataSetExportStrategy, //
+            OptimizedExportStrategy optimizedExportStrategy, //
+            PreparationExportStrategy preparationExportStrategy, //
+            CachedExportStrategy cachedExportStrategy) {
         // Order is important: it gives priority for one strategy over others.
-        return new OrderedBeans<>(Arrays.asList(optimizedExportStrategy, //
-                preparationExportStrategy, //
-                dataSetExportStrategy, //
-                applyPreparationExportStrategy));
+        return new OrderedBeans<>( //
+                asList(cachedExportStrategy, //
+                        optimizedExportStrategy, //
+                        preparationExportStrategy, //
+                        dataSetExportStrategy, //
+                        applyPreparationExportStrategy //
+                ) //
+        );
     }
 
 }

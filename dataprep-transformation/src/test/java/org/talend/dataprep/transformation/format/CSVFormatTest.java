@@ -30,7 +30,7 @@ public class CSVFormatTest extends BaseFormatTest {
     private CSVFormat format;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         format = new CSVFormat();
     }
 

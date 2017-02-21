@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -23,7 +22,6 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +38,6 @@ import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.user.store.UserDataRepository;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.RestAssured;
 
 /**
  * Base class for DataSet integration tests.
@@ -103,11 +100,6 @@ public abstract class DataSetBaseTest extends ServiceBaseTest {
         assertThat(lifecycle.contentIndexed(), is(true));
         assertThat(lifecycle.schemaAnalyzed(), is(true));
         assertThat(lifecycle.qualityAnalyzed(), is(true));
-    }
-
-    @Before
-    public void setUp() throws IOException {
-        RestAssured.port = port;
     }
 
     @After

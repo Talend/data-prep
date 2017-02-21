@@ -12,18 +12,22 @@
 
 package org.talend.dataprep;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -41,6 +45,23 @@ public abstract class ServiceBaseTest {
 
     @Autowired
     protected ObjectMapper mapper;
+
+    private boolean environmentSet = false;
+
+    @Before
+    public void setUp() {
+        if (!environmentSet) {
+            RestAssured.port = port;
+
+            // Overrides connection information with random port value
+            MockPropertySource connectionInformation = new MockPropertySource()
+                    .withProperty("dataset.service.url", "http://localhost:" + port)
+                    .withProperty("transformation.service.url", "http://localhost:" + port)
+                    .withProperty("preparation.service.url", "http://localhost:" + port);
+            environment.getPropertySources().addFirst(connectionInformation);
+            environmentSet = true;
+        }
+    }
 
     @Test
     public void contextLoads() {

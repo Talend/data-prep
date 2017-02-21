@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.mock.env.MockPropertySource;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -74,16 +73,8 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
 
     @Before
     public void setUp() {
-
-        // Overrides connection information with random port value
-        MockPropertySource connectionInformation = new MockPropertySource()
-                .withProperty("dataset.service.url", "http://localhost:" + port)
-                .withProperty("transformation.service.url", "http://localhost:" + port)
-                .withProperty("preparation.service.url", "http://localhost:" + port);
-        environment.getPropertySources().addFirst(connectionInformation);
-
+        super.setUp();
         urlUpdater.setUp();
-
         home = folderRepository.getHome();
     }
 

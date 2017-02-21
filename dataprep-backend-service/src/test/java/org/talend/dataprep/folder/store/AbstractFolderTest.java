@@ -60,7 +60,8 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
     protected Security security;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        super.setUp();
         this.homeFolderId = getFolderRepository().getHome().getId();
     }
 

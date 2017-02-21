@@ -99,7 +99,8 @@ public class ApplyPreparationExportStrategy extends StandardExportStrategy {
                     preparationId,
                     version,
                     formatName,
-                    parameters.getFrom()
+                    parameters.getFrom(),
+                    parameters.getArguments()
             );
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());

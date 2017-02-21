@@ -30,7 +30,8 @@ public class XlsFormatTest extends BaseFormatTest {
     private XlsFormat format;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        super.setUp();
         format = new XlsFormat();
     }
 

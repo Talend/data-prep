@@ -118,9 +118,9 @@ describe('Datagrid directive', () => {
                 expect(DatagridGridService.initGrid.calls.count()).toBe(1);
             }));
 
-            it('should init tooltip ruler', inject((DatagridTooltipService) => {
+            it('should init tooltip ruler', inject(() => {
                 //then
-                expect(DatagridTooltipService.tooltipRuler).toBeDefined();
+                expect(stateMock.playground.grid.tooltipRuler).toBeDefined();
             }));
         });
 

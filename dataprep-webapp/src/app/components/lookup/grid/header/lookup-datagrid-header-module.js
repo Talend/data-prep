@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import SERVICES_STATE_MODULE from '../../../../services/state/state-module';
 import SERVICES_UTILS_MODULE from '../../../../services/utils/utils-module';
 
 import LookupDatagridHeaderCtrl from './lookup-datagrid-header-controller';
@@ -24,10 +25,10 @@ const MODULE_NAME = 'data-prep.lookup-datagrid-header';
  * @name data-prep.lookup-datagrid-header
  * @description This module contains the controller
  * and directives to manage the lookup-datagrid header with transformation menu
- * @requires data-prep.services.utils
  */
 angular.module(MODULE_NAME,
 	[
+		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
     .controller('LookupDatagridHeaderCtrl', LookupDatagridHeaderCtrl)

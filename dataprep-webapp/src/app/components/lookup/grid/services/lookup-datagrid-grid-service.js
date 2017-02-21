@@ -27,9 +27,9 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 	let grid = null;
 	let lastSelectedColumn;
 	const gridServices = [
+		DatagridTooltipService,
 		LookupDatagridColumnService,
 		LookupDatagridStyleService,
-		DatagridTooltipService,
 	];
 
 	return {

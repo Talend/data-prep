@@ -14,20 +14,20 @@
 import DataViewMock from '../../../../../mocks/DataView.mock';
 import SlickGridMock from '../../../../../mocks/SlickGrid.mock';
 
-describe('Lookup Datagrid grid service', function () {
+describe('Lookup Datagrid grid service', () => {
     'use strict';
 
-    var realSlickGrid = Slick;
-    var dataViewMock;
-    var stateMock;
+    let realSlickGrid = Slick;
+    let dataViewMock;
+    let stateMock;
 
     beforeEach(angular.mock.module('data-prep.lookup'));
 
-    beforeEach(function () {
+    beforeEach(() => {
         dataViewMock = new DataViewMock();
     });
 
-    beforeEach(angular.mock.module('data-prep.datagrid', function ($provide) {
+    beforeEach(angular.mock.module('data-prep.datagrid', ($provide) => {
         stateMock = {
             playground: {
                 lookup: {
@@ -41,75 +41,39 @@ describe('Lookup Datagrid grid service', function () {
         spyOn(dataViewMock.onRowsChanged, 'subscribe').and.returnValue();
     }));
 
-    beforeEach(inject(function (LookupDatagridColumnService, LookupDatagridStyleService, LookupDatagridTooltipService) {
+    beforeEach(inject((LookupDatagridColumnService, LookupDatagridStyleService) => {
         spyOn(LookupDatagridColumnService, 'init').and.returnValue();
         spyOn(LookupDatagridStyleService, 'init').and.returnValue();
-        spyOn(LookupDatagridTooltipService, 'init').and.returnValue();
     }));
 
-    beforeEach(inject(function ($window) {
+    beforeEach(inject(($window) => {
         $window.Slick = {
             Grid: SlickGridMock,
         };
     }));
 
-    afterEach(inject(function ($window) {
+    afterEach(inject(($window) => {
         $window.Slick = realSlickGrid;
     }));
 
-    describe('on creation', function () {
-        it('should init the other datagrid services', inject(function (LookupDatagridGridService, LookupDatagridColumnService,
-            LookupDatagridStyleService, LookupDatagridTooltipService) {
+    describe('on creation', () => {
+        it('should init the other datagrid services', inject((LookupDatagridGridService, LookupDatagridColumnService,
+            LookupDatagridStyleService) => {
             //when
             LookupDatagridGridService.initGrid();
 
             //then
             expect(LookupDatagridColumnService.init).toHaveBeenCalled();
             expect(LookupDatagridStyleService.init).toHaveBeenCalled();
-            expect(LookupDatagridTooltipService.init).toHaveBeenCalled();
         }));
 
-        it('should add grid listeners', inject(function (LookupDatagridGridService) {
+        it('should add grid listeners', inject((LookupDatagridGridService) => {
             //when
             LookupDatagridGridService.initGrid();
 
             //then
             expect(stateMock.playground.lookup.dataView.onRowCountChanged.subscribe).toHaveBeenCalled();
             expect(stateMock.playground.lookup.dataView.onRowsChanged.subscribe).toHaveBeenCalled();
-        }));
-    });
-
-    describe('grid handlers', function () {
-        it('should update row count and render grid on row count change', inject(function (LookupDatagridGridService) {
-            //given
-            var grid = LookupDatagridGridService.initGrid();
-            spyOn(grid, 'updateRowCount').and.returnValue();
-            spyOn(grid, 'render').and.returnValue();
-
-            //when
-            var onRowCountChanged = stateMock.playground.lookup.dataView.onRowCountChanged.subscribe.calls.argsFor(0)[0];
-            onRowCountChanged();
-
-            //then
-            expect(grid.updateRowCount).toHaveBeenCalled();
-            expect(grid.render).toHaveBeenCalled();
-        }));
-
-        it('should invalidate rows and render grid on rows changed', inject(function (LookupDatagridGridService) {
-            //given
-            var grid = LookupDatagridGridService.initGrid();
-            spyOn(grid, 'invalidateRows').and.returnValue();
-            spyOn(grid, 'render').and.returnValue();
-
-            var args = { rows: [] };
-
-            //when
-            var onRowsChanged = stateMock.playground.lookup.dataView.onRowsChanged.subscribe.calls.argsFor(0)[0];
-            onRowsChanged(null, args);
-
-            //then
-            expect(grid.invalidateRows).toHaveBeenCalledWith(args.rows);
-            expect(grid.render).toHaveBeenCalled();
         }));
     });
 });

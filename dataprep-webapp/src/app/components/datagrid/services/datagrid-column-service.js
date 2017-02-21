@@ -12,8 +12,8 @@
  ============================================================================*/
 
 export const COLUMN_INDEX_ID = 'tdpId';
-const INDEX_COLUMN_WIDTH = 60;
-const INITIAL_COLUMN_WIDTH = 120;
+export const INDEX_COLUMN_WIDTH = 60;
+export const INITIAL_COLUMN_WIDTH = 120;
 
 /**
  * @ngdoc service
@@ -31,7 +31,7 @@ const INITIAL_COLUMN_WIDTH = 120;
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.utils.service:ConverterService
  */
-export default function DatagridColumnService($rootScope, $compile, $log, $translate,
+export default function DatagridColumnService($rootScope, $compile, $translate,
                                               PlaygroundService, DatagridStyleService, ConverterService) {
 	'ngInject';
 

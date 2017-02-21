@@ -38,6 +38,9 @@ export const lookupState = {
 	sortList,
 	orderList,
 	searchDatasetString: '',
+	showTooltip: false,
+	tooltip: {},
+	tooltipRuler: null,
 };
 
 /**
@@ -278,5 +281,8 @@ export function LookupStateService() {
 		lookupState.visibility = false;
 		lookupState.step = null;
 		lookupState.searchDatasetString = '';
+		lookupState.showTooltip = false;
+		lookupState.tooltip = {};
+		lookupState.tooltipRuler = null;
 	}
 }

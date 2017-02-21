@@ -12,10 +12,6 @@
  ============================================================================*/
 
 import angular from 'angular';
-import TRANSFORMATION_MENU_MODULE from '../../../transformation/menu/transformation-menu-module';
-import TALEND_WIDGET_MODULE from '../../../widgets/widget-module';
-import SERVICES_PLAYGROUND_MODULE from '../../../../services/playground/playground-module';
-import SERVICES_TRANSFORMATION_MODULE from '../../../../services/transformation/transformation-module';
 import SERVICES_UTILS_MODULE from '../../../../services/utils/utils-module';
 
 import LookupDatagridHeaderCtrl from './lookup-datagrid-header-controller';
@@ -28,18 +24,10 @@ const MODULE_NAME = 'data-prep.lookup-datagrid-header';
  * @name data-prep.lookup-datagrid-header
  * @description This module contains the controller
  * and directives to manage the lookup-datagrid header with transformation menu
- * @requires talend.widget
- * @requires data-prep.transformation-menu
  * @requires data-prep.services.utils
- * @requires data-prep.services.playground
- * @requires data-prep.services.transformation
  */
 angular.module(MODULE_NAME,
 	[
-		TALEND_WIDGET_MODULE,
-		TRANSFORMATION_MENU_MODULE,
-		SERVICES_PLAYGROUND_MODULE,
-		SERVICES_TRANSFORMATION_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
     .controller('LookupDatagridHeaderCtrl', LookupDatagridHeaderCtrl)

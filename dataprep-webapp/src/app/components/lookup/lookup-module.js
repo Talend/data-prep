@@ -30,7 +30,6 @@ import Lookup from './lookup-directive';
 import LookupDatagridColumnService from './grid/services/lookup-datagrid-column-service';
 import LookupDatagridGridService from './grid/services/lookup-datagrid-grid-service';
 import LookupDatagridStyleService from './grid/services/lookup-datagrid-style-service';
-import LookupDatagridCtrl from './grid/lookup-datagrid-controller';
 import LookupDatagrid from './grid/lookup-datagrid-directive';
 import LookupDatasetList from './dataset/list/lookup-dataset-list-component';
 
@@ -71,7 +70,6 @@ angular.module(MODULE_NAME,
     .service('LookupDatagridColumnService', LookupDatagridColumnService)
     .service('LookupDatagridGridService', LookupDatagridGridService)
     .service('LookupDatagridStyleService', LookupDatagridStyleService)
-    .controller('LookupDatagridCtrl', LookupDatagridCtrl)
     .directive('lookupDatagrid', LookupDatagrid)
     .component('lookupDatasetList', LookupDatasetList);
 

@@ -36,7 +36,9 @@ export default function LookupDatagrid($timeout, state, DatagridColumnService, D
 		templateUrl: template,
 		bindToController: true,
 		controllerAs: 'lookupDatagridCtrl',
-		controller: 'LookupDatagridCtrl',
+		controller() {
+			this.state = state;
+		},
 		link(scope, iElement, iAttrs, ctrl) {
 			let grid;
 			let columnTimeout;

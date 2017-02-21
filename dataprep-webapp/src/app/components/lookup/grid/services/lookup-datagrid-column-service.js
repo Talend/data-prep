@@ -67,17 +67,6 @@ export default function LookupDatagridColumnService(state, $rootScope, DatagridC
     //------------------------------------------------------------------------------------------------------
     /**
      * @ngdoc method
-     * @name attachColumnHeaderEvents
-     * @methodOf data-prep.lookup.service:LookupDatagridColumnService
-     * @description Attach listeners for header creation/destroy. The handler detachs and save headers on destroy,
-     * attach (create them if necessary) and update them on render
-     */
-	function attachColumnHeaderEvents() {
-		grid.onHeaderCellRendered.subscribe(createAndAttachHeader);
-	}
-
-    /**
-     * @ngdoc method
      * @name init
      * @methodOf data-prep.lookup.service:LookupDatagridColumnService
      * @param {object} newGrid The new grid
@@ -85,6 +74,6 @@ export default function LookupDatagridColumnService(state, $rootScope, DatagridC
      */
 	function init(newGrid) {
 		grid = newGrid;
-		attachColumnHeaderEvents();
+		grid.onHeaderCellRendered.subscribe(createAndAttachHeader);
 	}
 }

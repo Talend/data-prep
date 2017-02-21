@@ -23,12 +23,6 @@
         <div class="grid-header-type" ng-if="(!lookupDatagridHeaderCtrl.column.domain)">{{ lookupDatagridHeaderCtrl.converterService.simplifyType(lookupDatagridHeaderCtrl.column.type) }}</div>
     </div>
 
-    <quality-bar
-            enter-animation="false"
-            has-menu="false"
-            quality="lookupDatagridHeaderCtrl.column.quality">
-    </quality-bar>
-
     <div class="add-to-lookup">
         <div ng-if="lookupDatagridHeaderCtrl.showCheckbox()">
             <input type="checkbox"

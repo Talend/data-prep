@@ -21,6 +21,9 @@ export const gridState = {
 	selectedColumns: [],
 	semanticDomains: null,
 	primitiveTypes: null,
+	showTooltip: false,
+	tooltip: {},
+	tooltipRuler: null,
 };
 
 const NUMERIC_TYPES = ['numeric', 'integer', 'double', 'float', 'decimal'];
@@ -361,5 +364,8 @@ export function GridStateService() {
 		gridState.filteredOccurences = {};
 		gridState.numericColumns = [];
 		gridState.columns = [];
+		gridState.showTooltip = false;
+		gridState.tooltip = {};
+		gridState.tooltipRuler = null;
 	}
 }

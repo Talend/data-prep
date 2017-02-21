@@ -144,26 +144,16 @@ export default function DatagridTooltipService($timeout, state, TextFormatServic
 
     /**
      * @ngdoc method
-     * @name attachTooltipListener
-     * @methodOf data-prep.datagrid.service:DatagridTooltipService
-     * @description Attach cell hover for tooltips listeners
-     */
-	function attachTooltipListener(grid, gridState) {
-        // show tooltip on hover
-		grid.onMouseEnter.subscribe((event) => updateTooltip(event, grid, gridState));
-
-        // hide tooltip on leave
-		grid.onMouseLeave.subscribe((event) => hideTooltip(gridState));
-	}
-
-    /**
-     * @ngdoc method
      * @name init
      * @methodOf data-prep.datagrid.service:DatagridTooltipService
      * @param {object} newGrid The new grid
      * @description Initialize the grid and attach the tooltips listeners
      */
 	function init(grid, gridState) {
-		attachTooltipListener(grid, gridState);
+		// show tooltip on hover
+		grid.onMouseEnter.subscribe((event) => updateTooltip(event, grid, gridState));
+
+		// hide tooltip on leave
+		grid.onMouseLeave.subscribe((event) => hideTooltip(gridState));
 	}
 }

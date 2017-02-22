@@ -14,15 +14,15 @@
   -->
 
 <div class="param">
-    <div ng-class="{'param-row' : simpleParamCtrl.parameter.type === 'boolean'}">
+    <div ng-class="{'param-row' : simpleParamCtrl.isBooleanType()}">
         <div class="param-name"
              data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
-             ng-if="simpleParamCtrl.parameter.type !== 'boolean'">
+             ng-if="!simpleParamCtrl.isBooleanType()">
             {{::simpleParamCtrl.parameter.label}}<span translate-once="COLON"></span>
         </div>
         <div ng-switch="!!simpleParamCtrl.isReadonly">
             <div class="param-input" ng-switch-when="true">
-                <div ng-switch="simpleParamCtrl.parameter.type  !== 'boolean'">
+                <div ng-switch="!simpleParamCtrl.isBooleanType()">
                     <span ng-switch-when="true">
                         <span class="param-input-label" ng-if="simpleParamCtrl.parameter.value !== ''"
                               ng-bind-html="simpleParamCtrl.TextFormatService.adaptToGridConstraints(simpleParamCtrl.parameter.value)"></span>
@@ -55,7 +55,7 @@
                                ng-trim="false"
                                is-type="{{::simpleParamCtrl.parameter.type}}"
                                can-be-blank="{{::simpleParamCtrl.parameter.canBeBlank}}"/>
-                        <span ng-if="simpleParamCtrl.parameter.type  === 'boolean'">
+                        <span ng-if="simpleParamCtrl.isBooleanType()">
                             {{simpleParamCtrl.parameter.label ? simpleParamCtrl.parameter.label : simpleParamCtrl.parameter.name}}
                         </span>
                     </div>

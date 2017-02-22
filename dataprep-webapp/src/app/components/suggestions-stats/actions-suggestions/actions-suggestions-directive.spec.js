@@ -18,7 +18,7 @@ describe('Actions suggestions-stats directive', () => {
     let element;
     let createElement;
     let stateMock;
-    let body = angular.element('body');
+    const body = angular.element('body');
     beforeEach(angular.mock.module('data-prep.actions-suggestions', ($provide) => {
         stateMock = { playground: {
                 suggestions: {},

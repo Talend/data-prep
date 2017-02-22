@@ -11,20 +11,20 @@
 
   ============================================================================*/
 
-describe('Transform choice params controller', function () {
+describe('Transform choice params controller', () => {
     'use strict';
 
-    var createController;
-    var scope;
-    var parameter;
+    let createController;
+    let scope;
+    let parameter;
 
     beforeEach(angular.mock.module('data-prep.transformation-form'));
 
-    beforeEach(inject(function ($rootScope, $controller) {
+    beforeEach(inject(($rootScope, $controller) => {
         scope = $rootScope.$new();
 
-        createController = function () {
-            var ctrlFn = $controller('TransformChoiceParamCtrl', {
+        createController = () => {
+            let ctrlFn = $controller('TransformChoiceParamCtrl', {
                 $scope: scope,
             }, true);
             ctrlFn.instance.parameter = parameter;
@@ -32,7 +32,7 @@ describe('Transform choice params controller', function () {
         };
     }));
 
-    it('should Not initialize parameter value', function () {
+    it('should Not initialize parameter value', () => {
         //given
         parameter = {
             name: 'mode',
@@ -43,13 +43,13 @@ describe('Transform choice params controller', function () {
         };
 
         //when
-        var ctrl = createController();
+        let ctrl = createController();
 
         //then
         expect(ctrl.parameter.value).toEqual(undefined);
     });
 
-    it('should init choice default value', function () {
+    it('should init choice default value', () => {
         //given
         parameter = {
             name: 'mode',
@@ -64,13 +64,13 @@ describe('Transform choice params controller', function () {
         };
 
         //when
-        var ctrl = createController();
+        let ctrl = createController();
 
         //then
         expect(ctrl.parameter.value).toEqual('index');
     });
 
-    it('should init choice to first value if there is no default', function () {
+    it('should init choice to first value if there is no default', () => {
         //given
         parameter = {
             name: 'mode',
@@ -84,13 +84,13 @@ describe('Transform choice params controller', function () {
         };
 
         //when
-        var ctrl = createController();
+        let ctrl = createController();
 
         //then
         expect(ctrl.parameter.value).toEqual('regex');
     });
 
-    it('should not change current value if it is set', function () {
+    it('should not change current value if it is set', () => {
         //given
         parameter = {
             name: 'mode',
@@ -105,9 +105,30 @@ describe('Transform choice params controller', function () {
         };
 
         //when
-        var ctrl = createController();
+        let ctrl = createController();
 
         //then
         expect(ctrl.parameter.value).toEqual('index');
+    });
+
+    it('should return label from value', () => {
+        //given
+        parameter = {
+            name: 'mode',
+            type: 'select',
+            configuration: {
+                values: [
+                    { value: 'regex', label: 'regex-label' },
+                    { value: 'index', label: 'index-label' },
+                ],
+            },
+            value: 'regex',
+        };
+
+        //when
+        let ctrl = createController();
+
+        //then
+        expect(ctrl.getLabelByValue('regex')).toEqual('regex-label');
     });
 });

@@ -35,30 +35,30 @@ export default function TransformChoiceParam($rootScope, $compile) {
 		controllerAs: 'choiceParamCtrl',
 		controller: 'TransformChoiceParamCtrl',
 		link: (scope, iElement, iAttrs, ctrl) => {
-			_.chain(ctrl.parameter.configuration.values)
-				.filter(function (optionValue) {
+			ctrl.parameter.configuration.values
+				.filter((optionValue) => {
 					return optionValue.parameters && optionValue.parameters.length;
 				})
-				.forEach(function (optionValue) {
+				.forEach((optionValue) => {
 					const isolatedScope = $rootScope.$new(true);
 					isolatedScope.parameter = ctrl.parameter;
 					isolatedScope.optionValue = optionValue;
 					isolatedScope.isReadonly = ctrl.isReadonly;
 
-					const template = '<transform-params ' +
-						'parameters="optionValue.parameters" ' +
-						'ng-if="parameter.value === optionValue.value" ' +
-						'is-readonly="isReadonly" ' +
-						'></transform-params>';
-					$compile(template)(isolatedScope, function (cloned) {
+					const template =
+						`<transform-params
+							parameters="optionValue.parameters"
+							ng-if="parameter.value === optionValue.value"
+							is-readonly="isReadonly">
+						</transform-params>`;
+					$compile(template)(isolatedScope, (cloned) => {
 						iElement.append(cloned);
 					});
 
 					scope.$on('$destroy', () => {
 						isolatedScope.$destroy();
 					});
-				})
-				.value();
+				});
 		},
 	};
 }

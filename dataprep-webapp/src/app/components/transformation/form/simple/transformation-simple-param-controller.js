@@ -53,6 +53,17 @@ export default function TransformSimpleParamCtrl(ConverterService, TextFormatSer
 		vm.parameter.inputType = ConverterService.toInputType(vm.parameter.type);
 	};
 
+
+	/**
+	 * @ngdoc method
+	 * @name isBooleanType
+	 * @methodOf data-prep.transformation-form.controller:TransformSimpleParamsCtrl
+	 * @description check if it is a boolean input type
+	 */
+	vm.isBooleanType = () => {
+		return vm.parameter.type === 'boolean';
+	};
+
 	initParamValues();
 	initInputTypes();
 }

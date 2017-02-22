@@ -29,7 +29,7 @@ describe('Transformation form directive', () => {
         scope = $rootScope.$new();
 
         createElement = () => {
-            let element = angular.element('<transform-form transformation="transformation" on-submit="onSubmit" is-readonly="isReadonly"></transform-form>');
+            const element = angular.element('<transform-form transformation="transformation" on-submit="onSubmit" is-readonly="isReadonly"></transform-form>');
             $compile(element)(scope);
             scope.$digest();
             return element;
@@ -93,7 +93,7 @@ describe('Transformation form directive', () => {
         };
 
         //when
-        let element = createElement();
+        const element = createElement();
 
         //then
         let paramChoice = element.find('.param').eq(0);
@@ -141,8 +141,8 @@ describe('Transformation form directive', () => {
             name: 'menu with param',
             parameters: [parameter],
         };
-        let element = createElement();
-        let renderedParams = element.find('transform-params').eq(0);
+        const element = createElement();
+        const renderedParams = element.find('transform-params').eq(0);
 
         //when
         parameter.value = parameter.configuration.values[0];
@@ -258,7 +258,7 @@ describe('Transformation form directive', () => {
         };
 
         //when
-        let element = createElement();
+        const element = createElement();
 
         //then
         expect(element.find('.cluster').length).toBe(1);
@@ -289,10 +289,10 @@ describe('Transformation form directive', () => {
         };
 
         //when
-        let element = createElement();
+        const element = createElement();
 
         //then
-        let docLink = element.find('.param-buttons > a').eq(0);
+        const docLink = element.find('.param-buttons > a').eq(0);
         expect(docLink.attr('href')).toBe('http://www.google.com');
     });
 
@@ -301,7 +301,7 @@ describe('Transformation form directive', () => {
         scope.isReadonly = false;
 
         //when
-        let element = createElement();
+        const element = createElement();
 
         //then
         expect(element.find('.param-buttons > button').length).toBe(1);
@@ -312,7 +312,7 @@ describe('Transformation form directive', () => {
         scope.isReadonly = true;
 
         //when
-        let element = createElement();
+        const element = createElement();
 
         //then
         expect(element.find('.param-buttons > button').length).toBe(0);

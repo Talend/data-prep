@@ -60,7 +60,7 @@ describe('Transformation form directive', () => {
         };
 
         //when
-        let element = createElement();
+        const element = createElement();
 
         //then
         expect(element.find('.param-name').length).toBe(2);
@@ -108,7 +108,7 @@ describe('Transformation form directive', () => {
 
     it('should render an action with choice containing parameters', () => {
         //given
-        let parameter = {
+        const parameter = {
             name: 'my choice',
             label: 'my choice',
             type: 'select',

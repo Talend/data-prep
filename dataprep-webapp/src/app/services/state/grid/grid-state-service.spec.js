@@ -334,6 +334,9 @@ describe('Grid state service', () => {
             gridState.filteredRecords = [{}, {}];
             gridState.filteredOccurences = { toto: 3 };
             gridState.columns = [{}];
+            gridState.showTooltip = true;
+            gridState.tooltip = {'htmlstr' : ''};
+            gridState.tooltipRuler = {};
 
             //when
             GridStateService.reset();
@@ -348,6 +351,9 @@ describe('Grid state service', () => {
             expect(gridState.filteredRecords).toEqual([]);
             expect(gridState.filteredOccurences).toEqual({});
             expect(gridState.columns).toEqual([]);
+            expect(gridState.showTooltip).toEqual(false);
+            expect(gridState.tooltip).toEqual({});
+            expect(gridState.tooltipRuler).toEqual(null);
         }));
     });
 

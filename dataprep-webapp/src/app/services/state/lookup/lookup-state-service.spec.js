@@ -135,6 +135,9 @@ describe('Lookup state service', function () {
             lookupState.visibility = true;
             lookupState.step = {};
             lookupState.searchDatasetString = 'charles';
+            lookupState.showTooltip = true;
+            lookupState.tooltip = {'htmlstr' : ''};
+            lookupState.tooltipRuler = {};
 
             //when
             LookupStateService.reset();
@@ -149,6 +152,9 @@ describe('Lookup state service', function () {
             expect(lookupState.visibility).toBe(false);
             expect(lookupState.step).toBe(null);
             expect(lookupState.searchDatasetString).toBe('');
+            expect(lookupState.showTooltip).toEqual(false);
+            expect(lookupState.tooltip).toEqual({});
+            expect(lookupState.tooltipRuler).toEqual(null);
         }));
     });
 

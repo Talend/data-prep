@@ -52,7 +52,7 @@ describe('Lookup Datagrid column service', () => {
 
         it('should create and attach a new header', inject(() => {
             //given
-            let columnsArgs = {
+            const columnsArgs = {
                 column:  {
                     id: '0002',
                     tdpColMetadata: {},
@@ -61,7 +61,7 @@ describe('Lookup Datagrid column service', () => {
             };
 
             //when
-            let onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
+            const onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
             onHeaderCellRendered(null, columnsArgs);
 
             //then
@@ -70,7 +70,7 @@ describe('Lookup Datagrid column service', () => {
 
         it('should do nothing if column is index column', inject(() => {
             //given
-            let columnsArgs = {
+            const columnsArgs = {
                 column:  {
                     id: 'tdpId',
                 },
@@ -78,7 +78,7 @@ describe('Lookup Datagrid column service', () => {
             };
 
             //when
-            let onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
+            const onHeaderCellRendered = gridMock.onHeaderCellRendered.subscribe.calls.argsFor(0)[0];
             onHeaderCellRendered(null, columnsArgs);
 
             //then

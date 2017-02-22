@@ -10,7 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import { INDEX_COLUMN_WIDTH, INITIAL_COLUMN_WIDTH} from './datagrid-column-service';
+import { INDEX_COLUMN_WIDTH, INITIAL_COLUMN_WIDTH } from './datagrid-column-service';
 
 /**
  * @ngdoc service

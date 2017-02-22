@@ -60,7 +60,7 @@ describe('Lookup datagrid directive', () => {
         };
 
         // decorate grid creation to keep the resulting grid ref and attach spy on its functions
-        let realInitGrid = LookupDatagridGridService.initGrid;
+        const realInitGrid = LookupDatagridGridService.initGrid;
         LookupDatagridGridService.initGrid = (parentId) => {
             grid = realInitGrid(parentId);
             spyOn(grid, 'setColumns').and.returnValue();

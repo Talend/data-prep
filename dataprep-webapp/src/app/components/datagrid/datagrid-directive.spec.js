@@ -87,7 +87,7 @@ describe('Datagrid directive', () => {
     });
 
     describe('on data change', () => {
-        var data;
+        let data;
 
         beforeEach(inject(($timeout) => {
             //given
@@ -270,8 +270,8 @@ describe('Datagrid directive', () => {
     });
 
     describe('on grid selection change', () => {
-        var data = { metadata: { columns: [{ id: '0000' }, { id: '0001' }] }, preview: false };
-        var previewData = { metadata: { columns: [{ id: '0000' }, { id: '0001' }] }, preview: true };
+        const data = { metadata: { columns: [{ id: '0000' }, { id: '0001' }] }, preview: false };
+        const previewData = { metadata: { columns: [{ id: '0000' }, { id: '0001' }] }, preview: true };
 
         it('should set active cell in grid', inject(() => {
             //given

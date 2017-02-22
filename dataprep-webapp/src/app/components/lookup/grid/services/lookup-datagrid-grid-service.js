@@ -20,8 +20,7 @@
  * @requires data-prep.lookup.service:LookupDatagridStyleService
  * @requires data-prep.lookup.service:LookupDatagridColumnService
  */
-export default function LookupDatagridGridService($timeout, $window, state, DatagridGridService, DatagridTooltipService,
-												  StateService, LookupDatagridStyleService, LookupDatagridColumnService) {
+export default function LookupDatagridGridService($timeout, $window, state, DatagridGridService, DatagridTooltipService, StateService, LookupDatagridStyleService, LookupDatagridColumnService) {
 	'ngInject';
 
 	let grid = null;

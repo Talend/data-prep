@@ -133,7 +133,7 @@ export default function DatagridColumnService($rootScope, $compile, $translate,
 		// Add index column
 		colIndexArray.push({
 			id: COLUMN_INDEX_ID,
-			name: colIndexNameTemplate ? colIndexNameTemplate : '',
+			name: colIndexNameTemplate || '',
 			field: COLUMN_INDEX_ID,
 			maxWidth: INDEX_COLUMN_WIDTH,
 			formatter: function formatterIndex(row, cell, value) {
@@ -386,16 +386,14 @@ export default function DatagridColumnService($rootScope, $compile, $translate,
 			}
 		}
 		// Create the header if no available created header
+		else if (isIndexColumn) {
+			headerDefinition = createIndexHeader();
+		}
 		else {
-			if (isIndexColumn) {
-				headerDefinition = createIndexHeader();
-			}
-			else {
-				const headerScope = $rootScope.$new(true);
-				headerScope.column = columnDef.tdpColMetadata;
-				const headerElement = angular.element('<datagrid-header column="column"></datagrid-header>');
-				headerDefinition = createHeader(columnDef.tdpColMetadata, headerElement, headerScope);
-			}
+			const headerScope = $rootScope.$new(true);
+			headerScope.column = columnDef.tdpColMetadata;
+			const headerElement = angular.element('<datagrid-header column="column"></datagrid-header>');
+			headerDefinition = createHeader(columnDef.tdpColMetadata, headerElement, headerScope);
 		}
 
 		// Update column definition

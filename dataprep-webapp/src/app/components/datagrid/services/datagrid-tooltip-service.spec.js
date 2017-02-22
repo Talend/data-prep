@@ -37,7 +37,7 @@ describe('Datagrid tooltip service', () => {
     };
 
     //record on the line
-    let item = {
+    const item = {
         '0000': 'tata',                                         // should not show tooltip
         '0001': '  tetetetetetetetetetetetetetetetetetetete ',  // should show tooltip with trailing spaces
         '0002': 'titititititititititititititititititi',         // should show tooltip because of length
@@ -47,7 +47,7 @@ describe('Datagrid tooltip service', () => {
     };
 
     //columns metadata
-    let columns = [
+    const columns = [
         { id: '0000', name: 'col0' },
         { id: '0001', name: 'col1' },
         { id: '0002', name: 'col2' },
@@ -109,8 +109,8 @@ describe('Datagrid tooltip service', () => {
             gridMock.initCellMock(null); //grid.getCellFromEvent returns falsy param
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
 
             //then
@@ -134,14 +134,14 @@ describe('Datagrid tooltip service', () => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
 
-            let box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
-            let cell = { row: 1, cell: 0 };                           // contains 'tata'
+            const box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
+            const cell = { row: 1, cell: 0 };                           // contains 'tata'
             gridMock.initCellMock(cell, box);
 
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
 
             //then
@@ -165,13 +165,13 @@ describe('Datagrid tooltip service', () => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
 
-            let box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
-            let cell = { row: 1, cell: 1 }; // contains '  tetetetetetetetetetetetetetetetetetetete '
+            const box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
+            const cell = { row: 1, cell: 1 }; // contains '  tetetetetetetetetetetetetetetetetetetete '
             gridMock.initCellMock(cell, box);
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
             jasmine.clock().tick(300);
             $timeout.flush();
@@ -188,13 +188,13 @@ describe('Datagrid tooltip service', () => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
 
-            let box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
-            let cell = { row: 1, cell: 2 }; // contains 'titititititititititititititititititi'
+            const box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
+            const cell = { row: 1, cell: 2 }; // contains 'titititititititititititititititititi'
             gridMock.initCellMock(cell, box);
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
 
             //then
@@ -217,12 +217,12 @@ describe('Datagrid tooltip service', () => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
 
-            let cell = { row: 1, cell: 3 }; // contains 'toto<span class="hiddenCharsBreakLine">&nbsp;</span>\ntoto'
+            const cell = { row: 1, cell: 3 }; // contains 'toto<span class="hiddenCharsBreakLine">&nbsp;</span>\ntoto'
             gridMock.initCellMock(cell);
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
 
             //then
@@ -245,14 +245,14 @@ describe('Datagrid tooltip service', () => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
 
-            let box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
-            let cell = { row: 1, cell: 4 };                           // contains ''
+            const box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
+            const cell = { row: 1, cell: 4 };                           // contains ''
             gridMock.initCellMock(cell, box);
 
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
 
             //then
@@ -275,13 +275,13 @@ describe('Datagrid tooltip service', () => {
         it('should show tooltip after a 300ms delay with column tdpId', inject(($timeout, DatagridTooltipService) => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
-            let box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
-            let cell = { row: 1, cell: 5 }; //contains 16678678678686786788888888888888888886872
+            const box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
+            const cell = { row: 1, cell: 5 }; //contains 16678678678686786788888888888888888886872
             gridMock.initCellMock(cell, box);
 
             //when
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
 
             //then
@@ -308,7 +308,7 @@ describe('Datagrid tooltip service', () => {
             stateMock.playground.grid.showTooltip = true;
 
             //when
-            let mouseLeaveHandler = gridMock.onMouseLeave.subscribe.calls.argsFor(0)[0];
+            const mouseLeaveHandler = gridMock.onMouseLeave.subscribe.calls.argsFor(0)[0];
             mouseLeaveHandler();
 
             //then
@@ -325,13 +325,13 @@ describe('Datagrid tooltip service', () => {
             //given
             DatagridTooltipService.init(gridMock, stateMock.playground.grid);
 
-            let box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
-            let cell = { row: 1, cell: 2 };                           // contains 'titititititititititititititititititi'
+            const box = { left: 400, right: 500, top: 10, bottom: 40 }; //width: 100
+            const cell = { row: 1, cell: 2 };                           // contains 'titititititititititititititititititi'
             gridMock.initCellMock(cell, box);
 
             //when : trigger a tooltip and flush 299ms (1ms before actual tooltip show)
-            let mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
-            let event = { clientX: 500, clientY: 300 };
+            const mouseEnterHandler = gridMock.onMouseEnter.subscribe.calls.argsFor(0)[0];
+            const event = { clientX: 500, clientY: 300 };
             mouseEnterHandler(event);
             jasmine.clock().tick(300);
 
@@ -339,7 +339,7 @@ describe('Datagrid tooltip service', () => {
             expect(stateMock.playground.grid.showTooltip).toBe(false);
 
             //when : tooltip hide
-            let mouseLeaveHandler = gridMock.onMouseLeave.subscribe.calls.argsFor(0)[0];
+            const mouseLeaveHandler = gridMock.onMouseLeave.subscribe.calls.argsFor(0)[0];
             mouseLeaveHandler();
             try {
                 $timeout.flush();

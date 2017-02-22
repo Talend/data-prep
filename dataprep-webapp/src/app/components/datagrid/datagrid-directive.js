@@ -30,12 +30,10 @@ import template from './datagrid.html';
  * @requires data-prep.datagrid.service:DatagridColumnService
  * @requires data-prep.datagrid.service:DatagridStyleService
  * @requires data-prep.datagrid.service:DatagridSizeService
- * @requires data-prep.datagrid.service:DatagridTooltipService
  * @requires data-prep.datagrid.service:DatagridExternalService
  * @restrict E
  */
-export default function Datagrid($timeout, state, DatagridGridService, DatagridColumnService, DatagridStyleService, DatagridSizeService,
-                                 DatagridTooltipService, DatagridExternalService) {
+export default function Datagrid($timeout, state, DatagridGridService, DatagridColumnService, DatagridStyleService, DatagridSizeService, DatagridExternalService) {
 	'ngInject';
 
 	return {

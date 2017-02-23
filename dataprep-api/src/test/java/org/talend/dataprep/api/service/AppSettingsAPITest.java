@@ -353,7 +353,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(localImport.get("contentType"), is("text/plain"));
         assertThat(localImport.get("dynamic"), is(false));
         assertThat(localImport.get("defaultImport"), is(true));
-        assertThat(localImport.get("label"), is("Local File"));
+        assertThat(localImport.get("label"), is("Local file"));
         assertThat(localImport.get("title"), is("Add local file dataset"));
 
         final Map<String, Object> hdfsImport = (Map<String, Object>) importTypes.get(1);

@@ -4,7 +4,7 @@
     "name": "extract_url_tokens",
     "dynamic": false,
     "description": "Extract protocol, host, port, query, etc... from an URL in separated columns",
-    "label": "Extract URL Parts",
+    "label": "Extract URL parts",
     "actionScope": [],
     "parameters": [
       {
@@ -50,7 +50,7 @@
     "name": "extractemaildomain",
     "dynamic": false,
     "description": "Extract local and domain parts from an email",
-    "label": "Extract Email Parts",
+    "label": "Extract email parts",
     "actionScope": [],
     "parameters": [
       {
@@ -99,7 +99,7 @@
     "name": "clear_invalid",
     "dynamic": false,
     "description": "Clear cells that contain a value recognized as invalid",
-    "label": "Clear the Cells with Invalid Values",
+    "label": "Clear the cells with invalid values",
     "parameters": [
       {
         "name": "column_id",
@@ -199,7 +199,7 @@
     "name": "delete_lines",
     "dynamic": false,
     "description": "Delete only the rows that match the current filters",
-    "label": "Delete these Filtered Rows",
+    "label": "Delete these filtered rows",
     "actionScope": [],
     "parameters": [
       {
@@ -248,7 +248,7 @@
     "category": "data cleansing",
     "dynamic": false,
     "description": "Delete rows that have empty cells",
-    "label": "Delete the Rows with Empty Cell",
+    "label": "Delete the rows with empty cell",
     "parameters": [
       {
         "name": "column_id",
@@ -296,7 +296,7 @@
     "category": "data cleansing",
     "dynamic": false,
     "description": "Delete rows which contain an invalid cell",
-    "label": "Delete the Rows with Invalid Cell",
+    "label": "Delete the rows with invalid cell",
     "parameters": [
       {
         "name": "column_id",
@@ -388,7 +388,7 @@
     "category": "data cleansing",
     "dynamic": false,
     "description": "Delete rows where a cell in this column has a specific value",
-    "label": "Delete the Rows that Match",
+    "label": "Delete the rows that match",
     "actionScope": []
   },
   {
@@ -396,7 +396,7 @@
     "name": "keep_only",
     "dynamic": false,
     "description": "Keep only the rows that match the current filters",
-    "label": "Keep these Filtered Rows",
+    "label": "Keep these filtered rows",
     "actionScope": [],
     "parameters": [
       {
@@ -531,7 +531,7 @@
                   "implicit": false,
                   "canBeBlank": false,
                   "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Your Format",
+                  "label": "Your format",
                   "default": ""
                 }
               ]
@@ -547,7 +547,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Change the date format to use in a date column",
-    "label": "Change Date Format",
+    "label": "Change date format",
     "actionScope": []
   },
   {
@@ -617,7 +617,7 @@
         },
         "default": "HOURS",
         "description": "The unit in which you want the result",
-        "label": "Time Unit"
+        "label": "Time unit"
       },
       {
         "name": "since_when",
@@ -668,7 +668,7 @@
     ],
     "category": "dates",
     "docUrl": "",
-    "label": "Calculate Time until",
+    "label": "Calculate time until",
     "actionScope": [],
     "dynamic": false
   },
@@ -764,7 +764,7 @@
                   "implicit": false,
                   "canBeBlank": false,
                   "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Your Format",
+                  "label": "Your format",
                   "default": ""
                 }
               ]
@@ -779,7 +779,7 @@
     ],
     "dynamic": false,
     "description": "Given a timestamp (ellapsed time since epoch in second), create a new column with the date",
-    "label": "Calculate Timestamp to Date",
+    "label": "Calculate timestamp to date",
     "actionScope": []
   },
   {
@@ -930,7 +930,7 @@
   {
     "description": "Fill empty cells from this column with a given value",
     "category": "data cleansing",
-    "label": "Fill Empty Cells with Text",
+    "label": "Fill empty cells with text",
     "name": "fillemptywithdefault",
     "parameters": [
       {
@@ -1100,13 +1100,13 @@
     ],
     "dynamic": false,
     "description": "Fill cells from this column with a given value",
-    "label": "Fill Cells with Value",
+    "label": "Fill cells with value",
     "actionScope": []
   },
   {
     "description": "Fill invalid cells from this column with a given value",
     "category": "data cleansing",
-    "label": "Fill Invalid Cells with Value",
+    "label": "Fill invalid cells with value",
     "name": "fillinvalidwithdefault",
     "parameters": [
       {
@@ -1196,7 +1196,7 @@
     "name": "compute_length",
     "dynamic": false,
     "description": "Extract the number of digits from a value (23562 -> 5)",
-    "label": "Calculate Length",
+    "label": "Calculate length",
     "actionScope": [],
     "parameters": [
       {
@@ -1289,7 +1289,7 @@
     ],
     "dynamic": false,
     "description": "Remove specified text from cells in this column",
-    "label": "Remove Part of the Text",
+    "label": "Remove part of the text",
     "actionScope": []
   },
   {
@@ -1297,7 +1297,7 @@
     "name": "uppercase",
     "dynamic": false,
     "description": "Converts all of the cell text in this column to UPPER case (capitalize)",
-    "label": "Change Style to UPPER Case",
+    "label": "Change style to upper case",
     "actionScope": [],
     "parameters": [
       {
@@ -1343,7 +1343,7 @@
     "name": "remove_non_num_chars",
     "dynamic": false,
     "description": "For example Ã¢âÂ¬10.5k will become 10.5",
-    "label": "Remove all non Numeric Characters",
+    "label": "Remove all non numeric characters",
     "actionScope": [],
     "parameters": [
       {
@@ -1389,7 +1389,7 @@
     "category": "strings advanced",
     "name": "textclustering",
     "description": "Replace all similar values with the right one (i.e. cluster on fuzzy matching)",
-    "label": "Find and Group Similar Text",
+    "label": "Find and group similar text",
     "actionScope": [],
     "parameters": [
       {
@@ -1652,7 +1652,7 @@
     ],
     "dynamic": false,
     "description": "Extract some parts of the text (substring) and create a new column",
-    "label": "Extract Parts of the Text",
+    "label": "Extract parts of the text",
     "actionScope": []
   },
   {
@@ -1660,7 +1660,7 @@
     "name": "lowercase",
     "dynamic": false,
     "description": "Converts all of the cell text in this column to lower case",
-    "label": "Change Style to lower Case",
+    "label": "Change style to lower case",
     "actionScope": [],
     "parameters": [
       {
@@ -1821,7 +1821,7 @@
     ],
     "dynamic": false,
     "description": "Split column from separators",
-    "label": "Split the Text in Parts",
+    "label": "Split the text in parts",
     "actionScope": []
   },
   {
@@ -1894,7 +1894,7 @@
     ],
     "dynamic": false,
     "description": "Replace the cells that have a specific value",
-    "label": "Replace the Cells that Match",
+    "label": "Replace the cells that match",
     "actionScope": []
   },
   {
@@ -1978,7 +1978,7 @@
     ],
     "dynamic": false,
     "description": "Add extra characters (padding) on the left or on the right of the original value to match an expected size",
-    "label": "Add Extra Characters",
+    "label": "Add extra characters",
     "actionScope": []
   },
   {
@@ -2073,7 +2073,7 @@
     ],
     "dynamic": false,
     "description": "Create a new column with <i>true</i> or <i>false</i> regarding if the value that matches or not a given pattern",
-    "label": "Matches Pattern",
+    "label": "Matches pattern",
     "actionScope": []
   },
   {
@@ -2081,7 +2081,7 @@
     "name": "remove_non_alpha_num_chars",
     "dynamic": false,
     "description": "For example Ã¢âÂ¬10.5k will become 105",
-    "label": "Remove all non Alpha Numeric Characters",
+    "label": "Remove all non alpha numeric characters",
     "actionScope": [],
     "parameters": [
       {
@@ -2127,7 +2127,7 @@
     "name": "propercase",
     "dynamic": false,
     "description": "Converts the text content from this column to title case (i.e. \"data prep\" -> \"Data Prep\")",
-    "label": "Change Style to Title Case",
+    "label": "Change style to title case",
     "actionScope": [],
     "parameters": [
       {
@@ -2173,7 +2173,7 @@
     "name": "trim",
     "dynamic": false,
     "description": "Remove trailing and leading spaces (i.e. trim)",
-    "label": "Remove Whitespaces (Trailing and Leading)",
+    "label": "Remove whitespaces (trailing and leading)",
     "actionScope": [],
     "parameters": [
       {
@@ -2219,7 +2219,7 @@
     "name": "normalize",
     "dynamic": false,
     "description": "Simplify the content of this column (ie: FranÃÂ§ois -> francois)",
-    "label": "Simplify Text (remove case, accent, etc.)",
+    "label": "Simplify text (remove case, accent, etc.)",
     "actionScope": [],
     "parameters": [
       {
@@ -2265,7 +2265,7 @@
     "category": "numbers",
     "dynamic": false,
     "description": "Round value to the largest integer (3.14 -> 4)",
-    "label": "Round Value using Floor mode",
+    "label": "Round value using Floor mode",
     "actionScope": [],
     "parameters": [
       {
@@ -2318,7 +2318,7 @@
     "category": "data cleansing",
     "dynamic": false,
     "description": "Rows with a negative value in this column will be deleted",
-    "label": "Remove Negative Values",
+    "label": "Remove negative values",
     "actionScope": [],
     "parameters": [
       {
@@ -2364,7 +2364,7 @@
     "category": "numbers",
     "dynamic": false,
     "description": "Round value to the closest integer (3.14 -> 3)",
-    "label": "Round Value using HalfUp mode",
+    "label": "Round value using HalfUp mode",
     "actionScope": [],
     "parameters": [
       {
@@ -2417,7 +2417,7 @@
     "name": "absolute",
     "dynamic": false,
     "description": "Calculate the absolute value for all the numeric values in this column.",
-    "label": "Calculate Absolute Value",
+    "label": "Calculate absolute value",
     "actionScope": [],
     "parameters": [
       {
@@ -2569,7 +2569,7 @@
     ],
     "dynamic": false,
     "description": "Perform an operation/calculation on this column with another one or with a fixed value: Add/sum (+), multiply (x), subtract (-), or divide(/)",
-    "label": "Add, Multiply, Subtract or Divide",
+    "label": "Add, multiply, subtract or divide",
     "actionScope": []
   },
   {
@@ -2577,7 +2577,7 @@
     "category": "numbers",
     "dynamic": false,
     "description": "Round towards zero. (3.74 -> 3) and (-3.74 -> -3)",
-    "label": "Remove Fractional Part",
+    "label": "Remove fractional part",
     "actionScope": [],
     "parameters": [
       {
@@ -2676,7 +2676,7 @@
     "category": "numbers",
     "dynamic": false,
     "description": "Round value to the smallest integer (3.74 -> 3)",
-    "label": "Round Value using Ceil mode",
+    "label": "Round value using Ceil mode",
     "actionScope": [],
     "parameters": [
       {
@@ -2729,7 +2729,7 @@
     "name": "negate",
     "dynamic": false,
     "description": "Reverse the boolean value of cells from this column",
-    "label": "Negate Value",
+    "label": "Negate value",
     "actionScope": [],
     "parameters": [
       {
@@ -2778,7 +2778,7 @@
     "name": "copy",
     "dynamic": false,
     "description": "Create an exact copy of this column",
-    "label": "Duplicate Column",
+    "label": "Duplicate column",
     "parameters": [
       {
         "name": "column_id",
@@ -3000,14 +3000,14 @@
     "name": "rename_column",
     "dynamic": false,
     "description": "Rename this column",
-    "label": "Rename Column"
+    "label": "Rename column"
   },
   {
     "category": "column_metadata",
     "name": "domain_change",
     "dynamic": false,
     "description": "Change semantic domain of this column (city, zipcode, last name, etc.)",
-    "label": "Change Semantic Domain",
+    "label": "Change semantic domain",
     "actionScope": [],
     "parameters": [
       {
@@ -3053,7 +3053,7 @@
     "name": "type_change",
     "dynamic": false,
     "description": "Change type of this column (number, text, date, etc.)",
-    "label": "Change Data Type",
+    "label": "Change data type",
     "actionScope": [],
     "parameters": [
       {
@@ -3102,7 +3102,7 @@
     "name": "delete_column",
     "dynamic": false,
     "description": "Delete this column",
-    "label": "Delete Column",
+    "label": "Delete column",
     "parameters": [
       {
         "name": "column_id",
@@ -3506,7 +3506,7 @@
       }
     ],
     "description": "Compare this column to another column or a constant",
-    "label": "Compare Dates",
+    "label": "Compare dates",
     "docUrl": "",
     "actionScope": [],
     "dynamic": false
@@ -4073,7 +4073,7 @@
       }
     ],
     "category": "math",
-    "label": "Base 10 Logarithm",
+    "label": "Base 10 logarithm",
     "docUrl": "",
     "actionScope": [],
     "description": "Compute the base 10 logarithm from a column",
@@ -4120,7 +4120,7 @@
       }
     ],
     "category": "math",
-    "label": "Natural Logarithm",
+    "label": "Natural logarithm",
     "docUrl": "",
     "actionScope": [],
     "description": "Compute the natural logarithm from a column",

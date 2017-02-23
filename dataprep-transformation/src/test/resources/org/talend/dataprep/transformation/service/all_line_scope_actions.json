@@ -2,7 +2,7 @@
   {
     "description":"Delete this row",
     "category":"data cleansing",
-    "label":"Delete Row",
+    "label":"Delete row",
     "name":"delete",
     "dynamic":false,
     "actionScope":[

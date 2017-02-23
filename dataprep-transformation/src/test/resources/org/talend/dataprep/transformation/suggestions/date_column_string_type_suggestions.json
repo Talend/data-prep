@@ -49,7 +49,7 @@
       }
     ],
     "description": "Clear cells that contain a value recognized as invalid",
-    "label": "Clear the Cells with Invalid Values",
+    "label": "Clear the cells with invalid values",
     "docUrl": ""
   },
   {
@@ -102,13 +102,13 @@
       }
     ],
     "description": "Delete rows which contain an invalid cell",
-    "label": "Delete the Rows with Invalid Cell",
+    "label": "Delete the rows with invalid cell",
     "docUrl": ""
   },
   {
     "name": "fillinvalidwithdefault",
     "description": "Fill invalid cells from this column with a given value",
-    "label": "Fill Invalid Cells with Value",
+    "label": "Fill invalid cells with value",
     "category": "data cleansing",
     "parameters": [
       {
@@ -254,13 +254,13 @@
       }
     ],
     "description": "Delete rows that have empty cells",
-    "label": "Delete the Rows with Empty Cell",
+    "label": "Delete the rows with empty cell",
     "docUrl": ""
   },
   {
     "name": "fillemptywithdefault",
     "description": "Fill empty cells from this column with a given value",
-    "label": "Fill Empty Cells with Text",
+    "label": "Fill empty cells with text",
     "category": "data cleansing",
     "parameters": [
       {
@@ -502,7 +502,7 @@
                   "placeHolder": "",
                   "default": "",
                   "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Your Format"
+                  "label": "Your format"
                 }
               ],
               "label": "custom"
@@ -519,7 +519,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Change the date format to use in a date column",
-    "label": "Change Date Format",
+    "label": "Change date format",
     "actionScope": [],
     "docUrl": ""
   },
@@ -596,7 +596,7 @@
         "radio": false,
         "default": "HOURS",
         "description": "The unit in which you want the result",
-        "label": "Time Unit"
+        "label": "Time unit"
       },
       {
         "name": "since_when",
@@ -654,7 +654,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Calculate elapsed time until a date, in the desired unit (year, month, day, hour)",
-    "label": "Calculate Time until",
+    "label": "Calculate time until",
     "actionScope": [],
     "docUrl": ""
   },
@@ -815,7 +815,7 @@
     "category": "dates",
     "dynamic": false,
     "description": "Create columns with year, month, day, hour, minute, second, etc...",
-    "label": "Extract Date Parts",
+    "label": "Extract date parts",
     "actionScope": [],
     "docUrl": ""
   },
@@ -896,7 +896,7 @@
     "category": "strings",
     "dynamic": false,
     "description": "Replace the cells that have a specific value",
-    "label": "Replace the Cells that Match",
+    "label": "Replace the cells that match",
     "actionScope": [],
     "docUrl": ""
   }

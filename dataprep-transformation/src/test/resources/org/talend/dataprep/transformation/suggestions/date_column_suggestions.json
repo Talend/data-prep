@@ -502,7 +502,7 @@
                   "placeHolder": "",
                   "default": "",
                   "description": "e.g. dd/MM/yyyy for day/month/year",
-                  "label": "Your Format"
+                  "label": "Your format"
                 }
               ],
               "label": "custom"

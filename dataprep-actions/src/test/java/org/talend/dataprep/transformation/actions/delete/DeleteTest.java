@@ -68,7 +68,7 @@ public class DeleteTest extends AbstractMetadataBaseTest {
 
         //then
         assertThat(adaptedAction.getDescription(), is("Delete this row"));
-        assertThat(adaptedAction.getLabel(), is("Delete Row"));
+        assertThat(adaptedAction.getLabel(), is("Delete row"));
 
         assertThat( adaptedAction, not(is(action)) );
     }
@@ -80,7 +80,7 @@ public class DeleteTest extends AbstractMetadataBaseTest {
 
         //then
         assertThat(adaptedAction.getDescription(), is("Delete this column"));
-        assertThat(adaptedAction.getLabel(), is("Delete Column"));
+        assertThat(adaptedAction.getLabel(), is("Delete column"));
     }
 
     @Test

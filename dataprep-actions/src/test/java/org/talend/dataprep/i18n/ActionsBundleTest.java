@@ -12,12 +12,12 @@ public class ActionsBundleTest {
 
     @Test
     public void actionLabel() throws Exception {
-        assertEquals("Negate Value", ActionsBundle.INSTANCE.actionLabel(this, Locale.US, "negate"));
+        assertEquals("Negate value", ActionsBundle.INSTANCE.actionLabel(this, Locale.US, "negate"));
     }
 
     @Test
     public void actionLabel_defaultToEnglish() throws Exception {
-        assertEquals("Negate Value", ActionsBundle.INSTANCE.actionLabel(this, Locale.FRANCE, "negate"));
+        assertEquals("Negate value", ActionsBundle.INSTANCE.actionLabel(this, Locale.FRANCE, "negate"));
     }
 
     @Test(expected = TalendRuntimeException.class)
@@ -71,8 +71,8 @@ public class ActionsBundleTest {
 
     @Test
     public void customActionMessageDefaultFallback() throws Exception {
-        assertEquals("Negate Value", ActionsBundle.INSTANCE.actionLabel(new Object(), Locale.US, "negate"));
-        assertEquals("Negate Value", ActionsBundle.INSTANCE.actionLabel(null, Locale.US, "negate"));
+        assertEquals("Negate value", ActionsBundle.INSTANCE.actionLabel(new Object(), Locale.US, "negate"));
+        assertEquals("Negate value", ActionsBundle.INSTANCE.actionLabel(null, Locale.US, "negate"));
     }
 
 }

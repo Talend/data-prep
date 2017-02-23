@@ -50,7 +50,7 @@ describe('Preparation Creator Form Controller', () => {
 	}));
 
 	beforeEach(inject(($q, DatasetService, RestURLs) => {
-		RestURLs.setServerUrl('');
+		RestURLs.setConfig({ serverUrl: '' });
 
 		uploadDefer = $q.defer();
 		uploadDefer.promise.progress = (callback) => {

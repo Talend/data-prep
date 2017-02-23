@@ -162,6 +162,32 @@ public class FolderAPITest extends ApiServiceTestBase {
         }
     }
 
+    /**
+     * See https://jira.talendforge.org/browse/TDP-3456
+     */
+    @Test
+    public void listPreparationsByFolder_shouldListMoreThan32Preparations_TDP3456() throws Exception {
+        // given
+        int numberOfPreparations = 33;
+        for (int preparationId = 0; preparationId < numberOfPreparations; preparationId++) {
+            createPreparationFromFile("dataset/dataset.csv", "preparation " + preparationId, "text/csv", home.getId());
+        }
+
+        // when
+        final Response response = given() //
+                .when()//
+                .expect().statusCode(200).log().ifError() //
+                .get("/api/folders/{id}/preparations", home.getId());
+
+        // then
+        assertThat(response.getStatusCode(), is(200));
+        final JsonNode rootNode = mapper.readTree(response.asInputStream());
+
+        final JsonNode preparations = rootNode.get("preparations");
+        assertNotNull(preparations);
+        assertEquals(numberOfPreparations, preparations.size());
+    }
+
     @Test
     public void should_rename_folder() throws IOException {
         //given

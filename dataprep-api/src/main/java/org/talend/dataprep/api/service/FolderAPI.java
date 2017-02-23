@@ -20,11 +20,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 import org.apache.commons.lang.StringUtils;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +29,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.folder.*;
@@ -201,28 +197,27 @@ public class FolderAPI extends APIService {
                 writeFluxToJsonArray(folders, "folders", generator);
                 // Preparation list
                 final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
-                final Queue<DataSetMetadata> dataSetMetadata = new ArrayDeque<>();
-                final Publisher<DataSetMetadata> dataSetMetadataPublisher = Flux.fromIterable(dataSetMetadata);
 
-                final Flux<EnrichedPreparation> preparations = Flux
+                final Flux<UserPreparation> preparations = Flux
                         .from(CommandHelper.toPublisher(UserPreparation.class, mapper, listPreparations)) // From preparation list
-                        .doOnNext(preparation -> {
+                        .map(preparation -> {
+                            UserPreparation ep;
                             if (preparation.getDataSetId() == null) {
-                                dataSetMetadata.offer(null); // No data set metadata to get from preparation.
+                                ep = preparation;
                             } else {
                                 // get the dataset metadata
                                 try {
                                     securityProxy.asTechnicalUser(); // because dataset are not shared
-                                    dataSetMetadata.offer(getCommand(DataSetGetMetadata.class, preparation.getDataSetId()).execute());
+                                    ep = new EnrichedPreparation(preparation, getCommand(DataSetGetMetadata.class, preparation.getDataSetId()).execute());
                                 } catch (Exception e) {
-                                    dataSetMetadata.offer(null);
+                                    ep = preparation;
                                     LOG.debug("error reading dataset metadata {} : {}", preparation.getId(), e);
                                 } finally {
                                     securityProxy.releaseIdentity();
                                 }
                             }
-                        })
-                        .zipWith(dataSetMetadataPublisher, EnrichedPreparation::new); // Zip preparations and discovered metadata
+                            return ep;
+                        });
                 writeFluxToJsonArray(preparations, "preparations", generator);
                 generator.writeEndObject();
             } catch (EOFException e) {

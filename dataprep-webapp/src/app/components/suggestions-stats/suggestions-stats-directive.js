@@ -31,6 +31,8 @@ const SuggestionsStats = {
 	transclude: true,
 	controllerAs: 'suggestionsStatsCtrl',
 	controller(state) {
+		'ngInject';
+
 		this.state = state;
 	},
 };

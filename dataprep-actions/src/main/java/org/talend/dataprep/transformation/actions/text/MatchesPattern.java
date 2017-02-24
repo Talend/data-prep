@@ -90,12 +90,12 @@ public class MatchesPattern extends AbstractActionMetadata implements ColumnActi
         // @formatter:off
 		parameters.add(SelectParameter.Builder.builder()
 				.name(PATTERN_PARAMETER)
-				.item("[a-z]+")
-				.item("[A-Z]+")
-				.item("[0-9]+")
-				.item("[a-zA-Z]+")
-				.item("[a-zA-Z0-9]+")
-				.item(CUSTOM, new Parameter(MANUAL_PATTERN_PARAMETER, REGEX, EMPTY))
+				.item("[a-z]+", "[a-z]+")
+				.item("[A-Z]+", "[A-Z]+")
+				.item("[0-9]+", "[0-9]+")
+				.item("[a-zA-Z]+", "[a-zA-Z]+")
+				.item("[a-zA-Z0-9]+", "[a-zA-Z0-9]+")
+				.item(CUSTOM, CUSTOM, new Parameter(MANUAL_PATTERN_PARAMETER, REGEX, EMPTY))
 				.defaultValue("[a-zA-Z]+")
 				.build());
 		// @formatter:on

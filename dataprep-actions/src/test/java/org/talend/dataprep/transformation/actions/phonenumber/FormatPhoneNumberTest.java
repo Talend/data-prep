@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.parameters.Item;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -80,7 +79,7 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest {
 
         // Test on items label for TDP-2914:
         final SelectParameter useWithParam = (SelectParameter) parameters.get(4);
-        assertEquals("No other column", useWithParam.getItems().get(1).getLabel());
+        assertEquals("Constant", useWithParam.getItems().get(1).getLabel());
 
         final SelectParameter regionsListParam =(SelectParameter) useWithParam.getItems().get(1).getParameters().get(0);
         assertEquals("American standard", regionsListParam.getItems().get(0).getLabel());

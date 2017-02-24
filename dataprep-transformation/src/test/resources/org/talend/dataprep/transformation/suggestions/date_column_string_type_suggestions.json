@@ -173,7 +173,7 @@
                   "label": "Value"
                 }
               ],
-              "label": "No other column"
+              "label": "Constant"
             },
             {
               "value": "other_column_mode",
@@ -189,7 +189,7 @@
                   "label": "Column"
                 }
               ],
-              "label": "Another column"
+              "label": "Other column"
             }
           ],
           "multiple": false
@@ -325,7 +325,7 @@
                   "label": "Value"
                 }
               ],
-              "label": "No other column"
+              "label": "Constant"
             },
             {
               "value": "other_column_mode",
@@ -341,7 +341,7 @@
                   "label": "Column"
                 }
               ],
-              "label": "Another column"
+              "label": "Other column"
             }
           ],
           "multiple": false
@@ -640,7 +640,7 @@
                   "label": "Column"
                 }
               ],
-              "label": "Another column"
+              "label": "Other column"
             }
           ],
           "multiple": false

@@ -89,7 +89,7 @@ public class ComputeTimeSinceTest extends BaseDateTest {
         final SelectParameter selectParameter = (SelectParameter) parameters.get(5);
         assertEquals("Now", selectParameter.getItems().get(0).getLabel());
         assertEquals("Specific date", selectParameter.getItems().get(1).getLabel());
-        assertEquals("Another column", selectParameter.getItems().get(2).getLabel());
+        assertEquals("Other column", selectParameter.getItems().get(2).getLabel());
     }
 
     @Test

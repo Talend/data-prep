@@ -81,9 +81,9 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
 
         parameters.add(SelectParameter.Builder.builder() //
                 .name(OtherColumnParameters.MODE_PARAMETER) //
-                .item(OtherColumnParameters.CONSTANT_MODE, //
+                .item(OtherColumnParameters.CONSTANT_MODE, OtherColumnParameters.CONSTANT_MODE,//
                         new Parameter(VALUE_PARAMETER, ParameterType.STRING, EMPTY, false, true, StringUtils.EMPTY)) //
-                .item(OtherColumnParameters.OTHER_COLUMN_MODE, //
+                .item(OtherColumnParameters.OTHER_COLUMN_MODE, OtherColumnParameters.OTHER_COLUMN_MODE,//
                         new Parameter(OtherColumnParameters.SELECTED_COLUMN_PARAMETER, //
                                 ParameterType.COLUMN, //
                                 StringUtils.EMPTY, false, false, StringUtils.EMPTY)) //

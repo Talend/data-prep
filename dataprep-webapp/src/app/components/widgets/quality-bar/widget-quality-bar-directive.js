@@ -22,13 +22,17 @@ import template from './quality-bar.html';
  <quality-bar
      quality="quality"
      enterAnimation="enableEnterAnimation"
-     isTrusted="true"
-     hasMenu="true">
+ 	 valid-items-has-menu="false"
+     invalid-items-has-menu="true"
+     empty-items-has-menu="true"
+     isTrusted="true">
  </talend-tooltip>
  * @param {object} quality {empty: number, invalid: number, valid: number} The quality values
  * @param {string} enterAnimation Do not animate on enter if this flag === 'false'
  * @param {string} isTrusted Show empty quality bar if column has no statistics frequency table yet
- * @param {string} hasMenu Do not show the menu if hasMenu === 'false'
+ * @param {string} validItemsHasMenu Do not show the menu if validItemsHasMenu === 'false'
+ * @param {string} invalidItemsHasMenu Do not show the menu if invalidItemsHasMenu === 'false'
+ * @param {string} emptyItemsHasMenu Do not show the menu if emptyItemsHasMenu === 'false'
  */
 export default function QualityBar($timeout) {
 	'ngInject';
@@ -40,7 +44,9 @@ export default function QualityBar($timeout) {
 			enterAnimation: '@',
 			quality: '<',
 			isTrusted: '<',
-			hasMenu: '<',
+			validItemsHasMenu: '<',
+			invalidItemsHasMenu: '<',
+			emptyItemsHasMenu: '<',
 			onClick: '=',
 		},
 		transclude: {

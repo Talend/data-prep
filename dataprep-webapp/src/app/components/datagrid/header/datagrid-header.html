@@ -12,7 +12,6 @@
   ~
   ~ ============================================================================
   -->
-
 <div class="grid-header">
     <div class="talend-dropdown-div" ng-if="!datagridHeaderCtrl.state.playground.isReadOnly">
         <sc-dropdown on-open="datagridHeaderCtrl.initTransformations()">
@@ -46,32 +45,18 @@
     <div class="grid-header-type" ng-if="(!datagridHeaderCtrl.column.domain)">{{ datagridHeaderCtrl.converterService.simplifyType(datagridHeaderCtrl.column.type) }}</div>
 
 </div>
-
-<quality-bar ng-if="datagridHeaderCtrl.state.playground.isReadOnly"
-             enter-animation="true"
-             has-menu="false"
-             is-trusted="datagridHeaderCtrl.column.statistics.frequencyTable.length > 0"
+<quality-bar enter-animation="true"
              quality="datagridHeaderCtrl.column.quality"
-             on-click="datagridHeaderCtrl.addFilter">
-</quality-bar>
-
-<quality-bar ng-if="!datagridHeaderCtrl.state.playground.isReadOnly"
-             enter-animation="true"
-             has-menu="true"
              is-trusted="datagridHeaderCtrl.column.statistics.frequencyTable.length > 0"
-             quality="datagridHeaderCtrl.column.quality">
-
-    <valid-menu-items>
-        <li ng-click="datagridHeaderCtrl.addFilter('valid_records')">
-            <a><span translate-once="SELECT_VALID_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase }}</a>
-        </li>
-    </valid-menu-items>
-
+             valid-items-has-menu="false"
+             invalid-items-has-menu="!datagridHeaderCtrl.state.playground.isReadOnly && datagridHeaderCtrl.state.playground.suggestions.transformationsForInvalidCells.length > 0"
+             empty-items-has-menu="!datagridHeaderCtrl.state.playground.isReadOnly && datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells.length > 0"
+             on-click="datagridHeaderCtrl.addFilter">
     <empty-menu-items>
         <li ng-click="datagridHeaderCtrl.addFilter('empty_records')">
             <a><span translate-once="SELECT_EMPTY_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
         </li>
-        <li class="divider" ng-if="datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells.length"></li>
+        <li class="divider"></li>
         <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForEmptyCells track by $index"
             ng-click="datagridHeaderCtrl.PlaygroundService.completeParamsAndAppend(transfo, 'column')">
             <a>{{transfo.label}}</a>
@@ -82,7 +67,7 @@
         <li ng-click="datagridHeaderCtrl.addFilter('invalid_records')">
             <a><span translate-once="SELECT_INVALID_RECORDS"></span> {{ datagridHeaderCtrl.column.name | uppercase}}</a>
         </li>
-        <li class="divider" ng-if="datagridHeaderCtrl.state.playground.suggestions.transformationsForInvalidCells.length"></li>
+        <li class="divider"></li>
         <li ng-repeat="transfo in datagridHeaderCtrl.state.playground.suggestions.transformationsForInvalidCells track by $index"
             ng-click="datagridHeaderCtrl.PlaygroundService.completeParamsAndAppend(transfo, 'column')">
             <a>{{transfo.label}}</a>

@@ -24,7 +24,11 @@ describe('Quality bar directive', () => {
         scope = $rootScope.$new();
 
         createElement = () => {
-            const html = '<quality-bar quality="quality" has-menu="hasMenu" is-trusted="isTrusted" enter-animation="enterAnimation"></quality-bar>';
+            const html = `<quality-bar  quality="quality"
+                                        valid-items-has-menu="validItemsHasMenu"
+                                        invalid-items-has-menu="invalidItemsHasMenu"
+                                        empty-items-has-menu="emptyMenuItems"
+                                        enter-animation="enterAnimation"></quality-bar>`;
             element = $compile(html)(scope);
             scope.$digest();
 
@@ -99,7 +103,7 @@ describe('Quality bar directive', () => {
     describe('without enter animation', () => {
         beforeEach(inject(($compile) => {
             createElement = () => {
-                const html = '<quality-bar quality="quality" has-menu="hasMenu" enter-animation="false"></quality-bar>';
+                const html = '<quality-bar quality="quality" enter-animation="false"></quality-bar>';
                 element = $compile(html)(scope);
                 scope.$digest();
 
@@ -144,7 +148,7 @@ describe('Quality bar directive', () => {
     describe('without menu', () => {
         beforeEach(inject(($compile) => {
             createElement = () => {
-                const html = '<quality-bar quality="quality" has-menu="hasMenu" is-trusted="true" enter-animation="false" on-click="onclick"></quality-bar>';
+                const html = '<quality-bar quality="quality" is-trusted="true" enter-animation="false" on-click="onclick"></quality-bar>';
                 element = $compile(html)(scope);
                 scope.$digest();
 
@@ -159,7 +163,6 @@ describe('Quality bar directive', () => {
                 invalid: 20,
                 empty: 70,
             };
-            scope.hasMenu = false;
             createElement();
 
             // when
@@ -177,7 +180,6 @@ describe('Quality bar directive', () => {
                 invalid: 20,
                 empty: 70,
             };
-            scope.hasMenu = false;
             scope.onclick = () => {};
             spyOn(scope, 'onclick');
             createElement();
@@ -198,7 +200,6 @@ describe('Quality bar directive', () => {
                 invalid: 20,
                 empty: 70,
             };
-            scope.hasMenu = false;
             scope.onclick = () => {};
             spyOn(scope, 'onclick');
             createElement();
@@ -219,7 +220,6 @@ describe('Quality bar directive', () => {
                 invalid: 20,
                 empty: 70,
             };
-            scope.hasMenu = false;
             scope.onclick = () => {};
             spyOn(scope, 'onclick');
             createElement();
@@ -236,11 +236,16 @@ describe('Quality bar directive', () => {
     describe('with valid menu', () => {
         beforeEach(inject(($compile) => {
             createElement = () => {
-                const html = '<quality-bar quality="quality" has-menu="hasMenu" is-trusted="true" enter-animation="false">' +
-                    '<valid-menu-items><li class="column-action">valid</li></valid-menu-items>' +
-                    '<empty-menu-items><li class="column-action">empty</li></empty-menu-items>' +
-                    '<invalid-menu-items><li class="column-action">invalid</li></invalid-menu-items>' +
-                    '</quality-bar>';
+                const html = `<quality-bar
+                                    quality="quality"
+                                    is-trusted="true"
+                                    valid-items-has-menu="validItemsHasMenu"
+                                    invalid-items-has-menu="invalidItemsHasMenu"
+                                    empty-items-has-menu="emptyMenuItems"
+                                    enter-animation="false">
+                                        <valid-menu-items><li class="column-action">valid</li></valid-menu-items>
+                                        <empty-menu-items><li class="column-action">empty</li></empty-menu-items>
+                                        <invalid-menu-items><li class="column-action">invalid</li></invalid-menu-items></quality-bar>`;
                 element = $compile(html)(scope);
                 scope.$digest();
 
@@ -258,7 +263,10 @@ describe('Quality bar directive', () => {
                 empty: 70,
                 isVariableEmpty: true,
             };
-            scope.hasMenu = true;
+            scope.validItemsHasMenu = true;
+            scope.invalidItemsHasMenu = true;
+            scope.emptyMenuItems = true;
+
             createElement();
 
             // when
@@ -282,25 +290,6 @@ describe('Quality bar directive', () => {
             expect(invalidPartitionElm.hasClass('fixed-width')).toBeFalsy();
             expect(invalidPartitionElm.hasClass('not-fixed-width')).toBeTruthy();
             expect(element.find('.invalid-partition .dropdown-container .dropdown-menu .column-action').text()).toBe('invalid');
-        });
-    });
-
-    describe('with no trusted statistics', () => {
-        it('should not render its content', () => {
-            // given
-            scope.quality = {
-                valid: 10,
-                invalid: 20,
-                empty: 70,
-            };
-            scope.isTrusted = false;
-            createElement();
-
-            // when
-            scope.$digest();
-
-            // then
-            expect(element.find('.quality-bar').children().length).toBe(0);
         });
     });
 });

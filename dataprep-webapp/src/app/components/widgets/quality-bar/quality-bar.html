@@ -12,75 +12,67 @@
   ~
   ~ ============================================================================
   -->
-
-<div class="quality-bar" ng-if="qualityBarCtrl.hasMenu">
+<div class="quality-bar">
     <div ng-if="qualityBarCtrl.isTrusted">
-        <div talend-dropdown
+        <button class="valid-partition" ng-if="!qualityBarCtrl.validItemsHasMenu"
+             ng-style="qualityBarCtrl.width.isVariableValid && {'flex-basis': qualityBarCtrl.width.valid + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableValid, 'not-fixed-width': qualityBarCtrl.width.isVariableValid, 'no-transition': qualityBarCtrl.blockTransition}"
+             ng-show="qualityBarCtrl.quality.valid > 0"
+             title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)"
+             ng-click="qualityBarCtrl.onClick('valid_records')">
+        </button>
+        <div talend-dropdown ng-if="qualityBarCtrl.validItemsHasMenu"
              class="valid-partition"
              ng-style="qualityBarCtrl.width.isVariableValid && {'flex-basis': qualityBarCtrl.width.valid + '%'}"
              ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableValid, 'not-fixed-width': qualityBarCtrl.width.isVariableValid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.valid > 0"
              title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)">
-                <div class="dropdown-container">
-                    <div class="dropdown-action quality-bar-action"></div>
-                    <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" ng-transclude="valid-quality-bar-menu" role="menu">
-                    </ul>
-                </div>
+            <div class="dropdown-container">
+                <div class="dropdown-action quality-bar-action"></div>
+                <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu"
+                    ng-transclude="valid-quality-bar-menu" role="menu">
+                </ul>
+            </div>
         </div>
-
-        <div talend-dropdown
-             class="empty-partition"
-             ng-style="qualityBarCtrl.width.isVariableEmpty && {'flex-basis': qualityBarCtrl.width.empty + '%'}"
-             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableEmpty, 'not-fixed-width': qualityBarCtrl.width.isVariableEmpty, 'no-transition': qualityBarCtrl.blockTransition}"
-             ng-show="qualityBarCtrl.quality.empty > 0"
-             title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
-                <div class="dropdown-container">
-                    <div class="dropdown-action quality-bar-action"></div>
-                    <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" ng-transclude="empty-quality-bar-menu" role="menu">
-                    </ul>
-                </div>
-        </div>
-
-        <div talend-dropdown
-             class="invalid-partition"
-             ng-style="qualityBarCtrl.width.isVariableInvalid && {'flex-basis': qualityBarCtrl.width.invalid + '%'}"
-             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableInvalid, 'not-fixed-width': qualityBarCtrl.width.isVariableInvalid, 'no-transition': qualityBarCtrl.blockTransition}"
-             ng-show="qualityBarCtrl.quality.invalid > 0"
-             title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
-                <div class="dropdown-container">
-                    <div class="dropdown-action quality-bar-action"></div>
-                    <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu" ng-transclude="invalid-quality-bar-menu" role="menu">
-                    </ul>
-                </div>
-        </div>
-    </div>
-</div>
-
-<div class="quality-bar" ng-if="!qualityBarCtrl.hasMenu">
-    <div ng-if="qualityBarCtrl.isTrusted">
-        <div class="valid-partition"
-             ng-style="qualityBarCtrl.width.isVariableValid && {'flex-basis': qualityBarCtrl.width.valid + '%'}"
-             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableValid, 'not-fixed-width': qualityBarCtrl.width.isVariableValid, 'no-transition': qualityBarCtrl.blockTransition}"
-             ng-show="qualityBarCtrl.quality.valid > 0"
-             title="{{ qualityBarCtrl.quality.valid }} {{::'VALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.valid }}%)"
-             ng-click="qualityBarCtrl.onClick ? qualityBarCtrl.onClick('valid_records') : angular.noop()">
-        </div>
-
-        <div class="empty-partition"
+        <button class="empty-partition" ng-if="!qualityBarCtrl.emptyItemsHasMenu"
              ng-style="qualityBarCtrl.width.isVariableEmpty && {'flex-basis': qualityBarCtrl.width.empty + '%'}"
              ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableEmpty, 'not-fixed-width': qualityBarCtrl.width.isVariableEmpty, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.empty > 0"
              title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)"
-             ng-click="qualityBarCtrl.onClick ? qualityBarCtrl.onClick('empty_records') : angular.noop()">
+             ng-click="qualityBarCtrl.onClick('empty_records')">
+        </button>
+        <div talend-dropdown
+             class="empty-partition" ng-if="qualityBarCtrl.emptyItemsHasMenu"
+             ng-style="qualityBarCtrl.width.isVariableEmpty && {'flex-basis': qualityBarCtrl.width.empty + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableEmpty, 'not-fixed-width': qualityBarCtrl.width.isVariableEmpty, 'no-transition': qualityBarCtrl.blockTransition}"
+             ng-show="qualityBarCtrl.quality.empty > 0"
+             title="{{ qualityBarCtrl.quality.empty }} {{::'EMPTY_RECORDS' | translate}} ({{ qualityBarCtrl.percent.empty }}%)">
+            <div class="dropdown-container">
+                <div class="dropdown-action quality-bar-action"></div>
+                <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu"
+                    ng-transclude="empty-quality-bar-menu" role="menu">
+                </ul>
+            </div>
         </div>
-
-        <div class="invalid-partition"
+        <button class="invalid-partition" ng-if="!qualityBarCtrl.invalidItemsHasMenu"
              ng-style="qualityBarCtrl.width.isVariableInvalid && {'flex-basis': qualityBarCtrl.width.invalid + '%'}"
              ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableInvalid, 'not-fixed-width': qualityBarCtrl.width.isVariableInvalid, 'no-transition': qualityBarCtrl.blockTransition}"
              ng-show="qualityBarCtrl.quality.invalid > 0"
              title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)"
-             ng-click="qualityBarCtrl.onClick ? qualityBarCtrl.onClick('invalid_records') : angular.noop()">
+             ng-click="qualityBarCtrl.onClick('invalid_records')">
+        </button>
+        <div talend-dropdown
+             class="invalid-partition" ng-if="qualityBarCtrl.invalidItemsHasMenu"
+             ng-style="qualityBarCtrl.width.isVariableInvalid && {'flex-basis': qualityBarCtrl.width.invalid + '%'}"
+             ng-class="{'fixed-width': !qualityBarCtrl.width.isVariableInvalid, 'not-fixed-width': qualityBarCtrl.width.isVariableInvalid, 'no-transition': qualityBarCtrl.blockTransition}"
+             ng-show="qualityBarCtrl.quality.invalid > 0"
+             title="{{ qualityBarCtrl.quality.invalid }} {{::'INVALID_RECORDS' | translate}} ({{ qualityBarCtrl.percent.invalid }}%)">
+            <div class="dropdown-container">
+                <div class="dropdown-action quality-bar-action"></div>
+                <ul class="dropdown-menu dropdown-menu-small-top quality-bar-menu"
+                    ng-transclude="invalid-quality-bar-menu" role="menu">
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-<ng-transclude></ng-transclude>

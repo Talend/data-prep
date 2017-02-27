@@ -364,34 +364,9 @@ describe('Datagrid header directive', () => {
 
 			// then
 			expect(element.find('quality-bar').length).toBe(1);
-			expect(element.find('quality-bar valid-menu-items').length).toBe(1);
 			expect(element.find('quality-bar empty-menu-items').length).toBe(1);
 			expect(element.find('quality-bar invalid-menu-items').length).toBe(1);
 		});
-
-		describe('valid menu', () => {
-			it('should render valid menu content', () => {
-				// when
-				createElement();
-
-				// then
-				expect(element.find('quality-bar valid-menu-items li').length).toBe(1);
-				expect(element.find('quality-bar valid-menu-items li').text().trim())
-					.toBe('Select rows with valid values for  MOSTPOPULOUSCITY');
-			});
-
-			it('should trigger addFilter callback on 1st item menu click', inject((FilterManagerService) => {
-				// given
-				createElement();
-
-				// when
-				element.find('quality-bar valid-menu-items li').click();
-
-				// then
-				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('valid_records', column.id, column.name);
-			}));
-		});
-
 		describe('empty menu', () => {
 			it('should render empty menu content', () => {
 				// when

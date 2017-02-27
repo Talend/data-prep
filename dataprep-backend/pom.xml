@@ -683,7 +683,7 @@
         </repository>
         <repository>
             <id>snapshots</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/snapshots</url>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -694,7 +694,7 @@
         </repository>
         <repository>
             <id>releases</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/releases</url>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases</url>
             <releases>
                 <updatePolicy>never</updatePolicy>
                 <enabled>true</enabled>
@@ -705,7 +705,7 @@
         </repository>
         <repository>
             <id>opensource-snapshots</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot</url>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -716,7 +716,7 @@
         </repository>
         <repository>
             <id>opensource-releases</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease</url>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease</url>
             <releases>
                 <updatePolicy>never</updatePolicy>
                 <enabled>true</enabled>
@@ -729,11 +729,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>talend_nexus_deployment</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/snapshots/</url>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>talend_nexus_deployment</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/releases/</url>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
         </repository>
     </distributionManagement>
 </project>

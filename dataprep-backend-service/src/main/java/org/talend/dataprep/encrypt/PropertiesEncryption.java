@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * See also the properties file <a href="https://docs.oracle.com/cd/E23095_01/Platform.93/ATGProgGuide/html/s0204propertiesfileformat01.html">
+ * See also the properties file
+ * <a href="https://docs.oracle.com/cd/E23095_01/Platform.93/ATGProgGuide/html/s0204propertiesfileformat01.html">
  * specification</a>.
  * </p>
  * <p>
@@ -78,9 +79,9 @@ public class PropertiesEncryption {
                                 .configure(params.fileBased() //
                                         .setFile(inputFilePath.toFile())); //
                 PropertiesConfiguration config = builder.getConfiguration();
-                for (String key : mustBeModified) {
-                    config.setProperty(key, function.apply(config.getString(key)));
-                }
+                mustBeModified.stream().filter(config::containsKey)
+                        .forEach(key -> config.setProperty(key, function.apply(config.getString(key))));
+
                 builder.save();
             } catch (ConfigurationException e) {
                 LOGGER.error("unable to read {} {}", input, e);

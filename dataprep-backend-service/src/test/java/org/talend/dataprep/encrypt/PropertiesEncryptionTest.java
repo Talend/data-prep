@@ -114,6 +114,31 @@ public class PropertiesEncryptionTest {
 
     }
 
+    @Test
+    public void shouldEncryptAllKeysButMissingOnes() throws Exception {
+        // given
+        String propertyKey = "admin.password";
+        String missingPropertyKeyOne = "missingOne";
+        String missingPropertyKeyTwo = "missingTwo";
+        String propertyValue = "5ecr3t";
+        String propertyEncodedValue = "JP6lC6hVeu3wRZA1Tzigyg==";
+        Path tempFile = Files.createTempFile("dataprep-PropertiesEncryptionTest.", ".properties");
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempFile, Charsets.UTF_8)) {
+            for (int i = 0; i < 5; i++) {
+                bufferedWriter.write(propertyKey + "=" + propertyValue);
+                bufferedWriter.newLine();
+            }
+        }
+
+        // when
+        new PropertiesEncryption().encryptAndSave(tempFile.toString(),
+                Sets.newHashSet(propertyKey, missingPropertyKeyOne, missingPropertyKeyTwo));
+
+        // then
+        final String expectedLine = propertyKey + "=" + propertyEncodedValue;
+        verifyContent(expectedLine, tempFile);
+    }
+
     private void verifyContent(String expectedLine, Path tempFile) throws IOException {
         try (BufferedReader reader = Files.newBufferedReader(tempFile)) {
             String line = reader.readLine();

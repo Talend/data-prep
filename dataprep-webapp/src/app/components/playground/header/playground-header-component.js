@@ -62,6 +62,9 @@ const PlaygroundHeader = {
 		preparationPicker: '<',
 		preview: '<',
 		isReadonly: '<',
+		preparationName: '<',
+		nameEditionMode: '<',
+		confirmNameEdition: '=',
 	},
 };
 

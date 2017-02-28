@@ -155,6 +155,30 @@ public class DefaultActionParserTest {
     }
 
     @Test
+    public void testUpperCaseActionWithFilterOut() throws Exception {
+        // Given
+        IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "filtered out" });
+        IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "string" });
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_uppercase_filter_out.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // When
+        final IndexedRecord result1 = function.apply(record1);
+        final IndexedRecord result2 = function.apply(record2);
+
+        // Then
+        assertSerializable(function);
+        assertNull(result1);
+        assertNotNull(result2);
+        assertEquals("STRING", result2.get(0));
+    }
+
+    @Test
     public void testSplitCaseAction() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string string", "value" });

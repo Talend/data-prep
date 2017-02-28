@@ -44,7 +44,7 @@ public class PreparationParserTest {
     public void testActionSample() throws Exception {
         final PreparationMessage corePreparation;
         try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("single_lookup.json")) {
-            corePreparation = PreparationParser.parseCorePreparation(resourceAsStream);
+            corePreparation = PreparationParser.parsePreparation(resourceAsStream);
         }
 
         assertNotNull(corePreparation);
@@ -61,7 +61,7 @@ public class PreparationParserTest {
         final StandalonePreparation preparation;
         try (final InputStream resourceAsStream = DefaultActionParserTest.class
                 .getResourceAsStream("standalone_preparation_single_lookup.json")) {
-            preparation = PreparationParser.parseExportableCorePreparation(resourceAsStream);
+            preparation = PreparationParser.parsePreparation(resourceAsStream);
         }
 
         assertNotNull(preparation);

@@ -17,19 +17,21 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.avro.generic.IndexedRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.PreparationParser;
+import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.actions.resources.DictionaryResource;
 import org.talend.dataprep.actions.resources.FunctionResource;
 import org.talend.dataprep.actions.resources.FunctionResourceProvider;
 import org.talend.dataprep.actions.resources.LookupResource;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.Providers;
@@ -65,22 +67,24 @@ public class StandalonePreparationFactory {
      * {@link IndexedRecord}
      */
     public Function<IndexedRecord, IndexedRecord> create(final InputStream preparation, FunctionResource... resources) {
-        PreparationMessage minimalPreparation = PreparationParser.parseCorePreparation(preparation);
+        StandalonePreparation minimalPreparation = PreparationParser.parsePreparation(preparation);
         return create(minimalPreparation, resources);
     }
 
     public Function<IndexedRecord, IndexedRecord> create(final InputStream preparation, FunctionResourceProvider... providers) {
-        PreparationMessage minimalPreparation = PreparationParser.parseCorePreparation(preparation);
+        StandalonePreparation minimalPreparation = PreparationParser.parsePreparation(preparation);
         return create(minimalPreparation, providers);
     }
 
-    public Function<IndexedRecord, IndexedRecord> create(PreparationMessage preparation, FunctionResourceProvider... providers) {
+    public Function<IndexedRecord, IndexedRecord> create(StandalonePreparation preparation,
+            FunctionResourceProvider... providers) {
         if (preparation.getActions() == null) {
             LOGGER.info("No action defined in preparation, returning identity function");
             return new NoOpFunction();
         }
 
-        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions(), allowNonDistributedActions);
+        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions(),
+                allowNonDistributedActions);
 
         // get the list of resources for function
         FunctionResource[] resources = Arrays.stream(providers) //
@@ -91,7 +95,7 @@ public class StandalonePreparationFactory {
         return create(preparation, resources);
     }
 
-    public Function<IndexedRecord, IndexedRecord> create(PreparationMessage preparation, FunctionResource... resources) {
+    public Function<IndexedRecord, IndexedRecord> create(StandalonePreparation preparation, FunctionResource... resources) {
         if (preparation.getActions() == null) {
             LOGGER.info("No action defined in preparation, returning identity function");
             return new NoOpFunction();
@@ -108,6 +112,7 @@ public class StandalonePreparationFactory {
         final Pipeline pipeline = Pipeline.Builder.builder() //
                 .withActionRegistry(PreparationParser.actionRegistry) //
                 .withActions(actions) //
+                .withFilterOut(new FilterOutProvider(preparation)) //
                 .withInitialMetadata(rowMetadata, true) //
                 .withOutput(() -> stackedNode) //
                 .withStatisticsAdapter(new StatisticsAdapter(40)) //
@@ -128,7 +133,7 @@ public class StandalonePreparationFactory {
      * @return
      */
     public Function<IndexedRecord, IndexedRecord> create(final InputStream inputStream) {
-        StandalonePreparation standalonePreparation = PreparationParser.parseExportableCorePreparation(inputStream);
+        StandalonePreparation standalonePreparation = PreparationParser.parsePreparation(inputStream);
         FunctionResource lookup = new LookupResource(standalonePreparation.getLookupDataSets());
         BroadcastIndexObject dictionaryIndexObject = new BroadcastIndexObject(standalonePreparation.getDictionary());
         BroadcastIndexObject keywordIndexObject = new BroadcastIndexObject(standalonePreparation.getKeyword());
@@ -142,6 +147,21 @@ public class StandalonePreparationFactory {
         @Override
         public IndexedRecord apply(IndexedRecord indexedRecord) {
             return indexedRecord;
+        }
+    }
+
+    static class FilterOutProvider implements Function<RowMetadata, Predicate<DataSetRow>>, Serializable {
+
+        private final StandalonePreparation preparation;
+
+        FilterOutProvider(StandalonePreparation preparation) {
+            this.preparation = preparation;
+        }
+
+        @Override
+        public Predicate<DataSetRow> apply(RowMetadata metadata) {
+            final FilterService filterService = Providers.get(FilterService.class);
+            return filterService.build(preparation.getFilterOut(), metadata);
         }
     }
 

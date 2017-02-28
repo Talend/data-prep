@@ -521,7 +521,7 @@
     "description": "Change the date format to use in a date column",
     "label": "Change date format",
     "actionScope": [],
-    "docUrl": ""
+    "docUrl": "https://help.talend.com/pages/viewpage.action?pageId=266307181&utm_medium=dpdesktop&utm_source=func"
   },
   {
     "name": "compute_time_since",

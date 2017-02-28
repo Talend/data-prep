@@ -74,21 +74,42 @@ public class ActionsBundle implements MessagesBundle {
         return parameters.stream().map(p -> p.attach(parent)).collect(Collectors.toList());
     }
 
-    private String getMessage(Object action, Locale locale, String code, Object... args) {
-        ResourceBundle bundle = findBundle(action, locale);
-        // We can put some cache here if default internal caching it is not enough
-        MessageFormat messageFormat;
-        if (bundle.containsKey(code)) {
-            messageFormat = new MessageFormat(bundle.getString(code));
-        } else {
-            try {
-                messageFormat = new MessageFormat(actionToResourceBundle.get(fallBackKey).getString(code));
-            } catch (MissingResourceException e) {
-                LOGGER.info("Unable to find key '{}' using context '{}'.", code, action, e);
-                throw new TalendRuntimeException(BaseErrorCodes.MISSING_I18N, e);
-            }
-        }
+    /**
+     * Format the message template with provided arguments
+     * @param template The string template
+     * @param args The arguments
+     */
+    private String formatMessage(final String template, final Object... args) {
+        final MessageFormat messageFormat = new MessageFormat(template);
         return messageFormat.format(args);
+    }
+
+    /**
+     * Get the message from bundle or fallback bundle.
+     * If message is not present, null is returned
+     */
+    private String getOptionalMessage(Object action, Locale locale, String code, Object... args) {
+        final ResourceBundle bundle = findBundle(action, locale);
+        // We can put some cache here if default internal caching it is not enough
+        if (bundle.containsKey(code)) {
+            return formatMessage(bundle.getString(code), args);
+        } else if(actionToResourceBundle.get(fallBackKey).containsKey(code)) {
+            return formatMessage(actionToResourceBundle.get(fallBackKey).getString(code), args);
+        }
+        return null;
+    }
+
+    /**
+     * Get the message from bundle or fallback bundle.
+     * Ig message is not present, a TalendRuntimeException is thrown
+     */
+    private String getMandatoryMessage(Object action, Locale locale, String code, Object... args) {
+        final String message = getOptionalMessage(action, locale, code, args);
+        if (message == null) {
+            LOGGER.info("Unable to find key '{}' using context '{}'.", code, action);
+            throw new TalendRuntimeException(BaseErrorCodes.MISSING_I18N);
+        }
+        return message;
     }
 
     private ResourceBundle findBundle(Object action, Locale locale) {
@@ -127,7 +148,7 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String actionLabel(Object action, Locale locale, String actionName, Object... values) {
         final String actionLabelKey = ACTION_PREFIX + actionName + LABEL_SUFFIX;
-        return getMessage(action, locale, actionLabelKey, values);
+        return getMandatoryMessage(action, locale, actionLabelKey, values);
     }
 
     /**
@@ -136,20 +157,21 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String actionDescription(Object action, Locale locale, String actionName, Object... values) {
         final String actionDescriptionKey = ACTION_PREFIX + actionName + DESCRIPTION_SUFFIX;
-        return getMessage(action, locale, actionDescriptionKey, values);
+        return getMandatoryMessage(action, locale, actionDescriptionKey, values);
     }
 
     /**
      * Fetches action doc url at {@code action.<action_name>.url} in the dataprep actions resource bundle.
      * If there is no doc for this action, an empty string is returned.
      */
-    public String docUrl(Object action, Locale locale, String actionName) {
+    public String actionDocUrl(Object action, Locale locale, String actionName) {
         final String actionDocUrlKey = ACTION_PREFIX + actionName + URL_SUFFIX;
-        final ResourceBundle bundle = findBundle(action, locale);
-        if (bundle.containsKey(actionDocUrlKey)) {
-            return bundle.getString(actionDocUrlKey);
+        final String docUrl = getOptionalMessage(action, locale, actionDocUrlKey);
+
+        if (docUrl == null) {
+            return StringUtils.EMPTY;
         }
-        return StringUtils.EMPTY;
+        return docUrl;
     }
 
     /**
@@ -158,7 +180,7 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String parameterLabel(Object action, Locale locale, String parameterName, Object... values) {
         final String parameterLabelKey = PARAMETER_PREFIX + parameterName + LABEL_SUFFIX;
-        return getMessage(action, locale, parameterLabelKey, values);
+        return getMandatoryMessage(action, locale, parameterLabelKey, values);
     }
 
     /**
@@ -167,7 +189,7 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String parameterDescription(Object action, Locale locale, String parameterName, Object... values) {
         final String parameterDescriptionKey = PARAMETER_PREFIX + parameterName + DESCRIPTION_SUFFIX;
-        return getMessage(action, locale, parameterDescriptionKey, values);
+        return getMandatoryMessage(action, locale, parameterDescriptionKey, values);
     }
 
     /**
@@ -176,22 +198,22 @@ public class ActionsBundle implements MessagesBundle {
      */
     public String choice(Object action, Locale locale, String choiceName, Object... values) {
         final String choiceKey = CHOICE_PREFIX + choiceName;
-        return getMessage(action, locale, choiceKey, values);
+        return getMandatoryMessage(action, locale, choiceKey, values);
     }
 
     @Override
     public String getString(Locale locale, String code) {
-        return getMessage(null, locale, code);
+        return getMandatoryMessage(null, locale, code);
     }
 
     @Override
     public String getString(Locale locale, String code, String defaultMessage) {
-        return getMessage(null, locale, code);
+        return getMandatoryMessage(null, locale, code);
     }
 
     @Override
     public String getString(Locale locale, String code, Object... args) {
-        return getMessage(fallBackKey, locale, code, args);
+        return getMandatoryMessage(fallBackKey, locale, code, args);
     }
 
 }

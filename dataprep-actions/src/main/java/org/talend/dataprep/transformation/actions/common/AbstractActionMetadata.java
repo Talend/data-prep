@@ -103,7 +103,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
 
     @Override
     public String getDocUrl() {
-        return ActionsBundle.INSTANCE.docUrl(this, Locale.ENGLISH, getName());
+        return ActionsBundle.INSTANCE.actionDocUrl(this, Locale.ENGLISH, getName());
     }
 
     /**

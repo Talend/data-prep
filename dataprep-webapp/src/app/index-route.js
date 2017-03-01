@@ -10,7 +10,7 @@ export const PLAYGROUND_DATASET_ROUTE = 'playground.dataset';
 
 export const DEFAULT_HOME_URL = '/home/preparations/';
 
-export function routeConfig ($stateProvider, $urlRouterProvider) {
+export function routeConfig($stateProvider, $urlRouterProvider) {
 	'ngInject';
 
 	$stateProvider
@@ -44,7 +44,7 @@ export function routeConfig ($stateProvider, $urlRouterProvider) {
 		.state(PLAYGROUND_DATASET_ROUTE, { url: '/dataset?datasetid' });
 
 	$urlRouterProvider.otherwise(DEFAULT_HOME_URL);
-};
+}
 
 export function routeInterceptor($rootScope, $window, $translate, state) {
 	'ngInject';
@@ -53,11 +53,11 @@ export function routeInterceptor($rootScope, $window, $translate, state) {
 		if (current.name === PLAYGROUND_PREPARATION_ROUTE &&
 			state.playground.preparation &&
 			state.playground.preparation.name) {
-			//When reload = false
+			// When reload = false
 			$window.document.title = state.playground.preparation.name + ' | ' + $translate.instant('TALEND');
 		}
 		else {
-			//Reset tab title
+			// Reset tab title
 			$window.document.title = $translate.instant('DATA_PREPARATION') + ' | ' + $translate.instant('TALEND');
 		}
 	});

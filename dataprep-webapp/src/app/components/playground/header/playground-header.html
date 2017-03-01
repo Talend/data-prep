@@ -65,13 +65,13 @@
                                   on-validate="$ctrl.confirmNameEdition(text)"
                                   placeholder="ENTER_PREPARATION_NAME"
                                   text="$ctrl.preparationName"
-                                  text-class="steps-header-preparation-text"
+                                  text-class="header-preparation-name"
                                   text-title="{{$ctrl.preparationName}}">
             </talend-editable-text>
             <span ng-switch-when="true"
                   title="{{$ctrl.preparationName}}"
                   ng-bind="$ctrl.preparationName"
-                  class="steps-header-preparation-text">
+                  class="header-preparation-name">
             </span>
         </li>
     </ul>

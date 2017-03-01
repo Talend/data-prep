@@ -23,10 +23,11 @@ import HOME_MODULE from './components/home/home-module';
 import PLAYGROUND_MODULE from './components/playground/playground-module';
 import SERVICES_DATASET_MODULE from './services/dataset/dataset-module';
 import SERVICES_REST_MODULE from './services/rest/rest-module';
+import SERVICES_STATE_MODULE from './services/state/state-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
 import SETTINGS_MODULE from './settings/settings-module';
 
-import { routeConfig, routeInterceptor}  from './index-route';
+import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
 
 const MODULE_NAME = 'data-prep';
@@ -40,6 +41,7 @@ const app = angular.module(MODULE_NAME,
 		uiRouter,
 		SERVICES_REST_MODULE, // configuration: rest interceptors
 		SERVICES_DATASET_MODULE, // configuration: refresh supported encodings
+		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE, // configuration: register constants (version, ...)
 		SETTINGS_MODULE, // configuration: get app settings
 		HOME_MODULE, // routing: home components

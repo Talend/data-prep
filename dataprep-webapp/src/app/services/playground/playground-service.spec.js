@@ -237,7 +237,7 @@ describe('Playground Service', () => {
 	describe('load dataset', () => {
 		let assertNewPreparationInitialization;
 
-		beforeEach(inject(($rootScope, TransformationCacheService, ExportService,
+		beforeEach(inject(($rootScope, $window, TransformationCacheService, ExportService,
 		                   HistoryService, FilterService,
 		                   PreviewService, StateService) => {
 			spyOn($rootScope, '$emit').and.returnValue();
@@ -252,6 +252,7 @@ describe('Playground Service', () => {
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				expect(FilterService.initFilters).toHaveBeenCalled();
 				expect(ExportService.refreshTypes).toHaveBeenCalledWith('datasets', datasetColumns.metadata.id);
+				expect($window.document.title).toEqual(dataset.name + ' | TALEND');
 			};
 		}));
 
@@ -330,6 +331,7 @@ describe('Playground Service', () => {
 		const preparation = {
 			id: '6845521254541',
 			dataSetId: '1',
+			name: 'prep1',
 		};
 		const data = {
 			columns: [{ id: '0001' }],
@@ -338,7 +340,7 @@ describe('Playground Service', () => {
 		let assertDatasetLoadInitialized;
 		let assertDatasetLoadNotInitialized;
 
-		beforeEach(inject(($rootScope, $q, StateService, ExportService,
+		beforeEach(inject(($rootScope, $q, $window, StateService, ExportService,
 		                   PreparationService, RecipeService, StorageService,
 		                   TransformationCacheService, HistoryService, PreviewService, FilterService) => {
 			spyOn($rootScope, '$emit').and.returnValue();
@@ -361,6 +363,7 @@ describe('Playground Service', () => {
 				expect(FilterService.initFilters).toHaveBeenCalled();
 				expect(StateService.setGridSelection).toHaveBeenCalledWith([{ id: '0001' }]);
 				expect(ExportService.refreshTypes).toHaveBeenCalledWith('preparations', preparation.id);
+				expect($window.document.title).toEqual('prep1 | TALEND');
 			};
 
 			assertDatasetLoadNotInitialized = () => {
@@ -376,7 +379,7 @@ describe('Playground Service', () => {
 				expect(FilterService.initFilters).not.toHaveBeenCalled();
 				expect(StateService.setGridSelection).not.toHaveBeenCalled();
 				expect(ExportService.refreshTypes).not.toHaveBeenCalled();
-
+				expect($window.document.title).toEqual('DATA_PREPARATION | TALEND');
 			};
 		}));
 

@@ -25,7 +25,7 @@ describe('Playground header component', () => {
 
 		createElement = () => {
 			element = angular.element(`
-                <playground-header
+			<playground-header
                     preview="preview"
                     lookup-visible="lookupVisible"
                     feedback-visible="feedbackVisible"
@@ -37,7 +37,11 @@ describe('Playground header component', () => {
                     on-onboarding="onOnboarding()"
                     on-feedback="onFeedback()"
                     on-close="onClose()"
-                    on-preparation-picker="showPreparationPicker()"></playground-header>`);
+                    on-preparation-picker="showPreparationPicker()"
+					preparation-name="preparationName"
+					name-edition-mode="nameEditionMode"
+					confirm-name-edition="confirmPrepNameEdition"
+					is-readonly="isReadonly"></playground-header>`);
 			$compile(element)(scope);
 			scope.$digest();
 		};
@@ -57,7 +61,7 @@ describe('Playground header component', () => {
 			createElement();
 
 			// then
-			expect(element.find('#preview').length).toBe(0);
+			expect(element.find('.playground-header-preview').length).toBe(0);
 		});
 
 		it('should be rendered', () => {
@@ -68,7 +72,34 @@ describe('Playground header component', () => {
 			createElement();
 
 			// then
-			expect(element.find('.preview').length).toBe(1);
+			expect(element.find('.playground-header-preview').length).toBe(1);
+		});
+	});
+
+	describe('left header', () => {
+		it('should render editable text on preparation title', () => {
+			//given
+			scope.isReadOnly = false;
+
+			//when
+			createElement();
+
+			//then
+			const title = element.find('.playground-sub-header-left').eq(0).find('talend-editable-text');
+			expect(title.length).toBe(1);
+		});
+
+		it('should render preparation title on readonly mode', () => {
+			//given
+			scope.isReadOnly = true;
+			scope.preparationName = 'prep1';
+
+			//when
+			createElement();
+
+			//then
+			expect(element.find('.playground-sub-header-left .header-preparation-name').length).toBe(1);
+			expect(element.find('.playground-sub-header-left .header-preparation-name').text().trim()).toBe('prep1');
 		});
 	});
 

@@ -159,15 +159,15 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @ngdoc method
 	 * @name loadDataset
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
-	 * @param {object} dataset The dataset to load
+	 * @param {string} datasetid The dataset id to load
 	 * @description Initiate a new preparation from dataset.
 	 * @returns {Promise} The process promise
 	 */
-	function loadDataset(dataset) {
+	function loadDataset(datasetid) {
 		startLoader();
-		return DatasetService.getContent(dataset.id, true)
+		return DatasetService.getContent(datasetid, true)
 			.then(data => checkRecords(data))
-			.then(data => reset.call(this, dataset, data))
+			.then(data => reset.call(this, data.metadata, data))
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
 					$timeout(OnboardingService.startTour('playground'), 300, false);
@@ -745,7 +745,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 					return loadStep(activeStep);
 				}
 				else {
-					this.loadDataset.call(this, dataset);
+					this.loadDataset.call(this, dataset.id);
 				}
 			});
 	}
@@ -865,16 +865,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	function initDataset() {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		StateService.setIsLoadingPlayground(true);
-		startLoader();
-		DatasetService.getMetadata($stateParams.datasetid)
-			.then((dataset) => {
-				this.loadDataset.call(this, dataset);
-				return dataset;
-			})
-			.catch(() => {
-				stopLoader();
-				return errorGoBack(false);
-			});
+		this.loadDataset.call(this, $stateParams.datasetid);
 	}
 
 	/**

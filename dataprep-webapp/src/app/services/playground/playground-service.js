@@ -319,15 +319,13 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 			.then((preparation) => {
 				RecipeService.refresh(preparation);
 
-				if ($state.$current.name === PLAYGROUND_DATASET_ROUTE && state.playground.recipe.current.steps.length) {
+				if (state.playground.recipe.current.steps.length) {
 					StateService.showRecipe();
-					$state.go(PLAYGROUND_PREPARATION_ROUTE, { prepid: preparation.id });
 				}
 
 				if (!state.playground.isReadOnly &&
 					OnboardingService.shouldStartTour('recipe') &&
 					state.playground.recipe.current.steps.length >= 3) {
-					StateService.showRecipe();
 					$timeout(OnboardingService.startTour('recipe'), 300, false);
 				}
 				return preparation;

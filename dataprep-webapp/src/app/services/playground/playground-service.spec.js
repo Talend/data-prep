@@ -1775,7 +1775,6 @@ describe('Playground Service', () => {
 				$timeout.flush(300);
 
 				// then
-				expect(StateService.showRecipe.calls.count()).toBe(1);
 				expect(OnboardingService.startTour).toHaveBeenCalled();
 			}));
 
@@ -1824,6 +1823,19 @@ describe('Playground Service', () => {
 			// then
 			expect(PreparationService.getDetails).toHaveBeenCalledWith('79db821355a65cd96');
 			expect(RecipeService.refresh).toHaveBeenCalled();
+		}));
+
+		it('should show recipe', inject(($rootScope, PlaygroundService, StateService, $state) => {
+			// given
+			stateMock.playground.preparation = preparations[0];
+			stateMock.playground.recipe.current.steps = [{}];
+
+			// when
+			PlaygroundService.updatePreparationDetails();
+			$rootScope.$digest();
+
+			// then
+			expect(StateService.showRecipe).toHaveBeenCalled();
 		}));
 	});
 

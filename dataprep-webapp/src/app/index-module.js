@@ -26,7 +26,7 @@ import SERVICES_REST_MODULE from './services/rest/rest-module';
 import SERVICES_UTILS_MODULE from './services/utils/utils-module';
 import SETTINGS_MODULE from './settings/settings-module';
 
-import routeConfig from './index-route';
+import { routeConfig, routeInterceptor}  from './index-route';
 import getAppConfiguration from './index-config';
 
 const MODULE_NAME = 'data-prep';
@@ -67,6 +67,7 @@ const app = angular.module(MODULE_NAME,
 
 	// Router config
 	.config(routeConfig)
+	.run(routeInterceptor)
 
 	// Language to use at startup (for now only english)
 	.run(($window, $translate) => {

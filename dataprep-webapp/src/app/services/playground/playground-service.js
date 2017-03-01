@@ -40,7 +40,7 @@ const LINE = 'line';
 const EVENT_LOADING_START = 'talend.loading.start';
 const EVENT_LOADING_STOP = 'talend.loading.stop';
 
-export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
+export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams, $window,
                                           state, StateService, StepUtilsService,
                                           DatasetService, DatagridService, StorageService, FilterService,
                                           FilterAdapterService, PreparationService, PreviewService,
@@ -131,12 +131,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		if (preparation) {
 			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
+			$window.document.title = preparation.name + ' | ' + $translate.instant('TALEND');
 		}
 
 		// dataset specific init
 		else {
 			StateService.setNameEditionMode(true);
 			ExportService.refreshTypes('datasets', dataset.id);
+			$window.document.title = dataset.name + ' | ' + $translate.instant('TALEND');
 		}
 	}
 

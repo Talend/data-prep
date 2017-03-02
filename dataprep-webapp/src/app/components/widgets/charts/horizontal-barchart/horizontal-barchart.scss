@@ -12,96 +12,100 @@
   ============================================================================*/
 
 .horizontal-barchart-cls {
-  font-family: $inconsolota;
-  .bg-rect {
-    fill: $medium-gray;
-    cursor: pointer;
-  }
+	font-family: $inconsolota;
+	.bg-rect {
+		fill: $medium-gray;
+		cursor: pointer;
+	}
 
-  .primaryBar,
-  .secondaryBar {
-    rect {
-      &.transparentBar {
-        fill: $light-blue;
-      }
-      &.blueBar {
-        fill: $dark-blue;
-      }
-      &.brownBar {
-        fill: $brown;
-      }
-    }
-  }
+	.primaryBar,
+	.secondaryBar {
+		rect {
+			&.transparentBar {
+				fill: $light-blue;
+			}
+			&.blueBar {
+				fill: $dark-blue;
+			}
+			&.brownBar {
+				fill: $brown;
+			}
+		}
+	}
 
-  .label {
-    @include ellipsis();
-    background-color: rgba(255, 255, 255, 0);
-    font-size: .8em;
-    padding-top: 3px;
-    padding-left: 10px;
-    font-family: $inconsolota;
+	.label {
+		display: inline-block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		word-wrap: normal;
+		background-color: rgba(255, 255, 255, 0);
+		font-size: .8em;
+		padding-top: 3px;
+		padding-left: 10px;
+		font-family: $inconsolota;
 
-    &.blueBar {
-      color: $dark-green;
-    }
-    &.brownBar {
-      color: $dark-brown;
-    }
-  }
+		&.blueBar {
+			color: $dark-green;
+		}
+		&.brownBar {
+			color: $dark-brown;
+		}
+	}
 
-  .grid {
-    shape-rendering: crispEdges;
+	.grid {
+		shape-rendering: crispEdges;
 
-    path {
-      fill: none;
-    }
+		path {
+			fill: none;
+		}
 
-    line {
-      stroke: #6c6769;
-      stroke-opacity: .1;
-    }
+		line {
+			stroke: #6c6769;
+			stroke-opacity: .1;
+		}
 
-    text {
-      font-size: .8em;
-      fill: $medium-gray;
-    }
-  }
+		text {
+			font-size: .8em;
+			fill: $medium-gray;
+		}
+	}
 
-  .hiddenChars {
-    background-color: #E9E9E9;
-    border: 1px dotted #BABABA;
-    white-space: pre;
-  }
+	.hiddenChars {
+		background-color: #E9E9E9;
+		border: 1px dotted #BABABA;
+		white-space: pre;
+	}
 
-  &.d3-tip {
-    line-height: 1;
-    font-size: .8em;
-    font-weight: 400;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.6);
-    color: $white;
-    border-radius: 2px;
-    z-index: 100000;
-    right: 15px;
+	&.d3-tip {
+		line-height: 1;
+		font-size: .8em;
+		font-weight: 400;
+		padding: 12px;
+		background: rgba(0, 0, 0, 0.6);
+		color: $white;
+		border-radius: 2px;
+		z-index: 100000;
+		right: 15px;
 
-    &:after {
-      /* Creates a small triangle extender for the tooltip */
-      box-sizing: border-box;
-      display: inline;
-      width: 100%;
-      line-height: 1;
-      color: rgba(0, 0, 0, 0.8);
-      content: "\25BC";
-      position: absolute;
-      text-align: center;
-    }
-  }
+		&:after {
+			/* Creates a small triangle extender for the tooltip */
+			box-sizing: border-box;
+			display: inline;
+			width: 100%;
+			line-height: 1;
+			color: rgba(0, 0, 0, 0.8);
+			content: "\25BC";
+			position: absolute;
+			text-align: center;
+		}
+	}
 
-  /* Style northward tooltips differently */
-  &.d3-tip.n:after {
-    margin: -1px 0 0 0;
-    top: 100%;
-    left: 0;
-  }
+	/* Style northward tooltips differently */
+	&.d3-tip.n:after {
+		margin: -1px 0 0 0;
+		top: 100%;
+		left: 0;
+	}
 
 }

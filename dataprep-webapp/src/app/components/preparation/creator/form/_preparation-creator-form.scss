@@ -12,159 +12,169 @@
   ============================================================================*/
 
 .dataset-upload-list {
-    max-height: 90px;
-    overflow-y: auto;
+	max-height: 90px;
+	overflow-y: auto;
 }
 
 .preparation-creator-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-    input {
-        width: 150px;
-        height: 25px;
-        font-size: 0.8em;
-        padding: 0 30px 0 5px;
-        border-top: none;
-        border-right: none;
-        border-left: none;
-        box-shadow: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 10px;
+	input {
+		width: 150px;
+		height: 25px;
+		font-size: 0.8em;
+		padding: 0 30px 0 5px;
+		border-top: none;
+		border-right: none;
+		border-left: none;
+		box-shadow: none;
 
-        &::-ms-clear {
-            display: none;
-        }
-    }
-    .filters-list-title {
-        font-weight: 700;
-    }
+		&::-ms-clear {
+			display: none;
+		}
+	}
+	.filters-list-title {
+		font-weight: 700;
+	}
 }
 
 .panels {
-    display: flex;
-    flex-direction: row;
-    min-height: 40vh;
+	display: flex;
+	flex-direction: row;
+	min-height: 40vh;
 
-    .filters-left-panel {
-        width: 250px;
-        border: 1px solid $light-gray;
-        flex-basis: 250px;
-        max-height: 45vh;
-        overflow-y: auto;
+	.filters-left-panel {
+		width: 250px;
+		border: 1px solid $light-gray;
+		flex-basis: 250px;
+		max-height: 45vh;
+		overflow-y: auto;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
 
-    .inventory-list {
-        height: 40vh;
-        overflow-y: auto;
+	.inventory-list {
+		height: 40vh;
+		overflow-y: auto;
 
-        .inventory-item-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            flex-basis: 80px;
-            flex-grow: 0;
-            flex-shrink: 0;
+		.inventory-item-row {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			flex-basis: 80px;
+			flex-grow: 0;
+			flex-shrink: 0;
 
-            inventory-item {
-                flex-basis: 200px;
-                flex-grow: 1;
-                flex-shrink: 1;
+			inventory-item {
+				flex-basis: 200px;
+				flex-grow: 1;
+				flex-shrink: 1;
 
-                .inventory-icon {
-                    padding-top: 8px;
-                }
+				.inventory-icon {
+					padding-top: 8px;
+				}
 
-                .inventory-item {
-                    cursor:pointer;
-                    &:hover {
-                        background-color: tint($pale-blue, 70%);
-                    }
-                    .inventory-text .inventory-title {
-                        @include ellipsis(400px);
-                    }
-                }
-            }
-        }
+				.inventory-item {
+					cursor: pointer;
+					&:hover {
+						background-color: tint($pale-blue, 70%);
+					}
+					.inventory-text .inventory-title {
+						display: inline-block;
+						max-width: 400px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						word-wrap: normal;
+					}
+				}
+			}
+		}
 
-        border: 1px solid $light-gray;
-        flex-grow: 1;
+		border: 1px solid $light-gray;
+		flex-grow: 1;
 
-        .fetching-spinner {
-            position: absolute;
-            left: 60%;
-            top: 40%;
-            .continuous-rotate {
-                display: flex;
-            }
-        }
+		.fetching-spinner {
+			position: absolute;
+			left: 60%;
+			top: 40%;
+			.continuous-rotate {
+				display: flex;
+			}
+		}
 
-        .selected-dataset {
-            background-color: tint($pale-blue, 70%);
-        }
-    }
+		.selected-dataset {
+			background-color: tint($pale-blue, 70%);
+		}
+	}
 }
 
 .disabled-import {
-    opacity: .3;
+	opacity: .3;
 }
 
 .import-button-panel {
-    border-top: 1px solid #EEEEEF;
-    flex-grow: 0;
-    flex-shrink: 0;
-    @include flex-row();
+	border-top: 1px solid #EEEEEF;
+	flex-grow: 0;
+	flex-shrink: 0;
+	@include flex-row();
 
-    height: 60px;
-    padding: 10px;
-    cursor: pointer;
+	height: 60px;
+	padding: 10px;
+	cursor: pointer;
 
-    .import-icon {
-        display: flex;
-        align-items: center;
+	.import-icon {
+		display: flex;
+		align-items: center;
 
-        padding: 0 3px;
-        position: relative;
-        width: 40px;
-    }
+		padding: 0 3px;
+		position: relative;
+		width: 40px;
+	}
 
-    .import-text {
-        @include flex-column();
-        justify-content: center;
-        padding-left: 10px;
+	.import-text {
+		@include flex-column();
+		justify-content: center;
+		padding-left: 10px;
 
-        .import-title {
-            @include ellipsis(200px);
-            padding: 3px 0;
-            color: $black;
-        }
+		.import-title {
+			display: inline-block;
+			max-width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-wrap: normal;
+			padding: 3px 0;
+			color: $black;
+		}
 
-        .import-description {
-            color: $medium-gray;
-            font-weight: 300;
-            font-size: .8em;
-            overflow: hidden;
-            white-space: normal;
-            max-height: 2.8em;
-        }
-    }
+		.import-description {
+			color: $medium-gray;
+			font-weight: 300;
+			font-size: .8em;
+			overflow: hidden;
+			white-space: normal;
+			max-height: 2.8em;
+		}
+	}
 }
 
 .preparation-creator-form {
-    padding: 5px 0;
+	padding: 5px 0;
 
-    .preparation-name-input {
-        font-weight: 700;
-        margin: 15px 0;
-    }
-    .name-error{
-        color: red;
-        font-weight: 600;
-        float: right;
-        font-size: small;
-    }
+	.preparation-name-input {
+		font-weight: 700;
+		margin: 15px 0;
+	}
+	.name-error {
+		color: red;
+		font-weight: 600;
+		float: right;
+		font-size: small;
+	}
 }

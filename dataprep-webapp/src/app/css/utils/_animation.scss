@@ -11,18 +11,18 @@
 
   ============================================================================*/
 
-@include keyframes(rotate) {
-  from {
-    @include transform(rotate(0deg));
-  }
-  to {
-    @include transform(rotate(360deg));
-  }
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .continuous-rotate {
-  @include animation-name(rotate);
-  @include animation-duration(1s);
-  @include animation-timing-function(linear);
-  @include animation-iteration-count(infinite);
+	@include animation-name(rotate);
+	@include animation-duration(1s);
+	@include animation-timing-function(linear);
+	@include animation-iteration-count(infinite);
 }

@@ -12,43 +12,48 @@
   ============================================================================*/
 
 .theme-filter {
-    flex-grow: 0;
-    flex-shrink: 0;
-    @include flex-row();
+	flex-grow: 0;
+	flex-shrink: 0;
+	@include flex-row();
 
-    height: 60px;
-    padding: 10px;
-    cursor: pointer;
+	height: 60px;
+	padding: 10px;
+	cursor: pointer;
 
-    &:hover,
-    &.selected {
-        background-color: tint($pale-blue, 30%);
-    }
+	&:hover,
+	&.selected {
+		background-color: tint($pale-blue, 30%);
+	}
 
-    .theme-filter-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+	.theme-filter-icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-        width: 40px;
-        color: orange;
-    }
+		width: 40px;
+		color: orange;
+	}
 
-    .theme-filter-text {
-        @include flex-column();
-        justify-content: center;
-        padding-left: 10px;
+	.theme-filter-text {
+		@include flex-column();
+		justify-content: center;
+		padding-left: 10px;
 
-        .theme-filter-title {
-            @include ellipsis(200px);
-        }
+		.theme-filter-title {
+			display: inline-block;
+			max-width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-wrap: normal;
+		}
 
-        .theme-filter-description {
-            opacity: 0.5;
-            font-weight: 300;
-            font-size: 0.8em;
-            overflow: hidden;
-            max-height: 2em;
-        }
-    }
+		.theme-filter-description {
+			opacity: 0.5;
+			font-weight: 300;
+			font-size: 0.8em;
+			overflow: hidden;
+			max-height: 2em;
+		}
+	}
 }

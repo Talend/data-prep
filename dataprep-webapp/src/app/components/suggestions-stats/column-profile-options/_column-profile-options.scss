@@ -12,47 +12,52 @@
   ============================================================================*/
 
 .column-profile-options {
-  @include flex-column();
-  padding: 10px 10px;
+	@include flex-column();
+	padding: 10px 10px;
 
-  .chart-control {
-    @include flex-row();
-    align-items: center;
+	.chart-control {
+		@include flex-row();
+		align-items: center;
 
-    .chart-control-options {
-      border: 1px solid;
-      border-radius: 3px;
-      padding: 5px;
-      text-transform: uppercase;
+		.chart-control-options {
+			border: 1px solid;
+			border-radius: 3px;
+			padding: 5px;
+			text-transform: uppercase;
 
-      label {
-        font-family: $sourcesanspro;
-      }
+			label {
+				font-family: $sourcesanspro;
+			}
 
-      .chart-control-trigger {
-        @include ellipsis(140px);
-        vertical-align: middle;
-      }
+			.chart-control-trigger {
+				display: inline-block;
+				max-width: 140px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				word-wrap: normal;
+				vertical-align: middle;
+			}
 
-      .chart-control-form {
-        cursor: default;
-        min-width: 300px;
-        padding: 20px;
-      }
+			.chart-control-form {
+				cursor: default;
+				min-width: 300px;
+				padding: 20px;
+			}
 
-      .chart-control-buttons {
-        @include flex-row();
-        justify-content: flex-end;
-        margin-top: 10px;
-      }
-    }
-  }
+			.chart-control-buttons {
+				@include flex-row();
+				justify-content: flex-end;
+				margin-top: 10px;
+			}
+		}
+	}
 
-  .aggregation-description {
-    padding: 10px 5px;
+	.aggregation-description {
+		padding: 10px 5px;
 
-    .highlight {
-      font-weight: bold;
-    }
-  }
+		.highlight {
+			font-weight: bold;
+		}
+	}
 }

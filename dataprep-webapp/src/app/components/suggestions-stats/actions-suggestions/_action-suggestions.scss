@@ -57,11 +57,11 @@
 		flex-shrink: 0;
 
 		&.ng-enter {
-			@include animation(fadeIn 0.25s);
+			animation: fadeIn 0.25s;
 		}
 
 		&.ng-leave {
-			@include animation(fadeOut 0.25s);
+			animation: fadeOut 0.25s;
 		}
 
 		background-color: #DDDDDD;

@@ -12,103 +12,107 @@
   ============================================================================*/
 
 .navigation-list {
-  font-size: .95em;
-  height: 30px;
+	font-size: .95em;
+	height: 30px;
 
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 
-  .add-item {
-    flex-basis: 30px;
-    flex-shrink: 0;
-    flex-grow: 0;
+	.add-item {
+		flex-basis: 30px;
+		flex-shrink: 0;
+		flex-grow: 0;
 
-    .add-button {
-      height: 29px;
-      cursor: pointer;
-      color: $dark-gray;
+		.add-button {
+			height: 29px;
+			cursor: pointer;
+			color: $dark-gray;
 
-      &:active {
-        color : $light-gray;
-      }
-    }
-  }
+			&:active {
+				color: $light-gray;
+			}
+		}
+	}
 
-  .back-forth-btn {
-    display: flex;
-    align-items: center;
-    flex-basis: 50px;
-    flex-shrink: 0;
-    flex-grow: 0;
+	.back-forth-btn {
+		display: flex;
+		align-items: center;
+		flex-basis: 50px;
+		flex-shrink: 0;
+		flex-grow: 0;
 
-    text-align: center;
+		text-align: center;
 
-    div {
-      padding: 0;
-      margin: 0 5px;
-      background-color: transparent;
-      vertical-align: middle;
-      width: 0;
-      height: 0;
+		div {
+			padding: 0;
+			margin: 0 5px;
+			background-color: transparent;
+			vertical-align: middle;
+			width: 0;
+			height: 0;
 
-      &.arrow-left {
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        border-right: 8px solid $medium-gray;
+			&.arrow-left {
+				border-top: 8px solid transparent;
+				border-bottom: 8px solid transparent;
+				border-right: 8px solid $medium-gray;
 
-        &:active {
-          border-right : 8px solid $light-gray;
-        }
-      }
+				&:active {
+					border-right: 8px solid $light-gray;
+				}
+			}
 
-      &.arrow-right {
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        border-left: 8px solid $medium-gray;
+			&.arrow-right {
+				border-top: 8px solid transparent;
+				border-bottom: 8px solid transparent;
+				border-left: 8px solid $medium-gray;
 
-        &:active {
-          border-left : 8px solid $light-gray;
-        }
-      }
+				&:active {
+					border-left: 8px solid $light-gray;
+				}
+			}
 
-      &:focus {
-        outline: none;
-      }
-    }
-  }
+			&:focus {
+				outline: none;
+			}
+		}
+	}
 
-  .items-list-wrapper{
-    flex-basis: 200px;
-    flex-shrink: 1;
-    flex-grow: 1;
+	.items-list-wrapper {
+		flex-basis: 200px;
+		flex-shrink: 1;
+		flex-grow: 1;
 
-    overflow: hidden;
+		overflow: hidden;
 
-    ul {
-      margin: 0;
+		ul {
+			margin: 0;
 
-    }
-  }
+		}
+	}
 
-  .items-list {
-    height: 29px;
-    float: left;
-    display: flex;
-    transition: transform 0.25s linear;
+	.items-list {
+		height: 29px;
+		float: left;
+		display: flex;
+		transition: transform 0.25s linear;
 
-    .item-label {
-      @include ellipsis();
-      cursor: pointer;
-      text-transform: uppercase;
-      padding: 0 10px 2px 8px;
-      border: 1px solid $shadow-gray;
-      width: 200px;
+		.item-label {
+			display: inline-block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-wrap: normal;
+			cursor: pointer;
+			text-transform: uppercase;
+			padding: 0 10px 2px 8px;
+			border: 1px solid $shadow-gray;
+			width: 200px;
 
-      &.selected-item-label {
-        background-color: $light-gray;
-        font-weight: 700;
-        border-left: 10px solid #4fc1de;
-      }
-    }
-  }
+			&.selected-item-label {
+				background-color: $light-gray;
+				font-weight: 700;
+				border-left: 10px solid #4fc1de;
+			}
+		}
+	}
 }

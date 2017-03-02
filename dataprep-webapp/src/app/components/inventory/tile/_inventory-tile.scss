@@ -6,118 +6,127 @@ $important-color: $dark-blue;
 $standard-color: $black;
 
 .inventory-tile-list {
-  display: flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  height: 60vh;
+	display: flex;
+	flex-wrap: wrap;
+	overflow-y: auto;
+	height: 60vh;
 
-  > * {
-    flex-basis: 300px;
-  }
+	> * {
+		flex-basis: 300px;
+	}
 }
 
 .inventory-tile {
-  @include flex-row();
-  align-items: stretch;
+	@include flex-row();
+	align-items: stretch;
 
-  .information {
-    flex-shrink: 1;
-    flex-grow: 1;
-  }
+	.information {
+		flex-shrink: 1;
+		flex-grow: 1;
+	}
 
-  .actions {
-    flex-basis: 25px;
-    flex-shrink: 0;
-    flex-grow: 0;
+	.actions {
+		flex-basis: 25px;
+		flex-shrink: 0;
+		flex-grow: 0;
 
-    @include flex-column();
-    align-items: center;
-    justify-content: space-between;
-  }
+		@include flex-column();
+		align-items: center;
+		justify-content: space-between;
+	}
 }
 
 .inventory-tile {
-  @include transition(background-color 0.2s ease-in-out);
+	@include transition(background-color 0.2s ease-in-out);
 
-  background-color: $tile-items-background;
-  position: relative;
-  margin: 5px;
-  padding: $tile-item-border-size;
-  box-shadow: inset 0 0 1px 1px $shadow-gray;
-  text-align: left;
+	background-color: $tile-items-background;
+	position: relative;
+	margin: 5px;
+	padding: $tile-item-border-size;
+	box-shadow: inset 0 0 1px 1px $shadow-gray;
+	text-align: left;
 
-  &:focus,
-  &:hover {
-    background-color: darken($tile-items-background, 5%);
-    box-shadow: 5px 4px 6px -4px $dark-gray;
+	&:focus,
+	&:hover {
+		background-color: darken($tile-items-background, 5%);
+		box-shadow: 5px 4px 6px -4px $dark-gray;
 
-    .actions a {
-      &.hidden-action {
-        display: block;
-      }
-    }
-  }
+		.actions a {
+			&.hidden-action {
+				display: block;
+			}
+		}
+	}
 
-  .information {
-    font-size: .8em;
+	.information {
+		font-size: .8em;
 
-    .important {
-      color: $important-color;
-    }
+		.important {
+			color: $important-color;
+		}
 
-    .title {
-      font-size: 1.4em;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin: 0;
-      max-height: 25px;
-      @include ellipsis(210px);
+		.title {
+			font-size: 1.4em;
+			font-weight: 700;
+			text-transform: uppercase;
+			margin: 0;
+			max-height: 25px;
+			display: inline-block;
+			max-width: 210px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-wrap: normal;
 
-      &:hover {
-        cursor: pointer;
-      }
-    }
+			&:hover {
+				cursor: pointer;
+			}
+		}
 
-    .details {
-      margin-bottom: 5px;
-      padding-left: 10px;
+		.details {
+			margin-bottom: 5px;
+			padding-left: 10px;
 
-      .name {
-        @include ellipsis(210px);
-        max-width: 120px;
-        float: left;
-      }
-    }
-  }
+			.name {
+				display: inline-block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				word-wrap: normal;
+				max-width: 120px;
+				float: left;
+			}
+		}
+	}
 
-  .actions a {
-    color: $actions-color;
+	.actions a {
+		color: $actions-color;
 
-    &:hover {
-      color: $color-error;
-    }
+		&:hover {
+			color: $color-error;
+		}
 
-    &.favorite {
-      &.selected {
-        color: $orange;
-      }
-    }
+		&.favorite {
+			&.selected {
+				color: $orange;
+			}
+		}
 
-    &.hidden-action {
-      font-size: 0.8em;
-      display: none;
-    }
+		&.hidden-action {
+			font-size: 0.8em;
+			display: none;
+		}
 
-    &.check-btn {
-      margin-left: 5px;
-      color: $white;
-      background-color: $dark-green;
-      font-size: .5em;
+		&.check-btn {
+			margin-left: 5px;
+			color: $white;
+			background-color: $dark-green;
+			font-size: .5em;
 
-      &:hover {
-        background-color: darken($dark-green, 10%);
-      }
-    }
+			&:hover {
+				background-color: darken($dark-green, 10%);
+			}
+		}
 
-  }
+	}
 }

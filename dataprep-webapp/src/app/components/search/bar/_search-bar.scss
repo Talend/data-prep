@@ -11,44 +11,44 @@
 
   ============================================================================*/
 .tdp-search {
-    line-height: normal;
+	line-height: normal;
 
-    .typeahead-result {
-        min-width: 500px;
-        width: 100%;
-    }
-    input[type=search] {
-        color: $black;
-        font-style: italic;
-        margin: 0;
-    }
+	.typeahead-result {
+		min-width: 500px;
+		width: 100%;
+	}
+	input[type=search] {
+		color: $black;
+		font-style: italic;
+		margin: 0;
+	}
 
-    &.inventory {
-        .inventory-item {
-            .inventory-title, .inventory-description {
-                @include ellipsis(400px);
-            }
-        }
+	&.inventory {
+		.inventory-item,
+		.inventory-item:hover {
+			.inventory-title, .inventory-description {
+				display: inline-block;
+				max-width: 400px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				word-wrap: normal;
+			}
+		}
+	}
 
-        .inventory-item:hover {
-            .inventory-title, .inventory-description {
-                @include ellipsis(400px);
-            }
-        }
-    }
-
-    .documentation {
-        .inventory-item {
-            .inventory-description {
-                overflow: hidden;
-                white-space: normal;
-            }
-        }
-        .inventory-item:hover {
-            .inventory-description {
-                overflow: hidden;
-                white-space: normal;
-            }
-        }
-    }
+	.documentation {
+		.inventory-item {
+			.inventory-description {
+				overflow: hidden;
+				white-space: normal;
+			}
+		}
+		.inventory-item:hover {
+			.inventory-description {
+				overflow: hidden;
+				white-space: normal;
+			}
+		}
+	}
 }

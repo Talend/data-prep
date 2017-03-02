@@ -12,23 +12,23 @@
   ============================================================================*/
 
 .search-input {
-  position:relative;
+	position: relative;
 
-  > input {
-    margin: 0;
-  }
+	> input {
+		margin: 0;
+	}
 
-  .search-input-icon {
-    position: absolute;
-    color: gray;
-    display: none;
-    font-size: 0.5em;
-    right: 0;
-    top: 50%;
-    @include transform(translateY(-50%) translateX(-100%));
+	.search-input-icon {
+		position: absolute;
+		color: gray;
+		display: none;
+		font-size: 0.5em;
+		right: 0;
+		top: 50%;
+		transform: translate(-50%, -100%);
 
-    &.clear-icon {
-      cursor: pointer;
-    }
-  }
+		&.clear-icon {
+			cursor: pointer;
+		}
+	}
 }

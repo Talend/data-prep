@@ -377,6 +377,17 @@ describe('Lookup service', () => {
 			stateMock.playground.data = { metadata: { columns: [{ id: '0000' }] } };
 		});
 
+		it('should not get dataset transformations if there is not dataset yet', inject((LookupService, TransformationRestService) => {
+			//given
+			spyOn(TransformationRestService, 'getDatasetTransformations');
+
+			//when
+			LookupService.loadFromStep(lookupStep);
+
+			//then
+			expect(TransformationRestService.getDatasetTransformations).not.toHaveBeenCalled();
+		}));
+
 		it('should load action as lookup update', inject(($rootScope, LookupService, DatasetRestService, StateService) => {
 			//given
 			stateMock.playground.lookup.addedActions = lookupActions;

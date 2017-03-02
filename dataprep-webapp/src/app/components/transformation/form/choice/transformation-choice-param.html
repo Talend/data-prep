@@ -24,7 +24,8 @@
                     <span ng-switch-when="true" class="param-input-label" ng-if="choiceParamCtrl.parameter.value !== ''">{{choiceParamCtrl.getLabelByValue(choiceParamCtrl.parameter.value)}}</span>
                     <span ng-switch-when="true" class="param-input-label-none" ng-if="choiceParamCtrl.parameter.value === ''" translate-once="NONE"></span>
                     <div ng-switch-when="false">
-                        <select ng-model="choiceParamCtrl.parameter.value"
+                        <select class="form-control"
+                                ng-model="choiceParamCtrl.parameter.value"
                                 ng-options="option.value as option.label for option in choiceParamCtrl.parameter.configuration.values"
                                 can-be-blank="{{::choiceParamCtrl.parameter.canBeBlank}}"></select>
                     </div>

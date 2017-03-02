@@ -14,6 +14,10 @@
   -->
 
 <div class="editable-select">
-    <select ng-options="val for val in editableSelectCtrl.list" ng-model="editableSelectCtrl.value"></select>
-    <input type="text" ng-model="editableSelectCtrl.value" />
+    <select class="form-control"
+            ng-options="val for val in editableSelectCtrl.list"
+            ng-model="editableSelectCtrl.value"></select>
+    <input type="text"
+           class="form-control"
+           ng-model="editableSelectCtrl.value"/>
 </div>

@@ -21,33 +21,37 @@
     <div class="dataset-sheet-preview" ng-switch="previewCtrl.datasetSheetPreviewService.addPreparation">
         <div class="form-row" ng-switch-when="true">
             <div class="form-title" translate-once="PREPARATION_NAME"></div>
-            <div class="form-value"><input type="text" ng-model="previewCtrl.datasetSheetPreviewService.preparationName"/></div>
+            <div class="form-value">
+                <input type="text"
+                       class="form-control"
+                       ng-model="previewCtrl.datasetSheetPreviewService.preparationName"/>
+            </div>
         </div>
-        <div class="form-row"  ng-switch-when="false">
+        <div class="form-row" ng-switch-when="false">
             <div class="form-title" translate-once="DATASET_NAME"></div>
-            <div class="form-value"><input type="text" ng-model="previewCtrl.metadata.name"/></div>
+            <div class="form-value"><input type="text" class="form-control" ng-model="previewCtrl.metadata.name"/></div>
         </div>
 
         <div class="form-row">
             <div class="form-title" translate-once="STYLESHEET"></div>
             <div class="form-value">
-                <select
-                    ng-options="sheetContent.name as sheetContent.name for sheetContent in previewCtrl.metadata.schemaParserResult.sheetContents"
-                    ng-model="previewCtrl.selectedSheetName"
-                    ng-change="previewCtrl.selectSheet()"></select>
+                <select class="form-control"
+                        ng-options="sheetContent.name as sheetContent.name for sheetContent in previewCtrl.metadata.schemaParserResult.sheetContents"
+                        ng-model="previewCtrl.selectedSheetName"
+                        ng-change="previewCtrl.selectSheet()"></select>
             </div>
         </div>
 
         <div translate-once="CONTENT_100_FIRST_ROWS"></div>
-        <div id="datasetSheetPreviewGrid" class="datagrid" ></div>
+        <div id="datasetSheetPreviewGrid" class="datagrid"></div>
     </div>
 
     <div class="modal-buttons">
         <button class="btn talend-modal-close btn-default modal-secondary-button"
                 ng-click="confirmCtrl.cancel()" translate-once="CANCEL"></button>
-        <button  class="btn talend-modal-close btn-primary modal-primary-button"
-                 ng-click="previewCtrl.setDatasetSheet()"
-                 ng-disabled="previewCtrl.disableDatasetSheetConfirm()"
-                 translate-once="CONFIRM"></button>
+        <button class="btn talend-modal-close btn-primary modal-primary-button"
+                ng-click="previewCtrl.setDatasetSheet()"
+                ng-disabled="previewCtrl.disableDatasetSheetConfirm()"
+                translate-once="CONFIRM"></button>
     </div>
 </talend-modal>

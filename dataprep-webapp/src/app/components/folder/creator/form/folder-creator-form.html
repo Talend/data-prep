@@ -13,19 +13,20 @@
   ~ ============================================================================
   -->
 
-<span translate-once="ENTER_FOLDER_NAME"></span>
 <form name="$ctrl.folderNameForm" ng-submit="$ctrl.folderNameForm.$valid && $ctrl.createFolder()">
+    <label for="create-folder-name" translate-once="ENTER_FOLDER_NAME"/>
     <input id="create-folder-name"
            type="text"
+           class="form-control"
            ng-model="$ctrl.name"
            ng-model-options="{debounce: { default: 300, blur: 0 }}"
            unique-folder="$ctrl.state.inventory.folder.content.folders"/>
 
     <div class="modal-buttons">
-        <button type="button"
-                class="btn talend-modal-close btn-default modal-secondary-button"
+        <button class="btn talend-modal-close btn-default modal-secondary-button"
                 translate-once="CANCEL"></button>
-        <button class="btn btn-primary modal-primary-button"
+        <button type="submit"
+                class="btn btn-primary modal-primary-button"
                 translate-once="OK"
                 ng-disabled="$ctrl.folderNameForm.$invalid"></button>
     </div>

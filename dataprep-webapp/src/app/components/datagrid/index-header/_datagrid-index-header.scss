@@ -15,10 +15,8 @@
 	$datagrid-index-header-background: #666666;
 	$datagrid-index-header-background-active: darken($datagrid-index-header-background, 10%);
 
-	display: flex;
-	justify-content: space-between;
+	height: 100%;
 	padding: 5px 5px 0;
-	height: 50px;
 	font-size: 1.4rem;
 	color: $white;
 	background-color: $datagrid-index-header-background;

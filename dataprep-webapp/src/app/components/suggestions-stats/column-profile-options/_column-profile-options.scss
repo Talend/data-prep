@@ -47,7 +47,7 @@
 
 			.chart-control-buttons {
 				@include flex-row();
-				justify-content: flex-end;
+				justify-content: space-between;
 				margin-top: 10px;
 			}
 		}

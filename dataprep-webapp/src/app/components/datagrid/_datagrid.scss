@@ -148,7 +148,7 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 		.slick-header-column {
 			&.ui-state-default {
 				line-height: inherit;
-				height: auto;
+				height: 100%;
 				padding: 0;
 				border-color: #5a5a5a;
 			}

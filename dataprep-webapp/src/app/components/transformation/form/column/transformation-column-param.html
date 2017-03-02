@@ -24,12 +24,13 @@
         <div class="param-input" ng-switch="!!columnParamCtrl.isReadonly">
             <div ng-switch-when="true">
                 <span class="param-input-label" ng-if="columnParamCtrl.parameter.value !== ''">{{columnParamCtrl.getLabelById(columnParamCtrl.parameter.value)}}</span>
-                <span class="param-input-label-none" ng-if="columnParamCtrl.parameter.value === ''" translate-once="NONE"></span>
+                <span class="param-input-label-none" ng-if="columnParamCtrl.parameter.value === ''"
+                      translate-once="NONE"></span>
             </div>
             <div ng-switch-when="false">
-                <select ng-model="columnParamCtrl.parameter.value"
+                <select class="form-control param-input"
+                        ng-model="columnParamCtrl.parameter.value"
                         ng-options="option.id as option.name for option in columnParamCtrl.columns"
-                        class="param-input"
                         required></select>
             </div>
 

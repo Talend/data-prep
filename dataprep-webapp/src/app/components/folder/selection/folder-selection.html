@@ -14,16 +14,16 @@
   -->
 
 <div class="folders-modal">
-    
+
     <input id="action-suggestions-search"
            type="search"
-           class="action-search no-focus"
+           class="form-control action-search no-focus"
            translate-once-placeholder="FIND_FOLDER"
            ng-model="$ctrl.searchFolderQuery"
            ng-model-options="{debounce: { default: 300, blur: 0 }}"
            ng-change="$ctrl.performSearch()"
            talend-search-input>
-    
+
     <div class="folders"
          ng-switch="!!$ctrl.searchFolderQuery">
 

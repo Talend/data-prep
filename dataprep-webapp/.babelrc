@@ -7,7 +7,13 @@
     "**/**/*.css"
   ],
   "presets": [
-    "es2015",
+    ["env", {
+      "targets": {
+        "ie": 11,
+        "browsers": ["last 2 versions"]
+      },
+      "modules": false
+    }],
     "react"
   ]
 }

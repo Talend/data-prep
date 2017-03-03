@@ -21,6 +21,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.grants.CommonRestrictedActions.CERTIFICATION_NAME;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
 
@@ -41,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.dataset.*;
@@ -68,8 +70,6 @@ import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
-import org.talend.dataprep.grants.AccessGrantChecker;
-import org.talend.dataprep.grants.CommonRestrictedActions;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
@@ -154,9 +154,6 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private VersionService versionService;
-
-    @Autowired
-    private AccessGrantChecker accessGrantChecker;
 
     @Autowired
     private BeanConversionService conversionService;
@@ -516,14 +513,12 @@ public class DataSetService extends BaseDataSetService {
     @RequestMapping(value = "/datasets/{id}/processcertification", method = PUT, consumes = MediaType.ALL_VALUE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Ask certification for a dataset", notes = "Advance certification step of this dataset.")
     @Timed
+    @PreAuthorize("hasAuthority('" + CERTIFICATION_NAME + "')")
     public void processCertification(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to update") String dataSetId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ask certification for dataset #{}", dataSetId);
         }
-
-        // Check if the user has sufficient grants to perform the action
-        accessGrantChecker.allowed(CommonRestrictedActions.CERTIFICATION);
 
         DistributedLock datasetLock = dataSetMetadataRepository.createDatasetMetadataLock(dataSetId);
         datasetLock.lock();

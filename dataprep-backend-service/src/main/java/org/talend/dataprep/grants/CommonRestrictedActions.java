@@ -13,29 +13,18 @@
 
 package org.talend.dataprep.grants;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 /**
- * Enum keeping track of Restricted actions.
+ * Available permissions in Dataprep OS.
  */
-public enum CommonRestrictedActions implements RestrictedAction {
+public final class CommonRestrictedActions {
 
-    CERTIFICATION("CERTIFICATION");
+    public static final String CERTIFICATION_NAME = "CERTIFICATION";
 
-    /**
-     * The name of the action
-     */
-    private final String action;
+    public static final GrantedAuthority CERTIFICATION = new SimpleGrantedAuthority(CERTIFICATION_NAME);
 
-    /**
-     * Constructor.
-     * 
-     * @param action the specified action
-     */
-    CommonRestrictedActions(String action) {
-        this.action = action;
-    }
+    private CommonRestrictedActions() {}
 
-    @Override
-    public String action() {
-        return action;
-    }
 }

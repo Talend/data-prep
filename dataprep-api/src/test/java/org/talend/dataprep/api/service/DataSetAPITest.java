@@ -77,9 +77,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Autowired
     VersionService versionService;
 
-    @Autowired
-    private ObjectMapper mapper;
-
     @Before
     public void cleanupFolder() throws Exception {
         folderRepository.clear();

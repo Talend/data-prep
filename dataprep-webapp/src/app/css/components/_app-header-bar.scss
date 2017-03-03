@@ -1,28 +1,9 @@
-$navbar-svg-icon-size: 20px !default;
-
 .navbar-inverse .navbar-nav > li {
 
-	> a {
-		height: $navbar-height;
-		cursor: pointer;
-
-		> svg {
-			fill: $navbar-inverse-link-color;
-			width: $navbar-svg-icon-size;
-			height: $navbar-svg-icon-size;
-			shape-rendering: auto;
-		}
-
-		&.pressed,
-		&:hover {
-			background-color: $navbar-inverse-link-active-bg;
-		}
-
-		&.inactive {
-			cursor: not-allowed;
-			svg {
-				fill: darken($navbar-inverse-link-color, 25%);
-			}
+	> a.inactive {
+		cursor: not-allowed;
+		svg {
+			fill: darken($navbar-inverse-link-color, 25%);
 		}
 	}
 }

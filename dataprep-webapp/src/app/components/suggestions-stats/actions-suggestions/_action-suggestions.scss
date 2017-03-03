@@ -18,6 +18,11 @@
 		flex-grow: 1;
 		flex-shrink: 1;
 		position: relative;
+		overflow: hidden;
+
+		.tabs {
+			margin-bottom: 0;
+		}
 
 		.action-search-container {
 			box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
@@ -27,8 +32,8 @@
 				height: 25px;
 				font-size: .9em;
 				font-weight: 500;
-				padding: 0 20px 0 5px;
-				margin: 5px 10px 5px 10px;
+				margin: 0;
+				padding: 0 10px;
 				border-top: 1px solid transparent;
 				border-right: 1px solid transparent;
 				border-left: 1px solid transparent;
@@ -40,14 +45,17 @@
 			}
 
 		}
-	;
 
 		.action-suggestion-tab-items {
-			height: calc(100% - 75px);
+			height: calc(100% - 30px);
 			overflow-y: auto;
 			overflow-x: hidden;
 			position: absolute;
 			width: 100%;
+		}
+
+		.search-input + .action-suggestion-tab-items {
+			height: calc(100% - 55px);
 		}
 	}
 
@@ -55,6 +63,9 @@
 		flex-basis: 30px;
 		flex-grow: 0;
 		flex-shrink: 0;
+		background-color: #DDDDDD;
+		right: 10px;
+		padding: 5px 15px 0;
 
 		&.ng-enter {
 			animation: fadeIn 0.25s;
@@ -64,24 +75,22 @@
 			animation: fadeOut 0.25s;
 		}
 
-		background-color: #DDDDDD;
-		right: 10px;
-		padding: 5px;
-
-		input {
-			margin-left: 0.7em;
-			margin-right: 0;
-		}
 		label {
-			display: inline-block;
+			display: inline-flex;
+			align-items: center;
 			cursor: pointer;
 			vertical-align: middle;
 			font-weight: 600;
 			font-size: 0.8em;
+
+			span {
+				padding: 0 5px;
+			}
 		}
 
-		.filters-actions-form-span {
-			cursor: default;
+		input {
+			margin-left: 0.7em;
+			margin-right: 0;
 		}
 	}
 }

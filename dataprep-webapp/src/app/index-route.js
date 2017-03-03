@@ -54,11 +54,11 @@ export function routeInterceptor($rootScope, $window, $translate, state) {
 			state.playground.preparation &&
 			state.playground.preparation.name) {
 			// When reload = false
-			$window.document.title = state.playground.preparation.name + ' | ' + $translate.instant('TALEND');
+			$window.document.title = `${state.playground.preparation.name} | ${$translate.instant('TALEND')}`;
 		}
 		else {
 			// Reset tab title
-			$window.document.title = $translate.instant('DATA_PREPARATION') + ' | ' + $translate.instant('TALEND');
+			$window.document.title = `${$translate.instant('DATA_PREPARATION')} | ${$translate.instant('TALEND')}`;
 		}
 	});
 }

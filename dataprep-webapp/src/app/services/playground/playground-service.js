@@ -131,14 +131,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		if (preparation) {
 			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
-			$window.document.title = preparation.name + ' | ' + $translate.instant('TALEND');
+			$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
 		}
 
 		// dataset specific init
 		else {
 			StateService.setNameEditionMode(true);
 			ExportService.refreshTypes('datasets', dataset.id);
-			$window.document.title = dataset.name + ' | ' + $translate.instant('TALEND');
+			$window.document.title = `${dataset.name} | ${$translate.instant('TALEND')}`;
 		}
 	}
 

@@ -945,14 +945,14 @@ babel-register@^6.18.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
-babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.20.0, babel-runtime@^6.9.0:
+babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.20.0, babel-runtime@^6.9.0:
   version "6.20.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.20.0.tgz#87300bdcf4cd770f09bf0048c64204e17806d16f"
   dependencies:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
 
-babel-runtime@^6.22.0:
+babel-runtime@^6.18.0, babel-runtime@^6.22.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.23.0.tgz#0a9489f144de70efb3ce4300accdb329e2fc543b"
   dependencies:
@@ -1007,7 +1007,7 @@ babel-traverse@^6.22.0, babel-traverse@^6.23.0:
     invariant "^2.2.0"
     lodash "^4.2.0"
 
-babel-types@^6.15.0, babel-types@^6.16.0, babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.21.0, babel-types@^6.8.0, babel-types@^6.9.0:
+babel-types@^6.15.0, babel-types@^6.16.0, babel-types@^6.18.0, babel-types@^6.21.0, babel-types@^6.8.0, babel-types@^6.9.0:
   version "6.21.0"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-6.21.0.tgz#314b92168891ef6d3806b7f7a917fdf87c11a4b2"
   dependencies:
@@ -1016,7 +1016,7 @@ babel-types@^6.15.0, babel-types@^6.16.0, babel-types@^6.18.0, babel-types@^6.19
     lodash "^4.2.0"
     to-fast-properties "^1.0.1"
 
-babel-types@^6.22.0, babel-types@^6.23.0:
+babel-types@^6.19.0, babel-types@^6.22.0, babel-types@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-6.23.0.tgz#bb17179d7538bad38cd0c9e115d340f77e7e9acf"
   dependencies:
@@ -4738,13 +4738,14 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
-ng-annotate-loader@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/ng-annotate-loader/-/ng-annotate-loader-0.1.1.tgz#1f181ef8465edd632535d9945ec00cc159ac95df"
+ng-annotate-loader@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ng-annotate-loader/-/ng-annotate-loader-0.2.0.tgz#d462dc063dd69d2cdd71aa04a46c6ed0a006e523"
   dependencies:
     loader-utils "^0.2.6"
     ng-annotate "1.2.1"
-    source-map "0.5.4"
+    normalize-path "^2.0.1"
+    source-map "^0.5.6"
 
 ng-annotate@1.2.1:
   version "1.2.1"
@@ -6494,10 +6495,6 @@ source-map@0.4.x, source-map@^0.4.2, source-map@^0.4.4:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.4.4.tgz#eba4f5da9c0dc999de68032d8b4f76173652036b"
   dependencies:
     amdefine ">=0.0.4"
-
-source-map@0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.4.tgz#2beb18a2ab8abd88320a72178c671f0e4c5def28"
 
 source-map@^0.1.38, source-map@^0.1.39, source-map@^0.1.41, source-map@^0.1.43:
   version "0.1.43"

@@ -29,7 +29,6 @@ function getDefaultConfig(options) {
 				{
 					test: /\.js$/,
 					use: [
-						{ loader: 'ng-annotate-loader' },
 						{ loader: 'babel-loader', options: { cacheDirectory: true } },
 					],
 					exclude: /node_modules/,

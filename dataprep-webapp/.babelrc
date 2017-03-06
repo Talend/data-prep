@@ -1,13 +1,14 @@
 {
   "plugins": [
     "transform-runtime",
-    "transform-object-rest-spread"
+    "transform-object-rest-spread",
+    ["angularjs-annotate", { "explicitOnly" : true}]
   ],
   "ignore": [
     "**/**/*.css"
   ],
   "presets": [
-    "es2015",
+    [ "es2015", { "modules": false } ],
     "react"
   ]
 }

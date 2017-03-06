@@ -1,15 +1,14 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.user.store.file;
 
@@ -36,16 +35,6 @@ import org.talend.dataprep.user.store.UserDataRepository;
 @TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "user.data.store:file",
         "user.data.store.file.location:target/test/store/userdata" })
 public class FileSystemUserDataRepositoryTest extends AbstractUserDataRepositoryTest<UserData> {
-
-    /**
-     * Bean needed to resolve test properties set by the @TestPropertySource annotation
-     *
-     * @see FileSystemUserDataRepository#storeLocation
-     */
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertiesResolver() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
 
     /** The user data repository to test. */
     @Autowired

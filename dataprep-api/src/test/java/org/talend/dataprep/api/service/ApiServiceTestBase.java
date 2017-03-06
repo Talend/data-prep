@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;

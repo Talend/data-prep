@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -35,7 +34,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.dataprep.BaseErrorCodes;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.user.UserGroup;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;

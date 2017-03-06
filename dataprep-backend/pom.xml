@@ -31,7 +31,7 @@
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <tika.version>1.12</tika.version>
-        <org.talend.daikon.version>0.13.0</org.talend.daikon.version>
+        <org.talend.daikon.version>0.16.0-SNAPSHOT</org.talend.daikon.version>
         <org.talend.dataquality.common.version>1.5.7</org.talend.dataquality.common.version>
         <org.talend.dataquality.semantic.version>1.5.7</org.talend.dataquality.semantic.version>
         <org.talend.dataquality.statistics.version>1.5.7</org.talend.dataquality.statistics.version>
@@ -269,6 +269,18 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.daikon</groupId>
+                <artifactId>content-service-common</artifactId>
+                <version>${org.talend.daikon.version}</version>
+                <classifier>lib</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>local-content-service</artifactId>
+                <version>${org.talend.daikon.version}</version>
+                <classifier>lib</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.daikon</groupId>
                 <artifactId>daikon</artifactId>
                 <version>${org.talend.daikon.version}</version>
                 <!-- exclude old jackson version downloaded from apache avro -->
@@ -319,6 +331,11 @@
                 <groupId>com.netflix.hystrix</groupId>
                 <artifactId>hystrix-core</artifactId>
                 <version>1.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.netflix.archaius</groupId>
+                <artifactId>archaius-core</artifactId>
+                <version>0.7.5</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor</groupId>

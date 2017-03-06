@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -16,7 +15,7 @@ package org.talend.dataprep.schema;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 

@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.preparation.Preparation;
 
 import static org.hamcrest.Matchers.is;

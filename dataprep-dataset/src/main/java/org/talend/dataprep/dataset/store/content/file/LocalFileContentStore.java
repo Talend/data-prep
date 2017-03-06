@@ -1,144 +1,88 @@
-//  ============================================================================
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
-//
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.store.content.file;
 
 import static org.talend.daikon.exception.ExceptionContext.build;
 
-import java.io.*;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.content.ContentServiceEnabled;
+import org.talend.daikon.content.DeletablePathResolver;
+import org.talend.daikon.content.DeletableResource;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
-import org.talend.dataprep.log.Markers;
-import org.talend.dataprep.util.FilesHelper;
 
 /**
  * Local dataset content that stores content in files.
  */
 @Component("ContentStore#local")
-@ConditionalOnProperty(name = "dataset.content.store", havingValue = "file", matchIfMissing = false)
+@ConditionalOnBean(ContentServiceEnabled.class)
 public class LocalFileContentStore extends DataSetContentStore {
 
-    /** This class' logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocalFileContentStore.class);
+    private static final String ROOT = "/store/datasets/content/dataset/";
 
-    @Value("${dataset.content.store.file.location}")
-    private String storeLocation;
+    @Autowired
+    private DeletablePathResolver resolver;
 
-    @PostConstruct
-    public void init() {
-        if (storeLocation == null) {
-            throw new IllegalArgumentException("Store location cannot be null.");
-        }
-        if (!storeLocation.endsWith("/")) { //$NON-NLS-1$
-            storeLocation += "/"; //$NON-NLS-1$
-        }
-        LOGGER.info("Content store location: {}", storeLocation);
-    }
-
-    private File getFile(DataSetMetadata dataSetMetadata) {
-        return new File(storeLocation + dataSetMetadata.getId());
+    private DeletableResource getResource(DataSetMetadata dataSetMetadata) {
+        return resolver.getResource(ROOT + dataSetMetadata.getId());
     }
 
     @Override
     public void storeAsRaw(DataSetMetadata dataSetMetadata, InputStream dataSetContent) {
-        final Marker marker = Markers.dataset(dataSetMetadata.getId());
-        try {
-            File dataSetFile = getFile(dataSetMetadata);
-            FileUtils.touch(dataSetFile);
-            FileOutputStream fos = new FileOutputStream(dataSetFile);
-            IOUtils.copy(dataSetContent, fos);
-            LOGGER.debug(marker, "Data set stored to '{}'.", dataSetFile);
+        final DeletableResource resource = getResource(dataSetMetadata);
+        try (OutputStream outputStream = resource.getOutputStream()) {
+            IOUtils.copy(dataSetContent, outputStream);
         } catch (IOException e) {
-            throw new TDPException(DataSetErrorCodes.UNABLE_TO_STORE_DATASET_CONTENT, e, build().put("id",
-                    dataSetMetadata.getId()));
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_STORE_DATASET_CONTENT, e,
+                    build().put("id", dataSetMetadata.getId()));
         }
     }
 
     @Override
     public InputStream getAsRaw(DataSetMetadata dataSetMetadata, long limit) {
+        final DeletableResource resource = getResource(dataSetMetadata);
         try {
-            return new FileInputStream(getFile(dataSetMetadata));
-        } catch (FileNotFoundException e) {
+            return resource.getInputStream();
+        } catch (IOException e) {
             throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT, e);
         }
     }
 
     @Override
     public void delete(DataSetMetadata dataSetMetadata) {
+        final DeletableResource resource = getResource(dataSetMetadata);
         try {
-            FilesHelper.delete(getFile(dataSetMetadata));
+            resource.delete();
         } catch (IOException e) {
-            throw new TDPException(DataSetErrorCodes.UNABLE_TO_DELETE_DATASET, e, build().put("dataSetId", dataSetMetadata.getId()));
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_DELETE_DATASET, e,
+                    build().put("dataSetId", dataSetMetadata.getId()));
         }
     }
 
     @Override
     public void clear() {
         try {
-            Path path = FileSystems.getDefault().getPath(storeLocation);
-            if (!path.toFile().exists()) {
-                return;
-            }
-
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    // .nfs files are handled by the OS and can be deleted after the visitor started.
-                    // Exceptions on such files can be safely ignored
-                    if (file.getFileName().toFile().getName().startsWith(".nfs")) { //$NON-NLS-1$
-                        LOGGER.warn("unable to delete {}", file.getFileName(), exc);
-                        return FileVisitResult.CONTINUE;
-                    }
-                    throw exc;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
-                    // Skip NFS file content
-                    if (!file.getFileName().toFile().getName().startsWith(".nfs")) { //$NON-NLS-1$
-                        Files.delete(file);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-                    if (e == null) {
-                        return FileVisitResult.CONTINUE;
-                    } else {
-                        // directory iteration failed
-                        throw e;
-                    }
-                }
-            });
+            resolver.clear(ROOT + "/**");
         } catch (IOException e) {
-            LOGGER.error("Unable to clear local data set content.", e);
             throw new TDPException(DataSetErrorCodes.UNABLE_TO_CLEAR_DATASETS, e);
         }
     }

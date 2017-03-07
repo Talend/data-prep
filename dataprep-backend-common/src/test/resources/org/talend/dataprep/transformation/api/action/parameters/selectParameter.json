@@ -24,7 +24,7 @@
             "implicit": false,
             "canBeBlank": false,
             "placeHolder": "",
-            "description": "Number of Parts to split the value in",
+            "description": "Number of parts to split the value in",
             "label": "Parts",
             "default": ""
           }

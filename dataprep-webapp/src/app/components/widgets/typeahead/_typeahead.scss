@@ -11,12 +11,12 @@
 
   ============================================================================*/
 
-$typeahead-height: 48px !default;
-$typeahead-padding: 15px !default;
+$typeahead-height: $navbar-height !default;
+$typeahead-padding: 10px 15px !default;
 
 $typeahead-icon-color: $white !default;
 $typeahead-icon-hover-color: $black !default;
-$typeahead-icon-size: 20px !default;
+$typeahead-icon-size: $svg-md-size !default;
 $typeahead-z-index: 1 !default;
 
 $typeahead-input-width: 250px !default;
@@ -52,7 +52,7 @@ typeahead {
 
 	.search-icon {
 		cursor: pointer;
-		padding: ($typeahead-height - $typeahead-icon-size)/2 $typeahead-padding;
+		padding: $typeahead-padding;
 
 		svg {
 			height: $typeahead-icon-size;

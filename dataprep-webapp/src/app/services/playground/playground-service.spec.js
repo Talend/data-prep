@@ -252,7 +252,7 @@ describe('Playground Service', () => {
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				expect(FilterService.initFilters).toHaveBeenCalled();
 				expect(ExportService.refreshTypes).toHaveBeenCalledWith('datasets', datasetColumns.metadata.id);
-				expect($window.document.title).toEqual(dataset.name + ' | TALEND');
+				expect($window.document.title).toEqual(datasetColumns.metadata.name + ' | TALEND');
 			};
 		}));
 

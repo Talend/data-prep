@@ -29,7 +29,7 @@ $switch-shadow: 0 2px 5px transparentize(black, 0.6);
 $slide-action-background: $base-background-color;
 
 $navigation-border: 1px;
-$navigation-height: 50px;
+$navigation-height: 38px;
 $sub-header-height: 40px;
 $navigation-all-height: ($navigation-height + $navigation-border + $sub-header-height);
 $playground-height: '100vh - ' + ($navigation-all-height);

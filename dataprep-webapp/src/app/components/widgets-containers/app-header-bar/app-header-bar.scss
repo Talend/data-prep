@@ -11,16 +11,6 @@
 
  ============================================================================*/
 
-.nav.navbar-nav {
-	li[role="presentation"] {
-		i[class^="icon-"] {
-			&:before {
-				font-size: 1.8rem;
-			}
-		}
-	}
-}
-
 @keyframes fadeIn {
 	from { opacity: 0; }
 	to   { opacity: 1; }

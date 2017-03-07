@@ -1,9 +1,15 @@
 .navbar-inverse .navbar-nav > li {
 
-	> a.inactive {
-		cursor: not-allowed;
-		svg {
-			fill: darken($navbar-inverse-link-color, 25%);
+	> a {
+		&.inactive {
+			cursor: not-allowed;
+			svg {
+				fill: darken($navbar-inverse-link-color, 25%);
+			}
+		}
+
+		> icon {
+			line-height: $svg-md-size;
 		}
 	}
 }

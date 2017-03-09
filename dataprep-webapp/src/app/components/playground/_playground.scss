@@ -59,7 +59,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 		}
 
 		#playground-dataset-parameters {
-			@include slidable-top(205px, 0px);
+			@include slidable-top(200px, 0px);
 			> .content {
 				margin: 10px;
 				height: 100%;

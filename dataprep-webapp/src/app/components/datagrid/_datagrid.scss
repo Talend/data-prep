@@ -110,6 +110,10 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 		background: $white;
 	}
 
+	.slick-pane {
+		overflow: visible;
+	}
+
 	//-------------------------------------------------Slickgrid hack-----------------------------------------------------
 	//not frozen columns width to fit resizable container
 	.slick-pane-right {
@@ -259,7 +263,7 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 
 			.checkboxContainer {
 				padding: 1.5rem 1rem 1rem;
-				min-width: 20rem;
+				min-width: 21rem;
 				text-align: left;
 				background-color: $white;
 				border-radius: 4px;

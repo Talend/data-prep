@@ -29,8 +29,8 @@ $switch-shadow: 0 2px 5px transparentize(black, 0.6);
 $slide-action-background: $base-background-color;
 
 $navigation-border: 1px;
-$navigation-height: 38px;
-$sub-header-height: 38px;
+$navigation-height: $navbar-height;
+$sub-header-height: $navbar-height;
 $navigation-all-height: ($navigation-height + $navigation-border + $sub-header-height);
 $playground-height: '100vh - ' + ($navigation-all-height);
 
@@ -60,8 +60,9 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 
 		#playground-dataset-parameters {
 			@include slidable-top(205px, 0px);
-			> * {
+			> .content {
 				margin: 10px;
+				height: 100%;
 			}
 		}
 

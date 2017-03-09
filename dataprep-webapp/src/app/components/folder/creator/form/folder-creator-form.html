@@ -23,9 +23,11 @@
            unique-folder="$ctrl.state.inventory.folder.content.folders"/>
 
     <div class="modal-buttons">
-        <button class="btn talend-modal-close btn-default modal-secondary-button"
+        <button type="button"
+                class="btn talend-modal-close btn-default modal-secondary-button"
                 translate-once="CANCEL"></button>
-        <button class="btn btn-primary modal-primary-button"
+        <button type="submit"
+                class="btn btn-primary modal-primary-button"
                 translate-once="OK"
                 ng-disabled="$ctrl.folderNameForm.$invalid"></button>
     </div>

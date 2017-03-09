@@ -33,6 +33,12 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 	padding: 1px 4px 2px;
 }
 
+.slickgrid,
+.slickgrid *,
+.slick-header-column {
+	box-sizing: content-box;
+}
+
 .slick-header-columns {
 	height: 55px;
 }

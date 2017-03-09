@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.cache.loader;
 
-import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static java.util.Arrays.stream;
 import static java.util.Optional.ofNullable;
@@ -54,15 +53,14 @@ public class ResourceLoaderContentCache implements ContentCache {
         } else {
             return "/cache/" + key.getKey();
         }
-
     }
 
     private DeletableResource getResource(ContentCacheKey key) {
         try {
             final DeletableResource[] resources = resolver.getResources( "/cache/" + key.getKey() + "*");
-            if (resources.length == 0) {
+            if (resources.length <= 0) {
                 return null;
-            } else if(resources.length > 0){
+            } else { // resources.length > 0
                 final Optional<DeletableResource> reduce = stream(resources).reduce(maxBy((r1, r2) -> {
                     final String suffix1 = substringAfterLast(r1.getFilename(), ".");
                     final String suffix2 = substringAfterLast(r2.getFilename(), ".");
@@ -90,8 +88,6 @@ public class ResourceLoaderContentCache implements ContentCache {
                         return true;
                     }
                 }).orElse(null);
-            } else {
-                return null;
             }
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

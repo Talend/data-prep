@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -57,6 +58,55 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
     }
 
     @Test
+    public void shouldHavePermanentEntry() throws Exception {
+        // Put a content in cache...
+        ContentCacheKey key = new DummyCacheKey("permanent");
+        assertThat(cache.has(key), is(false));
+        addCacheEntry(key, "content", ContentCache.TimeToLive.PERMANENT);
+        // ... has() must return true
+        assertThat(cache.has(key), is(true));
+    }
+
+    @Test
+    public void shouldHaveWithMultipleVersions() throws Exception {
+        // Put a content in cache...
+        ContentCacheKey key = new DummyCacheKey("multipleVersions");
+        assertThat(cache.has(key), is(false));
+        addCacheEntry(key, "content", ContentCache.TimeToLive.DEFAULT);
+        TimeUnit.MILLISECONDS.sleep(500);
+        addCacheEntry(key, "content", ContentCache.TimeToLive.DEFAULT);
+        // ... has() must return true
+        assertThat(cache.has(key), is(true));
+    }
+
+    @Test
+    public void shouldHaveWithMultipleVersionsAndDifferentTTL() throws Exception {
+        // Put a content in cache...
+        ContentCacheKey key = new DummyCacheKey("multipleVersions");
+        assertThat(cache.has(key), is(false));
+        addCacheEntry(key, "content", ContentCache.TimeToLive.DEFAULT);
+        TimeUnit.MILLISECONDS.sleep(500);
+        addCacheEntry(key, "content", ContentCache.TimeToLive.PERMANENT);
+        // ... has() must return true
+        assertThat(cache.has(key), is(true));
+    }
+
+    @Test
+    public void shouldNotCleanPermanentEntryOnJanitor() throws Exception {
+        // Put a content in cache...
+        ContentCacheKey key = new DummyCacheKey("permanen");
+        assertThat(cache.has(key), is(false));
+        addCacheEntry(key, "content", ContentCache.TimeToLive.PERMANENT);
+
+        // Call janitor
+        janitor.janitor();
+
+        // ... has() must return true
+        assertThat(cache.has(key), is(true));
+    }
+
+
+    @Test
     public void testPutHas() throws Exception {
         // Put a content in cache...
         ContentCacheKey key = new DummyCacheKey("titi");
@@ -65,7 +115,6 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
         // ... has() must return true
         assertThat(cache.has(key), is(true));
     }
-
 
     @Test
     public void testGet() throws Exception {

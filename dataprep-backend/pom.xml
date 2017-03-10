@@ -38,6 +38,7 @@
         <org.talend.dataquality.record.linkage.version>3.2.7</org.talend.dataquality.record.linkage.version>
         <org.talend.dataquality.sampling.version>2.3.7</org.talend.dataquality.sampling.version>
         <org.talend.dataquality.standardization.version>3.2.7</org.talend.dataquality.standardization.version>
+        <org.talend.dataquality.converters.version>1.0.0-SNAPSHOT</org.talend.dataquality.converters.version>
         <spring-boot.version>1.5.1.RELEASE</spring-boot.version>
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
@@ -178,6 +179,29 @@
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-standardization</artifactId>
                 <version>${org.talend.dataquality.standardization.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.talend.dataquality</groupId>
+                <artifactId>dataquality-converters</artifactId>
+                <version>${org.talend.dataquality.converters.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>

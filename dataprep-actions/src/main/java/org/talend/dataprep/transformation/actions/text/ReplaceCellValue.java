@@ -87,11 +87,11 @@ public class ReplaceCellValue extends AbstractActionMetadata implements CellActi
             final Map<String, String> parameters = actionContext.getParameters();
             // get the target row ID
             try {
-                final String temp = parameters.get(ROW_ID.getKey());
-                if (temp == null) {
+                final String targetIdAsString = parameters.get(ROW_ID.getKey());
+                if (targetIdAsString == null) {
                     throw new NullPointerException("row ID is null");
                 }
-                final Long targetRowId = Long.valueOf(temp);
+                final Long targetRowId = Long.valueOf(targetIdAsString);
                 actionContext.get(TARGET_ROW_ID_KEY, p -> targetRowId);
             } catch (NullPointerException | NumberFormatException nfe) {
                 LOGGER.info("no row ID specified in parameters {}, action canceled", parameters);

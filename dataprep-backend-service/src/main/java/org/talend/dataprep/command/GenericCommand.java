@@ -46,12 +46,14 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
@@ -373,9 +375,12 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 if (res.getEntity() != null) {
                     content = IOUtils.toString(res.getEntity().getContent(), UTF_8);
                 }
-                JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(content);
-                code.setHttpStatus(statusCode);
-                final TDPException cause = new TDPException(code);
+
+                ObjectMapper exceptionsMapper = new ObjectMapper();
+                exceptionsMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+                TdpExceptionDto exceptionDto = exceptionsMapper.readerFor(TdpExceptionDto.class).readValue(content);
+
+                final TDPException cause = exceptionDto.to(HttpStatus.valueOf(res.getStatusLine().getStatusCode()));
                 throw onError.apply(cause);
             } catch (JsonMappingException e) {
                 LOGGER.debug("Cannot parse response content as JSON.", e);

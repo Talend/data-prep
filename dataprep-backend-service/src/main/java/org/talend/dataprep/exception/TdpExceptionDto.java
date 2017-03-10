@@ -9,12 +9,16 @@
 
 package org.talend.dataprep.exception;
 
-import static java.util.stream.StreamSupport.stream;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
+import static org.talend.daikon.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.error.ErrorCode;
 
 /**
@@ -44,9 +48,37 @@ public class TdpExceptionDto {
         String message = internal.getMessage();
         String messageTitle = internal.getMessageTitle();
         String cause = internal.getCause() == null ? null : internal.getCause().getMessage();
-        Map<String, Object> context = stream(internal.getContext().entries().spliterator(), false)
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        Map<String, Object> context = new HashMap<>();
+        for (Entry<String, Object> contextEntry : internal.getContext().entries()) {
+            context.put(contextEntry.getKey(), contextEntry.getValue());
+        }
         return new TdpExceptionDto(serializedCode, cause, message, messageTitle, context);
+    }
+
+    public TDPException to(HttpStatus httpStatus) {
+        String completeErrorCode = getCode();
+        ErrorCodeDto errorCodeDto = deserializeErrorCode(httpStatus, completeErrorCode);
+        return new TDPException(errorCodeDto, null, getMessage(), getMessageTitle(), ExceptionContext.build().from(getContext()).put("cause", getCause()));
+    }
+
+    private static ErrorCodeDto deserializeErrorCode(HttpStatus httpStatus, String completeErrorCode) {
+        String productCode = substringBefore(completeErrorCode, "_");
+        String groupCode = substringBefore(substringAfter(completeErrorCode, "_"), "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        String errorCode;
+        if (completeErrorCode == null) {
+            errorCode = UNEXPECTED_EXCEPTION.getCode();
+        } else {
+            errorCode = substringAfter(completeErrorCode, productCode + '_' + groupCode + '_');
+        }
+
+        return new ErrorCodeDto()
+                .setCode(errorCode)
+                .setGroup(groupCode)
+                .setProduct(productCode)
+                .setHttpStatus(httpStatus == null ? null : httpStatus.value());
+    }
+
+    public TdpExceptionDto() {
     }
 
     public TdpExceptionDto(String code, String cause, String message, String messageTitle, Map<String, Object> context) {

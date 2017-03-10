@@ -366,7 +366,7 @@ public class PreparationService {
                         .put("id", folderEntry.getContentId()) //
                         .put("folderId", folderId) //
                         .put("name", name);
-                throw new TDPException(PREPARATION_NAME_ALREADY_USED, context, true);
+                throw new TDPException(PREPARATION_NAME_ALREADY_USED, context);
             }
         });
     }
@@ -953,7 +953,7 @@ public class PreparationService {
         } else {
             LOGGER.debug("Unable to lock Preparation {} for user {}. Already locked by user {}", preparationId, userId,
                     lockedResource.getUserId());
-            throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()), false);
+            throw new TDPException(CONFLICT_TO_LOCK_RESOURCE, build().put("id", lockedResource.getUserDisplayName()));
         }
     }
 
@@ -1250,7 +1250,7 @@ public class PreparationService {
 
             // check that the wanted reordering is legal
             if (!reorderStepsUtils.isStepOrderValid(allAppendSteps)) {
-                throw new TDPException(PREPARATION_STEP_CANNOT_BE_REORDERED, build(), true);
+                throw new TDPException(PREPARATION_STEP_CANNOT_BE_REORDERED, build());
             }
 
             // rename created columns to conform to the way the transformation are performed

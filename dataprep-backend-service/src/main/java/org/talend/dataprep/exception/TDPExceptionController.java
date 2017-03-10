@@ -44,12 +44,7 @@ public class TDPExceptionController {
     @ResponseBody
     public String handleError(TalendRuntimeException e) {
         if (e instanceof TDPException) {
-            final TDPException tdpException = (TDPException) e;
-            if (!tdpException.isError()) {
-                LOGGER.error("An error occurred", e);
-            } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("An error occurred", e);
-            }
+            LOGGER.error("An  error occurred", e);
         }
         HttpResponseContext.status(HttpStatus.valueOf(e.getCode().getHttpStatus()));
         HttpResponseContext.header("Content-Type", MediaType.APPLICATION_JSON_VALUE);

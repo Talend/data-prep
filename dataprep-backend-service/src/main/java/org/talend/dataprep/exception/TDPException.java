@@ -59,14 +59,19 @@ public class TDPException extends TalendRuntimeException {
         }
     }
 
-    /**
-     * this field if set to <code>true</code> will prevent {@link TDPExceptionController} to log a stack trace.
-     */
-    private boolean error = false;
-
     private final String message;
 
     private final String messageTitle;
+
+    /**
+     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a component
+     * that does not have access to the exception bundle.
+     */
+    public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
+        super(code, cause, context);
+        this.message = message;
+        this.messageTitle = messageTitle;
+    }
 
     /**
      * Build a Talend exception that can be interpreted throughout the application and handled by the HTTP API to translate into
@@ -107,17 +112,6 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
-     * Lightweight constructor without a cause.
-     *
-     * @param code the error code that holds all the .
-     * @param context the exception context.
-     */
-    public TDPException(ErrorCode code, ExceptionContext context, boolean error) {
-        this(code, null, context);
-        this.error = error;
-    }
-
-    /**
      * Basic constructor from a JSON error code.
      *
      * @param code an error code serialized to JSON.
@@ -133,13 +127,6 @@ public class TDPException extends TalendRuntimeException {
      */
     public TDPException(ErrorCode code) {
         this(code, null, null);
-    }
-
-    /**
-     * @return <code>true</code> if exception is used to convey an error. In this case, stack trace is less important.
-     */
-    public boolean isError() {
-        return error;
     }
 
     @Override
@@ -159,7 +146,7 @@ public class TDPException extends TalendRuntimeException {
             objectMapper.writeValue(writer, TdpExceptionDto.from(this));
             writer.flush();
         } catch (IOException e) {
-            LOGGER.error("Unable to write exception to " + writer + ".", e);
+            log.error("Unable to write exception to " + writer + ".", e);
         }
     }
 

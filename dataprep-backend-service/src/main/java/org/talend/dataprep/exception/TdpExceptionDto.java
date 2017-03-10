@@ -34,7 +34,7 @@ public class TdpExceptionDto {
 
     private Map<String, Object> context;
 
-    private String cause;
+    private TdpExceptionDto cause;
 
     /**
      * Creates the DTO based on a {@link TDPException}. It handles the conversion code that would be serialization code.
@@ -47,7 +47,7 @@ public class TdpExceptionDto {
         String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
         String message = internal.getMessage();
         String messageTitle = internal.getMessageTitle();
-        String cause = internal.getCause() == null ? null : internal.getCause().getMessage();
+        TdpExceptionDto cause = internal.getCause() instanceof TDPException ? from((TDPException) internal.getCause()) : null;
         Map<String, Object> context = new HashMap<>();
         for (Entry<String, Object> contextEntry : internal.getContext().entries()) {
             context.put(contextEntry.getKey(), contextEntry.getValue());
@@ -81,7 +81,7 @@ public class TdpExceptionDto {
     public TdpExceptionDto() {
     }
 
-    public TdpExceptionDto(String code, String cause, String message, String messageTitle, Map<String, Object> context) {
+    public TdpExceptionDto(String code, TdpExceptionDto cause, String message, String messageTitle, Map<String, Object> context) {
         this.code = code;
         this.cause = cause;
         this.message = message;
@@ -121,11 +121,11 @@ public class TdpExceptionDto {
         this.context = context;
     }
 
-    public String getCause() {
+    public TdpExceptionDto getCause() {
         return cause;
     }
 
-    public void setCause(String cause) {
+    public void setCause(TdpExceptionDto cause) {
         this.cause = cause;
     }
 }

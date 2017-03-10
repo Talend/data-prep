@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -86,13 +88,15 @@ public class DataSetJSONTest extends ServiceBaseTest {
             from(null);
             fail("Expected an JSON parse exception.");
         } catch (Exception e) {
-            assertEquals(CommonErrorCodes.UNABLE_TO_PARSE_JSON.toString(), e.getMessage());
+            assertThat(e, instanceOf(TalendRuntimeException.class));
+            assertEquals(CommonErrorCodes.UNABLE_TO_PARSE_JSON, ((TalendRuntimeException) e).getCode());
         }
         try {
             from(new ByteArrayInputStream(new byte[0]));
             fail("Expected an JSON parse exception.");
         } catch (Exception e) {
-            assertEquals(CommonErrorCodes.UNABLE_TO_PARSE_JSON.toString(), e.getMessage());
+            assertThat(e, instanceOf(TalendRuntimeException.class));
+            assertEquals(CommonErrorCodes.UNABLE_TO_PARSE_JSON, ((TalendRuntimeException) e).getCode());
         }
     }
 

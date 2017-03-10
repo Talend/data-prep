@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import moment from 'moment';
+
 const preparation = {
 	id: '1',
 	dataset: {
@@ -33,8 +35,8 @@ const adaptedPreparation = {
 	type: 'preparation',
 	name: 'JSO prep 1',
 	author: 'toto',
-	creationDate: 'a few seconds ago',
-	lastModificationDate: 'a few seconds ago',
+	creationDate: moment(preparation.creationDate).fromNow(),
+	lastModificationDate: moment(preparation.lastModificationDate).fromNow(),
 	datasetName: 'US states',
 	nbSteps: 3,
 	icon: 'talend-dataprep',
@@ -57,8 +59,8 @@ const adaptedFolder = {
 	type: 'folder',
 	name: 'toto',
 	author: 'toto',
-	creationDate: 'a few seconds ago',
-	lastModificationDate: 'a few seconds ago',
+	creationDate: moment(folder.creationDate).fromNow(),
+	lastModificationDate: moment(folder.lastModificationDate).fromNow(),
 	icon: 'talend-folder',
 	displayMode: 'text',
 	className: 'list-item-folder',

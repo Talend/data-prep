@@ -114,22 +114,6 @@ public class PreparationParserTest {
                 .forEach(runnableActions -> assertTrue(runnableActions.isEmpty()));
     }
 
-    @Test
-    public void testIgnoreCellEdition() throws Exception {
-        final ReplaceOnValue replaceOnValue = new ReplaceOnValue();
-        final Map<String, String> emptyParameters = new HashMap<String, String>() {
-
-            {
-                put(SCOPE.getKey(), ScopeCategory.CELL.name());
-                put(COLUMN_ID.getKey(), "0");
-                put(ROW_ID.getKey(), "0");
-            }
-        };
-        final Action runnableAction = factory.create(replaceOnValue, emptyParameters);
-        final List<RunnableAction> runnableActions = PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
-
-        assertTrue(runnableActions.isEmpty());
-    }
 
     @Test
     public void testNotIgnoreColumnEdition() throws Exception {

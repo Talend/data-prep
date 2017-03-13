@@ -97,11 +97,7 @@
 		transition: transform 0.25s linear;
 
 		.item-label {
-			display: inline-block;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			word-wrap: normal;
+			@include ellipsis();
 			cursor: pointer;
 			text-transform: uppercase;
 			padding: 0 10px 2px 8px;

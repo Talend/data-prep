@@ -40,12 +40,7 @@
 		padding-left: 10px;
 
 		.theme-filter-title {
-			display: inline-block;
-			max-width: 200px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			word-wrap: normal;
+			@include ellipsis(200px);
 		}
 
 		.theme-filter-description {

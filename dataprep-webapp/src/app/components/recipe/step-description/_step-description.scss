@@ -30,14 +30,8 @@ $step-description-index-color: $blue;
 	}
 
 	.step-scope {
-		display: inline-block;
-		max-width: 200px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		word-wrap: normal;
+		@include ellipsis(200px, table-cell);
 		color: $step-description-highlight-color;
-		display: table-cell;
 		text-transform: uppercase;
 	}
 }

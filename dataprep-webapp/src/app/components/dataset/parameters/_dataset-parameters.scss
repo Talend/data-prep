@@ -58,12 +58,7 @@
 					}
 
 					&.dataset-name {
-						display: inline-block;
-						max-width: 250px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						word-wrap: normal;
+						@include ellipsis(250px);
 						flex-grow: 1;
 						font-weight: bold;
 						text-transform: uppercase;

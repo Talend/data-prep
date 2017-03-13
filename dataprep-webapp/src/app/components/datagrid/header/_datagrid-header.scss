@@ -76,11 +76,7 @@
 
 	&-title,
 	&-type {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		word-wrap: normal;
-		display: block;
+		@include ellipsis(100%, block);
 	}
 
 	&-type {

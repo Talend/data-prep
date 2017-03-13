@@ -34,11 +34,7 @@
 	}
 
 	.label {
-		display: inline-block;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		word-wrap: normal;
+		@include ellipsis();
 		background-color: rgba(255, 255, 255, 0);
 		font-size: .8em;
 		padding-top: 3px;

@@ -27,12 +27,7 @@
 		.inventory-item,
 		.inventory-item:hover {
 			.inventory-title, .inventory-description {
-				display: inline-block;
-				max-width: 400px;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				word-wrap: normal;
+				@include ellipsis(400px);
 			}
 		}
 	}

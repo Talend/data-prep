@@ -66,17 +66,12 @@ $standard-color: $black;
 		}
 
 		.title {
+			@include ellipsis(210px);
 			font-size: 1.4em;
 			font-weight: 700;
 			text-transform: uppercase;
 			margin: 0;
 			max-height: 25px;
-			display: inline-block;
-			max-width: 210px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			word-wrap: normal;
 
 			&:hover {
 				cursor: pointer;
@@ -88,12 +83,7 @@ $standard-color: $black;
 			padding-left: 10px;
 
 			.name {
-				display: inline-block;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				word-wrap: normal;
-				max-width: 120px;
+				@include ellipsis(120px);
 				float: left;
 			}
 		}

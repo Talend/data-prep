@@ -12,13 +12,7 @@
   ============================================================================*/
 
 .filter-value {
-	display: inline-block;
-	max-width: 180px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	word-wrap: normal;
-	display: inline;
+	@include ellipsis(180px, inline);
 	padding: 0 5px;
 	background-color: rgba(255, 255, 255, 0.15);
 	border-radius: 2px;

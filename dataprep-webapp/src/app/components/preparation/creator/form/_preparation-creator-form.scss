@@ -85,12 +85,7 @@
 						background-color: tint($pale-blue, 70%);
 					}
 					.inventory-text .inventory-title {
-						display: inline-block;
-						max-width: 400px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						word-wrap: normal;
+						@include ellipsis(400px);
 					}
 				}
 			}
@@ -143,12 +138,7 @@
 		padding-left: 10px;
 
 		.import-title {
-			display: inline-block;
-			max-width: 200px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			word-wrap: normal;
+			@include ellipsis(200px);
 			padding: 3px 0;
 			color: $black;
 		}

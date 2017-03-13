@@ -168,12 +168,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 				background-color: #F1F1F1;
 
 				.title {
-					display: inline-block;
-					max-width: 320px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					word-wrap: normal;
+					@include ellipsis(320px);
 					font-size: 1.2em;
 					font-weight: 600;
 					padding: 15px 15px 15px 10px;

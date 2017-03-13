@@ -149,12 +149,7 @@ $lookup-datagrid-height: 273px;
 					}
 				}
 				.inventory-title, .inventory-description {
-					display: inline-block;
-					max-width: 600px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					word-wrap: normal;
+					@include ellipsis(600px);
 				}
 				.btn-icon:hover {
 					background-color: transparent;

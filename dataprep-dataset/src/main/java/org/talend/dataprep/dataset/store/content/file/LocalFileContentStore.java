@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.content.ContentServiceEnabled;
-import org.talend.daikon.content.DeletablePathResolver;
 import org.talend.daikon.content.DeletableResource;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.store.content.DataSetContentStore;
 import org.talend.dataprep.exception.TDPException;
@@ -40,7 +40,7 @@ public class LocalFileContentStore extends DataSetContentStore {
     private static final String ROOT = "/store/datasets/content/dataset/";
 
     @Autowired
-    private DeletablePathResolver resolver;
+    private ResourceResolver resolver;
 
     private DeletableResource getResource(DataSetMetadata dataSetMetadata) {
         return resolver.getResource(ROOT + dataSetMetadata.getId());

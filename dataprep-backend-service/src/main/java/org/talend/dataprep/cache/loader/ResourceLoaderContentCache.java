@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.content.ContentServiceEnabled;
-import org.talend.daikon.content.DeletablePathResolver;
 import org.talend.daikon.content.DeletableResource;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TDPException;
@@ -41,7 +41,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class ResourceLoaderContentCache implements ContentCache {
 
     @Autowired
-    DeletablePathResolver resolver;
+    private ResourceResolver resolver;
 
     private DeletableResource getOrCreateResource(ContentCacheKey key, TimeToLive ttl) {
         return resolver.getResource(getLocation(key, ttl));

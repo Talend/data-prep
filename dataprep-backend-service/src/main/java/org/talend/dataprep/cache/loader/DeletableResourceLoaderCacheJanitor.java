@@ -26,19 +26,19 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.content.DeletablePathResolver;
 import org.talend.daikon.content.DeletableResource;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.cache.CacheJanitor;
 
 @Component
-@ConditionalOnBean(DeletablePathResolver.class)
+@ConditionalOnBean(ResourceResolver.class)
 @EnableScheduling
 public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeletableResourceLoaderCacheJanitor.class);
 
     @Autowired
-    private DeletablePathResolver deletablePathResolver;
+    private ResourceResolver deletablePathResolver;
 
     @Override
     @Scheduled(fixedDelay = 60000)

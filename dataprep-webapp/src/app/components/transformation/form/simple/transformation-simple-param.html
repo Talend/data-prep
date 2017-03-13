@@ -13,13 +13,14 @@
   ~ ============================================================================
   -->
 
-<div class="param">
+<div class="form-group param">
     <div ng-class="{'param-row' : simpleParamCtrl.isBooleanType()}">
-        <div class="param-name"
-             data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
-             ng-if="!simpleParamCtrl.isBooleanType()">
+        <label class="param-name"
+               data-prep-tooltip="{{::simpleParamCtrl.parameter.description}}"
+               for="{{::(simpleParamCtrl.parameter.name)}}"
+               ng-if="!simpleParamCtrl.isBooleanType()">
             {{::simpleParamCtrl.parameter.label}}<span translate-once="COLON"></span>
-        </div>
+        </label>
         <div ng-switch="!!simpleParamCtrl.isReadonly">
             <div class="param-input" ng-switch-when="true">
                 <div ng-switch="!simpleParamCtrl.isBooleanType()">
@@ -30,7 +31,9 @@
                               translate-once="NONE"></span>
                     </span>
                     <div ng-switch-when="false">
-                        <input name="{{::(simpleParamCtrl.parameter.name)}}"
+                        <input class="form-control"
+                               id="{{::(simpleParamCtrl.parameter.name)}}"
+                               name="{{::(simpleParamCtrl.parameter.name)}}"
                                type="{{::simpleParamCtrl.parameter.inputType}}"
                                ng-model="simpleParamCtrl.parameter.value"
                                ng-disabled="!!simpleParamCtrl.isReadonly"/>
@@ -48,7 +51,9 @@
                                 ng-model="simpleParamCtrl.parameter.value"></editable-select>
                     </div>
                     <div class="param-input" ng-switch-when="false">
-                        <input name="{{::(simpleParamCtrl.parameter.name)}}"
+                        <input class="form-control"
+                               id="{{::(simpleParamCtrl.parameter.name)}}"
+                               name="{{::(simpleParamCtrl.parameter.name)}}"
                                type="{{::simpleParamCtrl.parameter.inputType}}"
                                ng-model="simpleParamCtrl.parameter.value"
                                ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"

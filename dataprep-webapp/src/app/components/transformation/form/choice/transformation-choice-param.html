@@ -13,16 +13,22 @@
   ~ ============================================================================
   -->
 
-<div class="param">
+<div class="form-group param">
     <div ng-class="{'param-row' : choiceParamCtrl.parameter.type === 'boolean'}">
-        <div class="param-name"
-             data-prep-tooltip="{{::choiceParamCtrl.parameter.description}}">{{::choiceParamCtrl.parameter.label}}{{:: 'COLON' | translate}}
-        </div>
+        <label class="param-name"
+               data-prep-tooltip="{{::choiceParamCtrl.parameter.description}}">
+            {{::choiceParamCtrl.parameter.label}}{{:: 'COLON' | translate}}
+        </label>
         <div class="param-input" ng-switch="!!choiceParamCtrl.parameter.radio">
             <div ng-switch-when="false">
                 <div ng-switch="!!choiceParamCtrl.isReadonly">
-                    <span ng-switch-when="true" class="param-input-label" ng-if="choiceParamCtrl.parameter.value !== ''">{{choiceParamCtrl.getLabelByValue(choiceParamCtrl.parameter.value)}}</span>
-                    <span ng-switch-when="true" class="param-input-label-none" ng-if="choiceParamCtrl.parameter.value === ''" translate-once="NONE"></span>
+                    <span ng-switch-when="true" class="param-input-label"
+                          ng-if="choiceParamCtrl.parameter.value !== ''">
+                        {{choiceParamCtrl.getLabelByValue(choiceParamCtrl.parameter.value)}}
+                    </span>
+                    <span ng-switch-when="true" class="param-input-label-none"
+                          ng-if="choiceParamCtrl.parameter.value === ''"
+                          translate-once="NONE"></span>
                     <div ng-switch-when="false">
                         <select class="form-control"
                                 ng-model="choiceParamCtrl.parameter.value"

@@ -136,6 +136,7 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 			forceFitColumns: true,
 		};
 		grid = new Slick.Grid(elementId, state.playground.lookup.dataView, [{ id: 'tdpId' }], options);
+        grid.registerPlugin(new Slick.AutoColumnSize());
 
         // listeners
 		DatagridGridService.attachLongTableListeners(state.playground.lookup);

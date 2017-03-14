@@ -170,6 +170,7 @@ export default class DatagridGridService {
 			asyncEditorLoadDelay: 150,
 		};
 		this.grid = new Slick.Grid(elementId, this.state.playground.grid.dataView, [{ id: 'tdpId' }], options);
+		this.grid.registerPlugin(new Slick.AutoColumnSize());
 		SingleColumnResizePlugin.patch(this.grid);
 
         // listeners

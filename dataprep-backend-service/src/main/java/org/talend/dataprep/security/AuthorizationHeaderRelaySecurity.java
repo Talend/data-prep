@@ -13,13 +13,16 @@
 
 package org.talend.dataprep.security;
 
+import static java.util.Collections.emptySet;
+
 import java.util.Set;
+
+import org.apache.http.HttpHeaders;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.talend.dataprep.api.user.UserGroup;
-import static java.util.Collections.emptySet;
 
 @Component
 @ConditionalOnProperty(name = "security.mode", havingValue = "authorization-header")
@@ -39,7 +42,7 @@ public class AuthorizationHeaderRelaySecurity implements Security {
     @Override
     public String getAuthenticationToken() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return requestAttributes.getRequest().getHeader("Authorization");
+        return requestAttributes.getRequest().getHeader(HttpHeaders.AUTHORIZATION);
     }
 
     /**

@@ -116,7 +116,8 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 		background: $white;
 	}
 
-	.slick-pane {
+	.slick-pane,
+	.grid-canvas {
 		overflow: visible;
 	}
 
@@ -264,7 +265,8 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 				margin: 0;
 				padding: 1px 0 0 2px;
 				font-size: 1.4rem;
-				border: none;
+				background: $white;
+				border: 1px solid $scooter;
 			}
 
 			.checkboxContainer {

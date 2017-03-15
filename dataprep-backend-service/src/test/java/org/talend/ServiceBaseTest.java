@@ -27,15 +27,15 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
+import org.talend.daikon.content.local.LocalContentServiceConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
-import org.talend.daikon.content.local.LocalContentServiceConfiguration;
 
 @RunWith(SpringRunner.class)
 @Import(LocalContentServiceConfiguration.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false",
-        "content-service.store=local" })
+        "content-service.store=local", "tac.url=mock-url" })
 public abstract class ServiceBaseTest {
 
     @Configuration

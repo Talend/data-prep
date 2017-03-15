@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.schema.xls;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.junit.Assert.assertThat;
@@ -388,7 +389,7 @@ public class XlsSerializerTest extends AbstractSchemaTestUtils {
         Format format = assertFormat("excel_numbers.xls");
         // Test number serialization in XLS type guess
         InputStream input = this.getClass().getResourceAsStream("excel_numbers.xls");
-        final String result = IOUtils.toString(format.getFormatFamily().getSerializer().serialize(input, metadata, -1));
+        final String result = IOUtils.toString(format.getFormatFamily().getSerializer().serialize(input, metadata, -1), UTF_8);
         final String expected = "[{\"0000\":\"1\",\"0001\":\"123\"},{\"0000\":\"2\",\"0001\":\"123.1\"},{\"0000\":\"3\",\"0001\":\"209.9\"}]";
         assertThat(result, sameJSONAs(expected));
     }

@@ -14,6 +14,7 @@ package org.talend.dataprep.transformation.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -83,7 +84,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"));
+        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"),
+                UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -154,7 +156,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("uppercase_expected.json"));
+        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("uppercase_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -173,7 +175,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"));
+        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"),
+                UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -270,7 +273,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"));
+        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, exportContent, false);
     }
 

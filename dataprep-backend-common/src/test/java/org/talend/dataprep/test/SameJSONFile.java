@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.test;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,7 +34,7 @@ public class SameJSONFile {
      * @return a SameJSONAs to use like in assertThat(contentAsString, sameJSONAsFile("t-shirt_100.csv.expected.json"));
      */
     public static SameJSONAs<? super String> sameJSONAsFile(InputStream stream) throws IOException {
-        return sameJSONAs(IOUtils.toString(stream));
+        return sameJSONAs(IOUtils.toString(stream, UTF_8));
     }
 
     /**

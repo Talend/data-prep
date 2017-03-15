@@ -13,6 +13,7 @@
 package org.talend.dataprep.dataset;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -127,7 +128,7 @@ public abstract class DataSetBaseTest extends ServiceBaseTest {
 
     protected String createCSVDataSet(InputStream content, String name) throws Exception {
         String dataSetId = given() //
-                .body(IOUtils.toString(content)) //
+                .body(IOUtils.toString(content, UTF_8)) //
                 .queryParam("Content-Type", "text/csv") //
                 .queryParam("name", name) //
                 .when() //

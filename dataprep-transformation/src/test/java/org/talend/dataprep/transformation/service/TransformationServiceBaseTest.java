@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.service;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
@@ -97,7 +98,7 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
-        final String datasetContent = IOUtils.toString(this.getClass().getResourceAsStream(file));
+        final String datasetContent = IOUtils.toString(this.getClass().getResourceAsStream(file), UTF_8);
         final Response post = given() //
                 .contentType(ContentType.JSON) //
                 .body(datasetContent) //
@@ -174,7 +175,7 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
     }
 
     protected void applyActionFromFile(final String preparationId, final String actionFile) throws IOException {
-        final String action = IOUtils.toString(this.getClass().getResourceAsStream(actionFile));
+        final String action = IOUtils.toString(this.getClass().getResourceAsStream(actionFile), UTF_8);
         applyAction(preparationId, action);
     }
 

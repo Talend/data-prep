@@ -16,6 +16,7 @@ package org.talend.dataprep.api.service;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.path.json.JsonPath.from;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
@@ -90,12 +91,13 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = createDataset("dataset/dataset.csv", "testDataset", "text/csv");
 
         // when it's updated
-        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv")))
+        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
                 .queryParam("Content-Type", "text/csv").when().put("/api/datasets/" + dataSetId + "?name=testDataset").asString();
 
         // then, the content is updated
         String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
-        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"));
+        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"),
+                UTF_8);
         assertThat(dataSetContent, sameJSONAs(expectedContent).allowingExtraUnexpectedFields());
     }
 
@@ -106,12 +108,13 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = createDataset("dataset/dataset.csv", datasetOriginalName, "text/csv");
 
         // when it's updated
-        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv")))
+        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
                 .queryParam("Content-Type", "text/csv").when().put("/api/datasets/" + dataSetId).asString();
 
         // then, the content is updated
         String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
-        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"));
+        final String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("t-shirt_100.csv.expected.json"),
+                UTF_8);
         assertThat(dataSetContent, sameJSONAs(expectedContent).allowingExtraUnexpectedFields());
 
         final String jsonUpdatedMetadata = when().get("/api/datasets/{id}/metadata", dataSetId).asString();
@@ -206,7 +209,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
     /**
      * Check that a field is there and not null in the given json node.
      *
-     * @param node the parent json node.
+     * @param node      the parent json node.
      * @param fieldName the field name to check.
      */
     private void checkNotNull(JsonNode node, String fieldName) {
@@ -452,8 +455,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetColumnSuggestions() throws Exception {
         // given
-        final String columnDescription = IOUtils
-                .toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"));
+        final String columnDescription = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"),
+                UTF_8);
 
         // when
         final String content = given().body(columnDescription).when().post("/api/transform/suggest/column").asString();
@@ -466,8 +469,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetColumnActions() throws Exception {
         // given
-        final String columnDescription = IOUtils
-                .toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"));
+        final String columnDescription = IOUtils.toString(PreparationAPITest.class.getResourceAsStream("suggestions/firstname_column_metadata.json"),
+                UTF_8);
 
         // when
         final String content = given().body(columnDescription).when().post("/api/transform/actions/column").asString();
@@ -568,7 +571,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testDataSetCreateUnsupportedFormat() throws Exception {
         // given
-        final String datasetContent = IOUtils.toString(DataSetAPITest.class.getResourceAsStream("dataset/dataset.ods"));
+        final String datasetContent = IOUtils.toString(DataSetAPITest.class.getResourceAsStream("dataset/dataset.ods"),
+                UTF_8);
         final int metadataCount = dataSetMetadataRepository.size();
         // then
         final Response response = given().body(datasetContent).when().post("/api/datasets");

@@ -43,9 +43,6 @@ import 'X-SlickGrid/slick.grid.js';
 import 'X-SlickGrid/slick.grid.css';
 import 'X-SlickGrid/controls/slick.pager.css';
 
-// slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
-import 'slick.autocolumnsize/dist/slick.autocolumnsize.min.js';
-
 // D3 https://github.com/d3/d3
 import 'd3';
 // D3-tip https://github.com/Caged/d3-tip
@@ -85,4 +82,7 @@ import 'ngreact';
 
 // Babel
 import 'babel-polyfill'; // eslint-disable-line import/no-extraneous-dependencies
+
+// slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
+import './lib/slick.autocolumnsize';
 

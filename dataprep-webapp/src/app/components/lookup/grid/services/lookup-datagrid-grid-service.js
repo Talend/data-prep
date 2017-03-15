@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc service
@@ -35,13 +35,13 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 		initGrid,
 	};
 
-    /**
-     * @ngdoc method
-     * @name updateSelectedLookupColumn
-     * @methodOf data-prep.lookup.service:LookupDatagridGridService
-     * @param {Object} column The selected column
-     * @description Set the selected column into state services
-     */
+	/**
+	 * @ngdoc method
+	 * @name updateSelectedLookupColumn
+	 * @methodOf data-prep.lookup.service:LookupDatagridGridService
+	 * @param {Object} column The selected column
+	 * @description Set the selected column into state services
+	 */
 	function updateSelectedLookupColumn(column) {
 		const columnHasChanged = column.tdpColMetadata !== lastSelectedColumn;
 		if (!columnHasChanged) {
@@ -50,17 +50,17 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 
 		lastSelectedColumn = column.tdpColMetadata;
 		$timeout(function () {
-            // if the selected column is the index col: column.tdpColMetadata === undefined
+			// if the selected column is the index col: column.tdpColMetadata === undefined
 			StateService.setLookupSelectedColumn(column.tdpColMetadata);
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name attachCellListeners
-     * @methodOf data-prep.lookup.service:LookupDatagridGridService
-     * @description Attach listeners for saving the state of column id
-     */
+	/**
+	 * @ngdoc method
+	 * @name attachCellListeners
+	 * @methodOf data-prep.lookup.service:LookupDatagridGridService
+	 * @description Attach listeners for saving the state of column id
+	 */
 	function attachCellListeners() {
 		grid.onActiveCellChanged.subscribe(function (e, args) {
 			if (angular.isDefined(args.cell)) {
@@ -70,12 +70,12 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name attachColumnListeners
-     * @methodOf data-prep.lookup.service:LookupDatagridGridService
-     * @description Attach header selection listeners on right click or left click
-     */
+	/**
+	 * @ngdoc method
+	 * @name attachColumnListeners
+	 * @methodOf data-prep.lookup.service:LookupDatagridGridService
+	 * @description Attach header selection listeners on right click or left click
+	 */
 	function attachColumnListeners() {
 		function attachColumnCallback(args) {
 			const columnId = args.column.id;
@@ -92,39 +92,39 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name initGridServices
-     * @methodOf data-prep.lookup.service:LookupDatagridGridService
-     * @description Init other grid services with the new created grid
-     */
+	/**
+	 * @ngdoc method
+	 * @name initGridServices
+	 * @methodOf data-prep.lookup.service:LookupDatagridGridService
+	 * @description Init other grid services with the new created grid
+	 */
 	function initGridServices() {
 		_.forEach(gridServices, function (service) {
 			service.init(grid, state.playground.lookup);
 		});
 	}
 
-    /**
-     * @ngdoc method
-     * @name attachGridResizeListener
-     * @methodOf data-prep.lookup.service:LookupDatagridGridService
-     * @description Attach listeners on window resize
-     */
+	/**
+	 * @ngdoc method
+	 * @name attachGridResizeListener
+	 * @methodOf data-prep.lookup.service:LookupDatagridGridService
+	 * @description Attach listeners on window resize
+	 */
 	function attachGridResizeListener() {
 		$window.addEventListener('resize', function () {
 			grid.resizeCanvas();
 		}, true);
 	}
 
-    /**
-     * @ngdoc method
-     * @name initGrid
-     * @methodOf data-prep.lookup.service:LookupDatagridGridService
-     * @description Create Slick grid and initiate other lookup-datagrid services
-     * @param {string} elementId The element where the grid will be inserted in the DOM. The element must exists
-     */
+	/**
+	 * @ngdoc method
+	 * @name initGrid
+	 * @methodOf data-prep.lookup.service:LookupDatagridGridService
+	 * @description Create Slick grid and initiate other lookup-datagrid services
+	 * @param {string} elementId The element where the grid will be inserted in the DOM. The element must exists
+	 */
 	function initGrid(elementId) {
-        // create grid
+		// create grid
 		const options = {
 			autoEdit: false,
 			editable: false,
@@ -136,15 +136,15 @@ export default function LookupDatagridGridService($timeout, $window, state, Data
 			forceFitColumns: true,
 		};
 		grid = new Slick.Grid(elementId, state.playground.lookup.dataView, [{ id: 'tdpId' }], options);
-        grid.registerPlugin(new Slick.AutoColumnSize());
+		grid.registerPlugin(new Slick.AutoColumnSize());
 
-        // listeners
+		// listeners
 		DatagridGridService.attachLongTableListeners(state.playground.lookup);
 		attachCellListeners();
 		attachColumnListeners();
 		attachGridResizeListener();
 
-        // init other services
+		// init other services
 		initGridServices();
 
 		return grid;

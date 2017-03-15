@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.api.transformer;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.talend.dataprep.transformation.format.CSVFormat.CSV;
 
@@ -46,12 +47,12 @@ public class TransformerFactoryTest extends TransformationBaseTest {
                 .args(arguments) //
                 .format(CSV) //
                 .output(outputStream) //
-                .actions(IOUtils.toString(TransformerFactoryTest.class.getResourceAsStream("upper_case_firstname.json"))) //
+                .actions(IOUtils.toString(TransformerFactoryTest.class.getResourceAsStream("upper_case_firstname.json"),
+                        UTF_8)) //
                 .build();
         final Transformer transformer = factory.get(configuration);
-        final String expectedCsv = IOUtils.toString(
-                TransformerFactoryTest.class
-                .getResourceAsStream("expected_export_preparation_uppercase_firstname.csv"));
+        final String expectedCsv = IOUtils.toString(TransformerFactoryTest.class.getResourceAsStream("expected_export_preparation_uppercase_firstname.csv"),
+                UTF_8);
 
         final InputStream inputStream = TransformerFactoryTest.class.getResourceAsStream("../../format/export_dataset.json");
         try (JsonParser parser = mapper.getFactory().createParser(inputStream)) {

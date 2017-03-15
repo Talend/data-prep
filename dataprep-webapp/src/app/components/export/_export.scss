@@ -11,17 +11,19 @@
 
   ============================================================================*/
 
-$button-height: $navbar-height !default;
+$export-btn-height: 32px !default;
 
-.export-dropdown {
-	button {
-		border-radius: 0;
-		height: $button-height;
-	}
-	
+#export-button {
 	.disabled,
 	.disabled:hover {
 		color: $dark-gray;
 		cursor: not-allowed;
+	}
+	.btn {
+		height: $export-btn-height;
+		min-height: $export-btn-height;
+	}
+	li > a {
+		width: 100%;
 	}
 }

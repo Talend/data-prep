@@ -32,7 +32,11 @@
  */
 
 import { map } from 'lodash';
-import { PLAYGROUND_PREPARATION_ROUTE, PLAYGROUND_DATASET_ROUTE, HOME_DATASETS_ROUTE, HOME_PREPARATIONS_ROUTE } from '../../index-route';
+import {
+	PLAYGROUND_PREPARATION_ROUTE,
+	HOME_DATASETS_ROUTE,
+	HOME_PREPARATIONS_ROUTE,
+} from '../../index-route';
 // actions scopes
 const LINE = 'line';
 
@@ -40,7 +44,7 @@ const LINE = 'line';
 const EVENT_LOADING_START = 'talend.loading.start';
 const EVENT_LOADING_STOP = 'talend.loading.stop';
 
-export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams,
+export default function PlaygroundService($state, $rootScope, $q, $translate, $timeout, $stateParams, $window,
                                           state, StateService, StepUtilsService,
                                           DatasetService, DatagridService, StorageService, FilterService,
                                           FilterAdapterService, PreparationService, PreviewService,
@@ -131,12 +135,14 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 		if (preparation) {
 			StateService.showRecipe();
 			ExportService.refreshTypes('preparations', preparation.id);
+			$window.document.title = `${preparation.name} | ${$translate.instant('TALEND')}`;
 		}
 
 		// dataset specific init
 		else {
 			StateService.setNameEditionMode(true);
 			ExportService.refreshTypes('datasets', dataset.id);
+			$window.document.title = `${dataset.name} | ${$translate.instant('TALEND')}`;
 		}
 	}
 
@@ -159,15 +165,15 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @ngdoc method
 	 * @name loadDataset
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
-	 * @param {object} dataset The dataset to load
+	 * @param {string} datasetid The dataset id to load
 	 * @description Initiate a new preparation from dataset.
 	 * @returns {Promise} The process promise
 	 */
-	function loadDataset(dataset) {
+	function loadDataset(datasetid) {
 		startLoader();
-		return DatasetService.getContent(dataset.id, true)
+		return DatasetService.getContent(datasetid, true)
 			.then(data => checkRecords(data))
-			.then(data => reset.call(this, dataset, data))
+			.then(data => reset.call(this, data.metadata, data))
 			.then(() => {
 				if (OnboardingService.shouldStartTour('playground')) {
 					$timeout(OnboardingService.startTour('playground'), 300, false);
@@ -685,15 +691,29 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	 * @description Perform a cell or a column edition
 	 */
 	function editCell(rowItem, column, newValue, updateAllCellWithValue) {
-		const action = { name: 'replace_on_value' };
-		const scope = updateAllCellWithValue ? 'column' : 'cell';
-		const params = {
-			cell_value: {
-				token: rowItem[column.id],
-				operator: 'equals',
-			},
-			replace_value: newValue,
-		};
+		let action;
+		let scope;
+		let params;
+
+		if (updateAllCellWithValue) {
+			action = { name: 'replace_on_value' };
+			scope = 'column';
+			params = {
+				cell_value: {
+					token: rowItem[column.id],
+					operator: 'equals',
+				},
+				replace_value: newValue,
+			};
+		}
+		else {
+			action = { name: 'replace_cell_value' };
+			scope = 'cell';
+			params = {
+				original_value: rowItem[column.id],
+				new_value: newValue,
+			};
+		}
 
 		return service.completeParamsAndAppend(action, scope, params);
 	}
@@ -743,7 +763,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 					return loadStep(activeStep);
 				}
 				else {
-					this.loadDataset.call(this, dataset);
+					this.loadDataset.call(this, dataset.id);
 				}
 			});
 	}
@@ -863,16 +883,7 @@ export default function PlaygroundService($state, $rootScope, $q, $translate, $t
 	function initDataset() {
 		StateService.setPreviousRoute(HOME_DATASETS_ROUTE);
 		StateService.setIsLoadingPlayground(true);
-		startLoader();
-		DatasetService.getMetadata($stateParams.datasetid)
-			.then((dataset) => {
-				this.loadDataset.call(this, dataset);
-				return dataset;
-			})
-			.catch(() => {
-				stopLoader();
-				return errorGoBack(false);
-			});
+		this.loadDataset.call(this, $stateParams.datasetid);
 	}
 
 	/**

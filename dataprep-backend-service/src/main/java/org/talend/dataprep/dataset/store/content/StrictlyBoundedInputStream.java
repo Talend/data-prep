@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -13,13 +12,10 @@
 
 package org.talend.dataprep.dataset.store.content;
 
-import static org.talend.daikon.exception.ExceptionContext.build;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
 
 /**
  * A bounded input stream that throws a {@link TDPException} when the maximum input stream size is exceeded.
@@ -44,7 +40,7 @@ public class StrictlyBoundedInputStream extends InputStream {
     /**
      * Creates a new BoundedInputStream that wraps the given input stream.
      * If the maximum size which is specified is less or equal to zero, the constructed {@link InputStream} is unbounded.
-     * 
+     *
      * @param in the original input stream to be wrapped by this {@link StrictlyBoundedInputStream}
      * @param maxSize the maximum size of this input stream
      */
@@ -67,27 +63,15 @@ public class StrictlyBoundedInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         int i = in.read();
-        if (i >= 0)
+        if (i >= 0) {
             incrementCounter(1);
-        return i;
-    }
-
-    @Override
-    public int read(byte[] b) throws IOException {
-        return read(b, 0, b.length);
-    }
-
-    @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        int i = in.read(b, off, len);
-        if (i >= 0)
-            incrementCounter(i);
+        }
         return i;
     }
 
     /**
      * Increment the number of bytes, so far read, with the specified number.
-     * 
+     *
      * @param size the number of bytes which have been read
      * @throws IOException
      */
@@ -98,10 +82,10 @@ public class StrictlyBoundedInputStream extends InputStream {
         }
     }
 
-    public static class InputStreamTooLargeException extends RuntimeException{
+    public static class InputStreamTooLargeException extends RuntimeException {
 
         public InputStreamTooLargeException(long maxSize) {
-            super("The input stream exceeds the authorized size: "+ maxSize);
+            super("The input stream exceeds the authorized size: " + maxSize);
         }
     }
 

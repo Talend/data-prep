@@ -102,28 +102,31 @@ export default class LookupService {
 	 * @description Loads the lookup dataset content from step in update mode
 	 */
 	loadFromStep(step) {
-		return this._getActions(this.state.playground.dataset.id)
-			.then((actions) => {
-				const lookupId = step.actionParameters.parameters.lookup_ds_id;
-				const lookupAction = _.find(actions, (action) => {
-					return this._getDsId(action) === lookupId;
-				});
-
-				// change column selection to focus on step target
-				const selectedColumn = _.find(this.state.playground.data.metadata.columns, { id: step.actionParameters.parameters.column_id });
-				this.StateService.setGridSelection([selectedColumn]);
-
-				// lookup already loaded
-				if (this.state.playground.lookup.dataset === lookupAction &&
-					this.state.playground.lookup.step === step) {
-					return;
-				}
-
-				// load content
+		return this._getDatasets()
+			.then(() => {
 				return this._getActions(this.state.playground.dataset.id)
-					.then(() => this.DatasetRestService.getContent(lookupId, true))
-					.then((lookupDsContent) => {
-						this._initLookupState(lookupAction, lookupDsContent, step);
+					.then((actions) => {
+						const lookupId = step.actionParameters.parameters.lookup_ds_id;
+						const lookupAction = _.find(actions, (action) => {
+							return this._getDsId(action) === lookupId;
+						});
+
+						// change column selection to focus on step target
+						const selectedColumn = _.find(this.state.playground.data.metadata.columns, { id: step.actionParameters.parameters.column_id });
+						this.StateService.setGridSelection([selectedColumn]);
+
+						// lookup already loaded
+						if (this.state.playground.lookup.dataset === lookupAction &&
+							this.state.playground.lookup.step === step) {
+							return;
+						}
+
+						// load content
+						return this._getActions(this.state.playground.dataset.id)
+							.then(() => this.DatasetRestService.getContent(lookupId, true))
+							.then((lookupDsContent) => {
+								this._initLookupState(lookupAction, lookupDsContent, step);
+							});
 					});
 			});
 	}

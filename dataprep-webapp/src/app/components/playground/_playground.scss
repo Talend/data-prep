@@ -29,8 +29,9 @@ $switch-shadow: 0 2px 5px transparentize(black, 0.6);
 $slide-action-background: $base-background-color;
 
 $navigation-border: 1px;
-$navigation-height: 50px;
-$navigation-all-height: ($navigation-height + $navigation-border);
+$navigation-height: $navbar-height;
+$sub-header-height: $navbar-height;
+$navigation-all-height: ($navigation-height + $navigation-border + $sub-header-height);
 $playground-height: '100vh - ' + ($navigation-all-height);
 
 @mixin slidable-action-bar {
@@ -59,8 +60,9 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 
 		#playground-dataset-parameters {
 			@include slidable-top(200px, 0px);
-			> * {
+			> .content {
 				margin: 10px;
+				height: 100%;
 			}
 		}
 
@@ -118,35 +120,9 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 
 						> .recipe {
 							overflow-x: hidden;
-							overflow-y: auto;
-							-ms-overflow-y: scroll;
 						}
 					}
 				}
-			}
-		}
-
-		.steps-header {
-			display: inline-block;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-
-			border-bottom: 1px solid $shadow-gray;
-			padding: $padding-normal $padding-smaller $padding-normal $padding-large;
-
-			talend-editable-text {
-				width: 100%;
-				.edition-text-input {
-					width: 95%;
-				}
-			}
-
-			.steps-header-preparation-text {
-				@include ellipsis(95%);
-				font-size: 1.2em;
-				font-weight: 600;
-				text-transform: uppercase;
 			}
 		}
 	}
@@ -162,7 +138,7 @@ $playground-height: '100vh - ' + ($navigation-all-height);
 //-----------------------------------------------------BODY--------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------
 .playground-container {
-	$playground-suggestions-stats-details: '100vh - ' + (2*$navigation-height + $navigation-border);
+	$playground-suggestions-stats-details: '100vh - ' + (2*$navigation-height + $navigation-border + $sub-header-height);
 
 	height: 100vh;
 	@include flex-column();

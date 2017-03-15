@@ -13,6 +13,7 @@
 package org.talend.dataprep.dataset;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -26,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
@@ -127,7 +128,7 @@ public abstract class DataSetBaseTest extends ServiceBaseTest {
 
     protected String createCSVDataSet(InputStream content, String name) throws Exception {
         String dataSetId = given() //
-                .body(IOUtils.toString(content)) //
+                .body(IOUtils.toString(content, UTF_8)) //
                 .queryParam("Content-Type", "text/csv") //
                 .queryParam("name", name) //
                 .when() //

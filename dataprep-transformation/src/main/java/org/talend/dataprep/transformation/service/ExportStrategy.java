@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
@@ -143,7 +144,7 @@ public abstract class ExportStrategy {
             final PreparationGetActions getActionsCommand = applicationContext.getBean(PreparationGetActions.class, preparationId,
                     stepId);
             try {
-                actions = "{\"actions\": " + IOUtils.toString(getActionsCommand.execute()) + '}';
+                actions = "{\"actions\": " + IOUtils.toString(getActionsCommand.execute(), UTF_8) + '}';
             } catch (IOException e) {
                 final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", stepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);

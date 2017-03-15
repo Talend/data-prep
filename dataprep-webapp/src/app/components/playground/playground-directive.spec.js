@@ -213,33 +213,6 @@ describe('Playground directive', () => {
 			expect(element.find('.playground-recipe').eq(0).hasClass('slide-hide')).toBe(true);
 			expect(element.find('.playground-recipe').eq(0).find('.action').eq(0).hasClass('right')).toBe(false);
 		});
-
-		it('should render editable text on preparation title', () => {
-			//given
-			stateMock.playground.preparation = { id: '3e41168465e15d4' };
-			stateMock.playground.dataset = metadata;
-			stateMock.playground.isReadOnly = false;
-
-			//when
-			createElement();
-
-			//then
-			const title = element.find('.steps-header').eq(0).find('talend-editable-text');
-			expect(title.length).toBe(1);
-		});
-
-		it('should render editable text on preparation title on readonly mode', () => {
-			//given
-			stateMock.playground.preparation = { id: '3e41168465e15d4' };
-			stateMock.playground.dataset = metadata;
-			stateMock.playground.isReadOnly = true;
-
-			//when
-			createElement();
-
-			//then
-			expect(element.find('.steps-header-preparation-text').length).toBe(1);
-		});
 	});
 
 	describe('dataset parameters', () => {

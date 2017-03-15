@@ -28,23 +28,15 @@
                        on-close="playgroundCtrl.beforeClose()"
                        on-preparation-picker="playgroundCtrl.showPreparationPicker()"
                        is-readonly="playgroundCtrl.state.playground.isReadOnly"
+                       preparation-name="playgroundCtrl.state.playground.preparationName"
+                       name-edition-mode="playgroundCtrl.state.playground.nameEditionMode"
+                       confirm-name-edition="playgroundCtrl.confirmPrepNameEdition"
     ></playground-header>
     <div class="playground"
          ng-if="!playgroundCtrl.state.playground.isLoading">
         <talend-slidable class="playground-recipe slide-hide"
                          visible="playgroundCtrl.state.playground.recipe.visible"
                          side="left">
-            <!-- Recipe Header -->
-            <div class="steps-header" id="help-preparation-name">
-                <talend-editable-text edition-mode="playgroundCtrl.state.playground.nameEditionMode"
-                                      on-validate="playgroundCtrl.confirmPrepNameEdition(text)"
-                                      placeholder="ENTER_PREPARATION_NAME"
-                                      text="playgroundCtrl.state.playground.preparationName"
-                                      text-class="steps-header-preparation-text"
-                                      text-title="{{playgroundCtrl.state.playground.preparationName}}">
-                </talend-editable-text>
-            </div>
-            <!-- Recipe -->
             <recipe id="help-recipe" ng-if="playgroundCtrl.state.playground.data"></recipe>
         </talend-slidable>
 

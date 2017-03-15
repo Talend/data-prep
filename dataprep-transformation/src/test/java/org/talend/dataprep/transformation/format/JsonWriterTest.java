@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.format;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -34,7 +35,7 @@ import org.talend.dataprep.api.type.Type;
 
 /**
  * Unit test for the JsonWriter.
- * 
+ *
  * @JsonWriter
  */
 public class JsonWriterTest extends BaseFormatTest {
@@ -61,7 +62,8 @@ public class JsonWriterTest extends BaseFormatTest {
         columns.add(column1);
         columns.add(column2);
 
-        String expectedOutput = IOUtils.toString(JsonWriterTest.class.getResourceAsStream("expected_columns.json"));
+        String expectedOutput = IOUtils.toString(JsonWriterTest.class.getResourceAsStream("expected_columns.json"),
+                UTF_8);
 
         // when
         writer.write(new RowMetadata(columns));

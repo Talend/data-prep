@@ -6,9 +6,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.stream.Stream;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -35,8 +33,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.zafarkhaja.semver.ParseException;
 import com.github.zafarkhaja.semver.Version;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -128,7 +124,7 @@ public class UpgradeAPI extends APIService {
 
             post.setRequestEntity(new StringRequestEntity(content.toString(), MediaType.APPLICATION_JSON.getType(), UTF_8.name()));
             client.executeMethod(post);
-            response = IOUtils.toString(post.getResponseBodyAsStream());
+            response = IOUtils.toString(post.getResponseBodyAsStream(), UTF_8);
         } finally {
             post.releaseConnection();
         }

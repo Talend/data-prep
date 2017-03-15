@@ -1,5 +1,4 @@
 // ============================================================================
-//
 // Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
@@ -25,7 +24,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.talend.daikon.exception.error.ErrorCode;
-import org.talend.dataprep.ServiceBaseTest;
+import org.talend.ServiceBaseTest;
 import org.talend.dataprep.exception.TDPException;
 
 /**

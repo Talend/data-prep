@@ -1,3 +1,15 @@
+// ============================================================================
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+
 package org.talend.dataprep.util;
 
 import static org.junit.Assert.*;
@@ -20,10 +32,10 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.preparation.service.UserPreparation;
 
 public class SortAndOrderHelperTest {
-
 
     @Test
     public void getSortPropertyEditor() {
@@ -33,6 +45,25 @@ public class SortAndOrderHelperTest {
         assertEquals(NAME, value);
     }
 
+    @Test(expected = TDPException.class)
+    public void invalidSortPropertyEditor() {
+        PropertyEditor sortPropertyEditor = SortAndOrderHelper.getSortPropertyEditor();
+        sortPropertyEditor.setAsText("invalid");
+    }
+
+    @Test
+    public void getOrderPropertyEditor() {
+        PropertyEditor sortPropertyEditor = SortAndOrderHelper.getOrderPropertyEditor();
+        sortPropertyEditor.setAsText(DESC.camelName());
+        Object value = sortPropertyEditor.getValue();
+        assertEquals(DESC, value);
+    }
+
+    @Test(expected = TDPException.class)
+    public void invalidOrderPropertyEditor() {
+        PropertyEditor sortPropertyEditor = SortAndOrderHelper.getOrderPropertyEditor();
+        sortPropertyEditor.setAsText("invalid");
+    }
 
     @Test
     public void getPreparationComparator_byName() throws Exception {

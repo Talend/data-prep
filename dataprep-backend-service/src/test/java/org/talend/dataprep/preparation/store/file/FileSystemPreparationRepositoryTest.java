@@ -56,16 +56,6 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
     @Autowired
     private VersionService versionService;
 
-    /**
-     * Bean needed to resolve test properties set by the @TestPropertySource annotation
-     *
-     * @see FileSystemPreparationRepository#preparationsLocation
-     */
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertiesResolver() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
     /** The preparation repository to test. */
     @Autowired
     private PreparationRepository repository;

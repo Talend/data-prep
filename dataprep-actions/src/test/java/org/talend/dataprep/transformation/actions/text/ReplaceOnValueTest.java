@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
@@ -301,31 +300,6 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_replace_the_value_that_match_on_the_specified_cell() {
-        // given
-        final String columnId = "0000";
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "James");
-        final DataSetRow row = new DataSetRow(values);
-        row.setTdpId(85L);
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, generateJson("James", ReplaceOnValueHelper.EQUALS_MODE));
-        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
-        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "cell");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
-        parameters.put(ImplicitParameters.ROW_ID.getKey().toLowerCase(), "85");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertThat(row.get(columnId), is("Jimmy"));
-    }
-
-    @Test
     public void should_replace_value_based_on_regex() {
         //given
         final String from = "bridge.html?region=FR";
@@ -389,56 +363,6 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
     }
 
     @Test
-    public void should_replace_many_values_that_match_on_the_specified_cell() {
-        // given
-        final String columnId = "0000";
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "James Cleveland James");
-        final DataSetRow row = new DataSetRow(values);
-        row.setTdpId(85L);
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, generateJson("James", ReplaceOnValueHelper.CONTAINS_MODE));
-        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
-        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "cell");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
-        parameters.put(ImplicitParameters.ROW_ID.getKey().toLowerCase(), "85");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertThat(row.get(columnId), is("Jimmy Cleveland Jimmy"));
-    }
-
-    @Test
-    public void should_NOT_replace_the_value_that_DOESNT_match_on_the_specified_cell() {
-        // given
-        final String columnId = "0000";
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(columnId, "Toto");
-        values.put(FlagNames.TDP_ID, "85");
-        final DataSetRow row = new DataSetRow(values);
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(CELL_VALUE_PARAMETER, generateJson("James", ReplaceOnValueHelper.CONTAINS_MODE));
-        parameters.put(REPLACE_VALUE_PARAMETER, "Jimmy");
-        parameters.put(REPLACE_ENTIRE_CELL_PARAMETER, "false");
-        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "cell");
-        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), columnId);
-        parameters.put(ImplicitParameters.ROW_ID.getKey().toLowerCase(), "85");
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        assertThat(row.get(columnId), is("Toto"));
-    }
-
-    @Test
     public void test_TDP_663() {
         for (String op : new String[] { ReplaceOnValueHelper.REGEX_MODE, ReplaceOnValueHelper.EQUALS_MODE,
                 ReplaceOnValueHelper.CONTAINS_MODE, ReplaceOnValueHelper.STARTS_WITH_MODE,
@@ -476,9 +400,8 @@ public class ReplaceOnValueTest extends AbstractMetadataBaseTest {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, action.getBehavior().size());
+        assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
     }
 
 }

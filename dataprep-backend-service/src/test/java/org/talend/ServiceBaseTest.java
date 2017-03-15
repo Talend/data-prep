@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep;
+package org.talend;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -20,17 +20,28 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
+import org.talend.daikon.content.local.LocalContentServiceConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = "dataset.asynchronous.analysis=false")
+@Import(LocalContentServiceConfiguration.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false",
+        "content-service.store=local", "tac.url=mock-url" })
 public abstract class ServiceBaseTest {
+
+    @Configuration
+    @ComponentScan(basePackages = {"org.talend.daikon.content", "org.talend.dataprep"})
+    public static class TestComponentScan {
+    }
 
     @Value("${local.server.port}")
     protected int port;

@@ -11,17 +11,18 @@
 
   ============================================================================*/
 
-describe('Dataprep app', function () {
+describe('Dataprep app', () => {
     'use strict';
 
     beforeEach(angular.mock.module('pascalprecht.translate'));
+    beforeEach(angular.mock.module('data-prep.services.state'));
     beforeEach(angular.mock.module('data-prep.services.utils'));
 
-    describe('run', function () {
-        it('should set language from navigator', inject(function ($rootScope, $injector, $window, $translate) {
+    describe('run', () => {
+        it('should set language from navigator', inject(($rootScope, $injector, $window, $translate) => {
             //given
-            var myModule = angular.module('data-prep');
-            var runBlock = myModule._runBlocks[0];
+            const myModule = angular.module('data-prep');
+            const runBlock = myModule._runBlocks[1];
 
             spyOn($translate, 'use').and.returnValue();
 
@@ -34,18 +35,18 @@ describe('Dataprep app', function () {
         }));
     });
 
-    describe('config', function () {
-        it('should set $httpProvider useApplyAsync config to true', function () {
+    describe('config', () => {
+        it('should set $httpProvider useApplyAsync config to true', () => {
             //given
-            var httpProviderIt = null;
+            let httpProviderIt = null;
 
             //when
-            angular.mock.module('data-prep', function ($httpProvider) {
+            angular.mock.module('data-prep', ($httpProvider) => {
                 httpProviderIt = $httpProvider;
             });
 
-            inject(function ($injector) {
-                var $httpBackend = $injector.get('$httpBackend');
+            inject(($injector) => {
+                const $httpBackend = $injector.get('$httpBackend');
                 $httpBackend.when('GET', 'i18n/en.json').respond({});
                 $httpBackend.when('GET', 'i18n/fr.json').respond({});
             });

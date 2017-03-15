@@ -14,6 +14,7 @@ package org.talend.dataprep.preparation.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
@@ -1098,8 +1099,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final Response request = given()
-                .body(IOUtils.toString(
-                        PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_list_params.json")))//
+                .body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_list_params.json"),
+                        UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .post("/preparations/{id}/actions", preparationId);
@@ -1125,7 +1126,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         given().body(
-                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json")))//
+                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
+                        UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .put("/preparations/{id}/actions/{action}", preparationId, firstStepId);
@@ -1150,7 +1152,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when : update second (last) step
         given().body(
-                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json")))
+                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
+                        UTF_8))
                 .contentType(ContentType.JSON).when().put("/preparations/{id}/actions/{action}", preparationId, secondStepId);
 
         // then
@@ -1173,7 +1176,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         given().body(
-                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json")))
+                IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("actions/append_update_upper_case.json"),
+                        UTF_8))
                 .contentType(ContentType.JSON).when()
                 .put("/preparations/{id}/actions/{action}", preparation.id(), "a41184275b046d86c8d98d413ed019bc0a7f3c49");
 
@@ -1227,8 +1231,8 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final Response request = given()
-                .body(IOUtils.toString(
-                        PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_params.json")))//
+                .body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream("error/incomplete_transformation_params.json"),
+                        UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .put("/preparations/{id}/actions/{action}", preparationId, stepId);
@@ -1721,7 +1725,8 @@ public class PreparationControllerTest extends BasePreparationTest {
      * @return The created step id
      */
     private String applyTransformation(final String preparationId, final String transformationFilePath) throws IOException {
-        given().body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream(transformationFilePath)))//
+        given().body(IOUtils.toString(PreparationControllerTest.class.getResourceAsStream(transformationFilePath),
+                UTF_8))//
                 .contentType(ContentType.JSON)//
                 .when()//
                 .post("/preparations/{id}/actions", preparationId)//

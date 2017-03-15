@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.schema.csv;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
         datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
-        String actual = IOUtils.toString(input);
+        String actual = IOUtils.toString(input, UTF_8);
 
         InputStream expected = this.getClass().getResourceAsStream("simple.csv_expected.json");
         Assert.assertThat(actual, sameJSONAsFile(expected));
@@ -68,7 +69,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
         datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
-        String actual = IOUtils.toString(input);
+        String actual = IOUtils.toString(input, UTF_8);
 
         InputStream expected = this.getClass().getResourceAsStream("missing_values.csv_expected.json");
         Assert.assertThat(actual, sameJSONAsFile(expected));
@@ -81,7 +82,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
         datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
-        String actual = IOUtils.toString(input);
+        String actual = IOUtils.toString(input, UTF_8);
 
         InputStream expected = this.getClass().getResourceAsStream("additional_values.csv_expected.json");
         Assert.assertThat(actual, sameJSONAsFile(expected));
@@ -94,7 +95,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
         datasetMetadata.getContent().setNbLinesInHeader(2);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
-        String actual = IOUtils.toString(input);
+        String actual = IOUtils.toString(input, UTF_8);
 
         InputStream expected = this.getClass().getResourceAsStream("simple.csv_expected.json");
         Assert.assertThat(actual, sameJSONAsFile(expected));
@@ -108,7 +109,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
         datasetMetadata.setEncoding("x-MacRoman");
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
-        String actual = IOUtils.toString(input);
+        String actual = IOUtils.toString(input, UTF_8);
 
         // strange json because schema has not been detected
         String expected = "[{\"0000\":\",\\\"GÈrard\",\"0001\":null}]";
@@ -126,7 +127,7 @@ public class CSVSerializerTest extends AbstractSchemaTestUtils {
         datasetMetadata.getContent().setNbLinesInHeader(1);
 
         InputStream input = serializer.serialize(inputStream, datasetMetadata, -1);
-        String actual = IOUtils.toString(input);
+        String actual = IOUtils.toString(input, UTF_8);
 
         String expected = "[{\"0000\":\"Carson City\\\\Seine\"}]";
         Assert.assertEquals(expected, actual);

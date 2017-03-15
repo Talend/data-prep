@@ -123,9 +123,6 @@ function addCoverageConfig(config) {
 		options: {
 			embedSource: true,
 			noAutoWrap: true,
-			babel: {
-				presets: ['es2015']
-			}
 		},
 	});
 }

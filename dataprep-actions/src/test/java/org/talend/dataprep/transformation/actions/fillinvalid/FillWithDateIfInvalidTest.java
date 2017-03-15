@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.fillinvalid;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
@@ -156,7 +157,7 @@ public class FillWithDateIfInvalidTest extends AbstractMetadataBaseTest {
     }
 
     public Statistics getStatistics(InputStream source) throws IOException {
-        final String statisticsContent = IOUtils.toString(source);
+        final String statisticsContent = IOUtils.toString(source, UTF_8);
         final ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(statisticsContent, Statistics.class);
     }

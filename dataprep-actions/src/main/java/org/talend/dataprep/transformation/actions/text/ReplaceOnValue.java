@@ -31,7 +31,6 @@ import org.talend.dataprep.i18n.ActionsBundle;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
-import org.talend.dataprep.transformation.actions.common.CellAction;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.actions.common.ReplaceOnValueHelper;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -40,21 +39,21 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Replace the content or part of a cell by a value.
  */
 @Action(AbstractActionMetadata.ACTION_BEAN_PREFIX + ReplaceOnValue.REPLACE_ON_VALUE_ACTION_NAME)
-public class ReplaceOnValue extends AbstractActionMetadata implements ColumnAction, CellAction {
+public class ReplaceOnValue extends AbstractActionMetadata implements ColumnAction {
 
     public static final String REGEX_HELPER_KEY = "regex_helper";
 
     /** The action name. */
-    public static final String REPLACE_ON_VALUE_ACTION_NAME = "replace_on_value"; //$NON-NLS-1$
+    public static final String REPLACE_ON_VALUE_ACTION_NAME = "replace_on_value";
 
     /** Value to match. */
-    public static final String CELL_VALUE_PARAMETER = "cell_value"; //$NON-NLS-1$
+    public static final String CELL_VALUE_PARAMETER = "cell_value";
 
     /** Replace Value. */
-    public static final String REPLACE_VALUE_PARAMETER = "replace_value"; //$NON-NLS-1$
+    public static final String REPLACE_VALUE_PARAMETER = "replace_value";
 
     /** Scope Value (replace the entire cell or only the part that matches). */
-    public static final String REPLACE_ENTIRE_CELL_PARAMETER = "replace_entire_cell"; //$NON-NLS-1$
+    public static final String REPLACE_ENTIRE_CELL_PARAMETER = "replace_entire_cell";
 
     @Override
     public String getName() {
@@ -104,13 +103,6 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
         apply(row, context);
     }
 
-    /**
-     * @see CellAction#applyOnCell(DataSetRow, ActionContext)
-     */
-    @Override
-    public void applyOnCell(DataSetRow row, ActionContext context) {
-        apply(row, context);
-    }
 
     /**
      * Apply the action.
@@ -182,7 +174,7 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED);
+        return EnumSet.of(Behavior.VALUES_COLUMN);
     }
 
 }

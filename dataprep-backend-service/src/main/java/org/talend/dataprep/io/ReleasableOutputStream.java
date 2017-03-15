@@ -68,7 +68,12 @@ public class ReleasableOutputStream extends OutputStream {
 
     @Override
     public void flush() throws IOException {
-        delegate.flush();
+        try {
+            delegate.flush();
+        } catch (IOException e) {
+            safeClose();
+            isClosed = true;
+        }
     }
 
     @Override
